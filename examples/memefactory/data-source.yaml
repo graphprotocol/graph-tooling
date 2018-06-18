@@ -1,0 +1,54 @@
+# specVersion indicates the version of the data source definition spec
+specVersion: 0.0.1
+# Links to the GraphQL schema being mapped to
+schema:
+  # Path to the local schema for this Data Source.
+  source:
+    path: ./schema.graphql
+# A single Data Source may comprise multiple Datasets.
+# Datasets are composed of Data, Structure & Mapping, which are intentionally
+# decoupled.
+datasets:
+  # How the dataset is ingested into The Graph
+  - data:
+      kind: ethereum/contract
+      name: MemeRegistry
+      address: 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d
+      structure:
+        abi: MemeRegistry
+    mapping:
+      # Indicates that the mapping will be an event-driven.
+      kind: ethereum/events
+      # Version of the ETL mapping API used.
+      apiVersion: 0.0.1
+      # Indicates the language used by the mapping script runtime.
+      # The type of WASM matters because we are implementing custom
+      # data types for assemblyscript.
+      language: wasm/assemblyscript
+      # The entities that will be created/updated/removed in this mapping
+      # Names must correspond to types in the GraphQL schema.
+      entities:
+        - Meme
+        - User
+        - Vote
+        - Tag
+        - MemeToken
+      # Will be injected to into mapping module
+      abis:
+        - name: Meme
+          source:
+            path: ./abis/Meme.json
+        - name: MemeRegistry
+          source:
+            path: ./abis/MemeRegistry.json
+      eventHandlers:
+          # This event will be subscribed to and trigger the handler function
+          # each time it is emitted.
+        - event: RegistryEntryEvent
+          # This is the name of the handler function that will be exported
+          # by the WASM module.
+          handler: handleRegistryEntryEvent
+      source:
+        # Points to the AssemblyScript file, a module which should implement the mapping.
+        # This should actually point to the built WASM output when deployed.
+        path: ./mapping.ts
