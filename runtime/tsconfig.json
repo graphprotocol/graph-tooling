@@ -1,0 +1,6 @@
+{
+  "extends": "/Users/jannis/Work/graphprotocol/the-graph-wasm/node_modules/assemblyscript/tsconfig.assembly.json",
+  "include": [
+    "./*.ts"
+  ]
+}
