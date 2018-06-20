@@ -1,0 +1,4 @@
+{
+  "extends": "./node_modules/the-graph-wasm/tsconfig.json",
+  "files": ["mapping.ts"]
+}
