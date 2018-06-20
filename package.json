@@ -10,6 +10,8 @@
     "immutable": "^3.8.2",
     "js-yaml": "^3.12.0"
   },
+  "module": "src/index.ts",
+  "types": "index.d.ts",
   "bin": {
     "the-graph-wasm": "./cli.js",
     "the-graph-wasm-compile": "./the-graph-wasm-compile.js"
