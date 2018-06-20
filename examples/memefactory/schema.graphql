@@ -25,7 +25,12 @@ interface RegEntry {
   challenge_votesAgainst: Int
   challenge_votesTotal: Int
   challenge_claimedRewardOn: String
-  challenge_vote(vote_voter: ID!): Vote
+  challenge_votes: [ChallengeVotes]
+}
+
+type ChallengeVotes {
+  voter: ID
+  vote: ID
 }
 
 enum VoteOption {

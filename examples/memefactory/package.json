@@ -1,0 +1,9 @@
+{
+  "name": "memefactory",
+  "scripts": {
+    "build": "the-graph-wasm data-source.yaml"
+  },
+  "devDependencies": {
+    "the-graph-wasm": "../../"
+  }
+}
