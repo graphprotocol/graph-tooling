@@ -12,6 +12,6 @@
   },
   "bin": {
     "the-graph-wasm": "./cli.js",
-    "the-graph-wasm-build": "./the-graph-wasm-build.js"
+    "the-graph-wasm-compile": "./the-graph-wasm-compile.js"
   }
 }
