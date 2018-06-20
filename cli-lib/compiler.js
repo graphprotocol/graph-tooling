@@ -12,7 +12,7 @@ class Compiler {
   }
 
   _logStep(step, subject, ...msg) {
-    console.log(`[${step}/8]`, chalk.green(subject), ...msg)
+    console.log(`[${step}/9]`, chalk.green(subject), ...msg)
   }
 
   compile() {
@@ -22,6 +22,7 @@ class Compiler {
     let buildDir = this.createBuildDirectory()
     let dataSourceInBuildDir = this.copyDataSource(dataSource, buildDir)
     this.copyRuntimeFiles(buildDir)
+    this.mergeRuntimeAndMapping(buildDir)
     this.createOutputDirectory()
 
     let compiledDataSource = this.compileDataSource(dataSourceInBuildDir, buildDir)
@@ -113,20 +114,25 @@ class Compiler {
   copyRuntimeFiles(buildDir) {
     this._logStep(5, 'Copy runtime to build directory')
     this._copyRuntimeFile(buildDir, 'index.ts')
-    this._copyRuntimeFile(buildDir, 'tsconfig.json')
   }
 
   _copyRuntimeFile(buildDir, basename) {
     console.log(chalk.grey('Copy runtime file:', basename))
     fs.copyFileSync(
-      path.join(__dirname, '..', 'runtime', basename),
+      path.join(__dirname, '..', 'src', basename),
       path.join(buildDir, basename)
     )
   }
 
+  mergeRuntimeAndMapping(buildDir) {
+    this._logStep(6, 'Merge runtime and mapping')
+    let mapping = fs.readFileSync(path.join(buildDir, 'mapping.ts'))
+    fs.appendFileSync(path.join(buildDir, 'index.ts'), mapping, 'utf-8')
+  }
+
   createOutputDirectory() {
     try {
-      this._logStep(6, 'Create output directory:', this.options.outputDir)
+      this._logStep(7, 'Create output directory:', this.options.outputDir)
       fs.mkdirsSync(this.options.outputDir)
     } catch (e) {
       console.error(chalk.red('Failed to create output directory:'), e)
@@ -136,7 +142,7 @@ class Compiler {
 
   compileDataSource(dataSource, buildDir) {
     try {
-      this._logStep(7, 'Compile data source')
+      this._logStep(8, 'Compile data source')
 
       dataSource = dataSource.updateIn(['datasets'], dataSets =>
         dataSets.map(dataSet =>
@@ -164,7 +170,7 @@ class Compiler {
         path.relative(buildDir, mappingPath)
       )
 
-      let outputFile = `${dataSetName}.wasm`
+      let outputFile = `${dataSetName}.wast`
 
       asc.main(
         ['--baseDir', buildDir, '--outFile', outputFile, 'index.ts'],

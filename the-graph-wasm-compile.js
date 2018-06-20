@@ -3,7 +3,7 @@
 let app = require('commander')
 let path = require('path')
 
-let Compiler = require('./lib/compiler')
+let Compiler = require('./cli-lib/compiler')
 
 app
   .version('0.1.0')
