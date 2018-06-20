@@ -33,7 +33,7 @@ datasets:
         - Vote
         - Tag
         - MemeToken
-      # Will be injected to into mapping module
+      # Will be injected into the mapping module
       abis:
         - name: Meme
           source:
