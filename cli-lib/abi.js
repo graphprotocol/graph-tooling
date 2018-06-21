@@ -37,6 +37,21 @@ module.exports = class ABI {
             if (member.get('outputs').size > 1) {
               simpleReturnType = false
               returnType = codegen.generateClass(member.get('name') + '__Result', {})
+              returnType.addMethod(
+                codegen.generateMethod(
+                  'constructor',
+                  member
+                    .get('outputs')
+                    .map((output, index) =>
+                      codegen.generateParam(`value${index}`, output.get('type'))
+                    ),
+                  null,
+                  member
+                    .get('outputs')
+                    .map((output, index) => `this.value${index} = value${index}`)
+                    .join('\n')
+                )
+              )
               member
                 .get('outputs')
                 .map((output, index) =>
