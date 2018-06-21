@@ -128,7 +128,11 @@ class db {
  * Low-level interaction with Ethereum smart contracts
  */
 class SmartContract {
-  constructor() {}
+  bind(name: string, address: Address): void {}
+
+  call(name: string, params: Array<Value>): Array<Value> {
+    return null
+  }
 }
 
 /**
