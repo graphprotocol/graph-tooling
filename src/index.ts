@@ -14,7 +14,7 @@ class TypedMap<K, V> {
 }
 
 /** Pointer type */
-type pointer = i32
+type pointer = u32
 
 /**
  * Basic Ethereum types
