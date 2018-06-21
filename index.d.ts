@@ -76,7 +76,7 @@ interface EthereumEventParam {
 }
 
 // Interface for pushing entity updates to database of The Graph
-interface db {
+interface Database {
   add(entity: string, data: Entity): void
   update(entity: string, data: Entity): void
   remove(entity: string, id: string): void
@@ -84,5 +84,5 @@ interface db {
 
 // Interface for contextual information passed to event handlers
 interface EventHandlerContext {
-  db: db
+  db: Database
 }

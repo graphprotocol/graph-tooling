@@ -1,5 +1,22 @@
 import 'allocator/tlsf'
 
+/** Host db interface */
+declare namespace db {
+  function create(entity: string, data: Entity): void
+  function update(entity: string, data: Entity): void
+  function remove(entity: string, id: string): void
+}
+
+/** Host ethereum interface */
+declare namespace ethereum {
+  function call(
+    contractName: string,
+    contractAddress: Address,
+    functionName: string,
+    params: Array<Value>
+  ): Array<Value>
+}
+
 /** Typed map */
 class TypedMap<K, V> {
   constructor() {}
@@ -154,22 +171,36 @@ class FunctionCallRequest {
 /**
  * API to push updates to the database of The Graph
  */
-class db {
+class Database {
   constructor() {}
 
-  add(entity: string, data: Entity): void {}
-  update(entity: string, data: Entity): void {}
-  remove(entity: string, id: string): void {}
+  add(entity: string, data: Entity): void {
+    db.create(entity, data)
+  }
+
+  update(entity: string, data: Entity): void {
+    db.update(entity, data)
+  }
+
+  remove(entity: string, id: string): void {
+    db.remove(entity, id)
+  }
 }
 
 /**
  * Low-level interaction with Ethereum smart contracts
  */
 class SmartContract {
-  bind(name: string, address: Address): void {}
+  name: string
+  address: Address
+
+  bind(name: string, address: Address): void {
+    this.name = name
+    this.address = address
+  }
 
   call(name: string, params: Array<Value>): Array<Value> {
-    return null
+    return ethereum.call(this.name, this.address, name, params)
   }
 }
 
@@ -177,9 +208,9 @@ class SmartContract {
  * Contextual information passed to Ethereum event handlers
  */
 class EventHandlerContext {
-  db: db
+  db: Database
 
-  constructor(db: db) {
+  constructor(db: Database) {
     this.db = db
   }
 }
