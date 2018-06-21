@@ -1,20 +1,40 @@
 let chalk = require('chalk')
 
 module.exports = class Logger {
-  constructor(steps) {
+  constructor(steps, options) {
     this.steps = steps
+    this.currentStep = 0
+    this.options = options || {}
+    this.prefix = this.options.prefix
   }
 
-  step(step, subject, ...msg) {
-    console.info(`[${step}/${this.steps}]`, chalk.green(subject), ...msg)
+  step(subject, ...msg) {
+    if (this.prefix === undefined) {
+      console.info(`[${++this.currentStep}/${this.steps}]`, chalk.green(subject), ...msg)
+    } else {
+      console.info(
+        this.prefix,
+        `[${++this.currentStep}/${this.steps}]`,
+        chalk.green(subject),
+        ...msg
+      )
+    }
   }
 
   note(subject, ...msg) {
-    console.info(chalk.gray(subject), ...msg)
+    if (this.prefix === undefined) {
+      console.info(chalk.gray(subject), ...msg)
+    } else {
+      console.info(this.prefix, chalk.gray(subject), ...msg)
+    }
   }
 
   fatal(subject, ...msg) {
-    console.error(chalk.red(subject), ...msg)
+    if (this.prefix === undefined) {
+      console.error(chalk.red(subject), ...msg)
+    } else {
+      console.error(this.prefix, chalk.red(subject), ...msg)
+    }
     process.exit(1)
   }
 }

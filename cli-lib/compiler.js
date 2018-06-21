@@ -10,7 +10,7 @@ class Compiler {
   constructor(options) {
     this.options = options
     this.sourceDir = path.dirname(options.dataSourceFile)
-    this.logger = new Logger(8)
+    this.logger = new Logger(10)
   }
 
   compile() {
@@ -31,7 +31,7 @@ class Compiler {
 
   loadDataSource() {
     try {
-      this.logger.step(1, 'Load data source:', this.options.dataSourceFile)
+      this.logger.step('Load data source:', this.options.dataSourceFile)
       return DataSource.load(this.options.dataSourceFile)
     } catch (e) {
       this.logger.fatal('Failed to load data source:', e)
@@ -45,7 +45,7 @@ class Compiler {
 
   createBuildDirectory() {
     try {
-      this.logger.step(3, 'Create build directory')
+      this.logger.step('Create build directory')
 
       // Create temporary directory
       let buildDir = fs.mkdtempSync('.the-graph-wasm')
@@ -63,7 +63,7 @@ class Compiler {
 
   copyDataSource(dataSource, buildDir) {
     try {
-      this.logger.step(4, 'Copy data source to build directory')
+      this.logger.step('Copy data source to build directory')
 
       // Copy schema and update its path
       dataSource = dataSource.updateIn(['schema', 'source', 'path'], schemaPath =>
@@ -104,7 +104,7 @@ class Compiler {
   }
 
   copyRuntimeFiles(buildDir) {
-    this.logger.step(5, 'Copy runtime to build directory')
+    this.logger.step('Copy runtime to build directory')
     this._copyRuntimeFile(buildDir, 'index.ts')
   }
 
@@ -124,7 +124,7 @@ class Compiler {
 
   createOutputDirectory() {
     try {
-      this.logger.step(7, 'Create output directory:', this.options.outputDir)
+      this.logger.step('Create output directory:', this.options.outputDir)
       fs.mkdirsSync(this.options.outputDir)
     } catch (e) {
       this.logger.fatal('Failed to create output directory:', e)
@@ -133,7 +133,7 @@ class Compiler {
 
   compileDataSource(dataSource, buildDir) {
     try {
-      this.logger.step(8, 'Compile data source')
+      this.logger.step('Compile data source')
 
       dataSource = dataSource.updateIn(['datasets'], dataSets =>
         dataSets.map(dataSet =>
@@ -153,8 +153,8 @@ class Compiler {
     try {
       let dataSetName = dataSet.getIn(['data', 'name'])
 
-      console.log(
-        chalk.gray('Compile data set mapping:'),
+      this.logger.note(
+        'Compile data set mapping:',
         dataSetName,
         '/',
         path.relative(buildDir, mappingPath)
@@ -183,7 +183,7 @@ class Compiler {
 
   writeDataSourceToOutputDirectory(dataSource, buildDir) {
     try {
-      this.logger.step(8, 'Write compiled data source to output directory')
+      this.logger.step('Write compiled data source to output directory')
 
       // Copy schema and update its path
       dataSource = dataSource.updateIn(['schema', 'source', 'path'], schemaPath =>
