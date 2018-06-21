@@ -260,6 +260,13 @@ class Compiler {
         )
       })
 
+      // Write the generated index.ts (for debugging purposes)
+      this.logger.note('Write generated AssemblyScript source:', 'index.ts')
+      fs.copyFileSync(
+        path.join(buildDir, 'index.ts'),
+        path.join(this.options.outputDir, 'index.ts')
+      )
+
       // Write the data source definition itself
       let outputFilename = path.join(this.options.outputDir, 'data-source.yaml')
       this.logger.note('Write data source definition:', path.basename(outputFilename))
