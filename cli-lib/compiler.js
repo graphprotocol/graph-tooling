@@ -5,6 +5,7 @@ const path = require('path')
 
 const DataSource = require('./data-source')
 const Logger = require('./logger')
+const TypeGenerator = require('./type-generator')
 
 class Compiler {
   constructor(options) {
@@ -17,8 +18,10 @@ class Compiler {
     let dataSource = this.loadDataSource()
     let buildDir = this.createBuildDirectory()
     let dataSourceInBuildDir = this.copyDataSource(dataSource, buildDir)
+    let typeFiles = this.generateTypes(dataSourceInBuildDir, buildDir)
     this.copyRuntimeFiles(buildDir)
-    this.mergeRuntimeAndMapping(buildDir)
+    this.addTypesToRuntime(buildDir, typeFiles)
+    this.addMappingToRuntime(buildDir)
     this.createOutputDirectory()
 
     let compiledDataSource = this.compileDataSource(dataSourceInBuildDir, buildDir)
@@ -36,11 +39,6 @@ class Compiler {
     } catch (e) {
       this.logger.fatal('Failed to load data source:', e)
     }
-  }
-
-  validateDataSource(definition) {
-    this.logger.step(2, 'Validate data source')
-    // TODO
   }
 
   createBuildDirectory() {
@@ -103,6 +101,19 @@ class Compiler {
     return targetFile
   }
 
+  generateTypes(dataSource, buildDir) {
+    this.logger.step('Generate types from contract ABIs')
+
+    let generator = new TypeGenerator({
+      dataSource,
+      outputDir: buildDir,
+      logger: {
+        prefix: '.....',
+      },
+    })
+    return generator.generateTypes()
+  }
+
   copyRuntimeFiles(buildDir) {
     this.logger.step('Copy runtime to build directory')
     this._copyRuntimeFile(buildDir, 'index.ts')
@@ -116,10 +127,31 @@ class Compiler {
     )
   }
 
-  mergeRuntimeAndMapping(buildDir) {
-    this.logger.step(6, 'Merge runtime and mapping')
-    let mapping = fs.readFileSync(path.join(buildDir, 'mapping.ts'))
-    fs.appendFileSync(path.join(buildDir, 'index.ts'), mapping, 'utf-8')
+  addTypesToRuntime(buildDir, typeFiles) {
+    this.logger.step('Add generated types to runtime')
+    try {
+      typeFiles.forEach(typeFile => {
+        this.logger.note(
+          'Add types from file to runtime:',
+          path.relative(buildDir, typeFile)
+        )
+
+        let types = fs.readFileSync(typeFile)
+        fs.appendFileSync(path.join(buildDir, 'index.ts'), types + '\n', 'utf-8')
+      })
+    } catch (e) {
+      this.logger.fatal('Failed to add types to runtime:', e)
+    }
+  }
+
+  addMappingToRuntime(buildDir) {
+    this.logger.step('Add mapping to runtime')
+    try {
+      let mapping = fs.readFileSync(path.join(buildDir, 'mapping.ts'))
+      fs.appendFileSync(path.join(buildDir, 'index.ts'), mapping, 'utf-8')
+    } catch (e) {
+      this.logger.fatal('Failed to add mapping to runtime:', e)
+    }
   }
 
   createOutputDirectory() {
