@@ -26,6 +26,20 @@ class Bytes {}
 class H256 {}
 
 /**
+ * ValueType enum
+ */
+enum ValueType {
+  ADDRESS,
+  BOOLEAN,
+  U32,
+  U256,
+  BYTES,
+  STRING,
+  ARRAY,
+  MAP,
+}
+
+/**
  * Generic, dynamically typed value
  */
 class Value {
@@ -33,6 +47,10 @@ class Value {
   data: pointer
 
   toAddress(): Address {
+    throw 'Unsupported'
+  }
+
+  toBoolean(): bool {
     throw 'Unsupported'
   }
 
@@ -61,6 +79,10 @@ class Value {
   }
 
   static fromAddress(address: Address): Value {
+    throw 'Unsupported'
+  }
+
+  static fromBool(b: boolean): Value {
     throw 'Unsupported'
   }
 
