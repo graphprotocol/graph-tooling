@@ -1,6 +1,7 @@
 {
   "name": "memefactory",
   "scripts": {
+    "codegen": "the-graph-wasm generate-types --output-dir types/ data-source.yaml",
     "build": "the-graph-wasm data-source.yaml"
   },
   "devDependencies": {
