@@ -16,11 +16,26 @@ interface Bytes {}
 interface Bytes32 {}
 
 /**
+ * ValueType enum
+ */
+declare enum ValueType {
+  ADDRESS,
+  BOOLEAN,
+  U32,
+  U256,
+  BYTES,
+  STRING,
+  ARRAY,
+  MAP,
+}
+
+/**
  * Generic, dynamically typed value
  */
 declare class Value {
-  kind: string
+  kind: ValueType
   toString(): string
+  toBoolean(): bool
   toAddress(): Address
   toBytes(): Bytes
   toBytes32(): Bytes32
@@ -29,6 +44,7 @@ declare class Value {
   toArray(): Array<Value>
   toMap(): TypedMap<string, Value>
   static fromAddress(address: Address): Value
+  static fromBoolean(b: boolean): Value
   static fromBytes(bytes: Bytes): Value
   static fromU32(n: u32): Value
   static fromU256(n: U256): Value
