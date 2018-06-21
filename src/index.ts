@@ -36,7 +36,15 @@ class Value {
     throw 'Unsupported'
   }
 
+  toU32(): u32 {
+    throw 'Unsupported'
+  }
+
   toU256(): U256 {
+    throw 'Unsupported'
+  }
+
+  toBytes(): Bytes {
     throw 'Unsupported'
   }
 
@@ -56,7 +64,15 @@ class Value {
     throw 'Unsupported'
   }
 
-  static fromU256(u256: U256): Value {
+  static fromBytes(bytes: Bytes): Value {
+    throw 'Unsupported'
+  }
+
+  static fromU32(n: u32): Value {
+    throw 'Unsupported'
+  }
+
+  static fromU256(n: U256): Value {
     throw 'Unsupported'
   }
 

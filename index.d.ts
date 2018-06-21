@@ -22,12 +22,16 @@ declare class Value {
   kind: string
   toString(): string
   toAddress(): Address
-  toU256(): U256
+  toBytes(): Bytes
   toBytes32(): Bytes32
+  toU32(): u32
+  toU256(): U256
   toArray(): Array<Value>
   toMap(): TypedMap<string, Value>
   static fromAddress(address: Address): Value
-  static fromU256(u256: U256): Value
+  static fromBytes(bytes: Bytes): Value
+  static fromU32(n: u32): Value
+  static fromU256(n: U256): Value
   static fromString(string: string): Value
   static fromArray(values: Array<Value>): Value
 }
