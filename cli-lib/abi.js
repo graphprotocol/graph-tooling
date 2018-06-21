@@ -98,7 +98,7 @@ module.exports = class ABI {
                        : ''
                    }]
                  )
-                 ${
+                 return ${
                    simpleReturnType
                      ? codegen.generateValueToCoercion(
                          '__result[0]',
@@ -107,7 +107,7 @@ module.exports = class ABI {
                            .get(0)
                            .get('type')
                        )
-                     : `return new ${returnType.name}(
+                     : `new ${returnType.name}(
                    ${member
                      .get('outputs')
                      .map((output, index) =>
