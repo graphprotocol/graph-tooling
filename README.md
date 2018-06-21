@@ -28,14 +28,19 @@ An example of this can be found in [examples/memefactory/](examples/memefactory/
 4.  Add the following to `package.json`:
     ```json
     {
-      ...,
       "scripts": {
+        "codegen": "the-graph-wasm generate-types data-source.yaml",
         "build": "the-graph-wasm compile data-source.yaml"
-      },
-      ...
+      }
     }
     ```
-5.  Build with
+5.  Generate TypeScript type definitions from contract ABIs used in the
+    data source via:
+    ```bash
+    yarn codegen
+    ```
+6.  Develop your `mapping.ts` against those generated types.
+7.  Build with
     ```bash
     yarn build
     ```
