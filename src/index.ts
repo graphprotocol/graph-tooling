@@ -78,16 +78,6 @@ class Address {
 }
 
 /**
- * An unsigned 256-bit integer.
- */
-class U256 {}
-
-/**
- * A 256- bit hash.
- */
-class H256 {}
-
-/**
  * A dynamically-sized byte array.
  */
 class Bytes {}
@@ -98,6 +88,16 @@ class Bytes {}
 class Bytes32 {}
 
 /**
+ * A 256- bit hash.
+ */
+class H256 {}
+
+/**
+ * An unsigned 256-bit integer.
+ */
+class U256 {}
+
+/**
  * ValueType enum
  */
 enum ValueType {
@@ -106,6 +106,8 @@ enum ValueType {
   U32,
   U256,
   BYTES,
+  BYTES32,
+  H256,
   STRING,
   ARRAY,
   MAP,
@@ -115,14 +117,26 @@ enum ValueType {
  * A dynamically typed value.
  */
 class Value {
-  kind: string
+  kind: ValueType
   data: pointer
 
   toAddress(): Address {
     throw 'Unsupported'
   }
 
-  toBoolean(): bool {
+  toBoolean(): boolean {
+    throw 'Unsupported'
+  }
+
+  toBytes(): Bytes {
+    throw 'Unsupported'
+  }
+
+  toBytes32(): Bytes32 {
+    throw 'Unsupported'
+  }
+
+  toH256(): H256 {
     throw 'Unsupported'
   }
 
@@ -131,10 +145,6 @@ class Value {
   }
 
   toU256(): U256 {
-    throw 'Unsupported'
-  }
-
-  toBytes(): Bytes {
     throw 'Unsupported'
   }
 
@@ -154,11 +164,19 @@ class Value {
     throw 'Unsupported'
   }
 
-  static fromBool(b: boolean): Value {
+  static fromBoolean(b: boolean): Value {
     throw 'Unsupported'
   }
 
   static fromBytes(bytes: Bytes): Value {
+    throw 'Unsupported'
+  }
+
+  static fromBytes32(bytes: Bytes32): Value {
+    throw 'Unsupported'
+  }
+
+  static fromH256(h: H256): Value {
     throw 'Unsupported'
   }
 
@@ -177,6 +195,10 @@ class Value {
   static fromArray(values: Array<Value>): Value {
     throw 'Unsupported'
   }
+
+  static fromMap(m: TypedMap<string, Value>): Value {
+    throw 'Unsupported'
+  }
 }
 
 /**
@@ -184,7 +206,43 @@ class Value {
  * as `string` keys and the attribute values as dynamically-typed
  * `Value` objects.
  */
-class Entity extends TypedMap<string, Value> {}
+class Entity extends TypedMap<string, Value> {
+  setAddress(key: string, value: Address): void {
+    this.set(key, Value.fromAddress(value))
+  }
+
+  setBoolean(key: string, value: boolean): void {
+    this.set(key, Value.fromBoolean(value))
+  }
+
+  setBytes(key: string, value: Bytes): void {
+    this.set(key, Value.fromBytes(value))
+  }
+
+  setBytes32(key: string, value: Bytes32): void {
+    this.set(key, Value.fromBytes32(value))
+  }
+
+  setH256(key: string, value: H256): void {
+    this.set(key, Value.fromH256(value))
+  }
+
+  setU32(key: string, value: u32): void {
+    this.set(key, Value.fromU32(value))
+  }
+
+  setU256(key: string, value: U256): void {
+    this.set(key, Value.fromU256(value))
+  }
+
+  setString(key: string, value: string): void {
+    this.set(key, Value.fromString(value))
+  }
+
+  setArray(key: string, value: Array<Value>): void {
+    this.set(key, Value.fromArray(value))
+  }
+}
 
 /**
  * Common representation for Ethereum smart contract events.
