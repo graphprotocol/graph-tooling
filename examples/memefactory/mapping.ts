@@ -3,17 +3,14 @@
 /// <reference path="./types/Meme.types.ts" />
 /// <reference path="./types/MemeRegistry.types.ts" />
 
-export function handleRegistryEntryEvent(
-  ctx: EventHandlerContext,
-  event: EthereumEvent
-): void {
+export function handleRegistryEntryEvent(event: EthereumEvent): void {
   // Extract event arguments
   let registryEntryAddress = event.params[0].value.toAddress()
   let eventType = event.params[1].value.toString()
 
   if (eventType === 'constructed') {
     // Create an instance of the 'Meme' contract
-    let memeContract = new Meme(registryEntryAddress)
+    let memeContract = new Meme(registryEntryAddress, event.blockHash)
 
     // Obtain registry entry and meme data from the contract
     let registryEntryData = memeContract.loadRegistryEntry()
@@ -24,7 +21,7 @@ export function handleRegistryEntryEvent(
     meme.set('regEntry_address', Value.fromAddress(registryEntryAddress))
     meme.set('regEntry_version', Value.fromU256(registryEntryData.value0))
 
-    ctx.db.add('Meme', meme)
+    database.create('Meme', registryEntryAddress.toString(), meme)
   } else if (eventType === 'challengeCreated') {
     return
   } else if (eventType === 'voteCommitted') {
