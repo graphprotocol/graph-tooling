@@ -32,7 +32,7 @@ declare namespace database {
 /**
  * Typed map entry
  */
-interface TypedMapEntry<K, V> {
+declare class TypedMapEntry<K, V> {
   key: K
   value: V
 }
@@ -40,7 +40,7 @@ interface TypedMapEntry<K, V> {
 /**
  * Typed map
  */
-interface TypedMap<K, V> {
+declare class TypedMap<K, V> {
   set(key: K, value: V): void
   getEntry(key: K): TypedMapEntry<K, V> | null
   get(key: K): V | null
