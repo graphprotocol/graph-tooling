@@ -115,8 +115,8 @@ declare class Entity extends TypedMap<string, Value> {}
  */
 interface EthereumEvent {
   address: Address
-  eventSignature: H256
-  blockHash: string
+  eventSignature: string
+  blockHash: H256
   params: Array<EthereumEventParam>
 }
 

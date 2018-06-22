@@ -21,9 +21,12 @@ module.exports = class ABI {
     klass.addMethod(
       codegen.generateMethod(
         'constructor',
-        immutable.List([codegen.generateParam('address', 'address')]),
+        immutable.List([
+          codegen.generateParam('address', 'address'),
+          codegen.generateParam('blockHash', 'h256'),
+        ]),
         null,
-        `super.bind('${this.name}', address)`
+        `super.bind('${this.name}', address, blockHash)`
       )
     )
 
