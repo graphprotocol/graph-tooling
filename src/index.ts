@@ -1,5 +1,8 @@
 import 'allocator/tlsf'
 
+// Export allocator functions for hosts to manage WASM memory
+export { allocate_memory, free_memory }
+
 /** Host database interface */
 declare namespace database {
   function create(entity: string, id: string, data: Entity): void
