@@ -157,17 +157,16 @@ class ClassMember {
 
 class SimpleType {
   constructor(name) {
-    this.name = name
+    this.name = typeToString(name)
   }
 
   toString() {
-    ;`${this.name}`
+    return this.name
   }
 }
 
 const generateSimpleType = name => new SimpleType(name)
 const generateParam = (name, type) => new Param(name, type)
-const generateReturnType = (name, type) => new ReturnType(name, type)
 const generateMethod = (name, params, returnType, body) =>
   new Method(name, params, returnType, body)
 const generateClass = (name, options) => new Class(name, options)
@@ -181,7 +180,6 @@ module.exports = {
   generateClassMember,
   generateMethod,
   generateParam,
-  generateReturnType,
   generateValueFromCoercion,
   generateValueToCoercion,
 }
