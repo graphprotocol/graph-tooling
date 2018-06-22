@@ -82,6 +82,8 @@ declare enum ValueType {
   U32,
   U256,
   BYTES,
+  BYTES32,
+  H256,
   STRING,
   ARRAY,
   MAP,
@@ -94,10 +96,11 @@ declare class Value {
   kind: ValueType
 
   toString(): string
-  toBoolean(): bool
+  toBoolean(): boolean
   toAddress(): Address
   toBytes(): Bytes
   toBytes32(): Bytes32
+  toH256(): H256
   toU32(): u32
   toU256(): U256
   toArray(): Array<Value>
@@ -106,10 +109,12 @@ declare class Value {
   static fromAddress(address: Address): Value
   static fromBoolean(b: boolean): Value
   static fromBytes(bytes: Bytes): Value
+  static fromH256(h: H256): Value
   static fromU32(n: u32): Value
   static fromU256(n: U256): Value
   static fromString(string: string): Value
   static fromArray(values: Array<Value>): Value
+  static fromMap(m: TypedMap<string, Value>): Value
 }
 
 /**
@@ -117,7 +122,17 @@ declare class Value {
  * as `string` keys and the attribute values as dynamically-typed
  * `Value` objects.
  */
-declare class Entity extends TypedMap<string, Value> {}
+declare class Entity extends TypedMap<string, Value> {
+  setAddress(key: string, value: Address): void
+  setBoolean(key: string, value: boolean): void
+  setBytes(key: string, value: Bytes): void
+  setBytes32(key: string, value: Bytes32): void
+  setH256(key: string, value: H256): void
+  setU32(key: string, value: u32): void
+  setU256(key: string, value: U256): void
+  setString(key: string, value: string): void
+  setArray(key: string, value: Array<Value>): void
+}
 
 /**
  * Common interface for Ethereum smart contract events.
