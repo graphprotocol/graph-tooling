@@ -18,8 +18,8 @@ export function handleRegistryEntryEvent(event: EthereumEvent): void {
 
     // Create an entity to push into the database
     let meme = new Entity()
-    meme.set('regEntry_address', Value.fromAddress(registryEntryAddress))
-    meme.set('regEntry_version', Value.fromU256(registryEntryData.value0))
+    meme.setAddress('regEntry_address', registryEntryAddress)
+    meme.setU256('regEntry_version', registryEntryData.value0)
 
     database.create('Meme', registryEntryAddress.toString(), meme)
   } else if (eventType === 'challengeCreated') {
