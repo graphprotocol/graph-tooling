@@ -15,16 +15,53 @@ declare namespace ethereum {
   function call(call: SmartContractCall): Array<Value>
 }
 
+/**
+ * TypedMap entry.
+ */
+class TypedMapEntry<K, V> {
+  key: K
+  value: V
+
+  constructor(key: K, value: V) {
+    this.key = key
+    this.value = value
+  }
+}
+
 /** Typed map */
 class TypedMap<K, V> {
-  constructor() {}
+  entries: Array<TypedMapEntry<K, V>>
+
+  constructor() {
+    this.entries = new Array<TypedMapEntry<K, V>>()
+  }
 
   set(key: K, value: V): void {
-    throw 'Unsupported'
+    let entry = this.getEntry(key)
+    if (entry !== null) {
+      entry.value = value
+    } else {
+      let entry = new TypedMapEntry<K, V>(key, value)
+      this.entries.push(entry)
+    }
+  }
+
+  getEntry(key: K): TypedMapEntry<K, V> | null {
+    for (let i: i32 = 0; i < this.entries.length; i++) {
+      if (this.entries[i].key === key) {
+        return this.entries[i]
+      }
+    }
+    return null
   }
 
   get(key: K): V | null {
-    throw 'Unsupported'
+    for (let i: i32 = 0; i < this.entries.length; i++) {
+      if (this.entries[i].key === key) {
+        return this.entries[i].value
+      }
+    }
+    return null
   }
 }
 
