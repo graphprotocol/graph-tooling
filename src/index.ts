@@ -1,7 +1,7 @@
 import 'allocator/tlsf'
 
-/** Host db interface */
-declare namespace db {
+/** Host database interface */
+declare namespace database {
   function create(entity: string, data: Entity): void
   function update(entity: string, data: Entity): void
   function remove(entity: string, id: string): void
@@ -175,15 +175,15 @@ class Database {
   constructor() {}
 
   add(entity: string, data: Entity): void {
-    db.create(entity, data)
+    database.create(entity, data)
   }
 
   update(entity: string, data: Entity): void {
-    db.update(entity, data)
+    database.update(entity, data)
   }
 
   remove(entity: string, id: string): void {
-    db.remove(entity, id)
+    database.remove(entity, id)
   }
 }
 
