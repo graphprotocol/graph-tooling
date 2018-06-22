@@ -24,7 +24,7 @@ arrify@^1.0.0:
 
 "assemblyscript@https://github.com/AssemblyScript/assemblyscript/":
   version "0.5.0"
-  resolved "https://github.com/AssemblyScript/assemblyscript/#e8c8b20ca41d29274c4bce5d235d7dc560c17e2f"
+  resolved "https://github.com/AssemblyScript/assemblyscript/#525795b3540c8baa41cc2c52d98b0c1cd3f950f0"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
     binaryen "48.0.0-nightly.20180615"
