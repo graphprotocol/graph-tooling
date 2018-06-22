@@ -9,7 +9,7 @@ declare namespace database {
 
 /** Host ethereum interface */
 declare namespace ethereum {
-  function call(SmartContractCall): Array<Value>
+  function call(call: SmartContractCall): Array<Value>
 }
 
 /** Typed map */
@@ -151,8 +151,8 @@ class Entity extends TypedMap<string, Value> {}
  */
 class EthereumEvent {
   address: Address
-  eventSignature: H256
-  blockHash: string
+  eventSignature: string
+  blockHash: H256
   params: Array<EthereumEventParam>
 }
 
@@ -165,11 +165,25 @@ class EthereumEventParam {
 }
 
 class SmartContractCall {
-  blockHash: H256,
+  blockHash: H256
   contractName: string
   contractAddress: Address
   functionName: string
   functionParams: Array<Value>
+
+  constructor(
+    blockHash: H256,
+    contractName: string,
+    contractAddress: Address,
+    functionName: string,
+    functionParams: Array<Value>
+  ) {
+    this.blockHash = blockHash
+    this.contractName = contractName
+    this.contractAddress = contractAddress
+    this.functionName = functionName
+    this.functionParams = functionParams
+  }
 }
 
 /**
@@ -187,12 +201,13 @@ class SmartContract {
   }
 
   call(name: string, params: Array<Value>): Array<Value> {
-    return ethereum.call({
-      blockHash: this.blockHash,
-      contractName: this.name,
-      contractAddress: this.address,
-      functionName: name,
-      functionParams: params,
-    })
+    let call = new SmartContractCall(
+      this.blockHash,
+      this.name,
+      this.address,
+      name,
+      params
+    )
+    return ethereum.call(call)
   }
 }

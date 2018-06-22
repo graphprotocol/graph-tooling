@@ -5,6 +5,7 @@ const TYPE_MAP = {
   bytes: 'Bytes',
   bytes32: 'Bytes32',
   bool: 'bool',
+  h256: 'H256',
   string: 'string',
   uint8: 'u32',
   uint256: 'U256',
@@ -16,6 +17,7 @@ const VALUE_FROM_TYPE_FUNCTION_MAP = {
   bytes: 'Value.fromBytes',
   bytes32: 'Value.fromBytes32',
   bool: 'Value.fromBoolean',
+  h256: 'Value.fromH256',
   uint8: 'Value.fromU32',
   uint256: 'Value.fromU256',
 }
@@ -24,6 +26,7 @@ const VALUE_TO_TYPE_FUNCTION_MAP = {
   address: 'toAddress',
   bytes: 'toBytes',
   bytes32: 'toBytes32',
+  h256: 'toH256',
   uint8: 'toU32',
   uint256: 'toU256',
   bool: 'toBoolean',
