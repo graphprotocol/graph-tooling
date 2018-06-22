@@ -30,11 +30,20 @@ declare namespace database {
 }
 
 /**
+ * Typed map entry
+ */
+interface TypedMapEntry<K, V> {
+  key: K
+  value: V
+}
+
+/**
  * Typed map
  */
-declare class TypedMap<K, V> {
+interface TypedMap<K, V> {
   set(key: K, value: V): void
-  get(key: K): V | undefined
+  getEntry(key: K): TypedMapEntry<K, V> | null
+  get(key: K): V | null
 }
 
 /**
