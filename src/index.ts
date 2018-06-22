@@ -2,19 +2,14 @@ import 'allocator/tlsf'
 
 /** Host database interface */
 declare namespace database {
-  function create(entity: string, data: Entity): void
-  function update(entity: string, data: Entity): void
+  function create(entity: string, id: string, data: Entity): void
+  function update(entity: string, id: string, data: Entity): void
   function remove(entity: string, id: string): void
 }
 
 /** Host ethereum interface */
 declare namespace ethereum {
-  function call(
-    contractName: string,
-    contractAddress: Address,
-    functionName: string,
-    params: Array<Value>
-  ): Array<Value>
+  function call(SmartContractCall): Array<Value>
 }
 
 /** Typed map */
@@ -34,13 +29,33 @@ class TypedMap<K, V> {
 type pointer = u32
 
 /**
- * Basic Ethereum types
+ * An Ethereum address (20 bytes).
  */
+class Address {
+  toString(): string {
+    throw 'Unsupported'
+  }
+}
 
-class Address {}
+/**
+ * An unsigned 256-bit integer.
+ */
 class U256 {}
-class Bytes {}
+
+/**
+ * A 256- bit hash.
+ */
 class H256 {}
+
+/**
+ * A dynamically-sized byte array.
+ */
+class Bytes {}
+
+/**
+ * A fixed-size (32 bytes) byte array.
+ */
+class Bytes32 {}
 
 /**
  * ValueType enum
@@ -57,7 +72,7 @@ enum ValueType {
 }
 
 /**
- * Generic, dynamically typed value
+ * A dynamically typed value.
  */
 class Value {
   kind: string
@@ -125,12 +140,14 @@ class Value {
 }
 
 /**
- * Common representation of entity objects
+ * Common representation for entity data, storing entity attributes
+ * as `string` keys and the attribute values as dynamically-typed
+ * `Value` objects.
  */
 class Entity extends TypedMap<string, Value> {}
 
 /**
- * Ethereum event
+ * Common representation for Ethereum smart contract events.
  */
 class EthereumEvent {
   address: Address
@@ -140,51 +157,19 @@ class EthereumEvent {
 }
 
 /**
- * Ethereum event parameter
+ * A dynamically-typed Ethereum event parameter.
  */
 class EthereumEventParam {
   name: string
   value: Value
 }
 
-/**
- * State variable request
- */
-class StateVariableRequest {
+class SmartContractCall {
+  blockHash: H256,
   contractName: string
   contractAddress: Address
-  blockHash: H256
-  name: string
-}
-
-/**
- * Contract function call request
- */
-class FunctionCallRequest {
-  contractName: string
-  contractAddress: Address
-  blockHash: H256
-  name: string
-  params: Array<Value>
-}
-
-/**
- * API to push updates to the database of The Graph
- */
-class Database {
-  constructor() {}
-
-  add(entity: string, data: Entity): void {
-    database.create(entity, data)
-  }
-
-  update(entity: string, data: Entity): void {
-    database.update(entity, data)
-  }
-
-  remove(entity: string, id: string): void {
-    database.remove(entity, id)
-  }
+  functionName: string
+  functionParams: Array<Value>
 }
 
 /**
@@ -193,24 +178,21 @@ class Database {
 class SmartContract {
   name: string
   address: Address
+  blockHash: H256
 
-  bind(name: string, address: Address): void {
+  bind(name: string, address: Address, blockHash: H256): void {
     this.name = name
     this.address = address
+    this.blockHash = blockHash
   }
 
   call(name: string, params: Array<Value>): Array<Value> {
-    return ethereum.call(this.name, this.address, name, params)
-  }
-}
-
-/**
- * Contextual information passed to Ethereum event handlers
- */
-class EventHandlerContext {
-  db: Database
-
-  constructor(db: Database) {
-    this.db = db
+    return ethereum.call({
+      blockHash: this.blockHash,
+      contractName: this.name,
+      contractAddress: this.address,
+      functionName: name,
+      functionParams: params,
+    })
   }
 }

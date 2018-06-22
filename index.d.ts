@@ -1,5 +1,34 @@
 /// <reference path="./node_modules/assemblyscript/std/assembly.d.ts" />
 
+/** Host database interface */
+declare namespace database {
+  /**
+   * Creates an entity in the host database.
+   *
+   * @param entity Name of the entity type.
+   * @param id Entity ID.
+   * @param data Entity data.
+   */
+  function create(entity: string, id: string, data: Entity): void
+
+  /**
+   * Updates an entity in the host database.
+   *
+   * @param entity Name of the entity type.
+   * @param id Entity ID.
+   * @param data Entity data.
+   */
+  function update(entity: string, id: string, data: Entity): void
+
+  /**
+   * Removes ane entity from the host database.
+   *
+   * @param entity Name of the entity type.
+   * @param id Entity ID.
+   */
+  function remove(entity: string, id: string): void
+}
+
 /**
  * Typed map
  */
@@ -8,11 +37,31 @@ declare class TypedMap<K, V> {
   get(key: K): V | undefined
 }
 
-// Basic Ethereum types
-interface Address {}
+/**
+ * An Ethereum address (20 bytes).
+ */
+interface Address {
+  toString(): string
+}
+
+/**
+ * An unsigned 256-bit integer.
+ */
 interface U256 {}
+
+/**
+ * A 256- bit hash.
+ */
 interface H256 {}
+
+/**
+ * A dynamically-sized byte array.
+ */
 interface Bytes {}
+
+/**
+ * A fixed-size (32 bytes) byte array.
+ */
 interface Bytes32 {}
 
 /**
@@ -30,10 +79,11 @@ declare enum ValueType {
 }
 
 /**
- * Generic, dynamically typed value
+ * A dynamically typed value.
  */
 declare class Value {
   kind: ValueType
+
   toString(): string
   toBoolean(): bool
   toAddress(): Address
@@ -43,6 +93,7 @@ declare class Value {
   toU256(): U256
   toArray(): Array<Value>
   toMap(): TypedMap<string, Value>
+
   static fromAddress(address: Address): Value
   static fromBoolean(b: boolean): Value
   static fromBytes(bytes: Bytes): Value
@@ -53,12 +104,14 @@ declare class Value {
 }
 
 /**
- * Common representation of entity objects
+ * Common representation for entity data, storing entity attributes
+ * as `string` keys and the attribute values as dynamically-typed
+ * `Value` objects.
  */
 declare class Entity extends TypedMap<string, Value> {}
 
 /**
- * Common interface for Ethereum events
+ * Common interface for Ethereum smart contract events.
  */
 interface EthereumEvent {
   address: Address
@@ -68,21 +121,9 @@ interface EthereumEvent {
 }
 
 /**
- * Ethereum event parameter
+ * A dynamically-typed Ethereum event parameter.
  */
 interface EthereumEventParam {
   name: string
   value: Value
-}
-
-// Interface for pushing entity updates to database of The Graph
-interface Database {
-  add(entity: string, data: Entity): void
-  update(entity: string, data: Entity): void
-  remove(entity: string, id: string): void
-}
-
-// Interface for contextual information passed to event handlers
-interface EventHandlerContext {
-  db: Database
 }
