@@ -13,6 +13,7 @@ app
     'Output directory for build artifacts',
     path.join(process.cwd(), 'dist')
   )
+  .option('-t, --output-format [format]', 'Output format (wasm, wast)', 'wasm')
   .parse(process.argv)
 
 // Obtain the data source definition file
@@ -24,5 +25,6 @@ if (file === null || file === undefined) {
 let compiler = new Compiler({
   dataSourceFile: file,
   outputDir: app.outputDir,
+  outputFormat: app.outputFormat,
 })
 compiler.compile()

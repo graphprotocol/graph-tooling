@@ -192,7 +192,10 @@ class Compiler {
         path.relative(buildDir, mappingPath)
       )
 
-      let outputFile = `${dataSetName}.wast`
+      let outputFile =
+        this.options.outputFormat == 'wasm'
+          ? `${dataSetName}.wasm`
+          : `${dataSetName}.wast`
 
       asc.main(
         ['--baseDir', buildDir, '--outFile', outputFile, 'index.ts'],
