@@ -25,7 +25,7 @@ interface RegEntry {
   challenge_votesAgainst: Int
   challenge_votesTotal: Int
   challenge_claimedRewardOn: String
-  challenge_votes: [ChallengeVotes]
+  # TODO: challenge_votes: [ChallengeVotes]
 }
 
 type ChallengeVotes {
