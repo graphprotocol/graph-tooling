@@ -15,15 +15,15 @@ module.exports = class ABI {
   }
 
   _generateSmartContractClass() {
-    let klass = codegen.generateClass(this.name, { extends: 'SmartContract' })
+    let klass = codegen.klass(this.name, { extends: 'SmartContract' })
     let types = immutable.List()
 
     klass.addMethod(
-      codegen.generateMethod(
+      codegen.method(
         'constructor',
         immutable.List([
-          codegen.generateParam('address', 'address'),
-          codegen.generateParam('blockHash', 'h256'),
+          codegen.param('address', 'address'),
+          codegen.param('blockHash', 'h256'),
         ]),
         null,
         `super.bind('${this.name}', address, blockHash)`
@@ -39,14 +39,14 @@ module.exports = class ABI {
             let simpleReturnType = true
             if (member.get('outputs').size > 1) {
               simpleReturnType = false
-              returnType = codegen.generateClass(member.get('name') + '__Result', {})
+              returnType = codegen.klass(member.get('name') + '__Result', {})
               returnType.addMethod(
-                codegen.generateMethod(
+                codegen.method(
                   'constructor',
                   member
                     .get('outputs')
                     .map((output, index) =>
-                      codegen.generateParam(`value${index}`, output.get('type'))
+                      codegen.param(`value${index}`, output.get('type'))
                     ),
                   null,
                   member
@@ -58,14 +58,14 @@ module.exports = class ABI {
               member
                 .get('outputs')
                 .map((output, index) =>
-                  codegen.generateClassMember(`value${index}`, output.get('type'))
+                  codegen.klassMember(`value${index}`, output.get('type'))
                 )
                 .forEach(member => returnType.addMember(member))
 
               // Add the type to the types we'll create
               types = types.push(returnType)
             } else {
-              returnType = codegen.generateSimpleType(
+              returnType = codegen.simpleType(
                 member
                   .get('outputs')
                   .get(0)
@@ -76,13 +76,11 @@ module.exports = class ABI {
             // Generate and add a method that implements calling the function on
             // the smart contract
             klass.addMethod(
-              codegen.generateMethod(
+              codegen.method(
                 member.get('name'),
                 member
                   .get('inputs')
-                  .map(input =>
-                    codegen.generateParam(input.get('name'), input.get('type'))
-                  ),
+                  .map(input => codegen.param(input.get('name'), input.get('type'))),
                 returnType,
                 `let __result = super.call(
                    '${member.get('name')}',
@@ -91,7 +89,7 @@ module.exports = class ABI {
                        ? member
                            .get('inputs')
                            .map(input =>
-                             codegen.generateValueFromCoercion(
+                             codegen.valueFromCoercion(
                                input.get('name'),
                                input.get('type')
                              )
@@ -103,7 +101,7 @@ module.exports = class ABI {
                  )
                  return ${
                    simpleReturnType
-                     ? codegen.generateValueToCoercion(
+                     ? codegen.valueToCoercion(
                          '__result[0]',
                          member
                            .get('outputs')
@@ -114,10 +112,7 @@ module.exports = class ABI {
                    ${member
                      .get('outputs')
                      .map((output, index) =>
-                       codegen.generateValueToCoercion(
-                         `__result[${index}]`,
-                         output.get('type')
-                       )
+                       codegen.valueToCoercion(`__result[${index}]`, output.get('type'))
                      )
                      .join(', ')}
                  )`

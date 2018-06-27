@@ -165,21 +165,21 @@ class SimpleType {
   }
 }
 
-const generateSimpleType = name => new SimpleType(name)
-const generateParam = (name, type) => new Param(name, type)
-const generateMethod = (name, params, returnType, body) =>
+const simpleType = name => new SimpleType(name)
+const param = (name, type) => new Param(name, type)
+const method = (name, params, returnType, body) =>
   new Method(name, params, returnType, body)
-const generateClass = (name, options) => new Class(name, options)
-const generateClassMember = (name, type) => new ClassMember(name, type)
-const generateValueFromCoercion = (expr, type) => new ValueFromCoercion(expr, type)
-const generateValueToCoercion = (expr, type) => new ValueToCoercion(expr, type)
+const klass = (name, options) => new Class(name, options)
+const klassMember = (name, type) => new ClassMember(name, type)
+const valueFromCoercion = (expr, type) => new ValueFromCoercion(expr, type)
+const valueToCoercion = (expr, type) => new ValueToCoercion(expr, type)
 
 module.exports = {
-  generateSimpleType,
-  generateClass,
-  generateClassMember,
-  generateMethod,
-  generateParam,
-  generateValueFromCoercion,
-  generateValueToCoercion,
+  simpleType,
+  klass,
+  klassMember,
+  method,
+  param,
+  valueFromCoercion,
+  valueToCoercion,
 }
