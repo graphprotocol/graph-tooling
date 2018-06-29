@@ -13,7 +13,7 @@ datasets:
   - data:
       kind: ethereum/contract
       name: MemeRegistry
-      address: "06012c8cf97BEaD5deAe237070F9587f8E7A266d"
+      address: "22843e74c59580b3eaf6c233fa67d8b7c561a835"
       structure:
         abi: MemeRegistry
     mapping:
