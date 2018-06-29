@@ -1,4 +1,4 @@
-import 'allocator/tlsf'
+import 'allocator/arena'
 
 // Export allocator functions for hosts to manage WASM memory
 export { allocate_memory, free_memory }
