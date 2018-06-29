@@ -71,21 +71,17 @@ type pointer = u32
 /**
  * An Ethereum address (20 bytes).
  */
-class Address {
-  toString(): string {
-    throw 'Unsupported'
-  }
-}
+type Address = ArrayBuffer
 
 /**
  * A dynamically-sized byte array.
  */
-class Bytes {}
+type Bytes = ArrayBuffer
 
 /**
  * A fixed-size (32 bytes) byte array.
  */
-class Bytes32 {}
+type Bytes32 = ArrayBuffer
 
 /**
  * A 256- bit hash.
@@ -93,9 +89,121 @@ class Bytes32 {}
 class H256 {}
 
 /**
+ * A signed 256-bit integer.
+ */
+type I256 = ArrayBuffer
+
+/**
  * An unsigned 256-bit integer.
  */
-class U256 {}
+type U256 = ArrayBuffer
+
+/**
+ * Type hint for Ethereum values.
+ */
+enum TokenKind {
+  ADDRESS,
+  FIXED_BYTES,
+  BYTES,
+  INT,
+  UINT,
+  BOOL,
+  STRING,
+  FIXED_ARRAY,
+  ARRAY,
+}
+
+// Big enough to fit any pointer or native this.data.
+type TokenPayload = u64
+
+/**
+ * A dynamically typed value used when accessing Ethereum data.
+ */
+class Token {
+  kind: TokenKind
+  data: TokenPayload
+
+  toAddress(): Address {
+    assert(this.kind == TokenKind.ADDRESS, 'Token is not an address.')
+    return changetype<Address>(this.data as u32)
+  }
+
+  toBytes(): Bytes {
+    assert(
+      this.kind == TokenKind.FIXED_BYTES || this.kind == TokenKind.BYTES,
+      'Token is not bytes.'
+    )
+    return changetype<Bytes>(this.data as u32)
+  }
+
+  toI256(token: Token): I256 {
+    assert(
+      this.kind == TokenKind.INT || token.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<I256>(token.data as u32)
+  }
+
+  toBool(): boolean {
+    assert(this.kind == TokenKind.BOOL, 'Token is not a boolean.')
+    return this.data != 0
+  }
+
+  toString(): string {
+    assert(this.kind == TokenKind.STRING, 'Token is not a string.')
+    return changetype<string>(this.data as u32)
+  }
+
+  toArray(): Array<Token> {
+    assert(
+      this.kind == TokenKind.FIXED_ARRAY || this.kind == TokenKind.ARRAY,
+      'Token is not an array.'
+    )
+    return changetype<Array<Token>>(this.data as u32)
+  }
+
+  static fromAddress(address: Address): Token {
+    let token: Token
+    token.kind = TokenKind.BYTES
+    token.data = address as u64
+    return token
+  }
+
+  static fromBytes(bytes: Bytes): Token {
+    let token: Token
+    token.kind = TokenKind.BYTES
+    token.data = bytes as u64
+    return token
+  }
+
+  static fromI256(i: I256): Token {
+    let token: Token
+    token.kind = TokenKind.INT
+    token.data = i as u64
+    return token
+  }
+
+  static fromBool(b: boolean): Token {
+    let token: Token
+    token.kind = TokenKind.BOOL
+    token.data = b as u64
+    return token
+  }
+
+  static fromString(s: string): Token {
+    let token: Token
+    token.kind = TokenKind.STRING
+    token.data = s as u64
+    return token
+  }
+
+  static fromArray(arr: Token): Token {
+    let token: Token
+    token.kind = TokenKind.ARRAY
+    token.data = arr as u64
+    return token
+  }
+}
 
 /**
  * ValueType enum
@@ -259,7 +367,7 @@ class EthereumEvent {
  */
 class EthereumEventParam {
   name: string
-  value: Value
+  value: Token
 }
 
 class SmartContractCall {
