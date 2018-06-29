@@ -49,29 +49,70 @@ declare class TypedMap<K, V> {
 /**
  * An Ethereum address (20 bytes).
  */
-interface Address {
-  toString(): string
-}
+type Address = ArrayBuffer
+
+/**
+ * A signed 256-bit integer.
+ */
+type I256 = ArrayBuffer
 
 /**
  * An unsigned 256-bit integer.
  */
-interface U256 {}
+type U256 = ArrayBuffer
 
 /**
  * A 256- bit hash.
  */
-interface H256 {}
+type H256 = ArrayBuffer
 
 /**
  * A dynamically-sized byte array.
  */
-interface Bytes {}
+type Bytes = ArrayBuffer
 
 /**
  * A fixed-size (32 bytes) byte array.
  */
-interface Bytes32 {}
+type Bytes32 = ArrayBuffer
+
+/**
+ * Type hint for Ethereum values.
+ */
+declare enum TokenKind {
+  ADDRESS,
+  FIXED_BYTES,
+  BYTES,
+  INT,
+  UINT,
+  BOOL,
+  STRING,
+  FIXED_ARRAY,
+  ARRAY,
+}
+
+declare type TokenPayload = u64
+
+/**
+ * A dynamically typed value used when accessing Ethereum data.
+ */
+declare class Token {
+  kind: TokenKind
+  data: TokenPayload
+
+  toAddress(): Address
+  toBytes(): Bytes
+  toI256(token: Token): I256
+  toBool(): boolean
+  toString(): string
+  toArray(): Array<Token>
+  static fromAddress(address: Address): Token
+  static fromBytes(bytes: Bytes): Token
+  static fromI256(i: I256): Token
+  static fromBool(b: boolean): Token
+  static fromString(s: string): Token
+  static fromArray(arr: Token): Token
+}
 
 /**
  * ValueType enum
@@ -149,5 +190,5 @@ interface EthereumEvent {
  */
 interface EthereumEventParam {
   name: string
-  value: Value
+  value: Token
 }
