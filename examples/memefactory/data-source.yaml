@@ -44,7 +44,7 @@ datasets:
       eventHandlers:
           # This event will be subscribed to and trigger the handler function
           # each time it is emitted.
-        - event: RegistryEntryEvent
+        - event: RegistryEntryEvent(address,bytes32,uint256,uint256,uint256[])
           # This is the name of the handler function that will be exported
           # by the WASM module.
           handler: handleRegistryEntryEvent
