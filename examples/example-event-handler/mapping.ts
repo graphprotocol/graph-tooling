@@ -4,6 +4,6 @@
 
 export function handleExampleEvent(event: EthereumEvent): void {
   let entity = new Entity()
-  entity.setString('exampleAttribute', 'example value')
+  entity.setString('exampleAttribute', event.params[0].value.toString())
   database.create('ExampleEntity', 'example id', entity)
 }
