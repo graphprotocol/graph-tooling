@@ -314,7 +314,7 @@ class Value {
     throw 'Unsupported'
   }
 
-  static null(): Value {
+  static fromNull(): Value {
     let value = new Value()
     value.kind = ValueKind.NULL
     return value

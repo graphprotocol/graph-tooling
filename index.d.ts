@@ -160,7 +160,7 @@ declare class Value {
   static fromString(s: string): Value
   static fromArray(values: Array<Value>): Value
   static fromMap(m: TypedMap<string, Value>): Value
-  static null(): Value
+  static fromNull(): Value
 }
 
 /**
