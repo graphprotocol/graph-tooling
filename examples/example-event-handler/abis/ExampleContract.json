@@ -1,0 +1,8 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [{ "indexed": true, "name": "exampleParam", "type": "bytes32" }],
+    "name": "ExampleEvent",
+    "type": "event"
+  }
+]
