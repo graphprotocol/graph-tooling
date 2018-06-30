@@ -24,22 +24,22 @@ arrify@^1.0.0:
 
 "assemblyscript@https://github.com/AssemblyScript/assemblyscript/":
   version "0.5.0"
-  resolved "https://github.com/AssemblyScript/assemblyscript/#525795b3540c8baa41cc2c52d98b0c1cd3f950f0"
+  resolved "https://github.com/AssemblyScript/assemblyscript/#82da2d1f6dab93a5729433b07fa994c2d712ba57"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
-    binaryen "48.0.0-nightly.20180615"
+    binaryen "48.0.0-nightly.20180627"
     glob "^7.1.2"
     long "^4.0.0"
     minimist "^1.2.0"
-    ts-node "^6.1.1"
+    ts-node "^7.0.0"
 
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
-binaryen@48.0.0-nightly.20180615:
-  version "48.0.0-nightly.20180615"
-  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-48.0.0-nightly.20180615.tgz#da8e19d5c8792d63de1ef0b9d465ed403dc0d173"
+binaryen@48.0.0-nightly.20180627:
+  version "48.0.0-nightly.20180627"
+  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-48.0.0-nightly.20180627.tgz#605e42c7db752922560d7f2582d5c9dcaa2f4822"
 
 brace-expansion@^1.1.7:
   version "1.1.11"
@@ -48,7 +48,7 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
-buffer-from@^1.0.0:
+buffer-from@^1.0.0, buffer-from@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.0.tgz#87fcaa3a298358e0ade6e442cfce840740d1ad04"
 
@@ -71,8 +71,8 @@ color-name@1.1.1:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.1.tgz#4b1415304cf50028ea81643643bd82ea05803689"
 
 commander@^2.15.1:
-  version "2.15.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.16.0.tgz#f16390593996ceb4f3eeb020b31d78528f7f8a50"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -188,8 +188,8 @@ path-is-absolute@^1.0.0:
   resolved "https://registry.yarnpkg.com/path-is-absolute/-/path-is-absolute-1.0.1.tgz#174b9268735534ffbc7ace6bf53a5a9e1b5c5f5f"
 
 prettier@^1.13.5:
-  version "1.13.5"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.13.5.tgz#7ae2076998c8edce79d63834e9b7b09fead6bfd0"
+  version "1.13.7"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.13.7.tgz#850f3b8af784a49a6ea2d2eaa7ed1428a34b7281"
 
 source-map-support@^0.5.6:
   version "0.5.6"
@@ -212,11 +212,12 @@ supports-color@^5.3.0:
   dependencies:
     has-flag "^3.0.0"
 
-ts-node@^6.1.1:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-6.1.1.tgz#19607140acb06150441fcdb61be11f73f7b6657e"
+ts-node@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-7.0.0.tgz#a94a13c75e5e1aa6b82814b84c68deb339ba7bff"
   dependencies:
     arrify "^1.0.0"
+    buffer-from "^1.1.0"
     diff "^3.1.0"
     make-error "^1.1.1"
     minimist "^1.2.0"
