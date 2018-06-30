@@ -65,9 +65,6 @@ class TypedMap<K, V> {
   }
 }
 
-/** Pointer type */
-type pointer = u32
-
 /**
  * An Ethereum address (20 bytes).
  */
@@ -163,42 +160,42 @@ class Token {
   }
 
   static fromAddress(address: Address): Token {
-    let token: Token
+    let token = new Token()
     token.kind = TokenKind.BYTES
     token.data = address as u64
     return token
   }
 
   static fromBytes(bytes: Bytes): Token {
-    let token: Token
+    let token = new Token()
     token.kind = TokenKind.BYTES
     token.data = bytes as u64
     return token
   }
 
   static fromI256(i: I256): Token {
-    let token: Token
+    let token = new Token()
     token.kind = TokenKind.INT
     token.data = i as u64
     return token
   }
 
   static fromBool(b: boolean): Token {
-    let token: Token
+    let token = new Token()
     token.kind = TokenKind.BOOL
     token.data = b as u64
     return token
   }
 
   static fromString(s: string): Token {
-    let token: Token
+    let token = new Token()
     token.kind = TokenKind.STRING
     token.data = s as u64
     return token
   }
 
   static fromArray(arr: Token): Token {
-    let token: Token
+    let token = new Token()
     token.kind = TokenKind.ARRAY
     token.data = arr as u64
     return token
@@ -206,27 +203,30 @@ class Token {
 }
 
 /**
- * ValueType enum
+ * Enum for supported value types.
  */
-enum ValueType {
-  ADDRESS,
-  BOOLEAN,
-  U32,
-  U256,
-  BYTES,
-  BYTES32,
-  H256,
+enum ValueKind {
   STRING,
+  INT,
+  FLOAT,
+  BOOL,
   ARRAY,
-  MAP,
+  NULL,
 }
+
+/**
+ * Pointer type for Value data.
+ *
+ * Big enough to fit any pointer or native `this.data`.
+ */
+type ValuePayload = u64
 
 /**
  * A dynamically typed value.
  */
 class Value {
-  kind: ValueType
-  data: pointer
+  kind: ValueKind
+  data: ValuePayload
 
   toAddress(): Address {
     throw 'Unsupported'
@@ -273,7 +273,10 @@ class Value {
   }
 
   static fromBoolean(b: boolean): Value {
-    throw 'Unsupported'
+    let value = new Value()
+    value.kind = ValueKind.BOOL
+    value.data = b ? 1 : 0
+    return value
   }
 
   static fromBytes(bytes: Bytes): Value {
@@ -296,8 +299,11 @@ class Value {
     throw 'Unsupported'
   }
 
-  static fromString(string: string): Value {
-    throw 'Unsupported'
+  static fromString(s: string): Value {
+    let value = new Value()
+    value.kind = ValueKind.STRING
+    value.data = s as u64
+    return value
   }
 
   static fromArray(values: Array<Value>): Value {
@@ -306,6 +312,12 @@ class Value {
 
   static fromMap(m: TypedMap<string, Value>): Value {
     throw 'Unsupported'
+  }
+
+  static null(): Value {
+    let value = new Value()
+    value.kind = ValueKind.NULL
+    return value
   }
 }
 
