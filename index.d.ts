@@ -115,26 +115,30 @@ declare class Token {
 }
 
 /**
- * ValueType enum
+ * Enum for supported value types.
  */
-declare enum ValueType {
-  ADDRESS,
-  BOOLEAN,
-  U32,
-  U256,
-  BYTES,
-  BYTES32,
-  H256,
+declare enum ValueKind {
   STRING,
+  INT,
+  FLOAT,
+  BOOL,
   ARRAY,
-  MAP,
+  NULL,
 }
+
+/**
+ * Pointer type for Value data.
+ *
+ * Big enough to fit any pointer or native `this.data`.
+ */
+declare type ValuePayload = u64
 
 /**
  * A dynamically typed value.
  */
 declare class Value {
-  kind: ValueType
+  kind: ValueKind
+  data: ValuePayload
 
   toString(): string
   toBoolean(): boolean
@@ -153,9 +157,10 @@ declare class Value {
   static fromH256(h: H256): Value
   static fromU32(n: u32): Value
   static fromU256(n: U256): Value
-  static fromString(string: string): Value
+  static fromString(s: string): Value
   static fromArray(values: Array<Value>): Value
   static fromMap(m: TypedMap<string, Value>): Value
+  static null(): Value
 }
 
 /**
