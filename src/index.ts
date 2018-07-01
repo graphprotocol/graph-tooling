@@ -133,12 +133,20 @@ class Token {
     return changetype<Bytes>(this.data as u32)
   }
 
-  toI256(token: Token): I256 {
+  toI256(): I256 {
     assert(
       this.kind == TokenKind.INT || token.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
     return changetype<I256>(token.data as u32)
+  }
+
+  toU256(): U256 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<U256>(this.data as u32)
   }
 
   toBool(): boolean {
@@ -177,6 +185,13 @@ class Token {
     let token = new Token()
     token.kind = TokenKind.INT
     token.data = i as u64
+    return token
+  }
+
+  static fromU256(u: U256): Token {
+    let token = new Token()
+    token.kind = TokenKind.UINT
+    token.data = u as u64
     return token
   }
 

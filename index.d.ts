@@ -102,13 +102,15 @@ declare class Token {
 
   toAddress(): Address
   toBytes(): Bytes
-  toI256(token: Token): I256
+  toI256(): I256
+  toU256(): U256
   toBool(): boolean
   toString(): string
   toArray(): Array<Token>
   static fromAddress(address: Address): Token
   static fromBytes(bytes: Bytes): Token
   static fromI256(i: I256): Token
+  static fromU256(u: U256): Token
   static fromBool(b: boolean): Token
   static fromString(s: string): Token
   static fromArray(arr: Token): Token
