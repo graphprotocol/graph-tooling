@@ -12,7 +12,7 @@ declare namespace database {
 
 /** Host ethereum interface */
 declare namespace ethereum {
-  function call(call: SmartContractCall): Array<Value>
+  function call(call: SmartContractCall): Array<Token>
 }
 
 /**
@@ -387,14 +387,14 @@ class SmartContractCall {
   contractName: string
   contractAddress: Address
   functionName: string
-  functionParams: Array<Value>
+  functionParams: Array<Token>
 
   constructor(
     blockHash: H256,
     contractName: string,
     contractAddress: Address,
     functionName: string,
-    functionParams: Array<Value>
+    functionParams: Array<Token>
   ) {
     this.blockHash = blockHash
     this.contractName = contractName
@@ -418,7 +418,7 @@ class SmartContract {
     this.blockHash = blockHash
   }
 
-  call(name: string, params: Array<Value>): Array<Value> {
+  call(name: string, params: Array<Token>): Array<Token> {
     let call = new SmartContractCall(
       this.blockHash,
       this.name,
