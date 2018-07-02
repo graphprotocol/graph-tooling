@@ -6,7 +6,7 @@
 export function handleRegistryEntryEvent(event: EthereumEvent): void {
   // Extract event arguments
   let registryEntryAddress = event.params[0].value.toAddress()
-  let eventType = event.params[1].value.toString()
+  let eventType = event.params[1].value.toString(false)
 
   if (eventType === 'constructed') {
     // Create an instance of the 'Meme' contract
@@ -21,7 +21,7 @@ export function handleRegistryEntryEvent(event: EthereumEvent): void {
     meme.setAddress('regEntry_address', registryEntryAddress)
     meme.setU256('regEntry_version', registryEntryData.value0)
 
-    database.create('Meme', Value.fromAddress(registryEntryAddress).toString(), meme)
+    database.create('Meme', registryEntryAddress.toString(), meme)
   } else if (eventType === 'challengeCreated') {
     return
   } else if (eventType === 'voteCommitted') {
