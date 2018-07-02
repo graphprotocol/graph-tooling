@@ -105,7 +105,7 @@ declare class Token {
   toI256(): I256
   toU256(): U256
   toBool(): boolean
-  toString(): string
+  toString(hex?: boolean): string
   toArray(): Array<Token>
   static fromAddress(address: Address): Token
   static fromBytes(bytes: Bytes): Token

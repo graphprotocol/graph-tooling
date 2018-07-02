@@ -17,7 +17,8 @@ declare namespace ethereum {
 
 /** Type conversion interface */
 declare namespace typeConversion {
-  function bytesToString(bytes: Bytes): string
+  function bytesToString(address: Address): string
+  function bytesToHex(bytes: Bytes): string
 }
 
 /**
@@ -171,13 +172,19 @@ class Token {
     return this.data != 0
   }
 
-  toString(): string {
+  toString(hex: boolean = true): string {
     if (this.kind === TokenKind.STRING) {
       return changetype<string>(this.data as u32)
-    } else if (this.kind === TokenKind.FIXED_BYTES) {
-      return typeConversion.bytesToString(changetype<Bytes>(this.data as u32))
-    } else if (this.kind === TokenKind.BYTES) {
-      return typeConversion.bytesToString(changetype<Bytes>(this.data as u32))
+    } else if (
+      this.kind === TokenKind.ADDRESS ||
+      this.kind === TokenKind.FIXED_BYTES ||
+      this.kind === TokenKind.BYTES
+    ) {
+      if (hex) {
+        return typeConversion.bytesToHex(changetype<Uint8Array>(this.data as u32))
+      } else {
+        return typeConversion.bytesToString(changetype<Uint8Array>(this.data as u32))
+      }
     }
     throw new Error(`Token conversion from '${this.kind}' to ${this.kind} not supported`)
   }
