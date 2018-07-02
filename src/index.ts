@@ -72,19 +72,32 @@ class TypedMap<K, V> {
 }
 
 /**
+ * Byte array
+ */
+class ByteArray extends Uint8Array {
+  toString(hex: boolean = true): string {
+    if (hex) {
+      return typeConversion.bytesToHex(this)
+    } else {
+      return typeConversion.bytesToString(this)
+    }
+  }
+}
+
+/**
  * An Ethereum address (20 bytes).
  */
-type Address = Uint8Array
+type Address = ByteArray
 
 /**
  * A dynamically-sized byte array.
  */
-type Bytes = Uint8Array
+type Bytes = ByteArray
 
 /**
  * A fixed-size (32 bytes) byte array.
  */
-type Bytes32 = Uint8Array
+type Bytes32 = ByteArray
 
 /**
  * A 256- bit hash.
@@ -181,9 +194,9 @@ class Token {
       this.kind == TokenKind.BYTES
     ) {
       if (hex) {
-        return typeConversion.bytesToHex(changetype<Uint8Array>(this.data as u32))
+        return typeConversion.bytesToHex(changetype<ByteArray>(this.data as u32))
       } else {
-        return typeConversion.bytesToString(changetype<Uint8Array>(this.data as u32))
+        return typeConversion.bytesToString(changetype<ByteArray>(this.data as u32))
       }
     }
     throw new Error(`Token conversion from '${this.kind}' to ${this.kind} not supported`)

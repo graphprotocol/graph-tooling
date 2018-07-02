@@ -47,34 +47,41 @@ declare class TypedMap<K, V> {
 }
 
 /**
+ * Byte array
+ */
+declare class ByteArray extends Uint8Array {
+  toString(hex?: boolean): string
+}
+
+/**
  * An Ethereum address (20 bytes).
  */
-type Address = ArrayBuffer
-
-/**
- * A signed 256-bit integer.
- */
-type I256 = ArrayBuffer
-
-/**
- * An unsigned 256-bit integer.
- */
-type U256 = ArrayBuffer
-
-/**
- * A 256- bit hash.
- */
-type H256 = ArrayBuffer
+type Address = ByteArray
 
 /**
  * A dynamically-sized byte array.
  */
-type Bytes = Uint8Array
+type Bytes = ByteArray
 
 /**
  * A fixed-size (32 bytes) byte array.
  */
-type Bytes32 = Uint8Array
+type Bytes32 = ByteArray
+
+/**
+ * A 256- bit hash.
+ */
+type H256 = Uint64Array
+
+/**
+ * A signed 256-bit integer.
+ */
+type I256 = Uint64Array
+
+/**
+ * An unsigned 256-bit integer.
+ */
+type U256 = Uint64Array
 
 /**
  * Type hint for Ethereum values.
