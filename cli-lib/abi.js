@@ -39,7 +39,10 @@ module.exports = class ABI {
             let simpleReturnType = true
             if (member.get('outputs').size > 1) {
               simpleReturnType = false
-              returnType = codegen.klass(member.get('name') + '__Result', {})
+              returnType = codegen.klass(
+                this.name + '__' + member.get('name') + 'Result',
+                {}
+              )
               returnType.addMethod(
                 codegen.method(
                   'constructor',
