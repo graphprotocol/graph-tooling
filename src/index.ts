@@ -68,32 +68,32 @@ class TypedMap<K, V> {
 /**
  * An Ethereum address (20 bytes).
  */
-type Address = ArrayBuffer
+type Address = Uint8Array
 
 /**
  * A dynamically-sized byte array.
  */
-type Bytes = ArrayBuffer
+type Bytes = Uint8Array
 
 /**
  * A fixed-size (32 bytes) byte array.
  */
-type Bytes32 = ArrayBuffer
+type Bytes32 = Uint8Array
 
 /**
  * A 256- bit hash.
  */
-class H256 {}
+type H256 = Uint64Array
 
 /**
  * A signed 256-bit integer.
  */
-type I256 = ArrayBuffer
+type I256 = Uint64Array
 
 /**
  * An unsigned 256-bit integer.
  */
-type U256 = ArrayBuffer
+type U256 = Uint64Array
 
 /**
  * Type hint for Ethereum values.
@@ -110,7 +110,11 @@ enum TokenKind {
   ARRAY,
 }
 
-// Big enough to fit any pointer or native this.data.
+/**
+ * Pointer type for Token data.
+ *
+ * Big enough to fit any pointer or native `this.data`.
+ */
 type TokenPayload = u64
 
 /**
