@@ -18,6 +18,7 @@ const TOKEN_FROM_TYPE_FUNCTION_MAP = {
   bytes: 'Token.fromBytes',
   bytes32: 'Token.fromBytes32',
   h256: 'Token.fromH256',
+  string: 'Token.fromString',
   uint8: 'Token.fromU8',
   uint256: 'Token.fromU256',
 }
@@ -28,6 +29,7 @@ const TOKEN_TO_TYPE_FUNCTION_MAP = {
   bytes: 'toBytes',
   bytes32: 'toBytes32',
   h256: 'toH256',
+  string: 'toString',
   uint8: 'toU8',
   uint256: 'toU256',
 }
