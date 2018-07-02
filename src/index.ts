@@ -169,7 +169,7 @@ class Token {
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
-    return changetype<u8>(this.data as u32)
+    return changetype<u8>(this.data as u8)
   }
 
   toU256(): U256 {
