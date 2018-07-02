@@ -15,6 +15,11 @@ declare namespace ethereum {
   function call(call: SmartContractCall): Array<Token>
 }
 
+/** Type conversion interface */
+declare namespace typeConversion {
+  function bytesToString(bytes: Bytes): string
+}
+
 /**
  * TypedMap entry.
  */
@@ -167,8 +172,14 @@ class Token {
   }
 
   toString(): string {
-    assert(this.kind == TokenKind.STRING, 'Token is not a string.')
-    return changetype<string>(this.data as u32)
+    if (this.kind === TokenKind.STRING) {
+      return changetype<string>(this.data as u32)
+    } else if (this.kind === TokenKind.FIXED_BYTES) {
+      return typeConversion.bytesToString(changetype<Bytes>(this.data as u32))
+    } else if (this.kind === TokenKind.BYTES) {
+      return typeConversion.bytesToString(changetype<Bytes>(this.data as u32))
+    }
+    throw new Error(`Token conversion from '${this.kind}' to ${this.kind} not supported`)
   }
 
   toArray(): Array<Token> {
