@@ -54,7 +54,7 @@ class TypedMap<K, V> {
 
   getEntry(key: K): TypedMapEntry<K, V> | null {
     for (let i: i32 = 0; i < this.entries.length; i++) {
-      if (this.entries[i].key === key) {
+      if (this.entries[i].key == key) {
         return this.entries[i]
       }
     }
@@ -63,7 +63,7 @@ class TypedMap<K, V> {
 
   get(key: K): V | null {
     for (let i: i32 = 0; i < this.entries.length; i++) {
-      if (this.entries[i].key === key) {
+      if (this.entries[i].key == key) {
         return this.entries[i].value
       }
     }
@@ -173,12 +173,12 @@ class Token {
   }
 
   toString(hex: boolean = true): string {
-    if (this.kind === TokenKind.STRING) {
+    if (this.kind == TokenKind.STRING) {
       return changetype<string>(this.data as u32)
     } else if (
-      this.kind === TokenKind.ADDRESS ||
-      this.kind === TokenKind.FIXED_BYTES ||
-      this.kind === TokenKind.BYTES
+      this.kind == TokenKind.ADDRESS ||
+      this.kind == TokenKind.FIXED_BYTES ||
+      this.kind == TokenKind.BYTES
     ) {
       if (hex) {
         return typeConversion.bytesToHex(changetype<Uint8Array>(this.data as u32))
