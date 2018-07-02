@@ -69,12 +69,12 @@ type H256 = ArrayBuffer
 /**
  * A dynamically-sized byte array.
  */
-type Bytes = ArrayBuffer
+type Bytes = Uint8Array
 
 /**
  * A fixed-size (32 bytes) byte array.
  */
-type Bytes32 = ArrayBuffer
+type Bytes32 = Uint8Array
 
 /**
  * Type hint for Ethereum values.
