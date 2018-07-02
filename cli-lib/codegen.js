@@ -7,28 +7,28 @@ const TYPE_MAP = {
   bytes32: 'Bytes32',
   h256: 'H256',
   string: 'string',
-  uint8: 'u32',
+  uint8: 'u8',
   uint256: 'U256',
   'uint256[]': 'Array<U256>',
 }
 
-const VALUE_FROM_TYPE_FUNCTION_MAP = {
-  address: 'Value.fromAddress',
-  bool: 'Value.fromBoolean',
-  bytes: 'Value.fromBytes',
-  bytes32: 'Value.fromBytes32',
-  h256: 'Value.fromH256',
-  uint8: 'Value.fromU32',
-  uint256: 'Value.fromU256',
+const TOKEN_FROM_TYPE_FUNCTION_MAP = {
+  address: 'Token.fromAddress',
+  bool: 'Token.fromBoolean',
+  bytes: 'Token.fromBytes',
+  bytes32: 'Token.fromBytes32',
+  h256: 'Token.fromH256',
+  uint8: 'Token.fromU8',
+  uint256: 'Token.fromU256',
 }
 
-const VALUE_TO_TYPE_FUNCTION_MAP = {
+const TOKEN_TO_TYPE_FUNCTION_MAP = {
   address: 'toAddress',
   bool: 'toBoolean',
   bytes: 'toBytes',
   bytes32: 'toBytes32',
   h256: 'toH256',
-  uint8: 'toU32',
+  uint8: 'toU8',
   uint256: 'toU256',
 }
 
@@ -40,19 +40,19 @@ const typeToString = type => {
   }
 }
 
-const valueFromTypeFunction = type => {
-  if (VALUE_FROM_TYPE_FUNCTION_MAP[type] !== undefined) {
-    return VALUE_FROM_TYPE_FUNCTION_MAP[type]
+const tokenFromTypeFunction = type => {
+  if (TOKEN_FROM_TYPE_FUNCTION_MAP[type] !== undefined) {
+    return TOKEN_FROM_TYPE_FUNCTION_MAP[type]
   } else {
-    throw `Unsupported Value from type coercion for type: ${type}`
+    throw `Unsupported Token from type coercion for type: ${type}`
   }
 }
 
-const valueToTypeFunction = type => {
-  if (VALUE_TO_TYPE_FUNCTION_MAP[type] !== undefined) {
-    return VALUE_TO_TYPE_FUNCTION_MAP[type]
+const tokenToTypeFunction = type => {
+  if (TOKEN_TO_TYPE_FUNCTION_MAP[type] !== undefined) {
+    return TOKEN_TO_TYPE_FUNCTION_MAP[type]
   } else {
-    throw `Unsupported Value to type coercion for type: ${type}`
+    throw `Unsupported Token to type coercion for type: ${type}`
   }
 }
 
@@ -78,25 +78,25 @@ class ReturnType {
   }
 }
 
-class ValueFromCoercion {
+class TokenFromCoercion {
   constructor(expr, type) {
     this.expr = expr
     this.type = type
   }
 
   toString() {
-    return `${valueFromTypeFunction(this.type)}(${this.expr})`
+    return `${tokenFromTypeFunction(this.type)}(${this.expr})`
   }
 }
 
-class ValueToCoercion {
+class TokenToCoercion {
   constructor(expr, type) {
     this.expr = expr
     this.type = type
   }
 
   toString() {
-    return `${this.expr}.${valueToTypeFunction(this.type)}()`
+    return `${this.expr}.${tokenToTypeFunction(this.type)}()`
   }
 }
 
@@ -171,8 +171,8 @@ const method = (name, params, returnType, body) =>
   new Method(name, params, returnType, body)
 const klass = (name, options) => new Class(name, options)
 const klassMember = (name, type) => new ClassMember(name, type)
-const valueFromCoercion = (expr, type) => new ValueFromCoercion(expr, type)
-const valueToCoercion = (expr, type) => new ValueToCoercion(expr, type)
+const tokenFromCoercion = (expr, type) => new TokenFromCoercion(expr, type)
+const tokenToCoercion = (expr, type) => new TokenToCoercion(expr, type)
 
 module.exports = {
   simpleType,
@@ -180,6 +180,6 @@ module.exports = {
   klassMember,
   method,
   param,
-  valueFromCoercion,
-  valueToCoercion,
+  tokenFromCoercion,
+  tokenToCoercion,
 }

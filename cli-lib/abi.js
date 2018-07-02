@@ -89,7 +89,7 @@ module.exports = class ABI {
                        ? member
                            .get('inputs')
                            .map(input =>
-                             codegen.valueFromCoercion(
+                             codegen.tokenFromCoercion(
                                input.get('name'),
                                input.get('type')
                              )
@@ -101,7 +101,7 @@ module.exports = class ABI {
                  )
                  return ${
                    simpleReturnType
-                     ? codegen.valueToCoercion(
+                     ? codegen.tokenToCoercion(
                          '__result[0]',
                          member
                            .get('outputs')
@@ -112,7 +112,7 @@ module.exports = class ABI {
                    ${member
                      .get('outputs')
                      .map((output, index) =>
-                       codegen.valueToCoercion(`__result[${index}]`, output.get('type'))
+                       codegen.tokenToCoercion(`__result[${index}]`, output.get('type'))
                      )
                      .join(', ')}
                  )`
