@@ -145,6 +145,14 @@ class Token {
     return changetype<I256>(token.data as u32)
   }
 
+  toU8(): u8 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<u8>(this.data as u32)
+  }
+
   toU256(): U256 {
     assert(
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
