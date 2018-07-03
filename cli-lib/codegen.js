@@ -120,6 +120,24 @@ class Method {
   }
 }
 
+class StaticMethod {
+  constructor(name, params, returnType, body) {
+    this.name = name
+    this.params = params || []
+    this.returnType = returnType || 'void'
+    this.body = body || ''
+  }
+
+  toString() {
+    return `
+  static ${this.name}(${this.params.map(param => param.toString()).join(', ')})${
+      this.returnType ? `: ${this.returnType.name}` : ''
+    } {${this.body}
+  }
+`
+  }
+}
+
 class Class {
   constructor(name, options) {
     this.name = name
@@ -171,6 +189,8 @@ const simpleType = name => new SimpleType(name)
 const param = (name, type) => new Param(name, type)
 const method = (name, params, returnType, body) =>
   new Method(name, params, returnType, body)
+const staticMethod = (name, params, returnType, body) =>
+  new StaticMethod(name, params, returnType, body)
 const klass = (name, options) => new Class(name, options)
 const klassMember = (name, type) => new ClassMember(name, type)
 const tokenFromCoercion = (expr, type) => new TokenFromCoercion(expr, type)
@@ -181,6 +201,7 @@ module.exports = {
   klass,
   klassMember,
   method,
+  staticMethod,
   param,
   tokenFromCoercion,
   tokenToCoercion,
