@@ -19,14 +19,16 @@ module.exports = class ABI {
     let types = immutable.List()
 
     klass.addMethod(
-      codegen.method(
-        'constructor',
+      codegen.staticMethod(
+        'bind',
         immutable.List([
           codegen.param('address', 'address'),
           codegen.param('blockHash', 'h256'),
         ]),
-        null,
-        `super.bind('${this.name}', address, blockHash)`
+        klass,
+        `
+        return new ${this.name}('${this.name}', address, blockHash);
+        `
       )
     )
 

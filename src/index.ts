@@ -470,7 +470,7 @@ class SmartContract {
   address: Address
   blockHash: H256
 
-  bind(name: string, address: Address, blockHash: H256): void {
+  protected constructor(name: string, address: Address, blockHash: H256) {
     this.name = name
     this.address = address
     this.blockHash = blockHash
