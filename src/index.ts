@@ -19,6 +19,7 @@ declare namespace ethereum {
 declare namespace typeConversion {
   function bytesToString(address: Address): string
   function bytesToHex(bytes: Bytes): string
+  function u64ArrayToHex(array: U64Array): string
 }
 
 /**
@@ -84,6 +85,13 @@ class ByteArray extends Uint8Array {
   }
 }
 
+/** U64Array */
+class U64Array extends Uint64Array {
+  toString(): string {
+    return typeConversion.u64ArrayToHex(this)
+  }
+}
+
 /**
  * An Ethereum address (20 bytes).
  */
@@ -102,17 +110,17 @@ type Bytes32 = ByteArray
 /**
  * A 256- bit hash.
  */
-type H256 = Uint64Array
+type H256 = ByteArray
 
 /**
  * A signed 256-bit integer.
  */
-type I256 = Uint64Array
+type I256 = U64Array
 
 /**
  * An unsigned 256-bit integer.
  */
-type U256 = Uint64Array
+type U256 = U64Array
 
 /**
  * Type hint for Ethereum values.
