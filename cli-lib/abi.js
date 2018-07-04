@@ -18,6 +18,9 @@ module.exports = class ABI {
     let klass = codegen.klass(this.name, { extends: 'SmartContract' })
     let types = immutable.List()
 
+    const paramName = (name, index) =>
+      name === undefined || name === null || name === '' ? `param${name}` : name
+
     klass.addMethod(
       codegen.staticMethod(
         'bind',
@@ -85,7 +88,9 @@ module.exports = class ABI {
                 member.get('name'),
                 member
                   .get('inputs')
-                  .map(input => codegen.param(input.get('name'), input.get('type'))),
+                  .map((input, index) =>
+                    codegen.param(paramName(input.get('name'), index), input.get('type'))
+                  ),
                 returnType,
                 `let __result = super.call(
                    '${member.get('name')}',
@@ -93,9 +98,9 @@ module.exports = class ABI {
                      member.get('inputs')
                        ? member
                            .get('inputs')
-                           .map(input =>
+                           .map((input, index) =>
                              codegen.tokenFromCoercion(
-                               input.get('name'),
+                               paramName(input.get('name'), index),
                                input.get('type')
                              )
                            )
