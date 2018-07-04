@@ -2,6 +2,8 @@ const asc = require('assemblyscript/cli/asc')
 const chalk = require('chalk')
 const fs = require('fs-extra')
 const path = require('path')
+const immutable = require('immutable')
+const yaml = require('js-yaml')
 
 const DataSource = require('./data-source')
 const Logger = require('./logger')
@@ -10,8 +12,9 @@ const TypeGenerator = require('./type-generator')
 class Compiler {
   constructor(options) {
     this.options = options
+    this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.dataSourceFile)
-    this.logger = new Logger(10)
+    this.logger = new Logger(11)
   }
 
   dataSetDir(parent, dataSet) {
@@ -26,7 +29,7 @@ class Compiler {
     }
   }
 
-  compile() {
+  async compile() {
     let dataSource = this.loadDataSource()
 
     this.buildDir = this.createBuildDirectory()
@@ -40,7 +43,12 @@ class Compiler {
     this.createOutputDirectory()
 
     let compiledDataSource = this.compileDataSource(dataSourceInBuildDir)
-    let finalDataSource = this.writeDataSourceToOutputDirectory(compiledDataSource)
+    let localDataSource = this.writeDataSourceToOutputDirectory(compiledDataSource)
+    let hash = await this.uploadDataSourceToIPFS(localDataSource)
+
+    console.log('--')
+    console.log(chalk.bold(chalk.blue('Data source:')), hash)
+    console.log('')
   }
 
   loadDataSource() {
@@ -328,6 +336,82 @@ class Compiler {
       return dataSource
     } catch (e) {
       this.logger.fatal('Failed to write compiled data source to output directory:', e)
+    }
+  }
+
+  async uploadDataSourceToIPFS(dataSource) {
+    this.logger.step('Upload data source to IPFS')
+
+    try {
+      // Collect all source (path -> hash) updates to apply them later
+      let updates = []
+
+      // Upload the schema to IPFS
+      updates.push({
+        keyPath: ['schema', 'source'],
+        value: await this._uploadSourceToIPFS(dataSource.getIn(['schema', 'source'])),
+      })
+
+      // Upload the ABIs of all data sets to IPFS
+      for (let [i, dataSet] of dataSource.get('datasets').entries()) {
+        for (let [j, abi] of dataSet.getIn(['mapping', 'abis']).entries()) {
+          updates.push({
+            keyPath: ['datasets', i, 'mapping', 'abis', j, 'source'],
+            value: await this._uploadSourceToIPFS(abi.get('source')),
+          })
+        }
+      }
+
+      // Upload all mappings
+      for (let [i, dataSet] of dataSource.get('datasets').entries()) {
+        updates.push({
+          keyPath: ['datasets', i, 'mapping', 'source'],
+          value: await this._uploadSourceToIPFS(dataSet.getIn(['mapping', 'source'])),
+        })
+      }
+
+      // Apply all updates to the data source
+      for (let update of updates) {
+        dataSource = dataSource.setIn(update.keyPath, update.value)
+      }
+
+      // Upload the data source itself
+      return await this._uploadDataSourceDefinitionToIPFS(dataSource)
+    } catch (e) {
+      this.logger.fatal('Failed to upload data source to IPFS:', e)
+    }
+  }
+
+  async _uploadSourceToIPFS(source) {
+    let hash = await this._uploadFileToIPFS(source.get('path'))
+    return immutable.fromJS({ '/': `/ipfs/${hash}` })
+  }
+
+  async _uploadFileToIPFS(maybeRelativeFile) {
+    let absoluteFile = path.resolve(this.options.outputDir, maybeRelativeFile)
+    this.logger.note('Add file to IPFS:', this.displayPath(absoluteFile))
+    let content = Buffer.from(fs.readFileSync(absoluteFile), 'utf-8')
+    let hash = await this._uploadToIPFS({
+      path: path.relative(this.options.outputDir, absoluteFile),
+      content: content,
+    })
+    this.logger.note('               ..', hash)
+    return hash
+  }
+
+  async _uploadDataSourceDefinitionToIPFS(dataSource) {
+    let str = yaml.safeDump(dataSource.toJS(), { noRefs: true, sortKeys: true })
+    let file = { path: 'data-source.yaml', content: Buffer.from(str, 'utf-8') }
+    return await this._uploadToIPFS(file)
+  }
+
+  async _uploadToIPFS(file) {
+    try {
+      let hash = (await this.ipfs.files.add([file]))[0].hash
+      await this.ipfs.pin.add(hash)
+      return hash
+    } catch (e) {
+      this.logger.fatal('Failed to upload file to IPFS:', e)
     }
   }
 }
