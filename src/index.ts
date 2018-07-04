@@ -351,14 +351,14 @@ class Value {
   static fromBytes(bytes: Bytes): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = 'fromBytes not implemented yet' as u64
+    value.data = bytes.toString() as u64
     return value
   }
 
   static fromBytes32(bytes: Bytes32): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = 'fromBytes32 not implemented yet' as u64
+    value.data = bytes.toString() as u64
     return value
   }
 
