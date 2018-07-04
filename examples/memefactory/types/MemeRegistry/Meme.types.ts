@@ -33,6 +33,21 @@ class Meme__loadRegistryEntryChallengeResult {
     this.value8 = value8;
     this.value9 = value9;
   }
+
+  toMap(): TypedMap<string, Token> {
+    let map = new TypedMap<string, Token>();
+    map.set("value0", Token.fromU256(this.value0));
+    map.set("value1", Token.fromAddress(this.value1));
+    map.set("value2", Token.fromU256(this.value2));
+    map.set("value3", Token.fromBytes(this.value3));
+    map.set("value4", Token.fromU256(this.value4));
+    map.set("value5", Token.fromU256(this.value5));
+    map.set("value6", Token.fromU256(this.value6));
+    map.set("value7", Token.fromU256(this.value7));
+    map.set("value8", Token.fromU256(this.value8));
+    map.set("value9", Token.fromU256(this.value9));
+    return map;
+  }
 }
 
 class Meme__loadVoteResult {
@@ -54,6 +69,16 @@ class Meme__loadVoteResult {
     this.value2 = value2;
     this.value3 = value3;
     this.value4 = value4;
+  }
+
+  toMap(): TypedMap<string, Token> {
+    let map = new TypedMap<string, Token>();
+    map.set("value0", Token.fromBytes(this.value0));
+    map.set("value1", Token.fromU8(this.value1));
+    map.set("value2", Token.fromU256(this.value2));
+    map.set("value3", Token.fromU256(this.value3));
+    map.set("value4", Token.fromU256(this.value4));
+    return map;
   }
 }
 
@@ -89,6 +114,20 @@ class Meme__challengeResult {
     this.value7 = value7;
     this.value8 = value8;
   }
+
+  toMap(): TypedMap<string, Token> {
+    let map = new TypedMap<string, Token>();
+    map.set("value0", Token.fromAddress(this.value0));
+    map.set("value1", Token.fromU256(this.value1));
+    map.set("value2", Token.fromU256(this.value2));
+    map.set("value3", Token.fromBytes(this.value3));
+    map.set("value4", Token.fromU256(this.value4));
+    map.set("value5", Token.fromU256(this.value5));
+    map.set("value6", Token.fromU256(this.value6));
+    map.set("value7", Token.fromU256(this.value7));
+    map.set("value8", Token.fromU256(this.value8));
+    return map;
+  }
 }
 
 class Meme__loadRegistryEntryResult {
@@ -111,6 +150,16 @@ class Meme__loadRegistryEntryResult {
     this.value3 = value3;
     this.value4 = value4;
   }
+
+  toMap(): TypedMap<string, Token> {
+    let map = new TypedMap<string, Token>();
+    map.set("value0", Token.fromU256(this.value0));
+    map.set("value1", Token.fromU8(this.value1));
+    map.set("value2", Token.fromAddress(this.value2));
+    map.set("value3", Token.fromU256(this.value3));
+    map.set("value4", Token.fromU256(this.value4));
+    return map;
+  }
 }
 
 class Meme__loadMemeResult {
@@ -124,6 +173,15 @@ class Meme__loadMemeResult {
     this.value1 = value1;
     this.value2 = value2;
     this.value3 = value3;
+  }
+
+  toMap(): TypedMap<string, Token> {
+    let map = new TypedMap<string, Token>();
+    map.set("value0", Token.fromBytes(this.value0));
+    map.set("value1", Token.fromU256(this.value1));
+    map.set("value2", Token.fromU256(this.value2));
+    map.set("value3", Token.fromU256(this.value3));
+    return map;
   }
 }
 
