@@ -19,7 +19,7 @@ module.exports = class ABI {
     let types = immutable.List()
 
     const paramName = (name, index) =>
-      name === undefined || name === null || name === '' ? `param${name}` : name
+      name === undefined || name === null || name === '' ? `param${index}` : name
 
     klass.addMethod(
       codegen.staticMethod(
