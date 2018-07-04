@@ -175,6 +175,16 @@ class ClassMember {
   }
 }
 
+class NamedType {
+  constructor(name) {
+    this.name = name
+  }
+
+  toString() {
+    return this.name
+  }
+}
+
 class SimpleType {
   constructor(name) {
     this.name = typeToString(name)
@@ -185,6 +195,7 @@ class SimpleType {
   }
 }
 
+const namedType = name => new NamedType(name)
 const simpleType = name => new SimpleType(name)
 const param = (name, type) => new Param(name, type)
 const method = (name, params, returnType, body) =>
@@ -197,6 +208,7 @@ const tokenFromCoercion = (expr, type) => new TokenFromCoercion(expr, type)
 const tokenToCoercion = (expr, type) => new TokenToCoercion(expr, type)
 
 module.exports = {
+  namedType,
   simpleType,
   klass,
   klassMember,

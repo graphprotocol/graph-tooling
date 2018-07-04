@@ -44,10 +44,14 @@ module.exports = class ABI {
             let simpleReturnType = true
             if (member.get('outputs').size > 1) {
               simpleReturnType = false
+
+              // Create a type dedicated to holding the return values
               returnType = codegen.klass(
                 this.name + '__' + member.get('name') + 'Result',
                 {}
               )
+
+              // Add a constructor to this type
               returnType.addMethod(
                 codegen.method(
                   'constructor',
@@ -63,6 +67,31 @@ module.exports = class ABI {
                     .join('\n')
                 )
               )
+
+              // Add a `toMap(): TypedMap<string,Token>` function to the return type
+              returnType.addMethod(
+                codegen.method(
+                  'toMap',
+                  [],
+                  codegen.namedType('TypedMap<string,Token>'),
+                  `
+                  let map = new TypedMap<string,Token>();
+                  ${member
+                    .get('outputs')
+                    .map(
+                      (output, index) =>
+                        `map.set('value${index}', ${codegen.tokenFromCoercion(
+                          `this.value${index}`,
+                          output.get('type')
+                        )})`
+                    )
+                    .join(';')}
+                  return map;
+                  `
+                )
+              )
+
+              // Add value0, value1 etc. members to the type
               member
                 .get('outputs')
                 .map((output, index) =>
