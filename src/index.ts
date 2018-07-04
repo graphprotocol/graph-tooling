@@ -421,7 +421,7 @@ class Entity extends TypedMap<string, Value> {
     this.set(key, Value.fromArray(value))
   }
 
-  /** Assigns properties from source to this Entity in right-to-left order */
+  /** Assigns properties from sources to this Entity in right-to-left order */
   merge(sources: Array<Entity>): Entity {
     var target = this
     for (let i = 0; i < sources.length; i++) {
