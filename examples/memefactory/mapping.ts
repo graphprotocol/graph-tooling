@@ -10,7 +10,7 @@ export function handleRegistryEntryEvent(event: EthereumEvent): void {
 
   if (eventType === 'constructed') {
     // Create an instance of the 'Meme' contract
-    let memeContract = new Meme(registryEntryAddress, event.blockHash)
+    let memeContract = Meme.bind(registryEntryAddress, event.blockHash)
 
     // Obtain registry entry and meme data from the contract
     let registryEntryData = memeContract.loadRegistryEntry()
@@ -20,6 +20,12 @@ export function handleRegistryEntryEvent(event: EthereumEvent): void {
     let meme = new Entity()
     meme.setAddress('regEntry_address', registryEntryAddress)
     meme.setU256('regEntry_version', registryEntryData.value0)
+
+    let otherMeme = new Entity()
+    meme.setU32('regEntry_status', registryEntryData.value1)
+
+    // meme now has the regEntry_status set on it
+    meme.merge([otherMeme])
 
     database.create('Meme', registryEntryAddress.toString(), meme)
   } else if (eventType === 'challengeCreated') {
