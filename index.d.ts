@@ -186,7 +186,8 @@ declare class Entity extends TypedMap<string, Value> {
   setU32(key: string, value: u32): void
   setU256(key: string, value: U256): void
   setString(key: string, value: string): void
-  setArray(key: string, value: Array<Value>): void
+  /** Assigns properties from source to this Entity in right-to-left order */
+  merge(sources: Array<Entity>): Entity
 }
 
 /**
