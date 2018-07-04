@@ -49,28 +49,27 @@ module.exports = class TypeGenerator {
               .getIn(['mapping', 'abis'])
               .reduce(
                 (abis, abi) =>
-                  abis.set(
-                    abi.get('name'),
-                    this._loadABI(abi.get('name'), abi.getIn(['source', 'path']))
+                  abis.push(
+                    this._loadABI(dataSet, abi.get('name'), abi.getIn(['source', 'path']))
                   ),
                 abis
               ),
-          immutable.Map()
+          immutable.List()
         )
     } catch (e) {
       this.logger.fatal('Failed to load contract ABIs:', e)
     }
   }
 
-  _loadABI(name, maybeRelativePath) {
+  _loadABI(dataSet, name, maybeRelativePath) {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
         let relativePath = path.relative(this.sourceDir, absolutePath)
         this.logger.note('Load contract ABI file:', relativePath)
-        return ABI.load(name, absolutePath)
+        return { dataSet: dataSet, abi: ABI.load(name, absolutePath) }
       } else {
-        return ABI.load(name, maybeRelativePath)
+        return { dataSet: dataSet, abi: ABI.load(name, maybeRelativePath) }
       }
     } catch (e) {
       this.logger.fatal('Failed to load contract ABI:', e)
@@ -88,18 +87,26 @@ module.exports = class TypeGenerator {
 
   _generateTypesForABI(abi) {
     try {
-      this.logger.note('Generate types for contract ABI:', path.basename(abi.path))
+      this.logger.note(
+        'Generate types for contract ABI:',
+        abi.dataSet.getIn(['data', 'name']),
+        path.basename(abi.abi.path)
+      )
 
-      let types = abi.generateTypes()
+      let types = abi.abi.generateTypes()
       let typesCode = types.map(type => type.toString()).join('\n')
       let formattedCode = prettier.format(typesCode, { parser: 'typescript' })
 
-      let outputFile = path.join(this.options.outputDir, `${abi.name}.types.ts`)
-      this.logger.note('Write types to:', path.basename(outputFile))
+      let outputFile = path.join(
+        this.options.outputDir,
+        abi.dataSet.getIn(['data', 'name']),
+        `${abi.abi.name}.types.ts`
+      )
+      this.logger.note('Write types to:', path.relative(process.cwd(), outputFile))
       fs.mkdirsSync(path.dirname(outputFile))
       fs.writeFileSync(outputFile, formattedCode)
 
-      return outputFile
+      return { dataSet: abi.dataSet, abi: abi.abi, outputFile: outputFile }
     } catch (e) {
       this.logger.fatal('Failed to generate types for contract ABI:', e)
     }
