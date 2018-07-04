@@ -11,6 +11,9 @@ module.exports = class TypeGenerator {
   constructor(options) {
     this.options = options || {}
     this.logger = new Logger(3, this.options.logger)
+    this.displayPath = this.options.displayPath
+      ? this.options.displayPath
+      : s => path.relative(process.cwd(), s)
     this.sourceDir =
       this.options.sourceDir ||
       (this.options.dataSourceFile && path.dirname(this.options.dataSourceFile))
@@ -25,7 +28,10 @@ module.exports = class TypeGenerator {
   loadDataSource() {
     try {
       if (this.options.dataSourceFile) {
-        this.logger.step('Load data source:', this.options.dataSourceFile)
+        this.logger.step(
+          'Load data source:',
+          this.displayPath(this.options.dataSourceFile)
+        )
       } else {
         this.logger.step('Load data source')
       }
@@ -65,8 +71,7 @@ module.exports = class TypeGenerator {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
-        let relativePath = path.relative(this.sourceDir, absolutePath)
-        this.logger.note('Load contract ABI file:', relativePath)
+        this.logger.note('Load contract ABI file:', this.displayPath(absolutePath))
         return { dataSet: dataSet, abi: ABI.load(name, absolutePath) }
       } else {
         return { dataSet: dataSet, abi: ABI.load(name, maybeRelativePath) }
@@ -89,8 +94,8 @@ module.exports = class TypeGenerator {
     try {
       this.logger.note(
         'Generate types for contract ABI:',
-        abi.dataSet.getIn(['data', 'name']),
-        path.basename(abi.abi.path)
+        abi.abi.name,
+        `(${path.basename(abi.abi.path)})`
       )
 
       let types = abi.abi.generateTypes()
@@ -102,7 +107,7 @@ module.exports = class TypeGenerator {
         abi.dataSet.getIn(['data', 'name']),
         `${abi.abi.name}.types.ts`
       )
-      this.logger.note('Write types to:', path.relative(process.cwd(), outputFile))
+      this.logger.note('Write types to:', this.displayPath(outputFile))
       fs.mkdirsSync(path.dirname(outputFile))
       fs.writeFileSync(outputFile, formattedCode)
 
