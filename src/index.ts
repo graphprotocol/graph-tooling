@@ -151,7 +151,7 @@ class Token {
   toBytes(): Bytes {
     assert(
       this.kind == TokenKind.FIXED_BYTES || this.kind == TokenKind.BYTES,
-      'Token is not bytes.'
+      'Token is not bytes.',
     )
     return changetype<Bytes>(this.data as u32)
   }
@@ -159,7 +159,7 @@ class Token {
   toI256(): I256 {
     assert(
       this.kind == TokenKind.INT || token.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      'Token is not an int or uint.',
     )
     return changetype<I256>(token.data as u32)
   }
@@ -167,7 +167,7 @@ class Token {
   toU8(): u8 {
     assert(
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      'Token is not an int or uint.',
     )
     return changetype<u8>(this.data as u8)
   }
@@ -175,7 +175,7 @@ class Token {
   toU256(): U256 {
     assert(
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      'Token is not an int or uint.',
     )
     return changetype<U256>(this.data as u32)
   }
@@ -205,7 +205,7 @@ class Token {
   toArray(): Array<Token> {
     assert(
       this.kind == TokenKind.FIXED_ARRAY || this.kind == TokenKind.ARRAY,
-      'Token is not an array.'
+      'Token is not an array.',
     )
     return changetype<Array<Token>>(this.data as u32)
   }
@@ -420,6 +420,18 @@ class Entity extends TypedMap<string, Value> {
   setArray(key: string, value: Array<Value>): void {
     this.set(key, Value.fromArray(value))
   }
+
+  /** Assigns properties from source to this Entity in right-to-left order */
+  merge(sources: Array<Entity>): Entity {
+    var target = this
+    for (let i = 0; i < sources.length; i++) {
+      let entries = sources[i].entries
+      for (let j = 0; j < entries.length; j++) {
+        target.set(entries[j].key, entries[j].value)
+      }
+    }
+    return target
+  }
 }
 
 /**
@@ -452,7 +464,7 @@ class SmartContractCall {
     contractName: string,
     contractAddress: Address,
     functionName: string,
-    functionParams: Array<Token>
+    functionParams: Array<Token>,
   ) {
     this.blockHash = blockHash
     this.contractName = contractName
@@ -482,7 +494,7 @@ class SmartContract {
       this.name,
       this.address,
       name,
-      params
+      params,
     )
     return ethereum.call(call)
   }
