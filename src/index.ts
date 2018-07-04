@@ -327,7 +327,10 @@ class Value {
   }
 
   static fromAddress(address: Address): Value {
-    throw 'Unsupported'
+    let value = new Value()
+    value.kind = ValueKind.STRING
+    value.data = address.toString() as u64
+    return value
   }
 
   static fromBoolean(b: boolean): Value {
@@ -338,23 +341,38 @@ class Value {
   }
 
   static fromBytes(bytes: Bytes): Value {
-    throw 'Unsupported'
+    let value = new Value()
+    value.kind = ValueKind.STRING
+    value.data = 'fromBytes not implemented yet' as u64
+    return value
   }
 
   static fromBytes32(bytes: Bytes32): Value {
-    throw 'Unsupported'
+    let value = new Value()
+    value.kind = ValueKind.STRING
+    value.data = 'fromBytes32 not implemented yet' as u64
+    return value
   }
 
   static fromH256(h: H256): Value {
-    throw 'Unsupported'
+    let value = new Value()
+    value.kind = ValueKind.STRING
+    value.data = 'fromH256 not implemented yet' as u64
+    return value
   }
 
   static fromU32(n: u32): Value {
-    throw 'Unsupported'
+    let value = new Value()
+    value.kind = ValueKind.INT
+    value.data = n as u64
+    return value
   }
 
   static fromU256(n: U256): Value {
-    throw 'Unsupported'
+    let value = new Value()
+    value.kind = ValueKind.STRING
+    value.data = 'fromU256 not implemented yet' as u64
+    return value
   }
 
   static fromString(s: string): Value {
