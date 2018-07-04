@@ -17,11 +17,13 @@ class Compiler {
   compile() {
     let dataSource = this.loadDataSource()
     let buildDir = this.createBuildDirectory()
+
     let dataSourceInBuildDir = this.copyDataSource(dataSource, buildDir)
     let typeFiles = this.generateTypes(dataSourceInBuildDir, buildDir)
-    this.copyRuntimeFiles(buildDir)
+
+    this.copyRuntimeFiles(dataSourceInBuildDir, buildDir)
     this.addTypesToRuntime(buildDir, typeFiles)
-    this.addMappingToRuntime(buildDir)
+    this.addMappingsToRuntime(dataSourceInBuildDir, buildDir)
     this.createOutputDirectory()
 
     let compiledDataSource = this.compileDataSource(dataSourceInBuildDir, buildDir)
@@ -75,12 +77,20 @@ class Compiler {
             .updateIn(['mapping', 'abis'], abis =>
               abis.map(abi =>
                 abi.updateIn(['source', 'path'], abiPath =>
-                  this._copyDataSourceFile(abiPath, this.sourceDir, buildDir)
+                  this._copyDataSourceFile(
+                    abiPath,
+                    this.sourceDir,
+                    path.join(buildDir, dataSet.getIn(['data', 'name']))
+                  )
                 )
               )
             )
             .updateIn(['mapping', 'source', 'path'], mappingPath =>
-              this._copyDataSourceFile(mappingPath, this.sourceDir, buildDir)
+              this._copyDataSourceFile(
+                mappingPath,
+                this.sourceDir,
+                path.join(buildDir, dataSet.getIn(['data', 'name']))
+              )
             )
         )
       })
@@ -108,47 +118,60 @@ class Compiler {
       dataSource,
       outputDir: buildDir,
       logger: {
-        prefix: '.....',
+        prefix: '......',
       },
     })
     return generator.generateTypes()
   }
 
-  copyRuntimeFiles(buildDir) {
+  copyRuntimeFiles(dataSource, buildDir) {
     this.logger.step('Copy runtime to build directory')
-    this._copyRuntimeFile(buildDir, 'index.ts')
+    dataSource.get('datasets').map(dataSet => {
+      this._copyRuntimeFile(
+        path.join(buildDir, dataSet.getIn(['data', 'name'])),
+        'index.ts'
+      )
+    })
   }
 
   _copyRuntimeFile(buildDir, basename) {
-    this.logger.note('Copy runtime file:', basename)
-    fs.copyFileSync(
-      path.join(__dirname, '..', 'src', basename),
-      path.join(buildDir, basename)
-    )
+    let target = path.join(buildDir, basename)
+    this.logger.note('Copy runtime file:', path.relative(process.cwd(), target))
+    fs.copyFileSync(path.join(__dirname, '..', 'src', basename), target)
   }
 
   addTypesToRuntime(buildDir, typeFiles) {
     this.logger.step('Add generated types to runtime')
     try {
-      typeFiles.forEach(typeFile => {
+      typeFiles.forEach(typeFileInfo => {
         this.logger.note(
           'Add types from file to runtime:',
-          path.relative(buildDir, typeFile)
+          path.relative(process.cwd(), typeFileInfo.outputFile)
         )
 
-        let types = fs.readFileSync(typeFile)
-        fs.appendFileSync(path.join(buildDir, 'index.ts'), types + '\n', 'utf-8')
+        let types = fs.readFileSync(typeFileInfo.outputFile)
+        fs.appendFileSync(
+          path.join(buildDir, typeFileInfo.dataSet.getIn(['data', 'name']), 'index.ts'),
+          '\n' + types + '\n',
+          'utf-8'
+        )
       })
     } catch (e) {
       this.logger.fatal('Failed to add types to runtime:', e)
     }
   }
 
-  addMappingToRuntime(buildDir) {
-    this.logger.step('Add mapping to runtime')
+  addMappingsToRuntime(dataSource, buildDir) {
+    this.logger.step('Add mappings to runtime')
     try {
-      let mapping = fs.readFileSync(path.join(buildDir, 'mapping.ts'))
-      fs.appendFileSync(path.join(buildDir, 'index.ts'), mapping, 'utf-8')
+      dataSource.get('datasets').map(dataSet => {
+        let mapping = fs.readFileSync(dataSet.getIn(['mapping', 'source', 'path']))
+        fs.appendFileSync(
+          path.join(buildDir, dataSet.getIn(['data', 'name']), 'index.ts'),
+          '\n' + mapping + '\n',
+          'utf-8'
+        )
+      })
     } catch (e) {
       this.logger.fatal('Failed to add mapping to runtime:', e)
     }
@@ -185,20 +208,29 @@ class Compiler {
     try {
       let dataSetName = dataSet.getIn(['data', 'name'])
 
-      this.logger.note(
-        'Compile data set mapping:',
-        dataSetName,
-        '/',
-        path.relative(buildDir, mappingPath)
-      )
-
-      let outputFile =
+      let outputFile = path.join(
+        buildDir,
+        dataSet.getIn(['data', 'name']),
         this.options.outputFormat == 'wasm'
           ? `${dataSetName}.wasm`
           : `${dataSetName}.wast`
+      )
+
+      this.logger.note(
+        'Compile data set runtime:',
+        dataSetName,
+        '=>',
+        path.relative(process.cwd(), outputFile)
+      )
 
       asc.main(
-        ['--baseDir', buildDir, '--outFile', outputFile, 'index.ts'],
+        [
+          '--baseDir',
+          path.join(buildDir, dataSet.getIn(['data', 'name'])),
+          '--outFile',
+          path.basename(outputFile),
+          'index.ts',
+        ],
         {
           stdout: process.stdout,
           stderr: process.stdout,
@@ -210,7 +242,7 @@ class Compiler {
         }
       )
 
-      return path.join(buildDir, outputFile)
+      return outputFile
     } catch (e) {
       this.logger.fatal('Failed to compile data set mapping:', e)
     }
@@ -264,15 +296,22 @@ class Compiler {
       })
 
       // Write the generated index.ts (for debugging purposes)
-      this.logger.note('Write generated AssemblyScript source:', 'index.ts')
-      fs.copyFileSync(
-        path.join(buildDir, 'index.ts'),
-        path.join(this.options.outputDir, 'index.ts')
-      )
+      dataSource.get('datasets').map(dataSet => {
+        let dataSetName = dataSet.getIn(['data', 'name'])
+        let target = path.join(this.options.outputDir, dataSetName, `${dataSetName}.ts`)
+        this.logger.note(
+          'Write AssemblyScript runtime source:',
+          path.relative(process.cwd(), target)
+        )
+        fs.copyFileSync(path.join(buildDir, dataSetName, 'index.ts'), target)
+      })
 
       // Write the data source definition itself
       let outputFilename = path.join(this.options.outputDir, 'data-source.yaml')
-      this.logger.note('Write data source definition:', path.basename(outputFilename))
+      this.logger.note(
+        'Write data source definition:',
+        path.relative(process.cwd(), outputFilename)
+      )
       DataSource.write(dataSource, outputFilename)
 
       return dataSource
