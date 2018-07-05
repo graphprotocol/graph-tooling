@@ -46,9 +46,11 @@ class Compiler {
     let localDataSource = this.writeDataSourceToOutputDirectory(compiledDataSource)
     let hash = await this.uploadDataSourceToIPFS(localDataSource)
 
-    console.log('--')
-    console.log(chalk.bold(chalk.blue('Data source:')), hash)
-    console.log('')
+    this.logger.info('')
+    this.logger.info(chalk.green('Completed'))
+    this.logger.info('')
+    this.logger.info('%s %s', chalk.bold(chalk.blue('Data source:')), hash)
+    this.logger.info('')
   }
 
   loadDataSource() {
@@ -136,7 +138,7 @@ class Compiler {
       outputDir: this.buildDir,
       displayPath: this.displayPath.bind(this),
       logger: {
-        prefix: '......',
+        prefix: chalk.grey(' '),
       },
     })
     return generator.generateTypes()

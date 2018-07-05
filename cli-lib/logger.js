@@ -1,4 +1,5 @@
 let chalk = require('chalk')
+let winston = require('winston')
 
 module.exports = class Logger {
   constructor(steps, options) {
@@ -6,34 +7,68 @@ module.exports = class Logger {
     this.currentStep = 0
     this.options = options || {}
     this.prefix = this.options.prefix
+    let shortFormat = winston.format.printf(info => info.message)
+    this.logger = winston.createLogger({
+      level: process.env.LOG_LEVEL,
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.splat(),
+            winston.format.colorize(),
+            shortFormat
+          ),
+        }),
+      ],
+    })
+  }
+
+  info(...msg) {
+    this.logger.log('info', ...msg)
   }
 
   step(subject, ...msg) {
     if (this.prefix === undefined) {
-      console.info(`[${++this.currentStep}/${this.steps}]`, chalk.green(subject), ...msg)
-    } else {
-      console.info(
-        this.prefix,
-        `[${++this.currentStep}/${this.steps}]`,
+      this.logger.log(
+        'info',
+        '\n%d/%d %s %s',
+        ++this.currentStep,
+        this.steps,
         chalk.green(subject),
-        ...msg
+        msg.join(' ')
+      )
+    } else {
+      this.logger.log(
+        'info',
+        '%s\n%s %d/%d %s %s',
+        this.prefix,
+        this.prefix,
+        ++this.currentStep,
+        this.steps,
+        chalk.green(subject),
+        msg.join(' ')
       )
     }
   }
 
   note(subject, ...msg) {
     if (this.prefix === undefined) {
-      console.info(chalk.gray(subject), ...msg)
+      this.logger.log('debug', '%s %s', chalk.gray(subject), msg.join(' '))
     } else {
-      console.info(this.prefix, chalk.gray(subject), ...msg)
+      this.logger.log(
+        'debug',
+        '%s %s %s',
+        this.prefix,
+        chalk.gray(subject),
+        msg.join(' ')
+      )
     }
   }
 
   fatal(subject, ...msg) {
     if (this.prefix === undefined) {
-      console.error(chalk.red(subject), ...msg)
+      this.logger.log('error', '%s %s', chalk.red(subject), msg.join(' '))
     } else {
-      console.error(this.prefix, chalk.red(subject), ...msg)
+      this.logger.log('error', '%s %s %s', this.prefix, chalk.red(subject), msg.join(' '))
     }
     process.exit(1)
   }
