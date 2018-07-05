@@ -42,13 +42,8 @@ if (file === null || file === undefined) {
   app.help()
 }
 
-// Obtain the IPFS node to use
-if (app.ipfs === null || app.ipfs === undefined) {
-  app.help()
-}
-
-// Connect to the IPFS node
-let ipfs = ipfsAPI(app.ipfs)
+// Connect to the IPFS node (if a node address was provided)
+let ipfs = app.ipfs ? ipfsAPI(app.ipfs) : undefined
 
 // Compile the data source
 new Compiler({

@@ -44,12 +44,16 @@ class Compiler {
 
     let compiledDataSource = this.compileDataSource(dataSourceInBuildDir)
     let localDataSource = this.writeDataSourceToOutputDirectory(compiledDataSource)
-    let hash = await this.uploadDataSourceToIPFS(localDataSource)
+
+    let hashOrFilename =
+      this.ipfs !== undefined
+        ? await this.uploadDataSourceToIPFS(localDataSource)
+        : path.join(this.options.outputDir, 'data-source.yaml')
 
     this.logger.info('')
     this.logger.info(chalk.green('Completed'))
     this.logger.info('')
-    this.logger.info('%s %s', chalk.bold(chalk.blue('Data source:')), hash)
+    this.logger.info('%s %s', chalk.bold(chalk.blue('Data source:')), hashOrFilename)
     this.logger.info('')
   }
 
