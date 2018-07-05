@@ -14,6 +14,11 @@ app
     'Output directory for build artifacts',
     path.join(process.cwd(), 'dist')
   )
+  .option(
+    '--verbosity [info|verbose|debug]',
+    'The log level to use (default: LOG_LEVEL or info)',
+    process.env.LOG_LEVEL || 'info'
+  )
   .option('-t, --output-format [format]', 'Output format (wasm, wast)', 'wasm')
   .option('i, --ipfs [addr]', 'IPFS node to use for uploading files')
 
@@ -51,4 +56,5 @@ new Compiler({
   dataSourceFile: file,
   outputDir: app.outputDir,
   outputFormat: app.outputFormat,
+  verbosity: app.verbosity,
 }).compile()

@@ -9,7 +9,7 @@ module.exports = class Logger {
     this.prefix = this.options.prefix
     let shortFormat = winston.format.printf(info => info.message)
     this.logger = winston.createLogger({
-      level: process.env.LOG_LEVEL,
+      level: this.options.verbosity || 'info',
       transports: [
         new winston.transports.Console({
           format: winston.format.combine(
@@ -29,7 +29,7 @@ module.exports = class Logger {
   step(subject, ...msg) {
     if (this.prefix === undefined) {
       this.logger.log(
-        'info',
+        'verbose',
         '\n%d/%d %s %s',
         ++this.currentStep,
         this.steps,
@@ -38,7 +38,7 @@ module.exports = class Logger {
       )
     } else {
       this.logger.log(
-        'info',
+        'verbose',
         '%s\n%s %d/%d %s %s',
         this.prefix,
         this.prefix,
