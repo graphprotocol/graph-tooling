@@ -1,4 +1,4 @@
 {
   "extends": "./node_modules/assemblyscript/std/assembly/tsconfig.json",
-  "files": ["index.d.ts", "src/index.ts"]
+  "include": ["src/index.ts"]
 }

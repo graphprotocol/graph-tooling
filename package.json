@@ -16,7 +16,7 @@
     "winston": "^3.0.0"
   },
   "module": "src/index.ts",
-  "types": "index.d.ts",
+  "types": "./index.d.ts",
   "bin": {
     "the-graph-wasm": "./cli.js",
     "the-graph-wasm-compile": "./the-graph-wasm-compile.js"
