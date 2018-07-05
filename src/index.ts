@@ -15,7 +15,7 @@ declare namespace ethereum {
   function call(call: SmartContractCall): Array<Token>
 }
 
-/** Type conversion interface */
+/** Host type conversion interface */
 declare namespace typeConversion {
   function bytesToString(address: Address): string
   function bytesToHex(bytes: Bytes): string
@@ -206,6 +206,8 @@ class Token {
       } else {
         return typeConversion.bytesToString(changetype<ByteArray>(this.data as u32))
       }
+    } else if (this.kind == TokenKind.INT || this.kind == TokenKind.UINT) {
+      return typeConversion.u64ArrayToHex(changetype<U64Array>(this.data as u32))
     }
     throw new Error(`Token conversion from '${this.kind}' to ${this.kind} not supported`)
   }
@@ -365,7 +367,7 @@ class Value {
   static fromH256(h: H256): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = 'fromH256 not implemented yet' as u64
+    value.data = h.toString() as u64
     return value
   }
 
@@ -379,7 +381,7 @@ class Value {
   static fromU256(n: U256): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = 'fromU256 not implemented yet' as u64
+    value.data = n.toString() as u64
     return value
   }
 
