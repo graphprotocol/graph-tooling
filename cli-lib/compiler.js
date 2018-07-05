@@ -14,7 +14,7 @@ class Compiler {
     this.options = options
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.dataSourceFile)
-    this.logger = new Logger(11)
+    this.logger = new Logger(11, { verbosity: this.options.verbosity })
   }
 
   dataSetDir(parent, dataSet) {
