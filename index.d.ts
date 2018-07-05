@@ -63,32 +63,32 @@ declare class U64Array extends Uint64Array {
 /**
  * An Ethereum address (20 bytes).
  */
-type Address = ByteArray
+declare type Address = ByteArray
 
 /**
  * A dynamically-sized byte array.
  */
-type Bytes = ByteArray
+declare type Bytes = ByteArray
 
 /**
  * A fixed-size (32 bytes) byte array.
  */
-type Bytes32 = ByteArray
+declare type Bytes32 = ByteArray
 
 /**
  * A 256- bit hash.
  */
-type H256 = ByteArray
+declare type H256 = ByteArray
 
 /**
  * A signed 256-bit integer.
  */
-type I256 = U64Array
+declare type I256 = U64Array
 
 /**
  * An unsigned 256-bit integer.
  */
-type U256 = U64Array
+declare type U256 = U64Array
 
 /**
  * Type hint for Ethereum values.
@@ -200,7 +200,7 @@ declare class Entity extends TypedMap<string, Value> {
 /**
  * Common interface for Ethereum smart contract events.
  */
-interface EthereumEvent {
+declare interface EthereumEvent {
   address: Address
   eventSignature: string
   blockHash: H256
@@ -210,7 +210,7 @@ interface EthereumEvent {
 /**
  * A dynamically-typed Ethereum event parameter.
  */
-interface EthereumEventParam {
+declare interface EthereumEventParam {
   name: string
   value: Token
 }
