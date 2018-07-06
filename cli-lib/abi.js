@@ -11,7 +11,36 @@ module.exports = class ABI {
   }
 
   generateTypes() {
-    return this._generateSmartContractClass()
+    return [...this._generateEventTypes(), ...this._generateSmartContractClass()]
+  }
+
+  _generateEventTypes() {
+    return this.data.filter(member => member.get('type') === 'event').map(event => {
+      let klass = codegen.klass(event.get('name'), { extends: 'EthereumEvent' })
+
+      event.get('inputs').forEach((input, index) => {
+        let name = input.get('name')
+        if (name === undefined || name === null || name === '') {
+          name = `param${index}`
+        }
+
+        klass.addMethod(
+          codegen.method(
+            `get ${name}`,
+            [],
+            codegen.simpleType(input.get('type')),
+            `
+            return ${codegen.tokenToCoercion(
+              `this.params[${index}].value`,
+              input.get('type')
+            )}
+            `
+          )
+        )
+      })
+
+      return klass
+    })
   }
 
   _generateSmartContractClass() {
