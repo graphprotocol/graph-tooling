@@ -200,7 +200,7 @@ declare class Entity extends TypedMap<string, Value> {
 /**
  * Common interface for Ethereum smart contract events.
  */
-declare interface EthereumEvent {
+declare class EthereumEvent {
   address: Address
   eventSignature: string
   blockHash: H256

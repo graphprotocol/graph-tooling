@@ -21,6 +21,7 @@ const TOKEN_FROM_TYPE_FUNCTION_MAP = {
   string: 'Token.fromString',
   uint8: 'Token.fromU8',
   uint256: 'Token.fromU256',
+  'uint256[]': 'Token.fromArray',
 }
 
 const TOKEN_TO_TYPE_FUNCTION_MAP = {
@@ -32,6 +33,7 @@ const TOKEN_TO_TYPE_FUNCTION_MAP = {
   string: 'toString',
   uint8: 'toU8',
   uint256: 'toU256',
+  'uint256[]': 'toArray',
 }
 
 const typeToString = type => {
