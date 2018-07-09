@@ -296,46 +296,6 @@ class Value {
   kind: ValueKind
   data: ValuePayload
 
-  toAddress(): Address {
-    throw 'Unsupported'
-  }
-
-  toBoolean(): boolean {
-    throw 'Unsupported'
-  }
-
-  toBytes(): Bytes {
-    throw 'Unsupported'
-  }
-
-  toBytes32(): Bytes32 {
-    throw 'Unsupported'
-  }
-
-  toH256(): H256 {
-    throw 'Unsupported'
-  }
-
-  toU32(): u32 {
-    throw 'Unsupported'
-  }
-
-  toU256(): U256 {
-    throw 'Unsupported'
-  }
-
-  toString(): string {
-    throw 'Unsupported'
-  }
-
-  toArray(): Array<Value> {
-    throw 'Unsupported'
-  }
-
-  toMap(): TypedMap<string, Value> {
-    throw 'Unsupported'
-  }
-
   static fromAddress(address: Address): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
@@ -351,13 +311,6 @@ class Value {
   }
 
   static fromBytes(bytes: Bytes): Value {
-    let value = new Value()
-    value.kind = ValueKind.STRING
-    value.data = bytes.toString() as u64
-    return value
-  }
-
-  static fromBytes32(bytes: Bytes32): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
     value.data = bytes.toString() as u64
@@ -392,14 +345,6 @@ class Value {
     return value
   }
 
-  static fromArray(values: Array<Value>): Value {
-    throw 'Unsupported'
-  }
-
-  static fromMap(m: TypedMap<string, Value>): Value {
-    throw 'Unsupported'
-  }
-
   static fromNull(): Value {
     let value = new Value()
     value.kind = ValueKind.NULL
@@ -425,10 +370,6 @@ class Entity extends TypedMap<string, Value> {
     this.set(key, Value.fromBytes(value))
   }
 
-  setBytes32(key: string, value: Bytes32): void {
-    this.set(key, Value.fromBytes32(value))
-  }
-
   setH256(key: string, value: H256): void {
     this.set(key, Value.fromH256(value))
   }
@@ -443,10 +384,6 @@ class Entity extends TypedMap<string, Value> {
 
   setString(key: string, value: string): void {
     this.set(key, Value.fromString(value))
-  }
-
-  setArray(key: string, value: Array<Value>): void {
-    this.set(key, Value.fromArray(value))
   }
 
   /** Assigns properties from sources to this Entity in right-to-left order */
