@@ -156,17 +156,6 @@ declare class Value {
   kind: ValueKind
   data: ValuePayload
 
-  toString(): string
-  toBoolean(): boolean
-  toAddress(): Address
-  toBytes(): Bytes
-  toBytes32(): Bytes32
-  toH256(): H256
-  toU32(): u32
-  toU256(): U256
-  toArray(): Array<Value>
-  toMap(): TypedMap<string, Value>
-
   static fromAddress(address: Address): Value
   static fromBoolean(b: boolean): Value
   static fromBytes(bytes: Bytes): Value
@@ -174,8 +163,6 @@ declare class Value {
   static fromU32(n: u32): Value
   static fromU256(n: U256): Value
   static fromString(s: string): Value
-  static fromArray(values: Array<Value>): Value
-  static fromMap(m: TypedMap<string, Value>): Value
   static fromNull(): Value
 }
 
