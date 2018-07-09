@@ -92,39 +92,28 @@ class U64Array extends Uint64Array {
   }
 }
 
-/**
- * An Ethereum address (20 bytes).
- */
+/** An Ethereum address (20 bytes). */
 type Address = ByteArray
 
-/**
- * A dynamically-sized byte array.
- */
+/** A dynamically-sized byte array. */
 type Bytes = ByteArray
 
-/**
- * A fixed-size (32 bytes) byte array.
- */
-type Bytes32 = ByteArray
-
-/**
- * A 256- bit hash.
- */
+/** A 256- bit hash. */
 type H256 = ByteArray
 
-/**
- * A signed 256-bit integer.
- */
+/** A signed 128-bit integer. */
+type I128 = U64Array
+
+/** A signed 256-bit integer. */
 type I256 = U64Array
 
-/**
- * An unsigned 256-bit integer.
- */
+/** An unsigned 128-bit integer. */
+type U128 = U64Array
+
+/** An unsigned 256-bit integer. */
 type U256 = U64Array
 
-/**
- * Type hint for Ethereum values.
- */
+/** Type hint for Ethereum values. */
 enum TokenKind {
   ADDRESS,
   FIXED_BYTES,
@@ -156,41 +145,97 @@ class Token {
     return changetype<Address>(this.data as u32)
   }
 
+  toBoolean(): boolean {
+    assert(this.kind == TokenKind.BOOL, 'Token is not a boolean.')
+    return this.data != 0
+  }
+
   toBytes(): Bytes {
     assert(
       this.kind == TokenKind.FIXED_BYTES || this.kind == TokenKind.BYTES,
-      'Token is not bytes.',
+      'Token is not bytes.'
     )
     return changetype<Bytes>(this.data as u32)
   }
 
+  toI8(): i8 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<i8>(this.data as i8)
+  }
+
+  toI16(): i16 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<i16>(this.data as i16)
+  }
+
+  toI32(): i32 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<i32>(this.data as i32)
+  }
+
+  toI128(): I128 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<I128>(this.data as u32)
+  }
+
   toI256(): I256 {
     assert(
-      this.kind == TokenKind.INT || token.kind == TokenKind.UINT,
-      'Token is not an int or uint.',
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
     )
-    return changetype<I256>(token.data as u32)
+    return changetype<I256>(this.data as u32)
   }
 
   toU8(): u8 {
     assert(
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.',
+      'Token is not an int or uint.'
     )
     return changetype<u8>(this.data as u8)
+  }
+
+  toU16(): u16 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<u16>(this.data as u16)
+  }
+
+  toU32(): u32 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<u32>(this.data as u32)
+  }
+
+  toU128(): U128 {
+    assert(
+      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
+      'Token is not an int or uint.'
+    )
+    return changetype<U128>(this.data as u32)
   }
 
   toU256(): U256 {
     assert(
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.',
+      'Token is not an int or uint.'
     )
     return changetype<U256>(this.data as u32)
-  }
-
-  toBool(): boolean {
-    assert(this.kind == TokenKind.BOOL, 'Token is not a boolean.')
-    return this.data != 0
   }
 
   toString(hex: boolean = true): string {
@@ -215,7 +260,7 @@ class Token {
   toArray(): Array<Token> {
     assert(
       this.kind == TokenKind.FIXED_ARRAY || this.kind == TokenKind.ARRAY,
-      'Token is not an array.',
+      'Token is not an array.'
     )
     return changetype<Array<Token>>(this.data as u32)
   }
@@ -227,10 +272,45 @@ class Token {
     return token
   }
 
+  static fromBoolean(b: boolean): Token {
+    let token = new Token()
+    token.kind = TokenKind.BOOL
+    token.data = b as u64
+    return token
+  }
+
   static fromBytes(bytes: Bytes): Token {
     let token = new Token()
     token.kind = TokenKind.BYTES
     token.data = bytes as u64
+    return token
+  }
+
+  static fromI8(i: i8): Token {
+    let token = new Token()
+    token.kind = TokenKind.INT
+    token.data = i as u64
+    return token
+  }
+
+  static fromI16(i: i16): Token {
+    let token = new Token()
+    token.kind = TokenKind.INT
+    token.data = i as u64
+    return token
+  }
+
+  static fromI32(i: i32): Token {
+    let token = new Token()
+    token.kind = TokenKind.INT
+    token.data = i as u64
+    return token
+  }
+
+  static fromI128(i: I128): Token {
+    let token = new Token()
+    token.kind = TokenKind.INT
+    token.data = i as u64
     return token
   }
 
@@ -241,17 +321,38 @@ class Token {
     return token
   }
 
-  static fromU256(u: U256): Token {
+  static fromU8(u: u8): Token {
     let token = new Token()
     token.kind = TokenKind.UINT
     token.data = u as u64
     return token
   }
 
-  static fromBool(b: boolean): Token {
+  static fromU16(u: u16): Token {
     let token = new Token()
-    token.kind = TokenKind.BOOL
-    token.data = b as u64
+    token.kind = TokenKind.UINT
+    token.data = u as u64
+    return token
+  }
+
+  static fromU32(u: u32): Token {
+    let token = new Token()
+    token.kind = TokenKind.UINT
+    token.data = u as u64
+    return token
+  }
+
+  static fromU128(u: U128): Token {
+    let token = new Token()
+    token.kind = TokenKind.UINT
+    token.data = u as u64
+    return token
+  }
+
+  static fromU256(u: U256): Token {
+    let token = new Token()
+    token.kind = TokenKind.UINT
+    token.data = u as u64
     return token
   }
 
@@ -429,7 +530,7 @@ class SmartContractCall {
     contractName: string,
     contractAddress: Address,
     functionName: string,
-    functionParams: Array<Token>,
+    functionParams: Array<Token>
   ) {
     this.blockHash = blockHash
     this.contractName = contractName
@@ -459,7 +560,7 @@ class SmartContract {
       this.name,
       this.address,
       name,
-      params,
+      params
     )
     return ethereum.call(call)
   }
