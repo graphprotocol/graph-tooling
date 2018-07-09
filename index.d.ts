@@ -60,39 +60,28 @@ declare class U64Array extends Uint64Array {
   toString(): string
 }
 
-/**
- * An Ethereum address (20 bytes).
- */
+/** An Ethereum address (20 bytes). */
 declare type Address = ByteArray
 
-/**
- * A dynamically-sized byte array.
- */
+/** A dynamically-sized byte array. */
 declare type Bytes = ByteArray
 
-/**
- * A fixed-size (32 bytes) byte array.
- */
-declare type Bytes32 = ByteArray
-
-/**
- * A 256- bit hash.
- */
+/** A 256-bit hash. */
 declare type H256 = ByteArray
 
-/**
- * A signed 256-bit integer.
- */
+/** A signed 128-bit integer. */
+declare type I128 = U64Array
+
+/** A signed 256-bit integer. */
 declare type I256 = U64Array
 
-/**
- * An unsigned 256-bit integer.
- */
+/** An unsigned 128-bit integer. */
+declare type U128 = U64Array
+
+/** An unsigned 256-bit integer. */
 declare type U256 = U64Array
 
-/**
- * Type hint for Ethereum values.
- */
+/** Type hint for Ethereum values. */
 declare enum TokenKind {
   ADDRESS,
   FIXED_BYTES,
@@ -115,17 +104,37 @@ declare class Token {
   data: TokenPayload
 
   toAddress(): Address
+  toBoolean(): boolean
   toBytes(): Bytes
+  toI8(): i8
+  toI16(): i16
+  toI32(): i32
+  toI64(): i64
+  toI128(): I128
   toI256(): I256
+  toU8(): u8
+  toU16(): u16
+  toU32(): u32
+  toU64(): u64
+  toU128(): U128
   toU256(): U256
-  toBool(): boolean
   toString(hex?: boolean): string
   toArray(): Array<Token>
   static fromAddress(address: Address): Token
+  static fromBoolean(b: boolean): Token
   static fromBytes(bytes: Bytes): Token
+  static fromI8(i: i8): Token
+  static fromI16(i: i16): Token
+  static fromI32(i: i32): Token
+  static fromI64(i: i64): Token
+  static fromI128(i: I128): Token
   static fromI256(i: I256): Token
+  static fromU8(i: u8): Token
+  static fromU16(i: u16): Token
+  static fromU32(i: u32): Token
+  static fromU64(i: u64): Token
+  static fromU128(i: U128): Token
   static fromU256(u: U256): Token
-  static fromBool(b: boolean): Token
   static fromString(s: string): Token
   static fromArray(arr: Token): Token
 }
