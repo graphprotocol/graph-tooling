@@ -2,59 +2,110 @@ let immutable = require('immutable')
 
 const TYPE_MAP = {
   address: 'Address',
-  bool: 'bool',
-  bytes: 'Bytes',
-  bytes32: 'Bytes',
+  bool: 'boolean',
+  byte: 'Bytes',
+  '/bytes([0-9]+)?/': 'Bytes',
+  int8: 'i8',
+  int16: 'i16',
+  int32: 'i32',
+  int64: 'i64',
+  int128: 'I128',
+  int256: 'I256',
+  int: 'I256',
   h256: 'H256',
   string: 'string',
   uint8: 'u8',
+  uint16: 'u16',
+  uint32: 'u32',
+  uint64: 'u64',
+  uint128: 'I128',
   uint256: 'U256',
-  'uint256[]': 'Array<U256>',
+  uint: 'U256',
 }
 
 const TOKEN_FROM_TYPE_FUNCTION_MAP = {
   address: 'Token.fromAddress',
   bool: 'Token.fromBoolean',
-  bytes: 'Token.fromBytes',
-  bytes32: 'Token.fromBytes',
+  byte: 'Token.fromBytes',
+  '/bytes([0-9]+)?/': 'Token.fromBytes',
+  int8: 'Token.fromI8',
+  int16: 'Token.fromI16',
+  int32: 'Token.fromI32',
+  int64: 'Token.fromI64',
+  int128: 'Token.fromI128',
+  int256: 'Token.fromI256',
+  int: 'Token.fromI256',
   h256: 'Token.fromH256',
   string: 'Token.fromString',
   uint8: 'Token.fromU8',
+  uint16: 'Token.fromU16',
+  uint32: 'Token.fromU32',
+  uint64: 'Token.fromU64',
+  uint128: 'Token.fromU128',
   uint256: 'Token.fromU256',
-  'uint256[]': 'Token.fromArray',
+  uint: 'Token.fromU256',
 }
 
 const TOKEN_TO_TYPE_FUNCTION_MAP = {
   address: 'toAddress',
   bool: 'toBoolean',
-  bytes: 'toBytes',
-  bytes32: 'toBytes',
+  byte: 'toBytes',
+  '/bytes([0-9]+)?/': 'Token.toBytes',
+  int8: 'toI8',
+  int16: 'toI16',
+  int32: 'toI32',
+  int64: 'toI64',
+  int128: 'toI128',
+  int256: 'toI256',
+  int: 'toI256',
   h256: 'toH256',
   string: 'toString',
   uint8: 'toU8',
+  uint16: 'toU16',
+  uint32: 'toU32',
+  uint64: 'toU64',
+  uint128: 'toU128',
   uint256: 'toU256',
-  'uint256[]': 'toArray',
+  uint: 'toU256',
+}
+
+const findMatch = (m, type) => {
+  let matchingKey = Object.keys(m).find(key => type.match(key))
+  return matchingKey !== undefined ? m[matchingKey] : undefined
 }
 
 const typeToString = type => {
-  if (TYPE_MAP[type] !== undefined) {
-    return TYPE_MAP[type]
+  let isArrayType = type.match(/\[([0-9]+)?\]$/) ? true : false
+  let innerType = isArrayType ? type.substring(0, type.length - 2) : type
+  let tsType = TYPE_MAP[innerType] || findMatch(TYPE_MAP, innerType)
+
+  if (tsType !== undefined) {
+    return isArrayType ? `Array<${tsType}>` : tsType
   } else {
     throw `Unsupported type: ${type}`
   }
 }
 
 const tokenFromTypeFunction = type => {
-  if (TOKEN_FROM_TYPE_FUNCTION_MAP[type] !== undefined) {
-    return TOKEN_FROM_TYPE_FUNCTION_MAP[type]
+  let fromFunction =
+    TOKEN_FROM_TYPE_FUNCTION_MAP[type] || findMatch(TOKEN_FROM_TYPE_FUNCTION_MAP, type)
+
+  if (fromFunction !== undefined) {
+    return fromFunction
   } else {
     throw `Unsupported Token from type coercion for type: ${type}`
   }
 }
 
 const tokenToTypeFunction = type => {
-  if (TOKEN_TO_TYPE_FUNCTION_MAP[type] !== undefined) {
-    return TOKEN_TO_TYPE_FUNCTION_MAP[type]
+  let isArrayType = type.match(/\[([0-9]+)?\]$/) ? true : false
+  let innerType = isArrayType ? type.substring(0, type.length - 2) : type
+  let toFunction =
+    TOKEN_TO_TYPE_FUNCTION_MAP[innerType] ||
+    findMatch(TOKEN_TO_TYPE_FUNCTION_MAP, innerType)
+
+  if (toFunction !== undefined) {
+    return isArrayType ? `${toFunction}Array` : toFunction
   } else {
     throw `Unsupported Token to type coercion for type: ${type}`
   }
