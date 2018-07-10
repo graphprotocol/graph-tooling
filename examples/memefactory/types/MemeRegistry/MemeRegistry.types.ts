@@ -1,3 +1,37 @@
+class RegistryEntryEvent extends EthereumEvent {
+  get registryEntry(): Address {
+    return this.params[0].value.toAddress();
+  }
+
+  get eventType(): Bytes {
+    return this.params[1].value.toBytes();
+  }
+
+  get version(): U256 {
+    return this.params[2].value.toU256();
+  }
+
+  get timestamp(): U256 {
+    return this.params[3].value.toU256();
+  }
+
+  get data(): Array<U256> {
+    return this.params[4].value.toArray();
+  }
+}
+
+class LogSetAuthority extends EthereumEvent {
+  get authority(): Address {
+    return this.params[0].value.toAddress();
+  }
+}
+
+class LogSetOwner extends EthereumEvent {
+  get owner(): Address {
+    return this.params[0].value.toAddress();
+  }
+}
+
 class MemeRegistry extends SmartContract {
   static bind(address: Address, blockHash: H256): MemeRegistry {
     return new MemeRegistry("MemeRegistry", address, blockHash);
