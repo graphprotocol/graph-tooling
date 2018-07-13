@@ -191,254 +191,252 @@ class Meme extends SmartContract {
   }
 
   challengeDispensationKey(): Bytes {
-    let __result = super.call("challengeDispensationKey", []);
-    return __result[0].toBytes();
+    let result = super.call("challengeDispensationKey", []);
+    return result[0].toBytes();
   }
 
   creator(): Address {
-    let __result = super.call("creator", []);
-    return __result[0].toAddress();
+    let result = super.call("creator", []);
+    return result[0].toAddress();
   }
 
   loadRegistryEntryChallenge(): Meme__loadRegistryEntryChallengeResult {
-    let __result = super.call("loadRegistryEntryChallenge", []);
+    let result = super.call("loadRegistryEntryChallenge", []);
     return new Meme__loadRegistryEntryChallengeResult(
-      __result[0].toU256(),
-      __result[1].toAddress(),
-      __result[2].toU256(),
-      __result[3].toBytes(),
-      __result[4].toU256(),
-      __result[5].toU256(),
-      __result[6].toU256(),
-      __result[7].toU256(),
-      __result[8].toU256(),
-      __result[9].toU256()
+      result[0].toU256(),
+      result[1].toAddress(),
+      result[2].toU256(),
+      result[3].toBytes(),
+      result[4].toU256(),
+      result[5].toU256(),
+      result[6].toU256(),
+      result[7].toU256(),
+      result[8].toU256(),
+      result[9].toU256()
     );
   }
 
-  wasChallenged(): bool {
-    let __result = super.call("wasChallenged", []);
-    return __result[0].toBoolean();
+  wasChallenged(): boolean {
+    let result = super.call("wasChallenged", []);
+    return result[0].toBoolean();
   }
 
   depositKey(): Bytes {
-    let __result = super.call("depositKey", []);
-    return __result[0].toBytes();
+    let result = super.call("depositKey", []);
+    return result[0].toBytes();
   }
 
   voteReward(_voter: Address): U256 {
-    let __result = super.call("voteReward", [Token.fromAddress(_voter)]);
-    return __result[0].toU256();
+    let result = super.call("voteReward", [Token.fromAddress(_voter)]);
+    return result[0].toU256();
   }
 
   totalSupply(): U256 {
-    let __result = super.call("totalSupply", []);
-    return __result[0].toU256();
+    let result = super.call("totalSupply", []);
+    return result[0].toU256();
   }
 
   status(): u8 {
-    let __result = super.call("status", []);
-    return __result[0].toU8();
+    let result = super.call("status", []);
+    return result[0].toU8();
   }
 
   tokenIdStart(): U256 {
-    let __result = super.call("tokenIdStart", []);
-    return __result[0].toU256();
+    let result = super.call("tokenIdStart", []);
+    return result[0].toU256();
   }
 
-  isChallengePeriodActive(): bool {
-    let __result = super.call("isChallengePeriodActive", []);
-    return __result[0].toBoolean();
+  isChallengePeriodActive(): boolean {
+    let result = super.call("isChallengePeriodActive", []);
+    return result[0].toBoolean();
   }
 
-  isChallengeRewardClaimed(): bool {
-    let __result = super.call("isChallengeRewardClaimed", []);
-    return __result[0].toBoolean();
+  isChallengeRewardClaimed(): boolean {
+    let result = super.call("isChallengeRewardClaimed", []);
+    return result[0].toBoolean();
   }
 
   challengeReward(): U256 {
-    let __result = super.call("challengeReward", []);
-    return __result[0].toU256();
+    let result = super.call("challengeReward", []);
+    return result[0].toU256();
   }
 
   districtConfig(): Address {
-    let __result = super.call("districtConfig", []);
-    return __result[0].toAddress();
+    let result = super.call("districtConfig", []);
+    return result[0].toAddress();
   }
 
-  isVoteRevealPeriodActive(): bool {
-    let __result = super.call("isVoteRevealPeriodActive", []);
-    return __result[0].toBoolean();
+  isVoteRevealPeriodActive(): boolean {
+    let result = super.call("isVoteRevealPeriodActive", []);
+    return result[0].toBoolean();
   }
 
-  votedWinningVoteOption(_voter: Address): bool {
-    let __result = super.call("votedWinningVoteOption", [
+  votedWinningVoteOption(_voter: Address): boolean {
+    let result = super.call("votedWinningVoteOption", [
       Token.fromAddress(_voter)
     ]);
-    return __result[0].toBoolean();
+    return result[0].toBoolean();
   }
 
   version(): U256 {
-    let __result = super.call("version", []);
-    return __result[0].toU256();
+    let result = super.call("version", []);
+    return result[0].toU256();
   }
 
   revealPeriodDurationKey(): Bytes {
-    let __result = super.call("revealPeriodDurationKey", []);
-    return __result[0].toBytes();
+    let result = super.call("revealPeriodDurationKey", []);
+    return result[0].toBytes();
   }
 
   winningVoteOption(): u8 {
-    let __result = super.call("winningVoteOption", []);
-    return __result[0].toU8();
+    let result = super.call("winningVoteOption", []);
+    return result[0].toU8();
   }
 
-  isWhitelisted(): bool {
-    let __result = super.call("isWhitelisted", []);
-    return __result[0].toBoolean();
+  isWhitelisted(): boolean {
+    let result = super.call("isWhitelisted", []);
+    return result[0].toBoolean();
   }
 
   loadVote(_voter: Address): Meme__loadVoteResult {
-    let __result = super.call("loadVote", [Token.fromAddress(_voter)]);
+    let result = super.call("loadVote", [Token.fromAddress(_voter)]);
     return new Meme__loadVoteResult(
-      __result[0].toBytes(),
-      __result[1].toU8(),
-      __result[2].toU256(),
-      __result[3].toU256(),
-      __result[4].toU256()
+      result[0].toBytes(),
+      result[1].toU8(),
+      result[2].toU256(),
+      result[3].toU256(),
+      result[4].toU256()
     );
   }
 
   challengePeriodEnd(): U256 {
-    let __result = super.call("challengePeriodEnd", []);
-    return __result[0].toU256();
+    let result = super.call("challengePeriodEnd", []);
+    return result[0].toU256();
   }
 
-  isVoteRewardClaimed(_voter: Address): bool {
-    let __result = super.call("isVoteRewardClaimed", [
-      Token.fromAddress(_voter)
-    ]);
-    return __result[0].toBoolean();
+  isVoteRewardClaimed(_voter: Address): boolean {
+    let result = super.call("isVoteRewardClaimed", [Token.fromAddress(_voter)]);
+    return result[0].toBoolean();
   }
 
   challengePeriodDurationKey(): Bytes {
-    let __result = super.call("challengePeriodDurationKey", []);
-    return __result[0].toBytes();
+    let result = super.call("challengePeriodDurationKey", []);
+    return result[0].toBytes();
   }
 
   whitelistedOn(): U256 {
-    let __result = super.call("whitelistedOn", []);
-    return __result[0].toU256();
+    let result = super.call("whitelistedOn", []);
+    return result[0].toU256();
   }
 
   registryToken(): Address {
-    let __result = super.call("registryToken", []);
-    return __result[0].toAddress();
+    let result = super.call("registryToken", []);
+    return result[0].toAddress();
   }
 
   commitPeriodDurationKey(): Bytes {
-    let __result = super.call("commitPeriodDurationKey", []);
-    return __result[0].toBytes();
+    let result = super.call("commitPeriodDurationKey", []);
+    return result[0].toBytes();
   }
 
   registry(): Address {
-    let __result = super.call("registry", []);
-    return __result[0].toAddress();
+    let result = super.call("registry", []);
+    return result[0].toAddress();
   }
 
   metaHash(): Bytes {
-    let __result = super.call("metaHash", []);
-    return __result[0].toBytes();
+    let result = super.call("metaHash", []);
+    return result[0].toBytes();
   }
 
-  isWinningOptionVoteFor(): bool {
-    let __result = super.call("isWinningOptionVoteFor", []);
-    return __result[0].toBoolean();
+  isWinningOptionVoteFor(): boolean {
+    let result = super.call("isWinningOptionVoteFor", []);
+    return result[0].toBoolean();
   }
 
-  isVoteRevealPeriodOver(): bool {
-    let __result = super.call("isVoteRevealPeriodOver", []);
-    return __result[0].toBoolean();
+  isVoteRevealPeriodOver(): boolean {
+    let result = super.call("isVoteRevealPeriodOver", []);
+    return result[0].toBoolean();
   }
 
   memeToken(): Address {
-    let __result = super.call("memeToken", []);
-    return __result[0].toAddress();
+    let result = super.call("memeToken", []);
+    return result[0].toAddress();
   }
 
   totalMinted(): U256 {
-    let __result = super.call("totalMinted", []);
-    return __result[0].toU256();
+    let result = super.call("totalMinted", []);
+    return result[0].toU256();
   }
 
   winningVotesAmount(): U256 {
-    let __result = super.call("winningVotesAmount", []);
-    return __result[0].toU256();
+    let result = super.call("winningVotesAmount", []);
+    return result[0].toU256();
   }
 
-  isBlacklisted(): bool {
-    let __result = super.call("isBlacklisted", []);
-    return __result[0].toBoolean();
+  isBlacklisted(): boolean {
+    let result = super.call("isBlacklisted", []);
+    return result[0].toBoolean();
   }
 
-  isVoteRevealed(_voter: Address): bool {
-    let __result = super.call("isVoteRevealed", [Token.fromAddress(_voter)]);
-    return __result[0].toBoolean();
+  isVoteRevealed(_voter: Address): boolean {
+    let result = super.call("isVoteRevealed", [Token.fromAddress(_voter)]);
+    return result[0].toBoolean();
   }
 
   deposit(): U256 {
-    let __result = super.call("deposit", []);
-    return __result[0].toU256();
+    let result = super.call("deposit", []);
+    return result[0].toU256();
   }
 
   challenge(): Meme__challengeResult {
-    let __result = super.call("challenge", []);
+    let result = super.call("challenge", []);
     return new Meme__challengeResult(
-      __result[0].toAddress(),
-      __result[1].toU256(),
-      __result[2].toU256(),
-      __result[3].toBytes(),
-      __result[4].toU256(),
-      __result[5].toU256(),
-      __result[6].toU256(),
-      __result[7].toU256(),
-      __result[8].toU256()
+      result[0].toAddress(),
+      result[1].toU256(),
+      result[2].toU256(),
+      result[3].toBytes(),
+      result[4].toU256(),
+      result[5].toU256(),
+      result[6].toU256(),
+      result[7].toU256(),
+      result[8].toU256()
     );
   }
 
   loadRegistryEntry(): Meme__loadRegistryEntryResult {
-    let __result = super.call("loadRegistryEntry", []);
+    let result = super.call("loadRegistryEntry", []);
     return new Meme__loadRegistryEntryResult(
-      __result[0].toU256(),
-      __result[1].toU8(),
-      __result[2].toAddress(),
-      __result[3].toU256(),
-      __result[4].toU256()
+      result[0].toU256(),
+      result[1].toU8(),
+      result[2].toAddress(),
+      result[3].toU256(),
+      result[4].toU256()
     );
   }
 
-  isVoteCommitPeriodActive(): bool {
-    let __result = super.call("isVoteCommitPeriodActive", []);
-    return __result[0].toBoolean();
+  isVoteCommitPeriodActive(): boolean {
+    let result = super.call("isVoteCommitPeriodActive", []);
+    return result[0].toBoolean();
   }
 
   maxTotalSupplyKey(): Bytes {
-    let __result = super.call("maxTotalSupplyKey", []);
-    return __result[0].toBytes();
+    let result = super.call("maxTotalSupplyKey", []);
+    return result[0].toBytes();
   }
 
   voteQuorumKey(): Bytes {
-    let __result = super.call("voteQuorumKey", []);
-    return __result[0].toBytes();
+    let result = super.call("voteQuorumKey", []);
+    return result[0].toBytes();
   }
 
   loadMeme(): Meme__loadMemeResult {
-    let __result = super.call("loadMeme", []);
+    let result = super.call("loadMeme", []);
     return new Meme__loadMemeResult(
-      __result[0].toBytes(),
-      __result[1].toU256(),
-      __result[2].toU256(),
-      __result[3].toU256()
+      result[0].toBytes(),
+      result[1].toU256(),
+      result[2].toU256(),
+      result[3].toU256()
     );
   }
 }
