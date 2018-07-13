@@ -16,7 +16,7 @@ class RegistryEntryEvent extends EthereumEvent {
   }
 
   get data(): Array<U256> {
-    return this.params[4].value.toArray();
+    return this.params[4].value.toU256Array();
   }
 }
 
@@ -37,40 +37,40 @@ class MemeRegistry extends SmartContract {
     return new MemeRegistry("MemeRegistry", address, blockHash);
   }
 
-  isFactory(factory: Address): bool {
-    let __result = super.call("isFactory", [Token.fromAddress(factory)]);
-    return __result[0].toBoolean();
+  isFactory(factory: Address): boolean {
+    let result = super.call("isFactory", [Token.fromAddress(factory)]);
+    return result[0].toBoolean();
   }
 
   db(): Address {
-    let __result = super.call("db", []);
-    return __result[0].toAddress();
+    let result = super.call("db", []);
+    return result[0].toAddress();
   }
 
-  isEmergency(): bool {
-    let __result = super.call("isEmergency", []);
-    return __result[0].toBoolean();
+  isEmergency(): boolean {
+    let result = super.call("isEmergency", []);
+    return result[0].toBoolean();
   }
 
-  isRegistryEntry(registryEntry: Address): bool {
-    let __result = super.call("isRegistryEntry", [
+  isRegistryEntry(registryEntry: Address): boolean {
+    let result = super.call("isRegistryEntry", [
       Token.fromAddress(registryEntry)
     ]);
-    return __result[0].toBoolean();
+    return result[0].toBoolean();
   }
 
   owner(): Address {
-    let __result = super.call("owner", []);
-    return __result[0].toAddress();
+    let result = super.call("owner", []);
+    return result[0].toAddress();
   }
 
   authority(): Address {
-    let __result = super.call("authority", []);
-    return __result[0].toAddress();
+    let result = super.call("authority", []);
+    return result[0].toAddress();
   }
 
   target(): Address {
-    let __result = super.call("target", []);
-    return __result[0].toAddress();
+    let result = super.call("target", []);
+    return result[0].toAddress();
   }
 }
