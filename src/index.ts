@@ -163,7 +163,7 @@ class Token {
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
-    return changetype<i8>(this.data as i8)
+    return this.data as i8
   }
 
   toI16(): i16 {
@@ -171,7 +171,7 @@ class Token {
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
-    return changetype<i16>(this.data as i16)
+    return this.data as i16
   }
 
   toI32(): i32 {
@@ -179,7 +179,7 @@ class Token {
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
-    return changetype<i32>(this.data as i32)
+    return this.data as i32
   }
 
   toI128(): I128 {
@@ -203,7 +203,7 @@ class Token {
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
-    return changetype<u8>(this.data as u8)
+    return this.data as u8
   }
 
   toU16(): u16 {
@@ -211,7 +211,7 @@ class Token {
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
-    return changetype<u16>(this.data as u16)
+    return this.data as u16
   }
 
   toU32(): u32 {
@@ -219,7 +219,7 @@ class Token {
       this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
       'Token is not an int or uint.'
     )
-    return changetype<u32>(this.data as u32)
+    return this.data as u32
   }
 
   toU128(): U128 {
