@@ -150,41 +150,43 @@ module.exports = class ABI {
                     codegen.param(paramName(input.get('name'), index), input.get('type'))
                   ),
                 returnType,
-                `let __result = super.call(
-                   '${member.get('name')}',
-                   [${
-                     member.get('inputs')
-                       ? member
-                           .get('inputs')
-                           .map((input, index) =>
-                             codegen.tokenFromCoercion(
-                               paramName(input.get('name'), index),
-                               input.get('type')
-                             )
-                           )
-                           .map(coercion => coercion.toString())
-                           .join(', ')
-                       : ''
-                   }]
-                 )
-                 return ${
-                   simpleReturnType
-                     ? codegen.tokenToCoercion(
-                         '__result[0]',
-                         member
-                           .get('outputs')
-                           .get(0)
-                           .get('type')
-                       )
-                     : `new ${returnType.name}(
-                   ${member
-                     .get('outputs')
-                     .map((output, index) =>
-                       codegen.tokenToCoercion(`__result[${index}]`, output.get('type'))
-                     )
-                     .join(', ')}
-                 )`
-                 }`
+                `
+                let result = super.call(
+                  '${member.get('name')}',
+                  [${
+                    member.get('inputs')
+                      ? member
+                          .get('inputs')
+                          .map((input, index) =>
+                            codegen.tokenFromCoercion(
+                              paramName(input.get('name'), index),
+                              input.get('type')
+                            )
+                          )
+                          .map(coercion => coercion.toString())
+                          .join(', ')
+                      : ''
+                  }]
+                );
+                return ${
+                  simpleReturnType
+                    ? codegen.tokenToCoercion(
+                        'result[0]',
+                        member
+                          .get('outputs')
+                          .get(0)
+                          .get('type')
+                      )
+                    : `new ${returnType.name}(
+                  ${member
+                    .get('outputs')
+                    .map((output, index) =>
+                      codegen.tokenToCoercion(`result[${index}]`, output.get('type'))
+                    )
+                    .join(', ')}
+                )`
+                };
+                `
               )
             )
           }
