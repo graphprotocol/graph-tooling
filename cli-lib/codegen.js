@@ -18,7 +18,7 @@ const TYPE_MAP = {
   uint16: 'u16',
   uint32: 'u32',
   uint64: 'u64',
-  uint128: 'I128',
+  uint128: 'U128',
   uint256: 'U256',
   uint: 'U256',
 }
