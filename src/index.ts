@@ -275,7 +275,7 @@ class Token {
   static fromBoolean(b: boolean): Token {
     let token = new Token()
     token.kind = TokenKind.BOOL
-    token.data = b as u64
+    token.data = b ? 1 : 0
     return token
   }
 
