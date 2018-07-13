@@ -248,6 +248,26 @@ class SimpleType {
   }
 }
 
+class UnionType {
+  constructor(types) {
+    this.types = types
+  }
+
+  toString() {
+    return this.types.map(t => t.name).join(' | ')
+  }
+}
+
+class MaybeType {
+  constructor(type) {
+    this.type = type
+  }
+
+  toString() {
+    return `?${this.type.name}`
+  }
+}
+
 const namedType = name => new NamedType(name)
 const simpleType = name => new SimpleType(name)
 const param = (name, type) => new Param(name, type)
@@ -259,6 +279,7 @@ const klass = (name, options) => new Class(name, options)
 const klassMember = (name, type) => new ClassMember(name, type)
 const tokenFromCoercion = (expr, type) => new TokenFromCoercion(expr, type)
 const tokenToCoercion = (expr, type) => new TokenToCoercion(expr, type)
+const unionType = (...types) => new UnionType(types)
 
 module.exports = {
   namedType,
@@ -270,4 +291,5 @@ module.exports = {
   param,
   tokenFromCoercion,
   tokenToCoercion,
+  unionType,
 }
