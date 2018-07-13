@@ -74,13 +74,22 @@ const findMatch = (m, type) => {
   return matchingKey !== undefined ? m[matchingKey] : undefined
 }
 
+const maybeInspectArray = type => {
+  let pattern = /(.+)\[([0-9]*)\]$/
+  let match = type.match(pattern)
+  if (match !== null && match[2] !== undefined) {
+    return [true, match[1]]
+  } else {
+    return [false, type]
+  }
+}
+
 const typeToString = type => {
-  let isArrayType = type.match(/\[([0-9]+)?\]$/) ? true : false
-  let innerType = isArrayType ? type.substring(0, type.length - 2) : type
+  let [isArray, innerType] = maybeInspectArray(type)
   let tsType = TYPE_MAP[innerType] || findMatch(TYPE_MAP, innerType)
 
   if (tsType !== undefined) {
-    return isArrayType ? `Array<${tsType}>` : tsType
+    return isArray ? `Array<${tsType}>` : tsType
   } else {
     throw `Unsupported type: ${type}`
   }
@@ -98,14 +107,13 @@ const tokenFromTypeFunction = type => {
 }
 
 const tokenToTypeFunction = type => {
-  let isArrayType = type.match(/\[([0-9]+)?\]$/) ? true : false
-  let innerType = isArrayType ? type.substring(0, type.length - 2) : type
+  let [isArray, innerType] = maybeInspectArray(type)
   let toFunction =
     TOKEN_TO_TYPE_FUNCTION_MAP[innerType] ||
     findMatch(TOKEN_TO_TYPE_FUNCTION_MAP, innerType)
 
   if (toFunction !== undefined) {
-    return isArrayType ? `${toFunction}Array` : toFunction
+    return isArray ? `${toFunction}Array` : toFunction
   } else {
     throw `Unsupported Token to type coercion for type: ${type}`
   }
