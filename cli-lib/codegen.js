@@ -159,7 +159,7 @@ class Method {
   constructor(name, params, returnType, body) {
     this.name = name
     this.params = params || []
-    this.returnType = returnType || 'void'
+    this.returnType = returnType || namedType('void')
     this.body = body || ''
   }
 
