@@ -1,0 +1,14 @@
+{
+  "name": "decentraland",
+  "scripts": {
+    "codegen": "the-graph-wasm generate-types --output-dir types/ data-source.yaml",
+    "build": "the-graph-wasm compile data-source.yaml",
+    "build-wast": "the-graph-wasm compile -t wast data-source.yaml"
+  },
+  "devDependencies": {
+    "the-graph-wasm": "../../"
+  },
+  "dependencies": {
+    "glob": "^7.1.2"
+  }
+}
