@@ -50,14 +50,18 @@ declare class TypedMap<K, V> {
  * Byte array
  */
 declare class ByteArray extends Uint8Array {
-  toString(hex?: boolean): string
+  toHex(): string
+  toString(): string
 }
 
 /**
  * U64 array
  */
 declare class U64Array extends Uint64Array {
+  toHex(): string
   toString(): string
+  toAddress(): Address
+  toHash(): H256
 }
 
 /** An Ethereum address (20 bytes). */
@@ -65,6 +69,9 @@ declare type Address = ByteArray
 
 /** A dynamically-sized byte array. */
 declare type Bytes = ByteArray
+
+/** A 160-bit hash. */
+declare type H160 = ByteArray
 
 /** A 256-bit hash. */
 declare type H256 = ByteArray
@@ -118,7 +125,8 @@ declare class Token {
   toU64(): u64
   toU128(): U128
   toU256(): U256
-  toString(hex?: boolean): string
+  toU256Array(): Array<U256>
+  toString(): string
   toArray(): Array<Token>
   static fromAddress(address: Address): Token
   static fromBoolean(b: boolean): Token
@@ -184,7 +192,6 @@ declare class Entity extends TypedMap<string, Value> {
   setAddress(key: string, value: Address): void
   setBoolean(key: string, value: boolean): void
   setBytes(key: string, value: Bytes): void
-  setBytes32(key: string, value: Bytes32): void
   setH256(key: string, value: H256): void
   setU32(key: string, value: u32): void
   setU256(key: string, value: U256): void

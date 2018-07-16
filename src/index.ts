@@ -20,6 +20,11 @@ declare namespace typeConversion {
   function bytesToString(address: Address): string
   function bytesToHex(bytes: Bytes): string
   function u64ArrayToHex(array: U64Array): string
+  function u64ArrayToString(array: U64Array): string
+  function h256ToH160(h: H256): H160
+  function h160ToH256(h: H160): H256
+  function u256ToH160(u: U256): Address
+  function u256ToH256(u: U256): H256
 }
 
 /**
@@ -76,19 +81,27 @@ class TypedMap<K, V> {
  * Byte array
  */
 class ByteArray extends Uint8Array {
-  toString(hex: boolean = true): string {
-    if (hex) {
-      return typeConversion.bytesToHex(this)
-    } else {
-      return typeConversion.bytesToString(this)
-    }
+  toHex(): string {
+    return typeConversion.bytesToHex(this)
+  }
+
+  toString(): string {
+    return typeConversion.bytesToString(this)
   }
 }
 
 /** U64Array */
 class U64Array extends Uint64Array {
-  toString(): string {
+  toHex(): string {
     return typeConversion.u64ArrayToHex(this)
+  }
+
+  toString(): string {
+    return typeConversion.u64ArrayToString(this)
+  }
+
+  toAddress(): Address {
+    return typeConversion.u256ToH160(this)
   }
 }
 
@@ -98,7 +111,10 @@ type Address = ByteArray
 /** A dynamically-sized byte array. */
 type Bytes = ByteArray
 
-/** A 256- bit hash. */
+/** A 160-bit hash. */
+type H160 = ByteArray
+
+/** A 256-bit hash. */
 type H256 = ByteArray
 
 /** A signed 128-bit integer. */
@@ -141,8 +157,19 @@ class Token {
   data: TokenPayload
 
   toAddress(): Address {
-    assert(this.kind == TokenKind.ADDRESS, 'Token is not an address.')
-    return changetype<Address>(this.data as u32)
+    assert(
+      this.kind == TokenKind.ADDRESS ||
+        this.kind == TokenKind.UINT ||
+        this.kind == TokenKind.INT,
+      'Token is not an address, uint or int.'
+    )
+    if (this.kind == TokenKind.ADDRESS) {
+      return changetype<Address>(this.data as u32)
+    } else if (this.kind == TokenKind.UINT) {
+      return typeConversion.u256ToH160(this.toU256())
+    } else if (this.kind == TokenKind.INT) {
+      return typeConversion.u256ToH160(this.toI128())
+    }
   }
 
   toBoolean(): boolean {
@@ -238,23 +265,22 @@ class Token {
     return changetype<U256>(this.data as u32)
   }
 
-  toString(hex: boolean = true): string {
-    if (this.kind == TokenKind.STRING) {
-      return changetype<string>(this.data as u32)
-    } else if (
-      this.kind == TokenKind.ADDRESS ||
-      this.kind == TokenKind.FIXED_BYTES ||
-      this.kind == TokenKind.BYTES
-    ) {
-      if (hex) {
-        return typeConversion.bytesToHex(changetype<ByteArray>(this.data as u32))
-      } else {
-        return typeConversion.bytesToString(changetype<ByteArray>(this.data as u32))
-      }
-    } else if (this.kind == TokenKind.INT || this.kind == TokenKind.UINT) {
-      return typeConversion.u64ArrayToHex(changetype<U64Array>(this.data as u32))
+  toU256Array(): Array<U256> {
+    assert(
+      this.kind == TokenKind.ARRAY || this.kind == TokenKind.FIXED_ARRAY,
+      'Token is not an array or fixed array.'
+    )
+    let tokenArray = this.toArray()
+    let u256Array = new Array<U256>()
+    for (let i: i32 = 0; i < tokenArray.length; i++) {
+      u256Array.push(tokenArray[i].toU256())
     }
-    throw new Error(`Token conversion from '${this.kind}' to ${this.kind} not supported`)
+    return u256Array
+  }
+
+  toString(): string {
+    assert(this.kind == TokenKind.STRING, 'Token is not a string.')
+    return changetype<string>(this.data as u32)
   }
 
   toArray(): Array<Token> {
@@ -266,8 +292,10 @@ class Token {
   }
 
   static fromAddress(address: Address): Token {
+    assert(address.length == 20, 'Address must contain exactly 20 bytes')
+
     let token = new Token()
-    token.kind = TokenKind.BYTES
+    token.kind = TokenKind.ADDRESS
     token.data = address as u64
     return token
   }
@@ -400,7 +428,7 @@ class Value {
   static fromAddress(address: Address): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = address.toString() as u64
+    value.data = address.toHex() as u64
     return value
   }
 
