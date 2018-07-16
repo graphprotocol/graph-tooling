@@ -170,6 +170,7 @@ class Token {
     } else if (this.kind == TokenKind.INT) {
       return typeConversion.u256ToH160(this.toI128())
     }
+    throw new Error('Type conversion from ' + this.kind + ' to address not supported')
   }
 
   toBoolean(): boolean {
@@ -442,14 +443,14 @@ class Value {
   static fromBytes(bytes: Bytes): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = bytes.toString() as u64
+    value.data = bytes.toHex() as u64
     return value
   }
 
   static fromH256(h: H256): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = h.toString() as u64
+    value.data = h.toHex() as u64
     return value
   }
 
@@ -463,7 +464,7 @@ class Value {
   static fromU256(n: U256): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
-    value.data = n.toString() as u64
+    value.data = n.toHex() as u64
     return value
   }
 
