@@ -23,7 +23,7 @@ declare namespace typeConversion {
   function u64ArrayToString(array: U64Array): string
   function h256ToH160(h: H256): H160
   function h160ToH256(h: H160): H256
-  function u256ToH160(u: U256): Address
+  function u256ToH160(u: U256): H160
   function u256ToH256(u: U256): H256
 }
 
