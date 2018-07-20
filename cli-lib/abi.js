@@ -30,7 +30,7 @@ module.exports = class ABI {
             [],
             codegen.simpleType(input.get('type')),
             `
-            return ${codegen.tokenToCoercion(
+            return ${codegen.ethereumValueToCoercion(
               `this.params[${index}].value`,
               input.get('type')
             )}
@@ -97,19 +97,19 @@ module.exports = class ABI {
                 )
               )
 
-              // Add a `toMap(): TypedMap<string,Token>` function to the return type
+              // Add a `toMap(): TypedMap<string,EthereumValue>` function to the return type
               returnType.addMethod(
                 codegen.method(
                   'toMap',
                   [],
-                  codegen.namedType('TypedMap<string,Token>'),
+                  codegen.namedType('TypedMap<string,EthereumValue>'),
                   `
-                  let map = new TypedMap<string,Token>();
+                  let map = new TypedMap<string,EthereumValue>();
                   ${member
                     .get('outputs')
                     .map(
                       (output, index) =>
-                        `map.set('value${index}', ${codegen.tokenFromCoercion(
+                        `map.set('value${index}', ${codegen.ethereumValueFromCoercion(
                           `this.value${index}`,
                           output.get('type')
                         )})`
@@ -158,7 +158,7 @@ module.exports = class ABI {
                       ? member
                           .get('inputs')
                           .map((input, index) =>
-                            codegen.tokenFromCoercion(
+                            codegen.ethereumValueFromCoercion(
                               paramName(input.get('name'), index),
                               input.get('type')
                             )
@@ -170,7 +170,7 @@ module.exports = class ABI {
                 );
                 return ${
                   simpleReturnType
-                    ? codegen.tokenToCoercion(
+                    ? codegen.ethereumValueToCoercion(
                         'result[0]',
                         member
                           .get('outputs')
@@ -181,7 +181,7 @@ module.exports = class ABI {
                   ${member
                     .get('outputs')
                     .map((output, index) =>
-                      codegen.tokenToCoercion(`result[${index}]`, output.get('type'))
+                      codegen.ethereumValueToCoercion(`result[${index}]`, output.get('type'))
                     )
                     .join(', ')}
                 )`

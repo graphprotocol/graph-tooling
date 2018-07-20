@@ -23,34 +23,34 @@ const TYPE_MAP = {
   uint: 'U256',
 }
 
-const TOKEN_FROM_TYPE_FUNCTION_MAP = {
-  address: 'Token.fromAddress',
-  bool: 'Token.fromBoolean',
-  byte: 'Token.fromBytes',
-  '/bytes([0-9]+)?/': 'Token.fromBytes',
-  int8: 'Token.fromI8',
-  int16: 'Token.fromI16',
-  int32: 'Token.fromI32',
-  int64: 'Token.fromI64',
-  int128: 'Token.fromI128',
-  int256: 'Token.fromI256',
-  int: 'Token.fromI256',
-  h256: 'Token.fromH256',
-  string: 'Token.fromString',
-  uint8: 'Token.fromU8',
-  uint16: 'Token.fromU16',
-  uint32: 'Token.fromU32',
-  uint64: 'Token.fromU64',
-  uint128: 'Token.fromU128',
-  uint256: 'Token.fromU256',
-  uint: 'Token.fromU256',
+const ETHEREUM_VALUE_FROM_TYPE_FUNCTION_MAP = {
+  address: 'EthereumValue.fromAddress',
+  bool: 'EthereumValue.fromBoolean',
+  byte: 'EthereumValue.fromBytes',
+  '/bytes([0-9]+)?/': 'EthereumValue.fromBytes',
+  int8: 'EthereumValue.fromI8',
+  int16: 'EthereumValue.fromI16',
+  int32: 'EthereumValue.fromI32',
+  int64: 'EthereumValue.fromI64',
+  int128: 'EthereumValue.fromI128',
+  int256: 'EthereumValue.fromI256',
+  int: 'EthereumValue.fromI256',
+  h256: 'EthereumValue.fromH256',
+  string: 'EthereumValue.fromString',
+  uint8: 'EthereumValue.fromU8',
+  uint16: 'EthereumValue.fromU16',
+  uint32: 'EthereumValue.fromU32',
+  uint64: 'EthereumValue.fromU64',
+  uint128: 'EthereumValue.fromU128',
+  uint256: 'EthereumValue.fromU256',
+  uint: 'EthereumValue.fromU256',
 }
 
-const TOKEN_TO_TYPE_FUNCTION_MAP = {
+const ETHEREUM_VALUE_TO_TYPE_FUNCTION_MAP = {
   address: 'toAddress',
   bool: 'toBoolean',
   byte: 'toBytes',
-  '/bytes([0-9]+)?/': 'Token.toBytes',
+  '/bytes([0-9]+)?/': 'EthereumValue.toBytes',
   int8: 'toI8',
   int16: 'toI16',
   int32: 'toI32',
@@ -95,27 +95,28 @@ const typeToString = type => {
   }
 }
 
-const tokenFromTypeFunction = type => {
+const ethereumValueFromTypeFunction = type => {
   let fromFunction =
-    TOKEN_FROM_TYPE_FUNCTION_MAP[type] || findMatch(TOKEN_FROM_TYPE_FUNCTION_MAP, type)
+    ETHEREUM_VALUE_FROM_TYPE_FUNCTION_MAP[type] ||
+    findMatch(ETHEREUM_VALUE_FROM_TYPE_FUNCTION_MAP, type)
 
   if (fromFunction !== undefined) {
     return fromFunction
   } else {
-    throw `Unsupported Token from type coercion for type: ${type}`
+    throw `Unsupported EthereumValue from type coercion for type: ${type}`
   }
 }
 
-const tokenToTypeFunction = type => {
+const ethereumValueToTypeFunction = type => {
   let [isArray, innerType] = maybeInspectArray(type)
   let toFunction =
-    TOKEN_TO_TYPE_FUNCTION_MAP[innerType] ||
-    findMatch(TOKEN_TO_TYPE_FUNCTION_MAP, innerType)
+    ETHEREUM_VALUE_TO_TYPE_FUNCTION_MAP[innerType] ||
+    findMatch(ETHEREUM_VALUE_TO_TYPE_FUNCTION_MAP, innerType)
 
   if (toFunction !== undefined) {
     return isArray ? `${toFunction}Array` : toFunction
   } else {
-    throw `Unsupported Token to type coercion for type: ${type}`
+    throw `Unsupported EthereumValue to type coercion for type: ${type}`
   }
 }
 
@@ -141,25 +142,25 @@ class ReturnType {
   }
 }
 
-class TokenFromCoercion {
+class EthereumValueFromCoercion {
   constructor(expr, type) {
     this.expr = expr
     this.type = type
   }
 
   toString() {
-    return `${tokenFromTypeFunction(this.type)}(${this.expr})`
+    return `${ethereumValueFromTypeFunction(this.type)}(${this.expr})`
   }
 }
 
-class TokenToCoercion {
+class EthereumValueToCoercion {
   constructor(expr, type) {
     this.expr = expr
     this.type = type
   }
 
   toString() {
-    return `${this.expr}.${tokenToTypeFunction(this.type)}()`
+    return `${this.expr}.${ethereumValueToTypeFunction(this.type)}()`
   }
 }
 
@@ -285,8 +286,9 @@ const staticMethod = (name, params, returnType, body) =>
   new StaticMethod(name, params, returnType, body)
 const klass = (name, options) => new Class(name, options)
 const klassMember = (name, type) => new ClassMember(name, type)
-const tokenFromCoercion = (expr, type) => new TokenFromCoercion(expr, type)
-const tokenToCoercion = (expr, type) => new TokenToCoercion(expr, type)
+const ethereumValueFromCoercion = (expr, type) =>
+  new EthereumValueFromCoercion(expr, type)
+const ethereumValueToCoercion = (expr, type) => new EthereumValueToCoercion(expr, type)
 const unionType = (...types) => new UnionType(types)
 
 module.exports = {
@@ -297,7 +299,7 @@ module.exports = {
   method,
   staticMethod,
   param,
-  tokenFromCoercion,
-  tokenToCoercion,
+  ethereumValueFromCoercion,
+  ethereumValueToCoercion,
   unionType,
 }

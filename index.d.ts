@@ -89,7 +89,7 @@ declare type U128 = U64Array
 declare type U256 = U64Array
 
 /** Type hint for Ethereum values. */
-declare enum TokenKind {
+declare enum EthereumValueKind {
   ADDRESS,
   FIXED_BYTES,
   BYTES,
@@ -101,14 +101,14 @@ declare enum TokenKind {
   ARRAY,
 }
 
-declare type TokenPayload = u64
+declare type EthereumValuePayload = u64
 
 /**
  * A dynamically typed value used when accessing Ethereum data.
  */
-declare class Token {
-  kind: TokenKind
-  data: TokenPayload
+declare class EthereumValue {
+  kind: EthereumValueKind
+  data: EthereumValuePayload
 
   toAddress(): Address
   toBoolean(): boolean
@@ -127,24 +127,24 @@ declare class Token {
   toU256(): U256
   toU256Array(): Array<U256>
   toString(): string
-  toArray(): Array<Token>
-  static fromAddress(address: Address): Token
-  static fromBoolean(b: boolean): Token
-  static fromBytes(bytes: Bytes): Token
-  static fromI8(i: i8): Token
-  static fromI16(i: i16): Token
-  static fromI32(i: i32): Token
-  static fromI64(i: i64): Token
-  static fromI128(i: I128): Token
-  static fromI256(i: I256): Token
-  static fromU8(i: u8): Token
-  static fromU16(i: u16): Token
-  static fromU32(i: u32): Token
-  static fromU64(i: u64): Token
-  static fromU128(i: U128): Token
-  static fromU256(u: U256): Token
-  static fromString(s: string): Token
-  static fromArray(arr: Token): Token
+  toArray(): Array<EthereumValue>
+  static fromAddress(address: Address): EthereumValue
+  static fromBoolean(b: boolean): EthereumValue
+  static fromBytes(bytes: Bytes): EthereumValue
+  static fromI8(i: i8): EthereumValue
+  static fromI16(i: i16): EthereumValue
+  static fromI32(i: i32): EthereumValue
+  static fromI64(i: i64): EthereumValue
+  static fromI128(i: I128): EthereumValue
+  static fromI256(i: I256): EthereumValue
+  static fromU8(i: u8): EthereumValue
+  static fromU16(i: u16): EthereumValue
+  static fromU32(i: u32): EthereumValue
+  static fromU64(i: u64): EthereumValue
+  static fromU128(i: U128): EthereumValue
+  static fromU256(u: U256): EthereumValue
+  static fromString(s: string): EthereumValue
+  static fromArray(arr: EthereumValue): EthereumValue
 }
 
 /**
@@ -215,5 +215,5 @@ declare class EthereumEvent {
  */
 declare interface EthereumEventParam {
   name: string
-  value: Token
+  value: EthereumValue
 }

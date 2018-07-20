@@ -38,7 +38,7 @@ class MemeRegistry extends SmartContract {
   }
 
   isFactory(factory: Address): boolean {
-    let result = super.call("isFactory", [Token.fromAddress(factory)]);
+    let result = super.call("isFactory", [EthereumValue.fromAddress(factory)]);
     return result[0].toBoolean();
   }
 
@@ -54,7 +54,7 @@ class MemeRegistry extends SmartContract {
 
   isRegistryEntry(registryEntry: Address): boolean {
     let result = super.call("isRegistryEntry", [
-      Token.fromAddress(registryEntry)
+      EthereumValue.fromAddress(registryEntry)
     ]);
     return result[0].toBoolean();
   }
