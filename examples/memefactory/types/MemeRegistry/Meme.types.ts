@@ -34,18 +34,18 @@ class Meme__loadRegistryEntryChallengeResult {
     this.value9 = value9;
   }
 
-  toMap(): TypedMap<string, Token> {
-    let map = new TypedMap<string, Token>();
-    map.set("value0", Token.fromU256(this.value0));
-    map.set("value1", Token.fromAddress(this.value1));
-    map.set("value2", Token.fromU256(this.value2));
-    map.set("value3", Token.fromBytes(this.value3));
-    map.set("value4", Token.fromU256(this.value4));
-    map.set("value5", Token.fromU256(this.value5));
-    map.set("value6", Token.fromU256(this.value6));
-    map.set("value7", Token.fromU256(this.value7));
-    map.set("value8", Token.fromU256(this.value8));
-    map.set("value9", Token.fromU256(this.value9));
+  toMap(): TypedMap<string, EthereumValue> {
+    let map = new TypedMap<string, EthereumValue>();
+    map.set("value0", EthereumValue.fromU256(this.value0));
+    map.set("value1", EthereumValue.fromAddress(this.value1));
+    map.set("value2", EthereumValue.fromU256(this.value2));
+    map.set("value3", EthereumValue.fromBytes(this.value3));
+    map.set("value4", EthereumValue.fromU256(this.value4));
+    map.set("value5", EthereumValue.fromU256(this.value5));
+    map.set("value6", EthereumValue.fromU256(this.value6));
+    map.set("value7", EthereumValue.fromU256(this.value7));
+    map.set("value8", EthereumValue.fromU256(this.value8));
+    map.set("value9", EthereumValue.fromU256(this.value9));
     return map;
   }
 }
@@ -71,13 +71,13 @@ class Meme__loadVoteResult {
     this.value4 = value4;
   }
 
-  toMap(): TypedMap<string, Token> {
-    let map = new TypedMap<string, Token>();
-    map.set("value0", Token.fromBytes(this.value0));
-    map.set("value1", Token.fromU8(this.value1));
-    map.set("value2", Token.fromU256(this.value2));
-    map.set("value3", Token.fromU256(this.value3));
-    map.set("value4", Token.fromU256(this.value4));
+  toMap(): TypedMap<string, EthereumValue> {
+    let map = new TypedMap<string, EthereumValue>();
+    map.set("value0", EthereumValue.fromBytes(this.value0));
+    map.set("value1", EthereumValue.fromU8(this.value1));
+    map.set("value2", EthereumValue.fromU256(this.value2));
+    map.set("value3", EthereumValue.fromU256(this.value3));
+    map.set("value4", EthereumValue.fromU256(this.value4));
     return map;
   }
 }
@@ -115,17 +115,17 @@ class Meme__challengeResult {
     this.value8 = value8;
   }
 
-  toMap(): TypedMap<string, Token> {
-    let map = new TypedMap<string, Token>();
-    map.set("value0", Token.fromAddress(this.value0));
-    map.set("value1", Token.fromU256(this.value1));
-    map.set("value2", Token.fromU256(this.value2));
-    map.set("value3", Token.fromBytes(this.value3));
-    map.set("value4", Token.fromU256(this.value4));
-    map.set("value5", Token.fromU256(this.value5));
-    map.set("value6", Token.fromU256(this.value6));
-    map.set("value7", Token.fromU256(this.value7));
-    map.set("value8", Token.fromU256(this.value8));
+  toMap(): TypedMap<string, EthereumValue> {
+    let map = new TypedMap<string, EthereumValue>();
+    map.set("value0", EthereumValue.fromAddress(this.value0));
+    map.set("value1", EthereumValue.fromU256(this.value1));
+    map.set("value2", EthereumValue.fromU256(this.value2));
+    map.set("value3", EthereumValue.fromBytes(this.value3));
+    map.set("value4", EthereumValue.fromU256(this.value4));
+    map.set("value5", EthereumValue.fromU256(this.value5));
+    map.set("value6", EthereumValue.fromU256(this.value6));
+    map.set("value7", EthereumValue.fromU256(this.value7));
+    map.set("value8", EthereumValue.fromU256(this.value8));
     return map;
   }
 }
@@ -151,13 +151,13 @@ class Meme__loadRegistryEntryResult {
     this.value4 = value4;
   }
 
-  toMap(): TypedMap<string, Token> {
-    let map = new TypedMap<string, Token>();
-    map.set("value0", Token.fromU256(this.value0));
-    map.set("value1", Token.fromU8(this.value1));
-    map.set("value2", Token.fromAddress(this.value2));
-    map.set("value3", Token.fromU256(this.value3));
-    map.set("value4", Token.fromU256(this.value4));
+  toMap(): TypedMap<string, EthereumValue> {
+    let map = new TypedMap<string, EthereumValue>();
+    map.set("value0", EthereumValue.fromU256(this.value0));
+    map.set("value1", EthereumValue.fromU8(this.value1));
+    map.set("value2", EthereumValue.fromAddress(this.value2));
+    map.set("value3", EthereumValue.fromU256(this.value3));
+    map.set("value4", EthereumValue.fromU256(this.value4));
     return map;
   }
 }
@@ -175,12 +175,12 @@ class Meme__loadMemeResult {
     this.value3 = value3;
   }
 
-  toMap(): TypedMap<string, Token> {
-    let map = new TypedMap<string, Token>();
-    map.set("value0", Token.fromBytes(this.value0));
-    map.set("value1", Token.fromU256(this.value1));
-    map.set("value2", Token.fromU256(this.value2));
-    map.set("value3", Token.fromU256(this.value3));
+  toMap(): TypedMap<string, EthereumValue> {
+    let map = new TypedMap<string, EthereumValue>();
+    map.set("value0", EthereumValue.fromBytes(this.value0));
+    map.set("value1", EthereumValue.fromU256(this.value1));
+    map.set("value2", EthereumValue.fromU256(this.value2));
+    map.set("value3", EthereumValue.fromU256(this.value3));
     return map;
   }
 }
@@ -227,7 +227,7 @@ class Meme extends SmartContract {
   }
 
   voteReward(_voter: Address): U256 {
-    let result = super.call("voteReward", [Token.fromAddress(_voter)]);
+    let result = super.call("voteReward", [EthereumValue.fromAddress(_voter)]);
     return result[0].toU256();
   }
 
@@ -273,7 +273,7 @@ class Meme extends SmartContract {
 
   votedWinningVoteOption(_voter: Address): boolean {
     let result = super.call("votedWinningVoteOption", [
-      Token.fromAddress(_voter)
+      EthereumValue.fromAddress(_voter)
     ]);
     return result[0].toBoolean();
   }
@@ -299,7 +299,7 @@ class Meme extends SmartContract {
   }
 
   loadVote(_voter: Address): Meme__loadVoteResult {
-    let result = super.call("loadVote", [Token.fromAddress(_voter)]);
+    let result = super.call("loadVote", [EthereumValue.fromAddress(_voter)]);
     return new Meme__loadVoteResult(
       result[0].toBytes(),
       result[1].toU8(),
@@ -315,7 +315,9 @@ class Meme extends SmartContract {
   }
 
   isVoteRewardClaimed(_voter: Address): boolean {
-    let result = super.call("isVoteRewardClaimed", [Token.fromAddress(_voter)]);
+    let result = super.call("isVoteRewardClaimed", [
+      EthereumValue.fromAddress(_voter)
+    ]);
     return result[0].toBoolean();
   }
 
@@ -380,7 +382,9 @@ class Meme extends SmartContract {
   }
 
   isVoteRevealed(_voter: Address): boolean {
-    let result = super.call("isVoteRevealed", [Token.fromAddress(_voter)]);
+    let result = super.call("isVoteRevealed", [
+      EthereumValue.fromAddress(_voter)
+    ]);
     return result[0].toBoolean();
   }
 
