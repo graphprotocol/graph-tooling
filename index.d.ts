@@ -180,7 +180,7 @@ declare class Value {
   static fromBoolean(b: boolean): Value
   static fromBigInt(n: BigInt): Value
   static fromBytes(bytes: Bytes): Value
-  static fromH256(h: H256): Value
+  static fromI256(i: I256): Value
   static fromU32(n: u32): Value
   static fromU256(n: U256): Value
   static fromString(s: string): Value
@@ -197,11 +197,11 @@ declare class Entity extends TypedMap<string, Value> {
   setBoolean(key: string, value: boolean): void
   setBigInt(key: string, value: BigInt): void
   setBytes(key: string, value: Bytes): void
-  setH256(key: string, value: H256): void
   setI256(key: string, value: I256): void
   setU32(key: string, value: u32): void
   setU256(key: string, value: U256): void
   setString(key: string, value: string): void
+  unset(key: string): void
   /** Assigns properties from source to this Entity in right-to-left order */
   merge(sources: Array<Entity>): Entity
 }

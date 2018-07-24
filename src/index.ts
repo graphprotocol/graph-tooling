@@ -434,8 +434,8 @@ class Value {
 
   static fromAddress(address: Address): Value {
     let value = new Value()
-    value.kind = ValueKind.STRING
-    value.data = address.toHex() as u64
+    value.kind = ValueKind.BYTES
+    value.data = address as u64
     return value
   }
 
@@ -455,22 +455,21 @@ class Value {
 
   static fromBytes(bytes: Bytes): Value {
     let value = new Value()
-    value.kind = ValueKind.STRING
-    value.data = bytes.toHex() as u64
+    value.kind = ValueKind.BYTES
+    value.data = bytes as u64
     return value
   }
 
   static fromI256(i: I256): Value {
     let value = new Value()
-    value.kind = ValueKind.STRING
-    value.data = i.toHex() as u64
+    value.kind = ValueKind.BIGINT
+    value.data = typeConversion.int256ToBigInt(i) as u64
     return value
   }
 
-  static fromH256(h: H256): Value {
+  static fromNull(): Value {
     let value = new Value()
-    value.kind = ValueKind.STRING
-    value.data = h.toHex() as u64
+    value.kind = ValueKind.NULL
     return value
   }
 
@@ -483,8 +482,8 @@ class Value {
 
   static fromU256(n: U256): Value {
     let value = new Value()
-    value.kind = ValueKind.STRING
-    value.data = n.toHex() as u64
+    value.kind = ValueKind.BIGINT
+    value.data = typeConversion.int256ToBigInt(n) as u64
     return value
   }
 
@@ -492,12 +491,6 @@ class Value {
     let value = new Value()
     value.kind = ValueKind.STRING
     value.data = s as u64
-    return value
-  }
-
-  static fromNull(): Value {
-    let value = new Value()
-    value.kind = ValueKind.NULL
     return value
   }
 }
@@ -508,8 +501,12 @@ class Value {
  * `Value` objects.
  */
 class Entity extends TypedMap<string, Value> {
-  setAddress(key: string, value: Address): void {
-    this.set(key, Value.fromAddress(value))
+  setString(key: string, value: string): void {
+    this.set(key, Value.fromString(value))
+  }
+
+  setInt(key: string, value: u32): void {
+    this.set(key, Value.fromU32(value))
   }
 
   setBoolean(key: string, value: boolean): void {
@@ -520,24 +517,24 @@ class Entity extends TypedMap<string, Value> {
     this.set(key, Value.fromBytes(value))
   }
 
-  setH256(key: string, value: H256): void {
-    this.set(key, Value.fromH256(value))
+  setBigInt(key: string, value: BigInt): void {
+    this.set(key, Value.fromBigInt(value))
+  }
+
+  setAddress(key: string, value: Address): void {
+    this.set(key, Value.fromAddress(value))
   }
 
   setI256(key: string, value: I256): void {
     this.set(key, Value.fromI256(value))
   }
 
-  setU32(key: string, value: u32): void {
-    this.set(key, Value.fromU32(value))
-  }
-
   setU256(key: string, value: U256): void {
     this.set(key, Value.fromU256(value))
   }
 
-  setString(key: string, value: string): void {
-    this.set(key, Value.fromString(value))
+  unset(key: string): void {
+    this.set(key, Value.fromNull())
   }
 
   /** Assigns properties from sources to this Entity in right-to-left order */
