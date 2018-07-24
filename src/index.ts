@@ -447,6 +447,13 @@ class Value {
     return value
   }
 
+  static fromI256(i: I256): Value {
+    let value = new Value()
+    value.kind = ValueKind.STRING
+    value.data = i.toHex() as u64
+    return value
+  }
+
   static fromH256(h: H256): Value {
     let value = new Value()
     value.kind = ValueKind.STRING
@@ -502,6 +509,10 @@ class Entity extends TypedMap<string, Value> {
 
   setH256(key: string, value: H256): void {
     this.set(key, Value.fromH256(value))
+  }
+
+  setI256(key: string, value: I256): void {
+    this.set(key, Value.fromI256(value))
   }
 
   setU32(key: string, value: u32): void {
