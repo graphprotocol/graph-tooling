@@ -193,6 +193,7 @@ declare class Entity extends TypedMap<string, Value> {
   setBoolean(key: string, value: boolean): void
   setBytes(key: string, value: Bytes): void
   setH256(key: string, value: H256): void
+  setI256(key: string, value: I256): void
   setU32(key: string, value: u32): void
   setU256(key: string, value: U256): void
   setString(key: string, value: string): void
