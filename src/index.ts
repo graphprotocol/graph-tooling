@@ -25,6 +25,7 @@ declare namespace typeConversion {
   function h160ToH256(h: H160): H256
   function u256ToH160(u: U256): H160
   function u256ToH256(u: U256): H256
+  function int256ToBigInt(u: U256): BigInt
 }
 
 /**
@@ -107,6 +108,9 @@ class U64Array extends Uint64Array {
 
 /** An Ethereum address (20 bytes). */
 type Address = ByteArray
+
+/** An arbitrary size integer. */
+type BigInt = ByteArray
 
 /** A dynamically-sized byte array. */
 type Bytes = ByteArray
@@ -410,6 +414,8 @@ enum ValueKind {
   BOOL,
   ARRAY,
   NULL,
+  BYTES,
+  BIGINT,
 }
 
 /**
@@ -430,6 +436,13 @@ class Value {
     let value = new Value()
     value.kind = ValueKind.STRING
     value.data = address.toHex() as u64
+    return value
+  }
+
+  static fromBigInt(n: BigInt): Value {
+    let value = new Value()
+    value.kind = ValueKind.BIGINT
+    value.data = n as u64
     return value
   }
 

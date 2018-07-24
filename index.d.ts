@@ -67,6 +67,9 @@ declare class U64Array extends Uint64Array {
 /** An Ethereum address (20 bytes). */
 declare type Address = ByteArray
 
+/** An arbitrary size integer. */
+declare type BigInt = ByteArray
+
 /** A dynamically-sized byte array. */
 declare type Bytes = ByteArray
 
@@ -175,6 +178,7 @@ declare class Value {
 
   static fromAddress(address: Address): Value
   static fromBoolean(b: boolean): Value
+  static fromBigInt(n: BigInt): Value
   static fromBytes(bytes: Bytes): Value
   static fromH256(h: H256): Value
   static fromU32(n: u32): Value
@@ -191,6 +195,7 @@ declare class Value {
 declare class Entity extends TypedMap<string, Value> {
   setAddress(key: string, value: Address): void
   setBoolean(key: string, value: boolean): void
+  setBigInt(key: string, value: BigInt): void
   setBytes(key: string, value: Bytes): void
   setH256(key: string, value: H256): void
   setI256(key: string, value: I256): void
