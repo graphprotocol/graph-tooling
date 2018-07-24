@@ -67,7 +67,10 @@ module.exports = class ABI {
     this.data.forEach(member => {
       switch (member.get('type')) {
         case 'function':
-          if (member.get('stateMutability') === 'view') {
+          if (
+            member.get('stateMutability') === 'view' ||
+            member.get('stateMutability') === 'pure'
+          ) {
             // Generate a type for the result of calling the function
             let returnType = undefined
             let simpleReturnType = true
