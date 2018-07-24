@@ -12,7 +12,7 @@ declare namespace database {
 
 /** Host ethereum interface */
 declare namespace ethereum {
-  function call(call: SmartContractCall): Array<Token>
+  function call(call: SmartContractCall): Array<EthereumValue>
 }
 
 /** Host type conversion interface */
@@ -130,7 +130,7 @@ type U128 = U64Array
 type U256 = U64Array
 
 /** Type hint for Ethereum values. */
-enum TokenKind {
+enum EthereumValueKind {
   ADDRESS,
   FIXED_BYTES,
   BYTES,
@@ -143,258 +143,258 @@ enum TokenKind {
 }
 
 /**
- * Pointer type for Token data.
+ * Pointer type for EthereumValue data.
  *
  * Big enough to fit any pointer or native `this.data`.
  */
-type TokenPayload = u64
+type EthereumValuePayload = u64
 
 /**
  * A dynamically typed value used when accessing Ethereum data.
  */
-class Token {
-  kind: TokenKind
-  data: TokenPayload
+class EthereumValue {
+  kind: EthereumValueKind
+  data: EthereumValuePayload
 
   toAddress(): Address {
     assert(
-      this.kind == TokenKind.ADDRESS ||
-        this.kind == TokenKind.UINT ||
-        this.kind == TokenKind.INT,
-      'Token is not an address, uint or int.'
+      this.kind == EthereumValueKind.ADDRESS ||
+        this.kind == EthereumValueKind.UINT ||
+        this.kind == EthereumValueKind.INT,
+      'EthereumValue is not an address, uint or int.'
     )
-    if (this.kind == TokenKind.ADDRESS) {
+    if (this.kind == EthereumValueKind.ADDRESS) {
       return changetype<Address>(this.data as u32)
-    } else if (this.kind == TokenKind.UINT) {
+    } else if (this.kind == EthereumValueKind.UINT) {
       return typeConversion.u256ToH160(this.toU256())
-    } else if (this.kind == TokenKind.INT) {
+    } else if (this.kind == EthereumValueKind.INT) {
       return typeConversion.u256ToH160(this.toI128())
     }
     throw new Error('Type conversion from ' + this.kind + ' to address not supported')
   }
 
   toBoolean(): boolean {
-    assert(this.kind == TokenKind.BOOL, 'Token is not a boolean.')
+    assert(this.kind == EthereumValueKind.BOOL, 'EthereumValue is not a boolean.')
     return this.data != 0
   }
 
   toBytes(): Bytes {
     assert(
-      this.kind == TokenKind.FIXED_BYTES || this.kind == TokenKind.BYTES,
-      'Token is not bytes.'
+      this.kind == EthereumValueKind.FIXED_BYTES || this.kind == EthereumValueKind.BYTES,
+      'EthereumValue is not bytes.'
     )
     return changetype<Bytes>(this.data as u32)
   }
 
   toI8(): i8 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return this.data as i8
   }
 
   toI16(): i16 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return this.data as i16
   }
 
   toI32(): i32 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return this.data as i32
   }
 
   toI128(): I128 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return changetype<I128>(this.data as u32)
   }
 
   toI256(): I256 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return changetype<I256>(this.data as u32)
   }
 
   toU8(): u8 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return this.data as u8
   }
 
   toU16(): u16 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return this.data as u16
   }
 
   toU32(): u32 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return this.data as u32
   }
 
   toU128(): U128 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return changetype<U128>(this.data as u32)
   }
 
   toU256(): U256 {
     assert(
-      this.kind == TokenKind.INT || this.kind == TokenKind.UINT,
-      'Token is not an int or uint.'
+      this.kind == EthereumValueKind.INT || this.kind == EthereumValueKind.UINT,
+      'EthereumValue is not an int or uint.'
     )
     return changetype<U256>(this.data as u32)
   }
 
   toU256Array(): Array<U256> {
     assert(
-      this.kind == TokenKind.ARRAY || this.kind == TokenKind.FIXED_ARRAY,
-      'Token is not an array or fixed array.'
+      this.kind == EthereumValueKind.ARRAY || this.kind == EthereumValueKind.FIXED_ARRAY,
+      'EthereumValue is not an array or fixed array.'
     )
-    let tokenArray = this.toArray()
+    let valueArray = this.toArray()
     let u256Array = new Array<U256>()
-    for (let i: i32 = 0; i < tokenArray.length; i++) {
-      u256Array.push(tokenArray[i].toU256())
+    for (let i: i32 = 0; i < valueArray.length; i++) {
+      u256Array.push(valueArray[i].toU256())
     }
     return u256Array
   }
 
   toString(): string {
-    assert(this.kind == TokenKind.STRING, 'Token is not a string.')
+    assert(this.kind == EthereumValueKind.STRING, 'EthereumValue is not a string.')
     return changetype<string>(this.data as u32)
   }
 
-  toArray(): Array<Token> {
+  toArray(): Array<EthereumValue> {
     assert(
-      this.kind == TokenKind.FIXED_ARRAY || this.kind == TokenKind.ARRAY,
-      'Token is not an array.'
+      this.kind == EthereumValueKind.FIXED_ARRAY || this.kind == EthereumValueKind.ARRAY,
+      'EthereumValue is not an array.'
     )
-    return changetype<Array<Token>>(this.data as u32)
+    return changetype<Array<EthereumValue>>(this.data as u32)
   }
 
-  static fromAddress(address: Address): Token {
+  static fromAddress(address: Address): EthereumValue {
     assert(address.length == 20, 'Address must contain exactly 20 bytes')
 
-    let token = new Token()
-    token.kind = TokenKind.ADDRESS
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.ADDRESS
     token.data = address as u64
     return token
   }
 
-  static fromBoolean(b: boolean): Token {
-    let token = new Token()
-    token.kind = TokenKind.BOOL
+  static fromBoolean(b: boolean): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.BOOL
     token.data = b ? 1 : 0
     return token
   }
 
-  static fromBytes(bytes: Bytes): Token {
-    let token = new Token()
-    token.kind = TokenKind.BYTES
+  static fromBytes(bytes: Bytes): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.BYTES
     token.data = bytes as u64
     return token
   }
 
-  static fromI8(i: i8): Token {
-    let token = new Token()
-    token.kind = TokenKind.INT
+  static fromI8(i: i8): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.INT
     token.data = i as u64
     return token
   }
 
-  static fromI16(i: i16): Token {
-    let token = new Token()
-    token.kind = TokenKind.INT
+  static fromI16(i: i16): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.INT
     token.data = i as u64
     return token
   }
 
-  static fromI32(i: i32): Token {
-    let token = new Token()
-    token.kind = TokenKind.INT
+  static fromI32(i: i32): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.INT
     token.data = i as u64
     return token
   }
 
-  static fromI128(i: I128): Token {
-    let token = new Token()
-    token.kind = TokenKind.INT
+  static fromI128(i: I128): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.INT
     token.data = i as u64
     return token
   }
 
-  static fromI256(i: I256): Token {
-    let token = new Token()
-    token.kind = TokenKind.INT
+  static fromI256(i: I256): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.INT
     token.data = i as u64
     return token
   }
 
-  static fromU8(u: u8): Token {
-    let token = new Token()
-    token.kind = TokenKind.UINT
+  static fromU8(u: u8): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.UINT
     token.data = u as u64
     return token
   }
 
-  static fromU16(u: u16): Token {
-    let token = new Token()
-    token.kind = TokenKind.UINT
+  static fromU16(u: u16): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.UINT
     token.data = u as u64
     return token
   }
 
-  static fromU32(u: u32): Token {
-    let token = new Token()
-    token.kind = TokenKind.UINT
+  static fromU32(u: u32): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.UINT
     token.data = u as u64
     return token
   }
 
-  static fromU128(u: U128): Token {
-    let token = new Token()
-    token.kind = TokenKind.UINT
+  static fromU128(u: U128): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.UINT
     token.data = u as u64
     return token
   }
 
-  static fromU256(u: U256): Token {
-    let token = new Token()
-    token.kind = TokenKind.UINT
+  static fromU256(u: U256): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.UINT
     token.data = u as u64
     return token
   }
 
-  static fromString(s: string): Token {
-    let token = new Token()
-    token.kind = TokenKind.STRING
+  static fromString(s: string): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.STRING
     token.data = s as u64
     return token
   }
 
-  static fromArray(arr: Token): Token {
-    let token = new Token()
-    token.kind = TokenKind.ARRAY
+  static fromArray(arr: EthereumValue): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.ARRAY
     token.data = arr as u64
     return token
   }
@@ -544,7 +544,7 @@ class EthereumEvent {
  */
 class EthereumEventParam {
   name: string
-  value: Token
+  value: EthereumValue
 }
 
 class SmartContractCall {
@@ -552,14 +552,14 @@ class SmartContractCall {
   contractName: string
   contractAddress: Address
   functionName: string
-  functionParams: Array<Token>
+  functionParams: Array<EthereumValue>
 
   constructor(
     blockHash: H256,
     contractName: string,
     contractAddress: Address,
     functionName: string,
-    functionParams: Array<Token>
+    functionParams: Array<EthereumValue>
   ) {
     this.blockHash = blockHash
     this.contractName = contractName
@@ -583,7 +583,7 @@ class SmartContract {
     this.blockHash = blockHash
   }
 
-  call(name: string, params: Array<Token>): Array<Token> {
+  call(name: string, params: Array<EthereumValue>): Array<EthereumValue> {
     let call = new SmartContractCall(
       this.blockHash,
       this.name,
