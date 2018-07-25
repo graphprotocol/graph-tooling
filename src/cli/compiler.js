@@ -156,9 +156,10 @@ class Compiler {
   }
 
   _copyRuntimeFile(targetDir, basename) {
+    let source = path.join(__dirname, '..', 'runtime', basename)
     let target = path.join(targetDir, basename)
     this.logger.note('Copy runtime file:', this.displayPath(target))
-    fs.copyFileSync(path.join(__dirname, '..', 'src', basename), target)
+    fs.copyFileSync(source, target)
   }
 
   addTypesToRuntime(typeFiles) {

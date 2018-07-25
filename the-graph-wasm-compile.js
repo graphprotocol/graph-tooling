@@ -4,7 +4,7 @@ let app = require('commander')
 let path = require('path')
 let ipfsAPI = require('ipfs-api')
 
-let Compiler = require('./cli-lib/compiler')
+let Compiler = require('./src/cli/compiler')
 
 app
   .version('0.1.0')
