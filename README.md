@@ -50,7 +50,7 @@ An example of this can be found in the [Decentraland repository](https://github.
       "scripts": {
         "codegen": "graph generate-types data-source.yaml",
         "build": "graph build data-source.yaml",
-        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001"
+        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 data-source.yaml"
       }
     }
     ```
