@@ -5,9 +5,9 @@ export { allocate_memory, free_memory }
 
 /** Host database interface */
 declare namespace database {
-  function create(entity: string, id: string, data: Entity): void
-  function update(entity: string, id: string, data: Entity): void
-  function remove(entity: string, id: string): void
+  function create(blockHash: H256, entity: string, id: string, data: Entity): void
+  function update(blockHash: H256, entity: string, id: string, data: Entity): void
+  function remove(blockHash: H256, entity: string, id: string): void
 }
 
 /** Host ethereum interface */
@@ -613,5 +613,32 @@ class SmartContract {
       params
     )
     return ethereum.call(call)
+  }
+}
+
+/**
+ * Host database interface.
+ */
+class Database {
+  blockHash: H256
+
+  protected constructor(blockHash: H256) {
+    this.blockHash = blockHash
+  }
+
+  static bind(blockHash: H256): Database {
+    return new Database(blockHash)
+  }
+
+  create(entity: string, id: string, data: Entity): void {
+    database.create(this.blockHash, entity, id, data)
+  }
+
+  update(entity: string, id: string, data: Entity): void {
+    database.update(this.blockHash, entity, id, data)
+  }
+
+  remove(entity: string, id: string): void {
+    database.remove(this.blockHash, entity, id)
   }
 }

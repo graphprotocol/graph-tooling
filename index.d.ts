@@ -1,7 +1,17 @@
 /// <reference path="./node_modules/assemblyscript/std/assembly.d.ts" />
 
-/** Host database interface */
-declare namespace database {
+/**
+ * Host database interface
+ */
+declare class Database {
+  /**
+   * Creates a database object to add/update/remove Entities
+   * to/from the database.
+   *
+   * @param blockHash Hash of the current Ethereum block.
+   */
+  static bind(blockHash: H256): Database
+
   /**
    * Creates an entity in the host database.
    *
@@ -9,7 +19,7 @@ declare namespace database {
    * @param id Entity ID.
    * @param data Entity data.
    */
-  function create(entity: string, id: string, data: Entity): void
+  create(entity: string, id: string, data: Entity): void
 
   /**
    * Updates an entity in the host database.
@@ -18,7 +28,7 @@ declare namespace database {
    * @param id Entity ID.
    * @param data Entity data.
    */
-  function update(entity: string, id: string, data: Entity): void
+  update(entity: string, id: string, data: Entity): void
 
   /**
    * Removes ane entity from the host database.
@@ -26,7 +36,7 @@ declare namespace database {
    * @param entity Name of the entity type.
    * @param id Entity ID.
    */
-  function remove(entity: string, id: string): void
+  remove(entity: string, id: string, data: Entity): void
 }
 
 /**
