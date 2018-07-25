@@ -15,7 +15,7 @@
     "prettier": "^1.13.5",
     "winston": "^3.0.0"
   },
-  "module": "src/index.ts",
+  "module": "src/runtime/index.ts",
   "types": "./index.d.ts",
   "bin": {
     "the-graph-wasm": "./cli.js",
