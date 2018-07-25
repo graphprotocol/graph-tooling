@@ -1,9 +1,9 @@
 {
-  "name": "the-graph-wasm",
+  "name": "graph-cli",
   "version": "0.1.0",
-  "description": "Data source compiler for The Graph WASM runtime",
+  "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
-    "assemblyscript": "https://github.com/AssemblyScript/assemblyscript/",
+    "assemblyscript": "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11",
     "chalk": "^2.4.1",
     "commander": "^2.15.1",
     "debug": "^3.1.0",
@@ -18,7 +18,8 @@
   "module": "src/runtime/index.ts",
   "types": "./index.d.ts",
   "bin": {
-    "the-graph-wasm": "./cli.js",
-    "the-graph-wasm-compile": "./the-graph-wasm-compile.js"
+    "graph": "./graph.js",
+    "graph-build": "./graph-build.js",
+    "graph-codegen": "./graph-codegen.js"
   }
 }

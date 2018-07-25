@@ -1,53 +1,68 @@
-# the-graph-wasm
+# graph-cli
 
-This tool compiles data source definitions for WASM runtime of The Graph.
+The Graph command line interface.
+
+As of today, the command line interface consists of two commands:
+
+- `graph codegen` — generates TypeScript code for smart contract ABIs used in The Graph data sources.
+- `graph build` — compiles The Graph data sources to WebAssembly and deploys them to IPFS.
 
 ## How It Works
 
-`the-graph-wasm` takes a `data-source.yaml` data source definition (with references
-to a GraphQL schema, smart contract ABIs and data source mappings written in
-TypeScript/AssemblyScript), compiles the mappings to WASM and outputs a ready-to-use
-version of the data source.
+`graph` takes a `data-source.yaml` data source definition
 
-## Usage (TypeScript package)
+- with references
+  to a GraphQL schema,
+- smart contract ABIs, and
+- data source mappings written in TypeScript/AssemblyScript,
 
-An example of this can be found in [examples/memefactory/](examples/memefactory/).
+compiles the mappings to WebAssmebly and deploys a ready-to-use
+version of the data source to IPFS (or a local directory for
+debugging).
 
-1.  Install the package
+## Usage
+
+Data sources for The Graph are set up just like any other TypeScript
+project. It is recommended to install `graph-cli` as a local dependency
+via `package.json` and use `npm` scripts for code generation and
+building.
+
+An example of this can be found in the [Decentraland repository](https://github.com/graphprotocol/decentraland/).
+
+1.  Create a project for the data source with a `package.json` etc.
+2.  Add a `data-source.yaml` definition with a GraphQL schema etc.
+3.  Add `graph-cli` as a local dependency with one of
     ```bash
-    yarn add the-graph-wasm
+    npm install --save-dev graph-cli
+    yarn add --dev graph-cli
     ```
-2.  Add the following `tsconfig.json`:
+4.  Add the following `tsconfig.json`:
     ```json
     {
-      "extends": "./node_modules/the-graph-wasm/tsconfig.json",
+      "extends": "./node_modules/graph-cli/tsconfig.json",
       "files": ["mapping.ts"]
     }
     ```
-3.  Add a GraphQL schema file and a data source definition.
-4.  Add the following to `package.json`:
+    _Note: Replace `"mapping.ts"` with your own mapping fil(e)s._
+5.  Add the following to `package.json`:
     ```json
     {
       "scripts": {
-        "codegen": "the-graph-wasm generate-types data-source.yaml",
-        "build": "the-graph-wasm compile data-source.yaml"
+        "codegen": "graph generate-types data-source.yaml",
+        "build": "graph build data-source.yaml",
+        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001"
       }
     }
     ```
-5.  Generate TypeScript type definitions from contract ABIs used in the
-    data source via:
+    _Note: Replace the IPFS address with any IPFS node you want to deploy the data source to._
+6.  Generate type definitions for contract ABIs used in the data
+    with:
     ```bash
     yarn codegen
     ```
-6.  Develop your `mapping.ts` against those generated types.
-7.  Build with
-    ```bash
-    yarn build
+7.  Develop your `mapping.ts` against these generated types.
+8.  Build with one of
+    ```sh
+    yarn build      # Will drop the results in dist/
+    yarn build-ipfs # Will also deploy to IPFS and output an IPFS hash
     ```
-
-## Usage (CLI)
-
-```bash
-npm install -g https://github.com/graphprotocol/the-graph-wasm
-the-graph-wasm compile data-source.yaml
-```
