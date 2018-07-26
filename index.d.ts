@@ -1,19 +1,19 @@
 /// <reference path="./node_modules/assemblyscript/std/assembly.d.ts" />
 
 /**
- * Host database interface
+ * Host store interface
  */
-declare class Database {
+declare class Store {
   /**
-   * Creates a database object to add/update/remove Entities
-   * to/from the database.
+   * Creates a store object to add/update/remove Entities
+   * to/from the store.
    *
    * @param blockHash Hash of the current Ethereum block.
    */
-  static bind(blockHash: H256): Database
+  static bind(blockHash: H256): Store
 
   /**
-   * Creates an entity in the host database.
+   * Creates an entity in the host store.
    *
    * @param entity Name of the entity type.
    * @param id Entity ID.
@@ -22,7 +22,7 @@ declare class Database {
   create(entity: string, id: string, data: Entity): void
 
   /**
-   * Updates an entity in the host database.
+   * Updates an entity in the host store.
    *
    * @param entity Name of the entity type.
    * @param id Entity ID.
@@ -31,7 +31,7 @@ declare class Database {
   update(entity: string, id: string, data: Entity): void
 
   /**
-   * Removes ane entity from the host database.
+   * Removes ane entity from the host store.
    *
    * @param entity Name of the entity type.
    * @param id Entity ID.

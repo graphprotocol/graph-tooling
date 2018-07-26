@@ -3,8 +3,8 @@ import 'allocator/arena'
 // Export allocator functions for hosts to manage WASM memory
 export { allocate_memory, free_memory }
 
-/** Host database interface */
-declare namespace database {
+/** Host store interface */
+declare namespace store {
   function create(blockHash: H256, entity: string, id: string, data: Entity): void
   function update(blockHash: H256, entity: string, id: string, data: Entity): void
   function remove(blockHash: H256, entity: string, id: string): void
@@ -617,28 +617,28 @@ class SmartContract {
 }
 
 /**
- * Host database interface.
+ * Host store interface.
  */
-class Database {
+class Store {
   blockHash: H256
 
   protected constructor(blockHash: H256) {
     this.blockHash = blockHash
   }
 
-  static bind(blockHash: H256): Database {
-    return new Database(blockHash)
+  static bind(blockHash: H256): Store {
+    return new Store(blockHash)
   }
 
   create(entity: string, id: string, data: Entity): void {
-    database.create(this.blockHash, entity, id, data)
+    store.create(this.blockHash, entity, id, data)
   }
 
   update(entity: string, id: string, data: Entity): void {
-    database.update(this.blockHash, entity, id, data)
+    store.update(this.blockHash, entity, id, data)
   }
 
   remove(entity: string, id: string): void {
-    database.remove(this.blockHash, entity, id)
+    store.remove(this.blockHash, entity, id)
   }
 }
