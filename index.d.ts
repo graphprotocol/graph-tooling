@@ -13,22 +13,13 @@ declare class Store {
   static bind(blockHash: H256): Store
 
   /**
-   * Creates an entity in the host store.
+   * Creates or updates an entity in the host store.
    *
    * @param entity Name of the entity type.
    * @param id Entity ID.
    * @param data Entity data.
    */
-  create(entity: string, id: string, data: Entity): void
-
-  /**
-   * Updates an entity in the host store.
-   *
-   * @param entity Name of the entity type.
-   * @param id Entity ID.
-   * @param data Entity data.
-   */
-  update(entity: string, id: string, data: Entity): void
+  set(entity: string, id: string, data: Entity): void
 
   /**
    * Removes ane entity from the host store.

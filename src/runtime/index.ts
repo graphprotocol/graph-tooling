@@ -5,8 +5,7 @@ export { allocate_memory, free_memory }
 
 /** Host store interface */
 declare namespace store {
-  function create(blockHash: H256, entity: string, id: string, data: Entity): void
-  function update(blockHash: H256, entity: string, id: string, data: Entity): void
+  function set(blockHash: H256, entity: string, id: string, data: Entity): void
   function remove(blockHash: H256, entity: string, id: string): void
 }
 
@@ -630,12 +629,8 @@ class Store {
     return new Store(blockHash)
   }
 
-  create(entity: string, id: string, data: Entity): void {
-    store.create(this.blockHash, entity, id, data)
-  }
-
-  update(entity: string, id: string, data: Entity): void {
-    store.update(this.blockHash, entity, id, data)
+  set(entity: string, id: string, data: Entity): void {
+    store.set(this.blockHash, entity, id, data)
   }
 
   remove(entity: string, id: string): void {
