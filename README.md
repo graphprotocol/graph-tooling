@@ -1,4 +1,4 @@
-# graph-cli
+# The Graph CLI (graph-cli)
 
 The Graph command line interface.
 
@@ -66,3 +66,10 @@ An example of this can be found in the [Decentraland repository](https://github.
     yarn build      # Will drop the results in dist/
     yarn build-ipfs # Will also deploy to IPFS and output an IPFS hash
     ```
+
+## License
+
+Copyright &copy; 2018 Graph Protocol, Inc. and contributors.
+
+The Graph CLI is dual-licensed under the [MIT license](LICENSE-MIT) and the
+[Apache License, Version 2.0](LICENSE-APACHE).
