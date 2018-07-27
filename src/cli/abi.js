@@ -16,22 +16,33 @@ module.exports = class ABI {
 
   _generateEventTypes() {
     return this.data.filter(member => member.get('type') === 'event').map(event => {
-      let klass = codegen.klass(event.get('name'), { extends: 'EthereumEvent' })
+      let eventClassName = event.get('name');
+      // First, generate the class with the param getters.
+      let paramsClassName = eventClassName + 'Params'
+      let paramsClass = codegen.klass(paramsClassName, {})
+      paramsClass.addMember(codegen.klassMember('_event', eventClassName))
+      paramsClass.addMethod(
+        codegen.method(
+          `constructor`,
+          [codegen.param(`event`, eventClassName)],
+          null,
+          `this._event = event`
+        )
+      )
 
       event.get('inputs').forEach((input, index) => {
         let name = input.get('name')
         if (name === undefined || name === null || name === '') {
           name = `param${index}`
         }
-
-        klass.addMethod(
+        paramsClass.addMethod(
           codegen.method(
             `get ${name}`,
             [],
             codegen.simpleType(input.get('type')),
             `
             return ${codegen.ethereumValueToCoercion(
-              `this.params[${index}].value`,
+              `this._event.params[${index}].value`,
               input.get('type')
             )}
             `
@@ -39,7 +50,16 @@ module.exports = class ABI {
         )
       })
 
-      return klass
+      let klass = codegen.klass(eventClassName, { extends: 'EthereumEvent' })
+      klass.addMethod(
+        codegen.method(
+          `get params`,
+          [],
+          codegen.namedType(paramsClassName),
+          `return new ${paramsClassName}(this)`          
+        )
+      )
+      return [klass, paramsClass]
     })
   }
 
