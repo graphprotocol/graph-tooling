@@ -127,7 +127,7 @@ class Param {
   }
 
   toString() {
-    return `${this.name}: ${typeToString(this.type)}`
+    return `${this.name}: ${this.type.toString()}`
   }
 }
 
@@ -233,7 +233,7 @@ class ClassMember {
   }
 
   toString() {
-    return `  ${this.name}: ${typeToString(this.type)}`
+    return `  ${this.name}: ${this.type.toString()}`
   }
 }
 
