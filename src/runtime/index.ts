@@ -14,6 +14,16 @@ declare namespace ethereum {
   function call(call: SmartContractCall): Array<EthereumValue>
 }
 
+/** Host IPFS interface */
+declare namespace ipfs {
+  function cat(hash: String): Bytes
+}
+
+/** Host JSON interface */
+declare namespace json {
+  function fromBytes(data: Bytes): JSONValue
+}
+
 /** Host type conversion interface */
 declare namespace typeConversion {
   function bytesToString(address: Address): string
@@ -635,5 +645,53 @@ class Store {
 
   remove(entity: string, id: string): void {
     store.remove(this.blockHash, entity, id)
+  }
+}
+
+/** Type hint for JSON values. */
+enum JSONValueKind {
+  NULL,
+  BOOL,
+  NUMBER,
+  STRING,
+  ARRAY,
+  OBJECT,
+}
+
+/**
+ * Pointer type for JSONValue data.
+ *
+ * Big enough to fit any pointer or native `this.data`.
+ */
+type JSONValuePayload = u64
+
+class JSONValue {
+  kind: JSONValueKind
+  data: JSONValuePayload
+
+  isNull(): boolean {
+    return this.kind == JSONValueKind.NULL
+  }
+
+  toBool(): boolean {
+    assert(this.kind == JSONValueKind.BOOL, 'JSON value is not a boolean.')
+    return this.data != 0
+  }
+
+  // TODO: Conversion to number types.
+
+  toString(): string {
+    assert(this.kind == JSONValueKind.STRING, 'JSON value is not a string.')
+    return changetype<string>(this.data as u32)
+  }
+
+  toArray(): Array<JSONValue> {
+    assert(this.kind == JSONValueKind.ARRAY, 'JSON value is not an array.')
+    return changetype<Array<JSONValue>>(this.data as u32)
+  }
+
+  toObject(): TypedMap<string, JSONValue> {
+    assert(this.kind == JSONValueKind.OBJECT, 'JSON value is not an object.')
+    return changetype<TypedMap<string, JSONValue>>(this.data as u32)
   }
 }
