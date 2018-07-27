@@ -224,3 +224,31 @@ declare interface EthereumEventParam {
   name: string
   value: EthereumValue
 }
+
+/** Type hint for JSON values. */
+declare enum JSONValueKind {
+  NULL,
+  BOOL,
+  NUMBER,
+  STRING,
+  ARRAY,
+  OBJECT,
+}
+
+/**
+ * Pointer type for JSONValue data.
+ *
+ * Big enough to fit any pointer or native `this.data`.
+ */
+declare type JSONValuePayload = u64
+
+/**
+ * JSON value.
+ */
+declare class JSONValue {
+  isNull(): boolean
+  toBool(): boolean
+  toString(): string
+  toArray(): Array<JSONValue>
+  toObject(): TypedMap<string, JSONValue>
+}
