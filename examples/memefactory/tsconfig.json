@@ -1,4 +1,0 @@
-{
-  "extends": "./node_modules/the-graph-wasm/tsconfig.json",
-  "files": ["mapping.ts", "types/Meme.types.ts", "types/MemeRegistry.types.ts"]
-}
