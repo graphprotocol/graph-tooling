@@ -22,7 +22,7 @@ declare class Store {
   set(entity: string, id: string, data: Entity): void
 
   /**
-   * Removes ane entity from the host store.
+   * Removes an entity from the host store.
    *
    * @param entity Name of the entity type.
    * @param id Entity ID.
