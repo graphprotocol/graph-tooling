@@ -74,8 +74,8 @@ module.exports = class ABI {
       codegen.staticMethod(
         'bind',
         immutable.List([
-          codegen.param('address', 'address'),
-          codegen.param('blockHash', 'h256'),
+          codegen.param('address', codegen.simpleType('address')),
+          codegen.param('blockHash', codegen.simpleType('h256')),
         ]),
         klass,
         `
@@ -110,7 +110,7 @@ module.exports = class ABI {
                   member
                     .get('outputs')
                     .map((output, index) =>
-                      codegen.param(`value${index}`, output.get('type'))
+                      codegen.param(`value${index}`, codegen.simpleType(output.get('type')))
                     ),
                   null,
                   member
@@ -147,7 +147,7 @@ module.exports = class ABI {
               member
                 .get('outputs')
                 .map((output, index) =>
-                  codegen.klassMember(`value${index}`, output.get('type'))
+                  codegen.klassMember(`value${index}`, codegen.simpleType(output.get('type')))
                 )
                 .forEach(member => returnType.addMember(member))
 
@@ -170,7 +170,7 @@ module.exports = class ABI {
                 member
                   .get('inputs')
                   .map((input, index) =>
-                    codegen.param(paramName(input.get('name'), index), input.get('type'))
+                    codegen.param(paramName(input.get('name'), index), codegen.simpleType(input.get('type')))
                   ),
                 returnType,
                 `
