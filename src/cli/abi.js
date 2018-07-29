@@ -60,7 +60,11 @@ module.exports = class ABI {
         )
       )
       return [klass, paramsClass]
-    })
+    }).reduce(
+      // flatten the array
+      (array, classes) => array.concat(classes),
+      []
+    )
   }
 
   _generateSmartContractClass() {

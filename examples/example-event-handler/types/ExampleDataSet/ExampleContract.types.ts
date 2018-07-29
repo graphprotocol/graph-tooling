@@ -1,6 +1,18 @@
 class ExampleEvent extends EthereumEvent {
+  get params(): ExampleEventParams {
+    return new ExampleEventParams(this);
+  }
+}
+
+class ExampleEventParams {
+  _event: ExampleEvent;
+
+  constructor(event: ExampleEvent) {
+    this._event = event;
+  }
+
   get exampleParam(): string {
-    return this.params[0].value.toString();
+    return this._event.params[0].value.toString();
   }
 }
 
