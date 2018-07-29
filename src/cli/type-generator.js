@@ -4,8 +4,8 @@ let path = require('path')
 let prettier = require('prettier')
 
 let ABI = require('./abi')
-let DataSource = require('./data-source')
 let Logger = require('./logger')
+let Subgraph = require('./subgraph')
 
 module.exports = class TypeGenerator {
   constructor(options) {
@@ -16,48 +16,46 @@ module.exports = class TypeGenerator {
       : s => path.relative(process.cwd(), s)
     this.sourceDir =
       this.options.sourceDir ||
-      (this.options.dataSourceFile && path.dirname(this.options.dataSourceFile))
+      (this.options.subgraphManifest && path.dirname(this.options.subgraphManifest))
   }
 
   generateTypes() {
-    let dataSource = this.loadDataSource()
-    let abis = this.loadABIs(dataSource)
+    let subgraph = this.loadSubgraph()
+    let abis = this.loadABIs(subgraph)
     return this.generateTypesForABIs(abis)
   }
 
-  loadDataSource() {
+  loadSubgraph() {
     try {
-      if (this.options.dataSourceFile) {
+      if (this.options.subgraphManifest) {
         this.logger.step(
-          'Load data source:',
-          this.displayPath(this.options.dataSourceFile)
+          'Load subgraph:',
+          this.displayPath(this.options.subgraphManifest)
         )
       } else {
-        this.logger.step('Load data source')
+        this.logger.step('Load subgraph')
       }
 
-      return this.options.dataSource
-        ? this.options.dataSource
-        : DataSource.load(this.options.dataSourceFile)
+      return this.options.subgraph
+        ? this.options.subgraph
+        : Subgraph.load(this.options.subgraphManifest)
     } catch (e) {
-      this.logger.fatal('Failed to load data source:', e)
+      this.logger.fatal('Failed to load subgraph:', e)
     }
   }
 
-  loadABIs(dataSource) {
+  loadABIs(subgraph) {
     try {
       this.logger.step('Load contract ABIs')
-      return dataSource
-        .get('datasets')
+      return subgraph
+        .get('dataSources')
         .reduce(
-          (abis, dataSet) =>
-            dataSet
+          (abis, dataSource) =>
+            dataSource
               .getIn(['mapping', 'abis'])
               .reduce(
                 (abis, abi) =>
-                  abis.push(
-                    this._loadABI(dataSet, abi.get('name'), abi.getIn(['source', 'path']))
-                  ),
+                  abis.push(this._loadABI(dataSource, abi.get('name'), abi.get('file'))),
                 abis
               ),
           immutable.List()
@@ -67,14 +65,14 @@ module.exports = class TypeGenerator {
     }
   }
 
-  _loadABI(dataSet, name, maybeRelativePath) {
+  _loadABI(dataSource, name, maybeRelativePath) {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
         this.logger.note('Load contract ABI file:', this.displayPath(absolutePath))
-        return { dataSet: dataSet, abi: ABI.load(name, absolutePath) }
+        return { dataSource: dataSource, abi: ABI.load(name, absolutePath) }
       } else {
-        return { dataSet: dataSet, abi: ABI.load(name, maybeRelativePath) }
+        return { dataSource: dataSource, abi: ABI.load(name, maybeRelativePath) }
       }
     } catch (e) {
       this.logger.fatal('Failed to load contract ABI:', e)
@@ -95,7 +93,7 @@ module.exports = class TypeGenerator {
       this.logger.note(
         'Generate types for contract ABI:',
         abi.abi.name,
-        `(${path.basename(abi.abi.path)})`
+        `(${path.basename(abi.abi.file)})`
       )
 
       let types = abi.abi.generateTypes()
@@ -104,14 +102,14 @@ module.exports = class TypeGenerator {
 
       let outputFile = path.join(
         this.options.outputDir,
-        abi.dataSet.getIn(['data', 'name']),
+        abi.dataSource.get('name'),
         `${abi.abi.name}.types.ts`
       )
       this.logger.note('Write types to:', this.displayPath(outputFile))
       fs.mkdirsSync(path.dirname(outputFile))
       fs.writeFileSync(outputFile, formattedCode)
 
-      return { dataSet: abi.dataSet, abi: abi.abi, outputFile: outputFile }
+      return { dataSource: abi.dataSource, abi: abi.abi, outputFile: outputFile }
     } catch (e) {
       this.logger.fatal('Failed to generate types for contract ABI:', e)
     }

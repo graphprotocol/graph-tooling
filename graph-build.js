@@ -36,7 +36,7 @@ app.on('--help', function() {
 
 app.parse(process.argv)
 
-// Obtain the data source definition file
+// Obtain the subgraph manifest file
 let file = app.args.shift()
 if (file === null || file === undefined) {
   app.help()
@@ -45,10 +45,10 @@ if (file === null || file === undefined) {
 // Connect to the IPFS node (if a node address was provided)
 let ipfs = app.ipfs ? ipfsAPI(app.ipfs) : undefined
 
-// Compile the data source
+// Compile the subgraph
 new Compiler({
   ipfs: ipfs,
-  dataSourceFile: file,
+  subgraphManifest: file,
   outputDir: app.outputDir,
   outputFormat: app.outputFormat,
   verbosity: app.verbosity,

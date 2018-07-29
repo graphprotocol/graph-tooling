@@ -1,10 +1,10 @@
 {
   "name": "example-event-handler",
   "scripts": {
-    "codegen": "graph codegen --output-dir types/ data-source.yaml",
-    "build": "graph build data-source.yaml",
-    "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 data-source.yaml",
-    "build-wast": "graph build -t wast data-source.yaml"
+    "codegen": "graph codegen --output-dir types/ subgraph.yaml",
+    "build": "graph build subgraph.yaml",
+    "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
+    "build-wast": "graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
     "graph-cli": "ssh://git@github.com/graphprotocol/graph-cli"

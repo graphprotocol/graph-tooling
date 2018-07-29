@@ -5,20 +5,20 @@ const path = require('path')
 const immutable = require('immutable')
 const yaml = require('js-yaml')
 
-const DataSource = require('./data-source')
 const Logger = require('./logger')
+const Subgraph = require('./subgraph')
 const TypeGenerator = require('./type-generator')
 
 class Compiler {
   constructor(options) {
     this.options = options
     this.ipfs = options.ipfs
-    this.sourceDir = path.dirname(options.dataSourceFile)
+    this.sourceDir = path.dirname(options.subgraphManifest)
     this.logger = new Logger(11, { verbosity: this.options.verbosity })
   }
 
-  dataSetDir(parent, dataSet) {
-    return path.join(parent, dataSet.getIn(['data', 'name']))
+  subgraphDir(parent, subgraph) {
+    return path.join(parent, subgraph.get('name'))
   }
 
   displayPath(p) {
@@ -30,39 +30,39 @@ class Compiler {
   }
 
   async compile() {
-    let dataSource = this.loadDataSource()
+    let subgraph = this.loadSubgraph()
 
     this.buildDir = this.createBuildDirectory()
 
-    let dataSourceInBuildDir = this.copyDataSource(dataSource)
-    let typeFiles = this.generateTypes(dataSourceInBuildDir)
+    let subgraphInBuildDir = this.copySubgraph(subgraph)
+    let typeFiles = this.generateTypes(subgraphInBuildDir)
 
-    this.copyRuntimeFiles(dataSourceInBuildDir)
+    this.copyRuntimeFiles(subgraphInBuildDir)
     this.addTypesToRuntime(typeFiles)
-    this.addMappingsToRuntime(dataSourceInBuildDir)
+    this.addMappingsToRuntime(subgraphInBuildDir)
     this.createOutputDirectory()
 
-    let compiledDataSource = this.compileDataSource(dataSourceInBuildDir)
-    let localDataSource = this.writeDataSourceToOutputDirectory(compiledDataSource)
+    let compiledSubgraph = this.compileSubgraph(subgraphInBuildDir)
+    let localSubgraph = this.writeSubgraphToOutputDirectory(compiledSubgraph)
 
     let hashOrFilename =
       this.ipfs !== undefined
-        ? await this.uploadDataSourceToIPFS(localDataSource)
-        : path.join(this.options.outputDir, 'data-source.yaml')
+        ? await this.uploadSubgraphToIPFS(localSubgraph)
+        : path.join(this.options.outputDir, 'subgraph.yaml')
 
     this.logger.info('')
     this.logger.info(chalk.green('Completed'))
     this.logger.info('')
-    this.logger.info('%s %s', chalk.bold(chalk.blue('Data source:')), hashOrFilename)
+    this.logger.info('%s %s', chalk.bold(chalk.blue('Subgraph:')), hashOrFilename)
     this.logger.info('')
   }
 
-  loadDataSource() {
+  loadSubgraph() {
     try {
-      this.logger.step('Load data source:', this.options.dataSourceFile)
-      return DataSource.load(this.options.dataSourceFile)
+      this.logger.step('Load subgraph:', this.options.subgraphManifest)
+      return Subgraph.load(this.options.subgraphManifest)
     } catch (e) {
-      this.logger.fatal('Failed to load data source:', e)
+      this.logger.fatal('Failed to load subgraph:', e)
     }
   }
 
@@ -71,7 +71,7 @@ class Compiler {
       this.logger.step('Create build directory')
 
       // Create temporary directory
-      let buildDir = fs.mkdtempSync('.the-graph-wasm')
+      let buildDir = fs.mkdtempSync('.graph')
 
       // Ensure the temporary directory is destroyed on exit
       process.on('exit', () => fs.removeSync(buildDir))
@@ -84,61 +84,61 @@ class Compiler {
     }
   }
 
-  copyDataSource(dataSource) {
+  copySubgraph(subgraph) {
     try {
-      this.logger.step('Copy data source to build directory')
+      this.logger.step('Copy subgraph to build directory')
 
       // Copy schema and update its path
-      dataSource = dataSource.updateIn(['schema', 'source', 'path'], schemaPath =>
-        this._copyDataSourceFile(schemaPath, this.sourceDir, this.buildDir)
+      subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
+        this._copySubgraphFile(schemaFile, this.sourceDir, this.buildDir)
       )
 
-      // Copy data set files and update their paths
-      dataSource = dataSource.updateIn(['datasets'], dataSets => {
-        return dataSets.map(dataSet =>
-          dataSet
+      // Copy data source files and update their paths
+      subgraph = subgraph.update('dataSources', dataSources => {
+        return dataSources.map(dataSource =>
+          dataSource
             .updateIn(['mapping', 'abis'], abis =>
               abis.map(abi =>
-                abi.updateIn(['source', 'path'], abiPath =>
-                  this._copyDataSourceFile(
-                    abiPath,
+                abi.update('file', abiFile =>
+                  this._copySubgraphFile(
+                    abiFile,
                     this.sourceDir,
-                    this.dataSetDir(this.buildDir, dataSet)
+                    this.subgraphDir(this.buildDir, dataSource)
                   )
                 )
               )
             )
-            .updateIn(['mapping', 'source', 'path'], mappingPath =>
-              this._copyDataSourceFile(
-                mappingPath,
+            .updateIn(['mapping', 'file'], mappingFile =>
+              this._copySubgraphFile(
+                mappingFile,
                 this.sourceDir,
-                this.dataSetDir(this.buildDir, dataSet)
+                this.subgraphDir(this.buildDir, dataSource)
               )
             )
         )
       })
 
-      return dataSource
+      return subgraph
     } catch (e) {
-      this.logger.fatal('Failed to copy data source files:', e)
+      this.logger.fatal('Failed to copy subgraph files:', e)
     }
   }
 
-  _copyDataSourceFile(maybeRelativeFile, sourceDir, targetDir) {
+  _copySubgraphFile(maybeRelativeFile, sourceDir, targetDir) {
     let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
     let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
     let targetFile = path.join(targetDir, relativeSourceFile)
-    this.logger.note('Copy data source file:', this.displayPath(targetFile))
+    this.logger.note('Copy subgraph file:', this.displayPath(targetFile))
     fs.mkdirsSync(path.dirname(targetFile))
     fs.copyFileSync(absoluteSourceFile, targetFile)
     return targetFile
   }
 
-  generateTypes(dataSource) {
+  generateTypes(subgraph) {
     this.logger.step('Generate types from contract ABIs')
 
     let generator = new TypeGenerator({
-      dataSource,
+      subgraph: subgraph,
       outputDir: this.buildDir,
       displayPath: this.displayPath.bind(this),
       logger: {
@@ -148,10 +148,10 @@ class Compiler {
     return generator.generateTypes()
   }
 
-  copyRuntimeFiles(dataSource) {
+  copyRuntimeFiles(subgraph) {
     this.logger.step('Copy runtime to build directory')
-    dataSource.get('datasets').map(dataSet => {
-      this._copyRuntimeFile(this.dataSetDir(this.buildDir, dataSet), 'index.ts')
+    subgraph.get('dataSources').map(dataSource => {
+      this._copyRuntimeFile(this.subgraphDir(this.buildDir, dataSource), 'index.ts')
     })
   }
 
@@ -173,7 +173,7 @@ class Compiler {
 
         let types = fs.readFileSync(typeFileInfo.outputFile)
         fs.appendFileSync(
-          path.join(this.dataSetDir(this.buildDir, typeFileInfo.dataSet), 'index.ts'),
+          path.join(this.subgraphDir(this.buildDir, typeFileInfo.dataSource), 'index.ts'),
           '\n' + types + '\n',
           'utf-8'
         )
@@ -183,13 +183,13 @@ class Compiler {
     }
   }
 
-  addMappingsToRuntime(dataSource) {
+  addMappingsToRuntime(subgraph) {
     this.logger.step('Add mappings to runtime')
     try {
-      dataSource.get('datasets').map(dataSet => {
-        let mapping = fs.readFileSync(dataSet.getIn(['mapping', 'source', 'path']))
+      subgraph.get('dataSources').map(dataSource => {
+        let mapping = fs.readFileSync(dataSource.getIn(['mapping', 'file']))
         fs.appendFileSync(
-          path.join(this.dataSetDir(this.buildDir, dataSet), 'index.ts'),
+          path.join(this.subgraphDir(this.buildDir, dataSource), 'index.ts'),
           '\n' + mapping + '\n',
           'utf-8'
         )
@@ -211,38 +211,38 @@ class Compiler {
     }
   }
 
-  compileDataSource(dataSource) {
+  compileSubgraph(subgraph) {
     try {
-      this.logger.step('Compile data source')
+      this.logger.step('Compile subgraph')
 
-      dataSource = dataSource.updateIn(['datasets'], dataSets =>
-        dataSets.map(dataSet =>
-          dataSet.updateIn(['mapping', 'source', 'path'], mappingPath =>
-            this._compileDataSetMapping(dataSet, mappingPath)
+      subgraph = subgraph.update('dataSources', dataSources =>
+        dataSources.map(dataSource =>
+          dataSource.updateIn(['mapping', 'file'], mappingPath =>
+            this._compileDataSourceMapping(dataSource, mappingPath)
           )
         )
       )
 
-      return dataSource
+      return subgraph
     } catch (e) {
-      this.logger.fatal('Failed to compile data source:', e)
+      this.logger.fatal('Failed to compile subgraph:', e)
     }
   }
 
-  _compileDataSetMapping(dataSet, mappingPath) {
+  _compileDataSourceMapping(dataSource, mappingPath) {
     try {
-      let dataSetName = dataSet.getIn(['data', 'name'])
+      let dataSourceName = dataSource.getIn(['name'])
 
       let outputFile = path.join(
-        this.dataSetDir(this.buildDir, dataSet),
+        this.subgraphDir(this.buildDir, dataSource),
         this.options.outputFormat == 'wasm'
-          ? `${dataSetName}.wasm`
-          : `${dataSetName}.wast`
+          ? `${dataSourceName}.wasm`
+          : `${dataSourceName}.wast`
       )
 
       this.logger.note(
-        'Compile data set runtime:',
-        dataSetName,
+        'Compile data source mapping:',
+        dataSourceName,
         '=>',
         this.displayPath(outputFile)
       )
@@ -250,7 +250,7 @@ class Compiler {
       asc.main(
         [
           '--baseDir',
-          this.dataSetDir(this.buildDir, dataSet),
+          this.subgraphDir(this.buildDir, dataSource),
           '--outFile',
           path.basename(outputFile),
           'index.ts',
@@ -261,44 +261,44 @@ class Compiler {
         },
         e => {
           if (e != null) {
-            this.logger.fatal('Failed to compile data set mapping:', e)
+            this.logger.fatal('Failed to compile data source mapping:', e)
           }
         }
       )
 
       return outputFile
     } catch (e) {
-      this.logger.fatal('Failed to compile data set mapping:', e)
+      this.logger.fatal('Failed to compile data source mapping:', e)
     }
   }
 
-  writeDataSourceToOutputDirectory(dataSource) {
+  writeSubgraphToOutputDirectory(subgraph) {
     try {
-      this.logger.step('Write compiled data source to output directory')
+      this.logger.step('Write compiled subgraph to output directory')
 
       // Copy schema and update its path
-      dataSource = dataSource.updateIn(['schema', 'source', 'path'], schemaPath =>
+      subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
         path.relative(
           this.options.outputDir,
-          this._copyDataSourceFile(
-            path.relative(this.buildDir, schemaPath),
+          this._copySubgraphFile(
+            path.relative(this.buildDir, schemaFile),
             this.buildDir,
             this.options.outputDir
           )
         )
       )
 
-      // Copy data set files and update their paths
-      dataSource = dataSource.updateIn(['datasets'], dataSets => {
-        return dataSets.map(dataSet =>
-          dataSet
+      // Copy data source files and update their paths
+      subgraph = subgraph.update('dataSources', dataSources => {
+        return dataSources.map(dataSource =>
+          dataSource
             .updateIn(['mapping', 'abis'], abis =>
               abis.map(abi =>
-                abi.updateIn(['source', 'path'], abiPath =>
+                abi.update('file', abiFile =>
                   path.relative(
                     this.options.outputDir,
-                    this._copyDataSourceFile(
-                      path.relative(this.buildDir, abiPath),
+                    this._copySubgraphFile(
+                      path.relative(this.buildDir, abiFile),
                       this.buildDir,
                       this.options.outputDir
                     )
@@ -306,11 +306,11 @@ class Compiler {
                 )
               )
             )
-            .updateIn(['mapping', 'source', 'path'], mappingPath =>
+            .updateIn(['mapping', 'file'], mappingFile =>
               path.relative(
                 this.options.outputDir,
-                this._copyDataSourceFile(
-                  path.relative(this.buildDir, mappingPath),
+                this._copySubgraphFile(
+                  path.relative(this.buildDir, mappingFile),
                   this.buildDir,
                   this.options.outputDir
                 )
@@ -320,34 +320,31 @@ class Compiler {
       })
 
       // Write the generated index.ts (for debugging purposes)
-      dataSource.get('datasets').map(dataSet => {
+      subgraph.get('dataSources').map(dataSource => {
         let target = path.join(
-          this.dataSetDir(this.options.outputDir, dataSet),
-          `${dataSet.getIn(['data', 'name'])}.ts`
+          this.subgraphDir(this.options.outputDir, dataSource),
+          `${dataSource.get('name')}.ts`
         )
-        this.logger.note(
-          'Write AssemblyScript runtime source:',
-          path.relative(process.cwd(), target)
-        )
+        this.logger.note('Write runtime source:', path.relative(process.cwd(), target))
         fs.copyFileSync(
-          path.join(this.dataSetDir(this.buildDir, dataSet), 'index.ts'),
+          path.join(this.subgraphDir(this.buildDir, dataSource), 'index.ts'),
           target
         )
       })
 
-      // Write the data source definition itself
-      let outputFilename = path.join(this.options.outputDir, 'data-source.yaml')
-      this.logger.note('Write data source definition:', this.displayPath(outputFilename))
-      DataSource.write(dataSource, outputFilename)
+      // Write the subgraph manifest itself
+      let outputFilename = path.join(this.options.outputDir, 'subgraph.yaml')
+      this.logger.note('Write subgraph manifest:', this.displayPath(outputFilename))
+      Subgraph.write(subgraph, outputFilename)
 
-      return dataSource
+      return subgraph
     } catch (e) {
-      this.logger.fatal('Failed to write compiled data source to output directory:', e)
+      this.logger.fatal('Failed to write compiled subgraph to output directory:', e)
     }
   }
 
-  async uploadDataSourceToIPFS(dataSource) {
-    this.logger.step('Upload data source to IPFS')
+  async uploadSubgraphToIPFS(subgraph) {
+    this.logger.step('Upload subgraph to IPFS')
 
     try {
       // Collect all source (path -> hash) updates to apply them later
@@ -355,43 +352,38 @@ class Compiler {
 
       // Upload the schema to IPFS
       updates.push({
-        keyPath: ['schema', 'source'],
-        value: await this._uploadSourceToIPFS(dataSource.getIn(['schema', 'source'])),
+        keyPath: ['schema', 'file'],
+        value: await this._uploadFileToIPFS(subgraph.getIn(['schema', 'file'])),
       })
 
-      // Upload the ABIs of all data sets to IPFS
-      for (let [i, dataSet] of dataSource.get('datasets').entries()) {
-        for (let [j, abi] of dataSet.getIn(['mapping', 'abis']).entries()) {
+      // Upload the ABIs of all data sources to IPFS
+      for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+        for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
           updates.push({
-            keyPath: ['datasets', i, 'mapping', 'abis', j, 'source'],
-            value: await this._uploadSourceToIPFS(abi.get('source')),
+            keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
+            value: await this._uploadFileToIPFS(abi.get('file')),
           })
         }
       }
 
       // Upload all mappings
-      for (let [i, dataSet] of dataSource.get('datasets').entries()) {
+      for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
         updates.push({
-          keyPath: ['datasets', i, 'mapping', 'source'],
-          value: await this._uploadSourceToIPFS(dataSet.getIn(['mapping', 'source'])),
+          keyPath: ['dataSources', i, 'mapping', 'file'],
+          value: await this._uploadFileToIPFS(dataSource.getIn(['mapping', 'file'])),
         })
       }
 
-      // Apply all updates to the data source
+      // Apply all updates to the subgraph
       for (let update of updates) {
-        dataSource = dataSource.setIn(update.keyPath, update.value)
+        subgraph = subgraph.setIn(update.keyPath, update.value)
       }
 
-      // Upload the data source itself
-      return await this._uploadDataSourceDefinitionToIPFS(dataSource)
+      // Upload the subgraph itself
+      return await this._uploadSubgraphDefinitionToIPFS(subgraph)
     } catch (e) {
-      this.logger.fatal('Failed to upload data source to IPFS:', e)
+      this.logger.fatal('Failed to upload subgraph to IPFS:', e)
     }
-  }
-
-  async _uploadSourceToIPFS(source) {
-    let hash = await this._uploadFileToIPFS(source.get('path'))
-    return immutable.fromJS({ '/': `/ipfs/${hash}` })
   }
 
   async _uploadFileToIPFS(maybeRelativeFile) {
@@ -403,12 +395,12 @@ class Compiler {
       content: content,
     })
     this.logger.note('               ..', hash)
-    return hash
+    return immutable.fromJS({ '/': `/ipfs/${hash}` })
   }
 
-  async _uploadDataSourceDefinitionToIPFS(dataSource) {
-    let str = yaml.safeDump(dataSource.toJS(), { noRefs: true, sortKeys: true })
-    let file = { path: 'data-source.yaml', content: Buffer.from(str, 'utf-8') }
+  async _uploadSubgraphDefinitionToIPFS(subgraph) {
+    let str = yaml.safeDump(subgraph.toJS(), { noRefs: true, sortKeys: true })
+    let file = { path: 'subgraph.yaml', content: Buffer.from(str, 'utf-8') }
     return await this._uploadToIPFS(file)
   }
 
