@@ -10,19 +10,19 @@ app
   .arguments('<cmd> [file]')
   .option(
     '-o, --output-dir [path]',
-    'Output directory for files holding the generated types',
+    'Output directory for the generated code',
     path.join(process.cwd(), 'dist')
   )
   .parse(process.argv)
 
-// Obtain the data source definition file
+// Obtain the subgraph manifest file
 let file = app.args.shift()
 if (file === null || file === undefined) {
   app.help()
 }
 
 let generator = new TypeGenerator({
-  dataSourceFile: file,
+  subgraphManifest: file,
   outputDir: app.outputDir,
 })
 generator.generateTypes()
