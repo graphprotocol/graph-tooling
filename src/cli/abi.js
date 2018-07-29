@@ -4,9 +4,9 @@ let immutable = require('immutable')
 let codegen = require('./codegen')
 
 module.exports = class ABI {
-  constructor(name, path, data) {
+  constructor(name, file, data) {
     this.name = name
-    this.path = path
+    this.file = file
     this.data = data
   }
 
@@ -184,7 +184,10 @@ module.exports = class ABI {
                   ${member
                     .get('outputs')
                     .map((output, index) =>
-                      codegen.ethereumValueToCoercion(`result[${index}]`, output.get('type'))
+                      codegen.ethereumValueToCoercion(
+                        `result[${index}]`,
+                        output.get('type')
+                      )
                     )
                     .join(', ')}
                 )`
@@ -199,8 +202,8 @@ module.exports = class ABI {
     return [...types, klass]
   }
 
-  static load(name, path) {
-    let data = JSON.parse(fs.readFileSync(path))
-    return new ABI(name, path, immutable.fromJS(data))
+  static load(name, file) {
+    let data = JSON.parse(fs.readFileSync(file))
+    return new ABI(name, file, immutable.fromJS(data))
   }
 }
