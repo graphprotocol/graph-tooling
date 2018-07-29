@@ -113,7 +113,7 @@ module.exports = class TypeGenerator {
 
       return { dataSet: abi.dataSet, abi: abi.abi, outputFile: outputFile }
     } catch (e) {
-      this.logger.fatal('Failed to generate types for contract ABI:', e)
+      this.logger.fatal('Failed to generate types for contract ABI:', e.stack)
     }
   }
 }
