@@ -15,56 +15,61 @@ module.exports = class ABI {
   }
 
   _generateEventTypes() {
-    return this.data.filter(member => member.get('type') === 'event').map(event => {
-      let eventClassName = event.get('name');
-      // First, generate the class with the param getters.
-      let paramsClassName = eventClassName + 'Params'
-      let paramsClass = codegen.klass(paramsClassName, {})
-      paramsClass.addMember(codegen.klassMember('_event', eventClassName))
-      paramsClass.addMethod(
-        codegen.method(
-          `constructor`,
-          [codegen.param(`event`, eventClassName)],
-          null,
-          `this._event = event`
-        )
-      )
+    return this.data
+      .filter(member => member.get('type') === 'event')
+      .map(event => {
+        let eventClassName = event.get('name')
 
-      event.get('inputs').forEach((input, index) => {
-        let name = input.get('name')
-        if (name === undefined || name === null || name === '') {
-          name = `param${index}`
-        }
+        // First, generate a class with the param getters
+        let paramsClassName = eventClassName + 'Params'
+        let paramsClass = codegen.klass(paramsClassName, {})
+        paramsClass.addMember(codegen.klassMember('_event', eventClassName))
         paramsClass.addMethod(
           codegen.method(
-            `get ${name}`,
-            [],
-            codegen.simpleType(input.get('type')),
-            `
+            `constructor`,
+            [codegen.param(`event`, eventClassName)],
+            null,
+            `this._event = event`
+          )
+        )
+
+        event.get('inputs').forEach((input, index) => {
+          let name = input.get('name')
+          if (name === undefined || name === null || name === '') {
+            name = `param${index}`
+          }
+          paramsClass.addMethod(
+            codegen.method(
+              `get ${name}`,
+              [],
+              codegen.simpleType(input.get('type')),
+              `
             return ${codegen.ethereumValueToCoercion(
-              `this._event.params[${index}].value`,
+              `this._event.parameters[${index}].value`,
               input.get('type')
             )}
             `
+            )
+          )
+        })
+
+        // Then, generate the event class itself
+        let klass = codegen.klass(eventClassName, { extends: 'EthereumEvent' })
+        klass.addMethod(
+          codegen.method(
+            `get params`,
+            [],
+            codegen.namedType(paramsClassName),
+            `return new ${paramsClassName}(this)`
           )
         )
+        return [klass, paramsClass]
       })
-
-      let klass = codegen.klass(eventClassName, { extends: 'EthereumEvent' })
-      klass.addMethod(
-        codegen.method(
-          `get params`,
-          [],
-          codegen.namedType(paramsClassName),
-          `return new ${paramsClassName}(this)`          
-        )
+      .reduce(
+        // flatten the array
+        (array, classes) => array.concat(classes),
+        []
       )
-      return [klass, paramsClass]
-    }).reduce(
-      // flatten the array
-      (array, classes) => array.concat(classes),
-      []
-    )
   }
 
   _generateSmartContractClass() {
@@ -114,7 +119,10 @@ module.exports = class ABI {
                   member
                     .get('outputs')
                     .map((output, index) =>
-                      codegen.param(`value${index}`, codegen.simpleType(output.get('type')))
+                      codegen.param(
+                        `value${index}`,
+                        codegen.simpleType(output.get('type'))
+                      )
                     ),
                   null,
                   member
@@ -151,7 +159,10 @@ module.exports = class ABI {
               member
                 .get('outputs')
                 .map((output, index) =>
-                  codegen.klassMember(`value${index}`, codegen.simpleType(output.get('type')))
+                  codegen.klassMember(
+                    `value${index}`,
+                    codegen.simpleType(output.get('type'))
+                  )
                 )
                 .forEach(member => returnType.addMember(member))
 
@@ -174,7 +185,10 @@ module.exports = class ABI {
                 member
                   .get('inputs')
                   .map((input, index) =>
-                    codegen.param(paramName(input.get('name'), index), codegen.simpleType(input.get('type')))
+                    codegen.param(
+                      paramName(input.get('name'), index),
+                      codegen.simpleType(input.get('type'))
+                    )
                   ),
                 returnType,
                 `
