@@ -566,7 +566,7 @@ class EthereumEvent {
   address: Address
   eventSignature: string
   blockHash: H256
-  params: Array<EthereumEventParam>
+  parameters: Array<EthereumEventParam>
 }
 
 /**
