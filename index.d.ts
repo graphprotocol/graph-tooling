@@ -135,6 +135,7 @@ declare class EthereumValue {
   static fromAddress(address: Address): EthereumValue
   static fromBoolean(b: boolean): EthereumValue
   static fromBytes(bytes: Bytes): EthereumValue
+  static fromFixedBytes(bytes: Bytes): EthereumValue
   static fromI8(i: i8): EthereumValue
   static fromI16(i: i16): EthereumValue
   static fromI32(i: i32): EthereumValue
