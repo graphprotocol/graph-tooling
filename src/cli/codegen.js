@@ -27,7 +27,10 @@ const ETHEREUM_VALUE_FROM_TYPE_FUNCTION_MAP = {
   address: 'EthereumValue.fromAddress',
   bool: 'EthereumValue.fromBoolean',
   byte: 'EthereumValue.fromBytes',
-  '/bytes([0-9]+)?/': 'EthereumValue.fromBytes',
+  // FIXME: The regex doesn't seem to be working so as a workaround include
+  // `bytes32` literally.
+  bytes32: 'EthereumValue.fromFixedBytes',
+  '/bytes([0-9]+)?/': 'EthereumValue.fromFixedBytes',
   int8: 'EthereumValue.fromI8',
   int16: 'EthereumValue.fromI16',
   int32: 'EthereumValue.fromI32',

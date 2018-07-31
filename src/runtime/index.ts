@@ -328,6 +328,13 @@ class EthereumValue {
     return token
   }
 
+  static fromFixedBytes(bytes: Bytes): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.FIXED_BYTES
+    token.data = bytes as u64
+    return token
+  }
+
   static fromI8(i: i8): EthereumValue {
     let token = new EthereumValue()
     token.kind = EthereumValueKind.INT
