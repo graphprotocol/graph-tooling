@@ -29,10 +29,10 @@ An example of this can be found in the [Decentraland repository](https://github.
 
 1.  Create a project for the subgraph with a `package.json` etc.
 2.  Add a `subgraph.yaml` subgraph manifest with a GraphQL schema etc.
-3.  Add `graph-cli` as a local dependency with one of
+3.  Add `@graphprotocol/graph-cli` as a local dependency with one of
     ```bash
-    npm install --save-dev graph-cli # NPM
-    yarn add --dev graph-cli         # Yarn
+    npm install --save-dev @graphprotocol/graph-cli # NPM
+    yarn add --dev @graphprotocol/graph-cli         # Yarn
     ```
 4.  Add the following `tsconfig.json`:
     ```json
