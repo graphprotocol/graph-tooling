@@ -3,8 +3,10 @@
 let app = require('commander')
 let path = require('path')
 let ipfsAPI = require('ipfs-api')
-
+let chokidar = require('chokidar');
 let Compiler = require('./src/cli/compiler')
+
+const chalk = require('chalk')
 
 app
   .version('0.1.0')
@@ -21,6 +23,7 @@ app
   )
   .option('-t, --output-format [format]', 'Output format (wasm, wast)', 'wasm')
   .option('i, --ipfs [addr]', 'IPFS node to use for uploading files')
+  .option('-w, --watch', 'Setup directory watching to rebuild when files change')
 
 app.on('--help', function() {
   console.log('')
@@ -45,11 +48,45 @@ if (file === null || file === undefined) {
 // Connect to the IPFS node (if a node address was provided)
 let ipfs = app.ipfs ? ipfsAPI(app.ipfs) : undefined
 
-// Compile the subgraph
-new Compiler({
-  ipfs: ipfs,
-  subgraphManifest: file,
-  outputDir: app.outputDir,
-  outputFormat: app.outputFormat,
-  verbosity: app.verbosity,
-}).compile()
+let subgraph_generator = new Compiler({
+    ipfs: ipfs,
+    subgraphManifest: file,
+    outputDir: app.outputDir,
+    outputFormat: app.outputFormat,
+    verbosity: app.verbosity,
+})
+
+// Watch working directory for file updates or additions, trigger compile (if watch argument specified)
+if (app.watch) {
+    subgraph_generator.logger.info(chalk.grey('Watching files in working directory' ))
+    // Initialize watchers
+    let watcher = chokidar.watch('.', {
+        persistent: true,
+        ignoreInitial: true,
+        ignored: [
+            /(^|[\/\\])\../,
+            './node_modules',
+            './examples',
+            './dist',
+            '.yarn.lock'
+        ],
+        depth: 3,
+    })
+
+    // Add event listeners.
+    watcher
+        .on('ready', function() {
+            subgraph_generator.compile()
+            watcher
+                .on('add', path => {
+                    subgraph_generator.compile()
+                })
+                .on('change', path => {
+                    subgraph_generator.compile()
+            });
+            subgraph_generator.logger.info('')
+    })
+} else {
+    subgraph_generator.compile()
+}
+
