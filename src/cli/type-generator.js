@@ -10,7 +10,7 @@ let Subgraph = require('./subgraph')
 module.exports = class TypeGenerator {
   constructor(options) {
     this.options = options || {}
-    this.logger = new Logger(3, this.options.logger)
+    this.logger = new Logger(3, { verbosity: this.options.verbosity })
     this.displayPath = this.options.displayPath
       ? this.options.displayPath
       : s => path.relative(process.cwd(), s)

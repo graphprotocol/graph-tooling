@@ -51,7 +51,7 @@ class Compiler {
         : path.join(this.options.outputDir, 'subgraph.yaml')
 
     this.logger.info('')
-    this.logger.info(chalk.green('Completed'))
+    this.logger.info(chalk.green('Build Completed'))
     this.logger.info('')
     this.logger.info('%s %s', chalk.bold(chalk.blue('Subgraph:')), hashOrFilename)
     this.logger.info('')

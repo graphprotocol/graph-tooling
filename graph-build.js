@@ -58,7 +58,8 @@ let subgraph_generator = new Compiler({
 
 // Watch working directory for file updates or additions, trigger compile (if watch argument specified)
 if (app.watch) {
-    subgraph_generator.logger.info(chalk.grey('Watching files in working directory' ))
+    subgraph_generator.logger.info('')
+    subgraph_generator.logger.info(chalk.grey("Watching files, a new build will be triggered when file updates or additions are detected"))
     // Initialize watchers
     let watcher = chokidar.watch('.', {
         persistent: true,
@@ -79,10 +80,14 @@ if (app.watch) {
             subgraph_generator.compile()
             watcher
                 .on('add', path => {
+                    subgraph_generator.logger.info(chalk.grey('New file detected, rebuilding subgraph'))
                     subgraph_generator.compile()
+                    subgraph_generator.logger.info('')
                 })
                 .on('change', path => {
+                    subgraph_generator.logger.info(chalk.grey('File change detected, rebuilding subgraph'))
                     subgraph_generator.compile()
+                    subgraph_generator.logger.info('')
             });
             subgraph_generator.logger.info('')
     })
