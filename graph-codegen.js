@@ -5,6 +5,7 @@ let path = require('path')
 let chokidar = require('chokidar');
 
 let TypeGenerator = require('./src/cli/type-generator')
+const chalk = require('chalk')
 
 app
   .version('0.1.0')
@@ -13,6 +14,11 @@ app
     '-o, --output-dir [path]',
     'Output directory for the generated code',
     path.join(process.cwd(), 'dist')
+  )
+  .option(
+    '--verbosity [info|verbose|debug]',
+    'The log level to use (default: LOG_LEVEL or info)',
+    process.env.LOG_LEVEL || 'info'
   )
   .option(
         '-w, --watch',
@@ -28,12 +34,13 @@ if (file === null || file === undefined) {
 let generator = new TypeGenerator({
     subgraphManifest: file,
     outputDir: app.outputDir,
+    verbosity: app.verbosity
 })
-generator.generateTypes()
 
 // Watch working directory for file updates or additions, trigger type generation (if watch argument specified)
 if (app.watch) {
-    console.log("Watching files, new types will be generated when file updates or additions are detected")
+    generator.logger.info('')
+    generator.logger.info(chalk.grey("Watching files, new types will be generated when file updates or additions are detected"))
     // Initialize watchers
     let watcher = chokidar.watch('.', {
         persistent: true,
@@ -54,12 +61,19 @@ if (app.watch) {
     watcher
         .on('ready', function() {
             generator.generateTypes()
+            generator.logger.info('')
             watcher
                 .on('add', path => {
+                    generator.logger.info(chalk.grey('New file detected, rebuilding types'))
                     generator.generateTypes()
+                    generator.logger.info('')
+                    // generator.logger.info(chalk.green('Types generated'))
                 })
                 .on('change', path => {
+                    generator.logger.info(chalk.grey('File change detected, rebuilding types'))
                     generator.generateTypes()
+                    generator.logger.info('')
+                    // generator.logger.info(chalk.green('Types generated'))
                 });
         })
 } else {
