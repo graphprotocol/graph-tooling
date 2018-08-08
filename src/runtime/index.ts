@@ -1,7 +1,7 @@
 import 'allocator/arena'
 
 // Export allocator functions for hosts to manage WASM memory
-export { allocate_memory, free_memory }
+export { allocate_memory }
 
 /**
  * Host store interface.
