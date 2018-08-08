@@ -22,6 +22,10 @@ declare namespace ipfs {
 /** Host JSON interface */
 declare namespace json {
   function fromBytes(data: Bytes): JSONValue
+  function toI64(decimal: string): i64
+  function toU64(decimal: string): u64
+  function toF64(decimal: string): f64
+  function toBigInt(decimal: string): BigInt
 }
 
 /** Host type conversion interface */
@@ -685,7 +689,29 @@ class JSONValue {
     return this.data != 0
   }
 
-  // TODO: Conversion to number types.
+  toI64(): i64 {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toI64(decimalString)
+  }
+
+  toU64(): u64 {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toU64(decimalString)
+  }
+
+  toF64(): f64 {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toF64(decimalString)
+  }
+
+  toBigInt(): BigInt {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toBigInt(decimalString)
+  }
 
   toString(): string {
     assert(this.kind == JSONValueKind.STRING, 'JSON value is not a string.')

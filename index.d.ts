@@ -249,6 +249,10 @@ declare type JSONValuePayload = u64
 declare class JSONValue {
   isNull(): boolean
   toBool(): boolean
+  toI64(): i64
+  toU64(): u64
+  toF64(): f64
+  toBigInt(): BigInt
   toString(): string
   toArray(): Array<JSONValue>
   toObject(): TypedMap<string, JSONValue>
