@@ -1,4 +1,4 @@
-/// <reference path="./node_modules/assemblyscript/std/assembly.d.ts" />
+/// <reference path="./node_modules/assemblyscript/index.d.ts" />
 
 /**
  * Host store interface
