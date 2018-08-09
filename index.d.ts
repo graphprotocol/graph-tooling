@@ -3,15 +3,7 @@
 /**
  * Host store interface
  */
-declare class Store {
-  /**
-   * Creates a store object to add/update/remove Entities
-   * to/from the store.
-   *
-   * @param blockHash Hash of the current Ethereum block.
-   */
-  static bind(blockHash: H256): Store
-
+declare namespace store {
   /**
    * Creates or updates an entity in the host store.
    *
@@ -19,7 +11,7 @@ declare class Store {
    * @param id Entity ID.
    * @param data Entity data.
    */
-  set(entity: string, id: string, data: Entity): void
+  function set(entity: string, id: string, data: Entity): void
 
   /**
    * Removes an entity from the host store.
@@ -27,7 +19,7 @@ declare class Store {
    * @param entity Name of the entity type.
    * @param id Entity ID.
    */
-  remove(entity: string, id: string, data: Entity): void
+  function remove(entity: string, id: string): void
 }
 
 /**
@@ -215,7 +207,7 @@ declare class EthereumEvent {
   address: Address
   eventSignature: string
   blockHash: H256
-  params: Array<EthereumEventParam>
+  parameters: Array<EthereumEventParam>
 }
 
 /**
