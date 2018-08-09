@@ -681,3 +681,40 @@ class JSONValue {
     return changetype<TypedMap<string, JSONValue>>(this.data as u32)
   }
 }
+
+class ExampleEvent extends EthereumEvent {
+  get params(): ExampleEventParams {
+    return new ExampleEventParams(this);
+  }
+}
+
+class ExampleEventParams {
+  _event: ExampleEvent;
+
+  constructor(event: ExampleEvent) {
+    this._event = event;
+  }
+
+  get exampleParam(): string {
+    return this._event.parameters[0].value.toString();
+  }
+}
+
+class ExampleContract extends SmartContract {
+  static bind(address: Address, blockHash: H256): ExampleContract {
+    return new ExampleContract("ExampleContract", address, blockHash);
+  }
+}
+
+
+/// <reference path="./node_modules/assemblyscript/std/assembly.d.ts" />
+/// <reference path="./node_modules/the-graph-wasm/index.d.ts" />
+/// <reference path="./types/ExampleContract.types.ts" />
+
+export function handleExampleEvent(event: ExampleEvent): void {
+  let entity = new Entity() 
+  entity.setString('exampleAttribute', event.params.exampleParam)
+
+  store.set('ExampleEntity', 'example id', entity)
+}
+
