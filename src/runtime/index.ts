@@ -194,9 +194,9 @@ class EthereumValue {
     if (this.kind == EthereumValueKind.ADDRESS) {
       return changetype<Address>(this.data as u32)
     } else if (this.kind == EthereumValueKind.UINT) {
-      return typeConversion.u256ToH160(this.toU256())
+      return typeConversion.u256ToH160(this.toU256()) as Address
     } else if (this.kind == EthereumValueKind.INT) {
-      return typeConversion.u256ToH160(this.toI128())
+      return typeConversion.u256ToH160(this.toI128()) as Address
     }
     throw new Error('Type conversion from ' + this.kind + ' to address not supported')
   }
