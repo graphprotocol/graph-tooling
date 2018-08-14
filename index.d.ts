@@ -58,7 +58,9 @@ declare class U64Array extends Uint64Array {
 }
 
 /** An Ethereum address (20 bytes). */
-declare type Address = ByteArray
+declare class Address extends ByteArray {
+  fromString(s: String): Address
+}
 
 /** An arbitrary size integer. */
 declare type BigInt = ByteArray
@@ -67,7 +69,9 @@ declare type BigInt = ByteArray
 declare type Bytes = ByteArray
 
 /** A 160-bit hash. */
-declare type H160 = ByteArray
+declare class H160 extends ByteArray {
+  fromString(s: String): H160
+}
 
 /** A 256-bit hash. */
 declare type H256 = ByteArray
