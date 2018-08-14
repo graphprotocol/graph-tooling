@@ -124,7 +124,7 @@ class U64Array extends Uint64Array {
 
 /** An Ethereum address (20 bytes). */
 class Address extends ByteArray {
-  fromString(s: String): Address {
+  static fromString(s: String): Address {
     return changetype<Address>(typeConversion.stringToH160(s))
   }
 }
@@ -137,7 +137,7 @@ type Bytes = ByteArray
 
 /** A 160-bit hash. */
 class H160 extends ByteArray {
-  fromString(s: String): H160 {
+  static fromString(s: String): H160 {
     return typeConversion.stringToH160(s)
   }
 }
