@@ -41,6 +41,7 @@ declare namespace typeConversion {
   function u256ToH160(u: U256): H160
   function u256ToH256(u: U256): H256
   function int256ToBigInt(u: U256): BigInt
+  function stringToH160(s: String): H160
 }
 
 /**
@@ -122,7 +123,11 @@ class U64Array extends Uint64Array {
 }
 
 /** An Ethereum address (20 bytes). */
-type Address = ByteArray
+class Address extends ByteArray {
+  fromString(s: String): Address {
+    return changetype<Address>(typeConversion.stringToH160(s))
+  }
+}
 
 /** An arbitrary size integer. */
 type BigInt = ByteArray
@@ -131,7 +136,11 @@ type BigInt = ByteArray
 type Bytes = ByteArray
 
 /** A 160-bit hash. */
-type H160 = ByteArray
+class H160 extends ByteArray {
+  fromString(s: String): H160 {
+    return typeConversion.stringToH160(s)
+  }
+}
 
 /** A 256-bit hash. */
 type H256 = ByteArray
