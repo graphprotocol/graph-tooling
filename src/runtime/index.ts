@@ -32,7 +32,7 @@ declare namespace json {
 
 /** Host type conversion interface */
 declare namespace typeConversion {
-  function bytesToString(address: Address): string
+  function bytesToString(bytes: Bytes): string
   function bytesToHex(bytes: Bytes): string
   function u64ArrayToHex(array: U64Array): string
   function u64ArrayToString(array: U64Array): string
@@ -118,7 +118,7 @@ class U64Array extends Uint64Array {
   }
 
   toAddress(): Address {
-    return typeConversion.u256ToH160(this)
+    return typeConversion.u256ToH160(this) as Address
   }
 }
 
