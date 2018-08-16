@@ -3,10 +3,10 @@
   "scripts": {
     "codegen": "graph codegen --output-dir types/ subgraph.yaml",
     "build": "graph build subgraph.yaml",
-    "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
+    "build-ipfs": "graph build --watch --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
     "build-wast": "graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
-    "graph-cli": "ssh://git@github.com/graphprotocol/graph-cli"
+    "graph-cli": "git+ssh://git@github.com/graphprotocol/graph-cli.git#ford/watch-manifest-files-only"
   }
 }

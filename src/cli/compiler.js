@@ -4,6 +4,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const immutable = require('immutable')
 const yaml = require('js-yaml')
+const chokidar = require('chokidar');
 
 const Logger = require('./logger')
 const Subgraph = require('./subgraph')
@@ -64,6 +65,80 @@ class Compiler {
     } catch (e) {
       this.logger.fatal('Failed to load subgraph:', e)
     }
+  }
+
+  getFileLocations() {
+    try {
+      let allFiles = []
+      let subgraph = this.loadSubgraph()
+
+      // Add all file paths specified in manifest
+      allFiles.push(subgraph.getIn(['schema', 'file']))
+      let mappingFiles = subgraph.get('dataSources').map(dataSource => {
+          allFiles.push(dataSource.getIn(['mapping', 'file']))
+          dataSource.getIn(['mapping', 'abis']).map(abi => {
+            allFiles.push(abi.get('file'))
+          })
+      })
+
+      // Convert all paths to absolute reference
+      let allAbsolutePaths = allFiles.map(file => {
+        return path.resolve(this.sourceDir, file)
+      })
+      return allAbsolutePaths
+    } catch(e) {
+      this.logger.fatal('Failed to parse subgraph file locations:', e)
+    }
+  }
+
+  watchAndCompile() {
+    let compiler = this
+    compiler.logger.info('')
+
+    // Initialize watcher
+    let watcher = chokidar.watch(path.resolve(this.sourceDir, this.options.subgraphManifest), {
+      persistent: true,
+      ignoreInitial: true,
+      ignored: [
+        './dist',
+        './node_modules',
+        /(^|[\/\\])\../
+      ],
+      depth: 3,
+      atomic: 500
+    })
+
+    // Get locations of all files in subgraph manifest
+    let fileLocations = this.getFileLocations()
+    watcher.add(fileLocations)
+
+    // Add event listeners
+    watcher
+      .on('ready', function() {
+        let files = watcher.getWatched()
+        compiler.logger.info('%s %j', chalk.grey("Watching:"), files)
+        compiler.compile()
+        watcher
+          .on('change', path => {
+            compiler.logger.info('%s %s', chalk.grey('File change detected: '), path)
+            if (path.endsWith('.yaml')) {
+              let newFiles = compiler.getFileLocations().filter(file => {
+                return fileLocations.indexOf(file) === -1
+              })
+              if (newFiles.length >= 1) {
+                this.add(newFiles)
+                compiler.logger.info('%s %s', chalk.grey("Now watching:"), newFiles)
+              }
+            }
+            compiler.compile()
+        });
+    })
+
+    // Catch keyboard interrupt: close watcher and exit process
+    process.on('SIGINT', function() {
+      watcher.close()
+      process.exit()
+    })
   }
 
   createBuildDirectory() {
