@@ -1,7 +1,7 @@
 import 'allocator/arena'
 
 // Export allocator functions for hosts to manage WASM memory
-export { allocate_memory, free_memory }
+export { allocate_memory }
 
 /**
  * Host store interface.
@@ -24,11 +24,15 @@ declare namespace ipfs {
 /** Host JSON interface */
 declare namespace json {
   function fromBytes(data: Bytes): JSONValue
+  function toI64(decimal: string): i64
+  function toU64(decimal: string): u64
+  function toF64(decimal: string): f64
+  function toBigInt(decimal: string): BigInt
 }
 
 /** Host type conversion interface */
 declare namespace typeConversion {
-  function bytesToString(address: Address): string
+  function bytesToString(bytes: Bytes): string
   function bytesToHex(bytes: Bytes): string
   function u64ArrayToHex(array: U64Array): string
   function u64ArrayToString(array: U64Array): string
@@ -37,6 +41,7 @@ declare namespace typeConversion {
   function u256ToH160(u: U256): H160
   function u256ToH256(u: U256): H256
   function int256ToBigInt(u: U256): BigInt
+  function stringToH160(s: String): H160
 }
 
 /**
@@ -113,12 +118,16 @@ class U64Array extends Uint64Array {
   }
 
   toAddress(): Address {
-    return typeConversion.u256ToH160(this)
+    return typeConversion.u256ToH160(this) as Address
   }
 }
 
 /** An Ethereum address (20 bytes). */
-type Address = ByteArray
+class Address extends ByteArray {
+  static fromString(s: String): Address {
+    return changetype<Address>(typeConversion.stringToH160(s))
+  }
+}
 
 /** An arbitrary size integer. */
 type BigInt = ByteArray
@@ -127,7 +136,11 @@ type BigInt = ByteArray
 type Bytes = ByteArray
 
 /** A 160-bit hash. */
-type H160 = ByteArray
+class H160 extends ByteArray {
+  static fromString(s: String): H160 {
+    return typeConversion.stringToH160(s)
+  }
+}
 
 /** A 256-bit hash. */
 type H256 = ByteArray
@@ -181,9 +194,9 @@ class EthereumValue {
     if (this.kind == EthereumValueKind.ADDRESS) {
       return changetype<Address>(this.data as u32)
     } else if (this.kind == EthereumValueKind.UINT) {
-      return typeConversion.u256ToH160(this.toU256())
+      return typeConversion.u256ToH160(this.toU256()) as Address
     } else if (this.kind == EthereumValueKind.INT) {
-      return typeConversion.u256ToH160(this.toI128())
+      return typeConversion.u256ToH160(this.toI128()) as Address
     }
     throw new Error('Type conversion from ' + this.kind + ' to address not supported')
   }
@@ -664,7 +677,29 @@ class JSONValue {
     return this.data != 0
   }
 
-  // TODO: Conversion to number types.
+  toI64(): i64 {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toI64(decimalString)
+  }
+
+  toU64(): u64 {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toU64(decimalString)
+  }
+
+  toF64(): f64 {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toF64(decimalString)
+  }
+
+  toBigInt(): BigInt {
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
+    let decimalString = changetype<string>(this.data as u32)
+    return json.toBigInt(decimalString)
+  }
 
   toString(): string {
     assert(this.kind == JSONValueKind.STRING, 'JSON value is not a string.')

@@ -3,8 +3,6 @@
 let app = require('commander')
 let path = require('path')
 let ipfsAPI = require('ipfs-api')
-let chokidar = require('chokidar');
-let chalk = require('chalk')
 
 let Compiler = require('./src/cli/compiler')
 
@@ -56,49 +54,9 @@ let compiler = new Compiler({
   verbosity: app.verbosity,
 })
 
-// Watch working directory for file updates or additions, trigger compile (if watch argument specified)
+// Watch subgraph files for changes or additions, trigger compile (if watch argument specified)
 if (app.watch) {
-  compiler.logger.info('')
-  compiler.logger.info('%s %s', chalk.grey("Watching:"), process.cwd())
-
-  // Initialize watcher
-  let watcher = chokidar.watch('.', {
-    persistent: true,
-    ignoreInitial: true,
-    ignored: [
-      './dist',
-      './examples',
-      './node_modules',
-      /(^|[\/\\])\../
-    ],
-    depth: 3,
-    atomic: 500
-  })
-
-  // Add event listeners.
-  watcher
-    .on('ready', function() {
-      compiler.compile()
-      watcher
-        .on('add', path => {
-          compiler.logger.info(chalk.grey('New file detected, rebuilding subgraph'))
-          compiler.compile()
-          compiler.logger.info('')
-        })
-        .on('change', path => {
-          compiler.logger.info(chalk.grey('File change detected, rebuilding subgraph'))
-          compiler.compile()
-          compiler.logger.info('')
-      });
-      compiler.logger.info('')
-  })
-
-  // Catch keyboard interrupt: close watcher and exit process
-  process.on('SIGINT', function() {
-    watcher.close()
-    process.exit()
-  })
+  compiler.watchAndCompile()
 } else {
   compiler.compile()
 }
-
