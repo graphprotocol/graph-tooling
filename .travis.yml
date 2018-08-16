@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "8"
+  - "9"
+  - "10"
+cache: yarn
+script:
+  - ./graph.js codegen examples/example-event-handler/subgraph.yaml --verbosity debug
+  - ./graph.js build examples/example-event-handler/subgraph.yaml --verbosity debug
