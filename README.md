@@ -1,5 +1,7 @@
 # The Graph CLI (graph-cli)
 
+[![Build Status](https://travis-ci.org/graphprotocol/graph-cli.svg?branch=master)](https://travis-ci.org/graphprotocol/graph-cli)
+
 The Graph command line interface.
 
 As of today, the command line interface consists of two commands:
