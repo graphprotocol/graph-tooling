@@ -1,3 +1,5 @@
+let chalk = require('chalk')
+let chokidar = require('chokidar');
 let fs = require('fs-extra')
 let immutable = require('immutable')
 let path = require('path')
@@ -113,5 +115,77 @@ module.exports = class TypeGenerator {
     } catch (e) {
       this.logger.fatal('Failed to generate types for contract ABI:', e.stack)
     }
+  }
+
+  getFileLocations() {
+    try {
+      let allFiles = []
+      let subgraph = this.loadSubgraph()
+
+      // Add all file paths specified in manifest
+      let mappingFiles = subgraph.get('dataSources').map(dataSource => {
+          dataSource.getIn(['mapping', 'abis']).map(abi => {
+            allFiles.push(abi.get('file'))
+          })
+      })
+
+      // Convert all paths to absolute reference
+      let allAbsolutePaths = allFiles.map(file => {
+        return path.resolve(this.sourceDir, file)
+      })
+      return allAbsolutePaths
+    } catch(e) {
+      this.logger.fatal('Failed to parse subgraph file locations:', e)
+    }
+  }
+
+  watchAndCompile() {
+    let generator = this
+    generator.logger.info('')
+
+    // Initialize watcher
+    let watcher = chokidar.watch(path.resolve(this.sourceDir, this.options.subgraphManifest), {
+      persistent: true,
+      ignoreInitial: true,
+      ignored: [
+        './dist',
+        './node_modules',
+        /(^|[\/\\])\../
+      ],
+      depth: 3,
+      atomic: 500
+    })
+
+    // Get locations of all files in subgraph manifest
+    let fileLocations = this.getFileLocations()
+    watcher.add(fileLocations)
+
+    // Add event listeners
+    watcher
+      .on('ready', function() {
+        let files = watcher.getWatched()
+        generator.logger.info('%s %j', chalk.grey("Watching:"), files)
+        generator.generateTypes()
+        watcher
+          .on('change', path => {
+            generator.logger.info('%s %s', chalk.grey('File change detected: '), path)
+            if (path.endsWith('.yaml')) {
+              let newFiles = generator.getFileLocations().filter(file => {
+                return fileLocations.indexOf(file) === -1
+              })
+              if (newFiles.length >= 1) {
+                this.add(newFiles)
+                generator.logger.info('%s %s', chalk.grey("Now watching:"), newFiles)
+              }
+            }
+            generator.generateTypes()
+        });
+    })
+
+    // Catch keyboard interrupt: close watcher and exit process
+    process.on('SIGINT', function() {
+      watcher.close()
+      process.exit()
+    })
   }
 }
