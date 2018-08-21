@@ -37,7 +37,7 @@ let generator = new TypeGenerator({
 
 // Watch working directory for file updates or additions, trigger type generation (if watch argument specified)
 if (app.watch) {
-  generator.watchAndCompile()
+  generator.watchAndGenerateTypes()
 } else {
   generator.generateTypes()
 }

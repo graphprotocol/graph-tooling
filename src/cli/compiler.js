@@ -52,7 +52,7 @@ class Compiler {
         : path.join(this.options.outputDir, 'subgraph.yaml')
 
     this.logger.info('')
-    this.logger.info(chalk.green('Build Completed'))
+    this.logger.info(chalk.green('Build completed'))
     this.logger.info('')
     this.logger.info('%s %s', chalk.bold(chalk.blue('Subgraph:')), hashOrFilename)
     this.logger.info('')
@@ -67,21 +67,21 @@ class Compiler {
     }
   }
 
-  getFileLocations() {
+  getFilesToWatch() {
     try {
       let allFiles = []
       let subgraph = this.loadSubgraph()
 
       // Add all file paths specified in manifest
       allFiles.push(subgraph.getIn(['schema', 'file']))
-      let mappingFiles = subgraph.get('dataSources').map(dataSource => {
+      subgraph.get('dataSources').map(dataSource => {
           allFiles.push(dataSource.getIn(['mapping', 'file']))
           dataSource.getIn(['mapping', 'abis']).map(abi => {
             allFiles.push(abi.get('file'))
           })
       })
 
-      // Convert all paths to absolute reference
+      // Make paths absolute
       let allAbsolutePaths = allFiles.map(file => {
         return path.resolve(this.sourceDir, file)
       })
@@ -96,46 +96,67 @@ class Compiler {
     compiler.logger.info('')
 
     // Initialize watcher
-    let watcher = chokidar.watch(path.resolve(this.sourceDir, this.options.subgraphManifest), {
+    let watcher = chokidar.watch(this.options.subgraphManifest, {
       persistent: true,
       ignoreInitial: true,
-      ignored: [
-        './dist',
-        './node_modules',
-        /(^|[\/\\])\../
-      ],
-      depth: 3,
       atomic: 500
     })
 
     // Get locations of all files in subgraph manifest
-    let fileLocations = this.getFileLocations()
-    watcher.add(fileLocations)
+    let watchedFiles = this.getFilesToWatch()
+    watcher.add(watchedFiles)
 
     // Add event listeners
     watcher
       .on('ready', function() {
-        let files = watcher.getWatched()
-        compiler.logger.info('%s %j', chalk.grey("Watching:"), files)
+        compiler.logger.info(chalk.grey("Watching relevant manifest files"))
         compiler.compile()
-        watcher
-          .on('change', path => {
-            compiler.logger.info('%s %s', chalk.grey('File change detected: '), path)
-            if (path.endsWith('.yaml')) {
-              let newFiles = compiler.getFileLocations().filter(file => {
-                return fileLocations.indexOf(file) === -1
-              })
-              if (newFiles.length >= 1) {
-                this.add(newFiles)
-                compiler.logger.info('%s %s', chalk.grey("Now watching:"), newFiles)
-              }
-            }
-            compiler.compile()
-        });
-    })
+      })
+      .on('change', path => {
+        compiler.logger.info('%s %s',
+          chalk.grey('File change detected: '),
+          compiler.displayPath(path)
+        )
+        if (path === compiler.options.subgraphManifest) {
+          // Update watcher based on changes to manifest
+          let updatedWatchFiles = compiler.getFilesToWatch()
+          let addedFiles = updatedWatchFiles.filter(file => {
+            return watchedFiles.indexOf(file) === -1
+          })
+          let removedFiles = watchedFiles.filter(file => {
+            return updatedWatchFiles.indexOf(file) === -1
+          })
+          watchedFiles = updatedWatchFiles
+          watcher.add(addedFiles)
+          watcher.unwatch(removedFiles)
+
+          if (addedFiles.length >= 1) {
+            let addedFilesDisplay = addedFiles.map(file => {
+              return compiler.displayPath(file)
+            })
+            compiler.logger.info(
+              '%s %j',
+              chalk.grey('Now watching: '),
+              addedFilesDisplay
+            )
+          }
+          if (removedFiles.length >= 1) {
+            let addedFilesDisplay = removedFiles.map(file => {
+              return compiler.displayPath(file)
+            })
+            compiler.logger.info(
+              '%s %j',
+              chalk.grey('No longer watching: '),
+              addedFilesDisplay
+            )
+          }
+        }
+        fs.removeSync(compiler.buildDir)
+        compiler.compile()
+      })
 
     // Catch keyboard interrupt: close watcher and exit process
-    process.on('SIGINT', function() {
+    process.on('SIGINT', () => {
       watcher.close()
       process.exit()
     })
