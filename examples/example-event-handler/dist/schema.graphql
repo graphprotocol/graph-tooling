@@ -1,3 +1,0 @@
-type ExampleEntity {
-  exampleAttribute: String!
-}
