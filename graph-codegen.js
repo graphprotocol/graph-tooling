@@ -2,8 +2,6 @@
 
 let app = require('commander')
 let path = require('path')
-let chokidar = require('chokidar');
-let chalk = require('chalk')
 
 let TypeGenerator = require('./src/cli/type-generator')
 
@@ -39,50 +37,7 @@ let generator = new TypeGenerator({
 
 // Watch working directory for file updates or additions, trigger type generation (if watch argument specified)
 if (app.watch) {
-  generator.logger.info('')
-  generator.logger.info('%s %s', chalk.grey("Watching:"), process.cwd())
-  // Initialize watchers
-  let watcher = chokidar.watch('.', {
-    persistent: true,
-    ignoreInitial: true,
-    ignored: [
-      './**/*.types.ts',
-      './**/*.ts',
-      './dist',
-      './examples',
-      './mappings',
-      './node_modules',
-      /(^|[\/\\])\../
-    ],
-    depth: 3,
-    atomic: 500
-  })
-
-  // Add event listeners.
-  watcher
-    .on('ready', function() {
-      generator.generateTypes()
-      generator.logger.info('')
-      watcher
-        .on('add', path => {
-          generator.logger.info(chalk.grey('New file detected, rebuilding types'))
-          generator.generateTypes()
-          generator.logger.info('')
-        })
-        .on('change', path => {
-          generator.logger.info(chalk.grey('File change detected, rebuilding types'))
-          generator.generateTypes()
-          generator.logger.info('')
-        });
-      })
-
-  // Catch keyboard interrupt: close watcher and exit process
-  process.on('SIGINT', function() {
-    watcher.close()
-    process.exit()
-  })
+  generator.watchAndCompile()
 } else {
   generator.generateTypes()
 }
-
-
