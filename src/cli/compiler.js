@@ -15,7 +15,7 @@ class Compiler {
     this.options = options
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
-    this.logger = new Logger(11, { verbosity: this.options.verbosity })
+    this.logger = new Logger(12, { verbosity: this.options.verbosity })
   }
 
   subgraphDir(parent, subgraph) {
@@ -117,6 +117,7 @@ class Compiler {
           chalk.grey('File change detected: '),
           compiler.displayPath(path)
         )
+        compiler.logger.currentStep = 0
         if (path === compiler.options.subgraphManifest) {
           // Update watcher based on changes to manifest
           let updatedWatchFiles = compiler.getFilesToWatch()
