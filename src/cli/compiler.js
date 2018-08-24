@@ -1,10 +1,11 @@
 const asc = require('assemblyscript/cli/asc')
 const chalk = require('chalk')
+const chokidar = require('chokidar')
+const cluster = require('cluster')
 const fs = require('fs-extra')
-const path = require('path')
 const immutable = require('immutable')
+const path = require('path')
 const yaml = require('js-yaml')
-const chokidar = require('chokidar');
 
 const Logger = require('./logger')
 const Subgraph = require('./subgraph')
@@ -15,7 +16,7 @@ class Compiler {
     this.options = options
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
-    this.logger = new Logger(12, { verbosity: this.options.verbosity })
+    this.logger = new Logger(11, { verbosity: this.options.verbosity })
   }
 
   subgraphDir(parent, subgraph) {
@@ -31,6 +32,14 @@ class Compiler {
   }
 
   async compile() {
+    this.logger.currentStep = 0
+    try {
+      fs.removeSync(buildDir)
+    } catch(e) {
+      // Build directory cleanup not need on the first pass
+    }
+
+    this.logger.step('Load subgraph:', this.options.subgraphManifest)
     let subgraph = this.loadSubgraph()
 
     this.buildDir = this.createBuildDirectory()
@@ -60,7 +69,6 @@ class Compiler {
 
   loadSubgraph() {
     try {
-      this.logger.step('Load subgraph:', this.options.subgraphManifest)
       return Subgraph.load(this.options.subgraphManifest)
     } catch (e) {
       this.logger.fatal('Failed to load subgraph:', e)
@@ -93,74 +101,101 @@ class Compiler {
 
   watchAndCompile() {
     let compiler = this
-    compiler.logger.info('')
+    if (cluster.isMaster) {
+      let worker = cluster.fork()
+      worker.send({msgFromMaster: 1});
 
-    // Initialize watcher
-    let watcher = chokidar.watch(this.options.subgraphManifest, {
-      persistent: true,
-      ignoreInitial: true,
-      atomic: 500
-    })
-
-    // Get locations of all files in subgraph manifest
-    let watchedFiles = this.getFilesToWatch()
-    watcher.add(watchedFiles)
-
-    // Add event listeners
-    watcher
-      .on('ready', function() {
-        compiler.logger.info(chalk.grey("Watching relevant manifest files"))
-        compiler.compile()
+      cluster.on('exit', function() {
+        cluster.fork()
       })
-      .on('change', path => {
-        compiler.logger.info('%s %s',
-          chalk.grey('File change detected: '),
-          compiler.displayPath(path)
+    }
+
+    if (cluster.isWorker) {
+      // Use master message to kick off compile
+      // preventing infinite error loop
+      process.on('message', function(_) {
+        compiler.compile()
+      });
+      let watchedFiles = this.getFilesToWatch()
+
+      // Initialize watcher that reruns compiler
+      let watcher = chokidar.watch(this.options.subgraphManifest, {
+        persistent: true,
+        ignoreInitial: true,
+        atomic: 500
+      })
+      watcher
+        .on('ready', function () {
+          compiler.logger.info('')
+          compiler.logger.info(chalk.grey('Watching relevant manifest files'))
+        })
+        .on('change', changedFile => {
+          compiler.logger.info('')
+          compiler.logger.info('%s %s',
+            chalk.grey('File change detected: '),
+            compiler.displayPath(changedFile)
+          )
+
+          // Convert to absolute paths for comparison
+          let manifestAbsolute =
+            (path.resolve(compiler.options.subgraphManifest) === path.normalize(compiler.options.subgraphManifest))
+            ? this.options.subgraphManifest
+            : path.resolve(compiler.sourceDir, compiler.options.subgraphManifest)
+          let changedFileAbsolute = (path.resolve(changedFile) === path.normalize(changedFile))
+            ? changedFile
+            : path.resolve(compiler.sourceDir, changedFile)
+
+          if (changedFileAbsolute === manifestAbsolute) {
+            // Update watcher based on changes to manifest
+            let updatedWatchFiles = compiler.getFilesToWatch()
+            let addedFiles = updatedWatchFiles.filter(file => {
+              return watchedFiles.indexOf(file) === -1
+            })
+            let removedFiles = watchedFiles.filter(file => {
+              return updatedWatchFiles.indexOf(file) === -1
+            })
+            watchedFiles = updatedWatchFiles
+            watcher.add(addedFiles)
+            watcher.unwatch(removedFiles)
+
+            if (addedFiles.length >= 1) {
+              let addedFilesDisplay = addedFiles.map(file => {
+                return compiler.displayPath(file)
+              })
+              compiler.logger.info(
+                '%s %j',
+                chalk.grey('Now watching: '),
+                addedFilesDisplay
+              )
+            }
+            if (removedFiles.length >= 1) {
+              let addedFilesDisplay = removedFiles.map(file => {
+                return compiler.displayPath(file)
+              })
+              compiler.logger.info(
+                '%s %j',
+                chalk.grey('No longer watching: '),
+                addedFilesDisplay
+              )
+            }
+          }
+          compiler.compile()
+        })
+        .on('error', error =>
+          this.logger.info('Watcher error: ', error)
         )
-        compiler.logger.currentStep = 0
-        if (path === compiler.options.subgraphManifest) {
-          // Update watcher based on changes to manifest
-          let updatedWatchFiles = compiler.getFilesToWatch()
-          let addedFiles = updatedWatchFiles.filter(file => {
-            return watchedFiles.indexOf(file) === -1
-          })
-          let removedFiles = watchedFiles.filter(file => {
-            return updatedWatchFiles.indexOf(file) === -1
-          })
-          watchedFiles = updatedWatchFiles
-          watcher.add(addedFiles)
-          watcher.unwatch(removedFiles)
+      watcher.add(watchedFiles)
 
-          if (addedFiles.length >= 1) {
-            let addedFilesDisplay = addedFiles.map(file => {
-              return compiler.displayPath(file)
-            })
-            compiler.logger.info(
-              '%s %j',
-              chalk.grey('Now watching: '),
-              addedFilesDisplay
-            )
-          }
-          if (removedFiles.length >= 1) {
-            let addedFilesDisplay = removedFiles.map(file => {
-              return compiler.displayPath(file)
-            })
-            compiler.logger.info(
-              '%s %j',
-              chalk.grey('No longer watching: '),
-              addedFilesDisplay
-            )
-          }
-        }
-        fs.removeSync(compiler.buildDir)
-        compiler.compile()
+      process.on('SIGINT', () => {
+        watcher.close()
+        process.exit()
       })
-
-    // Catch keyboard interrupt: close watcher and exit process
-    process.on('SIGINT', () => {
-      watcher.close()
-      process.exit()
-    })
+      process.on('uncaughtException', function (err) {
+        watcher.close()
+        process.exit()
+        compiler.logger.fatal('UNCAUGHT EXCEPTION: ', err)
+      })
+    }
   }
 
   createBuildDirectory() {
