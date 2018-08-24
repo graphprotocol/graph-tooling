@@ -1,5 +1,6 @@
 let chalk = require('chalk')
 let chokidar = require('chokidar');
+let cluster = require('cluster')
 let fs = require('fs-extra')
 let immutable = require('immutable')
 let path = require('path')
@@ -12,7 +13,7 @@ let Subgraph = require('./subgraph')
 module.exports = class TypeGenerator {
   constructor(options) {
     this.options = options || {}
-    this.logger = new Logger(3, { verbosity: this.options.verbosity })
+    this.logger = new Logger(3, {verbosity: this.options.verbosity})
     this.displayPath = this.options.displayPath
       ? this.options.displayPath
       : s => path.relative(process.cwd(), s)
@@ -22,6 +23,15 @@ module.exports = class TypeGenerator {
   }
 
   generateTypes() {
+    this.logger.currentStep = 0
+    if (this.options.subgraphManifest) {
+      this.logger.step(
+        'Load subgraph:',
+        this.displayPath(this.options.subgraphManifest)
+      )
+    } else {
+      this.logger.step('Load subgraph')
+    }
     let subgraph = this.loadSubgraph()
     let abis = this.loadABIs(subgraph)
     return this.generateTypesForABIs(abis)
@@ -29,15 +39,6 @@ module.exports = class TypeGenerator {
 
   loadSubgraph() {
     try {
-      if (this.options.subgraphManifest) {
-        this.logger.step(
-          'Load subgraph:',
-          this.displayPath(this.options.subgraphManifest)
-        )
-      } else {
-        this.logger.step('Load subgraph')
-      }
-
       return this.options.subgraph
         ? this.options.subgraph
         : Subgraph.load(this.options.subgraphManifest)
@@ -87,6 +88,9 @@ module.exports = class TypeGenerator {
       return abis.map((abi, name) => this._generateTypesForABI(abi))
     } catch (e) {
       this.logger.fatal('Failed to generate types for contract ABIS:', e)
+    } finally {
+      this.logger.info('')
+      this.logger.info(chalk.green('Types generated'))
     }
   }
 
@@ -123,9 +127,9 @@ module.exports = class TypeGenerator {
 
       // Add all file paths specified in manifest
       subgraph.get('dataSources').map(dataSource => {
-          dataSource.getIn(['mapping', 'abis']).map(abi => {
-            allFiles.push(abi.get('file'))
-          })
+        dataSource.getIn(['mapping', 'abis']).map(abi => {
+          allFiles.push(abi.get('file'))
+        })
       })
 
       // Make paths absolute
@@ -133,79 +137,107 @@ module.exports = class TypeGenerator {
         return path.resolve(this.sourceDir, file)
       })
       return allAbsolutePaths
-    } catch(e) {
+    } catch (e) {
       this.logger.fatal('Failed to parse subgraph file locations:', e)
     }
   }
 
   watchAndGenerateTypes() {
     let generator = this
-    generator.logger.info('')
-
-    // Initialize watcher
-    let watcher = chokidar.watch(this.options.subgraphManifest, {
-      persistent: true,
-      ignoreInitial: true,
-      atomic: 500
-    })
-
-    // Get locations of all files in subgraph manifest
-    let fileLocations = this.getFilesToWatch()
-    watcher.add(fileLocations)
-
-    // Add event listeners
-    watcher
-      .on('ready', function() {
-        compiler.logger.info(chalk.grey("Watching relevant manifest files"))
-        generator.generateTypes()
+    if (cluster.isMaster) {
+      let worker = cluster.fork()
+      worker.send({msgFromMaster: 1});
+      cluster.on('exit', function () {
+        cluster.fork()
       })
-      .on('change', path => {
-        generator.logger.info('%s %s',
-          chalk.grey('File change detected: '),
-          generator.displayPath(path)
+    }
+
+    if (cluster.isWorker) {
+      // Use master message to kick off compile
+      // preventing infinite error loop
+      process.on('message', function (_) {
+        generator.generateTypes()
+      });
+      let watchedFiles = this.getFilesToWatch()
+
+      // Initialize watcher that reruns generator
+      let watcher = chokidar.watch(this.options.subgraphManifest, {
+        persistent: true,
+        ignoreInitial: true,
+        atomic: 500
+      })
+      watcher
+        .on('ready', function () {
+          generator.logger.info('')
+          generator.logger.info(chalk.grey('Watching relevant manifest files'))
+        })
+        .on('change', changedFile => {
+          generator.logger.info('')
+          generator.logger.info('%s %s',
+            chalk.grey('File change detected: '),
+            generator.displayPath(changedFile)
+          )
+
+          // Convert to absolute paths for comparison
+          let manifestAbsolute =
+            (path.resolve(generator.options.subgraphManifest) === path.normalize(generator.options.subgraphManifest))
+            ? this.options.subgraphManifest
+            : path.resolve(generator.sourceDir, generator.options.subgraphManifest)
+          let changedFileAbsolute = (path.resolve(changedFile) === path.normalize(changedFile))
+            ? changedFile
+            : path.resolve(generator.sourceDir, changedFile)
+
+          if (changedFileAbsolute === manifestAbsolute) {
+            // Update watcher based on changes to manifest
+            let updatedWatchFiles = generator.getFilesToWatch()
+            let addedFiles = updatedWatchFiles.filter(file => {
+              return watchedFiles.indexOf(file) === -1
+            })
+            let removedFiles = watchedFiles.filter(file => {
+              return updatedWatchFiles.indexOf(file) === -1
+            })
+            watchedFiles = updatedWatchFiles
+            watcher.add(addedFiles)
+            watcher.unwatch(removedFiles)
+
+            if (addedFiles.length >= 1) {
+              let addedFilesDisplay = addedFiles.map(file => {
+                return generator.displayPath(file)
+              })
+              generator.logger.info(
+                '%s %j',
+                chalk.grey('Now watching: '),
+                addedFilesDisplay
+              )
+            }
+            if (removedFiles.length >= 1) {
+              let addedFilesDisplay = removedFiles.map(file => {
+                return generator.displayPath(file)
+              })
+              generator.logger.info(
+                '%s %j',
+                chalk.grey('No longer watching: '),
+                addedFilesDisplay
+              )
+            }
+          }
+          generator.generateTypes()
+        })
+        .on('error', error =>
+          this.logger.info('Watcher error: ', error)
         )
-        if (path === generator.options.subgraphManifest) {
-          // Update watcher based on changes to manifest
-          let updatedWatchFiles = generator.getFilesToWatch()
-          let addedFiles = updatedWatchFiles.filter(file => {
-            return watchedFiles.indexOf(file) === -1
-          })
-          let removedFiles = watchedFiles.filter(file => {
-            return updatedWatchFiles.indexOf(file) === -1
-          })
-          watchedFiles = updatedWatchFiles
-          watcher.add(addedFiles)
-          watcher.unwatch(removedFiles)
+      watcher.add(watchedFiles)
 
-          if (addedFiles.length >= 1) {
-            let addedFilesDisplay = addedFiles.map(file => {
-              return compiler.displayPath(file)
-            })
-            compiler.logger.info(
-              '%s %j',
-              chalk.grey('Now watching: '),
-              addedFilesDisplay
-            )
-          }
-          if (removedFiles.length >= 1) {
-            let addedFilesDisplay = removedFiles.map(file => {
-              return compiler.displayPath(file)
-            })
-            compiler.logger.info(
-              '%s %j',
-              chalk.grey('No longer watching: '),
-              addedFilesDisplay
-            )
-          }
-
-        }
-        generator.generateTypes()
+      // Catch keyboard interrupt: close watcher and exit process
+      process.on('SIGINT', () => {
+        watcher.close()
+        process.exit()
       })
-
-    // Catch keyboard interrupt: close watcher and exit process
-    process.on('SIGINT', function() {
-      watcher.close()
-      process.exit()
-    })
+      process.on('uncaughtException', function (err) {
+        generator.logger.fatal('UNCAUGHT EXCEPTION: ', err)
+        watcher.close()
+        process.exit()
+      })
+    }
   }
 }
