@@ -64,11 +64,45 @@ module.exports = class Logger {
     }
   }
 
+  status(subject, ...msg) {
+    if (this.prefix === undefined) {
+      this.logger.log('verbose', '%s %s', chalk.magenta(subject), msg.join(' '))
+    } else {
+      this.logger.log(
+        'verbose',
+        '%s %s %s',
+        this.prefix,
+        chalk.gray(subject),
+        msg.join(' ')
+      )
+    }
+  }
+
   fatal(subject, ...msg) {
     if (this.prefix === undefined) {
       this.logger.log('error', '%s %s', chalk.red(subject), msg.join(' '))
     } else {
       this.logger.log('error', '%s %s %s', this.prefix, chalk.red(subject), msg.join(' '))
+    }
+  }
+
+  error(subject, e) {
+    if (e instanceof Error) {
+      if (e.hasOwnProperty('message')) {
+        this.fatal(e.message)
+      } else {
+        this.fatal(e)
+      }
+      if (e.hasOwnProperty('stack')) {
+        this.note(
+          e.stack
+            .split('\n')
+            .slice(1)
+            .join('\n')
+        )
+      }
+    } else {
+      this.fatal('Failed to compile subgraph', e)
     }
   }
 }
