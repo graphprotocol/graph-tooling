@@ -41,10 +41,14 @@ module.exports = class Watcher {
     })
 
     watcher.on('all', async (eventType, file) => {
+      // Collect watch all new files to watch
+      let newFiles = onCollectFiles()
+
+      // Collect watched files, if there are any
+      let watchedFiles = []
       try {
-        // Unwatch all previous files
         let watched = watcher.getWatched()
-        let files = Object.keys(watched).reduce(
+        watchedFiles = Object.keys(watched).reduce(
           (files, dirname) =>
             watched[dirname].reduce((files, filename) => {
               files.push(path.resolve(path.join(dirname, filename)))
@@ -52,14 +56,20 @@ module.exports = class Watcher {
             }, files),
           []
         )
-        watcher.unwatch(files)
       } catch (e) {
         onError(e)
       }
 
-      // Collect and watch all new files to watch
-      let files = onCollectFiles()
-      watcher.add(files)
+      let diff = (xs, ys) => ({
+        added: ys.filter(y => xs.indexOf(y) < 0),
+        removed: xs.filter(x => ys.indexOf(x) < 0),
+      })
+
+      // Diff previously watched files and new files; then remove and
+      // add files from/to the watcher accordingly
+      let filesDiff = diff(watchedFiles, newFiles)
+      watcher.unwatch(filesDiff.removed)
+      watcher.add(filesDiff.added)
 
       // Run the trigger callback
       await onTrigger(file)
