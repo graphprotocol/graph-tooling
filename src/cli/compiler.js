@@ -18,7 +18,7 @@ class Compiler {
     this.logger = new Logger(11, { verbosity: this.options.verbosity })
 
     process.on('uncaughtException', function(e) {
-      this.logger.fatalError('UNCAUGHT EXCEPTION:', e)
+      this.logger.error('UNCAUGHT EXCEPTION:', e)
     })
   }
 
@@ -114,7 +114,7 @@ class Compiler {
         await compiler.compile()
       },
       onCollectFiles: () => compiler.getFilesToWatch(),
-      onError: error => compiler.logger.fatalError('Error:', error),
+      onError: error => compiler.logger.error('Error:', error),
     })
 
     // Catch keyboard interrupt: close watcher and exit process
