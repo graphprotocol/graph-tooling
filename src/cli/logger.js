@@ -70,6 +70,5 @@ module.exports = class Logger {
     } else {
       this.logger.log('error', '%s %s %s', this.prefix, chalk.red(subject), msg.join(' '))
     }
-    process.exit(1)
   }
 }
