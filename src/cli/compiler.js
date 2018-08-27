@@ -1,7 +1,5 @@
 const asc = require('assemblyscript/cli/asc')
 const chalk = require('chalk')
-const chokidar = require('chokidar')
-const cluster = require('cluster')
 const fs = require('fs-extra')
 const immutable = require('immutable')
 const path = require('path')
@@ -10,6 +8,7 @@ const yaml = require('js-yaml')
 const Logger = require('./logger')
 const Subgraph = require('./subgraph')
 const TypeGenerator = require('./type-generator')
+const Watcher = require('./watcher')
 
 class Compiler {
   constructor(options) {
@@ -17,6 +16,10 @@ class Compiler {
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
     this.logger = new Logger(11, { verbosity: this.options.verbosity })
+
+    process.on('uncaughtException', function(e) {
+      this.logger.fatalError('UNCAUGHT EXCEPTION:', e)
+    })
   }
 
   subgraphDir(parent, subgraph) {
@@ -50,30 +53,23 @@ class Compiler {
       let compiledSubgraph = this.compileSubgraph(subgraphInBuildDir)
       let localSubgraph = this.writeSubgraphToOutputDirectory(compiledSubgraph)
 
-      let hashOrFilename =
-        this.ipfs !== undefined
-          ? await this.uploadSubgraphToIPFS(localSubgraph)
-          : path.join(this.options.outputDir, 'subgraph.yaml')
-
-      this.logger.info('')
-      this.logger.info(chalk.magenta('Build completed'))
-      this.logger.info('')
-      this.logger.info('%s %s', chalk.bold(chalk.blue('Subgraph:')), hashOrFilename)
-      this.logger.info('')
-    } catch (e) {
-      if (e instanceof Error) {
-        if(e.hasOwnProperty('message')) {
-          this.logger.fatal(e.message)
-        } else {
-          this.logger.fatal(e)
-        }
-        if(e.hasOwnProperty('stack')) {
-          this.logger.note(e.stack.split('\n').slice(1).join('\n'))
-        }
+      if (this.ipfs !== undefined) {
+        let ipfsHash = await this.uploadSubgraphToIPFS(localSubgraph)
+        this.completed(ipfsHash)
       } else {
-        this.logger.fatal("Failed to compile subgraph", e)
+        this.completed(path.join(this.options.outputDir, 'subgraph.yaml'))
       }
+    } catch (e) {
+      this.logger.error('Failed to compile subgraph', e)
     }
+  }
+
+  completed(ipfsHashOrPath) {
+    this.logger.info('')
+    this.logger.status('Build completed')
+    this.logger.info('')
+    this.logger.info('%s %s', chalk.bold(chalk.blue('Subgraph:')), ipfsHashOrPath)
+    this.logger.info('')
   }
 
   loadSubgraph() {
@@ -86,101 +82,48 @@ class Compiler {
 
   getFilesToWatch() {
     try {
-      let allFiles = []
+      let files = []
       let subgraph = this.loadSubgraph()
 
       // Add all file paths specified in manifest
-      allFiles.push(subgraph.getIn(['schema', 'file']))
+      files.push(path.resolve(subgraph.getIn(['schema', 'file'])))
       subgraph.get('dataSources').map(dataSource => {
-          allFiles.push(dataSource.getIn(['mapping', 'file']))
-          dataSource.getIn(['mapping', 'abis']).map(abi => {
-            allFiles.push(abi.get('file'))
-          })
+        files.push(dataSource.getIn(['mapping', 'file']))
+        dataSource.getIn(['mapping', 'abis']).map(abi => {
+          files.push(abi.get('file'))
+        })
       })
 
       // Make paths absolute
-      let allAbsolutePaths = allFiles.map(file => {
-        return path.resolve(this.sourceDir, file)
-      })
-      return allAbsolutePaths
+      return files.map(file => path.resolve(file))
     } catch (e) {
       throw Error('Failed to parse subgraph file locations')
     }
   }
 
-  watchAndCompile() {
+  async watchAndCompile() {
     let compiler = this
-    let watchedFiles = this.getFilesToWatch()
-    compiler.compile()
 
-    // Initialize watcher that reruns compiler
-    let watcher = chokidar.watch(this.options.subgraphManifest, {
-      persistent: true,
-      ignoreInitial: true,
-      atomic: 500
-    })
-    watcher
-      .on('ready', function () {
-        compiler.logger.info('')
-        compiler.logger.info(chalk.grey('Watching relevant manifest files'))
-      })
-      .on('change', changedFile => {
-        compiler.logger.info('')
-        compiler.logger.info('%s %s',
-          chalk.grey('File change detected: '),
-          compiler.displayPath(changedFile)
-        )
-
-        // Convert to absolute paths for comparison
-        let manifestAbsolute =
-          (path.resolve(compiler.options.subgraphManifest) === path.normalize(compiler.options.subgraphManifest))
-          ? this.options.subgraphManifest
-          : path.resolve(compiler.sourceDir, compiler.options.subgraphManifest)
-        let changedFileAbsolute = (path.resolve(changedFile) === path.normalize(changedFile))
-          ? changedFile
-          : path.resolve(compiler.sourceDir, changedFile)
-
-        if (changedFileAbsolute === manifestAbsolute) {
-          // Update watcher based on changes to manifest
-          let updatedWatchFiles = compiler.getFilesToWatch()
-          let addedFiles = updatedWatchFiles.filter(file => {
-            return watchedFiles.indexOf(file) === -1
-          })
-          let removedFiles = watchedFiles.filter(file => {
-            return updatedWatchFiles.indexOf(file) === -1
-          })
-          watchedFiles = updatedWatchFiles
-          watcher.add(addedFiles)
-          watcher.unwatch(removedFiles)
-
-          if (addedFiles.length >= 1) {
-            compiler.logger.note(
-              'Now watching: ',
-              addedFiles.map(file => compiler.displayPath(file)).join(', ')
-            )
-          }
-          if (removedFiles.length >= 1) {
-            compiler.logger.note(
-              'No longer watching: ',
-              removedFiles.map(file => compiler.displayPath(file)).join(', ')
-            )
-          }
+    // Create watcher and recompile once and then on every change to a watched file
+    let watcher = new Watcher({
+      onReady: () => compiler.logger.status('Watching subgraph files'),
+      onTrigger: async file => {
+        if (file !== undefined) {
+          compiler.logger.status('File change detected:', this.displayPath(file))
         }
-        compiler.compile()
-      })
-      .on('error', error => {
-        throw Error('Watcher error')
-      })
-    watcher.add(watchedFiles)
+        await compiler.compile()
+      },
+      onCollectFiles: () => compiler.getFilesToWatch(),
+      onError: error => compiler.logger.fatalError('Error:', error),
+    })
 
+    // Catch keyboard interrupt: close watcher and exit process
     process.on('SIGINT', () => {
       watcher.close()
       process.exit()
     })
-    process.on('uncaughtException', function (err) {
-      compiler.logger.fatal('UNCAUGHT EXCEPTION: ', err)
-      watcher.close()
-    })
+
+    watcher.watch()
   }
 
   createBuildDirectory() {
@@ -498,7 +441,7 @@ class Compiler {
       // Upload the subgraph itself
       return await this._uploadSubgraphDefinitionToIPFS(subgraph)
     } catch (e) {
-      throw (new Error('Failed to upload subgraph to IPFS'))
+      throw new Error('Failed to upload subgraph to IPFS')
     }
   }
 
