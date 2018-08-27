@@ -19,7 +19,7 @@ module.exports = class TypeGenerator {
       (this.options.subgraphManifest && path.dirname(this.options.subgraphManifest))
 
     process.on('uncaughtException', function(e) {
-      this.logger.fatalError('UNCAUGHT EXCEPTION:', e)
+      this.logger.error('UNCAUGHT EXCEPTION:', e)
     })
   }
 
@@ -36,7 +36,7 @@ module.exports = class TypeGenerator {
       let abis = this.loadABIs(subgraph)
       return this.generateTypesForABIs(abis)
     } catch (e) {
-      this.logger.fatalError('Failed to generate types:', e)
+      this.logger.error('Failed to generate types:', e)
     }
   }
 
@@ -155,7 +155,7 @@ module.exports = class TypeGenerator {
         await generator.generateTypes()
       },
       onCollectFiles: () => generator.getFilesToWatch(),
-      onError: error => generator.logger.fatalError('Error:', error),
+      onError: error => generator.logger.error('Error:', error),
     })
 
     // Catch keyboard interrupt: close watcher and exit process
