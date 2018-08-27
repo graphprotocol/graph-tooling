@@ -3,7 +3,7 @@ const path = require('path')
 
 module.exports = class Watcher {
   constructor(options) {
-    const { onReady, onTrigger, onCollectFiles, onError, onFilesUpdated } = options
+    const { onReady, onTrigger, onCollectFiles, onError } = options
     this.onReady = onReady
     this.onTrigger = onTrigger
     this.onCollectFiles = onCollectFiles
