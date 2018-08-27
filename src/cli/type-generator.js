@@ -128,6 +128,9 @@ module.exports = class TypeGenerator {
       let files = []
       let subgraph = this.loadSubgraph()
 
+      // Add the subgraph manifest file
+      files.push(this.options.subgraphManifest)
+
       // Add all file paths specified in manifest
       subgraph.get('dataSources').map(dataSource => {
         dataSource.getIn(['mapping', 'abis']).map(abi => {

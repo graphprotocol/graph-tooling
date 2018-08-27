@@ -85,6 +85,9 @@ class Compiler {
       let files = []
       let subgraph = this.loadSubgraph()
 
+      // Add the subgraph manifest file
+      files.push(this.options.subgraphManifest)
+
       // Add all file paths specified in manifest
       files.push(path.resolve(subgraph.getIn(['schema', 'file'])))
       subgraph.get('dataSources').map(dataSource => {
