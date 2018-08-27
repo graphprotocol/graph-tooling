@@ -32,9 +32,25 @@ module.exports = class TypeGenerator {
     } else {
       this.logger.step('Load subgraph')
     }
-    let subgraph = this.loadSubgraph()
-    let abis = this.loadABIs(subgraph)
-    return this.generateTypesForABIs(abis)
+
+    try {
+      let subgraph = this.loadSubgraph()
+      let abis = this.loadABIs(subgraph)
+      return this.generateTypesForABIs(abis)
+    } catch(e) {
+      if (e instanceof Error) {
+        if(e.hasOwnProperty('message')) {
+          this.logger.fatal(e.message)
+        } else {
+          this.logger.fatal(e)
+        }
+        if(e.hasOwnProperty('stack')) {
+          this.logger.note(e.stack.split('\n').slice(1).join('\n'))
+        }
+      } else {
+        this.logger.fatal("Failed to generate types", e)
+      }
+    }
   }
 
   loadSubgraph() {
@@ -43,7 +59,7 @@ module.exports = class TypeGenerator {
         ? this.options.subgraph
         : Subgraph.load(this.options.subgraphManifest)
     } catch (e) {
-      this.logger.fatal('Failed to load subgraph:', e)
+      throw Error('Failed to load subgraph')
     }
   }
 
@@ -64,7 +80,7 @@ module.exports = class TypeGenerator {
           immutable.List()
         )
     } catch (e) {
-      this.logger.fatal('Failed to load contract ABIs:', e)
+      throw Error('Failed to load contract ABIs')
     }
   }
 
@@ -78,7 +94,7 @@ module.exports = class TypeGenerator {
         return { dataSource: dataSource, abi: ABI.load(name, maybeRelativePath) }
       }
     } catch (e) {
-      this.logger.fatal('Failed to load contract ABI:', e)
+      throw Error('Failed to load contract ABI')
     }
   }
 
@@ -87,10 +103,10 @@ module.exports = class TypeGenerator {
       this.logger.step('Generate types for contract ABIs')
       return abis.map((abi, name) => this._generateTypesForABI(abi))
     } catch (e) {
-      this.logger.fatal('Failed to generate types for contract ABIS:', e)
+      throw Error('Failed to load subgraph')
     } finally {
       this.logger.info('')
-      this.logger.info(chalk.green('Types generated'))
+      this.logger.info(chalk.magenta('Types generated'))
     }
   }
 
@@ -116,7 +132,7 @@ module.exports = class TypeGenerator {
       fs.writeFileSync(outputFile, formattedCode)
       return { dataSource: abi.dataSource, abi: abi.abi, outputFile: outputFile }
     } catch (e) {
-      this.logger.fatal('Failed to generate types for contract ABI:', e.stack)
+      throw Error('Failed to generate types for contract ABI')
     }
   }
 
@@ -138,106 +154,82 @@ module.exports = class TypeGenerator {
       })
       return allAbsolutePaths
     } catch (e) {
-      this.logger.fatal('Failed to parse subgraph file locations:', e)
+      throw Error('Failed to parse subgraph file locations')
     }
   }
 
   watchAndGenerateTypes() {
     let generator = this
-    if (cluster.isMaster) {
-      let worker = cluster.fork()
-      worker.send({msgFromMaster: 1});
-      cluster.on('exit', function () {
-        cluster.fork()
+
+    let watchedFiles = this.getFilesToWatch()
+    generator.generateTypes()
+    // Initialize watcher that reruns generator
+    let watcher = chokidar.watch(this.options.subgraphManifest, {
+      persistent: true,
+      ignoreInitial: true,
+      atomic: 500
+    })
+    watcher
+      .on('ready', function () {
+        generator.logger.info('')
+        generator.logger.info(chalk.grey('Watching relevant manifest files'))
       })
-    }
-
-    if (cluster.isWorker) {
-      // Use master message to kick off compile
-      // preventing infinite error loop
-      process.on('message', function (_) {
-        generator.generateTypes()
-      });
-      let watchedFiles = this.getFilesToWatch()
-
-      // Initialize watcher that reruns generator
-      let watcher = chokidar.watch(this.options.subgraphManifest, {
-        persistent: true,
-        ignoreInitial: true,
-        atomic: 500
-      })
-      watcher
-        .on('ready', function () {
-          generator.logger.info('')
-          generator.logger.info(chalk.grey('Watching relevant manifest files'))
-        })
-        .on('change', changedFile => {
-          generator.logger.info('')
-          generator.logger.info('%s %s',
-            chalk.grey('File change detected: '),
-            generator.displayPath(changedFile)
-          )
-
-          // Convert to absolute paths for comparison
-          let manifestAbsolute =
-            (path.resolve(generator.options.subgraphManifest) === path.normalize(generator.options.subgraphManifest))
-            ? this.options.subgraphManifest
-            : path.resolve(generator.sourceDir, generator.options.subgraphManifest)
-          let changedFileAbsolute = (path.resolve(changedFile) === path.normalize(changedFile))
-            ? changedFile
-            : path.resolve(generator.sourceDir, changedFile)
-
-          if (changedFileAbsolute === manifestAbsolute) {
-            // Update watcher based on changes to manifest
-            let updatedWatchFiles = generator.getFilesToWatch()
-            let addedFiles = updatedWatchFiles.filter(file => {
-              return watchedFiles.indexOf(file) === -1
-            })
-            let removedFiles = watchedFiles.filter(file => {
-              return updatedWatchFiles.indexOf(file) === -1
-            })
-            watchedFiles = updatedWatchFiles
-            watcher.add(addedFiles)
-            watcher.unwatch(removedFiles)
-
-            if (addedFiles.length >= 1) {
-              let addedFilesDisplay = addedFiles.map(file => {
-                return generator.displayPath(file)
-              })
-              generator.logger.info(
-                '%s %j',
-                chalk.grey('Now watching: '),
-                addedFilesDisplay
-              )
-            }
-            if (removedFiles.length >= 1) {
-              let addedFilesDisplay = removedFiles.map(file => {
-                return generator.displayPath(file)
-              })
-              generator.logger.info(
-                '%s %j',
-                chalk.grey('No longer watching: '),
-                addedFilesDisplay
-              )
-            }
-          }
-          generator.generateTypes()
-        })
-        .on('error', error =>
-          this.logger.info('Watcher error: ', error)
+      .on('change', changedFile => {
+        generator.logger.info('')
+        generator.logger.info('%s %s',
+          chalk.grey('File change detected: '),
+          generator.displayPath(changedFile)
         )
-      watcher.add(watchedFiles)
 
-      // Catch keyboard interrupt: close watcher and exit process
-      process.on('SIGINT', () => {
-        watcher.close()
-        process.exit()
+        // Convert to absolute paths for comparison
+        let manifestAbsolute =
+          (path.resolve(generator.options.subgraphManifest) === path.normalize(generator.options.subgraphManifest))
+          ? this.options.subgraphManifest
+          : path.resolve(generator.sourceDir, generator.options.subgraphManifest)
+        let changedFileAbsolute = (path.resolve(changedFile) === path.normalize(changedFile))
+          ? changedFile
+          : path.resolve(generator.sourceDir, changedFile)
+
+        if (changedFileAbsolute === manifestAbsolute) {
+          // Update watcher based on changes to manifest
+          let updatedWatchFiles = generator.getFilesToWatch()
+          let addedFiles = updatedWatchFiles.filter(file => {
+            return watchedFiles.indexOf(file) === -1
+          })
+          let removedFiles = watchedFiles.filter(file => {
+            return updatedWatchFiles.indexOf(file) === -1
+          })
+          watchedFiles = updatedWatchFiles
+          watcher.add(addedFiles)
+          watcher.unwatch(removedFiles)
+
+          if (addedFiles.length >= 1) {
+            generator.logger.note(
+              'Now watching: ',
+              addedFiles.map(file => generator.displayPath(file)).join(', ')
+            )
+          }
+          if (removedFiles.length >= 1) {
+            generator.logger.note(
+              'No longer watching: ',
+              removedFiles.map(file => generator.displayPath(file)).join(', ')
+            )
+          }
+        }
+        generator.generateTypes()
       })
-      process.on('uncaughtException', function (err) {
-        generator.logger.fatal('UNCAUGHT EXCEPTION: ', err)
-        watcher.close()
-        process.exit()
-      })
-    }
+      .on('error', error =>
+        this.logger.info('Watcher error: ', error)
+      )
+    watcher.add(watchedFiles)
+
+    // Catch keyboard interrupt: close watcher and exit process
+    process.on('SIGINT', () => {
+      watcher.close()
+      process.exit()
+    })
+    process.on('uncaughtException', function (err) {
+      generator.logger.fatal('UNCAUGHT EXCEPTION: ', err)
+    })
   }
 }

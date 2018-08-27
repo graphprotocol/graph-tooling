@@ -32,46 +32,55 @@ class Compiler {
   }
 
   async compile() {
-    this.logger.currentStep = 0
     try {
-      fs.removeSync(buildDir)
-    } catch(e) {
-      // Build directory cleanup not need on the first pass
+      this.logger.currentStep = 0
+      this.logger.step('Load subgraph:', this.options.subgraphManifest)
+      let subgraph = this.loadSubgraph()
+
+      this.buildDir = this.createBuildDirectory()
+
+      let subgraphInBuildDir = this.copySubgraph(subgraph)
+      let typeFiles = this.generateTypes(subgraphInBuildDir)
+
+      this.copyRuntimeFiles(subgraphInBuildDir)
+      this.addTypesToRuntime(typeFiles)
+      this.addMappingsToRuntime(subgraphInBuildDir)
+      this.createOutputDirectory()
+
+      let compiledSubgraph = this.compileSubgraph(subgraphInBuildDir)
+      let localSubgraph = this.writeSubgraphToOutputDirectory(compiledSubgraph)
+
+      let hashOrFilename =
+        this.ipfs !== undefined
+          ? await this.uploadSubgraphToIPFS(localSubgraph)
+          : path.join(this.options.outputDir, 'subgraph.yaml')
+
+      this.logger.info('')
+      this.logger.info(chalk.magenta('Build completed'))
+      this.logger.info('')
+      this.logger.info('%s %s', chalk.bold(chalk.blue('Subgraph:')), hashOrFilename)
+      this.logger.info('')
+    } catch (e) {
+      if (e instanceof Error) {
+        if(e.hasOwnProperty('message')) {
+          this.logger.fatal(e.message)
+        } else {
+          this.logger.fatal(e)
+        }
+        if(e.hasOwnProperty('stack')) {
+          this.logger.note(e.stack.split('\n').slice(1).join('\n'))
+        }
+      } else {
+        this.logger.fatal("Failed to compile subgraph", e)
+      }
     }
-
-    this.logger.step('Load subgraph:', this.options.subgraphManifest)
-    let subgraph = this.loadSubgraph()
-
-    this.buildDir = this.createBuildDirectory()
-
-    let subgraphInBuildDir = this.copySubgraph(subgraph)
-    let typeFiles = this.generateTypes(subgraphInBuildDir)
-
-    this.copyRuntimeFiles(subgraphInBuildDir)
-    this.addTypesToRuntime(typeFiles)
-    this.addMappingsToRuntime(subgraphInBuildDir)
-    this.createOutputDirectory()
-
-    let compiledSubgraph = this.compileSubgraph(subgraphInBuildDir)
-    let localSubgraph = this.writeSubgraphToOutputDirectory(compiledSubgraph)
-
-    let hashOrFilename =
-      this.ipfs !== undefined
-        ? await this.uploadSubgraphToIPFS(localSubgraph)
-        : path.join(this.options.outputDir, 'subgraph.yaml')
-
-    this.logger.info('')
-    this.logger.info(chalk.green('Build completed'))
-    this.logger.info('')
-    this.logger.info('%s %s', chalk.bold(chalk.blue('Subgraph:')), hashOrFilename)
-    this.logger.info('')
   }
 
   loadSubgraph() {
     try {
       return Subgraph.load(this.options.subgraphManifest)
     } catch (e) {
-      this.logger.fatal('Failed to load subgraph:', e)
+      throw Error('Failed to load subgraph')
     }
   }
 
@@ -94,108 +103,84 @@ class Compiler {
         return path.resolve(this.sourceDir, file)
       })
       return allAbsolutePaths
-    } catch(e) {
-      this.logger.fatal('Failed to parse subgraph file locations:', e)
+    } catch (e) {
+      throw Error('Failed to parse subgraph file locations')
     }
   }
 
   watchAndCompile() {
     let compiler = this
-    if (cluster.isMaster) {
-      let worker = cluster.fork()
-      worker.send({msgFromMaster: 1});
+    let watchedFiles = this.getFilesToWatch()
+    compiler.compile()
 
-      cluster.on('exit', function() {
-        cluster.fork()
+    // Initialize watcher that reruns compiler
+    let watcher = chokidar.watch(this.options.subgraphManifest, {
+      persistent: true,
+      ignoreInitial: true,
+      atomic: 500
+    })
+    watcher
+      .on('ready', function () {
+        compiler.logger.info('')
+        compiler.logger.info(chalk.grey('Watching relevant manifest files'))
       })
-    }
-
-    if (cluster.isWorker) {
-      // Use master message to kick off compile
-      // preventing infinite error loop
-      process.on('message', function(_) {
-        compiler.compile()
-      });
-      let watchedFiles = this.getFilesToWatch()
-
-      // Initialize watcher that reruns compiler
-      let watcher = chokidar.watch(this.options.subgraphManifest, {
-        persistent: true,
-        ignoreInitial: true,
-        atomic: 500
-      })
-      watcher
-        .on('ready', function () {
-          compiler.logger.info('')
-          compiler.logger.info(chalk.grey('Watching relevant manifest files'))
-        })
-        .on('change', changedFile => {
-          compiler.logger.info('')
-          compiler.logger.info('%s %s',
-            chalk.grey('File change detected: '),
-            compiler.displayPath(changedFile)
-          )
-
-          // Convert to absolute paths for comparison
-          let manifestAbsolute =
-            (path.resolve(compiler.options.subgraphManifest) === path.normalize(compiler.options.subgraphManifest))
-            ? this.options.subgraphManifest
-            : path.resolve(compiler.sourceDir, compiler.options.subgraphManifest)
-          let changedFileAbsolute = (path.resolve(changedFile) === path.normalize(changedFile))
-            ? changedFile
-            : path.resolve(compiler.sourceDir, changedFile)
-
-          if (changedFileAbsolute === manifestAbsolute) {
-            // Update watcher based on changes to manifest
-            let updatedWatchFiles = compiler.getFilesToWatch()
-            let addedFiles = updatedWatchFiles.filter(file => {
-              return watchedFiles.indexOf(file) === -1
-            })
-            let removedFiles = watchedFiles.filter(file => {
-              return updatedWatchFiles.indexOf(file) === -1
-            })
-            watchedFiles = updatedWatchFiles
-            watcher.add(addedFiles)
-            watcher.unwatch(removedFiles)
-
-            if (addedFiles.length >= 1) {
-              let addedFilesDisplay = addedFiles.map(file => {
-                return compiler.displayPath(file)
-              })
-              compiler.logger.info(
-                '%s %j',
-                chalk.grey('Now watching: '),
-                addedFilesDisplay
-              )
-            }
-            if (removedFiles.length >= 1) {
-              let addedFilesDisplay = removedFiles.map(file => {
-                return compiler.displayPath(file)
-              })
-              compiler.logger.info(
-                '%s %j',
-                chalk.grey('No longer watching: '),
-                addedFilesDisplay
-              )
-            }
-          }
-          compiler.compile()
-        })
-        .on('error', error =>
-          this.logger.info('Watcher error: ', error)
+      .on('change', changedFile => {
+        compiler.logger.info('')
+        compiler.logger.info('%s %s',
+          chalk.grey('File change detected: '),
+          compiler.displayPath(changedFile)
         )
-      watcher.add(watchedFiles)
 
-      process.on('SIGINT', () => {
-        watcher.close()
-        process.exit()
+        // Convert to absolute paths for comparison
+        let manifestAbsolute =
+          (path.resolve(compiler.options.subgraphManifest) === path.normalize(compiler.options.subgraphManifest))
+          ? this.options.subgraphManifest
+          : path.resolve(compiler.sourceDir, compiler.options.subgraphManifest)
+        let changedFileAbsolute = (path.resolve(changedFile) === path.normalize(changedFile))
+          ? changedFile
+          : path.resolve(compiler.sourceDir, changedFile)
+
+        if (changedFileAbsolute === manifestAbsolute) {
+          // Update watcher based on changes to manifest
+          let updatedWatchFiles = compiler.getFilesToWatch()
+          let addedFiles = updatedWatchFiles.filter(file => {
+            return watchedFiles.indexOf(file) === -1
+          })
+          let removedFiles = watchedFiles.filter(file => {
+            return updatedWatchFiles.indexOf(file) === -1
+          })
+          watchedFiles = updatedWatchFiles
+          watcher.add(addedFiles)
+          watcher.unwatch(removedFiles)
+
+          if (addedFiles.length >= 1) {
+            compiler.logger.note(
+              'Now watching: ',
+              addedFiles.map(file => compiler.displayPath(file)).join(', ')
+            )
+          }
+          if (removedFiles.length >= 1) {
+            compiler.logger.note(
+              'No longer watching: ',
+              removedFiles.map(file => compiler.displayPath(file)).join(', ')
+            )
+          }
+        }
+        compiler.compile()
       })
-      process.on('uncaughtException', function (err) {
-        watcher.close()
-        process.exit()
-        compiler.logger.fatal('UNCAUGHT EXCEPTION: ', err)
+      .on('error', error => {
+        throw Error('Watcher error')
       })
-    }
+    watcher.add(watchedFiles)
+
+    process.on('SIGINT', () => {
+      watcher.close()
+      process.exit()
+    })
+    process.on('uncaughtException', function (err) {
+      compiler.logger.fatal('UNCAUGHT EXCEPTION: ', err)
+      watcher.close()
+    })
   }
 
   createBuildDirectory() {
@@ -212,7 +197,7 @@ class Compiler {
 
       return buildDir
     } catch (e) {
-      this.logger.fatal('Failed to create build directory:', e)
+      throw new Error('Failed to create build directory')
     }
   }
 
@@ -252,7 +237,7 @@ class Compiler {
 
       return subgraph
     } catch (e) {
-      this.logger.fatal('Failed to copy subgraph files:', e)
+      throw Error('Failed to copy subgraph files')
     }
   }
 
@@ -311,7 +296,7 @@ class Compiler {
         )
       })
     } catch (e) {
-      this.logger.fatal('Failed to add types to runtime:', e)
+      throw Error('Failed to add types to runtime')
     }
   }
 
@@ -327,7 +312,7 @@ class Compiler {
         )
       })
     } catch (e) {
-      this.logger.fatal('Failed to add mapping to runtime:', e)
+      throw Error('Failed to add mapping to runtime')
     }
   }
 
@@ -339,7 +324,7 @@ class Compiler {
       )
       fs.mkdirsSync(this.options.outputDir)
     } catch (e) {
-      this.logger.fatal('Failed to create output directory:', e)
+      throw Error('Failed to create output directory')
     }
   }
 
@@ -357,7 +342,7 @@ class Compiler {
 
       return subgraph
     } catch (e) {
-      this.logger.fatal('Failed to compile subgraph:', e)
+      throw Error('Failed to compile subgraph')
     }
   }
 
@@ -393,14 +378,13 @@ class Compiler {
         },
         e => {
           if (e != null) {
-            this.logger.fatal('Failed to compile data source mapping:', e)
+            throw e
           }
         }
       )
-
       return outputFile
     } catch (e) {
-      this.logger.fatal('Failed to compile data source mapping:', e)
+      throw Error('Failed to compile data source mapping')
     }
   }
 
@@ -471,7 +455,7 @@ class Compiler {
 
       return subgraph
     } catch (e) {
-      this.logger.fatal('Failed to write compiled subgraph to output directory:', e)
+      throw Error('Failed to write compiled subgraph to output directory')
     }
   }
 
@@ -514,7 +498,7 @@ class Compiler {
       // Upload the subgraph itself
       return await this._uploadSubgraphDefinitionToIPFS(subgraph)
     } catch (e) {
-      this.logger.fatal('Failed to upload subgraph to IPFS:', e)
+      throw (new Error('Failed to upload subgraph to IPFS'))
     }
   }
 
@@ -542,7 +526,7 @@ class Compiler {
       await this.ipfs.pin.add(hash)
       return hash
     } catch (e) {
-      this.logger.fatal('Failed to upload file to IPFS:', e)
+      throw Error('Failed to upload file to IPFS')
     }
   }
 }
