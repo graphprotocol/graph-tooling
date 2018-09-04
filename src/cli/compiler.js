@@ -56,6 +56,7 @@ class Compiler {
       if (this.ipfs !== undefined) {
         let ipfsHash = await this.uploadSubgraphToIPFS(localSubgraph)
         this.completed(ipfsHash)
+        return ipfsHash
       } else {
         this.completed(path.join(this.options.outputDir, 'subgraph.yaml'))
       }

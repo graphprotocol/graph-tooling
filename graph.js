@@ -8,4 +8,5 @@ app
   .command('build [file]', 'Compiles a subgraph and uploads it to IPFS', {
     isDefault: true,
   })
+  .command('deploy [file]', 'Deploys subgraph')
   .parse(process.argv)
