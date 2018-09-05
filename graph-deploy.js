@@ -1,51 +1,56 @@
 #!/usr/bin/env node
 
-let app = require('commander')
+let args = require('commander')
+let jayson = require('jayson');
 let request = require('request')
-let args = require('./src/cli/args')
+let app = require('./src/cli/app')
+const Logger = require('./src/cli/logger')
 const url = require('url')
 
-args.addBuildCommand()
+app.initApp()
+app.addBuildCommand()
 
-app
+args
     .option(
         '-n, --subgraph-name <NAME>',
         'subgraph name'
     )
     .option(
         '--node <URL>[:PORT]',
-        'graph node url'
+        'graph node'
     )
 
-app.parse(process.argv)
+app.parse()
 
-if (!app.node || !app.subgraphName) {
-    app.help()
+if (!args.node || !args.subgraphName) {
+    args.help()
 }
 
-let compiler = args.compilerFromArgs()
+let compiler = app.compilerFromArgs()
 
-let requestUrl = new URL(app.node);
+let requestUrl = new URL(args.node)
 if (!requestUrl.port) {
     requestUrl.port = "8020"
 }
+
+let client = jayson.Client.http(requestUrl)
+let logger = new Logger(0, { verbosity: args.verbosity })
 
 compiler.compile()
     .then(
         function (ipfsHash) {
             if (ipfsHash === undefined) {
-                console.log("compilation failed, not deploying")
+                // Compilation failed, not deploying.
+                process.exitCode = 1
                 return
             }
-            requestUrl.pathname += `subgraph_deploy/${app.name}/${ipfsHash}`
-            request.post(requestUrl, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            },
-                function (error, res, body) {
-                    if (error) {
-                        console.log("error sending json-rpc request " + error)
+            client.request('subgraph_deploy', { name: args.subgraphName, ipfs_hash: ipfsHash },
+                function (requestError, jsonRpcError, res) {
+                    if (requestError) {
+                        logger.fatal("HTTP error deploying the subgraph:", requestError)
+                    }
+                    if (jsonRpcError) {
+                        logger.fatal("Error deploying the subgraph:", jsonRpcError.message)
                     }
                 })
         }

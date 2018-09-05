@@ -6,19 +6,27 @@ let ipfsAPI = require('ipfs-api')
 
 let Compiler = require('./compiler')
 
-function addBuildCommand() {
+function initApp() {
     app
         .version('0.1.0')
-        .arguments('<cmd> [file]')
-        .option(
-            '-o, --output-dir [path]',
-            'Output directory for build artifacts',
-            path.join(process.cwd(), 'dist')
-        )
+        .arguments('<cmd> [subgraph.yaml]')
         .option(
             '--verbosity [info|verbose|debug]',
             'The log level to use (default: LOG_LEVEL or info)',
             process.env.LOG_LEVEL || 'info'
+        )
+}
+
+function parse() {
+    app.parse(process.argv)
+}
+
+function addBuildCommand() {
+    app
+        .option(
+            '-o, --output-dir [path]',
+            'Output directory for build artifacts',
+            path.join(process.cwd(), 'dist')
         )
         .option('-t, --output-format [format]', 'Output format (wasm, wast)', 'wasm')
         .option('i, --ipfs [addr]', 'IPFS node to use for uploading files')
@@ -56,5 +64,9 @@ function compilerFromArgs() {
     })
 }
 
-exports.addBuildCommand = addBuildCommand
-exports.compilerFromArgs = compilerFromArgs
+module.exports = {
+    addBuildCommand,
+    compilerFromArgs,
+    initApp,
+    parse,
+}
