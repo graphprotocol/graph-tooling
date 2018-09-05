@@ -18,9 +18,7 @@ app
     'The log level to use (default: LOG_LEVEL or info)',
     process.env.LOG_LEVEL || 'info'
   )
-  .option(
-    '-w, --watch',
-    'Rebuild automatically when files change')
+  .option('-w, --watch', 'Rebuild automatically when files change')
   .parse(process.argv)
 
 // Obtain the subgraph manifest file
@@ -32,7 +30,7 @@ if (file === null || file === undefined) {
 let generator = new TypeGenerator({
   subgraphManifest: file,
   outputDir: app.outputDir,
-  verbosity: app.verbosity
+  verbosity: app.verbosity,
 })
 
 // Watch working directory for file updates or additions, trigger type generation (if watch argument specified)
