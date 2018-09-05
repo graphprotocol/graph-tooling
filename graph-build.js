@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-let app = require('commander')
-let args = require('./src/cli/args')
+let app = require('./src/cli/app')
 
-args.addBuildCommand()
-app.parse(process.argv)
-let compiler = args.compilerFromArgs()
+app.initApp()
+app.addBuildCommand()
+app.parse()
+let compiler = app.compilerFromArgs()
 
 // Watch subgraph files for changes or additions, trigger compile (if watch argument specified)
 if (app.watch) {
