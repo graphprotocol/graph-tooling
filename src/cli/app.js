@@ -29,7 +29,7 @@ function addBuildCommand() {
             path.join(process.cwd(), 'dist')
         )
         .option('-t, --output-format [format]', 'Output format (wasm, wast)', 'wasm')
-        .option('i, --ipfs [addr]', 'IPFS node to use for uploading files')
+        .option('-i, --ipfs [addr]', 'IPFS node to use for uploading files')
         .option('-w, --watch', 'Rebuild automatically when files change')
 
     app.on('--help', function () {
