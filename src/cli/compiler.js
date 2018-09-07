@@ -105,7 +105,7 @@ class Compiler {
     }
   }
 
-  async watchAndCompile() {
+  async watchAndCompile(onCompiled = undefined) {
     let compiler = this
 
     // Create watcher and recompile once and then on every change to a watched file
@@ -115,7 +115,10 @@ class Compiler {
         if (file !== undefined) {
           compiler.logger.status('File change detected:', this.displayPath(file))
         }
-        await compiler.compile()
+        let ipfsHash = await compiler.compile()
+        if (onCompiled !== undefined) {
+          onCompiled(ipfsHash)
+        }
       },
       onCollectFiles: () => compiler.getFilesToWatch(),
       onError: error => compiler.logger.error('Error:', error),
