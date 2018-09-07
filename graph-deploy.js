@@ -14,6 +14,7 @@ app.addBuildCommand()
 args
   .option('-n, --subgraph-name <NAME>', 'subgraph name')
   .option('--node <URL>[:PORT]', 'graph node')
+  .option('--api-key <KEY>', 'key corresponding to the subgraph name')
 
 app.parse()
 
@@ -29,6 +30,7 @@ if (!requestUrl.port) {
 }
 
 let client = jayson.Client.http(requestUrl)
+client.options.headers = { Authorization: 'Bearer ' + args.apiKey }
 let logger = new Logger(0, { verbosity: args.verbosity })
 
 let deploySubgraph = ipfsHash => {
@@ -40,7 +42,7 @@ let deploySubgraph = ipfsHash => {
     { name: args.subgraphName, ipfs_hash: ipfsHash },
     function(requestError, jsonRpcError, res) {
       if (requestError) {
-        logger.fatal('HTTP error deploying the subgraph:', requestError)
+        logger.fatal('HTTP error deploying the subgraph:', requestError.code)
       }
       if (jsonRpcError) {
         logger.fatal('Error deploying the subgraph:', jsonRpcError.message)
