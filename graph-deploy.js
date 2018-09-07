@@ -2,6 +2,7 @@
 
 let args = require('commander')
 let jayson = require('jayson')
+let path = require('path')
 let request = require('request')
 let app = require('./src/cli/app')
 const Logger = require('./src/cli/logger')
@@ -30,12 +31,10 @@ if (!requestUrl.port) {
 let client = jayson.Client.http(requestUrl)
 let logger = new Logger(0, { verbosity: args.verbosity })
 
-compiler.compile().then(function(ipfsHash) {
-  if (ipfsHash === undefined) {
-    // Compilation failed, not deploying.
-    process.exitCode = 1
-    return
-  }
+let deploySubgraph = ipfsHash => {
+  logger.status('Deploying to Graph node:', requestUrl)
+  logger.info('')
+
   client.request(
     'subgraph_deploy',
     { name: args.subgraphName, ipfs_hash: ipfsHash },
@@ -46,6 +45,33 @@ compiler.compile().then(function(ipfsHash) {
       if (jsonRpcError) {
         logger.fatal('Error deploying the subgraph:', jsonRpcError.message)
       }
+      if (!requestError && !jsonRpcError) {
+        logger.status(
+          'Deployed to Graph node:',
+          path.join(requestUrl.toString(), args.subgraphName)
+        )
+      }
     }
   )
-})
+}
+
+if (args.watch) {
+  compiler
+    .watchAndCompile(ipfsHash => {
+      if (ipfsHash !== undefined) {
+        deploySubgraph(ipfsHash)
+      }
+    })
+    .catch(e => {
+      logger.fatal('Failed to watch, compile or deploy the subgraph:', e)
+    })
+} else {
+  compiler.compile().then(function(ipfsHash) {
+    if (ipfsHash === undefined) {
+      // Compilation failed, not deploying.
+      process.exitCode = 1
+      return
+    }
+    deploySubgraph(ipfsHash)
+  })
+}
