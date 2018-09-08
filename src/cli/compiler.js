@@ -9,6 +9,7 @@ const Logger = require('./logger')
 const Subgraph = require('./subgraph')
 const TypeGenerator = require('./type-generator')
 const Watcher = require('./watcher')
+const ABI = require('./abi')
 
 class Compiler {
   constructor(options) {
@@ -166,13 +167,15 @@ class Compiler {
           dataSource
             .updateIn(['mapping', 'abis'], abis =>
               abis.map(abi =>
-                abi.update('file', abiFile =>
-                  this._copySubgraphFile(
+                abi.update('file', abiFile => {
+                  let abiData = ABI.load(abi.get('name'), abiFile)
+                  return this._writeSubgraphFile(
                     abiFile,
+                    JSON.stringify(abiData.data.toJS(), null, 2),
                     this.sourceDir,
                     this.subgraphDir(this.buildDir, dataSource)
                   )
-                )
+                })
               )
             )
             .updateIn(['mapping', 'file'], mappingFile =>
@@ -198,6 +201,16 @@ class Compiler {
     this.logger.note('Copy subgraph file:', this.displayPath(targetFile))
     fs.mkdirsSync(path.dirname(targetFile))
     fs.copyFileSync(absoluteSourceFile, targetFile)
+    return targetFile
+  }
+
+  _writeSubgraphFile(maybeRelativeFile, data, sourceDir, targetDir) {
+    let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
+    let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
+    let targetFile = path.join(targetDir, relativeSourceFile)
+    this.logger.note('Write subgraph file:', this.displayPath(targetFile))
+    fs.mkdirsSync(path.dirname(targetFile))
+    fs.writeFileSync(targetFile, data)
     return targetFile
   }
 

@@ -242,6 +242,8 @@ module.exports = class ABI {
 
   static load(name, file) {
     let data = JSON.parse(fs.readFileSync(file))
-    return new ABI(name, file, immutable.fromJS(data))
+    return Array.isArray(data)
+      ? new ABI(name, file, immutable.fromJS(data))
+      : new ABI(name, file, immutable.fromJS(data.abi))
   }
 }
