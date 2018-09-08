@@ -494,9 +494,9 @@ class Value {
     return changetype<string>(this.data as u32)
   }
 
-  toArray<T>(): Array<T> {
+  toArray(): Array<Value> {
     assert(this.kind == ValueKind.ARRAY, 'Value is not an array.')
-    return changetype<Array<T>>(this.data as u32)
+    return changetype<Array<Value>>(this.data as u32)
   }
 
   static fromAddress(address: Address): Value {
@@ -561,7 +561,7 @@ class Value {
     return value
   }
 
-  static fromArray<T>(array: Array<T>): Value {
+  static fromArray(array: Array<Value>): Value {
     let value = new Value()
     value.kind = ValueKind.ARRAY
     value.data = array as u64
@@ -600,7 +600,7 @@ class Entity extends TypedMap<string, Value> {
     return this.get(key).toString()
   }
 
-  getArray<T>(key: string): Array<T> {
+  getArray(key: string): Array<Value> {
     return this.get(key).toArray()
   }
 
@@ -636,7 +636,7 @@ class Entity extends TypedMap<string, Value> {
     this.set(key, Value.fromU256(value))
   }
 
-  setArray<T>(key: string, array: Array<T>): void {
+  setArray(key: string, array: Array<Value>): void {
     this.set(key, Value.fromArray(array))
   }
 

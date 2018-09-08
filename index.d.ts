@@ -188,7 +188,7 @@ declare class Value {
   toBytes(): Bytes
   toU32(): u32
   toString(): string
-  toArray<T>(array: Array<T>): Value
+  toArray(array: Array<Value>): Value
 
   static fromAddress(address: Address): Value
   static fromBoolean(b: boolean): Value
@@ -199,7 +199,7 @@ declare class Value {
   static fromU256(n: U256): Value
   static fromString(s: string): Value
   static fromNull(): Value
-  static fromArray<T>(array: Array<T>): Value
+  static fromArray(array: Array<Value>): Value
 }
 
 /**
@@ -215,7 +215,7 @@ declare class Entity extends TypedMap<string, Value> {
   getBytes(key: string): Bytes
   getU32(key: string): u32
   getString(key: string): string
-  getArray<T>(key: string): Array<T>
+  getArray(key: string): Array<Value>
 
   setAddress(key: string, value: Address): void
   setBoolean(key: string, value: boolean): void
@@ -225,7 +225,7 @@ declare class Entity extends TypedMap<string, Value> {
   setU32(key: string, value: u32): void
   setU256(key: string, value: U256): void
   setString(key: string, value: string): void
-  setArray<T>(key: string, array: Array<T>): void
+  setArray(key: string, array: Array<Value>): void
   unset(key: string): void
   /** Assigns properties from source to this Entity in right-to-left order */
   merge(sources: Array<Entity>): Entity
