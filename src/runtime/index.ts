@@ -616,11 +616,11 @@ class Entity extends TypedMap<string, Value> {
   }
 
   getI256(key: string): I256 {
-    this.get(key).toI256()
+    return this.get(key).toI256()
   }
 
   getU256(key: string): U256 {
-    this.get(key).toU256()
+    return this.get(key).toU256()
   }
 
   setString(key: string, value: string): void {
