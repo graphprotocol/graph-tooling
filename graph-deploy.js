@@ -7,6 +7,7 @@ let request = require('request')
 let app = require('./src/cli/app')
 const Logger = require('./src/cli/logger')
 const url = require('url')
+const { URL } = url
 
 app.initApp()
 app.addBuildCommand()
