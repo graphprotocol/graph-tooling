@@ -20,6 +20,14 @@ declare namespace store {
    * @param id Entity ID.
    */
   function remove(entity: string, id: string): void
+
+  /**
+   * Fetches a previously created entity from the host store.
+   * 
+   * @param entity Name of the entity type.
+   * @param id Entity ID.
+   */
+  function get(entity: string, id: string): Entity
 }
 
 /**
@@ -174,6 +182,14 @@ declare class Value {
   kind: ValueKind
   data: ValuePayload
 
+  toAddress(): Address
+  toBoolean(): boolean
+  toBigInt(): BigInt
+  toBytes(): Bytes
+  toU32(): u32
+  toString(): string
+  toArray<T>(array: Array<T>): Value
+
   static fromAddress(address: Address): Value
   static fromBoolean(b: boolean): Value
   static fromBigInt(n: BigInt): Value
@@ -192,6 +208,15 @@ declare class Value {
  * `Value` objects.
  */
 declare class Entity extends TypedMap<string, Value> {
+
+  getAddress(key: string): Address
+  getBoolean(key: string): boolean
+  getBigInt(key: string): BigInt
+  getBytes(key: string): Bytes
+  getU32(key: string): u32
+  getString(key: string): string
+  getArray<T>(key: string): Array<T>
+
   setAddress(key: string, value: Address): void
   setBoolean(key: string, value: boolean): void
   setBigInt(key: string, value: BigInt): void
