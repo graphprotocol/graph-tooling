@@ -20,6 +20,14 @@ declare namespace store {
    * @param id Entity ID.
    */
   function remove(entity: string, id: string): void
+
+  /**
+   * Fetches a previously created entity from the host store.
+   * 
+   * @param entity Name of the entity type.
+   * @param id Entity ID.
+   */
+  function get(entity: string, id: string): Entity
 }
 
 /**
