@@ -183,6 +183,7 @@ declare class Value {
   static fromU256(n: U256): Value
   static fromString(s: string): Value
   static fromNull(): Value
+  static fromArray<T>(array: Array<T>): Value
 }
 
 /**
@@ -199,6 +200,7 @@ declare class Entity extends TypedMap<string, Value> {
   setU32(key: string, value: u32): void
   setU256(key: string, value: U256): void
   setString(key: string, value: string): void
+  setArray<T>(key: string, array: Array<T>): void
   unset(key: string): void
   /** Assigns properties from source to this Entity in right-to-left order */
   merge(sources: Array<Entity>): Entity
