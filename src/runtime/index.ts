@@ -41,8 +41,9 @@ declare namespace typeConversion {
   function h160ToH256(h: H160): H256
   function u256ToH160(u: U256): H160
   function u256ToH256(u: U256): H256
-  function int256ToBigInt(u: U256): BigInt
+  function int256ToBigInt(u: U64Array): BigInt
   function stringToH160(s: String): H160
+  function bigIntToInt256(i: BigInt): U64Array
 }
 
 /**
