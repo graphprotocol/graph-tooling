@@ -465,37 +465,37 @@ class Value {
   data: ValuePayload
 
   toAddress(): Address {
-    assert(this.kind == ValueKind.BYTES, 'EthereumValue is not an address.')
+    assert(this.kind == ValueKind.BYTES, 'Value is not an address.')
     return changetype<Address>(this.data as u32)
   }
 
   toBoolean(): boolean {
-    assert(this.kind == ValueKind.BOOL, 'EthereumValue is not a boolean.')
+    assert(this.kind == ValueKind.BOOL, 'Value is not a boolean.')
     return this.data != 0
   }
 
   toBigInt(): BigInt {
-    assert(this.kind == ValueKind.BIGINT, 'EthereumValue is not a BigInt.')
+    assert(this.kind == ValueKind.BIGINT, 'Value is not an I256, U256 or BigInt.')
     return changetype<BigInt>(this.data as u32)
   }
 
   toBytes(): Bytes {
-    assert(this.kind == ValueKind.BYTES, 'EthereumValue is not a byte array.')
+    assert(this.kind == ValueKind.BYTES, 'Value is not a byte array.')
     return changetype<Bytes>(this.data as u32)
   }
 
   toU32(): u32 {
-    assert(this.kind == ValueKind.INT, 'EthereumValue is not an u32.')
+    assert(this.kind == ValueKind.INT, 'Value is not an u32.')
     return this.data as u32
   }
 
   toString(): string {
-    assert(this.kind == ValueKind.STRING, 'EthereumValue is not a string.')
+    assert(this.kind == ValueKind.STRING, 'Value is not a string.')
     return changetype<string>(this.data as u32)
   }
 
   toArray<T>(): Array<T> {
-    assert(this.kind == ValueKind.ARRAY, 'EthereumValue is not an array.')
+    assert(this.kind == ValueKind.ARRAY, 'Value is not an array.')
     return changetype<Array<T>>(this.data as u32)
   }
 
