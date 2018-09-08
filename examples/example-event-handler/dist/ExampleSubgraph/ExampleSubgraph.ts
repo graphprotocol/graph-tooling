@@ -41,8 +41,9 @@ declare namespace typeConversion {
   function h160ToH256(h: H160): H256
   function u256ToH160(u: U256): H160
   function u256ToH256(u: U256): H256
-  function int256ToBigInt(u: U256): BigInt
+  function int256ToBigInt(u: U64Array): BigInt
   function stringToH160(s: String): H160
+  function bigIntToInt256(i: BigInt): U64Array
 }
 
 /**
@@ -499,6 +500,16 @@ class Value {
     return changetype<Array<T>>(this.data as u32)
   }
 
+  toI256(): I256 {
+    assert(this.kind == ValueKind.BIGINT, 'Value is not an I256.')
+    return typeConversion.bigIntToInt256(changetype<BigInt>(this.data as u32))
+  }
+
+  toU256(): U256 {
+    assert(this.kind == ValueKind.BIGINT, 'Value is not an U256.')
+    return typeConversion.bigIntToInt256(changetype<BigInt>(this.data as u32))
+  }
+
   static fromAddress(address: Address): Value {
     let value = new Value()
     value.kind = ValueKind.BYTES
@@ -602,6 +613,14 @@ class Entity extends TypedMap<string, Value> {
 
   getArray<T>(key: string): Array<T> {
     return this.get(key).toArray()
+  }
+
+  getI256(key: string): I256 {
+    this.get(key).toI256()
+  }
+
+  getU256(key: string): U256 {
+    this.get(key).toU256()
   }
 
   setString(key: string, value: string): void {
