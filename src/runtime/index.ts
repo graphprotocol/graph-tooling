@@ -9,6 +9,7 @@ export { allocate_memory }
 declare namespace store {
   function set(entity: string, id: string, data: Entity): void
   function remove(entity: string, id: string): void
+  function get(entity: string, id: string): Entity
 }
 
 /** Host ethereum interface */
