@@ -577,31 +577,31 @@ class Value {
 class Entity extends TypedMap<string, Value> {
 
   getAddress(key: string): Address {
-    this.get(key).toAddress()
+    return this.get(key).toAddress()
   }
 
   getBoolean(key: string): boolean {
-    this.get(key).toBoolean()
+    return this.get(key).toBoolean()
   }
 
   getBigInt(key: string): BigInt {
-    this.get(key).toBigInt()
+    return this.get(key).toBigInt()
   }
 
   getBytes(key: string): Bytes {
-    this.get(key).toBytes()
+    return this.get(key).toBytes()
   }
 
   getU32(key: string): u32 {
-    this.get(key).toU32()
+    return this.get(key).toU32()
   }
 
   getString(key: string): string {
-    this.get(key).toString()
+    return this.get(key).toString()
   }
 
   getArray<T>(key: string): Array<T> {
-    this.get(key).toArray()
+    return this.get(key).toArray()
   }
 
   setString(key: string, value: string): void {
