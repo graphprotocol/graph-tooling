@@ -16,7 +16,7 @@ module.exports = class ABI {
   }
 
   _maybePrefixedName(s) {
-    return this._typePrefix ? `${this._typePrefix}_${s}` : s
+    return this._typePrefix ? `${this._typePrefix}${s}` : s
   }
 
   _generateEventTypes() {
