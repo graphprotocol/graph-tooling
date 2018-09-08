@@ -4,21 +4,26 @@ let immutable = require('immutable')
 let codegen = require('./codegen')
 
 module.exports = class ABI {
-  constructor(name, file, data) {
+  constructor(name, file, data, _typePrefix) {
     this.name = name
     this.file = file
     this.data = data
+    this._typePrefix = _typePrefix
   }
 
   generateTypes() {
     return [...this._generateEventTypes(), ...this._generateSmartContractClass()]
   }
 
+  _maybePrefixedName(s) {
+    return this._typePrefix ? `${this._typePrefix}_${s}` : s
+  }
+
   _generateEventTypes() {
     return this.data
       .filter(member => member.get('type') === 'event')
       .map(event => {
-        let eventClassName = event.get('name')
+        let eventClassName = this._maybePrefixedName(event.get('name'))
 
         // First, generate a class with the param getters
         let paramsClassName = eventClassName + 'Params'
@@ -73,7 +78,8 @@ module.exports = class ABI {
   }
 
   _generateSmartContractClass() {
-    let klass = codegen.klass(this.name, { extends: 'SmartContract' })
+    let klassName = this._maybePrefixedName(this.name)
+    let klass = codegen.klass(klassName, { extends: 'SmartContract' })
     let types = immutable.List()
 
     const paramName = (name, index) =>
@@ -88,7 +94,7 @@ module.exports = class ABI {
         ]),
         klass,
         `
-        return new ${this.name}('${this.name}', address, blockHash);
+        return new ${klassName}('${this.name}', address, blockHash);
         `
       )
     )
@@ -108,7 +114,7 @@ module.exports = class ABI {
 
               // Create a type dedicated to holding the return values
               returnType = codegen.klass(
-                this.name + '__' + member.get('name') + 'Result',
+                this._maybePrefixedName(this.name) + '__' + member.get('name') + 'Result',
                 {}
               )
 
@@ -240,10 +246,10 @@ module.exports = class ABI {
     return [...types, klass]
   }
 
-  static load(name, file) {
+  static load(name, file, _typePrefix) {
     let data = JSON.parse(fs.readFileSync(file))
     return Array.isArray(data)
-      ? new ABI(name, file, immutable.fromJS(data))
-      : new ABI(name, file, immutable.fromJS(data.abi))
+      ? new ABI(name, file, immutable.fromJS(data), _typePrefix)
+      : new ABI(name, file, immutable.fromJS(data.abi), _typePrefix)
   }
 }

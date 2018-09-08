@@ -61,7 +61,14 @@ module.exports = class TypeGenerator {
               .getIn(['mapping', 'abis'])
               .reduce(
                 (abis, abi) =>
-                  abis.push(this._loadABI(dataSource, abi.get('name'), abi.get('file'))),
+                  abis.push(
+                    this._loadABI(
+                      dataSource,
+                      abi.get('name'),
+                      abi.get('file'),
+                      abi.get('_typePrefix')
+                    )
+                  ),
                 abis
               ),
           immutable.List()
@@ -71,14 +78,17 @@ module.exports = class TypeGenerator {
     }
   }
 
-  _loadABI(dataSource, name, maybeRelativePath) {
+  _loadABI(dataSource, name, maybeRelativePath, _typePrefix) {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
         this.logger.note('Load contract ABI file:', this.displayPath(absolutePath))
-        return { dataSource: dataSource, abi: ABI.load(name, absolutePath) }
+        return { dataSource: dataSource, abi: ABI.load(name, absolutePath, _typePrefix) }
       } else {
-        return { dataSource: dataSource, abi: ABI.load(name, maybeRelativePath) }
+        return {
+          dataSource: dataSource,
+          abi: ABI.load(name, maybeRelativePath, _typePrefix),
+        }
       }
     } catch (e) {
       throw Error('Failed to load contract ABI')
