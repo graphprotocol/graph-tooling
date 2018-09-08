@@ -464,6 +464,41 @@ class Value {
   kind: ValueKind
   data: ValuePayload
 
+  toAddress(): Address {
+    assert(this.kind == ValueKind.BYTES, 'EthereumValue is not an address.')
+    return changetype<Address>(this.data as u32)
+  }
+
+  toBoolean(): boolean {
+    assert(this.kind == ValueKind.BOOL, 'EthereumValue is not a boolean.')
+    return this.data != 0
+  }
+
+  toBigInt(): BigInt {
+    assert(this.kind == ValueKind.BIGINT, 'EthereumValue is not a BigInt.')
+    return changetype<BigInt>(this.data as u32)
+  }
+
+  toBytes(): Bytes {
+    assert(this.kind == ValueKind.BYTES, 'EthereumValue is not a byte array.')
+    return changetype<Bytes>(this.data as u32)
+  }
+
+  toU32(): u32 {
+    assert(this.kind == ValueKind.INT, 'EthereumValue is not an u32.')
+    return this.data as u32
+  }
+
+  toString(): string {
+    assert(this.kind == ValueKind.STRING, 'EthereumValue is not a string.')
+    return changetype<string>(this.data as u32)
+  }
+
+  toArray<T>(): Array<T> {
+    assert(this.kind == ValueKind.ARRAY, 'EthereumValue is not an array.')
+    return changetype<Array<T>>(this.data as u32)
+  }
+
   static fromAddress(address: Address): Value {
     let value = new Value()
     value.kind = ValueKind.BYTES
@@ -540,6 +575,35 @@ class Value {
  * `Value` objects.
  */
 class Entity extends TypedMap<string, Value> {
+
+  getAddress(key: string): Address {
+    this.get(key).toAddress()
+  }
+
+  getBoolean(key: string): boolean {
+    this.get(key).toBoolean()
+  }
+
+  getBigInt(key: string): BigInt {
+    this.get(key).toBigInt()
+  }
+
+  getBytes(key: string): Bytes {
+    this.get(key).toBytes()
+  }
+
+  getU32(key: string): u32 {
+    this.get(key).toU32()
+  }
+
+  getString(key: string): string {
+    this.get(key).toString()
+  }
+
+  getArray<T>(key: string): Array<T> {
+    this.get(key).toArray()
+  }
+
   setString(key: string, value: string): void {
     this.set(key, Value.fromString(value))
   }
