@@ -189,6 +189,8 @@ declare class Value {
   toU32(): u32
   toString(): string
   toArray<T>(array: Array<T>): Value
+  toI256(): I256
+  toU256(): U256
 
   static fromAddress(address: Address): Value
   static fromBoolean(b: boolean): Value
@@ -216,6 +218,8 @@ declare class Entity extends TypedMap<string, Value> {
   getU32(key: string): u32
   getString(key: string): string
   getArray<T>(key: string): Array<T>
+  getI256(key: string): I256
+  getU256(key: string): U256
 
   setAddress(key: string, value: Address): void
   setBoolean(key: string, value: boolean): void
