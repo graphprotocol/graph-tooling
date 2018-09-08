@@ -572,7 +572,7 @@ class Value {
     return value
   }
 
-  static fromArray<T>(array: Array<T>): Value {
+  static fromArray(array: Array<Value>): Value {
     let value = new Value()
     value.kind = ValueKind.ARRAY
     value.data = array as u64
@@ -655,7 +655,7 @@ class Entity extends TypedMap<string, Value> {
     this.set(key, Value.fromU256(value))
   }
 
-  setArray<T>(key: string, array: Array<T>): void {
+  setArray(key: string, array: Array<Value>): void {
     this.set(key, Value.fromArray(array))
   }
 
