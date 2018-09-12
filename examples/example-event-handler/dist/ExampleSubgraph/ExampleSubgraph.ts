@@ -9,7 +9,12 @@ export { allocate_memory }
 declare namespace store {
   function set(entity: string, id: string, data: Entity): void
   function remove(entity: string, id: string): void
-  function get(entity: string, id: string): Entity
+}
+
+namespace store {
+  function get(entity: string, id: string): Entity {
+    return assert<Entity>(null, "store.get is not supported yet")
+  }
 }
 
 /** Host ethereum interface */
@@ -846,5 +851,6 @@ export function handleExampleEvent(event: ExampleEvent): void {
   entity.setString('exampleAttribute', event.params.exampleParam)
 
   store.set('ExampleEntity', 'example id', entity)
+  store.get('ExampleEntity', 'example id')
 }
 
