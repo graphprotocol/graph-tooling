@@ -7,4 +7,5 @@ export function handleExampleEvent(event: ExampleEvent): void {
   entity.setString('exampleAttribute', event.params.exampleParam)
 
   store.set('ExampleEntity', 'example id', entity)
+  store.get('ExampleEntity', 'example id')
 }
