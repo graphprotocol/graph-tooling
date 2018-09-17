@@ -50,7 +50,8 @@ An example of this can be found in the [Decentraland repository](https://github.
       "scripts": {
         "codegen": "graph generate-types subgraph.yaml",
         "build": "graph build subgraph.yaml",
-        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml"
+        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
+        "deploy": "graph deploy subgraph.yaml --watch --verbosity debug --node http://35.242.224.197:8020/ --ipfs /ip4/35.242.224.197/tcp/8030 --subgraph-name my-subgraph"
       }
     }
     ```
@@ -74,7 +75,6 @@ An example of this can be found in the [Decentraland repository](https://github.
        --node $GRAPH_NODE_MANAGEMENT \
        --ipfs $GRAPH_NODE_IPFS \
        --subgraph-name my-subgraph \
-       --api-key $GRAPH_NODE_API_KEY \
        deploy \
        subgraph.yaml
     ```
