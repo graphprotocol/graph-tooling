@@ -39,11 +39,12 @@ An example of this can be found in the [Decentraland repository](https://github.
 4.  Add the following `tsconfig.json`:
     ```json
     {
-      "extends": "./node_modules/graph-cli/tsconfig.json",
-      "files": ["mapping.ts"]
+      "extends": "./node_modules/@graphprotocol/graph-cli/tsconfig.json",
+      "compilerOptions": {
+        "types": ["graph-cli"]
+      }
     }
     ```
-    _Note: Replace `"mapping.ts"` with your own mapping fil(e)s._
 5.  Add the following to `package.json`:
     ```json
     {
