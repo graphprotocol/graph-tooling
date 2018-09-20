@@ -46,25 +46,26 @@ app
   .option('--api-key <KEY>', 'Graph API key corresponding to the subgraph name')
 
 app.on('--help', function() {
-  console.log('  Configuration:')
+  console.log('')
+  console.log('Configuration:')
   console.log('')
 
   if (app.subgraphName === undefined) {
-    console.log('    Subgraph name: No name defined with -n/--subgraph-name')
+    console.log('  Subgraph name: No name defined with -n/--subgraph-name')
   } else {
-    console.log(`    Subgraph name: ${app.subgraphName}`)
+    console.log(`  Subgraph name: ${app.subgraphName}`)
   }
 
   if (app.node === undefined) {
-    console.log('    Graph node:    No node defined with -g/--node')
+    console.log('  Graph node:    No node defined with -g/--node')
   } else {
-    console.log(`    Graph node:    ${app.node}`)
+    console.log(`  Graph node:    ${app.node}`)
   }
 
   if (app.ipfs === undefined) {
-    console.log('    IPFS:          No node defined with -i/--ipfs')
+    console.log('  IPFS:          No node defined with -i/--ipfs')
   } else {
-    console.log(`    IPFS:          ${app.ipfs}`)
+    console.log(`  IPFS:          ${app.ipfs}`)
   }
 
   console.log('')
@@ -109,20 +110,20 @@ app
   .description('Deploys the subgraph to a graph node')
   .action(subgraphManifest => {
     if (app.subgraphName == undefined) {
-      console.error('  Error: No subgraph name specified with -n/--subgraph-name')
-      console.error('  --')
+      console.error('Error: No subgraph name specified with -n/--subgraph-name')
+      console.error('--')
       app.help()
     }
 
     if (app.node == undefined) {
-      console.error('  Error: No Graph node specified with -g/--node')
-      console.error('  --')
+      console.error('Error: No Graph node specified with -g/--node')
+      console.error('--')
       app.help()
     }
 
     if (app.ipfs == undefined) {
-      console.error('  Error: No IPFS node specified with -i/--ipfs')
-      console.error('  --')
+      console.error('Error: No IPFS node specified with -i/--ipfs')
+      console.error('--')
       app.help()
     }
 
@@ -185,8 +186,8 @@ app
   })
 
 app.command('*', { noHelp: true }).action(args => {
-  console.error('  Unknown command:', args)
-  console.error('  --')
+  console.error('Unknown command:', args)
+  console.error('--')
   app.help()
 })
 
