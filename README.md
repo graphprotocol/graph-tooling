@@ -41,7 +41,7 @@ An example of this can be found in the [Decentraland repository](https://github.
     {
       "extends": "./node_modules/@graphprotocol/graph-cli/tsconfig.json",
       "compilerOptions": {
-        "types": ["graph-cli"]
+        "types": ["@graphprotocol/graph-cli"]
       }
     }
     ```
