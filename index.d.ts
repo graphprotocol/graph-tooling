@@ -30,6 +30,20 @@ declare namespace store {
   function get(entity: string, id: string): Entity
 }
 
+/** Host IPFS interface */
+declare namespace ipfs {
+  function cat(hash: String): Bytes
+}
+
+/** Host JSON interface */
+declare namespace json {
+  function fromBytes(data: Bytes): JSONValue
+  function toI64(decimal: string): i64
+  function toU64(decimal: string): u64
+  function toF64(decimal: string): f64
+  function toBigInt(decimal: string): BigInt
+}
+
 /**
  * Typed map entry
  */
