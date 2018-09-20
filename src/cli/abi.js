@@ -84,11 +84,10 @@ module.exports = class ABI {
         'bind',
         immutable.List([
           codegen.param('address', codegen.simpleType('address')),
-          codegen.param('blockHash', codegen.simpleType('h256')),
         ]),
         klass,
         `
-        return new ${this.name}('${this.name}', address, blockHash);
+        return new ${this.name}('${this.name}', address);
         `
       )
     )

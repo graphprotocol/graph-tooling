@@ -700,20 +700,17 @@ class EthereumEventParam {
 }
 
 class SmartContractCall {
-  blockHash: H256
   contractName: string
   contractAddress: Address
   functionName: string
   functionParams: Array<EthereumValue>
 
   constructor(
-    blockHash: H256,
     contractName: string,
     contractAddress: Address,
     functionName: string,
     functionParams: Array<EthereumValue>
   ) {
-    this.blockHash = blockHash
     this.contractName = contractName
     this.contractAddress = contractAddress
     this.functionName = functionName
@@ -727,17 +724,14 @@ class SmartContractCall {
 class SmartContract {
   name: string
   address: Address
-  blockHash: H256
 
   protected constructor(name: string, address: Address, blockHash: H256) {
     this.name = name
     this.address = address
-    this.blockHash = blockHash
   }
 
   call(name: string, params: Array<EthereumValue>): Array<EthereumValue> {
     let call = new SmartContractCall(
-      this.blockHash,
       this.name,
       this.address,
       name,
@@ -836,8 +830,8 @@ class ExampleEventParams {
 }
 
 class ExampleContract extends SmartContract {
-  static bind(address: Address, blockHash: H256): ExampleContract {
-    return new ExampleContract("ExampleContract", address, blockHash);
+  static bind(address: Address): ExampleContract {
+    return new ExampleContract("ExampleContract", address);
   }
 }
 
