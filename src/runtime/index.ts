@@ -725,7 +725,7 @@ class SmartContract {
   name: string
   address: Address
 
-  protected constructor(name: string, address: Address, blockHash: H256) {
+  protected constructor(name: string, address: Address) {
     this.name = name
     this.address = address
   }
