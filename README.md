@@ -1,5 +1,6 @@
 # The Graph CLI (graph-cli)
 
+![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-cli.svg)
 [![Build Status](https://travis-ci.org/graphprotocol/graph-cli.svg?branch=master)](https://travis-ci.org/graphprotocol/graph-cli)
 
 The Graph command line interface.
