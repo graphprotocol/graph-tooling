@@ -104,9 +104,9 @@ module.exports = class Logger {
   error(subject, e) {
     if (e instanceof Error) {
       if (e.hasOwnProperty('message')) {
-        this.fatal(e.message)
+        this.fatal(subject, e.message)
       } else {
-        this.fatal(e)
+        this.fatal(subject, e)
       }
       if (e.hasOwnProperty('stack')) {
         this.note(
