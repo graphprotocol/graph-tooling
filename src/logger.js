@@ -30,7 +30,8 @@ module.exports = class Logger {
     if (this.prefix === undefined) {
       this.logger.log(
         'verbose',
-        '\n%d/%d %s %s',
+        '%s%d/%d %s %s',
+        this.currentStep === 0 ? '' : '\n',
         ++this.currentStep,
         this.steps,
         chalk.green(subject),
