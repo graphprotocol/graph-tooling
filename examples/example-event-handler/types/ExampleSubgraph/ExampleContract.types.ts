@@ -1,10 +1,10 @@
-class ExampleEvent extends EthereumEvent {
+export class ExampleEvent extends EthereumEvent {
   get params(): ExampleEventParams {
     return new ExampleEventParams(this);
   }
 }
 
-class ExampleEventParams {
+export class ExampleEventParams {
   _event: ExampleEvent;
 
   constructor(event: ExampleEvent) {
@@ -16,7 +16,7 @@ class ExampleEventParams {
   }
 }
 
-class ExampleContract extends SmartContract {
+export class ExampleContract extends SmartContract {
   static bind(address: Address): ExampleContract {
     return new ExampleContract("ExampleContract", address);
   }
