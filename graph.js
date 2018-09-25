@@ -196,3 +196,8 @@ app.command('*', { noHelp: true }).action(args => {
 })
 
 app.parse(process.argv)
+
+// If no command was supplied, output the help text
+if (app.args.length === 0) {
+  app.help()
+}
