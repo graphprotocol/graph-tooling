@@ -11,7 +11,10 @@ let Watcher = require('./watcher')
 module.exports = class TypeGenerator {
   constructor(options) {
     this.options = options || {}
-    this.logger = new Logger(3, { verbosity: this.options.verbosity })
+    this.logger = new Logger(3, {
+      prefix: this.options.logger.prefix,
+      verbosity: this.options.logger.verbosity,
+    })
     this.displayPath = this.options.displayPath
       ? this.options.displayPath
       : s => path.relative(process.cwd(), s)
@@ -93,7 +96,6 @@ module.exports = class TypeGenerator {
     } catch (e) {
       throw Error('Failed to load subgraph')
     } finally {
-      this.logger.info('')
       this.logger.status('Types generated')
     }
   }
