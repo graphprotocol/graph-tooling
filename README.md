@@ -69,13 +69,13 @@ An example of this can be found in the [Decentraland repository](https://github.
     yarn build      # Will drop the results in dist/
     yarn build-ipfs # Will also deploy to IPFS and output an IPFS hash
     ```
-9.  Deploy your subgraph to one of the hosted nodes. The following command builds and deploys the subgraph continuously as you are making changes to it:
+9.  Deploy your subgraph to a Graph Node. The following command builds and deploys the subgraph continuously as you are making changes to it:
     ```sh
     graph \
        --watch \
        --verbosity debug \
-       --node $GRAPH_NODE_MANAGEMENT \
-       --ipfs $GRAPH_NODE_IPFS \
+       --node http://35.242.224.197:8020/ \
+       --ipfs /ip4/35.242.224.197/tcp/8030 \
        --subgraph-name my-subgraph \
        deploy \
        subgraph.yaml
