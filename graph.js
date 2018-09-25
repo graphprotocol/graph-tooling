@@ -32,6 +32,32 @@ function createCompiler(app, subgraphManifest) {
   })
 }
 
+function outputDeployConfig() {
+  console.error('')
+  console.error('Configuration:')
+  console.error('')
+
+  if (app.subgraphName === undefined) {
+    console.error('  Subgraph name: No name defined with -n/--subgraph-name')
+  } else {
+    console.error(`  Subgraph name: ${app.subgraphName}`)
+  }
+
+  if (app.node === undefined) {
+    console.error('  Graph node:    No node defined with -g/--node')
+  } else {
+    console.error(`  Graph node:    ${app.node}`)
+  }
+
+  if (app.ipfs === undefined) {
+    console.error('  IPFS:          No node defined with -i/--ipfs')
+  } else {
+    console.error(`  IPFS:          ${app.ipfs}`)
+  }
+
+  console.error('')
+}
+
 app
   .version('0.1.0')
   .option(
@@ -52,32 +78,6 @@ app
   .option('-i, --ipfs <addr>', 'IPFS node to use for uploading files')
   .option('-n, --subgraph-name <NAME>', 'Subgraph name')
   .option('--api-key <KEY>', 'Graph API key corresponding to the subgraph name')
-
-app.on('--help', function() {
-  console.log('')
-  console.log('Configuration:')
-  console.log('')
-
-  if (app.subgraphName === undefined) {
-    console.log('  Subgraph name: No name defined with -n/--subgraph-name')
-  } else {
-    console.log(`  Subgraph name: ${app.subgraphName}`)
-  }
-
-  if (app.node === undefined) {
-    console.log('  Graph node:    No node defined with -g/--node')
-  } else {
-    console.log(`  Graph node:    ${app.node}`)
-  }
-
-  if (app.ipfs === undefined) {
-    console.log('  IPFS:          No node defined with -i/--ipfs')
-  } else {
-    console.log(`  IPFS:          ${app.ipfs}`)
-  }
-
-  console.log('')
-})
 
 app
   .command('codegen <subgraph-manifest>')
@@ -119,22 +119,16 @@ app
   .command('deploy <subgraph-manifest>')
   .description('Deploys the subgraph to a graph node')
   .action(subgraphManifest => {
-    if (app.subgraphName == undefined) {
-      console.error('Error: No subgraph name specified with -n/--subgraph-name')
+    if (
+      app.subgraphName === undefined ||
+      app.node === undefined ||
+      app.ipfs === undefined
+    ) {
+      outputDeployConfig()
       console.error('--')
-      app.help()
-    }
-
-    if (app.node == undefined) {
-      console.error('Error: No Graph node specified with -g/--node')
-      console.error('--')
-      app.help()
-    }
-
-    if (app.ipfs == undefined) {
-      console.error('Error: No IPFS node specified with -i/--ipfs')
-      console.error('--')
-      app.help()
+      console.error('For more information run this command with --help')
+      process.exitCode = 1
+      return
     }
 
     let compiler = createCompiler(app, subgraphManifest)
