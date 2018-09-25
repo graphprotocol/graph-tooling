@@ -66,15 +66,29 @@ module.exports = class Logger {
 
   status(subject, ...msg) {
     if (this.prefix === undefined) {
-      this.logger.log('verbose', '%s %s', chalk.magenta(subject), msg.join(' '))
+      if ((this.options.verbosity || 'info') !== 'info') {
+        this.logger.log('info', '\n%s %s', chalk.magenta(subject), msg.join(' '))
+      } else {
+        this.logger.log('info', '%s %s', chalk.magenta(subject), msg.join(' '))
+      }
     } else {
-      this.logger.log(
-        'verbose',
-        '%s %s %s',
-        this.prefix,
-        chalk.gray(subject),
-        msg.join(' ')
-      )
+      if ((this.options.verbosity || 'info') !== 'info') {
+        this.logger.log(
+          'info',
+          '\n%s %s %s',
+          this.prefix,
+          chalk.gray(subject),
+          msg.join(' ')
+        )
+      } else {
+        this.logger.log(
+          'info',
+          '%s %s %s',
+          this.prefix,
+          chalk.gray(subject),
+          msg.join(' ')
+        )
+      }
     }
   }
 
