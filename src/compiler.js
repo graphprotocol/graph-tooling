@@ -91,7 +91,7 @@ class Compiler {
       // Make paths absolute
       return files.map(file => path.resolve(file))
     } catch (e) {
-      throw Error('Failed to parse subgraph file locations')
+      throw Error(`Failed to parse subgraph file locations: ${e}`)
     }
   }
 
@@ -306,7 +306,7 @@ class Compiler {
       // Upload the subgraph itself
       return await this._uploadSubgraphDefinitionToIPFS(subgraph)
     } catch (e) {
-      throw new Error('Failed to upload subgraph to IPFS')
+      throw new Error(`Failed to upload subgraph to IPFS: ${e}`)
     }
   }
 
@@ -334,7 +334,7 @@ class Compiler {
       await this.ipfs.pin.add(hash)
       return hash
     } catch (e) {
-      throw Error('Failed to upload file to IPFS')
+      throw Error(`Failed to upload file to IPFS: ${e}`)
     }
   }
 }

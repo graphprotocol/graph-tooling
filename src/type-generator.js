@@ -50,7 +50,7 @@ module.exports = class TypeGenerator {
         ? this.options.subgraph
         : Subgraph.load(this.options.subgraphManifest)
     } catch (e) {
-      throw Error('Failed to load subgraph')
+      throw Error(`Failed to load subgraph: ${e.message}`)
     }
   }
 
@@ -71,7 +71,7 @@ module.exports = class TypeGenerator {
           immutable.List()
         )
     } catch (e) {
-      throw Error('Failed to load contract ABIs')
+      throw Error(`Failed to load contract ABIs: ${e}`)
     }
   }
 
@@ -85,7 +85,7 @@ module.exports = class TypeGenerator {
         return { dataSource: dataSource, abi: ABI.load(name, maybeRelativePath) }
       }
     } catch (e) {
-      throw Error('Failed to load contract ABI')
+      throw Error(`Failed to load contract ABI: ${e}`)
     }
   }
 
@@ -94,7 +94,7 @@ module.exports = class TypeGenerator {
       this.logger.step('Generate types for contract ABIs')
       return abis.map((abi, name) => this._generateTypesForABI(abi))
     } catch (e) {
-      throw Error('Failed to load subgraph')
+      throw Error(`Failed to generate types for contract ABIS: ${e}`)
     } finally {
       this.logger.status('Types generated')
     }
@@ -130,7 +130,7 @@ module.exports = class TypeGenerator {
       fs.writeFileSync(outputFile, formattedCode)
       return { dataSource: abi.dataSource, abi: abi.abi, outputFile: outputFile }
     } catch (e) {
-      throw Error('Failed to generate types for contract ABI')
+      throw Error(`Failed to generate types for contract ABI: ${e}`)
     }
   }
 
@@ -152,7 +152,7 @@ module.exports = class TypeGenerator {
       // Make paths absolute
       return files.map(file => path.resolve(file))
     } catch (e) {
-      throw Error('Failed to parse subgraph file locations')
+      throw Error(`Failed to parse subgraph file locations: ${e}`)
     }
   }
 
