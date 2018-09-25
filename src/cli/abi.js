@@ -22,7 +22,7 @@ module.exports = class ABI {
 
         // First, generate a class with the param getters
         let paramsClassName = eventClassName + 'Params'
-        let paramsClass = codegen.klass(paramsClassName, {})
+        let paramsClass = codegen.klass(paramsClassName, { export: true })
         paramsClass.addMember(codegen.klassMember('_event', eventClassName))
         paramsClass.addMethod(
           codegen.method(
@@ -54,7 +54,10 @@ module.exports = class ABI {
         })
 
         // Then, generate the event class itself
-        let klass = codegen.klass(eventClassName, { extends: 'EthereumEvent' })
+        let klass = codegen.klass(eventClassName, {
+          export: true,
+          extends: 'EthereumEvent',
+        })
         klass.addMethod(
           codegen.method(
             `get params`,
@@ -73,7 +76,7 @@ module.exports = class ABI {
   }
 
   _generateSmartContractClass() {
-    let klass = codegen.klass(this.name, { extends: 'SmartContract' })
+    let klass = codegen.klass(this.name, { export: true, extends: 'SmartContract' })
     let types = immutable.List()
 
     const paramName = (name, index) =>
@@ -82,9 +85,7 @@ module.exports = class ABI {
     klass.addMethod(
       codegen.staticMethod(
         'bind',
-        immutable.List([
-          codegen.param('address', codegen.simpleType('address')),
-        ]),
+        immutable.List([codegen.param('address', codegen.simpleType('address'))]),
         klass,
         `
         return new ${this.name}('${this.name}', address);
@@ -108,7 +109,7 @@ module.exports = class ABI {
               // Create a type dedicated to holding the return values
               returnType = codegen.klass(
                 this.name + '__' + member.get('name') + 'Result',
-                {}
+                { export: true }
               )
 
               // Add a constructor to this type

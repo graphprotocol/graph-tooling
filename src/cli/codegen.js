@@ -209,6 +209,7 @@ class Class {
     this.extends = options.extends
     this.methods = []
     this.members = []
+    this.export = options.export || false
   }
 
   addMember(member) {
@@ -221,7 +222,9 @@ class Class {
 
   toString() {
     return `
-class ${this.name}${this.extends ? ` extends ${this.extends}` : ''} {
+${this.export ? 'export' : ''} class ${this.name}${
+      this.extends ? ` extends ${this.extends}` : ''
+    } {
 ${this.members.map(member => member.toString()).join('\n')}
 ${this.methods.map(method => method.toString()).join('')}
 }
