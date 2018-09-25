@@ -12,6 +12,10 @@ let Compiler = require('./src/cli/compiler')
 let TypeGenerator = require('./src/cli/type-generator')
 const Logger = require('./src/cli/logger')
 
+function getVerbosity(app) {
+  return app.debug ? 'debug' : app.verbose ? 'verbose' : app.verbosity
+}
+
 // Helper function to construct a subgraph compiler
 function createCompiler(app, subgraphManifest) {
   // Connect to the IPFS node (if a node address was provided)
@@ -22,7 +26,9 @@ function createCompiler(app, subgraphManifest) {
     subgraphManifest,
     outputDir: app.outputDir,
     outputFormat: app.outputFormat || 'wasm',
-    verbosity: app.verbosity,
+    logger: {
+      verbosity: getVerbosity(app),
+    },
   })
 }
 
@@ -33,6 +39,8 @@ app
     'The log level to use (default: LOG_LEVEL or info)',
     process.env.LOG_LEVEL || 'info'
   )
+  .option('--debug', 'Alias for --verbosity debug')
+  .option('--verbose', 'Alias for --verbosity verbose')
   .option(
     '-o, --output-dir <path>',
     'Output directory for build artifacts',
@@ -78,7 +86,9 @@ app
     let generator = new TypeGenerator({
       subgraphManifest,
       outputDir: app.outputDir,
-      verbosity: app.verbosity,
+      logger: {
+        verbosity: getVerbosity(app),
+      },
     })
 
     // Watch working directory for file updates or additions, trigger
@@ -138,7 +148,7 @@ app
       client.options.headers = { Authorization: 'Bearer ' + app.apiKey }
     }
 
-    let logger = new Logger(0, { verbosity: app.verbosity })
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     let deploySubgraph = ipfsHash => {
       logger.status('Deploying to Graph node:', requestUrl)

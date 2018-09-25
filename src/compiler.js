@@ -15,9 +15,9 @@ class Compiler {
   constructor(options) {
     this.options = options
     this.ipfs = options.ipfs
-    this.sourceDir = path.resolve(path.dirname(options.subgraphManifest))
+    this.sourceDir = path.dirname(options.subgraphManifest)
     this.logger = new Logger(this.ipfs !== undefined ? 4 : 3, {
-      verbosity: this.options.verbosity,
+      verbosity: this.options.logger.verbosity,
     })
 
     process.on('uncaughtException', function(e) {
