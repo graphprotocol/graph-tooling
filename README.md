@@ -74,8 +74,8 @@ An example of this can be found in the [Decentraland repository](https://github.
     graph \
        --watch \
        --verbosity debug \
-       --node http://35.242.224.197:8020/ \
-       --ipfs /ip4/35.242.224.197/tcp/8030 \
+       --node http://127.0.0.1:8020/ \
+       --ipfs /ip4/127.0.0.1/tcp/8030 \
        --subgraph-name my-subgraph \
        deploy \
        subgraph.yaml
