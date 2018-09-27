@@ -35,6 +35,11 @@ declare namespace ipfs {
   function cat(hash: String): Bytes
 }
 
+/** Host crypto utilities interface */
+declare namespace crypto {
+  function keccak256(input: Bytes): Bytes
+}
+
 /** Host JSON interface */
 declare namespace json {
   function fromBytes(data: Bytes): JSONValue
