@@ -7,14 +7,9 @@ export { allocate_memory }
  * Host store interface.
  */
 declare namespace store {
+  function get(entity: string, id: string): Entity
   function set(entity: string, id: string, data: Entity): void
   function remove(entity: string, id: string): void
-}
-
-namespace store {
-  function get(entity: string, id: string): Entity {
-    return assert<Entity>(null, "store.get is not supported yet")
-  }
 }
 
 /** Host ethereum interface */

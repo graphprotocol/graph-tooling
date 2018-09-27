@@ -23,7 +23,7 @@ declare namespace store {
 
   /**
    * Fetches a previously created entity from the host store.
-   * 
+   *
    * @param entity Name of the entity type.
    * @param id Entity ID.
    */
