@@ -27,7 +27,7 @@ declare namespace store {
    * @param entity Name of the entity type.
    * @param id Entity ID.
    */
-  function get(entity: string, id: string): Entity
+  function get(entity: string, id: string): Entity | null
 }
 
 /** Host IPFS interface */

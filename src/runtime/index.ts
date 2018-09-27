@@ -7,7 +7,7 @@ export { allocate_memory }
  * Host store interface.
  */
 declare namespace store {
-  function get(entity: string, id: string): Entity
+  function get(entity: string, id: string): Entity | null
   function set(entity: string, id: string, data: Entity): void
   function remove(entity: string, id: string): void
 }
