@@ -500,9 +500,9 @@ class Value {
     return changetype<string>(this.data as u32)
   }
 
-  toArray<T>(): Array<T> {
+  toArray(): Array<Value> {
     assert(this.kind == ValueKind.ARRAY, 'Value is not an array.')
-    return changetype<Array<T>>(this.data as u32)
+    return changetype<Array<Value>>(this.data as u32)
   }
 
   toI256(): I256 {
@@ -616,7 +616,7 @@ class Entity extends TypedMap<string, Value> {
     return this.get(key).toString()
   }
 
-  getArray<T>(key: string): Array<T> {
+  getArray(key: string): Array<Value> {
     return this.get(key).toArray()
   }
 
