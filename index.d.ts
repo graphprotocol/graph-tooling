@@ -207,7 +207,7 @@ declare class Value {
   toBytes(): Bytes
   toU32(): u32
   toString(): string
-  toArray<T>(array: Array<T>): Value
+  toArray(): Array<Value>
   toI256(): I256
   toU256(): U256
 
@@ -229,14 +229,13 @@ declare class Value {
  * `Value` objects.
  */
 declare class Entity extends TypedMap<string, Value> {
-
   getAddress(key: string): Address
   getBoolean(key: string): boolean
   getBigInt(key: string): BigInt
   getBytes(key: string): Bytes
   getU32(key: string): u32
   getString(key: string): string
-  getArray<T>(key: string): Array<T>
+  getArray(key: string): Array<Value>
   getI256(key: string): I256
   getU256(key: string): U256
 
