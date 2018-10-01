@@ -18,8 +18,6 @@
     "request": "^2.88.0",
     "winston": "^3.0.0"
   },
-  "module": "src/runtime/index.ts",
-  "types": "./index.d.ts",
   "bin": {
     "graph": "./graph.js",
     "graph-build": "./graph-build.js",
