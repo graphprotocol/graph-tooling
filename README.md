@@ -32,17 +32,26 @@ An example of this can be found in the [Decentraland repository](https://github.
 
 1.  Create a project for the subgraph with a `package.json` etc.
 2.  Add a `subgraph.yaml` subgraph manifest with a GraphQL schema etc.
-3.  Add `@graphprotocol/graph-cli` as a local dependency with one of
+3.  Add `@graphprotocol/graph-cli` and `@graphprotocol/graph-ts` dependencies, with one of
+
     ```bash
-    npm install --save-dev @graphprotocol/graph-cli # NPM
-    yarn add --dev @graphprotocol/graph-cli         # Yarn
+    # NPM
+    npm install --save-dev
+      @graphprotocol/graph-cli \
+      @graphprotocol/graph-ts
+
+    # Yarn
+    yarn add --dev \
+      @graphprotocol/graph-cli \
+      @graphprotocol/graph-ts
     ```
+
 4.  Add the following `tsconfig.json`:
     ```json
     {
-      "extends": "./node_modules/@graphprotocol/graph-cli/tsconfig.json",
+      "extends": "./node_modules/@graphprotocol/graph-ts/tsconfig.json",
       "compilerOptions": {
-        "types": ["@graphprotocol/graph-cli"]
+        "types": ["@graphprotocol/graph-ts"]
       }
     }
     ```
@@ -53,11 +62,14 @@ An example of this can be found in the [Decentraland repository](https://github.
         "codegen": "graph generate-types subgraph.yaml",
         "build": "graph build subgraph.yaml",
         "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
-        "deploy": "graph deploy subgraph.yaml --watch --verbosity debug --node http://35.242.224.197:8020/ --ipfs /ip4/35.242.224.197/tcp/8030 --subgraph-name my-subgraph"
+        "deploy":
+          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8030 --subgraph-name your-subgraph subgraph.yaml"
       }
     }
     ```
-    _Note: Replace the IPFS address with any IPFS node you want to deploy the subgraph to._
+    _Note: Replace the IP addresses and ports with any
+    [Graph Node](https://github.com/graphprotocol/graph-node) you want
+    to deploy the subgraph to._
 6.  Generate type definitions for contract ABIs used in the subgraph
     with:
     ```bash
@@ -69,18 +81,20 @@ An example of this can be found in the [Decentraland repository](https://github.
     yarn build      # Will drop the results in dist/
     yarn build-ipfs # Will also deploy to IPFS and output an IPFS hash
     ```
-9.  Deploy your subgraph to a Graph Node. The following command builds and deploys the subgraph continuously as you are making changes to it:
+9.  Deploy your subgraph to a
+    [Graph Node](https://github.com/graphprotocol/graph-node). The following
+    command builds and deploys the subgraph continuously as you are making
+    changes to it:
     ```sh
     graph \
        --watch \
        --verbosity debug \
        --node http://127.0.0.1:8020/ \
        --ipfs /ip4/127.0.0.1/tcp/8030 \
-       --subgraph-name my-subgraph \
+       --subgraph-name your-subgraph \
        deploy \
        subgraph.yaml
     ```
-
 
 ## License
 
