@@ -15,8 +15,10 @@ class Compiler {
   constructor(options) {
     this.options = options
     this.ipfs = options.ipfs
-    this.sourceDir = path.dirname(options.subgraphManifest)
-    this.logger = new Logger(11, { verbosity: this.options.verbosity })
+    this.sourceDir = path.resolve(path.dirname(options.subgraphManifest))
+    this.logger = new Logger(this.ipfs !== undefined ? 4 : 3, {
+      verbosity: this.options.verbosity,
+    })
 
     process.on('uncaughtException', function(e) {
       this.logger.error('UNCAUGHT EXCEPTION:', e)
@@ -28,8 +30,8 @@ class Compiler {
   }
 
   displayPath(p) {
-    if (p.indexOf(this.buildDir) >= 0) {
-      return p.replace(this.buildDir, '<build>')
+    if (p.indexOf(this.sourceDir) >= 0) {
+      return p.replace(this.sourceDir, '<src>')
     } else {
       return path.relative(process.cwd(), p)
     }
@@ -41,17 +43,7 @@ class Compiler {
       this.logger.step('Load subgraph:', this.options.subgraphManifest)
       let subgraph = this.loadSubgraph()
 
-      this.buildDir = this.createBuildDirectory()
-
-      let subgraphInBuildDir = this.copySubgraph(subgraph)
-      let typeFiles = this.generateTypes(subgraphInBuildDir)
-
-      this.copyRuntimeFiles(subgraphInBuildDir)
-      this.addTypesToRuntime(typeFiles)
-      this.addMappingsToRuntime(subgraphInBuildDir)
-      this.createOutputDirectory()
-
-      let compiledSubgraph = this.compileSubgraph(subgraphInBuildDir)
+      let compiledSubgraph = this.compileSubgraph(subgraph)
       let localSubgraph = this.writeSubgraphToOutputDirectory(compiledSubgraph)
 
       if (this.ipfs !== undefined) {
@@ -134,66 +126,6 @@ class Compiler {
     watcher.watch()
   }
 
-  createBuildDirectory() {
-    try {
-      this.logger.step('Create build directory')
-
-      // Create temporary directory
-      let buildDir = fs.mkdtempSync('.graph')
-
-      // Ensure the temporary directory is destroyed on exit
-      process.on('exit', () => fs.removeSync(buildDir))
-      process.on('SIGINT', () => fs.removeSync(buildDir))
-      process.on('uncaughtException', () => fs.removeSync(buildDir))
-
-      return buildDir
-    } catch (e) {
-      throw new Error('Failed to create build directory')
-    }
-  }
-
-  copySubgraph(subgraph) {
-    try {
-      this.logger.step('Copy subgraph to build directory')
-
-      // Copy schema and update its path
-      subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
-        this._copySubgraphFile(schemaFile, this.sourceDir, this.buildDir)
-      )
-
-      // Copy data source files and update their paths
-      subgraph = subgraph.update('dataSources', dataSources => {
-        return dataSources.map(dataSource =>
-          dataSource
-            .updateIn(['mapping', 'abis'], abis =>
-              abis.map(abi =>
-                abi.update('file', abiFile => {
-                  let abiData = ABI.load(abi.get('name'), abiFile)
-                  return this._writeSubgraphFile(
-                    abiFile,
-                    JSON.stringify(abiData.data.toJS(), null, 2),
-                    this.sourceDir,
-                    this.subgraphDir(this.buildDir, dataSource)
-                  )
-                })
-              )
-            )
-            .updateIn(['mapping', 'file'], mappingFile =>
-              this._copySubgraphFile(
-                mappingFile,
-                this.sourceDir,
-                this.subgraphDir(this.buildDir, dataSource)
-              )
-            )
-        )
-      })
-
-      return subgraph
-    } catch (e) {
-      throw Error('Failed to copy subgraph files')
-    }
-  }
-
   _copySubgraphFile(maybeRelativeFile, sourceDir, targetDir) {
     let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
     let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
@@ -202,93 +134,6 @@ class Compiler {
     fs.mkdirsSync(path.dirname(targetFile))
     fs.copyFileSync(absoluteSourceFile, targetFile)
     return targetFile
-  }
-
-  _writeSubgraphFile(maybeRelativeFile, data, sourceDir, targetDir) {
-    let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
-    let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
-    let targetFile = path.join(targetDir, relativeSourceFile)
-    this.logger.note('Write subgraph file:', this.displayPath(targetFile))
-    fs.mkdirsSync(path.dirname(targetFile))
-    fs.writeFileSync(targetFile, data)
-    return targetFile
-  }
-
-  generateTypes(subgraph) {
-    this.logger.step('Generate types from contract ABIs')
-
-    let generator = new TypeGenerator({
-      subgraph: subgraph,
-      outputDir: this.buildDir,
-      displayPath: this.displayPath.bind(this),
-      logger: {
-        prefix: chalk.grey(' '),
-      },
-    })
-    return generator.generateTypes()
-  }
-
-  copyRuntimeFiles(subgraph) {
-    this.logger.step('Copy runtime to build directory')
-    subgraph.get('dataSources').map(dataSource => {
-      this._copyRuntimeFile(this.subgraphDir(this.buildDir, dataSource), 'index.ts')
-    })
-  }
-
-  _copyRuntimeFile(targetDir, basename) {
-    let source = path.join(__dirname, '..', 'runtime', basename)
-    let target = path.join(targetDir, basename)
-    this.logger.note('Copy runtime file:', this.displayPath(target))
-    fs.copyFileSync(source, target)
-  }
-
-  addTypesToRuntime(typeFiles) {
-    this.logger.step('Add generated types to runtime')
-    try {
-      typeFiles.forEach(typeFileInfo => {
-        this.logger.note(
-          'Add types from file to runtime:',
-          this.displayPath(typeFileInfo.outputFile)
-        )
-
-        let types = fs.readFileSync(typeFileInfo.outputFile)
-        fs.appendFileSync(
-          path.join(this.subgraphDir(this.buildDir, typeFileInfo.dataSource), 'index.ts'),
-          '\n' + types + '\n',
-          'utf-8'
-        )
-      })
-    } catch (e) {
-      throw Error('Failed to add types to runtime')
-    }
-  }
-
-  addMappingsToRuntime(subgraph) {
-    this.logger.step('Add mappings to runtime')
-    try {
-      subgraph.get('dataSources').map(dataSource => {
-        let mapping = fs.readFileSync(dataSource.getIn(['mapping', 'file']))
-        fs.appendFileSync(
-          path.join(this.subgraphDir(this.buildDir, dataSource), 'index.ts'),
-          '\n' + mapping + '\n',
-          'utf-8'
-        )
-      })
-    } catch (e) {
-      throw Error('Failed to add mapping to runtime')
-    }
-  }
-
-  createOutputDirectory() {
-    try {
-      this.logger.step(
-        'Create output directory:',
-        this.displayPath(this.options.outputDir)
-      )
-      fs.mkdirsSync(this.options.outputDir)
-    } catch (e) {
-      throw Error('Failed to create output directory')
-    }
   }
 
   compileSubgraph(subgraph) {
@@ -313,8 +158,8 @@ class Compiler {
     try {
       let dataSourceName = dataSource.getIn(['name'])
 
-      let outputFile = path.join(
-        this.subgraphDir(this.buildDir, dataSource),
+      let outFile = path.join(
+        this.subgraphDir(this.options.outputDir, dataSource),
         this.options.outputFormat == 'wasm'
           ? `${dataSourceName}.wasm`
           : `${dataSourceName}.wast`
@@ -324,16 +169,29 @@ class Compiler {
         'Compile data source mapping:',
         dataSourceName,
         '=>',
-        this.displayPath(outputFile)
+        this.displayPath(outFile)
       )
+
+      let baseDir = this.sourceDir
+      let inputFile = path.relative(baseDir, mappingPath)
+      let outputFile = outFile
+
+      // Create output directory
+      try {
+        fs.mkdirsSync(path.dirname(outputFile))
+      } catch (e) {
+        throw e
+      }
 
       asc.main(
         [
+          inputFile,
           '--baseDir',
-          this.subgraphDir(this.buildDir, dataSource),
+          baseDir,
+          '--lib',
+          path.join(baseDir, 'node_modules'),
           '--outFile',
-          path.basename(outputFile),
-          'index.ts',
+          outputFile,
         ],
         {
           stdout: process.stdout,
@@ -359,11 +217,7 @@ class Compiler {
       subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
         path.relative(
           this.options.outputDir,
-          this._copySubgraphFile(
-            path.relative(this.buildDir, schemaFile),
-            this.buildDir,
-            this.options.outputDir
-          )
+          this._copySubgraphFile(schemaFile, this.sourceDir, this.options.outputDir)
         )
       )
 
@@ -377,37 +231,19 @@ class Compiler {
                   path.relative(
                     this.options.outputDir,
                     this._copySubgraphFile(
-                      path.relative(this.buildDir, abiFile),
-                      this.buildDir,
+                      abiFile,
+                      this.sourceDir,
                       this.options.outputDir
                     )
                   )
                 )
               )
             )
+            // The mapping file is already being written to the output
+            // directory by the AssemblyScript compiler
             .updateIn(['mapping', 'file'], mappingFile =>
-              path.relative(
-                this.options.outputDir,
-                this._copySubgraphFile(
-                  path.relative(this.buildDir, mappingFile),
-                  this.buildDir,
-                  this.options.outputDir
-                )
-              )
+              path.relative(this.options.outputDir, mappingFile)
             )
-        )
-      })
-
-      // Write the generated index.ts (for debugging purposes)
-      subgraph.get('dataSources').map(dataSource => {
-        let target = path.join(
-          this.subgraphDir(this.options.outputDir, dataSource),
-          `${dataSource.get('name')}.ts`
-        )
-        this.logger.note('Write runtime source:', path.relative(process.cwd(), target))
-        fs.copyFileSync(
-          path.join(this.subgraphDir(this.buildDir, dataSource), 'index.ts'),
-          target
         )
       })
 
@@ -418,7 +254,7 @@ class Compiler {
 
       return subgraph
     } catch (e) {
-      throw Error('Failed to write compiled subgraph to output directory')
+      throw Error(`Failed to write compiled subgraph to output directory: ${e}`)
     }
   }
 
