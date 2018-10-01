@@ -4,8 +4,8 @@ let args = require('commander')
 let jayson = require('jayson')
 let path = require('path')
 let request = require('request')
-let app = require('./src/cli/app')
-const Logger = require('./src/cli/logger')
+let app = require('./src/app')
+const Logger = require('./src/logger')
 const url = require('url')
 const { URL } = url
 
