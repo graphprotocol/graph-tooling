@@ -3,7 +3,7 @@
 let app = require('commander')
 let path = require('path')
 
-let TypeGenerator = require('./src/cli/type-generator')
+let TypeGenerator = require('./src/type-generator')
 
 app
   .version('0.1.0')

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-let app = require('./src/cli/app')
+let app = require('./src/app')
 
 app.initApp()
 app.addBuildCommand()
