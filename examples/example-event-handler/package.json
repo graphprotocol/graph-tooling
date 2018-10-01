@@ -7,6 +7,7 @@
     "build-wast": "graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
+    "@graphprotocol/graph-ts": "../../../graph-ts",
     "graph-cli": "git+https://github.com/graphprotocol/graph-cli.git"
   }
 }

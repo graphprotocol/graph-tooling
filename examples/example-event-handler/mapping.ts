@@ -1,6 +1,8 @@
-/// <reference path="./node_modules/assemblyscript/index.d.ts" />
-/// <reference path="./node_modules/graph-cli/index.d.ts" />
-/// <reference path="./types/ExampleSubgraph/ExampleContract.types.ts" />
+import 'allocator/arena'
+export { allocate_memory }
+
+import { store, crypto, Entity } from '@graphprotocol/graph-ts'
+import { ExampleEvent } from './types/ExampleSubgraph/ExampleContract'
 
 export function handleExampleEvent(event: ExampleEvent): void {
   let entity = new Entity()

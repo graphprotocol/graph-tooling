@@ -1,3 +1,19 @@
+import {
+  EthereumEvent,
+  SmartContract,
+  EthereumValue,
+  JSONValue,
+  TypedMap,
+  Entity,
+  Bytes,
+  Address,
+  I128,
+  U128,
+  I256,
+  U256,
+  H256
+} from "@graphprotocol/graph-ts";
+
 export class ExampleEvent extends EthereumEvent {
   get params(): ExampleEventParams {
     return new ExampleEventParams(this);
