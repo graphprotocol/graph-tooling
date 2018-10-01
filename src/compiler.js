@@ -150,7 +150,7 @@ class Compiler {
 
       return subgraph
     } catch (e) {
-      throw Error('Failed to compile subgraph')
+      throw Error(`Failed to compile subgraph: ${e}`)
     }
   }
 
@@ -205,7 +205,7 @@ class Compiler {
       )
       return outputFile
     } catch (e) {
-      throw Error('Failed to compile data source mapping')
+      throw Error(`Failed to compile data source mapping: ${e}`)
     }
   }
 
