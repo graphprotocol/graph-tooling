@@ -105,14 +105,22 @@ module.exports = class TypeGenerator {
         `(${path.basename(abi.abi.file)})`
       )
 
+      let imports = abi.abi.generateModuleImports()
+      let importsCode = imports.map(moduleImport => moduleImport.toString()).join('\n')
+
       let types = abi.abi.generateTypes()
       let typesCode = types.map(type => type.toString()).join('\n')
-      let formattedCode = prettier.format(typesCode, { parser: 'typescript' })
+
+      let unformattedCode = [importsCode, typesCode].join('\n')
+
+      let formattedCode = prettier.format(unformattedCode, {
+        parser: 'typescript',
+      })
 
       let outputFile = path.join(
         this.options.outputDir,
         abi.dataSource.get('name'),
-        `${abi.abi.name}.types.ts`
+        `${abi.abi.name}.ts`
       )
       this.logger.note('Write types to:', this.displayPath(outputFile))
       fs.mkdirsSync(path.dirname(outputFile))

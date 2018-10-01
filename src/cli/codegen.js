@@ -283,6 +283,30 @@ class MaybeType {
   }
 }
 
+class ModuleImports {
+  constructor(nameOrNames, module) {
+    this.nameOrNames = nameOrNames
+    this.module = module
+  }
+
+  toString() {
+    return `import { ${
+      typeof this.nameOrNames === 'string' ? this.nameOrNames : this.nameOrNames.join(',')
+    } } from "${this.module}"`
+  }
+}
+
+class ModuleImport {
+  constructor(alias, module) {
+    this.alias = alias
+    this.module = module
+  }
+
+  toString() {
+    return `import * as ${this.alias} from "${this.module}"`
+  }
+}
+
 const namedType = name => new NamedType(name)
 const simpleType = name => new SimpleType(name)
 const param = (name, type) => new Param(name, type)

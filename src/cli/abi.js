@@ -10,6 +10,32 @@ module.exports = class ABI {
     this.data = data
   }
 
+  generateModuleImports() {
+    return [
+      codegen.moduleImports(
+        [
+          // Base classes
+          'EthereumEvent',
+          'SmartContract',
+          'EthereumValue',
+          'JSONValue',
+          'TypedMap',
+          'Entity',
+
+          // Basic Ethereum types
+          'Bytes',
+          'Address',
+          'I128',
+          'U128',
+          'I256',
+          'U256',
+          'H256',
+        ],
+        '@graphprotocol/graph-ts'
+      ),
+    ]
+  }
+
   generateTypes() {
     return [...this._generateEventTypes(), ...this._generateSmartContractClass()]
   }
