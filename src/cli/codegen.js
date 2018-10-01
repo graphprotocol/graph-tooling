@@ -296,6 +296,7 @@ const ethereumValueFromCoercion = (expr, type) =>
   new EthereumValueFromCoercion(expr, type)
 const ethereumValueToCoercion = (expr, type) => new EthereumValueToCoercion(expr, type)
 const unionType = (...types) => new UnionType(types)
+const moduleImports = (nameOrNames, module) => new ModuleImports(nameOrNames, module)
 
 module.exports = {
   namedType,
@@ -308,4 +309,5 @@ module.exports = {
   ethereumValueFromCoercion,
   ethereumValueToCoercion,
   unionType,
+  moduleImports,
 }
