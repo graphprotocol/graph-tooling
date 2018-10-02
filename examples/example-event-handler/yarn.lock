@@ -2,6 +2,25 @@
 # yarn lockfile v1
 
 
+"@graphprotocol/graph-cli@git+https://github.com/graphprotocol/graph-cli.git":
+  version "0.3.0"
+  resolved "git+https://github.com/graphprotocol/graph-cli.git#a3a22e5f1bb5d6150ade16c08d5c811fbf427ff3"
+  dependencies:
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
+    chalk "^2.4.1"
+    chokidar "^2.0.4"
+    commander "^2.15.1"
+    debug "^3.1.0"
+    fs-extra "^6.0.1"
+    glob "^7.1.2"
+    immutable "^3.8.2"
+    ipfs-api "^22.2.1"
+    jayson "^2.0.6"
+    js-yaml "^3.12.0"
+    prettier "^1.13.5"
+    request "^2.88.0"
+    winston "^3.0.0"
+
 "@graphprotocol/graph-ts@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.0.1.tgz#4a515bb68ab14e6caf70cf154010c357ddb19db9"
@@ -844,25 +863,6 @@ glob@^7.0.5, glob@^7.1.2:
 graceful-fs@^4.1.2, graceful-fs@^4.1.6:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
-
-"graph-cli@git+https://github.com/graphprotocol/graph-cli.git":
-  version "0.2.9"
-  resolved "git+https://github.com/graphprotocol/graph-cli.git#08dfbeb3f19cc6ebd4ceae1b3aa954b62453b5a7"
-  dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
-    chalk "^2.4.1"
-    chokidar "^2.0.4"
-    commander "^2.15.1"
-    debug "^3.1.0"
-    fs-extra "^6.0.1"
-    glob "^7.1.2"
-    immutable "^3.8.2"
-    ipfs-api "^22.2.1"
-    jayson "^2.0.6"
-    js-yaml "^3.12.0"
-    prettier "^1.13.5"
-    request "^2.88.0"
-    winston "^3.0.0"
 
 har-schema@^2.0.0:
   version "2.0.0"
