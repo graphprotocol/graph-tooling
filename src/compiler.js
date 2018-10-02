@@ -174,7 +174,7 @@ class Compiler {
 
       let baseDir = this.sourceDir
       let inputFile = path.relative(baseDir, mappingPath)
-      let outputFile = outFile
+      let outputFile = path.relative(baseDir, outFile)
 
       // Create output directory
       try {
