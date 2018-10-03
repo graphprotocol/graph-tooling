@@ -6,6 +6,7 @@ let prettier = require('prettier')
 let ABI = require('./abi')
 let Logger = require('./logger')
 let Subgraph = require('./subgraph')
+let Watcher = require('./watcher')
 
 module.exports = class TypeGenerator {
   constructor(options) {
@@ -160,8 +161,8 @@ module.exports = class TypeGenerator {
     let watcher = new Watcher({
       onReady: () => generator.logger.status('Watching subgraph files'),
       onTrigger: async changedFile => {
-        if (file !== undefined) {
-          generator.logger.status('File change detected:', this.displayPath(file))
+        if (changedFile !== undefined) {
+          generator.logger.status('File change detected:', this.displayPath(changedFile))
         }
         await generator.generateTypes()
       },
