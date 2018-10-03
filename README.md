@@ -59,7 +59,7 @@ An example of this can be found in the [Decentraland repository](https://github.
     ```json
     {
       "scripts": {
-        "codegen": "graph generate-types subgraph.yaml",
+        "codegen": "graph codegen subgraph.yaml",
         "build": "graph build subgraph.yaml",
         "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
         "deploy":
