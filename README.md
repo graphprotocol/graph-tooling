@@ -28,7 +28,11 @@ project. It is recommended to install `graph-cli` as a local dependency
 via `package.json` and use `npm` scripts for code generation and
 building.
 
-An example of this can be found in the [Decentraland repository](https://github.com/graphprotocol/decentraland/).
+If you are just getting started with creating a subgraph, head to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md). Eventually this guide will lead you back here.
+
+For clarity, an example of the setup below can be found in the [ENS subgraph repository](https://github.com/graphprotocol/ens-subgraph).
+
+### Steps 
 
 1.  Create a project for the subgraph with a `package.json` etc.
 2.  Add a `subgraph.yaml` subgraph manifest with a GraphQL schema etc.
@@ -59,7 +63,7 @@ An example of this can be found in the [Decentraland repository](https://github.
     ```json
     {
       "scripts": {
-        "codegen": "graph codegen subgraph.yaml",
+        "codegen": "graph codegen --output-dir types/ subgraph.yaml",
         "build": "graph build subgraph.yaml",
         "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
         "deploy":
@@ -70,16 +74,18 @@ An example of this can be found in the [Decentraland repository](https://github.
     _Note: Replace the IP addresses and ports with any
     [Graph Node](https://github.com/graphprotocol/graph-node) you want
     to deploy the subgraph to._
-6.  Generate type definitions for contract ABIs used in the subgraph
+6.  Generate type definitions for contract ABIs used in the subgraph.
     with:
     ```bash
     yarn codegen
     ```
-7.  Develop your `mapping.ts` against these generated types.
-8.  Build the subgraph with one of
+    
+     This creates the `types/` folder. This folder does not need to be uploaded to GitHub, and the files within it should not be edited.
+    
+7.  Develop your `mapping.ts` against these generated types. If you are new to this process, you can head over to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md#34-write-your-mappings) for a beginner friendly walkthrough of The Graph.
+8.  Build the subgraph with:
     ```sh
-    yarn build      # Will drop the results in dist/
-    yarn build-ipfs # Will also deploy to IPFS and output an IPFS hash
+    yarn deploy
     ```
 9.  Deploy your subgraph to a
     [Graph Node](https://github.com/graphprotocol/graph-node). The following
@@ -108,3 +114,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
