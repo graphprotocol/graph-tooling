@@ -136,6 +136,16 @@ class Compiler {
     return targetFile
   }
 
+  _writeSubgraphFile(maybeRelativeFile, data, sourceDir, targetDir) {
+    let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
+    let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
+    let targetFile = path.join(targetDir, relativeSourceFile)
+    this.logger.note('Write subgraph file:', this.displayPath(targetFile))
+    fs.mkdirsSync(path.dirname(targetFile))
+    fs.writeFileSync(targetFile, data)
+    return targetFile
+  }
+
   compileSubgraph(subgraph) {
     try {
       this.logger.step('Compile subgraph')
@@ -227,16 +237,18 @@ class Compiler {
           dataSource
             .updateIn(['mapping', 'abis'], abis =>
               abis.map(abi =>
-                abi.update('file', abiFile =>
-                  path.relative(
+                abi.update('file', abiFile => {
+                  let abiData = ABI.load(abi.get('name'), abiFile)
+                  return path.relative(
                     this.options.outputDir,
-                    this._copySubgraphFile(
+                    this._writeSubgraphFile(
                       abiFile,
+                      JSON.stringify(abiData.data.toJS(), null, 2),
                       this.sourceDir,
-                      this.options.outputDir
+                      this.subgraphDir(this.options.outputDir, dataSource)
                     )
                   )
-                )
+                })
               )
             )
             // The mapping file is already being written to the output
