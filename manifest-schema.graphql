@@ -1,0 +1,46 @@
+scalar String
+scalar File
+
+type Schema {
+  file: File!
+}
+
+union DataSource = EthereumContractDataSource
+
+type EthereumContractDataSource {
+  kind: String!
+  name: String!
+  source: EthereumContractSource!
+  mapping: EthereumContractMapping!
+}
+
+type EthereumContractSource {
+  address: String!
+  abi: String!
+}
+
+type EthereumContractMapping {
+  kind: String!
+  apiVersion: String!
+  language: String!
+  file: File!
+  entities: [String!]!
+  abis: [EthereumContractAbi!]!
+  eventHandlers: [EthereumContractEventHandlers]!
+}
+
+type EthereumContractAbi {
+  name: String!
+  file: File!
+}
+
+type EthereumContractEventHandlers {
+  event: String!
+  handler: String!
+}
+
+type SubgraphManifest {
+  specVersion: String!
+  schema: Schema!
+  dataSources: [DataSource!]!
+}
