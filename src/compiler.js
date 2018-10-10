@@ -70,7 +70,7 @@ class Compiler {
     try {
       return Subgraph.load(this.options.subgraphManifest)
     } catch (e) {
-      throw Error('Failed to load subgraph')
+      throw Error(`Failed to load subgraph: ${e.message}`)
     }
   }
 
