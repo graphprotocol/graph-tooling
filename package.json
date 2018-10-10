@@ -10,6 +10,7 @@
     "debug": "^3.1.0",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
+    "graphql": "^14.0.2",
     "immutable": "^3.8.2",
     "ipfs-api": "^22.2.1",
     "jayson": "^2.0.6",
