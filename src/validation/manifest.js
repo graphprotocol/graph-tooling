@@ -190,6 +190,4 @@ const validateManifest = (value, type, schema) =>
         },
       ]
 
-module.exports = {
-  validateManifest,
-}
+module.exports = { validateManifest }

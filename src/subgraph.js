@@ -33,10 +33,19 @@ module.exports = class Subgraph {
     }
   }
 
+  static validateSchema(manifest) {
+    let errors = validation.validateSchema(manifest.getIn(['schema', 'file']))
+    if (errors.length > 0) {
+      throw new Error(errors.reduce((msg, e) => `${msg}\n\n${e.message}`, ''))
+    }
+  }
+
   static load(filename) {
     let data = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'))
     Subgraph.validate(filename, data)
-    return immutable.fromJS(data)
+    let manifest = immutable.fromJS(data)
+    Subgraph.validateSchema(manifest)
+    return manifest
   }
 
   static write(subgraph, filename) {
