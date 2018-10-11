@@ -14,9 +14,12 @@ const typeName = value =>
  * Converts an immutable or plain JavaScript value to a YAML string.
  */
 const toYAML = x =>
-  yaml.safeDump(typeName(x) === 'list' || typeName(x) === 'map' ? x.toJS() : x, {
-    indent: 2,
-  })
+  yaml
+    .safeDump(typeName(x) === 'list' || typeName(x) === 'map' ? x.toJS() : x, {
+      indent: 2,
+    })
+    .replace(/\n/g, '\n  ')
+    .trim()
 
 /**
  * Looks up the type of a field in a GraphQL object type.
@@ -89,7 +92,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected list, found ${typeName(value)}:\n${toYAML(value)}`,
+            message: `Expected list, found ${typeName(value)}:\n  ${toYAML(value)}`,
           },
         ]),
 
@@ -120,7 +123,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected map, found ${typeName(value)}:\n${toYAML(value)}`,
+            message: `Expected map, found ${typeName(value)}:\n  ${toYAML(value)}`,
           },
         ])
   },
@@ -131,7 +134,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected string, found ${typeName(value)}:\n${toYAML(value)}`,
+            message: `Expected string, found ${typeName(value)}:\n  ${toYAML(value)}`,
           },
         ]),
 
@@ -148,7 +151,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected filename, found ${typeName(value)}:\n${value}`,
+            message: `Expected filename, found ${typeName(value)}:\n  ${value}`,
           },
         ]),
 })
@@ -183,7 +186,7 @@ const validateManifest = (value, type, schema) =>
     : [
         {
           path: [],
-          message: `Expected non-empty value, found ${typeName(value)}:\n${value}`,
+          message: `Expected non-empty value, found ${typeName(value)}:\n  ${value}`,
         },
       ]
 
