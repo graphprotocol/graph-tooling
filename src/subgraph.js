@@ -6,7 +6,7 @@ let graphql = require('graphql/language')
 let validation = require('./validation')
 
 module.exports = class Subgraph {
-  static validate(data) {
+  static validate(filename, data) {
     // Parse the default subgraph schema
     let schema = graphql.parse(
       fs.readFileSync(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8')
@@ -23,10 +23,11 @@ module.exports = class Subgraph {
       throw new Error(
         errors.reduce(
           (msg, e) =>
-            `${msg}\n\nError at ${e.path.length === 0 ? '/' : e.path.join('/')}:\n${
-              e.message
-            }`,
-          ''
+            `${msg}
+
+  Path: ${e.path.length === 0 ? '/' : ['/', ...e.path].join(' > ')}
+  ${e.message}`,
+          `Error in ${filename}:`
         )
       )
     }
@@ -34,7 +35,7 @@ module.exports = class Subgraph {
 
   static load(filename) {
     let data = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'))
-    Subgraph.validate(data)
+    Subgraph.validate(filename, data)
     return immutable.fromJS(data)
   }
 
