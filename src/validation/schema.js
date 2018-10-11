@@ -25,7 +25,8 @@ const typeDefinitionValidators = {
       : immutable.fromJS([
           {
             loc: def.loc,
-            message: `Type '${def.name.value}' defined without @entity directive`,
+            message: `Type '${def.name.value}':
+  Defined without @entity directive`,
           },
         ]),
 }

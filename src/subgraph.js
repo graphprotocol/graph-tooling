@@ -34,9 +34,17 @@ module.exports = class Subgraph {
   }
 
   static validateSchema(manifest) {
-    let errors = validation.validateSchema(manifest.getIn(['schema', 'file']))
+    let filename = manifest.getIn(['schema', 'file'])
+    let errors = validation.validateSchema(filename)
     if (errors.length > 0) {
-      throw new Error(errors.reduce((msg, e) => `${msg}\n\n${e.message}`, ''))
+      throw new Error(
+        errors.reduce(
+          (msg, e) => `${msg}
+
+  ${e.message}`,
+          `Error in ${filename}:`
+        )
+      )
     }
   }
 
