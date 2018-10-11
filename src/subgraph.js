@@ -3,7 +3,6 @@ let immutable = require('immutable')
 let path = require('path')
 let yaml = require('js-yaml')
 let graphql = require('graphql/language')
-//let validate = require('@graphprotocol/graphql-data-validation')
 let validation = require('./validation')
 
 module.exports = class Subgraph {
