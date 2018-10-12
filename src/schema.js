@@ -2,7 +2,7 @@ let fs = require('fs-extra')
 let graphql = require('graphql/language')
 let immutable = require('immutable')
 
-let codegen = require('./codegen')
+let codegen = require('./codegen/typescript')
 
 module.exports = class Schema {
   constructor(filename, document, ast) {
@@ -18,6 +18,7 @@ module.exports = class Schema {
           // Base classes
           'TypedMap',
           'Entity',
+          'Value',
 
           // Basic Ethereum types
           'Bytes',
@@ -69,20 +70,14 @@ module.exports = class Schema {
   _generateEntityFieldMethods(entityDef, fieldDef) {
     return immutable.List([
       this._generateEntityFieldGetter(entityDef, fieldDef),
-      // this._generateEntityFieldSetter(entityDef, fieldDef),
+      this._generateEntityFieldSetter(entityDef, fieldDef),
     ])
   }
 
   _generateEntityFieldGetter(entityDef, fieldDef) {
     let name = fieldDef.getIn(['name', 'value'])
     let gqlType = fieldDef.get('type')
-    console.log('GQL TYPE:', gqlType.toString())
     let ascType = codegen.graphqlTypeToAssemblyScriptType(this.ast, gqlType)
-    console.log('-> ASC TYPE:', ascType.toString())
-    console.log(
-      '-> RESULT:',
-      codegen.valueToCoercion(`this.get('${name}')`, ascType).toString()
-    )
     return codegen.method(
       `get ${name}`,
       [],
@@ -98,7 +93,26 @@ module.exports = class Schema {
     )
   }
 
-  _generateEntityFieldSetter(entityDef, fieldDef) {}
+  _generateEntityFieldSetter(entityDef, fieldDef) {
+    let name = fieldDef.getIn(['name', 'value'])
+    let gqlType = fieldDef.get('type')
+    let ascType = codegen.graphqlTypeToAssemblyScriptType(this.ast, gqlType)
+    return codegen.method(
+      `set ${name}`,
+      [codegen.param('value', ascType)],
+      undefined,
+      `
+      if (value == null) {
+        this.set('${name}', null)
+      } else {
+        this.set('${name}', ${codegen.valueFromCoercion(
+        `value as ${ascType instanceof codegen.NullableType ? ascType.inner : ascType}`,
+        ascType
+      )})
+      }
+      `
+    )
+  }
 
   _graphqlTypeToAssemblyScript(gqlType) {
     return 'U256'

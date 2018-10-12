@@ -24,5 +24,11 @@
     "graph": "./graph.js",
     "graph-build": "./graph-build.js",
     "graph-codegen": "./graph-codegen.js"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }
