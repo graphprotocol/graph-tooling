@@ -43,8 +43,8 @@ module.exports = class TypeGenerator {
       let abis = this.loadABIs(subgraph)
       this.generateTypesForABIs(abis)
 
-      let schema = this.loadSchema(subgraph)
-      this.generateTypesForSchema(schema)
+      //let schema = this.loadSchema(subgraph)
+      //this.generateTypesForSchema(schema)
     } catch (e) {
       this.logger.error('Failed to generate types:', e)
     }
@@ -114,8 +114,11 @@ module.exports = class TypeGenerator {
         `(${path.basename(abi.abi.file)})`
       )
 
+      let codeGenerator = abi.abi.codeGenerator()
       let code = prettier.format(
-        [...abi.abi.generateModuleImports(), ...abi.abi.generateTypes()].join('\n'),
+        [...codeGenerator.generateModuleImports(), ...codeGenerator.generateTypes()].join(
+          '\n'
+        ),
         {
           parser: 'typescript',
         }
