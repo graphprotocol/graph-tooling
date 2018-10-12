@@ -112,7 +112,7 @@ module.exports = class ABI {
       codegen.staticMethod(
         'bind',
         immutable.List([codegen.param('address', codegen.simpleType('address'))]),
-        klass,
+        codegen.namedType(this.name),
         `
         return new ${this.name}('${this.name}', address);
         `
@@ -216,7 +216,7 @@ module.exports = class ABI {
                       codegen.simpleType(input.get('type'))
                     )
                   ),
-                returnType,
+                codegen.namedType(returnType.name),
                 `
                 let result = super.call(
                   '${member.get('name')}',
