@@ -2,9 +2,11 @@ let fs = require('fs-extra')
 let immutable = require('immutable')
 let path = require('path')
 let prettier = require('prettier')
+let graphql = require('graphql/language')
 
 let ABI = require('./abi')
 let Logger = require('./logger')
+let Schema = require('./schema')
 let Subgraph = require('./subgraph')
 let Watcher = require('./watcher')
 
@@ -37,8 +39,12 @@ module.exports = class TypeGenerator {
 
     try {
       let subgraph = this.loadSubgraph()
+
       let abis = this.loadABIs(subgraph)
-      return this.generateTypesForABIs(abis)
+      this.generateTypesForABIs(abis)
+
+      let schema = this.loadSchema(subgraph)
+      this.generateTypesForSchema(schema)
     } catch (e) {
       this.logger.error('Failed to generate types:', e)
     }
@@ -94,7 +100,7 @@ module.exports = class TypeGenerator {
       this.logger.step('Generate types for contract ABIs')
       return abis.map((abi, name) => this._generateTypesForABI(abi))
     } catch (e) {
-      throw Error(`Failed to generate types for contract ABIS: ${e}`)
+      throw Error(`Failed to generate types for contract ABIs: ${e}`)
     } finally {
       this.logger.status('Types generated')
     }
@@ -108,17 +114,12 @@ module.exports = class TypeGenerator {
         `(${path.basename(abi.abi.file)})`
       )
 
-      let imports = abi.abi.generateModuleImports()
-      let importsCode = imports.map(moduleImport => moduleImport.toString()).join('\n')
-
-      let types = abi.abi.generateTypes()
-      let typesCode = types.map(type => type.toString()).join('\n')
-
-      let unformattedCode = [importsCode, typesCode].join('\n')
-
-      let formattedCode = prettier.format(unformattedCode, {
-        parser: 'typescript',
-      })
+      let code = prettier.format(
+        [...abi.abi.generateModuleImports(), ...abi.abi.generateTypes()].join('\n'),
+        {
+          parser: 'typescript',
+        }
+      )
 
       let outputFile = path.join(
         this.options.outputDir,
@@ -127,10 +128,40 @@ module.exports = class TypeGenerator {
       )
       this.logger.note('Write types to:', this.displayPath(outputFile))
       fs.mkdirsSync(path.dirname(outputFile))
-      fs.writeFileSync(outputFile, formattedCode)
-      return { dataSource: abi.dataSource, abi: abi.abi, outputFile: outputFile }
+      fs.writeFileSync(outputFile, code)
     } catch (e) {
       throw Error(`Failed to generate types for contract ABI: ${e}`)
+    }
+  }
+
+  loadSchema(subgraph) {
+    try {
+      this.logger.step('Load GraphQL schema')
+      let filename = subgraph.getIn(['schema', 'file'])
+      return Schema.load(filename)
+    } catch (e) {
+      throw Error(`Failed to load GraphQL schema: ${e}`)
+    }
+  }
+
+  generateTypesForSchema(schema) {
+    try {
+      this.logger.step('Generate types for GraphQL schema')
+
+      // Generate TypeScript code module from schema
+      let code = prettier.format(
+        [...schema.generateModuleImports(), ...schema.generateTypes()].join('\n'),
+        {
+          parser: 'typescript',
+        }
+      )
+
+      let outputFile = path.join(this.options.outputDir, 'schema.ts')
+      this.logger.note('Write types to:', this.displayPath(outputFile))
+      fs.mkdirsSync(path.dirname(outputFile))
+      fs.writeFileSync(outputFile, code)
+    } catch (e) {
+      throw Error(`Failed to generate types for GraphQL schema: ${e}`)
     }
   }
 
