@@ -1,4 +1,68 @@
 let immutable = require('immutable')
+let Map = immutable.Map
+
+const schemaHasNamedType = (schema, name) =>
+  schema
+    .get('definitions')
+    .find(
+      def =>
+        def.get('kind') === 'ObjectTypeDefinition' &&
+        def.getIn(['name', 'value']) === name
+    ) !== undefined
+
+const GRAPHQL_TYPE_TO_ASSEMBLY_SCRIPT_TYPE_CONVERTERS = {
+  NonNullType: (schema, gqlType) => {
+    let inner = gqlType.get('type')
+    let innerAsc = graphqlTypeToAssemblyScriptType(schema, inner)
+    return unionType(innerAsc, namedType('null'))
+  },
+
+  ListType: (schema, gqlType) => {
+    let inner = gqlType.get('type')
+    let innerAsc = graphqlTypeToAssemblyScriptType(schema, inner)
+    return arrayType(innerAsc)
+  },
+
+  NamedType: (schema, gqlType) => {
+    let name = gqlType.getIn(['name', 'value'])
+    console.log('NAME', name)
+    let ascType = graphqlTypeToAssemblyScriptType(
+      schema,
+      gqlType.getIn(['name', 'value'])
+    )
+    console.log('ASC TYPE', ascType)
+    return ascType
+  },
+
+  String: () => namedType('string'),
+  ID: () => namedType('string'),
+  Bytes: () => namedType('Bytes'),
+  BigInt: () => namedType('U256'),
+  Int: () => namedType('u32'),
+  Boolean: () => namedType('boolean'),
+}
+
+const graphqlTypeToAssemblyScriptType = (schema, gqlType) => {
+  if (Map.isMap(gqlType)) {
+    let kind = gqlType.get('kind')
+    let converter = GRAPHQL_TYPE_TO_ASSEMBLY_SCRIPT_TYPE_CONVERTERS[kind]
+    if (converter !== undefined) {
+      return converter(schema, gqlType)
+    } else {
+      throw Error(`Unsupported GraphQL type: ${kind}`)
+    }
+  } else {
+    let converter = GRAPHQL_TYPE_TO_ASSEMBLY_SCRIPT_TYPE_CONVERTERS[gqlType]
+    if (converter !== undefined) {
+      return converter(schema, gqlType)
+    } else if (schemaHasNamedType(schema, gqlType)) {
+      // References are returned as strings
+      return namedType('string')
+    } else {
+      throw Error(`Unsupported GraphQL type: ${gqlType}`)
+    }
+  }
+}
 
 const TYPE_MAP = {
   address: 'Address',
@@ -72,6 +136,12 @@ const ETHEREUM_VALUE_TO_TYPE_FUNCTION_MAP = {
   uint: 'toU256',
 }
 
+const VALUE_TO_TYPE_FUNCTION_MAP = {
+  string: 'toString',
+  BigInt: 'toU265',
+  Bytes: 'toBytes',
+}
+
 const findMatch = (m, type) => {
   let matchingKey = Object.keys(m).find(key => type.match(key))
   return matchingKey !== undefined ? m[matchingKey] : undefined
@@ -88,13 +158,21 @@ const maybeInspectArray = type => {
 }
 
 const typeToString = type => {
-  let [isArray, innerType] = maybeInspectArray(type)
-  let tsType = TYPE_MAP[innerType] || findMatch(TYPE_MAP, innerType)
+  console.log('Type to string:', type, type instanceof UnionType)
 
-  if (tsType !== undefined) {
-    return isArray ? `Array<${tsType}>` : tsType
+  if (type instanceof UnionType) {
+    return type.types.map(type => typeToString(type)).join(' | ')
+  } else if (type instanceof NamedType) {
+    return type.toString()
   } else {
-    throw `Unsupported type: ${type}`
+    let [isArray, innerType] = maybeInspectArray(type)
+    let tsType = TYPE_MAP[innerType] || findMatch(TYPE_MAP, innerType)
+
+    if (tsType !== undefined) {
+      return isArray ? `Array<${tsType}>` : tsType
+    } else {
+      throw `Unsupported type: ${type}`
+    }
   }
 }
 
@@ -122,6 +200,32 @@ const ethereumValueToTypeFunction = type => {
     throw `Unsupported EthereumValue to type coercion for type: ${type}`
   }
 }
+
+const valueToTypeFunction = type => {
+  console.log('VALUE TO TYPE FUNCTION:', type)
+  let fn =
+    type instanceof ArrayType
+      ? `${valueToTypeFunction(type.inner)}Array`
+      : type instanceof UnionType
+        ? `${valueToTypeFunction(type.types[0])}`
+        : VALUE_TO_TYPE_FUNCTION_MAP[type.name] || undefined
+  console.log('FN:', fn)
+  return fn
+  //typeof type === 'ArrayType'
+  //  ? `${valueToTypeFunction(type.inner)}Array`
+  //  : VALUE_TO_TYPE_FUNCTION_MAP[type.name] || undefined
+}
+
+//let [isArray, innerType] = maybeInspectArray(type)
+//let toFunction =
+//  VALUE_TO_TYPE_FUNCTION_MAP[innerType] ||
+//  findMatch(VALUE_TO_TYPE_FUNCTION_MAP, innerType)
+
+//if (toFunction !== undefined) {
+//  return isArray ? `${toFunction}Array` : toFunction
+//} else {
+//  throw `Unsupported Value to type coercion for type: ${type}`
+//}
 
 class Param {
   constructor(name, type) {
@@ -178,7 +282,7 @@ class Method {
   toString() {
     return `
   ${this.name}(${this.params.map(param => param.toString()).join(', ')})${
-      this.returnType ? `: ${this.returnType.name}` : ''
+      this.returnType ? `: ${this.returnType.toString()}` : ''
     } {${this.body}
   }
 `
@@ -263,6 +367,17 @@ class SimpleType {
   }
 }
 
+class ArrayType {
+  constructor(inner) {
+    this.inner = inner
+    this.name = `Array<${typeToString(inner)}>`
+  }
+
+  toString() {
+    return this.name
+  }
+}
+
 class UnionType {
   constructor(types) {
     this.types = types
@@ -307,8 +422,21 @@ class ModuleImport {
   }
 }
 
+class ValueToCoercion {
+  constructor(expr, type) {
+    this.expr = expr
+    this.type = type
+  }
+
+  toString() {
+    console.log('VALUE TO COERCION:', this.expr, this.type)
+    return `${this.expr}.${valueToTypeFunction(this.type)}()`
+  }
+}
+
 const namedType = name => new NamedType(name)
 const simpleType = name => new SimpleType(name)
+const arrayType = name => new ArrayType(name)
 const param = (name, type) => new Param(name, type)
 const method = (name, params, returnType, body) =>
   new Method(name, params, returnType, body)
@@ -321,10 +449,12 @@ const ethereumValueFromCoercion = (expr, type) =>
 const ethereumValueToCoercion = (expr, type) => new EthereumValueToCoercion(expr, type)
 const unionType = (...types) => new UnionType(types)
 const moduleImports = (nameOrNames, module) => new ModuleImports(nameOrNames, module)
+const valueToCoercion = (expr, type) => new ValueToCoercion(expr, type)
 
 module.exports = {
   namedType,
   simpleType,
+  arrayType,
   klass,
   klassMember,
   method,
@@ -334,4 +464,6 @@ module.exports = {
   ethereumValueToCoercion,
   unionType,
   moduleImports,
+  valueToCoercion,
+  graphqlTypeToAssemblyScriptType,
 }
