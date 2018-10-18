@@ -178,6 +178,10 @@ module.exports = class TypeGenerator {
       process.exit()
     })
 
-    watcher.watch()
+    try {
+      watcher.watch()
+    } catch (e) {
+      this.logger.error('Error:', e)
+    }
   }
 }
