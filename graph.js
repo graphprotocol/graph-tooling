@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 
-let app = require('commander')
-let ipfsAPI = require('ipfs-api')
-let jayson = require('jayson')
-let path = require('path')
-let request = require('request')
+const app = require('commander')
+const ipfsAPI = require('ipfs-api')
+const jayson = require('jayson')
+const path = require('path')
+const pkginfo = require('pkginfo')(module, 'version')
+const request = require('request')
 const url = require('url')
 const { URL } = url
 
-let Compiler = require('./src/cli/compiler')
-let TypeGenerator = require('./src/cli/type-generator')
-const Logger = require('./src/cli/logger')
+const Compiler = require('./src/compiler')
+const TypeGenerator = require('./src/type-generator')
+const Logger = require('./src/logger')
 
 function getVerbosity(app) {
   return app.debug ? 'debug' : app.verbose ? 'verbose' : app.verbosity
@@ -59,7 +60,7 @@ function outputDeployConfig() {
 }
 
 app
-  .version('0.1.0')
+  .version(module.exports.version)
   .option(
     '--verbosity <info|verbose|debug>',
     'The log level to use (default: LOG_LEVEL or info)',
