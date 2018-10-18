@@ -18,47 +18,46 @@ function getVerbosity(app) {
 }
 
 // Helper function to construct a subgraph compiler
-function createCompiler(app, subgraphManifest) {
+function createCompiler(app, cmd, subgraphManifest) {
   // Connect to the IPFS node (if a node address was provided)
-  let ipfs = app.ipfs ? ipfsAPI(app.ipfs) : undefined
+  let ipfs = cmd.ipfs ? ipfsAPI(cmd.ipfs) : undefined
 
   return new Compiler({
     ipfs,
     subgraphManifest,
-    outputDir: app.outputDir,
-    outputFormat: app.outputFormat || 'wasm',
+    outputDir: cmd.outputDir,
+    outputFormat: cmd.outputFormat || 'wasm',
     logger: {
       verbosity: getVerbosity(app),
     },
   })
 }
 
-function outputDeployConfig() {
+function outputDeployConfig(cmd) {
   console.error('')
   console.error('Configuration:')
   console.error('')
-
-  if (app.subgraphName === undefined) {
+  if (cmd.subgraphName === undefined) {
     console.error('  Subgraph name: No name defined with -n/--subgraph-name')
   } else {
-    console.error(`  Subgraph name: ${app.subgraphName}`)
+    console.error(`  Subgraph name: ${cmd.subgraphName}`)
   }
-
-  if (app.node === undefined) {
+  if (cmd.node === undefined) {
     console.error('  Graph node:    No node defined with -g/--node')
   } else {
-    console.error(`  Graph node:    ${app.node}`)
+    console.error(`  Graph node:    ${cmd.node}`)
   }
-
-  if (app.ipfs === undefined) {
+  if (cmd.ipfs === undefined) {
     console.error('  IPFS:          No node defined with -i/--ipfs')
   } else {
-    console.error(`  IPFS:          ${app.ipfs}`)
+    console.error(`  IPFS:          ${cmd.ipfs}`)
   }
-
   console.error('')
 }
 
+/**
+ * Global app configuration and options
+ */
 app
   .version(module.exports.version)
   .option(
@@ -68,25 +67,23 @@ app
   )
   .option('--debug', 'Alias for --verbosity debug')
   .option('--verbose', 'Alias for --verbosity verbose')
-  .option(
-    '-o, --output-dir <path>',
-    'Output directory for build artifacts',
-    path.resolve(process.cwd(), 'dist')
-  )
-  .option('-w, --watch', 'Rebuild automatically when files change')
-  .option('-g, --node <URL>[:PORT]', 'Graph node')
-  .option('-t, --output-format <wasm|wast>', 'Output format (wasm, wast)', 'wasm')
-  .option('-i, --ipfs <addr>', 'IPFS node to use for uploading files')
-  .option('-n, --subgraph-name <NAME>', 'Subgraph name')
-  .option('--api-key <KEY>', 'Graph API key corresponding to the subgraph name')
 
+/**
+ * graph codegen
+ */
 app
   .command('codegen [SUBGRAPH_MANIFEST]')
   .description('Generates TypeScript types for a subgraph')
-  .action(subgraphManifest => {
+  .option(
+    '-o, --output-dir <path>',
+    'Output directory for generated types',
+    path.resolve(process.cwd(), 'types')
+  )
+  .option('-w, --watch', 'Regenerate types automatically when files change')
+  .action((subgraphManifest, cmd) => {
     let generator = new TypeGenerator({
       subgraphManifest: subgraphManifest || path.resolve('subgraph.yaml'),
-      outputDir: app.outputDir,
+      outputDir: cmd.outputDir,
       logger: {
         verbosity: getVerbosity(app),
       },
@@ -94,41 +91,70 @@ app
 
     // Watch working directory for file updates or additions, trigger
     // type generation (if watch argument specified)
-    if (app.watch) {
+    if (cmd.watch) {
       generator.watchAndGenerateTypes()
     } else {
       generator.generateTypes()
     }
   })
 
+/**
+ * graph build
+ */
 app
   .command('build [SUBGRAPH_MANIFEST]')
   .description('Compiles a subgraph and uploads it to IPFS')
-  .action(subgraphManifest => {
+  .option('-i, --ipfs <addr>', 'IPFS node to use for uploading files')
+  .option('-n, --subgraph-name <NAME>', 'Subgraph name')
+  .option(
+    '-o, --output-dir <path>',
+    'Output directory for build results',
+    path.resolve(process.cwd(), 'dist')
+  )
+  .option('-t, --output-format <wasm|wast>', 'Output format (wasm, wast)', 'wasm')
+  .option('-w, --watch', 'Rebuild automatically when files change')
+  .action((subgraphManifest, cmd) => {
     let compiler = createCompiler(
       app,
+      cmd,
       subgraphManifest || path.resolve('subgraph.yaml')
     )
 
     // Watch subgraph files for changes or additions, trigger
     // compile (if watch argument specified)
-    if (app.watch) {
+    if (cmd.watch) {
       compiler.watchAndCompile()
     } else {
       compiler.compile()
     }
   })
 
+/**
+ * graph deploy
+ */
 app
   .command('deploy [SUBGRAPH_MANIFEST]')
   .description('Deploys the subgraph to a graph node')
-  .action(subgraphManifest => {
+  .option(
+    '-k, --api-key <KEY>',
+    'Graph API key authorized to deploy to the subgraph name'
+  )
+  .option('-g, --node <URL>[:PORT]', 'Graph node to deploy to')
+  .option('-i, --ipfs <addr>', 'IPFS node to use for uploading files')
+  .option('-n, --subgraph-name <NAME>', 'Subgraph name')
+  .option(
+    '-o, --output-dir <path>',
+    'Output directory for build results',
+    path.resolve(process.cwd(), 'dist')
+  )
+  .option('-w, --watch', 'Rebuild and redeploy automatically when files change')
+  .action((subgraphManifest, cmd) => {
     if (
-      app.subgraphName === undefined ||
-      app.node === undefined ||
-      app.ipfs === undefined
+      cmd.subgraphName === undefined ||
+      cmd.node === undefined ||
+      cmd.ipfs === undefined
     ) {
-      outputDeployConfig()
+      outputDeployConfig(cmd)
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
@@ -137,17 +163,18 @@ app
 
     let compiler = createCompiler(
       app,
+      cmd,
       subgraphManifest || path.resolve('subgraph.yaml')
     )
 
-    let requestUrl = new URL(app.node)
+    let requestUrl = new URL(cmd.node)
     if (!requestUrl.port) {
       requestUrl.port = '8020'
     }
 
     let client = jayson.Client.http(requestUrl)
-    if (app.apiKey !== undefined) {
-      client.options.headers = { Authorization: 'Bearer ' + app.apiKey }
+    if (cmd.apiKey !== undefined) {
+      client.options.headers = { Authorization: 'Bearer ' + cmd.apiKey }
     }
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
@@ -175,7 +202,7 @@ app
       )
     }
 
-    if (app.watch) {
+    if (cmd.watch) {
       compiler
         .watchAndCompile(ipfsHash => {
           if (ipfsHash !== undefined) {
