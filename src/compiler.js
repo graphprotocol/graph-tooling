@@ -120,7 +120,11 @@ class Compiler {
       process.exit()
     })
 
-    watcher.watch()
+    try {
+      watcher.watch()
+    } catch (e) {
+      this.logger.error('Error:', e)
+    }
   }
 
   _copySubgraphFile(maybeRelativeFile, sourceDir, targetDir) {
