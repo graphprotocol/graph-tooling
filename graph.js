@@ -81,11 +81,11 @@ app
   .option('--api-key <KEY>', 'Graph API key corresponding to the subgraph name')
 
 app
-  .command('codegen <subgraph-manifest>')
+  .command('codegen [SUBGRAPH_MANIFEST]')
   .description('Generates TypeScript types for a subgraph')
   .action(subgraphManifest => {
     let generator = new TypeGenerator({
-      subgraphManifest,
+      subgraphManifest: subgraphManifest || path.resolve('subgraph.yaml'),
       outputDir: app.outputDir,
       logger: {
         verbosity: getVerbosity(app),
@@ -102,10 +102,13 @@ app
   })
 
 app
-  .command('build <subgraph-manifest>')
+  .command('build [SUBGRAPH_MANIFEST]')
   .description('Compiles a subgraph and uploads it to IPFS')
   .action(subgraphManifest => {
-    let compiler = createCompiler(app, subgraphManifest)
+    let compiler = createCompiler(
+      app,
+      subgraphManifest || path.resolve('subgraph.yaml')
+    )
 
     // Watch subgraph files for changes or additions, trigger
     // compile (if watch argument specified)
@@ -117,7 +120,7 @@ app
   })
 
 app
-  .command('deploy <subgraph-manifest>')
+  .command('deploy [SUBGRAPH_MANIFEST]')
   .description('Deploys the subgraph to a graph node')
   .action(subgraphManifest => {
     if (
@@ -132,7 +135,11 @@ app
       return
     }
 
-    let compiler = createCompiler(app, subgraphManifest)
+    let compiler = createCompiler(
+      app,
+      subgraphManifest || path.resolve('subgraph.yaml')
+    )
+
     let requestUrl = new URL(app.node)
     if (!requestUrl.port) {
       requestUrl.port = '8020'
