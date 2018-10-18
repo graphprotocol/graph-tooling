@@ -28,26 +28,49 @@ module.exports = class Logger {
 
   step(subject, ...msg) {
     if (this.prefix === undefined) {
-      this.logger.log(
-        'verbose',
-        '%s%d/%d %s %s',
-        this.currentStep === 0 ? '' : '\n',
-        ++this.currentStep,
-        this.steps,
-        chalk.green(subject),
-        msg.join(' ')
-      )
+      if (this.options.verbosity === 'debug') {
+        this.logger.log(
+          'verbose',
+          '\n%d/%d %s %s',
+          ++this.currentStep,
+          this.steps,
+          chalk.green(subject),
+          msg.join(' ')
+        )
+      } else {
+        this.logger.log(
+          'verbose',
+          '%d/%d %s %s',
+          ++this.currentStep,
+          this.steps,
+          chalk.green(subject),
+          msg.join(' ')
+        )
+      }
     } else {
-      this.logger.log(
-        'verbose',
-        '%s\n%s %d/%d %s %s',
-        this.prefix,
-        this.prefix,
-        ++this.currentStep,
-        this.steps,
-        chalk.green(subject),
-        msg.join(' ')
-      )
+      if (this.options.verbosity === 'debug') {
+        this.logger.log(
+          'verbose',
+          '\n%s\n%s %d/%d %s %s',
+          this.prefix,
+          this.prefix,
+          ++this.currentStep,
+          this.steps,
+          chalk.green(subject),
+          msg.join(' ')
+        )
+      } else {
+        this.logger.log(
+          'verbose',
+          '%s\n%s %d/%d %s %s',
+          this.prefix,
+          this.prefix,
+          ++this.currentStep,
+          this.steps,
+          chalk.green(subject),
+          msg.join(' ')
+        )
+      }
     }
   }
 
@@ -67,13 +90,13 @@ module.exports = class Logger {
 
   status(subject, ...msg) {
     if (this.prefix === undefined) {
-      if ((this.options.verbosity || 'info') !== 'info') {
+      if (this.options.verbosity === 'debug') {
         this.logger.log('info', '\n%s %s', chalk.magenta(subject), msg.join(' '))
       } else {
         this.logger.log('info', '%s %s', chalk.magenta(subject), msg.join(' '))
       }
     } else {
-      if ((this.options.verbosity || 'info') !== 'info') {
+      if (this.options.verbosity === 'debug') {
         this.logger.log(
           'info',
           '\n%s %s %s',
@@ -95,9 +118,29 @@ module.exports = class Logger {
 
   fatal(subject, ...msg) {
     if (this.prefix === undefined) {
-      this.logger.log('error', '%s %s', chalk.red(subject), msg.join(' '))
+      if (this.options.verbosity === 'debug') {
+        this.logger.log('error', '\n%s %s', chalk.red(subject), msg.join(' '))
+      } else {
+        this.logger.log('error', '%s %s', chalk.red(subject), msg.join(' '))
+      }
     } else {
-      this.logger.log('error', '%s %s %s', this.prefix, chalk.red(subject), msg.join(' '))
+      if (this.options.verbosity === 'debug') {
+        this.logger.log(
+          'error',
+          '\n%s %s %s',
+          this.prefix,
+          chalk.red(subject),
+          msg.join(' ')
+        )
+      } else {
+        this.logger.log(
+          'error',
+          '%s %s %s',
+          this.prefix,
+          chalk.red(subject),
+          msg.join(' ')
+        )
+      }
     }
   }
 
