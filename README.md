@@ -12,7 +12,7 @@ As of today, the command line interface consists of two commands:
 
 ## How It Works
 
-`graph` takes a `subgraph.yaml` subgraph manifest with
+`graph` takes a subgraph manifest (defaults to `subgraph.yaml`) with
 
 - references to a GraphQL schema,
 - smart contract ABIs, and
@@ -63,11 +63,11 @@ For clarity, an example of the setup below can be found in the [ENS subgraph rep
     ```json
     {
       "scripts": {
-        "codegen": "graph codegen --output-dir types/ subgraph.yaml",
-        "build": "graph build subgraph.yaml",
-        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
+        "codegen": "graph codegen --output-dir types/",
+        "build": "graph build",
+        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001",
         "deploy":
-          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name your-subgraph subgraph.yaml"
+          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name your-subgraph"
       }
     }
     ```
@@ -93,13 +93,12 @@ For clarity, an example of the setup below can be found in the [ENS subgraph rep
     changes to it:
     ```sh
     graph \
+       deploy \
        --watch \
        --verbosity debug \
        --node http://127.0.0.1:8020/ \
        --ipfs /ip4/127.0.0.1/tcp/5001 \
-       --subgraph-name your-subgraph \
-       deploy \
-       subgraph.yaml
+       --subgraph-name your-subgraph
     ```
 
 ## License
