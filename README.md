@@ -67,7 +67,7 @@ For clarity, an example of the setup below can be found in the [ENS subgraph rep
         "build": "graph build subgraph.yaml",
         "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
         "deploy":
-          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8030 --subgraph-name your-subgraph subgraph.yaml"
+          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name your-subgraph subgraph.yaml"
       }
     }
     ```
@@ -96,7 +96,7 @@ For clarity, an example of the setup below can be found in the [ENS subgraph rep
        --watch \
        --verbosity debug \
        --node http://127.0.0.1:8020/ \
-       --ipfs /ip4/127.0.0.1/tcp/8030 \
+       --ipfs /ip4/127.0.0.1/tcp/5001 \
        --subgraph-name your-subgraph \
        deploy \
        subgraph.yaml
