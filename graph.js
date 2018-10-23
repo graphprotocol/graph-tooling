@@ -184,7 +184,7 @@ app
       logger.info('')
       client.request(
         'subgraph_deploy',
-        { name: app.subgraphName, ipfs_hash: ipfsHash },
+        { name: cmd.subgraphName, ipfs_hash: ipfsHash },
         function(requestError, jsonRpcError, res) {
           if (requestError) {
             logger.fatal('HTTP error deploying the subgraph:', requestError.code)
@@ -195,7 +195,7 @@ app
           if (!requestError && !jsonRpcError) {
             logger.status(
               'Deployed to Graph node:',
-              path.join(requestUrl.toString(), app.subgraphName)
+              path.join(requestUrl.toString(), cmd.subgraphName)
             )
           }
         }
