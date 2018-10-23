@@ -16,7 +16,7 @@ dataSources:
         - ExampleEntity
       abis:
         - name: ExampleContract
-          file: abis/ExampleContract.json
+          file: ExampleSubgraph/abis/ExampleContract.json
       eventHandlers:
         - event: ExampleEvent(string)
           handler: handleExampleEvent
