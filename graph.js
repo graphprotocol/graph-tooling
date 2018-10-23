@@ -33,7 +33,7 @@ function createCompiler(app, cmd, subgraphManifest) {
   })
 }
 
-function outputDeployConfig(cmd) {
+function outputNameAndNodeConfig(cmd) {
   console.error('')
   console.error('Configuration:')
   console.error('')
@@ -47,6 +47,10 @@ function outputDeployConfig(cmd) {
   } else {
     console.error(`  Graph node:    ${cmd.node}`)
   }
+}
+
+function outputDeployConfig(cmd) {
+  outputNameAndNodeConfig(cmd)
   if (cmd.ipfs === undefined) {
     console.error('  IPFS:          No node defined with -i/--ipfs')
   } else {
@@ -184,7 +188,7 @@ app
       logger.info('')
       client.request(
         'subgraph_deploy',
-        { name: app.subgraphName, ipfs_hash: ipfsHash },
+        { name: cmd.subgraphName, ipfs_hash: ipfsHash },
         function(requestError, jsonRpcError, res) {
           if (requestError) {
             logger.fatal('HTTP error deploying the subgraph:', requestError.code)
@@ -195,7 +199,7 @@ app
           if (!requestError && !jsonRpcError) {
             logger.status(
               'Deployed to Graph node:',
-              path.join(requestUrl.toString(), app.subgraphName)
+              path.join(requestUrl.toString(), cmd.subgraphName)
             )
           }
         }
@@ -223,6 +227,62 @@ app
       })
     }
   })
+
+  app
+  .command('remove')
+  .description('Removes subgraph from node')
+  .option(
+    '-k, --api-key <KEY>',
+    'Graph API key authorized to deploy to the subgraph name'
+  )
+  .option('-g, --node <URL>[:PORT]', 'Graph node')
+  .option('-n, --subgraph-name <NAME>', 'Subgraph name')
+  .action(cmd => {
+    if (
+      cmd.subgraphName === undefined ||
+      cmd.node === undefined
+    ) {
+      outputNameAndNodeConfig(cmd)
+      console.error('--')
+      console.error('For more information run this command with --help')
+      process.exitCode = 1
+      return
+    }
+
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
+    let requestUrl = new URL(cmd.node)
+    if (!requestUrl.port) {
+      requestUrl.port = '8020'
+    }
+
+    let client = jayson.Client.http(requestUrl)
+    if (cmd.apiKey !== undefined) {
+      client.options.headers = { Authorization: 'Bearer ' + cmd.apiKey }
+    }
+
+    logger.status('Removing subgraph from Graph node:', requestUrl)
+    logger.info('')
+    client.request(
+      'subgraph_remove',
+      { name: cmd.subgraphName },
+      function(requestError, jsonRpcError, res) {
+        if (requestError) {
+          logger.fatal('HTTP error removing the subgraph:', requestError.code)
+        }
+        if (jsonRpcError) {
+          logger.fatal('Error removing the subgraph:', jsonRpcError.message)
+        }
+        if (!requestError && !jsonRpcError) {
+          logger.status(
+            'Removed subgraph from node'
+          )
+        }
+      }
+    )
+  }
+  )
+
 
 app.command('*', { noHelp: true }).action(args => {
   console.error('Unknown command:', args)
