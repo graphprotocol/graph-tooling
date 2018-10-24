@@ -278,8 +278,8 @@ module.exports = class ABI {
       abi = data.compilerOutput.abi
     }
 
-    if (!abi) {
-      throw Error(`Could not extract abi from file ${file}`)
+    if (abi === null || abi === undefined) {
+      throw Error(`Could not extract abi from ${file}`)
     }
   
     return new ABI(name, file, immutable.fromJS(abi))
