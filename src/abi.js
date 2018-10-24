@@ -268,8 +268,20 @@ module.exports = class ABI {
 
   static load(name, file) {
     let data = JSON.parse(fs.readFileSync(file))
-    return Array.isArray(data)
-      ? new ABI(name, file, immutable.fromJS(data))
-      : new ABI(name, file, immutable.fromJS(data.abi))
+
+    let abi = null
+    if (Array.isArray(data)) {
+      abi = data
+    } else if (data.abi !== undefined) {
+      abi = data.abi
+    } else if (data.compilerOutput !== undefined && data.compilerOutput.abi !== undefined) {
+      abi = data.compilerOutput.abi
+    }
+
+    if (!abi) {
+      throw Error(`Could not extract abi from file ${file}`)
+    }
+  
+    return new ABI(name, file, immutable.fromJS(abi))
   }
 }
