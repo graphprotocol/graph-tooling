@@ -233,10 +233,10 @@ app
   .description('Removes subgraph from node')
   .option(
     '-k, --api-key <KEY>',
-    'Graph API key authorized to deploy to the subgraph name'
+    'Graph API key authorized to manage the subgraph name'
   )
-  .option('-g, --node <URL>[:PORT]', 'Graph node')
-  .option('-n, --subgraph-name <NAME>', 'Subgraph name')
+  .option('-g, --node <URL>[:PORT]', 'Graph node to remove the subgraph from')
+  .option('-n, --subgraph-name <NAME>', 'Subgraph name to remove')
   .action(cmd => {
     if (
       cmd.subgraphName === undefined ||
