@@ -197,10 +197,14 @@ app
             logger.fatal('Error deploying the subgraph:', jsonRpcError.message)
           }
           if (!requestError && !jsonRpcError) {
-            logger.status(
-              'Deployed to Graph node:',
-              path.join(requestUrl.toString(), cmd.subgraphName)
-            )
+            logger.status('Deployed to Graph node:', requestUrl.toString())
+            
+            // Assume that the host is the same.
+            // In the future the deployment router should also return the host.
+            let base = requestUrl.protocol + '//' + requestUrl.hostname
+            logger.status('Playground', base + res.playground)
+            logger.status('Queries (HTTP)', base + res.queries)
+            logger.status('Subscriptions (WS)', base + res.subscriptions)
           }
         }
       )
