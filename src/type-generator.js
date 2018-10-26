@@ -43,8 +43,8 @@ module.exports = class TypeGenerator {
       let abis = this.loadABIs(subgraph)
       this.generateTypesForABIs(abis)
 
-      //let schema = this.loadSchema(subgraph)
-      //this.generateTypesForSchema(schema)
+      let schema = this.loadSchema(subgraph)
+      this.generateTypesForSchema(schema)
     } catch (e) {
       this.logger.error('Failed to generate types:', e)
     }
@@ -151,9 +151,12 @@ module.exports = class TypeGenerator {
     try {
       this.logger.step('Generate types for GraphQL schema')
 
-      // Generate TypeScript code module from schema
+      // Generate TypeScript module from schema
+      let codeGenerator = schema.codeGenerator()
       let code = prettier.format(
-        [...schema.generateModuleImports(), ...schema.generateTypes()].join('\n'),
+        [...codeGenerator.generateModuleImports(), ...codeGenerator.generateTypes()].join(
+          '\n'
+        ),
         {
           parser: 'typescript',
         }
