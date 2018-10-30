@@ -141,7 +141,7 @@ export function handleExampleEventArray(event: ExampleEvent): void {
   entity.requiredInt = contract.getAndReturnUint8(entity.requiredInt)
   entity.requiredInt = contract.getAndReturnUint16(entity.requiredInt)
   entity.requiredInt = contract.getAndReturnUint24(entity.requiredInt)
-  entity.requiredInt = contract.getAndReturnUint32(entity.requiredInt)
+  entity.requiredBigInt = contract.getAndReturnUint32(entity.requiredBigInt)
   entity.requiredBigInt = contract.getAndReturnUint40(entity.requiredBigInt)
   entity.requiredBigInt = contract.getAndReturnUint56(entity.requiredBigInt)
   entity.requiredBigInt = contract.getAndReturnUint64(entity.requiredBigInt)
@@ -212,10 +212,13 @@ export function handleExampleEventArray(event: ExampleEvent): void {
   entity.requiredBigIntList = contract.getAndReturnInt240Array(entity.requiredBigIntList)
   entity.requiredBigIntList = contract.getAndReturnInt248Array(entity.requiredBigIntList)
   entity.requiredBigIntList = contract.getAndReturnInt256Array(entity.requiredBigIntList)
-  let u8Array: Array<u32> = contract.getAndReturnUint8Array([1 as u32, 100 as u32])
-  let u16Array: Array<u32> = contract.getAndReturnUint16Array([1 as u32, 100 as u32])
-  let u24Array: Array<u32> = contract.getAndReturnUint24Array([1 as u32, 100 as u32])
-  let u32Array: Array<u32> = contract.getAndReturnUint32Array([1 as u32, 100 as u32])
+  let u8Array: Array<i32> = contract.getAndReturnUint8Array([1 as i32, 100 as i32])
+  let u16Array: Array<i32> = contract.getAndReturnUint16Array([1 as i32, 100 as i32])
+  let u24Array: Array<i32> = contract.getAndReturnUint24Array([1 as i32, 100 as i32])
+  let u32Array: Array<BigInt> = contract.getAndReturnUint32Array([
+    new BigInt(),
+    new BigInt(),
+  ])
   entity.requiredBigIntList = contract.getAndReturnUint40Array(entity.requiredBigIntList)
   entity.requiredBigIntList = contract.getAndReturnUint56Array(entity.requiredBigIntList)
   entity.requiredBigIntList = contract.getAndReturnUint64Array(entity.requiredBigIntList)

@@ -285,24 +285,26 @@ export class ExampleContract extends SmartContract {
     return result[0].toBigInt();
   }
 
-  getAndReturnUint8(x: u32): u32 {
-    let result = super.call("getAndReturnUint8", [EthereumValue.fromU32(x)]);
-    return result[0].toU32();
+  getAndReturnUint8(x: i32): i32 {
+    let result = super.call("getAndReturnUint8", [EthereumValue.fromI32(x)]);
+    return result[0].toI32();
   }
 
-  getAndReturnUint16(x: u32): u32 {
-    let result = super.call("getAndReturnUint16", [EthereumValue.fromU32(x)]);
-    return result[0].toU32();
+  getAndReturnUint16(x: i32): i32 {
+    let result = super.call("getAndReturnUint16", [EthereumValue.fromI32(x)]);
+    return result[0].toI32();
   }
 
-  getAndReturnUint24(x: u32): u32 {
-    let result = super.call("getAndReturnUint24", [EthereumValue.fromU32(x)]);
-    return result[0].toU32();
+  getAndReturnUint24(x: i32): i32 {
+    let result = super.call("getAndReturnUint24", [EthereumValue.fromI32(x)]);
+    return result[0].toI32();
   }
 
-  getAndReturnUint32(x: u32): u32 {
-    let result = super.call("getAndReturnUint32", [EthereumValue.fromU32(x)]);
-    return result[0].toU32();
+  getAndReturnUint32(x: BigInt): BigInt {
+    let result = super.call("getAndReturnUint32", [
+      EthereumValue.fromUnsignedBigInt(x)
+    ]);
+    return result[0].toBigInt();
   }
 
   getAndReturnUint40(x: BigInt): BigInt {
@@ -767,32 +769,32 @@ export class ExampleContract extends SmartContract {
     return result[0].toBigIntArray();
   }
 
-  getAndReturnUint8Array(x: Array<u32>): Array<u32> {
+  getAndReturnUint8Array(x: Array<i32>): Array<i32> {
     let result = super.call("getAndReturnUint8Array", [
-      EthereumValue.fromU32Array(x)
+      EthereumValue.fromI32Array(x)
     ]);
-    return result[0].toU32Array();
+    return result[0].toI32Array();
   }
 
-  getAndReturnUint16Array(x: Array<u32>): Array<u32> {
+  getAndReturnUint16Array(x: Array<i32>): Array<i32> {
     let result = super.call("getAndReturnUint16Array", [
-      EthereumValue.fromU32Array(x)
+      EthereumValue.fromI32Array(x)
     ]);
-    return result[0].toU32Array();
+    return result[0].toI32Array();
   }
 
-  getAndReturnUint24Array(x: Array<u32>): Array<u32> {
+  getAndReturnUint24Array(x: Array<i32>): Array<i32> {
     let result = super.call("getAndReturnUint24Array", [
-      EthereumValue.fromU32Array(x)
+      EthereumValue.fromI32Array(x)
     ]);
-    return result[0].toU32Array();
+    return result[0].toI32Array();
   }
 
-  getAndReturnUint32Array(x: Array<u32>): Array<u32> {
+  getAndReturnUint32Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call("getAndReturnUint32Array", [
-      EthereumValue.fromU32Array(x)
+      EthereumValue.fromUnsignedBigIntArray(x)
     ]);
-    return result[0].toU32Array();
+    return result[0].toBigIntArray();
   }
 
   getAndReturnUint40Array(x: Array<BigInt>): Array<BigInt> {
