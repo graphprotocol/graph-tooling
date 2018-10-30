@@ -155,11 +155,15 @@ describe('AssemblyScript -> EthereumValue', () => {
   })
 
   test('Bytes -> byte', () => {
-    expect(codegen.ethereumValueFromAsc('x', 'byte')).toBe('EthereumValue.fromBytes(x)')
+    expect(codegen.ethereumValueFromAsc('x', 'byte')).toBe(
+      'EthereumValue.fromFixedBytes(x)'
+    )
   })
 
   test('Bytes -> bytes', () => {
-    expect(codegen.ethereumValueFromAsc('x', 'bytes')).toBe('EthereumValue.fromBytes(x)')
+    expect(codegen.ethereumValueFromAsc('x', 'bytes')).toBe(
+      'EthereumValue.fromFixedBytes(x)'
+    )
   })
 
   test('Bytes -> bytes0 (invalid)', () => {
@@ -169,7 +173,7 @@ describe('AssemblyScript -> EthereumValue', () => {
   test('Bytes -> bytes1..32', () => {
     for (let i = 1; i <= 32; i++) {
       expect(codegen.ethereumValueFromAsc('x', `bytes${i}`)).toBe(
-        'EthereumValue.fromBytes(x)'
+        'EthereumValue.fromFixedBytes(x)'
       )
     }
   })
@@ -242,25 +246,25 @@ describe('AssemblyScript -> EthereumValue', () => {
 
   test('Array<Bytes> -> byte[*]', () => {
     expect(codegen.ethereumValueFromAsc('x', 'byte[]')).toBe(
-      'EthereumValue.fromBytesArray(x)'
+      'EthereumValue.fromFixedBytesArray(x)'
     )
     expect(codegen.ethereumValueFromAsc('x', 'byte[7]')).toBe(
-      'EthereumValue.fromBytesArray(x)'
+      'EthereumValue.fromFixedBytesArray(x)'
     )
     expect(codegen.ethereumValueFromAsc('x', 'byte[553]')).toBe(
-      'EthereumValue.fromBytesArray(x)'
+      'EthereumValue.fromFixedBytesArray(x)'
     )
   })
 
   test('Array<Bytes> -> bytes[*]', () => {
     expect(codegen.ethereumValueFromAsc('x', 'bytes[]')).toBe(
-      'EthereumValue.fromBytesArray(x)'
+      'EthereumValue.fromFixedBytesArray(x)'
     )
     expect(codegen.ethereumValueFromAsc('x', 'bytes[14]')).toBe(
-      'EthereumValue.fromBytesArray(x)'
+      'EthereumValue.fromFixedBytesArray(x)'
     )
     expect(codegen.ethereumValueFromAsc('x', 'bytes[444]')).toBe(
-      'EthereumValue.fromBytesArray(x)'
+      'EthereumValue.fromFixedBytesArray(x)'
     )
   })
 
@@ -273,13 +277,13 @@ describe('AssemblyScript -> EthereumValue', () => {
   test('Array<Bytes> -> bytes1..32[*]', () => {
     for (let i = 1; i <= 32; i++) {
       expect(codegen.ethereumValueFromAsc('x', `bytes${i}[]`)).toBe(
-        'EthereumValue.fromBytesArray(x)'
+        'EthereumValue.fromFixedBytesArray(x)'
       )
       expect(codegen.ethereumValueFromAsc('x', `bytes${i}[7]`)).toBe(
-        'EthereumValue.fromBytesArray(x)'
+        'EthereumValue.fromFixedBytesArray(x)'
       )
       expect(codegen.ethereumValueFromAsc('x', `bytes${i}[432]`)).toBe(
-        'EthereumValue.fromBytesArray(x)'
+        'EthereumValue.fromFixedBytesArray(x)'
       )
     }
   })
