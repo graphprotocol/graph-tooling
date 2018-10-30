@@ -5,5 +5,6 @@ node_js:
   - "10"
 cache: yarn
 script:
-  - ./graph.js codegen examples/example-event-handler/subgraph.yaml --verbosity debug
-  - ./graph.js build examples/example-event-handler/subgraph.yaml --verbosity debug
+  - yarn test
+  - cd examples/example-event-handler && ../../graph.js codegen --output-dir src/types --debug
+  - cd examples/example-event-handler && ../../graph.js build --debug
