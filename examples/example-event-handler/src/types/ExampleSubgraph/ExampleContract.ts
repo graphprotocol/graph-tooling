@@ -53,18 +53,22 @@ export class ExampleContract extends SmartContract {
   }
 
   getAndReturnByte(x: Bytes): Bytes {
-    let result = super.call("getAndReturnByte", [EthereumValue.fromBytes(x)]);
+    let result = super.call("getAndReturnByte", [
+      EthereumValue.fromFixedBytes(x)
+    ]);
     return result[0].toBytes();
   }
 
   getAndReturnBytes1(x: Bytes): Bytes {
-    let result = super.call("getAndReturnBytes1", [EthereumValue.fromBytes(x)]);
+    let result = super.call("getAndReturnBytes1", [
+      EthereumValue.fromFixedBytes(x)
+    ]);
     return result[0].toBytes();
   }
 
   getAndReturnBytes32(x: Bytes): Bytes {
     let result = super.call("getAndReturnBytes32", [
-      EthereumValue.fromBytes(x)
+      EthereumValue.fromFixedBytes(x)
     ]);
     return result[0].toBytes();
   }
@@ -526,21 +530,21 @@ export class ExampleContract extends SmartContract {
 
   getAndReturnByteArray(x: Array<Bytes>): Array<Bytes> {
     let result = super.call("getAndReturnByteArray", [
-      EthereumValue.fromBytesArray(x)
+      EthereumValue.fromFixedBytesArray(x)
     ]);
     return result[0].toBytesArray();
   }
 
   getAndReturnBytes1Array(x: Array<Bytes>): Array<Bytes> {
     let result = super.call("getAndReturnBytes1Array", [
-      EthereumValue.fromBytesArray(x)
+      EthereumValue.fromFixedBytesArray(x)
     ]);
     return result[0].toBytesArray();
   }
 
   getAndReturnBytes32Array(x: Array<Bytes>): Array<Bytes> {
     let result = super.call("getAndReturnBytes32Array", [
-      EthereumValue.fromBytesArray(x)
+      EthereumValue.fromFixedBytesArray(x)
     ]);
     return result[0].toBytesArray();
   }
