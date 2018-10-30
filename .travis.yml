@@ -7,5 +7,6 @@ cache: yarn
 script:
   - yarn test
   - cd examples/example-event-handler
+  - yarn
   - ../../graph.js codegen --output-dir src/types --debug
   - ../../graph.js build --debug
