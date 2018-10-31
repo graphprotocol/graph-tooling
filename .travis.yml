@@ -4,6 +4,8 @@ node_js:
   - "9"
   - "10"
 cache: yarn
+before_install:
+  - sudo apt-get install libsecret-1-dev
 script:
   - yarn test
   - cd examples/example-subgraph

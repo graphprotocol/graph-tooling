@@ -3,6 +3,7 @@
 const app = require('commander')
 const ipfsAPI = require('ipfs-api')
 const jayson = require('jayson')
+const keytar = require('keytar')
 const path = require('path')
 const pkginfo = require('pkginfo')(module, 'version')
 const request = require('request')
@@ -136,6 +137,17 @@ app
       })
     }
   })
+
+
+/**
+ * graph auth */
+app
+  .command('auth [node] [auth_token]')
+  .description('Stores your auth key in an encrypted file for use in deployment')
+  .action((node, authToken) => {
+    keytar.setPassword('subgraph', node, authToken)
+  })
+
 
 /**
  * graph deploy
