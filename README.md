@@ -5,10 +5,11 @@
 
 The Graph command line interface.
 
-As of today, the command line interface consists of two commands:
+As of today, the command line interface consists of three commands:
 
 - `graph codegen` — generates TypeScript code for smart contract ABIs used in subgraphs.
 - `graph build` — compiles subgraphs to WebAssembly and deploys them to IPFS.
+- `graph auth` — saves access token to system's keychain.
 
 ## How It Works
 
@@ -26,11 +27,20 @@ version of the subgraph to IPFS or a local directory for debugging.
 Subgraphs for The Graph are set up just like any regular TypeScript
 project. It is recommended to install `graph-cli` as a local dependency
 via `package.json` and use `npm` scripts for code generation and
-building.
+building. <br/>_
 
 If you are just getting started with creating a subgraph, head to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md). Eventually this guide will lead you back here.
 
 For clarity, an example of the setup below can be found in the [ENS subgraph repository](https://github.com/graphprotocol/ens-subgraph).
+
+### On Linux
+
+`libsecret` is used for storing access tokens, so you may need to install it
+before getting started. Use one of the following commands depending on
+your distribution:
+- Debian/Ubuntu: `sudo apt-get install libsecret-1-dev`
+- Red Hat: `sudo yum install libsecret-devel`
+- Arch Linux: `sudo pacman -S libsecret`
 
 ### Steps 
 
@@ -100,6 +110,9 @@ For clarity, an example of the setup below can be found in the [ENS subgraph rep
        --ipfs /ip4/127.0.0.1/tcp/5001 \
        --subgraph-name your-subgraph
     ```
+    _Note: If the Graph Node you are deploying to requires authorization,
+    make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS TOKEN>`
+    before deploying._
 
 ## License
 
