@@ -60,6 +60,22 @@ function outputDeployConfig(cmd) {
   console.error('')
 }
 
+function outputAuthConfig(node, accessToken) {
+  console.error('')
+  console.error('Configuration:')
+  console.error('')
+  if (node === undefined) {
+    console.error('  Graph Node:      No node defined')
+  } else {
+    console.error(`  Graph Node:      ${node}`)
+  }
+  if (accessToken === undefined) {
+    console.error('  Access token: missing')
+  } else if (accessToken.length > 200) {
+    console.error('  AccessToken: Access token is too long')
+  }
+}
+
 /**
  * Global app configuration and options
  */
@@ -138,14 +154,29 @@ app
     }
   })
 
-
 /**
- * graph auth */
+ * graph auth
+ */
 app
-  .command('auth [node] [auth_token]')
-  .description('Stores your auth key in an encrypted file for use in deployment')
-  .action((node, authToken) => {
-    keytar.setPassword('subgraph', node, authToken)
+  .command('auth [NODE] [AUTH_TOKEN]')
+  .description("Sets the access token to use when deploying to a Graph node")
+  .action((node, accessToken) => {
+    if (
+      accessToken === undefined ||
+      node === undefined ||
+      accessToken.length > 200
+    ) {
+      outputAuthConfig(node, accessToken)
+      console.error('--')
+      console.error('For more information run this command with --help')
+      process.exitCode = 1
+      return
+    }
+    keytar.setPassword('graphprotocol-auth', node, accessToken).then(() => {
+      console.log("Access token saved for Graph node:", node)
+    }).catch((err) => {
+      console.error('Failed to save access token: ', err)
+    })
   })
 
 
