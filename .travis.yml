@@ -12,3 +12,4 @@ script:
   - yarn
   - ../../graph.js codegen --output-dir src/types --debug
   - ../../graph.js build --debug
+  - ../../graph.js auth node authtoken
