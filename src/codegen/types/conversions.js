@@ -47,6 +47,10 @@ const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
 
 /**
  * AssemblyScript -> EthereumValue conversions
+ *
+ * Note: The order and patterns for conversions in this direction differ slightly
+ * from EthereumValue -> AssemblyScript, which is why there is a separate table
+ * for them.
  */
 const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
   // Scalar values
@@ -149,6 +153,10 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
 
 /**
  * AssemblyScript -> Value conversions
+ *
+ * Note: The order and patterns for conversions in this direction differ slightly
+ * from Value -> AssemblyScript, which is why there is a separate table
+ * for them.
  */
 const ASSEMBLYSCRIPT_TO_VALUE = [
   // Arrays
