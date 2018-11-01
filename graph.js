@@ -186,11 +186,8 @@ app
 app
   .command('deploy [SUBGRAPH_MANIFEST]')
   .description('Deploys the subgraph to a graph node')
-  .option(
-    '-k, --api-key <KEY>',
-    'Graph API key authorized to deploy to the subgraph name'
-  )
   .option('-g, --node <URL>[:PORT]', 'Graph node to deploy to')
+  .option('-a, --auth', 'Use access token for deployment')
   .option('-i, --ipfs <addr>', 'IPFS node to use for uploading files')
   .option('-n, --subgraph-name <NAME>', 'Subgraph name')
   .option(
@@ -229,6 +226,19 @@ app
     }
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
+    if (cmd.auth) {
+      keytar.getPassword('subgraph-hosting', cmd.node).then((accessToken) => {
+        if (accessToken == null) {
+          logger.fatal('Unable to find access token for ', cmd.node)
+          logger.fatal("Save an access token to your system's keychain using graph auth [NODE] [AUTH_TOKEN]")
+        } else {
+          client.options.headers = {Authorization: 'Bearer ' + accessToken}
+        }
+      }).catch((err) => {
+        logger.fatal("Error fetching access token: ", err)
+      })
+    }
 
     let deploySubgraph = ipfsHash => {
       logger.status('Deploying to Graph node:', requestUrl)
