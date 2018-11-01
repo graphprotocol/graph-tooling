@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "git+https://github.com/graphprotocol/graph-cli.git",
-    "@graphprotocol/graph-ts": "^0.0.1"
+    "@graphprotocol/graph-ts": "git+https://github.com/graphprotocol/graph-ts.git#master"
   }
 }
