@@ -5,10 +5,12 @@
 
 The Graph command line interface.
 
-As of today, the command line interface consists of three commands:
+As of today, the command line interface consists of five commands:
 
 - `graph codegen` — generates TypeScript code for smart contract ABIs used in subgraphs.
 - `graph build` — compiles subgraphs to WebAssembly and deploys them to IPFS.
+- `graph deploy` — deploys subgraphs to running [Graph Nodes](https://github.com/graphprotocol/graph-node).
+- `graph remove` — removes subgraphs from [Graph Nodes](https://github.com/graphprotocol/graph-node).
 - `graph auth` — saves access token for [Graph Node](https://github.com/graphprotocol/graph-node) to the system's keychain.
 
 ## How It Works
@@ -42,7 +44,7 @@ your distribution:
 - Red Hat: `sudo yum install libsecret-devel`
 - Arch Linux: `sudo pacman -S libsecret`
 
-### Steps 
+### Steps
 
 1.  Create a project for the subgraph with a `package.json` etc.
 2.  Add a `subgraph.yaml` subgraph manifest with a GraphQL schema etc.
@@ -114,6 +116,14 @@ your distribution:
     make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS_TOKEN>`
     before deploying._
 
+Remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-node) with:
+```sh
+graph \
+  remove \
+  --api-key <key> \
+  --node http://127.0.0.1:8020/ \
+  --subgraph-name <your-subgraph>
+```
 ## License
 
 Copyright &copy; 2018 Graph Protocol, Inc. and contributors.
