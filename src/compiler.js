@@ -52,9 +52,11 @@ class Compiler {
         return ipfsHash
       } else {
         this.completed(path.join(this.options.outputDir, 'subgraph.yaml'))
+        return true
       }
     } catch (e) {
       this.logger.error('Failed to compile subgraph', e)
+      return false
     }
   }
 
