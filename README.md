@@ -15,20 +15,22 @@ As of today, the command line interface consists of five commands:
 
 ## How It Works
 
-`graph` takes a subgraph manifest (defaults to `subgraph.yaml`) with
+`graph` takes a subgraph manifest with references to
 
-- references to a GraphQL schema,
-- smart contract ABIs, and
-- mappings written in TypeScript/AssemblyScript,
+- a GraphQL schema,
+- smart contract ABIs
+- mappings written in TypeScript/AssemblyScript
 
-compiles the mappings to WebAssembly and deploys a ready-to-use
-version of the subgraph to IPFS or a local directory for debugging.
+compiles the mappings to WebAssembly,
+builds a ready-to-use version of the subgraph to IPFS or a local directory for debugging,
+and deploys the subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node).
+
 
 ## Usage
 
 Subgraphs for The Graph are set up just like any regular TypeScript
 project. It is recommended to install `graph-cli` as a local dependency
-via `package.json` and use `npm` scripts for code generation and
+via `package.json` and use `yarn` scripts for code generation and
 building.
 
 If you are just getting started with creating a subgraph, head to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md). Eventually this guide will lead you back here.
@@ -116,7 +118,7 @@ your distribution:
     make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS_TOKEN>`
     before deploying._
 
-Remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-node) with:
+If you need to remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-node) use:
 ```sh
 graph \
   remove \
