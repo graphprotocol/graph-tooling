@@ -9,8 +9,8 @@ As of today, the command line interface consists of five commands:
 
 - `graph codegen` — generates TypeScript code for smart contract ABIs used in subgraphs.
 - `graph build` — compiles subgraphs to WebAssembly and deploys them to IPFS.
-- `graph deploy` — deploys subgraphs to running [Graph Nodes](https://github.com/graphprotocol/graph-node).
-- `graph remove` — removes subgraphs from [Graph Nodes](https://github.com/graphprotocol/graph-node).
+- `graph deploy` — deploys subgraphs to a [Graph Node](https://github.com/graphprotocol/graph-node).
+- `graph remove` — removes subgraphs from a [Graph Node](https://github.com/graphprotocol/graph-node).
 - `graph auth` — saves access token for [Graph Node](https://github.com/graphprotocol/graph-node) to the system's keychain.
 
 ## How It Works
@@ -79,7 +79,7 @@ your distribution:
         "build": "graph build",
         "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001",
         "deploy":
-          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name your-subgraph"
+          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name <YOUR-SUBGRAPH>"
       }
     }
     ```
@@ -97,7 +97,7 @@ your distribution:
 7.  Develop your `mapping.ts` against these generated types. If you are new to this process, you can head over to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md#34-write-your-mappings) for a beginner friendly walkthrough of The Graph.
 8.  Build the subgraph with:
     ```sh
-    yarn deploy
+    yarn build
     ```
 9.  Deploy your subgraph to a
     [Graph Node](https://github.com/graphprotocol/graph-node). The following
@@ -110,7 +110,7 @@ your distribution:
        --verbosity debug \
        --node http://127.0.0.1:8020/ \
        --ipfs /ip4/127.0.0.1/tcp/5001 \
-       --subgraph-name your-subgraph
+       --subgraph-name <YOUR-SUBGRAPH>
     ```
     _Note: If the Graph Node you are deploying to requires authorization,
     make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS_TOKEN>`
@@ -120,9 +120,9 @@ Remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-n
 ```sh
 graph \
   remove \
-  --api-key <key> \
+  --api-key <KEY> \
   --node http://127.0.0.1:8020/ \
-  --subgraph-name <your-subgraph>
+  --subgraph-name <YOUR-SUBGRAPH>
 ```
 ## License
 
