@@ -129,7 +129,11 @@ app
     if (cmd.watch) {
       compiler.watchAndCompile()
     } else {
-      compiler.compile()
+      compiler.compile().then(result => {
+        if (result === false) {
+          process.exitCode = 1
+        }
+      })
     }
   })
 
@@ -198,7 +202,7 @@ app
           }
           if (!requestError && !jsonRpcError) {
             logger.status('Deployed successfully.')
-            
+
             // Assume that the host is the same.
             // In the future the deployment router should also return the host.
             let base = requestUrl.protocol + '//' + requestUrl.hostname
@@ -221,31 +225,25 @@ app
           logger.fatal('Failed to watch, compile or deploy the subgraph:', e)
         })
     } else {
-      compiler.compile().then(function(ipfsHash) {
-        if (ipfsHash === undefined) {
+      compiler.compile().then(function(result) {
+        if (result === undefined || result === false) {
           // Compilation failed, not deploying.
           process.exitCode = 1
           return
         }
-        deploySubgraph(ipfsHash)
+        deploySubgraph(result)
       })
     }
   })
 
-  app
+app
   .command('remove')
   .description('Removes subgraph from node')
-  .option(
-    '-k, --api-key <KEY>',
-    'Graph API key authorized to manage the subgraph name'
-  )
+  .option('-k, --api-key <KEY>', 'Graph API key authorized to manage the subgraph name')
   .option('-g, --node <URL>[:PORT]', 'Graph node to remove the subgraph from')
   .option('-n, --subgraph-name <NAME>', 'Subgraph name to remove')
   .action(cmd => {
-    if (
-      cmd.subgraphName === undefined ||
-      cmd.node === undefined
-    ) {
+    if (cmd.subgraphName === undefined || cmd.node === undefined) {
       outputNameAndNodeConfig(cmd)
       console.error('--')
       console.error('For more information run this command with --help')
@@ -267,26 +265,22 @@ app
 
     logger.status('Removing subgraph from Graph node:', requestUrl)
     logger.info('')
-    client.request(
-      'subgraph_remove',
-      { name: cmd.subgraphName },
-      function(requestError, jsonRpcError, res) {
-        if (requestError) {
-          logger.fatal('HTTP error removing the subgraph:', requestError.code)
-        }
-        if (jsonRpcError) {
-          logger.fatal('Error removing the subgraph:', jsonRpcError.message)
-        }
-        if (!requestError && !jsonRpcError) {
-          logger.status(
-            'Removed subgraph from node'
-          )
-        }
+    client.request('subgraph_remove', { name: cmd.subgraphName }, function(
+      requestError,
+      jsonRpcError,
+      res
+    ) {
+      if (requestError) {
+        logger.fatal('HTTP error removing the subgraph:', requestError.code)
       }
-    )
-  }
-  )
-
+      if (jsonRpcError) {
+        logger.fatal('Error removing the subgraph:', jsonRpcError.message)
+      }
+      if (!requestError && !jsonRpcError) {
+        logger.status('Removed subgraph from node')
+      }
+    })
+  })
 
 app.command('*', { noHelp: true }).action(args => {
   console.error('Unknown command:', args)
