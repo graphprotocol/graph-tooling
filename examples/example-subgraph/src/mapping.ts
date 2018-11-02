@@ -1,3 +1,6 @@
+import 'allocator/arena'
+export { allocate_memory }
+
 import { store, crypto, Entity, Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { ExampleContract, ExampleEvent } from './types/ExampleSubgraph/ExampleContract'
 import { ExampleEntity } from './types/schema'
