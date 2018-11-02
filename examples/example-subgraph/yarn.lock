@@ -21,14 +21,9 @@
     request "^2.88.0"
     winston "^3.0.0"
 
-"@graphprotocol/graph-ts@../../../graph-ts/":
-  version "0.3.4"
-  dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
-
 "@graphprotocol/graph-ts@git+https://github.com/graphprotocol/graph-ts.git#master":
   version "0.3.4"
-  resolved "git+https://github.com/graphprotocol/graph-ts.git#097078d41bc4b6e94967339d0b4932ad7242f9ed"
+  resolved "git+https://github.com/graphprotocol/graph-ts.git#c51ddc3963c7320723b45b195fc9d8c225b9c442"
   dependencies:
     assemblyscript "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
 
