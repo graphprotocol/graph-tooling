@@ -21,9 +21,7 @@
     "winston": "^3.0.0"
   },
   "bin": {
-    "graph": "./graph.js",
-    "graph-build": "./graph-build.js",
-    "graph-codegen": "./graph-codegen.js"
+    "graph": "./graph.js"
   },
   "devDependencies": {
     "jest": "^23.6.0"
