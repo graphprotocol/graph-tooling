@@ -65,12 +65,12 @@ function outputAuthConfig(node, accessToken) {
   console.error('Configuration:')
   console.error('')
   if (node === undefined) {
-    console.error('  Graph Node:      No node defined')
+    console.error('  Graph Node:   No node defined')
   } else {
-    console.error(`  Graph Node:      ${node}`)
+    console.error(`  Graph Node:   ${node}`)
   }
   if (accessToken === undefined) {
-    console.error('  Access token: missing')
+    console.error('  Access token: Missing')
   } else if (accessToken.length > 200) {
     console.error('  AccessToken: Access token is too long')
   }
@@ -82,7 +82,7 @@ function outputAuthConfig(node, accessToken) {
 app
   .version(module.exports.version)
   .option(
-    '--verbosity <info|verbose|debug>',
+    '--verbosity <INFO|VERBOSE|DEBUG>',
     'The log level to use (default: LOG_LEVEL or info)',
     process.env.LOG_LEVEL || 'info'
   )
@@ -96,7 +96,7 @@ app
   .command('codegen [SUBGRAPH_MANIFEST]')
   .description('Generates TypeScript types for a subgraph')
   .option(
-    '-o, --output-dir <path>',
+    '-o, --output-dir <PATH>',
     'Output directory for generated types',
     path.resolve(process.cwd(), 'types')
   )
@@ -125,14 +125,14 @@ app
 app
   .command('build [SUBGRAPH_MANIFEST]')
   .description('Compiles a subgraph and uploads it to IPFS')
-  .option('-i, --ipfs <addr>', 'IPFS node to use for uploading files')
+  .option('-i, --ipfs <ADDR>', 'IPFS node to use for uploading files')
   .option('-n, --subgraph-name <NAME>', 'Subgraph name')
   .option(
-    '-o, --output-dir <path>',
+    '-o, --output-dir <PATH>',
     'Output directory for build results',
     path.resolve(process.cwd(), 'dist')
   )
-  .option('-t, --output-format <wasm|wast>', 'Output format (wasm, wast)', 'wasm')
+  .option('-t, --output-format <WASM|WAST>', 'Output format (wasm, wast)', 'wasm')
   .option('-w, --watch', 'Rebuild automatically when files change')
   .action((subgraphManifest, cmd) => {
     let compiler = createCompiler(
@@ -187,11 +187,11 @@ app
   .command('deploy [SUBGRAPH_MANIFEST]')
   .description('Deploys the subgraph to a graph node')
   .option('-g, --node <URL>[:PORT]', 'Graph node to deploy to')
-  .option('-a, --auth', 'Use access token for deployment')
-  .option('-i, --ipfs <addr>', 'IPFS node to use for uploading files')
+  .option('-i, --ipfs <ADDR>', 'IPFS node to use for uploading files')
   .option('-n, --subgraph-name <NAME>', 'Subgraph name')
+  .option('--access-token <TOKEN>', 'Graph access token')
   .option(
-    '-o, --output-dir <path>',
+    '-o, --output-dir <PATH>',
     'Output directory for build results',
     path.resolve(process.cwd(), 'dist')
   )
@@ -221,18 +221,14 @@ app
     }
 
     let client = jayson.Client.http(requestUrl)
-    if (cmd.apiKey !== undefined) {
-      client.options.headers = { Authorization: 'Bearer ' + cmd.apiKey }
-    }
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
-    if (cmd.auth) {
-      keytar.getPassword('subgraph-hosting', cmd.node).then((accessToken) => {
-        if (accessToken == null) {
-          logger.fatal('Unable to find access token for ', cmd.node)
-          logger.fatal("Save an access token to your system's keychain using graph auth [NODE] [AUTH_TOKEN]")
-        } else {
+    if(cmd.accessToken !== undefined) {
+      client.options.headers = { Authorization: 'Bearer ' + cmd.accessToken }
+    } else {
+      keytar.getPassword('graphprotocol-auth', cmd.node).then((accessToken) => {
+        if (accessToken !== null) {
           client.options.headers = {Authorization: 'Bearer ' + accessToken}
         }
       }).catch((err) => {
