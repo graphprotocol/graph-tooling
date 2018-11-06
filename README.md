@@ -9,7 +9,7 @@ As of today, the command line interface consists of three commands:
 
 - `graph codegen` — generates TypeScript code for smart contract ABIs used in subgraphs.
 - `graph build` — compiles subgraphs to WebAssembly and deploys them to IPFS.
-- `graph auth` — saves access token to system's keychain.
+- `graph auth` — saves access token for [Graph Node](https://github.com/graphprotocol/graph-node) to the system's keychain.
 
 ## How It Works
 
@@ -27,7 +27,7 @@ version of the subgraph to IPFS or a local directory for debugging.
 Subgraphs for The Graph are set up just like any regular TypeScript
 project. It is recommended to install `graph-cli` as a local dependency
 via `package.json` and use `npm` scripts for code generation and
-building. <br/>_
+building.
 
 If you are just getting started with creating a subgraph, head to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md). Eventually this guide will lead you back here.
 
@@ -111,7 +111,7 @@ your distribution:
        --subgraph-name your-subgraph
     ```
     _Note: If the Graph Node you are deploying to requires authorization,
-    make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS TOKEN>`
+    make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS_TOKEN>`
     before deploying._
 
 ## License
