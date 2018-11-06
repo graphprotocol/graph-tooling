@@ -34,6 +34,10 @@ function createCompiler(app, cmd, subgraphManifest) {
   })
 }
 
+function normalizeNodeUrl(node) {
+  return new URL(node).toString()
+}
+
 function outputNameAndNodeConfig(cmd) {
   console.error('')
   console.error('Configuration:')
@@ -82,7 +86,7 @@ function outputAuthConfig(node, accessToken) {
 app
   .version(module.exports.version)
   .option(
-    '--verbosity <INFO|VERBOSE|DEBUG>',
+    '--verbosity <info|verbose|debug>',
     'The log level to use (default: LOG_LEVEL or info)',
     process.env.LOG_LEVEL || 'info'
   )
@@ -132,7 +136,7 @@ app
     'Output directory for build results',
     path.resolve(process.cwd(), 'dist')
   )
-  .option('-t, --output-format <WASM|WAST>', 'Output format (wasm, wast)', 'wasm')
+  .option('-t, --output-format <wasm|wast>', 'Output format (wasm, wast)', 'wasm')
   .option('-w, --watch', 'Rebuild automatically when files change')
   .action((subgraphManifest, cmd) => {
     let compiler = createCompiler(
@@ -158,27 +162,26 @@ app
  * graph auth
  */
 app
-  .command('auth [NODE] [AUTH_TOKEN]')
-  .description("Sets the access token to use when deploying to a Graph node")
-  .action((node, accessToken) => {
-    if (
-      accessToken === undefined ||
-      node === undefined ||
-      accessToken.length > 200
-    ) {
-      outputAuthConfig(node, accessToken)
+  .command('auth [NODE] [ACCESS_TOKEN]')
+  .description('Sets the access token to use when deploying to a Graph node')
+  .action((nodeUrl, accessToken) => {
+    if (accessToken === undefined || nodeUrl === undefined || accessToken.length > 200) {
+      outputAuthConfig(nodeUrl, accessToken)
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
       return
     }
-    keytar.setPassword('graphprotocol-auth', node, accessToken).then(() => {
-      console.log("Access token saved for Graph node:", node)
-    }).catch((err) => {
-      console.error('Failed to save access token: ', err)
-    })
+    let node = normalizeNodeUrl(nodeUrl)
+    keytar
+      .setPassword('graphprotocol-auth', node, accessToken)
+      .then(() => {
+        console.log('Access token saved for Graph node:', node)
+      })
+      .catch(err => {
+        console.error('Failed to save access token:', err)
+      })
   })
-
 
 /**
  * graph deploy
@@ -224,16 +227,20 @@ app
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
-    if(cmd.accessToken !== undefined) {
+    if (cmd.accessToken !== undefined) {
       client.options.headers = { Authorization: 'Bearer ' + cmd.accessToken }
     } else {
-      keytar.getPassword('graphprotocol-auth', cmd.node).then((accessToken) => {
-        if (accessToken !== null) {
-          client.options.headers = {Authorization: 'Bearer ' + accessToken}
-        }
-      }).catch((err) => {
-        logger.fatal("Error fetching access token: ", err)
-      })
+      let node = normalizeNodeUrl(cmd.node)
+      keytar
+        .getPassword('graphprotocol-auth', node)
+        .then(accessToken => {
+          if (accessToken !== null) {
+            client.options.headers = { Authorization: 'Bearer ' + accessToken }
+          }
+        })
+        .catch(err => {
+          logger.fatal('Error fetching access token:', err)
+        })
     }
 
     let deploySubgraph = ipfsHash => {

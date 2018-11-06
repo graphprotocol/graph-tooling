@@ -161,7 +161,6 @@ module.exports = class Logger {
       }
     } else {
       this.fatal('Failed to compile subgraph', e)
-      process.exitCode = 1
     }
   }
 }
