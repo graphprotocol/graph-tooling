@@ -18,10 +18,10 @@ As of today, the command line interface consists of five commands:
 `graph` takes a subgraph manifest (defaults to `subgraph.yaml`) with references to
 
 - a GraphQL schema,
-- smart contract ABIs
-- mappings written in TypeScript/AssemblyScript
+- smart contract ABIs,
+- mappings written in TypeScript/AssemblyScript.
 
-compiles the mappings to WebAssembly, builds a ready-to-use version of the subgraph saved to IPFS or a local directory for debugging, and deploys the subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node).
+It compiles the mappings to WebAssembly, builds a ready-to-use version of the subgraph saved to IPFS or a local directory for debugging, and deploys the subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node).
 
 ## Usage
 
@@ -115,11 +115,10 @@ your distribution:
     make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS_TOKEN>`
     before deploying._
 
-If you need to remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-node) use:
+To remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-node), use:
 ```sh
 graph \
   remove \
-  --api-key <KEY> \
   --node http://127.0.0.1:8020/ \
   --subgraph-name <SUBGRAPH_NAME>
 ```
