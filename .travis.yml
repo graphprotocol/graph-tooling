@@ -12,4 +12,3 @@ script:
   - yarn
   - ../../graph.js codegen --output-dir src/types --debug
   - ../../graph.js build --debug
-  - ../../graph.js auth http://127.0.0.1:8020 example-access-token
