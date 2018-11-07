@@ -206,6 +206,7 @@ app
       cmd.node === undefined ||
       cmd.ipfs === undefined
     ) {
+      console.error('Information missing to deploy the subgraph')
       outputDeployConfig(cmd)
       console.error('--')
       console.error('For more information run this command with --help')
@@ -306,7 +307,7 @@ app
   .option('-n, --subgraph-name <NAME>', 'Subgraph name to remove')
   .action(cmd => {
     if (cmd.subgraphName === undefined || cmd.node === undefined) {
-      console.error('Failed to remove subgraph')
+      console.error('Information missing to remove the subgraph')
       console.error('--')
       outputNameAndNodeConfig(cmd)
       console.error('--')
