@@ -162,23 +162,26 @@ app
 app
   .command('auth [NODE] [ACCESS_TOKEN]')
   .description('Sets the access token to use when deploying to a Graph node')
-  .action((nodeUrl, accessToken) => {
+  .action(async (nodeUrl, accessToken) => {
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
     if (accessToken === undefined || nodeUrl === undefined || accessToken.length > 200) {
+      console.error('Failed to set access token')
+      console.error('--')
       outputAuthConfig(nodeUrl, accessToken)
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
       return
     }
+
     let node = normalizeNodeUrl(nodeUrl)
-    keytar
-      .setPassword('graphprotocol-auth', node, accessToken)
-      .then(() => {
-        console.log('Access token saved for Graph node:', node)
-      })
-      .catch(err => {
-        console.error('Failed to save access token:', err)
-      })
+    try {
+      keytar.setPassword('graphprotocol-auth', node, accessToken)
+      logger.status('Access token set for Graph node:', node)
+    } catch (e) {
+      logger.fatal('Failed to set access token:', e)
+    }
   })
 
 /**
