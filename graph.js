@@ -164,7 +164,6 @@ app
   .description('Sets the access token to use when deploying to a Graph node')
   .action(async (nodeUrl, accessToken) => {
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
-
     if (accessToken === undefined || nodeUrl === undefined || accessToken.length > 200) {
       console.error('Cannot to set the access token')
       console.error('--')
@@ -174,13 +173,13 @@ app
       process.exitCode = 1
       return
     }
-
     let node = normalizeNodeUrl(nodeUrl)
     try {
-      keytar.setPassword('graphprotocol-auth', node, accessToken)
+      await keytar.setPassword('graphprotocol-auth', node, accessToken)
       logger.status('Access token set for Graph node:', node)
     } catch (e) {
       logger.fatal('Failed to set access token:', e)
+      process.exitCode = 1
     }
   })
 
@@ -241,7 +240,7 @@ app
         accessToken = await keytar.getPassword('graphprotocol-auth', node)
       } catch (e) {
         logger.fatal(`Error fetching access token for Graph node: ${node}`)
-        process.exit = 1
+        process.exitCode = 1
         return
       }
     }
