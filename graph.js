@@ -39,7 +39,6 @@ function normalizeNodeUrl(node) {
 }
 
 function outputNameAndNodeConfig(cmd) {
-  console.error('')
   console.error('Configuration:')
   console.error('')
   if (cmd.subgraphName === undefined) {
@@ -65,7 +64,6 @@ function outputDeployConfig(cmd) {
 }
 
 function outputAuthConfig(node, accessToken) {
-  console.error('')
   console.error('Configuration:')
   console.error('')
   if (node === undefined) {
@@ -199,7 +197,7 @@ app
     path.resolve(process.cwd(), 'dist')
   )
   .option('-w, --watch', 'Rebuild and redeploy automatically when files change')
-  .action((subgraphManifest, cmd) => {
+  .action(async (subgraphManifest, cmd) => {
     if (
       cmd.subgraphName === undefined ||
       cmd.node === undefined ||
@@ -245,7 +243,6 @@ app
 
     let deploySubgraph = ipfsHash => {
       logger.status('Deploying to Graph node:', requestUrl)
-      logger.info('')
       client.request(
         'subgraph_deploy',
         { name: cmd.subgraphName, ipfs_hash: ipfsHash },
