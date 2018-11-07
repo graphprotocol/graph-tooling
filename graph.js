@@ -67,9 +67,9 @@ function outputAuthConfig(node, accessToken) {
   console.error('Configuration:')
   console.error('')
   if (node === undefined) {
-    console.error('  Graph Node:   No node defined')
+    console.error('  Graph node:   No node defined')
   } else {
-    console.error(`  Graph Node:   ${node}`)
+    console.error(`  Graph node:   ${node}`)
   }
   if (accessToken === undefined) {
     console.error('  Access token: Missing')
