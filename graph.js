@@ -166,7 +166,7 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     if (accessToken === undefined || nodeUrl === undefined || accessToken.length > 200) {
-      console.error('Information missing to set the access token')
+      console.error('Cannot to set the access token')
       console.error('--')
       outputAuthConfig(nodeUrl, accessToken)
       console.error('--')
@@ -206,7 +206,7 @@ app
       cmd.node === undefined ||
       cmd.ipfs === undefined
     ) {
-      console.error('Information missing to deploy the subgraph')
+      console.error('Cannot deploy the subgraph')
       outputDeployConfig(cmd)
       console.error('--')
       console.error('For more information run this command with --help')
@@ -307,7 +307,7 @@ app
   .option('-n, --subgraph-name <NAME>', 'Subgraph name to remove')
   .action(cmd => {
     if (cmd.subgraphName === undefined || cmd.node === undefined) {
-      console.error('Information missing to remove the subgraph')
+      console.error('Cannot remove the subgraph')
       console.error('--')
       outputNameAndNodeConfig(cmd)
       console.error('--')
