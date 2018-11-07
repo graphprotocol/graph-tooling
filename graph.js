@@ -166,7 +166,7 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     if (accessToken === undefined || nodeUrl === undefined || accessToken.length > 200) {
-      console.error('Failed to set access token')
+      console.error('Information missing to set the access token')
       console.error('--')
       outputAuthConfig(nodeUrl, accessToken)
       console.error('--')
@@ -228,20 +228,26 @@ app
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
+    // Determine the access token to use, if any:
+    // - First try using --access-token, if provided
+    // - Then see if we have an access token set for the Graph node
+    let accessToken = undefined
     if (cmd.accessToken !== undefined) {
-      client.options.headers = { Authorization: 'Bearer ' + cmd.accessToken }
+      accessToken = cmd.accessToken
     } else {
       let node = normalizeNodeUrl(cmd.node)
-      keytar
-        .getPassword('graphprotocol-auth', node)
-        .then(accessToken => {
-          if (accessToken !== null) {
-            client.options.headers = { Authorization: 'Bearer ' + accessToken }
-          }
-        })
-        .catch(err => {
-          logger.fatal('Error fetching access token:', err)
-        })
+      try {
+        accessToken = await keytar.getPassword('graphprotocol-auth', node)
+      } catch (e) {
+        logger.fatal(`Error fetching access token for Graph node: ${node}`)
+        process.exit = 1
+        return
+      }
+    }
+
+    // Use the access token, if one is sset
+    if (accessToken !== undefined && accessToken !== null) {
+      client.options.headers = { Authorization: 'Bearer ' + accessToken }
     }
 
     let deploySubgraph = ipfsHash => {
@@ -300,6 +306,8 @@ app
   .option('-n, --subgraph-name <NAME>', 'Subgraph name to remove')
   .action(cmd => {
     if (cmd.subgraphName === undefined || cmd.node === undefined) {
+      console.error('Failed to remove subgraph')
+      console.error('--')
       outputNameAndNodeConfig(cmd)
       console.error('--')
       console.error('For more information run this command with --help')
