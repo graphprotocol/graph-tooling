@@ -173,12 +173,12 @@ app
       process.exitCode = 1
       return
     }
-    let node = normalizeNodeUrl(nodeUrl)
     try {
+      let node = normalizeNodeUrl(nodeUrl)
       await keytar.setPassword('graphprotocol-auth', node, accessToken)
       logger.status('Access token set for Graph node:', node)
     } catch (e) {
-      logger.fatal('Failed to set access token:', e)
+      logger.error('Failed to set access token:', e)
       process.exitCode = 1
     }
   })
@@ -235,11 +235,11 @@ app
     if (cmd.accessToken !== undefined) {
       accessToken = cmd.accessToken
     } else {
-      let node = normalizeNodeUrl(cmd.node)
       try {
+        let node = normalizeNodeUrl(cmd.node)
         accessToken = await keytar.getPassword('graphprotocol-auth', node)
       } catch (e) {
-        logger.fatal(`Error fetching access token for Graph node: ${node}`)
+        logger.error(`Failed to fetch access token:`, e)
         process.exitCode = 1
         return
       }
