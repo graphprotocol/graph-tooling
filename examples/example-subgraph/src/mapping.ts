@@ -253,4 +253,11 @@ export function handleExampleEventArray(event: ExampleEvent): void {
   store.set('ExampleEntity', 'example id', entity)
   store.get('ExampleEntity', 'example id')
   store.remove('ExampleEntity', 'example id')
+
+  // BigInt math
+  let bigIntPlus = entity.requiredBigInt + entity.requiredBigInt
+  let bigIntMinus = entity.requiredBigInt - entity.requiredBigInt
+  let bigIntTimes = entity.requiredBigInt * entity.requiredBigInt
+  let bigIntDividedBy = entity.requiredBigInt / entity.requiredBigInt
+  let bigIntMod = entity.requiredBigInt % entity.requiredBigInt
 }
