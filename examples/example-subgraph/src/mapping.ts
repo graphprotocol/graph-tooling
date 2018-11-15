@@ -5,7 +5,7 @@ import { store, crypto, Entity, Address, BigInt, Bytes } from '@graphprotocol/gr
 import { ExampleContract, ExampleEvent } from './types/ExampleSubgraph/ExampleContract'
 import { ExampleEntity } from './types/schema'
 
-export function handleExampleEventArray(event: ExampleEvent): void {
+export function handleExampleEvent(event: ExampleEvent): void {
   let entity = new ExampleEntity()
 
   // Entity field access
