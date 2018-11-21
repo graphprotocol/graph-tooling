@@ -17,7 +17,7 @@ module.exports = class Subgraph {
       return definition.name.value === 'SubgraphManifest'
     })
 
-    // Validate the subgraph definition using this schema
+    // Validate the subgraph manifest using this schema
     let errors = validation.validateManifest(data, rootType, schema)
     if (errors.length > 0) {
       throw new Error(
@@ -25,7 +25,7 @@ module.exports = class Subgraph {
           (msg, e) =>
             `${msg}
 
-  Path: ${e.path.length === 0 ? '/' : ['/', ...e.path].join(' > ')}
+  Path: ${e.path.length === 0 ? '/' : e.path.join(' > ')}
   ${e.message}`,
           `Error in ${filename}:`
         )
