@@ -37,7 +37,17 @@ module.exports = class Subgraph {
 
   static validateSchema(manifest, { resolveFile }) {
     let filename = resolveFile(manifest.getIn(['schema', 'file']))
-    return immutable.fromJS(validation.validateSchema(filename))
+    let errors = validation.validateSchema(filename).toJS()
+    if (errors.length > 0) {
+      throw new Error(
+        errors.reduce(
+          (msg, e) => `${msg}
+
+  ${e.message}`,
+          `Error in ${filename}:`
+        )
+      )
+    }
   }
 
   static validateAbis(manifest, { resolveFile }) {
@@ -184,10 +194,13 @@ module.exports = class Subgraph {
       throwCombinedError(filename, manifestErrors)
     }
 
-    // Perform other validations
     let manifest = immutable.fromJS(data)
+
+    // Validate the schema
+    Subgraph.validateSchema(manifest, { resolveFile })
+
+    // Perform other validations
     let errors = immutable.List.of(
-      ...Subgraph.validateSchema(manifest, { resolveFile }),
       ...Subgraph.validateAbis(manifest, { resolveFile }),
       ...Subgraph.validateContractAddresses(manifest),
       ...Subgraph.validateEvents(manifest, { resolveFile })
