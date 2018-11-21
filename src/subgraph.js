@@ -39,17 +39,13 @@ module.exports = class Subgraph {
   }
 
   static validateSchema(manifest) {
-    let filename = manifest.getIn(['schema', 'file'])
-    let errors = validation.validateSchema(filename)
-    if (errors.length > 0) {
-      throwCombinedError(filename, errors)
-    }
+    return validation.validateSchema(manifest.getIn(['schema', 'file']))
   }
 
   static validateAbis(filename, manifest) {
     // Validate that the the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
-    let errors = manifest
+    let abiReferenceErrors = manifest
       .get('dataSources')
       .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
       .reduce((errors, dataSource, dataSourceIndex) => {
@@ -69,7 +65,7 @@ module.exports = class Subgraph {
       }, immutable.List())
 
     // Validate that all ABI files are valid
-    errors = manifest
+    let abiFileErrors = manifest
       .get('dataSources')
       .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
       .reduce(
@@ -92,21 +88,26 @@ module.exports = class Subgraph {
               })
             }
           }, errors),
-        errors
+        immutable.List()
       )
-      .toJS()
 
-    if (errors.length > 0) {
-      throwCombinedError(filename, errors)
-    }
+    return abiReferenceErrors.concat(abiFileErrors)
   }
 
   static load(filename) {
+    // Load and validate the manifest
     let data = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'))
     Subgraph.validate(filename, data)
+
+    // Perform other validations
     let manifest = immutable.fromJS(data)
-    Subgraph.validateSchema(manifest)
-    Subgraph.validateAbis(filename, manifest)
+    let errors = Subgraph.validateSchema(manifest)
+    errors = errors.concat(Subgraph.validateAbis(filename, manifest))
+
+    if (errors.length > 0) {
+      throwCombinedError(errors)
+    }
+
     return manifest
   }
 
