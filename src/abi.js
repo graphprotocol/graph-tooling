@@ -22,14 +22,17 @@ module.exports = class ABI {
       abi = data
     } else if (data.abi !== undefined) {
       abi = data.abi
-    } else if (data.compilerOutput !== undefined && data.compilerOutput.abi !== undefined) {
+    } else if (
+      data.compilerOutput !== undefined &&
+      data.compilerOutput.abi !== undefined
+    ) {
       abi = data.compilerOutput.abi
     }
 
     if (abi === null || abi === undefined) {
-      throw Error(`Could not extract ABI from ${file}`)
+      throw Error(`No valid ABI in file ${file}`)
     }
-  
+
     return new ABI(name, file, immutable.fromJS(abi))
   }
 }
