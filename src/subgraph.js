@@ -123,7 +123,7 @@ module.exports = class Subgraph {
         }
 
         // Validate whether the address is a hex string
-        let pattern = /^(0x[0-9a-fA-F]{40}|[0-9a-fA-F]{42})$/
+        let pattern = /^(0x[0-9a-fA-F]{42}|[0-9a-fA-F]{40})$/
         if (pattern.test(address)) {
           return errors
         } else {
