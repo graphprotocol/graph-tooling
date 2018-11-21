@@ -4,6 +4,20 @@ let path = require('path')
 let yaml = require('js-yaml')
 let graphql = require('graphql/language')
 let validation = require('./validation')
+let ABI = require('./abi')
+
+const throwCombinedError = (filename, errors) => {
+  throw new Error(
+    errors.reduce(
+      (msg, e) =>
+        `${msg}
+
+    Path: ${e.path.length === 0 ? '/' : e.path.join(' > ')}
+    ${e.message}`,
+      `Error in ${filename}:`
+    )
+  )
+}
 
 module.exports = class Subgraph {
   static validate(filename, data) {
@@ -20,16 +34,7 @@ module.exports = class Subgraph {
     // Validate the subgraph manifest using this schema
     let errors = validation.validateManifest(data, rootType, schema)
     if (errors.length > 0) {
-      throw new Error(
-        errors.reduce(
-          (msg, e) =>
-            `${msg}
-
-  Path: ${e.path.length === 0 ? '/' : e.path.join(' > ')}
-  ${e.message}`,
-          `Error in ${filename}:`
-        )
-      )
+      throwCombinedError(filename, errors)
     }
   }
 
