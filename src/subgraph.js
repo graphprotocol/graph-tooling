@@ -42,14 +42,62 @@ module.exports = class Subgraph {
     let filename = manifest.getIn(['schema', 'file'])
     let errors = validation.validateSchema(filename)
     if (errors.length > 0) {
-      throw new Error(
-        errors.reduce(
-          (msg, e) => `${msg}
+      throwCombinedError(filename, errors)
+    }
+  }
 
-  ${e.message}`,
-          `Error in ${filename}:`
-        )
+  static validateAbis(filename, manifest) {
+    // Validate that the the "source > abi" reference of all data sources
+    // points to an existing ABI in the data source ABIs
+    let errors = manifest
+      .get('dataSources')
+      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
+      .reduce((errors, dataSource, dataSourceIndex) => {
+        let abiName = dataSource.getIn(['source', 'abi'])
+        let abiNames = dataSource.getIn(['mapping', 'abis']).map(abi => abi.get('name'))
+
+        if (abiNames.includes(abiName)) {
+          return errors
+        } else {
+          return errors.push({
+            path: ['dataSources', dataSourceIndex, 'source', 'abi'],
+            message:
+              `ABI name "${abiName}" not found in mapping > abis: ` +
+              `${abiNames.toJS()}`,
+          })
+        }
+      }, immutable.List())
+
+    // Validate that all ABI files are valid
+    errors = manifest
+      .get('dataSources')
+      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
+      .reduce(
+        (errors, dataSource, dataSourceIndex) =>
+          dataSource.getIn(['mapping', 'abis']).reduce((errors, abi, abiIndex) => {
+            try {
+              ABI.load(abi.get('name'), abi.get('file'))
+              return errors
+            } catch (e) {
+              return errors.push({
+                path: [
+                  'dataSources',
+                  dataSourceIndex,
+                  'mapping',
+                  'abis',
+                  abiIndex,
+                  'file',
+                ],
+                message: e.message,
+              })
+            }
+          }, errors),
+        errors
       )
+      .toJS()
+
+    if (errors.length > 0) {
+      throwCombinedError(filename, errors)
     }
   }
 
@@ -58,6 +106,7 @@ module.exports = class Subgraph {
     Subgraph.validate(filename, data)
     let manifest = immutable.fromJS(data)
     Subgraph.validateSchema(manifest)
+    Subgraph.validateAbis(filename, manifest)
     return manifest
   }
 
