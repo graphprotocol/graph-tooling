@@ -198,6 +198,7 @@ app
     'Output directory for build results',
     path.resolve(process.cwd(), 'dist')
   )
+  .option('--no-auth', 'Skip authorization (useful for CI systems)')
   .option('-w, --watch', 'Rebuild and redeploy automatically when files change')
   .action(async (subgraphManifest, cmd) => {
     if (
@@ -228,26 +229,29 @@ app
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
-    // Determine the access token to use, if any:
-    // - First try using --access-token, if provided
-    // - Then see if we have an access token set for the Graph node
-    let accessToken = undefined
-    if (cmd.accessToken !== undefined) {
-      accessToken = cmd.accessToken
-    } else {
-      try {
-        let node = normalizeNodeUrl(cmd.node)
-        accessToken = await keytar.getPassword('graphprotocol-auth', node)
-      } catch (e) {
-        logger.error(`Failed to fetch access token:`, e)
-        process.exitCode = 1
-        return
+    // If auth is enabled (default), add access token to the request
+    if (cmd.auth) {
+      // Determine the access token to use, if any:
+      // - First try using --access-token, if provided
+      // - Then see if we have an access token set for the Graph node
+      let accessToken = undefined
+      if (cmd.accessToken !== undefined) {
+        accessToken = cmd.accessToken
+      } else {
+        try {
+          let node = normalizeNodeUrl(cmd.node)
+          accessToken = await keytar.getPassword('graphprotocol-auth', node)
+        } catch (e) {
+          logger.error(`Failed to fetch access token:`, e)
+          process.exitCode = 1
+          return
+        }
       }
-    }
 
-    // Use the access token, if one is sset
-    if (accessToken !== undefined && accessToken !== null) {
-      client.options.headers = { Authorization: 'Bearer ' + accessToken }
+      // Use the access token, if one is sset
+      if (accessToken !== undefined && accessToken !== null) {
+        client.options.headers = { Authorization: 'Bearer ' + accessToken }
+      }
     }
 
     let deploySubgraph = ipfsHash => {
