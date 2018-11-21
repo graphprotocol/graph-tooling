@@ -60,6 +60,34 @@ const validateEntityDirective = def =>
         },
       ])
 
+const validateEntityID = def => {
+  let idField = def.fields.find(field => field.name.value === 'id')
+
+  if (idField === undefined) {
+    return immutable.fromJS([
+      {
+        loc: def.loc,
+        message: `Entity type '${def.name.value}': Missing field: id: ID!`,
+      },
+    ])
+  }
+
+  if (
+    idField.type.kind === 'NonNullType' &&
+    idField.type.type.kind === 'NamedType' &&
+    idField.type.type.name.value === 'ID'
+  ) {
+    return List()
+  } else {
+    return immutable.fromJS([
+      {
+        loc: idField.loc,
+        message: `Type '${def.name.value}', field 'id': Entity IDs must be of type 'ID!'`,
+      },
+    ])
+  }
+}
+
 const validateListFieldType = (def, field) =>
   field.type.kind === 'NonNullType' &&
   field.type.kind === 'ListType' &&
@@ -154,7 +182,11 @@ const validateEntityFields = (defs, def) =>
 
 const typeDefinitionValidators = {
   ObjectTypeDefinition: (defs, def) =>
-    List.of(...validateEntityDirective(def), ...validateEntityFields(defs, def)),
+    List.of(
+      ...validateEntityDirective(def),
+      ...validateEntityID(def),
+      ...validateEntityFields(defs, def)
+    ),
 }
 
 const validateTypeDefinition = (defs, def) =>

@@ -1,4 +1,6 @@
 type ExampleEntity @entity {
+  id: ID!
+
   optionalBoolean: Boolean
   requiredBoolean: Boolean!
   optionalBooleanList: [Boolean!]
