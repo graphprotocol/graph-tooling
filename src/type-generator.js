@@ -140,8 +140,9 @@ module.exports = class TypeGenerator {
   loadSchema(subgraph) {
     try {
       this.logger.step('Load GraphQL schema')
-      let filename = subgraph.getIn(['schema', 'file'])
-      return Schema.load(filename)
+      let maybeRelativePath = subgraph.getIn(['schema', 'file'])
+      let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
+      return Schema.load(absolutePath)
     } catch (e) {
       throw Error(`Failed to load GraphQL schema: ${e}`)
     }
