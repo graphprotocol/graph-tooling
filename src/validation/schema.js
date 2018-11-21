@@ -5,6 +5,34 @@ const immutable = require('immutable')
 const List = immutable.List
 const Map = immutable.Map
 
+// Builtin scalar types
+const BUILTIN_SCALAR_TYPES = [
+  'Boolean',
+  'Int',
+  'Float',
+  'String',
+  'BigInt',
+  'Bytes',
+  'ID',
+]
+
+// Type suggestions for common mistakes
+const TYPE_SUGGESTIONS = {
+  Address: 'Bytes',
+  address: 'Bytes',
+  bytes: 'Bytes',
+  string: 'String',
+  bool: 'Boolean',
+  boolean: 'Boolean',
+  Bool: 'Boolean',
+  int: 'Int',
+  float: 'Float',
+  uint128: 'BigInt',
+  int128: 'BigInt',
+  uint256: 'BigInt',
+  int256: 'BigInt',
+}
+
 const loadSchema = filename => {
   try {
     return fs.readFileSync(filename, 'utf-8')
@@ -32,7 +60,7 @@ const validateEntityDirective = def =>
         },
       ])
 
-const validateEntityFieldType = (def, field) =>
+const validateListFieldType = (def, field) =>
   field.type.kind === 'NonNullType' &&
   field.type.kind === 'ListType' &&
   field.type.type.kind !== 'NonNullType'
@@ -40,7 +68,7 @@ const validateEntityFieldType = (def, field) =>
         {
           loc: field.loc,
           message: `\
-Type '${def.name.value}', field ${field.name.value}: \
+Type '${def.name.value}', field '${field.name.value}': \
 Field has type [${field.type.type.name.value}]! but must \
 have type [${field.type.type.name.value}!]!
   Reason: Lists with null elements are not supported.
@@ -52,7 +80,7 @@ have type [${field.type.type.name.value}!]!
           {
             loc: field.loc,
             message: `\
-Type '${def.name.value}', field ${field.name.value}: \
+Type '${def.name.value}', field '${field.name.value}': \
 Field has type [${field.type.type.name.value}] but must \
 have type [${field.type.type.name.value}!]
   Reason: Lists with null elements are not supported.
@@ -61,29 +89,86 @@ have type [${field.type.type.name.value}!]
         ])
       : List()
 
-const validateEntityFields = def =>
+const validateInnerFieldType = (defs, def, field) => {
+  let innerTypeFromList = listType =>
+    listType.type.kind === 'NonNullType'
+      ? innerTypeFromNonNull(listType.type)
+      : listType.type
+
+  let innerTypeFromNonNull = nonNullType =>
+    nonNullType.type.kind === 'ListType'
+      ? innerTypeFromList(nonNullType.type)
+      : nonNullType.type
+
+  // Obtain the inner-most type from the field
+  let innerType =
+    field.type.kind === 'NonNullType'
+      ? innerTypeFromNonNull(field.type)
+      : field.type.kind === 'ListType'
+        ? innerTypeFromList(field.type)
+        : field.type
+
+  // Get the name of the type
+  let typeName = innerType.name.value
+
+  // Look up a possible suggestion for the type to catch common mistakes
+  let suggestion = TYPE_SUGGESTIONS[typeName]
+
+  // Collect all types that we can use here: built-ins + entities + enums
+  let availableTypes = List.of(
+    ...BUILTIN_SCALAR_TYPES,
+    ...defs
+      .filter(
+        def => def.kind === 'ObjectTypeDefinition' || def.kind === 'EnumTypeDefinition'
+      )
+      .map(def => def.name.value)
+  )
+
+  // Check whether the type name is available, otherwise return an error
+  return availableTypes.includes(typeName)
+    ? List()
+    : immutable.fromJS([
+        {
+          loc: field.loc,
+          message: `\
+Type '${def.name.value}', field '${field.name.value}': \
+Unknown type '${typeName}'.${
+            suggestion !== undefined ? ` Did you mean '${suggestion}'?` : ''
+          } \
+`,
+        },
+      ])
+}
+
+const validateEntityFieldType = (defs, def, field) =>
+  List.of(
+    ...validateListFieldType(def, field),
+    ...validateInnerFieldType(defs, def, field)
+  )
+
+const validateEntityFields = (defs, def) =>
   def.fields.reduce(
-    (errors, field) => errors.concat(validateEntityFieldType(def, field)),
+    (errors, field) => errors.concat(validateEntityFieldType(defs, def, field)),
     List()
   )
 
 const typeDefinitionValidators = {
-  ObjectTypeDefinition: def =>
-    validateEntityDirective(def).concat(validateEntityFields(def)),
+  ObjectTypeDefinition: (defs, def) =>
+    List.of(...validateEntityDirective(def), ...validateEntityFields(defs, def)),
 }
 
-const validateTypeDefinition = def =>
+const validateTypeDefinition = (defs, def) =>
   typeDefinitionValidators[def.kind] !== undefined
-    ? typeDefinitionValidators[def.kind](def)
+    ? typeDefinitionValidators[def.kind](defs, def)
     : List()
 
 const validateTypeDefinitions = defs =>
-  defs.reduce((errors, def) => errors.concat(validateTypeDefinition(def)), List())
+  defs.reduce((errors, def) => errors.concat(validateTypeDefinition(defs, def)), List())
 
 const validateSchema = filename => {
   let doc = loadSchema(filename)
   let schema = parseSchema(doc)
-  return validateTypeDefinitions(schema.definitions).toJS()
+  return validateTypeDefinitions(schema.definitions)
 }
 
 module.exports = { validateSchema }
