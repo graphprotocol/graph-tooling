@@ -14,6 +14,16 @@ module.exports = class ABI {
     return new AbiCodeGenerator(this)
   }
 
+  eventSignatures() {
+    return this.data.filter(entry => entry.get('type') === 'event').map(
+      event =>
+        `${event.get('name')}(${event
+          .get('inputs')
+          .map(input => input.get('type'))
+          .join(',')})`
+    )
+  }
+
   static load(name, file) {
     let data = JSON.parse(fs.readFileSync(file))
 
