@@ -66,7 +66,7 @@ module.exports = class Subgraph {
           return errors.push({
             path: ['dataSources', dataSourceIndex, 'source', 'abi'],
             message:
-              `ABI name "${abiName}" not found in mapping > abis: ` +
+              `ABI name '${abiName}' not found in mapping > abis: ` +
               `${abiNames.toJS()}`,
           })
         }
@@ -168,7 +168,7 @@ module.exports = class Subgraph {
                     path: [...path, index],
                     message:
                       `Event with signature ${manifestEvent} not present ` +
-                      `in ABI "${abi.name}". ` +
+                      `in ABI '${abi.name}'. ` +
                       `Candidates: ${abiEvents.toJS()}`,
                   }),
             errors

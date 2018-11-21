@@ -82,7 +82,7 @@ const validateEntityID = def => {
     return immutable.fromJS([
       {
         loc: idField.loc,
-        message: `Type '${def.name.value}', field 'id': Entity IDs must be of type 'ID!'`,
+        message: `Type '${def.name.value}', field 'id': Entity IDs must be of type ID!`,
       },
     ])
   }
