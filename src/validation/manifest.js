@@ -1,5 +1,6 @@
 const immutable = require('immutable')
 const yaml = require('js-yaml')
+const path = require('path')
 
 const List = immutable.List
 const Map = immutable.Map
@@ -138,9 +139,12 @@ const validators = immutable.fromJS({
           },
         ]),
 
-  File: (value, ctx) =>
-    typeof value === 'string'
-      ? require('fs').existsSync(value)
+  File: (value, ctx) => {
+    if (typeof value === 'string') {
+      let manifestDir = path.dirname(ctx.get('manifestFilename'))
+      let filename = path.resolve(manifestDir, value)
+
+      return require('fs').existsSync(filename)
         ? immutable.fromJS([])
         : immutable.fromJS([
             {
@@ -148,12 +152,15 @@ const validators = immutable.fromJS({
               message: `File does not exist: ${value}`,
             },
           ])
-      : immutable.fromJS([
-          {
-            path: ctx.get('path'),
-            message: `Expected filename, found ${typeName(value)}:\n  ${value}`,
-          },
-        ]),
+    } else {
+      immutable.fromJS([
+        {
+          path: ctx.get('path'),
+          message: `Expected filename, found ${typeName(value)}:\n  ${value}`,
+        },
+      ])
+    }
+  },
 })
 
 const validateValue = (value, ctx) => {
@@ -172,7 +179,7 @@ const validateValue = (value, ctx) => {
   }
 }
 
-const validateManifest = (value, type, schema) =>
+const validateManifest = (filename, value, type, schema) =>
   value !== null && value !== undefined
     ? validateValue(
         immutable.fromJS(value),
@@ -181,6 +188,7 @@ const validateManifest = (value, type, schema) =>
           type: type,
           path: [],
           errors: [],
+          manifestFilename: filename,
         })
       ).toJS()
     : [
