@@ -20,7 +20,7 @@ const throwCombinedError = (filename, errors) => {
 }
 
 module.exports = class Subgraph {
-  static validate(filename, data) {
+  static validate(data, { resolveFile }) {
     // Parse the default subgraph schema
     let schema = graphql.parse(
       fs.readFileSync(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8')
@@ -32,18 +32,15 @@ module.exports = class Subgraph {
     })
 
     // Validate the subgraph manifest using this schema
-    return validation.validateManifest(filename, data, rootType, schema)
+    return validation.validateManifest(data, rootType, schema, { resolveFile })
   }
 
-  static validateSchema(manifestFilename, manifest) {
-    let filename = path.resolve(
-      path.dirname(manifestFilename),
-      manifest.getIn(['schema', 'file'])
-    )
+  static validateSchema(manifest, { resolveFile }) {
+    let filename = resolveFile(manifest.getIn(['schema', 'file']))
     return immutable.fromJS(validation.validateSchema(filename))
   }
 
-  static validateAbis(manifestFilename, manifest) {
+  static validateAbis(manifest, { resolveFile }) {
     // Validate that the the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
     let abiReferenceErrors = manifest
@@ -73,9 +70,7 @@ module.exports = class Subgraph {
         (errors, dataSource, dataSourceIndex) =>
           dataSource.getIn(['mapping', 'abis']).reduce((errors, abi, abiIndex) => {
             try {
-              let manifestDir = path.dirname(manifestFilename)
-              let filename = path.resolve(manifestDir, abi.get('file'))
-              ABI.load(abi.get('name'), filename)
+              ABI.load(abi.get('name'), resolveFile(abi.get('file')))
               return errors
             } catch (e) {
               return errors.push({
@@ -133,16 +128,23 @@ module.exports = class Subgraph {
   static load(filename) {
     // Load and validate the manifest
     let data = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'))
-    let manifestErrors = Subgraph.validate(filename, data)
+
+    // Helper to resolve files relative to the subgraph manifest
+    let resolveFile = maybeRelativeFile =>
+      path.resolve(path.dirname(filename), maybeRelativeFile)
+
+    let manifestErrors = Subgraph.validate(data, { resolveFile })
     if (manifestErrors.size > 0) {
       throwCombinedError(filename, manifestErrors)
     }
 
     // Perform other validations
     let manifest = immutable.fromJS(data)
-    let errors = Subgraph.validateSchema(filename, manifest)
-    errors = errors.concat(Subgraph.validateAbis(filename, manifest))
-    errors = errors.concat(Subgraph.validateContractAddresses(manifest))
+    let errors = immutable.List.of(
+      ...Subgraph.validateSchema(manifest, { resolveFile }),
+      ...Subgraph.validateAbis(manifest, { resolveFile }),
+      ...Subgraph.validateContractAddresses(manifest),
+    )
 
     if (errors.size > 0) {
       throwCombinedError(filename, errors)
