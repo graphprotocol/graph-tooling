@@ -29,3 +29,7 @@ type ExampleEntity @entity {
   optionalReferenceList: [OtherEntity!]
   requiredReferenceList: [OtherEntity!]!
 }
+
+type OtherEntity @entity {
+  id: ID!
+}
