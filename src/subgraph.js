@@ -32,17 +32,18 @@ module.exports = class Subgraph {
     })
 
     // Validate the subgraph manifest using this schema
-    let errors = validation.validateManifest(data, rootType, schema)
-    if (errors.length > 0) {
-      throwCombinedError(filename, errors)
-    }
+    return validation.validateManifest(filename, data, rootType, schema)
   }
 
-  static validateSchema(manifest) {
-    return validation.validateSchema(manifest.getIn(['schema', 'file']))
+  static validateSchema(manifestFilename, manifest) {
+    let filename = path.resolve(
+      path.dirname(manifestFilename),
+      manifest.getIn(['schema', 'file'])
+    )
+    return immutable.fromJS(validation.validateSchema(filename))
   }
 
-  static validateAbis(filename, manifest) {
+  static validateAbis(manifestFilename, manifest) {
     // Validate that the the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
     let abiReferenceErrors = manifest
@@ -72,7 +73,9 @@ module.exports = class Subgraph {
         (errors, dataSource, dataSourceIndex) =>
           dataSource.getIn(['mapping', 'abis']).reduce((errors, abi, abiIndex) => {
             try {
-              ABI.load(abi.get('name'), abi.get('file'))
+              let manifestDir = path.dirname(manifestFilename)
+              let filename = path.resolve(manifestDir, abi.get('file'))
+              ABI.load(abi.get('name'), filename)
               return errors
             } catch (e) {
               return errors.push({
@@ -94,18 +97,55 @@ module.exports = class Subgraph {
     return abiReferenceErrors.concat(abiFileErrors)
   }
 
+  static validateContractAddresses(manifest) {
+    return manifest
+      .get('dataSources')
+      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
+      .reduce((errors, dataSource, dataSourceIndex) => {
+        let path = ['dataSources', dataSourceIndex, 'source', 'address']
+        let address = dataSource.getIn(['source', 'address'])
+
+        if (
+          !((address.startsWith('0x') && address.length == 42) || address.length == 40)
+        ) {
+          if (address.length != 40) {
+            return errors.push({
+              path,
+              message:
+                `Contract address must have length 40 (or 42 if prefixed with 0x) ` +
+                `but has length ${address.length}: ${address}`,
+            })
+          }
+        }
+
+        let pattern = /^(0x[0-9a-fA-F]{40}|[0-9a-fA-F]{42})$/
+        if (pattern.test(address)) {
+          return errors
+        } else {
+          return errors.push({
+            path,
+            message: `Contract address is not a hexadecimal string: ${address}`,
+          })
+        }
+      }, immutable.List())
+  }
+
   static load(filename) {
     // Load and validate the manifest
     let data = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'))
-    Subgraph.validate(filename, data)
+    let manifestErrors = Subgraph.validate(filename, data)
+    if (manifestErrors.size > 0) {
+      throwCombinedError(filename, manifestErrors)
+    }
 
     // Perform other validations
     let manifest = immutable.fromJS(data)
-    let errors = Subgraph.validateSchema(manifest)
+    let errors = Subgraph.validateSchema(filename, manifest)
     errors = errors.concat(Subgraph.validateAbis(filename, manifest))
+    errors = errors.concat(Subgraph.validateContractAddresses(manifest))
 
-    if (errors.length > 0) {
-      throwCombinedError(errors)
+    if (errors.size > 0) {
+      throwCombinedError(filename, errors)
     }
 
     return manifest
