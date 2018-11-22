@@ -19,7 +19,6 @@ const toYAML = x =>
     .safeDump(typeName(x) === 'list' || typeName(x) === 'map' ? x.toJS() : x, {
       indent: 2,
     })
-    .replace(/\n/g, '\n  ')
     .trim()
 
 /**
@@ -93,7 +92,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected list, found ${typeName(value)}:\n  ${toYAML(value)}`,
+            message: `Expected list, found ${typeName(value)}:\n${toYAML(value)}`,
           },
         ]),
 
@@ -126,7 +125,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected map, found ${typeName(value)}:\n  ${toYAML(value)}`,
+            message: `Expected map, found ${typeName(value)}:\n${toYAML(value)}`,
           },
         ])
   },
@@ -137,7 +136,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected string, found ${typeName(value)}:\n  ${toYAML(value)}`,
+            message: `Expected string, found ${typeName(value)}:\n${toYAML(value)}`,
           },
         ]),
 
@@ -154,7 +153,7 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected filename, found ${typeName(value)}:\n  ${value}`,
+            message: `Expected filename, found ${typeName(value)}:\n${value}`,
           },
         ]),
 })
