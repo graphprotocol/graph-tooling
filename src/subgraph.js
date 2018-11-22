@@ -13,7 +13,10 @@ const throwCombinedError = (filename, errors) => {
         `${msg}
 
   Path: ${e.get('path').size === 0 ? '/' : e.get('path').join(' > ')}
-  ${e.get('message')}`,
+  ${e
+    .get('message')
+    .split('\n')
+    .join('\n  ')}`,
       `Error in ${path.relative(process.cwd(), filename)}:`
     )
   )
@@ -81,11 +84,11 @@ module.exports = class Subgraph {
               path: ['dataSources', dataSourceIndex, 'source', 'abi'],
               message: `\
 ABI name '${abiName}' not found in mapping > abis.
-  Available ABIs:
-  ${abiNames
-    .sort()
-    .map(name => `- ${name}`)
-    .join('\n  ')}`,
+Available ABIs:
+${abiNames
+                .sort()
+                .map(name => `- ${name}`)
+                .join('\n')}`,
             })
           )
         }
@@ -141,7 +144,7 @@ ABI name '${abiName}' not found in mapping > abis.
               path,
               message: `\
 Contract address is invalid: ${address}
-  Must be 40 hexadecimal characters, with an optional '0x' prefix.`,
+Must be 40 hexadecimal characters, with an optional '0x' prefix.`,
             })
           )
         }
@@ -182,11 +185,11 @@ Contract address is invalid: ${address}
                       path: [...path, index],
                       message: `\
 Event with signature '${manifestEvent}' not present in ABI '${abi.name}'.
-  Available events:
-  ${abiEvents
-    .sort()
-    .map(event => `- ${event}`)
-    .join('\n  ')}`,
+Available events:
+${abiEvents
+                        .sort()
+                        .map(event => `- ${event}`)
+                        .join('\n')}`,
                     })
                   ),
             errors
