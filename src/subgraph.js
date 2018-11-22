@@ -14,7 +14,7 @@ const throwCombinedError = (filename, errors) => {
 
   Path: ${e.get('path').size === 0 ? '/' : e.get('path').join(' > ')}
   ${e.get('message')}`,
-      `Error in ${filename}:`
+      `Error in ${path.relative(process.cwd(), filename)}:`
     )
   )
 }
@@ -38,15 +38,28 @@ module.exports = class Subgraph {
   static validateSchema(manifest, { resolveFile }) {
     let filename = resolveFile(manifest.getIn(['schema', 'file']))
     let errors = validation.validateSchema(filename)
-    if (errors.size > 0) {
-      throw new Error(
-        errors.reduce(
-          (msg, e) => `${msg}
 
-  ${e.get('message')}`,
-          `Error in ${filename}:`
-        )
+    if (errors.size > 0) {
+      errors = errors.groupBy(error => error.get('entity')).sort()
+
+      let msg = errors.reduce(
+        (msg, errors, entity) =>
+          `${msg}
+
+  ${entity}:
+  ${errors
+    .map(error =>
+      error
+        .get('message')
+        .split('\n')
+        .join('\n    ')
+    )
+    .map(msg => `- ${msg}`)
+    .join('\n  ')}`,
+        `Error in ${path.relative(process.cwd(), filename)}:`
       )
+
+      throw new Error(msg)
     }
   }
 

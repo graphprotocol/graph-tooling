@@ -148,7 +148,7 @@ const validators = immutable.fromJS({
         : immutable.fromJS([
             {
               path: ctx.get('path'),
-              message: `File does not exist: ${value}`,
+              message: `File does not exist: ${path.relative(process.cwd(), value)}`,
             },
           ])
       : immutable.fromJS([

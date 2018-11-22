@@ -55,8 +55,8 @@ const validateEntityDirective = def =>
     : immutable.fromJS([
         {
           loc: def.loc,
-          message: `Type '${def.name.value}':
-  Defined without @entity directive`,
+          entity: debug.name.value,
+          message: `Defined without @entity directive`,
         },
       ])
 
@@ -67,7 +67,8 @@ const validateEntityID = def => {
     return immutable.fromJS([
       {
         loc: def.loc,
-        message: `Entity type '${def.name.value}': Missing field: id: ID!`,
+        entity: def.name.value,
+        message: `Missing field: id: ID!`,
       },
     ])
   }
@@ -82,7 +83,8 @@ const validateEntityID = def => {
     return immutable.fromJS([
       {
         loc: idField.loc,
-        message: `Type '${def.name.value}', field 'id': Entity IDs must be of type ID!`,
+        entity: def.name.value,
+        message: `Field 'id': Entity IDs must be of type ID!`,
       },
     ])
   }
@@ -95,24 +97,26 @@ const validateListFieldType = (def, field) =>
     ? immutable.fromJS([
         {
           loc: field.loc,
+          entity: def.name.value,
           message: `\
-Type '${def.name.value}', field '${field.name.value}': \
-Field has type [${field.type.type.name.value}]! but must \
-have type [${field.type.type.name.value}!]!
-  Reason: Lists with null elements are not supported.
-          `,
+Field '${field.name.value}':
+Field has type [${field.type.type.name.value}]! but
+must have type [${field.type.type.name.value}!]!
+
+Reason: Lists with null elements are not supported.`,
         },
       ])
     : field.type.kind === 'ListType' && field.type.type.kind !== 'NonNullType'
       ? immutable.fromJS([
           {
             loc: field.loc,
+            entity: def.name.value,
             message: `\
-Type '${def.name.value}', field '${field.name.value}': \
-Field has type [${field.type.type.name.value}] but must \
-have type [${field.type.type.name.value}!]
-  Reason: Lists with null elements are not supported.
-            `,
+Field '${field.name.value}':
+Field has type [${field.type.type.name.value}] but
+must have type [${field.type.type.name.value}!]
+
+Reason: Lists with null elements are not supported.`,
           },
         ])
       : List()
@@ -158,8 +162,9 @@ const validateInnerFieldType = (defs, def, field) => {
     : immutable.fromJS([
         {
           loc: field.loc,
+          entity: def.name.value,
           message: `\
-Type '${def.name.value}', field '${field.name.value}': \
+Field '${field.name.value}': \
 Unknown type '${typeName}'.${
             suggestion !== undefined ? ` Did you mean '${suggestion}'?` : ''
           }`,
