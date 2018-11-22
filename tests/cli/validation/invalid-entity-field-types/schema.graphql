@@ -1,0 +1,20 @@
+type MyEntity @entity {
+  id: ID!
+
+  isSet1: bool
+  isSet2: boolean
+  isSet3: Bool
+
+  address1: Address
+  address2: address
+
+  a: uint256
+  b: int256
+  c: uint128
+  d: int128
+
+  x: float
+  y: int
+
+  references: [Foo!]!
+}
