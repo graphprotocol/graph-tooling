@@ -25,7 +25,8 @@
     "graph": "./graph.js"
   },
   "devDependencies": {
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "spawn-command": "^0.0.2-1"
   },
   "scripts": {
     "test": "jest"
