@@ -29,6 +29,6 @@
     "spawn-command": "^0.0.2-1"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose"
   }
 }
