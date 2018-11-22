@@ -4,7 +4,7 @@ Failed to generate types: Failed to load subgraph: Error in subgraph.yaml:
   No value provided
 
   Path: schema > file
-  File does not exist: ./non-existent.grapqhl
+  File does not exist: non-existent.grapqhl
 
   Path: dataSources > 0 > kind
   No value provided
