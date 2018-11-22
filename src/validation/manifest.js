@@ -163,7 +163,14 @@ const validateValue = (value, ctx) => {
   let validator = validators.get(kind)
 
   if (validator !== undefined) {
-    return validator(value, ctx)
+    // If the type is nullable, accept undefined and null; if the nullable
+    // type is wrapped in a `NonNullType`, the validator for that `NonNullType`
+    // will catch the missing/unset value
+    if (kind !== 'NonNullType' && (value === undefined || value === null)) {
+      return List()
+    } else {
+      return validator(value, ctx)
+    }
   } else {
     return immutable.fromJS([
       {
