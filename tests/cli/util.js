@@ -2,7 +2,7 @@ const path = require('path')
 const spawn = require('spawn-command')
 const fs = require('fs')
 
-const cliTest = (title, testPath) => {
+const cliTest = (title, testPath, options) => {
   test(title, async () => {
     let resolvePath = p => path.join(__dirname, p)
 
@@ -12,12 +12,9 @@ const cliTest = (title, testPath) => {
     )
 
     let expectedExitCode = undefined
-    try {
-      expectedExitCode = parseInt(
-        fs.readFileSync(resolvePath(`./${testPath}.exit`)),
-        'utf-8'
-      )
-    } catch (e) {}
+    if (options !== undefined && options.exitCode) {
+      expectedExitCode = options.exitCode
+    }
 
     let expectedStdout = undefined
     try {
@@ -33,10 +30,10 @@ const cliTest = (title, testPath) => {
       expect(exitCode).toBe(expectedExitCode)
     }
     if (expectedStdout !== undefined) {
-      expect(stdout).toMatch(expectedStdout)
+      expect(stdout).toBe(expectedStdout)
     }
     if (expectedStderr !== undefined) {
-      expect(stderr).toMatch(expectedStderr)
+      expect(stderr).toBe(expectedStderr)
     }
   })
 }
