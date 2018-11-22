@@ -57,7 +57,7 @@ const validators = immutable.fromJS({
       .getIn(['type', 'types'])
       .reduce(
         (errors, type) => errors.concat(validateValue(value, ctx.set('type', type))),
-        immutable.fromJS([])
+        List()
       ),
 
   NamedType: (value, ctx) =>
@@ -88,7 +88,7 @@ const validators = immutable.fromJS({
                   .update('type', type => type.get('type'))
               )
             ),
-          immutable.fromJS([])
+          List()
         )
       : immutable.fromJS([
           {
@@ -104,23 +104,25 @@ const validators = immutable.fromJS({
           .map(fieldDef => fieldDef.getIn(['name', 'value']))
           .concat(value.keySeq())
           .toSet()
-          .reduce((errors, key) => {
-            return getFieldType(ctx.get('type'), key)
-              ? errors.concat(
-                  validateValue(
-                    value.get(key),
-                    ctx
-                      .update('path', path => path.push(key))
-                      .set('type', getFieldType(ctx.get('type'), key))
+          .reduce(
+            (errors, key) =>
+              getFieldType(ctx.get('type'), key)
+                ? errors.concat(
+                    validateValue(
+                      value.get(key),
+                      ctx
+                        .update('path', path => path.push(key))
+                        .set('type', getFieldType(ctx.get('type'), key))
+                    )
                   )
-                )
-              : errors.push(
-                  immutable.fromJS({
-                    path: ctx.get('path'),
-                    message: `Unexpected key in map: ${key}`,
-                  })
-                )
-          }, immutable.fromJS([]))
+                : errors.push(
+                    immutable.fromJS({
+                      path: ctx.get('path'),
+                      message: `Unexpected key in map: ${key}`,
+                    })
+                  ),
+            List()
+          )
       : immutable.fromJS([
           {
             path: ctx.get('path'),
@@ -131,7 +133,7 @@ const validators = immutable.fromJS({
 
   String: (value, ctx) =>
     typeof value === 'string'
-      ? immutable.fromJS([])
+      ? List()
       : immutable.fromJS([
           {
             path: ctx.get('path'),
@@ -191,12 +193,12 @@ const validateManifest = (value, type, schema, { resolveFile }) =>
           errors: [],
           resolveFile,
         })
-      ).toJS()
-    : [
+      )
+    : immutable.fromJS([
         {
           path: [],
           message: `Expected non-empty value, found ${typeName(value)}:\n  ${value}`,
         },
-      ]
+      ])
 
 module.exports = { validateManifest }
