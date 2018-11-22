@@ -139,10 +139,10 @@ const validators = immutable.fromJS({
           },
         ]),
 
-  File: (value, ctx) => {
+  File: (value, ctx) =>
     typeof value === 'string'
       ? require('fs').existsSync(ctx.get('resolveFile')(value))
-        ? immutable.fromJS([])
+        ? List()
         : immutable.fromJS([
             {
               path: ctx.get('path'),
@@ -154,8 +154,7 @@ const validators = immutable.fromJS({
             path: ctx.get('path'),
             message: `Expected filename, found ${typeName(value)}:\n  ${value}`,
           },
-        ])
-  },
+        ]),
 })
 
 const validateValue = (value, ctx) => {
