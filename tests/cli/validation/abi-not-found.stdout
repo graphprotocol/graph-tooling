@@ -1,0 +1,7 @@
+Failed to generate types: Failed to load subgraph: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > source > abi
+  ABI name 'NonExistentAbi' not found in mapping > abis.
+  Available ABIs:
+  - FirstAbi
+  - SecondAbi
