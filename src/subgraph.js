@@ -12,8 +12,8 @@ const throwCombinedError = (filename, errors) => {
       (msg, e) =>
         `${msg}
 
-    Path: ${e.path.length === 0 ? '/' : e.path.join(' > ')}
-    ${e.message}`,
+  Path: ${e.get('path').size === 0 ? '/' : e.get('path').join(' > ')}
+  ${e.get('message')}`,
       `Error in ${filename}:`
     )
   )
@@ -37,13 +37,13 @@ module.exports = class Subgraph {
 
   static validateSchema(manifest, { resolveFile }) {
     let filename = resolveFile(manifest.getIn(['schema', 'file']))
-    let errors = validation.validateSchema(filename).toJS()
-    if (errors.length > 0) {
+    let errors = validation.validateSchema(filename)
+    if (errors.size > 0) {
       throw new Error(
         errors.reduce(
           (msg, e) => `${msg}
 
-  ${e.message}`,
+  ${e.get('message')}`,
           `Error in ${filename}:`
         )
       )
@@ -63,12 +63,14 @@ module.exports = class Subgraph {
         if (abiNames.includes(abiName)) {
           return errors
         } else {
-          return errors.push({
-            path: ['dataSources', dataSourceIndex, 'source', 'abi'],
-            message:
-              `ABI name '${abiName}' not found in mapping > abis: ` +
-              `${abiNames.toJS()}`,
-          })
+          return errors.push(
+            immutable.fromJS({
+              path: ['dataSources', dataSourceIndex, 'source', 'abi'],
+              message:
+                `ABI name '${abiName}' not found in mapping > abis: ` +
+                `${abiNames.toJS()}`,
+            })
+          )
         }
       }, immutable.List())
 
@@ -83,17 +85,19 @@ module.exports = class Subgraph {
               ABI.load(abi.get('name'), resolveFile(abi.get('file')))
               return errors
             } catch (e) {
-              return errors.push({
-                path: [
-                  'dataSources',
-                  dataSourceIndex,
-                  'mapping',
-                  'abis',
-                  abiIndex,
-                  'file',
-                ],
-                message: e.message,
-              })
+              return errors.push(
+                immutable.fromJS({
+                  path: [
+                    'dataSources',
+                    dataSourceIndex,
+                    'mapping',
+                    'abis',
+                    abiIndex,
+                    'file',
+                  ],
+                  message: e.message,
+                })
+              )
             }
           }, errors),
         immutable.List()
@@ -114,12 +118,14 @@ module.exports = class Subgraph {
         if (
           !((address.startsWith('0x') && address.length == 42) || address.length == 40)
         ) {
-          return errors.push({
-            path,
-            message:
-              `Contract address must have length 40 (or 42 if prefixed with 0x) ` +
-              `but has length ${address.length}: ${address}`,
-          })
+          return errors.push(
+            immutable.fromJS({
+              path,
+              message:
+                `Contract address must have length 40 (or 42 if prefixed with 0x) ` +
+                `but has length ${address.length}: ${address}`,
+            })
+          )
         }
 
         // Validate whether the address is a hex string
@@ -127,10 +133,12 @@ module.exports = class Subgraph {
         if (pattern.test(address)) {
           return errors
         } else {
-          return errors.push({
-            path,
-            message: `Contract address is not a hexadecimal string: ${address}`,
-          })
+          return errors.push(
+            immutable.fromJS({
+              path,
+              message: `Contract address is not a hexadecimal string: ${address}`,
+            })
+          )
         }
       }, immutable.List())
   }
@@ -164,13 +172,15 @@ module.exports = class Subgraph {
             (errors, manifestEvent, index) =>
               abiEvents.includes(manifestEvent)
                 ? errors
-                : errors.push({
-                    path: [...path, index],
-                    message:
-                      `Event with signature ${manifestEvent} not present ` +
-                      `in ABI '${abi.name}'. ` +
-                      `Candidates: ${abiEvents.toJS()}`,
-                  }),
+                : errors.push(
+                    immutable.fromJS({
+                      path: [...path, index],
+                      message:
+                        `Event with signature ${manifestEvent} not present ` +
+                        `in ABI '${abi.name}'. ` +
+                        `Candidates: ${abiEvents.toJS()}`,
+                    })
+                  ),
             errors
           )
         } catch (e) {
