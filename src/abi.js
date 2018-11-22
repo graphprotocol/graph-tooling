@@ -1,7 +1,8 @@
-let fs = require('fs-extra')
-let immutable = require('immutable')
+const fs = require('fs-extra')
+const immutable = require('immutable')
+const path = require('path')
 
-let AbiCodeGenerator = require('./codegen/abi')
+const AbiCodeGenerator = require('./codegen/abi')
 
 module.exports = class ABI {
   constructor(name, file, data) {
@@ -40,7 +41,7 @@ module.exports = class ABI {
     }
 
     if (abi === null || abi === undefined) {
-      throw Error(`No valid ABI in file ${file}`)
+      throw Error(`No valid ABI in file: ${path.relative(process.cwd(), file)}`)
     }
 
     return new ABI(name, file, immutable.fromJS(abi))
