@@ -1,0 +1,11 @@
+  Path: dataSources > 0 > source > address
+  Contract address is invalid: 22843e74c59580b3eaf6c233fa67d8b7c561a835a
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.
+
+  Path: dataSources > 1 > source > address
+  Contract address is invalid: 22843e74c59580b3eaf6c233fa67d8b7c561axyz
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.
+
+  Path: dataSources > 2 > source > address
+  Contract address is invalid: 0x22843e74c59580b3eaf6c233fa67d8b7c561a835a
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.

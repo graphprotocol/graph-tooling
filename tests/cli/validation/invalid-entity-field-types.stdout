@@ -1,0 +1,23 @@
+  Type 'MyEntity', field 'isSet1': Unknown type 'bool'. Did you mean 'Boolean'?
+
+  Type 'MyEntity', field 'isSet2': Unknown type 'boolean'. Did you mean 'Boolean'?
+
+  Type 'MyEntity', field 'isSet3': Unknown type 'Bool'. Did you mean 'Boolean'?
+
+  Type 'MyEntity', field 'address1': Unknown type 'Address'. Did you mean 'Bytes'?
+
+  Type 'MyEntity', field 'address2': Unknown type 'address'. Did you mean 'Bytes'?
+
+  Type 'MyEntity', field 'a': Unknown type 'uint256'. Did you mean 'BigInt'?
+
+  Type 'MyEntity', field 'b': Unknown type 'int256'. Did you mean 'BigInt'?
+
+  Type 'MyEntity', field 'c': Unknown type 'uint128'. Did you mean 'BigInt'?
+
+  Type 'MyEntity', field 'd': Unknown type 'int128'. Did you mean 'BigInt'?
+
+  Type 'MyEntity', field 'x': Unknown type 'float'. Did you mean 'Float'?
+
+  Type 'MyEntity', field 'y': Unknown type 'int'. Did you mean 'Int'?
+
+  Type 'MyEntity', field 'references': Unknown type 'Foo'.
