@@ -10,6 +10,7 @@ union DataSource = EthereumContractDataSource
 type EthereumContractDataSource {
   kind: String!
   name: String!
+  network: String
   source: EthereumContractSource!
   mapping: EthereumContractMapping!
 }
