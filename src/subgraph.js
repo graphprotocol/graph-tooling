@@ -66,9 +66,13 @@ module.exports = class Subgraph {
           return errors.push(
             immutable.fromJS({
               path: ['dataSources', dataSourceIndex, 'source', 'abi'],
-              message:
-                `ABI name '${abiName}' not found in mapping > abis: ` +
-                `${abiNames.toJS()}`,
+              message: `\
+ABI name '${abiName}' not found in mapping > abis.
+  Available ABIs:
+  ${abiNames
+    .sort()
+    .map(name => `- ${name}`)
+    .join('\n  ')}`,
             })
           )
         }
@@ -103,7 +107,7 @@ module.exports = class Subgraph {
         immutable.List()
       )
 
-    return abiReferenceErrors.concat(abiFileErrors)
+    return immutable.List.of(...abiReferenceErrors, ...abiFileErrors)
   }
 
   static validateContractAddresses(manifest) {
@@ -175,10 +179,13 @@ module.exports = class Subgraph {
                 : errors.push(
                     immutable.fromJS({
                       path: [...path, index],
-                      message:
-                        `Event with signature ${manifestEvent} not present ` +
-                        `in ABI '${abi.name}'. ` +
-                        `Candidates: ${abiEvents.toJS()}`,
+                      message: `\
+Event with signature '${manifestEvent}' not present in ABI '${abi.name}'.
+  Available events:
+  ${abiEvents
+    .sort()
+    .map(event => `- ${event}`)
+    .join('\n  ')}`,
                     })
                   ),
             errors
