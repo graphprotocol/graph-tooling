@@ -45,8 +45,10 @@ module.exports = class TypeGenerator {
 
       let schema = this.loadSchema(subgraph)
       this.generateTypesForSchema(schema)
+      return true
     } catch (e) {
       this.logger.error('Failed to generate types:', e)
+      return false
     }
   }
 
