@@ -1,9 +1,12 @@
 specVersion: 0.0.1
+description: "example of a subgraph"
+repository: https://github.com/graphprotocol/graph-cli.git
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: ExampleSubgraph
+    network: mainnet
     source:
       address: '22843e74c59580b3eaf6c233fa67d8b7c561a835'
       abi: ExampleContract
