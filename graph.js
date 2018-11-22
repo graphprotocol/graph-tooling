@@ -117,7 +117,9 @@ app
     if (cmd.watch) {
       generator.watchAndGenerateTypes()
     } else {
-      generator.generateTypes()
+      if (!generator.generateTypes()) {
+        process.exitCode = 1
+      }
     }
   })
 
