@@ -162,8 +162,7 @@ const validateInnerFieldType = (defs, def, field) => {
 Type '${def.name.value}', field '${field.name.value}': \
 Unknown type '${typeName}'.${
             suggestion !== undefined ? ` Did you mean '${suggestion}'?` : ''
-          } \
-`,
+          }`,
         },
       ])
 }
