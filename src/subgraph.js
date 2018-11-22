@@ -118,29 +118,17 @@ ABI name '${abiName}' not found in mapping > abis.
         let path = ['dataSources', dataSourceIndex, 'source', 'address']
         let address = dataSource.getIn(['source', 'address'])
 
-        // Validate whether the address has the right length
-        if (
-          !((address.startsWith('0x') && address.length == 42) || address.length == 40)
-        ) {
-          return errors.push(
-            immutable.fromJS({
-              path,
-              message:
-                `Contract address must have length 40 (or 42 if prefixed with 0x) ` +
-                `but has length ${address.length}: ${address}`,
-            })
-          )
-        }
-
-        // Validate whether the address is a hex string
-        let pattern = /^(0x[0-9a-fA-F]{40}|[0-9a-fA-F]{40})$/
+        // Validate whether the address is valid
+        let pattern = /^(0x)?[0-9a-fA-F]{40}$/
         if (pattern.test(address)) {
           return errors
         } else {
           return errors.push(
             immutable.fromJS({
               path,
-              message: `Contract address is not a hexadecimal string: ${address}`,
+              message: `\
+Contract address is invalid: ${address}
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.`,
             })
           )
         }
