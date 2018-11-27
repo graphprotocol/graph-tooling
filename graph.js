@@ -167,7 +167,7 @@ app
   .action(async (nodeUrl, accessToken) => {
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
     if (accessToken === undefined || nodeUrl === undefined || accessToken.length > 200) {
-      console.error('Cannot to set the access token')
+      console.error('Cannot set the access token')
       console.error('--')
       outputAuthConfig(nodeUrl, accessToken)
       console.error('--')
@@ -180,7 +180,15 @@ app
       await keytar.setPassword('graphprotocol-auth', node, accessToken)
       logger.status('Access token set for Graph node:', node)
     } catch (e) {
-      logger.error('Failed to set access token:', e)
+      if (process.platform === 'win32') {
+        logger.error(`Error storing Graph access token in Windows Credential Vault:`, e)
+      } else if (process.platform === 'darwin') {
+        logger.error(`Error storing Graph access token in macOS Keychain:`, e)
+      } else if (process.platform === 'linux') {
+        logger.error(`Error storing Graph access token with libsecret (usually gnome-keyring or ksecretservice):`, e)
+      } else {
+        logger.error(`Error storing Graph access token in OS secret storage service:`, e)
+      }
       process.exitCode = 1
     }
   })
@@ -241,13 +249,20 @@ app
         let node = normalizeNodeUrl(cmd.node)
         accessToken = await keytar.getPassword('graphprotocol-auth', node)
       } catch (e) {
-        logger.error(`Failed to fetch access token:`, e)
-        process.exitCode = 1
-        return
+        if (process.platform === 'win32') {
+          logger.errorWarning(`Could not get Graph access token from Windows Credential Vault: `, e)
+        } else if (process.platform === 'darwin') {
+          logger.errorWarning(`Could not get Graph access token from macOS Keychain: `, e)
+        } else if (process.platform === 'linux') {
+          logger.errorWarning(`Could not get Graph access token from libsecret (usually gnome-keyring or ksecretservice): `, e)
+        } else {
+          logger.errorWarning(`Could not get Graph access token from OS secret storage service: `, e)
+        }
+        logger.status(`Continuing without an access token`)
       }
     }
 
-    // Use the access token, if one is sset
+    // Use the access token, if one is set
     if (accessToken !== undefined && accessToken !== null) {
       client.options.headers = { Authorization: 'Bearer ' + accessToken }
     }
