@@ -30,7 +30,7 @@ project. It is recommended to install `graph-cli` as a local dependency
 via `package.json` and use `npm` scripts for code generation and
 building.
 
-If you are just getting started with creating a subgraph, head to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md). Eventually this guide will lead you back here.
+If you are just getting started with creating a subgraph, head to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md). Eventually that guide will lead you back here.
 
 For clarity, an example of the setup below can be found in the [ENS subgraph repository](https://github.com/graphprotocol/ens-subgraph).
 
@@ -45,8 +45,8 @@ your distribution:
 
 ### Steps
 
-1.  Create a project for the subgraph with a `package.json` etc.
-2.  Add a `subgraph.yaml` subgraph manifest with a GraphQL schema etc.
+1.  Create a project for the subgraph with a `package.json`
+2.  Add a `subgraph.yaml` subgraph manifest with a GraphQL schema
 3.  Add `@graphprotocol/graph-cli` and `@graphprotocol/graph-ts` dependencies, with one of
 
     ```bash
@@ -74,12 +74,12 @@ your distribution:
     ```json
     {
       "scripts": {
-        "codegen": "graph codegen --output-dir types/",
-        "build": "graph build",
-        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001",
+        "codegen": "graph codegen --output-dir types/ subgraph.yaml" ,
+        "build": "graph build subgraph.yaml",
+        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
         "deploy":
-          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name <SUBGRAPH_NAME>"
-      }
+          "graph deploy subgraph.yaml --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name <SUBGRAPH_NAME>",
+       }
     }
     ```
     _Note: Replace the IP addresses and ports with any
@@ -87,18 +87,16 @@ your distribution:
     to deploy the subgraph to._
 6.  Generate type definitions for contract ABIs used in the subgraph.
     with:
+    
     ```bash
     yarn codegen
     ```
     
-     This creates the `types/` folder. This folder does not need to be uploaded to GitHub, and the files within it should not be edited.
+     This creates the `types/` folder. This folder does not need to be uploaded to GitHub, and the files within it should not be edited. With these types created, you can get auto complete for the types while writing the mappings. 
     
 7.  Develop your `mapping.ts` against these generated types. If you are new to this process, you can head over to [getting started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md#34-write-your-mappings) for a beginner friendly walkthrough of The Graph.
-8.  Build the subgraph with:
-    ```sh
-    yarn build
-    ```
-9.  Deploy your subgraph to a
+    
+8.  Deploy your subgraph to a
     [Graph Node](https://github.com/graphprotocol/graph-node). The following
     command builds and deploys the subgraph continuously as you are making
     changes to it:
@@ -114,6 +112,17 @@ your distribution:
     _Note: If the Graph Node you are deploying to requires authorization,
     make sure to authorize with the node using e.g. `graph auth http://127.0.0.`:8020 <ACCESS_TOKEN>`
     before deploying._
+    
+    You can also use the the npm script added into the `package.json`:
+    
+    ```sh
+    yarn deploy --verbosity debug
+    ```
+    
+    This will deploy the subgraph. If you want it to continuously upgrade, also pass the `watch` flag. If you are doing a lot of editing, and the subgraph is large, you will likely want to leave out the `watch` flag. 
+    
+    `yarn deploy` will create the `/dist` folder. Within this folder are the compiled WASM files from the assembly script mappings. This folder need not be uploaded to github.
+
 
 To remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-node), use:
 ```sh
