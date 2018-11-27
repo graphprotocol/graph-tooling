@@ -144,6 +144,26 @@ module.exports = class Logger {
     }
   }
 
+  errorWarning(subject, e) {
+    if (e instanceof Error) {
+      if (e.hasOwnProperty('message')) {
+        this.logger.log('warn', '%s %s', subject, e.message)
+      } else {
+        this.logger.log('warn', '%s %s', subject, e)
+      }
+      if (e.hasOwnProperty('stack')) {
+        this.note(
+          e.stack
+            .split('\n')
+            .slice(1)
+            .join('\n')
+        )
+      }
+    } else {
+      this.logger.log('warn', '%s %s', subject, e)
+    }
+  }
+
   error(subject, e) {
     if (e instanceof Error) {
       if (e.hasOwnProperty('message')) {
@@ -160,7 +180,7 @@ module.exports = class Logger {
         )
       }
     } else {
-      this.fatal('Failed to compile subgraph', e)
+      this.fatal(subject, e)
     }
   }
 }
