@@ -181,13 +181,17 @@ app
       logger.status('Access token set for Graph node:', node)
     } catch (e) {
       if (process.platform === 'win32') {
-        logger.error(`Error storing Graph access token in Windows Credential Vault:`, e)
+        logger.error(`Error storing access token in Windows Credential Vault:`, e)
       } else if (process.platform === 'darwin') {
-        logger.error(`Error storing Graph access token in macOS Keychain:`, e)
+        logger.error(`Error storing access token in macOS Keychain:`, e)
       } else if (process.platform === 'linux') {
-        logger.error(`Error storing Graph access token with libsecret (usually gnome-keyring or ksecretservice):`, e)
+        logger.error(
+          `Error storing access token with libsecret ` +
+          `(usually gnome-keyring or ksecretservice):`,
+          e
+        )
       } else {
-        logger.error(`Error storing Graph access token in OS secret storage service:`, e)
+        logger.error(`Error storing access token in OS secret storage service:`, e)
       }
       process.exitCode = 1
     }
@@ -250,13 +254,17 @@ app
         accessToken = await keytar.getPassword('graphprotocol-auth', node)
       } catch (e) {
         if (process.platform === 'win32') {
-          logger.errorWarning(`Could not get Graph access token from Windows Credential Vault: `, e)
+          logger.errorWarning(`Could not get access token from Windows Credential Vault:`, e)
         } else if (process.platform === 'darwin') {
-          logger.errorWarning(`Could not get Graph access token from macOS Keychain: `, e)
+          logger.errorWarning(`Could not get access token from macOS Keychain:`, e)
         } else if (process.platform === 'linux') {
-          logger.errorWarning(`Could not get Graph access token from libsecret (usually gnome-keyring or ksecretservice): `, e)
+          logger.errorWarning(
+            `Could not get access token from libsecret ` +
+            `(usually gnome-keyring or ksecretservice):`,
+            e
+          )
         } else {
-          logger.errorWarning(`Could not get Graph access token from OS secret storage service: `, e)
+          logger.errorWarning(`Could not get access token from OS secret storage service:`, e)
         }
         logger.status(`Continuing without an access token`)
       }
