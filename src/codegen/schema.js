@@ -56,6 +56,9 @@ module.exports = class SchemaCodeGenerator {
     // Generate and add a constructor
     klass.addMethod(this._generateConstructor(name))
 
+    // Generate and add save() and getById() methods
+    this._generateStoreMethods(name).forEach(method => klass.addMethod(method))
+
     // Generate and add entity field getters and setters
     def
       .get('fields')
@@ -77,6 +80,33 @@ module.exports = class SchemaCodeGenerator {
       this.set('id', Value.fromString(id))
       return this
       `
+    )
+  }
+
+  _generateStoreMethods(entityName) {
+    return List.of(
+      tsCodegen.method(
+        'save',
+        [],
+        tsCodegen.namedType('void'),
+        `
+        let id = this.get('id')
+        assert(id !== null, 'Cannot save ${entityName} entity without an ID')
+        assert(
+          id.kind == ValueKind.STRING,
+          'Cannot save ${entityName} entity with non-string ID'
+        )
+        store.set('${entityName}', id.toString(), this)`
+      ),
+
+      tsCodegen.staticMethod(
+        'getById',
+        [tsCodegen.param('id', tsCodegen.namedType('string'))],
+        tsCodegen.nullableType(tsCodegen.namedType(entityName)),
+        `
+        return store.get('${entityName}', id) as ${entityName} | null
+        `
+      )
     )
   }
 
