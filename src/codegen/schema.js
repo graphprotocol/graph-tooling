@@ -3,6 +3,8 @@ const immutable = require('immutable')
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
 
+const List = immutable.List
+
 module.exports = class SchemaCodeGenerator {
   constructor(schema) {
     this.schema = schema
@@ -16,6 +18,10 @@ module.exports = class SchemaCodeGenerator {
           'TypedMap',
           'Entity',
           'Value',
+          'ValueKind',
+
+          // APIs
+          'store',
 
           // Basic Ethereum types
           'Address',
@@ -47,19 +53,35 @@ module.exports = class SchemaCodeGenerator {
     let name = def.getIn(['name', 'value'])
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
 
+    // Generate and add a constructor
+    klass.addMethod(this._generateConstructor(name))
+
+    // Generate and add entity field getters and setters
     def
       .get('fields')
       .reduce(
         (methods, field) => methods.concat(this._generateEntityFieldMethods(def, field)),
-        immutable.List()
+        List()
       )
-      .map(method => klass.addMethod(method))
+      .forEach(method => klass.addMethod(method))
 
     return klass
   }
 
+  _generateConstructor(entityName) {
+    return tsCodegen.method(
+      'constructor',
+      [tsCodegen.param('id', tsCodegen.namedType('string'))],
+      undefined,
+      `
+      this.set('id', Value.fromString(id))
+      return this
+      `
+    )
+  }
+
   _generateEntityFieldMethods(entityDef, fieldDef) {
-    return immutable.List([
+    return List([
       this._generateEntityFieldGetter(entityDef, fieldDef),
       this._generateEntityFieldSetter(entityDef, fieldDef),
     ])
