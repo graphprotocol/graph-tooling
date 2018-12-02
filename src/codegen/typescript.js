@@ -52,7 +52,7 @@ class StaticMethod {
   toString() {
     return `
   static ${this.name}(${this.params.map(param => param.toString()).join(', ')})${
-      this.returnType ? `: ${this.returnType.name}` : ''
+      this.returnType ? `: ${this.returnType.toString()}` : ''
     } {${this.body}
   }
 `
