@@ -2,12 +2,50 @@ import {
   TypedMap,
   Entity,
   Value,
+  ValueKind,
+  store,
   Address,
   Bytes,
   BigInt
 } from "@graphprotocol/graph-ts";
 
 export class ExampleEntity extends Entity {
+  constructor(id: string) {
+    this.set("id", Value.fromString(id));
+    return this;
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save ExampleEntity entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save ExampleEntity entity with non-string ID"
+    );
+    store.set("ExampleEntity", id.toString(), this);
+  }
+
+  static getById(id: string): ExampleEntity | null {
+    return store.get("ExampleEntity", id) as ExampleEntity | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString() as string;
+    }
+  }
+
+  set id(value: string) {
+    if (value === null) {
+      this.unset("id");
+    } else {
+      this.set("id", Value.fromString(value as string));
+    }
+  }
+
   get optionalBoolean(): boolean | null {
     let value = this.get("optionalBoolean");
     if (value === null) {
@@ -443,6 +481,44 @@ export class ExampleEntity extends Entity {
         "requiredReferenceList",
         Value.fromStringArray(value as Array<string>)
       );
+    }
+  }
+}
+
+export class OtherEntity extends Entity {
+  constructor(id: string) {
+    this.set("id", Value.fromString(id));
+    return this;
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save OtherEntity entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save OtherEntity entity with non-string ID"
+    );
+    store.set("OtherEntity", id.toString(), this);
+  }
+
+  static getById(id: string): OtherEntity | null {
+    return store.get("OtherEntity", id) as OtherEntity | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString() as string;
+    }
+  }
+
+  set id(value: string) {
+    if (value === null) {
+      this.unset("id");
+    } else {
+      this.set("id", Value.fromString(value as string));
     }
   }
 }
