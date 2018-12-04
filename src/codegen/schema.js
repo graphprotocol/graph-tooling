@@ -100,7 +100,7 @@ module.exports = class SchemaCodeGenerator {
       ),
 
       tsCodegen.staticMethod(
-        'getById',
+        'load',
         [tsCodegen.param('id', tsCodegen.namedType('string'))],
         tsCodegen.nullableType(tsCodegen.namedType(entityName)),
         `
