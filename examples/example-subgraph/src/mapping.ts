@@ -251,9 +251,9 @@ export function handleExampleEvent(event: ExampleEvent): void {
   store.get('ExampleEntity', 'example id')
   store.remove('ExampleEntity', 'example id')
 
-  // Entity getById and save (using the store behind the scenes)
+  // Entity load and save (using the store behind the scenes)
   entity.save()
-  let other = ExampleEntity.getById('other example id')
+  let other = ExampleEntity.load('other example id')
   if (other == null) {
     other = new ExampleEntity('other example id')
   }

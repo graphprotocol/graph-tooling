@@ -25,7 +25,7 @@ export class ExampleEntity extends Entity {
     store.set("ExampleEntity", id.toString(), this);
   }
 
-  static getById(id: string): ExampleEntity | null {
+  static load(id: string): ExampleEntity | null {
     return store.get("ExampleEntity", id) as ExampleEntity | null;
   }
 
@@ -501,7 +501,7 @@ export class OtherEntity extends Entity {
     store.set("OtherEntity", id.toString(), this);
   }
 
-  static getById(id: string): OtherEntity | null {
+  static load(id: string): OtherEntity | null {
     return store.get("OtherEntity", id) as OtherEntity | null;
   }
 
