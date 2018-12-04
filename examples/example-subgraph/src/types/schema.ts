@@ -20,7 +20,8 @@ export class ExampleEntity extends Entity {
     assert(id !== null, "Cannot save ExampleEntity entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save ExampleEntity entity with non-string ID"
+      "Cannot save ExampleEntity entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
     );
     store.set("ExampleEntity", id.toString(), this);
   }
@@ -496,7 +497,8 @@ export class OtherEntity extends Entity {
     assert(id !== null, "Cannot save OtherEntity entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save OtherEntity entity with non-string ID"
+      "Cannot save OtherEntity entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
     );
     store.set("OtherEntity", id.toString(), this);
   }
