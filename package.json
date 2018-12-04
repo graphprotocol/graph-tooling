@@ -3,7 +3,7 @@
   "version": "0.4.1",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
-    "assemblyscript": "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11",
+    "assemblyscript": "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c",
     "chalk": "^2.4.1",
     "chokidar": "^2.0.4",
     "commander": "^2.18.0",
