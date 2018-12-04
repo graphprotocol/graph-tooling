@@ -1,4 +1,6 @@
 type ExampleEntity @entity {
+  id: ID!
+
   optionalBoolean: Boolean
   requiredBoolean: Boolean!
   optionalBooleanList: [Boolean!]
@@ -28,4 +30,8 @@ type ExampleEntity @entity {
   requiredReference: OtherEntity!
   optionalReferenceList: [OtherEntity!]
   requiredReferenceList: [OtherEntity!]!
+}
+
+type OtherEntity @entity {
+  id: ID!
 }
