@@ -8,7 +8,7 @@ dataSources:
     name: ExampleSubgraph
     network: mainnet
     source:
-      address: 22843e74c59580b3eaf6c233fa67d8b7c561a835
+      address: '0x22843e74c59580b3eaf6c233fa67d8b7c561a835'
       abi: ExampleContract
     mapping:
       kind: ethereum/events
@@ -17,6 +17,7 @@ dataSources:
       file: ExampleSubgraph/ExampleSubgraph.wasm
       entities:
         - ExampleEntity
+        - OtherEntity
       abis:
         - name: ExampleContract
           file: ExampleSubgraph/abis/ExampleContract.json
