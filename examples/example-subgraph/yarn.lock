@@ -4,7 +4,7 @@
 
 "@graphprotocol/graph-cli@git+http://github.com/graphprotocol/graph-cli#jannis/bump-asc":
   version "0.4.1"
-  resolved "git+http://github.com/graphprotocol/graph-cli#63b43c2c0961a51de53f9e532467b4ffbc0469cb"
+  resolved "git+http://github.com/graphprotocol/graph-cli#601cf26dc39ec7fd57457f425f7aef6bb50ff711"
   dependencies:
     assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
     chalk "^2.4.1"
