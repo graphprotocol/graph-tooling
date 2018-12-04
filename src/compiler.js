@@ -197,14 +197,16 @@ class Compiler {
       }
 
       let libs = path.join(baseDir, 'node_modules');
-      let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global')
+      let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
+  
       asc.main(
         [
           inputFile,
+          global,
           '--baseDir',
           baseDir,
           '--lib',
-          `${libs},${global}`,
+          libs,
           '--outFile',
           outputFile,
         ],
