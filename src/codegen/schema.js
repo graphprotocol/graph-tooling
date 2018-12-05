@@ -94,7 +94,8 @@ module.exports = class SchemaCodeGenerator {
         assert(id !== null, 'Cannot save ${entityName} entity without an ID')
         assert(
           id.kind == ValueKind.STRING,
-          'Cannot save ${entityName} entity with non-string ID'
+          'Cannot save ${entityName} entity with non-string ID. ' +
+          'Considering using .toHex() to convert the "id" to a string.'
         )
         store.set('${entityName}', id.toString(), this)`
       ),
