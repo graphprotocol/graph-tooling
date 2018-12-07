@@ -2,11 +2,11 @@
 # yarn lockfile v1
 
 
-"@graphprotocol/graph-cli@git+http://github.com/graphprotocol/graph-cli#jannis/bump-asc":
+"@graphprotocol/graph-cli@git+http://github.com/graphprotocol/graph-cli#master":
   version "0.4.1"
-  resolved "git+http://github.com/graphprotocol/graph-cli#601cf26dc39ec7fd57457f425f7aef6bb50ff711"
+  resolved "git+http://github.com/graphprotocol/graph-cli#94184160c825d0107040f396b1e88d3a631bde72"
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
     chalk "^2.4.1"
     chokidar "^2.0.4"
     commander "^2.18.0"
@@ -27,6 +27,12 @@
 "@graphprotocol/graph-ts@git+http://github.com/graphprotocol/graph-ts#jannis/bump-asc":
   version "0.4.2"
   resolved "git+http://github.com/graphprotocol/graph-ts#d2d8d5441174e6ff4ba4eb1525357bb03bc1f0a3"
+  dependencies:
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
+
+"@graphprotocol/graph-ts@git+http://github.com/graphprotocol/graph-ts#master":
+  version "0.4.2"
+  resolved "git+http://github.com/graphprotocol/graph-ts#c72e34ec158e7e57105f1f661afb7e6bf6500311"
   dependencies:
     assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
 
@@ -154,6 +160,14 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
+"assemblyscript@https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11":
+  version "0.5.0"
+  resolved "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
+  dependencies:
+    "@protobufjs/utf8" "^1.1.0"
+    binaryen "48.0.0-nightly.20180627"
+    long "^4.0.0"
+
 "assemblyscript@https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c":
   version "0.5.0"
   resolved "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
@@ -258,6 +272,11 @@ binary-extensions@^1.0.0:
   version "1.12.0"
   resolved "https://registry.npmjs.org/binary-extensions/-/binary-extensions-1.12.0.tgz#c2d780f53d45bba8317a8902d4ceeaf3a6385b14"
   integrity sha512-DYWGk01lDcxeS/K9IHPGWfT8PsJmbXRtRd2Sx72Tnb8pcYZQFF1oSDb8hJtS1vhp212q1Rzi5dUf9+nq0o9UIg==
+
+binaryen@48.0.0-nightly.20180627:
+  version "48.0.0-nightly.20180627"
+  resolved "https://registry.npmjs.org/binaryen/-/binaryen-48.0.0-nightly.20180627.tgz#605e42c7db752922560d7f2582d5c9dcaa2f4822"
+  integrity sha512-ZBXSVMoXb+LDiPX3Epdis57KJIqhSkvC3y8i0SEMCkOtErrAlEiS//UBrXBDUaqB12h0qU9gjNSC9iD987w7QQ==
 
 binaryen@55.0.0-nightly.20181130:
   version "55.0.0-nightly.20181130"

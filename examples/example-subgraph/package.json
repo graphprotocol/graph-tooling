@@ -7,7 +7,7 @@
     "build-wast": "graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "git+http://github.com/graphprotocol/graph-cli#jannis/bump-asc",
-    "@graphprotocol/graph-ts": "git+http://github.com/graphprotocol/graph-ts#jannis/bump-asc"
+    "@graphprotocol/graph-cli": "git+http://github.com/graphprotocol/graph-cli#master",
+    "@graphprotocol/graph-ts": "git+http://github.com/graphprotocol/graph-ts#master"
   }
 }
