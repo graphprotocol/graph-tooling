@@ -371,10 +371,10 @@ app
 app
   .command('remove')
   .description('Removes subgraph from node')
-  .option('-k, --api-key <KEY>', 'Graph API key authorized to manage the subgraph name')
+  .option('--access-token <TOKEN>', 'Graph access token')
   .option('-g, --node <URL>[:PORT]', 'Graph node to remove the subgraph from')
   .option('-n, --subgraph-name <NAME>', 'Subgraph name to remove')
-  .action(cmd => {
+  .action(async cmd => {
     if (cmd.subgraphName === undefined || cmd.node === undefined) {
       console.error('Cannot remove the subgraph')
       console.error('--')
@@ -387,14 +387,17 @@ app
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
+    // Default to port 8020 for the admin endpoint
     let requestUrl = new URL(cmd.node)
     if (!requestUrl.port) {
       requestUrl.port = '8020'
     }
 
+    // Create remove request client
     let client = jayson.Client.http(requestUrl)
-    if (cmd.apiKey !== undefined) {
-      client.options.headers = { Authorization: 'Bearer ' + cmd.apiKey }
+    let accessToken = await getAccessToken(cmd, cmd.node, logger)
+    if (accessToken !== undefined) {
+      client.options.headers = { Authorization: `Bearer ${accessToken}` }
     }
 
     logger.status('Removing subgraph from Graph node:', requestUrl)
