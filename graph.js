@@ -18,11 +18,23 @@ function getVerbosity(app) {
   return app.debug ? 'debug' : app.verbose ? 'verbose' : app.verbosity
 }
 
-// Helper function to construct a subgraph compiler
-function createCompiler(app, cmd, subgraphManifest) {
-  // Connect to the IPFS node (if a node address was provided)
-  let ipfs = cmd.ipfs ? ipfsAPI(cmd.ipfs) : undefined
+// Helper function to construct an IPFS client
+function createIpfsClient(app, cmd, accessToken) {
+  return cmd.ipfs
+    ? ipfsAPI(
+        cmd.ipfs,
+        undefined,
+        accessToken !== undefined
+          ? {
+              headers: { Authorization: `Bearer ${accessToken}` },
+            }
+          : {}
+      )
+    : undefined
+}
 
+// Helper function to construct a subgraph compiler
+function createCompiler(app, cmd, subgraphManifest, ipfs) {
   return new Compiler({
     ipfs,
     subgraphManifest,
@@ -183,11 +195,16 @@ app
   )
   .option('-t, --output-format <wasm|wast>', 'Output format (wasm, wast)', 'wasm')
   .option('-w, --watch', 'Rebuild automatically when files change')
-  .action((subgraphManifest, cmd) => {
+  .action(async (subgraphManifest, cmd) => {
+    // Connect to the IPFS node (if an IPFS address was provided)
+    let accessToken = await getAccessToken(cmd, cmd.ipfs, logger)
+    let ipfs = createIpfsClient(app, cmd, accessToken)
+
     let compiler = createCompiler(
       app,
       cmd,
-      subgraphManifest || path.resolve('subgraph.yaml')
+      subgraphManifest || path.resolve('subgraph.yaml'),
+      ipfs
     )
 
     // Watch subgraph files for changes or additions, trigger
@@ -272,52 +289,31 @@ app
       return
     }
 
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
+    // Create IPFS client
+    let ipfsAccessToken = await getAccessToken(cmd, cmd.ipfs, logger)
+    let ipfs = createIpfsClient(app, cmd, ipfsAccessToken)
+
+    // Create compiler
     let compiler = createCompiler(
       app,
       cmd,
-      subgraphManifest || path.resolve('subgraph.yaml')
+      subgraphManifest || path.resolve('subgraph.yaml'),
+      ipfs
     )
 
+    // Default to port 8020 for the admin endpoint
     let requestUrl = new URL(cmd.node)
     if (!requestUrl.port) {
       requestUrl.port = '8020'
     }
 
+    // Create deployment request client
     let client = jayson.Client.http(requestUrl)
-
-    let logger = new Logger(0, { verbosity: getVerbosity(app) })
-
-    // Determine the access token to use, if any:
-    // - First try using --access-token, if provided
-    // - Then see if we have an access token set for the Graph node
-    let accessToken = undefined
-    if (cmd.accessToken !== undefined) {
-      accessToken = cmd.accessToken
-    } else {
-      try {
-        let node = normalizeNodeUrl(cmd.node)
-        accessToken = await keytar.getPassword('graphprotocol-auth', node)
-      } catch (e) {
-        if (process.platform === 'win32') {
-          logger.errorWarning(`Could not get access token from Windows Credential Vault:`, e)
-        } else if (process.platform === 'darwin') {
-          logger.errorWarning(`Could not get access token from macOS Keychain:`, e)
-        } else if (process.platform === 'linux') {
-          logger.errorWarning(
-            `Could not get access token from libsecret ` +
-            `(usually gnome-keyring or ksecretservice):`,
-            e
-          )
-        } else {
-          logger.errorWarning(`Could not get access token from OS secret storage service:`, e)
-        }
-        logger.status(`Continuing without an access token`)
-      }
-    }
-
-    // Use the access token, if one is set
+    let accessToken = await getAccessToken(cmd, cmd.node, logger)
     if (accessToken !== undefined && accessToken !== null) {
-      client.options.headers = { Authorization: 'Bearer ' + accessToken }
+      client.options.headers = { Authorization: `Bearer ${accessToken}` }
     }
 
     let deploySubgraph = ipfsHash => {
