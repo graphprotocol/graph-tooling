@@ -208,22 +208,22 @@ app
  */
 app
   .command('auth [NODE] [ACCESS_TOKEN]')
-  .description('Sets the access token to use when deploying to a Graph node')
-  .action(async (nodeUrl, accessToken) => {
+  .description('Sets the access token to use when deploying to a Graph or IPFS node')
+  .action(async (url, accessToken) => {
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
-    if (accessToken === undefined || nodeUrl === undefined || accessToken.length > 200) {
+    if (accessToken === undefined || url === undefined || accessToken.length > 200) {
       console.error('Cannot set the access token')
       console.error('--')
-      outputAuthConfig(nodeUrl, accessToken)
+      outputAuthConfig(url, accessToken)
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
       return
     }
     try {
-      let node = normalizeNodeUrl(nodeUrl)
+      let node = normalizeUrl(url)
       await keytar.setPassword('graphprotocol-auth', node, accessToken)
-      logger.status('Access token set for Graph node:', node)
+      logger.status('Access token set for Graph or IPFS node:', node)
     } catch (e) {
       if (process.platform === 'win32') {
         logger.error(`Error storing access token in Windows Credential Vault:`, e)
@@ -232,7 +232,7 @@ app
       } else if (process.platform === 'linux') {
         logger.error(
           `Error storing access token with libsecret ` +
-          `(usually gnome-keyring or ksecretservice):`,
+            `(usually gnome-keyring or ksecretservice):`,
           e
         )
       } else {
