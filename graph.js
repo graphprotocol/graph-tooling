@@ -196,6 +196,8 @@ app
   .option('-t, --output-format <wasm|wast>', 'Output format (wasm, wast)', 'wasm')
   .option('-w, --watch', 'Rebuild automatically when files change')
   .action(async (subgraphManifest, cmd) => {
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
     // Connect to the IPFS node (if an IPFS address was provided)
     let accessToken = await getAccessToken(cmd, cmd.ipfs, logger)
     let ipfs = createIpfsClient(app, cmd, accessToken)
