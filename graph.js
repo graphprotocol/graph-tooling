@@ -34,8 +34,53 @@ function createCompiler(app, cmd, subgraphManifest) {
   })
 }
 
-function normalizeNodeUrl(node) {
-  return new URL(node).toString()
+// Helper function to obtain the access token for the target node
+async function getAccessToken(cmd, url, logger) {
+  // Determine the access token to use, if any:
+  // - First try using --access-token, if provided
+  // - Then see if we have an access token set for the Graph node
+  if (cmd.accessToken !== undefined) {
+    return cmd.accessToken
+  } else {
+    try {
+      url = normalizeUrl(url)
+      return await keytar.getPassword('graphprotocol-auth', url)
+    } catch (e) {
+      if (process.platform === 'win32') {
+        logger.errorWarning(
+          `Could not get access token from Windows Credential Vault:`,
+          e
+        )
+      } else if (process.platform === 'darwin') {
+        logger.errorWarning(`Could not get access token from macOS Keychain:`, e)
+      } else if (process.platform === 'linux') {
+        logger.errorWarning(
+          `Could not get access token from libsecret ` +
+            `(usually gnome-keyring or ksecretservice):`,
+          e
+        )
+      } else {
+        logger.errorWarning(
+          `Could not get access token from OS secret storage service:`,
+          e
+        )
+      }
+      logger.status(`Continuing without an access token`)
+    }
+    return undefined
+  }
+}
+
+function normalizeUrl(url) {
+  try {
+    return new URL(url).toString()
+  } catch (e) {
+    if (typeof url === 'string') {
+      return url.endsWith('/') ? url.substring(0, url.length - 1) : url
+    } else {
+      throw Error(`Invalid URL: ${url}`)
+    }
+  }
 }
 
 function outputNameAndNodeConfig(cmd) {
