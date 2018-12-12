@@ -123,26 +123,25 @@ module.exports = class SchemaCodeGenerator {
     let gqlType = fieldDef.get('type')
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
     let returnType = this._typeFromGraphQl(gqlType)
+
+    let getNonNullable = `return ${typesCodegen.valueToAsc(
+                            'value',
+                            fieldValueType
+                          )}`
+    let getNullable = `if (value === null) {
+                          return null
+                        } else {
+                          ${getNonNullable} as ${returnType.toString()}
+                        }`
+    
+    let isNullable = returnType instanceof tsCodegen.NullableType 
     return tsCodegen.method(
       `get ${name}`,
       [],
       returnType,
       `
-      let value = this.get('${name}')
-      if (value === null) {
-        return ${
-          returnType.toString() === 'boolean'
-            ? 'false'
-            : returnType.toString() === 'boolean | null'
-              ? 'false'
-              : 'null'
-        }
-      } else {
-        return ${typesCodegen.valueToAsc(
-          'value',
-          fieldValueType
-        )} as ${returnType.toString()}
-      }
+       let value = this.get('${name}')
+       ${isNullable ? getNullable : getNonNullable}
       `
     )
   }
@@ -152,24 +151,28 @@ module.exports = class SchemaCodeGenerator {
     let gqlType = fieldDef.get('type')
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
     let paramType = this._typeFromGraphQl(gqlType)
+    let isNullable = paramType instanceof tsCodegen.NullableType
+    let paramTypeString = isNullable ? paramType.inner.toString() : paramType.toString()
+
+    let setNonNullable = `
+      this.set('${name}', ${typesCodegen.valueFromAsc(
+        `value as ${paramTypeString}`,
+        fieldValueType
+      )})
+    `
+    let setNullable = `
+      if (value === null) {
+        this.unset('${name}')
+      } else {
+        ${setNonNullable}
+      }
+    `
+
     return tsCodegen.method(
       `set ${name}`,
       [tsCodegen.param('value', paramType)],
       undefined,
-      `
-        if (value === null) {
-          this.unset('${name}')
-        } else {
-          this.set('${name}', ${typesCodegen.valueFromAsc(
-        `value as ${
-          paramType instanceof tsCodegen.NullableType
-            ? paramType.inner.toString()
-            : paramType.toString()
-        }`,
-        fieldValueType
-      )})
-        }
-      `
+      isNullable ? setNullable : setNonNullable
     )
   }
 
