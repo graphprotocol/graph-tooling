@@ -42,9 +42,9 @@ export class ExampleEntity extends Entity {
   get optionalBoolean(): boolean | null {
     let value = this.get("optionalBoolean");
     if (value === null) {
-      return null;
+      return false;
     } else {
-      return value.toBoolean() as boolean | null;
+      return value.toBoolean();
     }
   }
 
@@ -70,7 +70,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBooleanArray() as Array<boolean> | null;
+      return value.toBooleanArray();
     }
   }
 
@@ -102,7 +102,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toString() as string | null;
+      return value.toString();
     }
   }
 
@@ -128,7 +128,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toStringArray() as Array<string> | null;
+      return value.toStringArray();
     }
   }
 
@@ -160,7 +160,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBytes() as Bytes | null;
+      return value.toBytes();
     }
   }
 
@@ -186,7 +186,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBytesArray() as Array<Bytes> | null;
+      return value.toBytesArray();
     }
   }
 
@@ -213,9 +213,9 @@ export class ExampleEntity extends Entity {
   get optionalInt(): i32 | null {
     let value = this.get("optionalInt");
     if (value === null) {
-      return null;
+      return 0;
     } else {
-      return value.toI32() as i32 | null;
+      return value.toI32();
     }
   }
 
@@ -241,7 +241,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toI32Array() as Array<i32> | null;
+      return value.toI32Array();
     }
   }
 
@@ -267,7 +267,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBigInt() as BigInt | null;
+      return value.toBigInt();
     }
   }
 
@@ -293,7 +293,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBigIntArray() as Array<BigInt> | null;
+      return value.toBigIntArray();
     }
   }
 
@@ -325,7 +325,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toString() as string | null;
+      return value.toString();
     }
   }
 
@@ -351,7 +351,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toStringArray() as Array<string> | null;
+      return value.toStringArray();
     }
   }
 
