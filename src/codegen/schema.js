@@ -128,10 +128,14 @@ module.exports = class SchemaCodeGenerator {
                             'value',
                             fieldValueType
                           )}`
+    // Todo: An API that doesn't conflate `false`, `0` and `null`.
+    let nullLike = returnType.toString() === 'boolean | null' ? 'false' :
+                   returnType.toString() === 'i32 | null' ? '0' :
+                   'null'
     let getNullable = `if (value === null) {
-                          return null
+                          return ${nullLike}
                         } else {
-                          ${getNonNullable} as ${returnType.toString()}
+                          ${getNonNullable}
                         }`
     
     let isNullable = returnType instanceof tsCodegen.NullableType 
