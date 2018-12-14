@@ -32,53 +32,29 @@ export class ExampleEntity extends Entity {
 
   get id(): string {
     let value = this.get("id");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString() as string;
-    }
+    return value.toString();
   }
 
   set id(value: string) {
-    if (value === null) {
-      this.unset("id");
-    } else {
-      this.set("id", Value.fromString(value as string));
-    }
+    this.set("id", Value.fromString(value));
   }
 
-  get optionalBoolean(): boolean | null {
+  get optionalBoolean(): boolean {
     let value = this.get("optionalBoolean");
-    if (value === null) {
-      return false;
-    } else {
-      return value.toBoolean() as boolean | null;
-    }
+    return value.toBoolean();
   }
 
-  set optionalBoolean(value: boolean | null) {
-    if (value === null) {
-      this.unset("optionalBoolean");
-    } else {
-      this.set("optionalBoolean", Value.fromBoolean(value as boolean));
-    }
+  set optionalBoolean(value: boolean) {
+    this.set("optionalBoolean", Value.fromBoolean(value));
   }
 
   get requiredBoolean(): boolean {
     let value = this.get("requiredBoolean");
-    if (value === null) {
-      return false;
-    } else {
-      return value.toBoolean() as boolean;
-    }
+    return value.toBoolean();
   }
 
   set requiredBoolean(value: boolean) {
-    if (value === null) {
-      this.unset("requiredBoolean");
-    } else {
-      this.set("requiredBoolean", Value.fromBoolean(value as boolean));
-    }
+    this.set("requiredBoolean", Value.fromBoolean(value));
   }
 
   get optionalBooleanList(): Array<boolean> | null {
@@ -86,7 +62,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBooleanArray() as Array<boolean> | null;
+      return value.toBooleanArray();
     }
   }
 
@@ -103,22 +79,11 @@ export class ExampleEntity extends Entity {
 
   get requiredBooleanList(): Array<boolean> {
     let value = this.get("requiredBooleanList");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBooleanArray() as Array<boolean>;
-    }
+    return value.toBooleanArray();
   }
 
   set requiredBooleanList(value: Array<boolean>) {
-    if (value === null) {
-      this.unset("requiredBooleanList");
-    } else {
-      this.set(
-        "requiredBooleanList",
-        Value.fromBooleanArray(value as Array<boolean>)
-      );
-    }
+    this.set("requiredBooleanList", Value.fromBooleanArray(value));
   }
 
   get optionalString(): string | null {
@@ -126,7 +91,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toString() as string | null;
+      return value.toString();
     }
   }
 
@@ -140,19 +105,11 @@ export class ExampleEntity extends Entity {
 
   get requiredString(): string {
     let value = this.get("requiredString");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString() as string;
-    }
+    return value.toString();
   }
 
   set requiredString(value: string) {
-    if (value === null) {
-      this.unset("requiredString");
-    } else {
-      this.set("requiredString", Value.fromString(value as string));
-    }
+    this.set("requiredString", Value.fromString(value));
   }
 
   get optionalStringList(): Array<string> | null {
@@ -160,7 +117,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toStringArray() as Array<string> | null;
+      return value.toStringArray();
     }
   }
 
@@ -177,22 +134,11 @@ export class ExampleEntity extends Entity {
 
   get requiredStringList(): Array<string> {
     let value = this.get("requiredStringList");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toStringArray() as Array<string>;
-    }
+    return value.toStringArray();
   }
 
   set requiredStringList(value: Array<string>) {
-    if (value === null) {
-      this.unset("requiredStringList");
-    } else {
-      this.set(
-        "requiredStringList",
-        Value.fromStringArray(value as Array<string>)
-      );
-    }
+    this.set("requiredStringList", Value.fromStringArray(value));
   }
 
   get optionalBytes(): Bytes | null {
@@ -200,7 +146,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBytes() as Bytes | null;
+      return value.toBytes();
     }
   }
 
@@ -214,19 +160,11 @@ export class ExampleEntity extends Entity {
 
   get requiredBytes(): Bytes {
     let value = this.get("requiredBytes");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBytes() as Bytes;
-    }
+    return value.toBytes();
   }
 
   set requiredBytes(value: Bytes) {
-    if (value === null) {
-      this.unset("requiredBytes");
-    } else {
-      this.set("requiredBytes", Value.fromBytes(value as Bytes));
-    }
+    this.set("requiredBytes", Value.fromBytes(value));
   }
 
   get optionalBytesList(): Array<Bytes> | null {
@@ -234,7 +172,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBytesArray() as Array<Bytes> | null;
+      return value.toBytesArray();
     }
   }
 
@@ -251,56 +189,29 @@ export class ExampleEntity extends Entity {
 
   get requiredBytesList(): Array<Bytes> {
     let value = this.get("requiredBytesList");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBytesArray() as Array<Bytes>;
-    }
+    return value.toBytesArray();
   }
 
   set requiredBytesList(value: Array<Bytes>) {
-    if (value === null) {
-      this.unset("requiredBytesList");
-    } else {
-      this.set(
-        "requiredBytesList",
-        Value.fromBytesArray(value as Array<Bytes>)
-      );
-    }
+    this.set("requiredBytesList", Value.fromBytesArray(value));
   }
 
-  get optionalInt(): i32 | null {
+  get optionalInt(): i32 {
     let value = this.get("optionalInt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toI32() as i32 | null;
-    }
+    return value.toI32();
   }
 
-  set optionalInt(value: i32 | null) {
-    if (value === null) {
-      this.unset("optionalInt");
-    } else {
-      this.set("optionalInt", Value.fromI32(value as i32));
-    }
+  set optionalInt(value: i32) {
+    this.set("optionalInt", Value.fromI32(value));
   }
 
   get requiredInt(): i32 {
     let value = this.get("requiredInt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toI32() as i32;
-    }
+    return value.toI32();
   }
 
   set requiredInt(value: i32) {
-    if (value === null) {
-      this.unset("requiredInt");
-    } else {
-      this.set("requiredInt", Value.fromI32(value as i32));
-    }
+    this.set("requiredInt", Value.fromI32(value));
   }
 
   get optionalIntList(): Array<i32> | null {
@@ -308,7 +219,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toI32Array() as Array<i32> | null;
+      return value.toI32Array();
     }
   }
 
@@ -322,19 +233,11 @@ export class ExampleEntity extends Entity {
 
   get requiredIntList(): Array<i32> {
     let value = this.get("requiredIntList");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toI32Array() as Array<i32>;
-    }
+    return value.toI32Array();
   }
 
   set requiredIntList(value: Array<i32>) {
-    if (value === null) {
-      this.unset("requiredIntList");
-    } else {
-      this.set("requiredIntList", Value.fromI32Array(value as Array<i32>));
-    }
+    this.set("requiredIntList", Value.fromI32Array(value));
   }
 
   get optionalBigInt(): BigInt | null {
@@ -342,7 +245,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBigInt() as BigInt | null;
+      return value.toBigInt();
     }
   }
 
@@ -356,19 +259,11 @@ export class ExampleEntity extends Entity {
 
   get requiredBigInt(): BigInt {
     let value = this.get("requiredBigInt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt() as BigInt;
-    }
+    return value.toBigInt();
   }
 
   set requiredBigInt(value: BigInt) {
-    if (value === null) {
-      this.unset("requiredBigInt");
-    } else {
-      this.set("requiredBigInt", Value.fromBigInt(value as BigInt));
-    }
+    this.set("requiredBigInt", Value.fromBigInt(value));
   }
 
   get optionalBigIntList(): Array<BigInt> | null {
@@ -376,7 +271,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toBigIntArray() as Array<BigInt> | null;
+      return value.toBigIntArray();
     }
   }
 
@@ -393,22 +288,11 @@ export class ExampleEntity extends Entity {
 
   get requiredBigIntList(): Array<BigInt> {
     let value = this.get("requiredBigIntList");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigIntArray() as Array<BigInt>;
-    }
+    return value.toBigIntArray();
   }
 
   set requiredBigIntList(value: Array<BigInt>) {
-    if (value === null) {
-      this.unset("requiredBigIntList");
-    } else {
-      this.set(
-        "requiredBigIntList",
-        Value.fromBigIntArray(value as Array<BigInt>)
-      );
-    }
+    this.set("requiredBigIntList", Value.fromBigIntArray(value));
   }
 
   get optionalReference(): string | null {
@@ -416,7 +300,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toString() as string | null;
+      return value.toString();
     }
   }
 
@@ -430,19 +314,11 @@ export class ExampleEntity extends Entity {
 
   get requiredReference(): string {
     let value = this.get("requiredReference");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString() as string;
-    }
+    return value.toString();
   }
 
   set requiredReference(value: string) {
-    if (value === null) {
-      this.unset("requiredReference");
-    } else {
-      this.set("requiredReference", Value.fromString(value as string));
-    }
+    this.set("requiredReference", Value.fromString(value));
   }
 
   get optionalReferenceList(): Array<string> | null {
@@ -450,7 +326,7 @@ export class ExampleEntity extends Entity {
     if (value === null) {
       return null;
     } else {
-      return value.toStringArray() as Array<string> | null;
+      return value.toStringArray();
     }
   }
 
@@ -467,22 +343,11 @@ export class ExampleEntity extends Entity {
 
   get requiredReferenceList(): Array<string> {
     let value = this.get("requiredReferenceList");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toStringArray() as Array<string>;
-    }
+    return value.toStringArray();
   }
 
   set requiredReferenceList(value: Array<string>) {
-    if (value === null) {
-      this.unset("requiredReferenceList");
-    } else {
-      this.set(
-        "requiredReferenceList",
-        Value.fromStringArray(value as Array<string>)
-      );
-    }
+    this.set("requiredReferenceList", Value.fromStringArray(value));
   }
 }
 
@@ -509,18 +374,10 @@ export class OtherEntity extends Entity {
 
   get id(): string {
     let value = this.get("id");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString() as string;
-    }
+    return value.toString();
   }
 
   set id(value: string) {
-    if (value === null) {
-      this.unset("id");
-    } else {
-      this.set("id", Value.fromString(value as string));
-    }
+    this.set("id", Value.fromString(value));
   }
 }

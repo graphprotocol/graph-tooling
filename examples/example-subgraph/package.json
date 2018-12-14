@@ -1,7 +1,7 @@
 {
   "name": "example-event-handler",
   "scripts": {
-    "codegen": "graph codegen --output-dir types/ subgraph.yaml",
+    "codegen": "graph codegen --output-dir src/types/ subgraph.yaml",
     "build": "graph build subgraph.yaml",
     "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
     "build-wast": "graph build -t wast subgraph.yaml"
