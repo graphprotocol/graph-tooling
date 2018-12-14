@@ -155,16 +155,16 @@ module.exports = class SchemaCodeGenerator {
     let paramTypeString = isNullable ? paramType.inner.toString() : paramType.toString()
 
     let setNonNullable = `
-      this.set('${name}', ${typesCodegen.valueFromAsc(
-        `value as ${paramTypeString}`,
-        fieldValueType
-      )})
+      this.set('${name}', ${typesCodegen.valueFromAsc(`value`, fieldValueType)})
     `
     let setNullable = `
       if (value === null) {
         this.unset('${name}')
       } else {
-        ${setNonNullable}
+        this.set('${name}', ${typesCodegen.valueFromAsc(
+          `value as ${paramTypeString}`,
+          fieldValueType
+        )})
       }
     `
 

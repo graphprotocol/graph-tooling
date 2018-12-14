@@ -36,7 +36,7 @@ export class ExampleEntity extends Entity {
   }
 
   set id(value: string) {
-    this.set("id", Value.fromString(value as string));
+    this.set("id", Value.fromString(value));
   }
 
   get optionalBoolean(): boolean {
@@ -45,7 +45,7 @@ export class ExampleEntity extends Entity {
   }
 
   set optionalBoolean(value: boolean) {
-    this.set("optionalBoolean", Value.fromBoolean(value as boolean));
+    this.set("optionalBoolean", Value.fromBoolean(value));
   }
 
   get requiredBoolean(): boolean {
@@ -54,7 +54,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredBoolean(value: boolean) {
-    this.set("requiredBoolean", Value.fromBoolean(value as boolean));
+    this.set("requiredBoolean", Value.fromBoolean(value));
   }
 
   get optionalBooleanList(): Array<boolean> | null {
@@ -83,10 +83,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredBooleanList(value: Array<boolean>) {
-    this.set(
-      "requiredBooleanList",
-      Value.fromBooleanArray(value as Array<boolean>)
-    );
+    this.set("requiredBooleanList", Value.fromBooleanArray(value));
   }
 
   get optionalString(): string | null {
@@ -112,7 +109,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredString(value: string) {
-    this.set("requiredString", Value.fromString(value as string));
+    this.set("requiredString", Value.fromString(value));
   }
 
   get optionalStringList(): Array<string> | null {
@@ -141,10 +138,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredStringList(value: Array<string>) {
-    this.set(
-      "requiredStringList",
-      Value.fromStringArray(value as Array<string>)
-    );
+    this.set("requiredStringList", Value.fromStringArray(value));
   }
 
   get optionalBytes(): Bytes | null {
@@ -170,7 +164,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredBytes(value: Bytes) {
-    this.set("requiredBytes", Value.fromBytes(value as Bytes));
+    this.set("requiredBytes", Value.fromBytes(value));
   }
 
   get optionalBytesList(): Array<Bytes> | null {
@@ -199,7 +193,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredBytesList(value: Array<Bytes>) {
-    this.set("requiredBytesList", Value.fromBytesArray(value as Array<Bytes>));
+    this.set("requiredBytesList", Value.fromBytesArray(value));
   }
 
   get optionalInt(): i32 {
@@ -208,7 +202,7 @@ export class ExampleEntity extends Entity {
   }
 
   set optionalInt(value: i32) {
-    this.set("optionalInt", Value.fromI32(value as i32));
+    this.set("optionalInt", Value.fromI32(value));
   }
 
   get requiredInt(): i32 {
@@ -217,7 +211,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredInt(value: i32) {
-    this.set("requiredInt", Value.fromI32(value as i32));
+    this.set("requiredInt", Value.fromI32(value));
   }
 
   get optionalIntList(): Array<i32> | null {
@@ -243,7 +237,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredIntList(value: Array<i32>) {
-    this.set("requiredIntList", Value.fromI32Array(value as Array<i32>));
+    this.set("requiredIntList", Value.fromI32Array(value));
   }
 
   get optionalBigInt(): BigInt | null {
@@ -269,7 +263,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredBigInt(value: BigInt) {
-    this.set("requiredBigInt", Value.fromBigInt(value as BigInt));
+    this.set("requiredBigInt", Value.fromBigInt(value));
   }
 
   get optionalBigIntList(): Array<BigInt> | null {
@@ -298,10 +292,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredBigIntList(value: Array<BigInt>) {
-    this.set(
-      "requiredBigIntList",
-      Value.fromBigIntArray(value as Array<BigInt>)
-    );
+    this.set("requiredBigIntList", Value.fromBigIntArray(value));
   }
 
   get optionalReference(): string | null {
@@ -327,7 +318,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredReference(value: string) {
-    this.set("requiredReference", Value.fromString(value as string));
+    this.set("requiredReference", Value.fromString(value));
   }
 
   get optionalReferenceList(): Array<string> | null {
@@ -356,10 +347,7 @@ export class ExampleEntity extends Entity {
   }
 
   set requiredReferenceList(value: Array<string>) {
-    this.set(
-      "requiredReferenceList",
-      Value.fromStringArray(value as Array<string>)
-    );
+    this.set("requiredReferenceList", Value.fromStringArray(value));
   }
 }
 
@@ -390,6 +378,6 @@ export class OtherEntity extends Entity {
   }
 
   set id(value: string) {
-    this.set("id", Value.fromString(value as string));
+    this.set("id", Value.fromString(value));
   }
 }
