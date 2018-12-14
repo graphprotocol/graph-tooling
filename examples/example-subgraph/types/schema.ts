@@ -39,21 +39,13 @@ export class ExampleEntity extends Entity {
     this.set("id", Value.fromString(value as string));
   }
 
-  get optionalBoolean(): boolean | null {
+  get optionalBoolean(): boolean {
     let value = this.get("optionalBoolean");
-    if (value === null) {
-      return false;
-    } else {
-      return value.toBoolean();
-    }
+    return value.toBoolean();
   }
 
-  set optionalBoolean(value: boolean | null) {
-    if (value === null) {
-      this.unset("optionalBoolean");
-    } else {
-      this.set("optionalBoolean", Value.fromBoolean(value as boolean));
-    }
+  set optionalBoolean(value: boolean) {
+    this.set("optionalBoolean", Value.fromBoolean(value as boolean));
   }
 
   get requiredBoolean(): boolean {
@@ -210,21 +202,13 @@ export class ExampleEntity extends Entity {
     this.set("requiredBytesList", Value.fromBytesArray(value as Array<Bytes>));
   }
 
-  get optionalInt(): i32 | null {
+  get optionalInt(): i32 {
     let value = this.get("optionalInt");
-    if (value === null) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value.toI32();
   }
 
-  set optionalInt(value: i32 | null) {
-    if (value === null) {
-      this.unset("optionalInt");
-    } else {
-      this.set("optionalInt", Value.fromI32(value as i32));
-    }
+  set optionalInt(value: i32) {
+    this.set("optionalInt", Value.fromI32(value as i32));
   }
 
   get requiredInt(): i32 {
