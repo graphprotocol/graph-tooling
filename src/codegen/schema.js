@@ -128,12 +128,8 @@ module.exports = class SchemaCodeGenerator {
                             'value',
                             fieldValueType
                           )}`
-    // Todo: An API that doesn't conflate `false`, `0` and `null`.
-    let nullLike = returnType.toString() === 'boolean | null' ? 'false' :
-                   returnType.toString() === 'i32 | null' ? '0' :
-                   'null'
     let getNullable = `if (value === null) {
-                          return ${nullLike}
+                          return null
                         } else {
                           ${getNonNullable}
                         }`
@@ -189,22 +185,17 @@ module.exports = class SchemaCodeGenerator {
   }
 
   _typeFromGraphQl(gqlType, nullable = true) {
-    return gqlType.get('kind') === 'NonNullType'
-      ? this._typeFromGraphQl(gqlType.get('type'), false)
-      : gqlType.get('kind') === 'ListType'
-        ? nullable
-          ? tsCodegen.nullableType(
-              tsCodegen.arrayType(this._typeFromGraphQl(gqlType.get('type')))
-            )
-          : tsCodegen.arrayType(this._typeFromGraphQl(gqlType.get('type')))
-        : nullable
-          ? tsCodegen.nullableType(
-              tsCodegen.namedType(
-                typesCodegen.ascTypeForValue(gqlType.getIn(['name', 'value']))
-              )
-            )
-          : tsCodegen.namedType(
-              typesCodegen.ascTypeForValue(gqlType.getIn(['name', 'value']))
-            )
+    if (gqlType.get('kind') === 'NonNullType') {
+      return this._typeFromGraphQl(gqlType.get('type'), false)
+    } else if (gqlType.get('kind') === 'ListType') {
+      let type = tsCodegen.arrayType(this._typeFromGraphQl(gqlType.get('type')))
+      return nullable ? tsCodegen.nullableType(type) : type
+    } else { // NamedType
+      let type = tsCodegen.namedType(
+        typesCodegen.ascTypeForValue(gqlType.getIn(['name', 'value']))
+      )
+      // In AssemblyScript, primitives cannot be nullable.
+      return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type
+    }
   }
 }
