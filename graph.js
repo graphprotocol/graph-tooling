@@ -234,10 +234,6 @@ app
     )
 
     let requestUrl = new URL(cmd.node)
-    if (!requestUrl.port) {
-      requestUrl.port = '8020'
-    }
-
     let client = jayson.Client.http(requestUrl)
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
@@ -343,11 +339,8 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     let requestUrl = new URL(cmd.node)
-    if (!requestUrl.port) {
-      requestUrl.port = '8020'
-    }
-
     let client = jayson.Client.http(requestUrl)
+
     if (cmd.apiKey !== undefined) {
       client.options.headers = { Authorization: 'Bearer ' + cmd.apiKey }
     }
