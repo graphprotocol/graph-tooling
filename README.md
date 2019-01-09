@@ -118,7 +118,7 @@ graph \
 ```
 ## License
 
-Copyright &copy; 2019 Graph Protocol, Inc. and contributors.
+Copyright &copy; 2018-2019 Graph Protocol, Inc. and contributors.
 
 The Graph CLI is dual-licensed under the [MIT license](LICENSE-MIT) and the [Apache License, Version 2.0](LICENSE-APACHE).
 
