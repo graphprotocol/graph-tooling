@@ -338,6 +338,51 @@ app
   })
 
 app
+  .command('create [SUBGRAPH_NAME]')
+  .description('Creates a named subgraph name')
+  .option('-g, --node <URL>[:PORT]', 'Graph node to create the subgraph in')
+  .option('--access-token <TOKEN>', 'Graph access token')
+  .action(async (subgraphName, cmd) => {
+    if (subgraphName === undefined || cmd.node === undefined) {
+      console.error('Cannot create the subgraph')
+      console.error('--')
+      outputNameAndNodeConfig(cmd, { subgraphNameFromFlag: false, subgraphName })
+      console.error('--')
+      console.error('For more information run this command with --help')
+      process.exitCode = 1
+      return
+    }
+
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
+    let requestUrl = new URL(cmd.node)
+    let client = jayson.Client.http(requestUrl)
+
+    // Use the access token, if one is set
+    let accessToken = await identifyAccessToken(app, cmd)
+    if (accessToken !== undefined && accessToken !== null) {
+      client.options.headers = { Authorization: 'Bearer ' + accessToken }
+    }
+
+    logger.status('Creating subgraph in Graph node:', requestUrl)
+    client.request('subgraph_create', { name: subgraphName }, function(
+      requestError,
+      jsonRpcError,
+      res
+    ) {
+      if (requestError) {
+        logger.fatal('HTTP error creating the subgraph:', requestError.code)
+      }
+      if (jsonRpcError) {
+        logger.fatal('Error creating the subgraph:', jsonRpcError.message)
+      }
+      if (!requestError && !jsonRpcError) {
+        logger.status('Created subgraph:', subgraphName)
+      }
+    })
+  })
+
+app
   .command('remove [SUBGRAPH_NAME]')
   .description('Removes subgraph from node')
   .option('-g, --node <URL>[:PORT]', 'Graph node to remove the subgraph from')
