@@ -38,13 +38,23 @@ function normalizeNodeUrl(node) {
   return new URL(node).toString()
 }
 
-function outputNameAndNodeConfig(cmd) {
+function outputNameAndNodeConfig(
+  cmd,
+  { subgraphNameFromFlag, subgraphName } = {
+    subgraphNameFromFlag: true,
+    subgraphName: undefined,
+  }
+) {
   console.error('Configuration:')
   console.error('')
-  if (cmd.subgraphName === undefined) {
+  if (subgraphNameFromFlag && cmd.subgraphName === undefined) {
     console.error('  Subgraph name: No name defined with -n/--subgraph-name')
+  } else if (!subgraphNameFromFlag && subgraphName === undefined) {
+    console.error('  Subgraph name: Not provided')
   } else {
-    console.error(`  Subgraph name: ${cmd.subgraphName}`)
+    console.error(
+      `  Subgraph name: ${subgraphNameFromFlag ? cmd.subgraphName : subgraphName}`
+    )
   }
   if (cmd.node === undefined) {
     console.error('  Graph node:    No node defined with -g/--node')
@@ -75,6 +85,41 @@ function outputAuthConfig(node, accessToken) {
     console.error('  Access token: Missing')
   } else if (accessToken.length > 200) {
     console.error('  AccessToken: Access token is too long')
+  }
+}
+
+async function identifyAccessToken(app, cmd) {
+  // Determine the access token to use, if any:
+  // - First try using --access-token, if provided
+  // - Then see if we have an access token set for the Graph node
+  if (cmd.accessToken !== undefined) {
+    return cmd.accessToken
+  } else {
+    try {
+      let node = normalizeNodeUrl(cmd.node)
+      return await keytar.getPassword('graphprotocol-auth', node)
+    } catch (e) {
+      if (process.platform === 'win32') {
+        logger.errorWarning(
+          `Could not get access token from Windows Credential Vault:`,
+          e
+        )
+      } else if (process.platform === 'darwin') {
+        logger.errorWarning(`Could not get access token from macOS Keychain:`, e)
+      } else if (process.platform === 'linux') {
+        logger.errorWarning(
+          `Could not get access token from libsecret ` +
+            `(usually gnome-keyring or ksecretservice):`,
+          e
+        )
+      } else {
+        logger.errorWarning(
+          `Could not get access token from OS secret storage service:`,
+          e
+        )
+      }
+      logger.status(`Continuing without an access token`)
+    }
   }
 }
 
@@ -187,7 +232,7 @@ app
       } else if (process.platform === 'linux') {
         logger.error(
           `Error storing access token with libsecret ` +
-          `(usually gnome-keyring or ksecretservice):`,
+            `(usually gnome-keyring or ksecretservice):`,
           e
         )
       } else {
@@ -238,35 +283,8 @@ app
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
-    // Determine the access token to use, if any:
-    // - First try using --access-token, if provided
-    // - Then see if we have an access token set for the Graph node
-    let accessToken = undefined
-    if (cmd.accessToken !== undefined) {
-      accessToken = cmd.accessToken
-    } else {
-      try {
-        let node = normalizeNodeUrl(cmd.node)
-        accessToken = await keytar.getPassword('graphprotocol-auth', node)
-      } catch (e) {
-        if (process.platform === 'win32') {
-          logger.errorWarning(`Could not get access token from Windows Credential Vault:`, e)
-        } else if (process.platform === 'darwin') {
-          logger.errorWarning(`Could not get access token from macOS Keychain:`, e)
-        } else if (process.platform === 'linux') {
-          logger.errorWarning(
-            `Could not get access token from libsecret ` +
-            `(usually gnome-keyring or ksecretservice):`,
-            e
-          )
-        } else {
-          logger.errorWarning(`Could not get access token from OS secret storage service:`, e)
-        }
-        logger.status(`Continuing without an access token`)
-      }
-    }
-
     // Use the access token, if one is set
+    let accessToken = await identifyAccessToken(app, cmd)
     if (accessToken !== undefined && accessToken !== null) {
       client.options.headers = { Authorization: 'Bearer ' + accessToken }
     }
@@ -320,16 +338,15 @@ app
   })
 
 app
-  .command('remove')
+  .command('remove [SUBGRAPH_NAME]')
   .description('Removes subgraph from node')
-  .option('-k, --api-key <KEY>', 'Graph API key authorized to manage the subgraph name')
   .option('-g, --node <URL>[:PORT]', 'Graph node to remove the subgraph from')
-  .option('-n, --subgraph-name <NAME>', 'Subgraph name to remove')
-  .action(cmd => {
-    if (cmd.subgraphName === undefined || cmd.node === undefined) {
+  .option('--access-token <TOKEN>', 'Graph access token')
+  .action(async (subgraphName, cmd) => {
+    if (subgraphName === undefined || cmd.node === undefined) {
       console.error('Cannot remove the subgraph')
       console.error('--')
-      outputNameAndNodeConfig(cmd)
+      outputNameAndNodeConfig(cmd, { subgraphNameFromFlag: false, subgraphName })
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
@@ -341,13 +358,14 @@ app
     let requestUrl = new URL(cmd.node)
     let client = jayson.Client.http(requestUrl)
 
-    if (cmd.apiKey !== undefined) {
-      client.options.headers = { Authorization: 'Bearer ' + cmd.apiKey }
+    // Use the access token, if one is set
+    let accessToken = await identifyAccessToken(app, cmd)
+    if (accessToken !== undefined && accessToken !== null) {
+      client.options.headers = { Authorization: 'Bearer ' + accessToken }
     }
 
     logger.status('Removing subgraph from Graph node:', requestUrl)
-    logger.info('')
-    client.request('subgraph_remove', { name: cmd.subgraphName }, function(
+    client.request('subgraph_remove', { name: subgraphName }, function(
       requestError,
       jsonRpcError,
       res
@@ -359,7 +377,7 @@ app
         logger.fatal('Error removing the subgraph:', jsonRpcError.message)
       }
       if (!requestError && !jsonRpcError) {
-        logger.status('Removed subgraph from node')
+        logger.status('Removed subgraph:', subgraphName)
       }
     })
   })
