@@ -45,6 +45,10 @@ module.exports = class TypeGenerator {
 
       let schema = this.loadSchema(subgraph)
       this.generateTypesForSchema(schema)
+
+      this.logger.status('Types generated')
+      this.logger.note('')
+
       return true
     } catch (e) {
       this.logger.error('Failed to generate types:', e)
@@ -103,8 +107,6 @@ module.exports = class TypeGenerator {
       return abis.map((abi, name) => this._generateTypesForABI(abi))
     } catch (e) {
       throw Error(`Failed to generate types for contract ABIs: ${e}`)
-    } finally {
-      this.logger.status('Types generated')
     }
   }
 
