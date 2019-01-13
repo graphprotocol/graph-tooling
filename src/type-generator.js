@@ -17,9 +17,6 @@ module.exports = class TypeGenerator {
       prefix: this.options.logger.prefix,
       verbosity: this.options.logger.verbosity,
     })
-    this.displayPath = this.options.displayPath
-      ? this.options.displayPath
-      : s => path.relative(process.cwd(), s)
     this.sourceDir =
       this.options.sourceDir ||
       (this.options.subgraphManifest && path.dirname(this.options.subgraphManifest))
@@ -27,6 +24,10 @@ module.exports = class TypeGenerator {
     process.on('uncaughtException', function(e) {
       this.logger.error('UNCAUGHT EXCEPTION:', e)
     })
+  }
+
+  displayPath(p) {
+    return path.relative(process.cwd(), p)
   }
 
   generateTypes() {
