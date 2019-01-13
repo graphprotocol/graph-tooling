@@ -13,7 +13,7 @@ let Watcher = require('./watcher')
 module.exports = class TypeGenerator {
   constructor(options) {
     this.options = options || {}
-    this.logger = new Logger(3, {
+    this.logger = new Logger(5, {
       prefix: this.options.logger.prefix,
       verbosity: this.options.logger.verbosity,
     })
@@ -184,6 +184,9 @@ module.exports = class TypeGenerator {
 
       // Add the subgraph manifest file
       files.push(this.options.subgraphManifest)
+
+      // Add the GraphQL schema to the watched files
+      files.push(subgraph.getIn(['schema', 'file']))
 
       // Add all file paths specified in manifest
       subgraph.get('dataSources').map(dataSource => {
