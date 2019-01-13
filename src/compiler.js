@@ -7,7 +7,6 @@ const yaml = require('js-yaml')
 
 const Logger = require('./logger')
 const Subgraph = require('./subgraph')
-const TypeGenerator = require('./type-generator')
 const Watcher = require('./watcher')
 const ABI = require('./abi')
 
@@ -197,21 +196,12 @@ class Compiler {
         throw e
       }
 
-      let libs = path.join(baseDir, 'node_modules');
+      let libs = path.join(baseDir, 'node_modules')
       let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
       global = path.relative(baseDir, global)
 
       asc.main(
-        [
-          inputFile,
-          global,
-          '--baseDir',
-          baseDir,
-          '--lib',
-          libs,
-          '--outFile',
-          outputFile,
-        ],
+        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile],
         {
           stdout: process.stdout,
           stderr: process.stdout,
