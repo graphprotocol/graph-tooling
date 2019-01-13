@@ -63,6 +63,7 @@ class Compiler {
   completed(ipfsHashOrPath) {
     this.logger.status('Build completed')
     this.logger.status(chalk.bold(chalk.blue('Subgraph:')), ipfsHashOrPath)
+    this.logger.note('')
   }
 
   loadSubgraph() {
