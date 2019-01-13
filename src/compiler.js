@@ -29,11 +29,7 @@ class Compiler {
   }
 
   displayPath(p) {
-    if (p.indexOf(this.sourceDir) >= 0) {
-      return p.replace(this.sourceDir, '<src>')
-    } else {
-      return path.relative(process.cwd(), p)
-    }
+    return path.relative(process.cwd(), p)
   }
 
   async compile() {
