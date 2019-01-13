@@ -248,7 +248,7 @@ app
 app
   .command('deploy [SUBGRAPH_MANIFEST]')
   .description('Deploys the subgraph to a graph node')
-  .option('-g, --node <URL>[:PORT]', 'Graph node to deploy to')
+  .option('-g, --node <URL>', 'Graph node to deploy to')
   .option('-i, --ipfs <ADDR>', 'IPFS node to use for uploading files')
   .option('-n, --subgraph-name <NAME>', 'Subgraph name')
   .option('--access-token <TOKEN>', 'Graph access token')
@@ -340,7 +340,7 @@ app
 app
   .command('create [SUBGRAPH_NAME]')
   .description('Creates a named subgraph name')
-  .option('-g, --node <URL>[:PORT]', 'Graph node to create the subgraph in')
+  .option('-g, --node <URL>', 'Graph node to create the subgraph in')
   .option('--access-token <TOKEN>', 'Graph access token')
   .action(async (subgraphName, cmd) => {
     if (subgraphName === undefined || cmd.node === undefined) {
@@ -385,7 +385,7 @@ app
 app
   .command('remove [SUBGRAPH_NAME]')
   .description('Removes subgraph from node')
-  .option('-g, --node <URL>[:PORT]', 'Graph node to remove the subgraph from')
+  .option('-g, --node <URL>', 'Graph node to remove the subgraph from')
   .option('--access-token <TOKEN>', 'Graph access token')
   .action(async (subgraphName, cmd) => {
     if (subgraphName === undefined || cmd.node === undefined) {
