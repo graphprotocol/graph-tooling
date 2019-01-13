@@ -38,23 +38,13 @@ function normalizeNodeUrl(node) {
   return new URL(node).toString()
 }
 
-function outputNameAndNodeConfig(
-  cmd,
-  { subgraphNameFromFlag, subgraphName } = {
-    subgraphNameFromFlag: true,
-    subgraphName: undefined,
-  }
-) {
+function outputNameAndNodeConfig(cmd, { subgraphName } = { subgraphName: undefined }) {
   console.error('Configuration:')
   console.error('')
-  if (subgraphNameFromFlag && cmd.subgraphName === undefined) {
-    console.error('  Subgraph name: No name defined with -n/--subgraph-name')
-  } else if (!subgraphNameFromFlag && subgraphName === undefined) {
+  if (subgraphName === null || subgraphName === undefined) {
     console.error('  Subgraph name: Not provided')
   } else {
-    console.error(
-      `  Subgraph name: ${subgraphNameFromFlag ? cmd.subgraphName : subgraphName}`
-    )
+    console.error(`  Subgraph name: ${subgraphName}`)
   }
   if (cmd.node === undefined) {
     console.error('  Graph node:    No node defined with -g/--node')
@@ -63,8 +53,8 @@ function outputNameAndNodeConfig(
   }
 }
 
-function outputDeployConfig(cmd) {
-  outputNameAndNodeConfig(cmd)
+function outputDeployConfig(cmd, { subgraphName }) {
+  outputNameAndNodeConfig(cmd, { subgraphName })
   if (cmd.ipfs === undefined) {
     console.error('  IPFS:          No node defined with -i/--ipfs')
   } else {
@@ -246,11 +236,10 @@ app
  * graph deploy
  */
 app
-  .command('deploy [SUBGRAPH_MANIFEST]')
+  .command('deploy [SUBGRAPH_NAME] [SUBGRAPH_MANIFEST]')
   .description('Deploys the subgraph to a graph node')
   .option('-g, --node <URL>', 'Graph node to deploy to')
   .option('-i, --ipfs <ADDR>', 'IPFS node to use for uploading files')
-  .option('-n, --subgraph-name <NAME>', 'Subgraph name')
   .option('--access-token <TOKEN>', 'Graph access token')
   .option(
     '-o, --output-dir <PATH>',
@@ -258,14 +247,10 @@ app
     path.resolve(process.cwd(), 'dist')
   )
   .option('-w, --watch', 'Rebuild and redeploy automatically when files change')
-  .action(async (subgraphManifest, cmd) => {
-    if (
-      cmd.subgraphName === undefined ||
-      cmd.node === undefined ||
-      cmd.ipfs === undefined
-    ) {
+  .action(async (subgraphName, subgraphManifest, cmd) => {
+    if (subgraphName === undefined || cmd.node === undefined || cmd.ipfs === undefined) {
       console.error('Cannot deploy the subgraph')
-      outputDeployConfig(cmd)
+      outputDeployConfig(cmd, { subgraphName })
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
@@ -293,7 +278,7 @@ app
       logger.status('Deploying to Graph node:', requestUrl)
       client.request(
         'subgraph_deploy',
-        { name: cmd.subgraphName, ipfs_hash: ipfsHash },
+        { name: subgraphName, ipfs_hash: ipfsHash },
         function(requestError, jsonRpcError, res) {
           if (requestError) {
             logger.fatal('HTTP error deploying the subgraph:', requestError.code)
