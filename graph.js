@@ -331,7 +331,7 @@ app
     if (subgraphName === undefined || cmd.node === undefined) {
       console.error('Cannot create the subgraph')
       console.error('--')
-      outputNameAndNodeConfig(cmd, { subgraphNameFromFlag: false, subgraphName })
+      outputNameAndNodeConfig(cmd, { subgraphName })
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
@@ -376,7 +376,7 @@ app
     if (subgraphName === undefined || cmd.node === undefined) {
       console.error('Cannot remove the subgraph')
       console.error('--')
-      outputNameAndNodeConfig(cmd, { subgraphNameFromFlag: false, subgraphName })
+      outputNameAndNodeConfig(cmd, { subgraphName })
       console.error('--')
       console.error('For more information run this command with --help')
       process.exitCode = 1
