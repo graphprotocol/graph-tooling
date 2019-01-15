@@ -328,7 +328,7 @@ class Compiler {
 
   async _uploadToIPFS(file) {
     try {
-      let hash = (await this.ipfs.files.add([file]))[0].hash
+      let hash = (await this.ipfs.add([file]))[0].hash
       await this.ipfs.pin.add(hash)
       return hash
     } catch (e) {
