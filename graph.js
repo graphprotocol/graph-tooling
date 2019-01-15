@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const app = require('commander')
-const ipfsAPI = require('ipfs-api')
+const ipfsHttpClient = require('ipfs-http-client')
 const jayson = require('jayson')
 const keytar = require('keytar')
 const path = require('path')
@@ -20,8 +20,18 @@ function getVerbosity(app) {
 
 // Helper function to construct a subgraph compiler
 function createCompiler(app, cmd, subgraphManifest) {
+  // Parse the IPFS URL
+  let url = new URL(cmd.ipfs)
+
   // Connect to the IPFS node (if a node address was provided)
-  let ipfs = cmd.ipfs ? ipfsAPI(cmd.ipfs) : undefined
+  let ipfs = cmd.ipfs
+    ? ipfsHttpClient({
+        protocol: url.protocol.replace(/[:]+$/, ''),
+        host: url.hostname,
+        port: url.port,
+        'api-path': url.pathname,
+      })
+    : undefined
 
   return new Compiler({
     ipfs,
