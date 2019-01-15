@@ -1,8 +1,7 @@
 language: node_js
 node_js:
-  - "8"
-  - "9"
   - "10"
+  - "11"
 cache: yarn
 before_install:
   - sudo apt-get install libsecret-1-dev dbus gnome-keyring python-keyring python-gnomekeyring
