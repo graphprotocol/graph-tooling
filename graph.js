@@ -18,6 +18,17 @@ function getVerbosity(app) {
   return app.debug ? 'debug' : app.verbose ? 'verbose' : app.verbosity
 }
 
+function createJsonRpcClient(url) {
+  let params = {
+    host: url.hostname,
+    port: url.port,
+    path: url.pathname,
+  }
+  return url.protocol === 'https:'
+    ? jayson.Client.https(params)
+    : jayson.Client.http(params)
+}
+
 // Helper function to construct a subgraph compiler
 function createCompiler(app, cmd, subgraphManifest) {
   // Parse the IPFS URL
@@ -274,7 +285,7 @@ app
     )
 
     let requestUrl = new URL(cmd.node)
-    let client = jayson.Client.http(requestUrl)
+    let client = createJsonRpcClient(requestUrl)
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
@@ -351,7 +362,7 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     let requestUrl = new URL(cmd.node)
-    let client = jayson.Client.http(requestUrl)
+    let client = createJsonRpcClient(requestUrl)
 
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
@@ -396,7 +407,7 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     let requestUrl = new URL(cmd.node)
-    let client = jayson.Client.http(requestUrl)
+    let client = createJsonRpcClient(requestUrl)
 
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
