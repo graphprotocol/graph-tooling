@@ -78,7 +78,7 @@ function outputAuthConfig(node, accessToken) {
   }
 }
 
-async function identifyAccessToken(app, cmd) {
+async function identifyAccessToken(app, cmd, logger) {
   // Determine the access token to use, if any:
   // - First try using --access-token, if provided
   // - Then see if we have an access token set for the Graph node
@@ -269,7 +269,7 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     // Use the access token, if one is set
-    let accessToken = await identifyAccessToken(app, cmd)
+    let accessToken = await identifyAccessToken(app, cmd, logger)
     if (accessToken !== undefined && accessToken !== null) {
       client.options.headers = { Authorization: 'Bearer ' + accessToken }
     }
@@ -344,7 +344,7 @@ app
     let client = jayson.Client.http(requestUrl)
 
     // Use the access token, if one is set
-    let accessToken = await identifyAccessToken(app, cmd)
+    let accessToken = await identifyAccessToken(app, cmd, logger)
     if (accessToken !== undefined && accessToken !== null) {
       client.options.headers = { Authorization: 'Bearer ' + accessToken }
     }
@@ -389,7 +389,7 @@ app
     let client = jayson.Client.http(requestUrl)
 
     // Use the access token, if one is set
-    let accessToken = await identifyAccessToken(app, cmd)
+    let accessToken = await identifyAccessToken(app, cmd, logger)
     if (accessToken !== undefined && accessToken !== null) {
       client.options.headers = { Authorization: 'Bearer ' + accessToken }
     }
