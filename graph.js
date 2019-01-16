@@ -36,8 +36,7 @@ function createJsonRpcClient(url, { logger }) {
     logger.note(
       'The Graph Node URL must be of the following format: http(s)://host[:port]/[path]'
     )
-    process.exitCode = 1
-    process.exit(1)
+    return null
   }
 }
 
@@ -52,8 +51,7 @@ function createCompiler(app, cmd, subgraphManifest, { logger }) {
     logger.note(
       'The IPFS URL must be of the following format: http(s)://host[:port]/[path]'
     )
-    process.exitCode = 1
-    process.exit(1)
+    return null
   }
 
   // Connect to the IPFS node (if a node address was provided)
@@ -225,6 +223,12 @@ app
       { logger }
     )
 
+    // Exit with an error code if the compiler couldn't be created
+    if (!compiler) {
+      process.exitCode = 1
+      return
+    }
+
     // Watch subgraph files for changes or additions, trigger
     // compile (if watch argument specified)
     if (cmd.watch) {
@@ -311,8 +315,20 @@ app
       { logger }
     )
 
+    // Exit with an error code if the compiler couldn't be created
+    if (!compiler) {
+      process.exitCode = 1
+      return
+    }
+
     let requestUrl = new URL(cmd.node)
     let client = createJsonRpcClient(requestUrl, { logger })
+
+    // Exit with an error code if the client couldn't be created
+    if (!client) {
+      process.exitCode = 1
+      return
+    }
 
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
@@ -389,6 +405,12 @@ app
     let requestUrl = new URL(cmd.node)
     let client = createJsonRpcClient(requestUrl, { logger })
 
+    // Exit with an error code if the client couldn't be created
+    if (!client) {
+      process.exitCode = 1
+      return
+    }
+
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
     if (accessToken !== undefined && accessToken !== null) {
@@ -433,6 +455,12 @@ app
 
     let requestUrl = new URL(cmd.node)
     let client = createJsonRpcClient(requestUrl, { logger })
+
+    // Exit with an error code if the client couldn't be created
+    if (!client) {
+      process.exitCode = 1
+      return
+    }
 
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
