@@ -60,7 +60,7 @@ function createCompiler(app, cmd, subgraphManifest, { logger }) {
         protocol: url.protocol.replace(/[:]+$/, ''),
         host: url.hostname,
         port: url.port,
-        'api-path': url.pathname,
+        'api-path': url.pathname.replace(/\/$/, '') + '/api/v0/',
       })
     : undefined
 
