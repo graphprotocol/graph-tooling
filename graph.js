@@ -18,21 +18,43 @@ function getVerbosity(app) {
   return app.debug ? 'debug' : app.verbose ? 'verbose' : app.verbosity
 }
 
-function createJsonRpcClient(url) {
+function createJsonRpcClient(url, { logger }) {
   let params = {
     host: url.hostname,
     port: url.port,
     path: url.pathname,
   }
-  return url.protocol === 'https:'
-    ? jayson.Client.https(params)
-    : jayson.Client.http(params)
+
+  if (url.protocol === 'https:') {
+    return jayson.Client.https(params)
+  } else if (url.protocol === 'http:') {
+    return jayson.Client.http(params)
+  } else {
+    logger.error(
+      `Unsupported protocol: ${url.protocol.substring(0, url.protocol.length - 1)}`
+    )
+    logger.note(
+      'The Graph Node URL must be of the following format: http(s)://host[:port]/[path]'
+    )
+    process.exitCode = 1
+    process.exit(1)
+  }
 }
 
 // Helper function to construct a subgraph compiler
-function createCompiler(app, cmd, subgraphManifest) {
+function createCompiler(app, cmd, subgraphManifest, { logger }) {
   // Parse the IPFS URL
-  let url = cmd.ipfs ? new URL(cmd.ipfs) : undefined
+  let url
+  try {
+    url = cmd.ipfs ? new URL(cmd.ipfs) : undefined
+  } catch (e) {
+    logger.error(`Invalid IPFS URL: ${cmd.ipfs}`)
+    logger.note(
+      'The IPFS URL must be of the following format: http(s)://host[:port]/[path]'
+    )
+    process.exitCode = 1
+    process.exit(1)
+  }
 
   // Connect to the IPFS node (if a node address was provided)
   let ipfs = cmd.ipfs
@@ -195,10 +217,12 @@ app
   .option('-t, --output-format <wasm|wast>', 'Output format (wasm, wast)', 'wasm')
   .option('-w, --watch', 'Rebuild automatically when files change')
   .action((subgraphManifest, cmd) => {
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
     let compiler = createCompiler(
       app,
       cmd,
-      subgraphManifest || path.resolve('subgraph.yaml')
+      subgraphManifest || path.resolve('subgraph.yaml'),
+      { logger }
     )
 
     // Watch subgraph files for changes or additions, trigger
@@ -278,16 +302,17 @@ app
       return
     }
 
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
     let compiler = createCompiler(
       app,
       cmd,
-      subgraphManifest || path.resolve('subgraph.yaml')
+      subgraphManifest || path.resolve('subgraph.yaml'),
+      { logger }
     )
 
     let requestUrl = new URL(cmd.node)
-    let client = createJsonRpcClient(requestUrl)
-
-    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+    let client = createJsonRpcClient(requestUrl, { logger })
 
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
@@ -362,7 +387,7 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     let requestUrl = new URL(cmd.node)
-    let client = createJsonRpcClient(requestUrl)
+    let client = createJsonRpcClient(requestUrl, { logger })
 
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
@@ -407,7 +432,7 @@ app
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
     let requestUrl = new URL(cmd.node)
-    let client = createJsonRpcClient(requestUrl)
+    let client = createJsonRpcClient(requestUrl, { logger })
 
     // Use the access token, if one is set
     let accessToken = await identifyAccessToken(app, cmd, logger)
