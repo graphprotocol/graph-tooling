@@ -32,7 +32,7 @@ function createJsonRpcClient(url) {
 // Helper function to construct a subgraph compiler
 function createCompiler(app, cmd, subgraphManifest) {
   // Parse the IPFS URL
-  let url = new URL(cmd.ipfs)
+  let url = cmd.ipfs ? new URL(cmd.ipfs) : undefined
 
   // Connect to the IPFS node (if a node address was provided)
   let ipfs = cmd.ipfs
