@@ -351,12 +351,26 @@ app
           if (!requestError && !jsonRpcError) {
             logger.status('Deployed successfully')
 
-            // Assume that the host is the same.
-            // In the future the deployment router should also return the host.
-            let base = requestUrl.protocol + '//' + requestUrl.hostname
-            logger.status('Playground:        ', base + res.playground)
-            logger.status('Queries (HTTP):    ', base + res.queries)
-            logger.status('Subscriptions (WS):', base + res.subscriptions)
+            const base = requestUrl.protocol + '//' + requestUrl.hostname
+
+            let playground    = res.playground
+            let queries       = res.queries
+            let subscriptions = res.subscriptions
+
+            // Add a base URL if graph-node did not return the full URL
+            if (playground.charAt(0) === ':') {
+                playground = base + playground
+            }
+            if (queries.charAt(0) === ':') {
+                queries = base + queries
+            }
+            if (subscriptions.charAt(0) === ':') {
+                subscriptions = base + subscriptions
+            }
+
+            logger.status('Playground:        ', playground)
+            logger.status('Queries (HTTP):    ', queries)
+            logger.status('Subscriptions (WS):', subscriptions)
           }
         }
       )
