@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const app = require('commander')
+const fs = require('fs-extra')
 const ipfsHttpClient = require('ipfs-http-client')
 const jayson = require('jayson')
 const keytar = require('keytar')
@@ -9,6 +10,9 @@ const pkginfo = require('pkginfo')(module, 'version')
 const request = require('request')
 const url = require('url')
 const { URL } = url
+const which = require('which')
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
 
 const Compiler = require('./src/compiler')
 const TypeGenerator = require('./src/type-generator')
@@ -116,6 +120,21 @@ function outputAuthConfig(node, accessToken) {
     console.error('  Access token: Missing')
   } else if (accessToken.length > 200) {
     console.error('  AccessToken: Access token is too long')
+  }
+}
+
+function outputInitConfig(directory, subgraphName) {
+  console.error('Configuration:')
+  console.error('')
+  if (directory === undefined || directory === '') {
+    console.error('  Directory:     No directory provided')
+  } else {
+    console.error(`  Directory:     ${directory}`)
+  }
+  if (subgraphName === undefined || subgraphName === '') {
+    console.error('  Subgraph name: No subgraph name provided')
+  } else {
+    console.error(`  Subgraph name: ${subgraphName}`)
   }
 }
 
@@ -299,6 +318,7 @@ app
   .action(async (subgraphName, subgraphManifest, cmd) => {
     if (subgraphName === undefined || cmd.node === undefined || cmd.ipfs === undefined) {
       console.error('Cannot deploy the subgraph')
+      console.error('--')
       outputDeployConfig(cmd, { subgraphName })
       console.error('--')
       console.error('For more information run this command with --help')
@@ -353,24 +373,38 @@ app
 
             const base = requestUrl.protocol + '//' + requestUrl.hostname
 
-            let playground    = res.playground
-            let queries       = res.queries
+            let playground = res.playground
+            let queries = res.queries
             let subscriptions = res.subscriptions
 
             // Add a base URL if graph-node did not return the full URL
             if (playground.charAt(0) === ':') {
-                playground = base + playground
+              playground = base + playground
             }
             if (queries.charAt(0) === ':') {
-                queries = base + queries
+              queries = base + queries
             }
             if (subscriptions.charAt(0) === ':') {
-                subscriptions = base + subscriptions
+              subscriptions = base + subscriptions
             }
 
-            logger.status('Playground:        ', playground)
-            logger.status('Queries (HTTP):    ', queries)
-            logger.status('Subscriptions (WS):', subscriptions)
+            let hostedService = cmd.node.match(/thegraph.com/)
+            if (hostedService) {
+              logger.status(
+                `Live deployment:   `,
+                `https://thegraph.com/explorer/subgraph/${subgraphName}`
+              )
+            }
+            logger.status(
+              'Subgraph endpoints:',
+              [
+                hostedService ? '' : `\nPlayground:         ${playground}`,
+                `Queries (HTTP):     ${queries}`,
+                `Subscriptions (WS): ${subscriptions}`,
+              ]
+                .filter(msg => msg !== undefined)
+                .join('\n')
+            )
           }
         }
       )
@@ -498,6 +532,129 @@ app
         logger.status('Removed subgraph:', subgraphName)
       }
     })
+  })
+
+/**
+ * graph init
+ */
+app
+  .command('init [SUBGRAPH_NAME] [DIRECTORY]')
+  .description('Creates a new subgraph project with basic scaffolding')
+  .action(async (subgraphName, directory, cmd) => {
+    if (!directory || directory === '' || !subgraphName || subgraphName === '') {
+      console.error('Cannot initialize new subgraph')
+      console.error('--')
+      outputInitConfig(directory, subgraphName)
+      process.exitCode = 1
+      return
+    }
+
+    let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
+    if (fs.existsSync(directory)) {
+      logger.fatal(`Directory or file "${directory}" already exists`)
+      process.exitCode = 1
+      return
+    }
+
+    let git = which.sync('git', { nothrow: true })
+    if (git === null) {
+      logger.fatal(
+        `Git was not found on your system. Please install 'git' so it is in $PATH.`
+      )
+      process.exitCode = 1
+      return
+    }
+
+    let yarn = which.sync('yarn', { nothrow: true })
+    let npm = which.sync('npm', { nothrow: true })
+    if (!yarn && !npm) {
+      logger.fatal(
+        `Neither Yarn nor NPM were found on your system. Please install one of them.`
+      )
+      process.exitCode = 1
+      return
+    }
+    let installCommand = yarn ? 'yarn' : 'npm install'
+    let codegenCommand = yarn ? 'yarn codegen' : 'npm run codegen'
+    let deployCommand = yarn ? 'yarn deploy' : 'npm run deploy'
+
+    // Clone the example subgraph repository
+    try {
+      await exec(
+        `${git} clone http://github.com/graphprotocol/example-subgraph ${directory}`
+      )
+    } catch (e) {
+      logger.fatal(`Failed to clone example subgraph repository:`, e)
+      process.exitCode = 1
+      return
+    }
+
+    // Update package.json to match the subgraph name
+    try {
+      // Load package.json
+      let pkgJsonFilename = path.join(directory, 'package.json')
+      let pkgJson = JSON.parse(fs.readFileSync(pkgJsonFilename, { encoding: 'utf-8' }))
+
+      pkgJson.name = path.basename(subgraphName)
+      Object.keys(pkgJson.scripts).forEach(name => {
+        pkgJson.scripts[name] = pkgJson.scripts[name].replace('example', subgraphName)
+      })
+      delete pkgJson['license']
+      delete pkgJson['repository']
+
+      // Write package.json
+      let output = JSON.stringify(pkgJson, undefined, 2)
+      fs.writeFileSync(pkgJsonFilename, output, { encoding: 'utf-8' })
+    } catch (e) {
+      logger.fatal(`Failed to preconfigure the subgraph:`, e)
+      process.exitCode = 1
+      fs.removeSync(directory)
+      return
+    }
+
+    // Reset the git repository
+    try {
+      await exec(
+        `\
+cd ${directory} \
+  && rm -rf .git \
+  && git init \
+  && git add --all \
+  && git commit -m "Initial commit"`
+      )
+    } catch (e) {
+      logger.fatal(`Failed to initialize the subgraph directory:`, e)
+      process.exitCode = 1
+      return
+    }
+
+    logger.status(
+      `Subgraph "${subgraphName}" created.`,
+      `
+
+Next steps:
+
+1. Run \`graph auth https://api.thegraph.com/deploy/<your access token>\`
+   to authenticate with the hosted service. You can get the access token from
+   https://thegraph.com/explorer/dashboard/.
+
+2. Type \`cd ${directory}\` to enter the subgraph.
+
+3. Run \`${installCommand}\` to install dependencies.
+
+4. Run \`${codegenCommand}\` to generate code from contract ABIs and the GraphQL schema.
+
+5. Run \`${deployCommand}\` to deploy the subgraph to
+   https://thegraph.com/explorer/subgraph/${subgraphName}.
+`
+    )
+
+    logger.info(
+      `\
+Make sure to visit the documentation on https://thegraph.com/docs/ for
+further information.`
+    )
   })
 
 app.command('*', { noHelp: true }).action(args => {
