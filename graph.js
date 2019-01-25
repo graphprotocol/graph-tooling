@@ -635,7 +635,7 @@ cd ${directory} \
 
 Next steps:
 
-1. Run \`graph auth https://api.thegraph.com/deploy/<your access token>\`
+1. Run \`graph auth https://api.thegraph.com/deploy/ <your access token>\`
    to authenticate with the hosted service. You can get the access token from
    https://thegraph.com/explorer/dashboard/.
 
