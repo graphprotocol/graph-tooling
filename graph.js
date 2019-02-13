@@ -13,6 +13,7 @@ const { URL } = url
 const which = require('which')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
+const os = require('os')
 
 const Compiler = require('./src/compiler')
 const TypeGenerator = require('./src/type-generator')
@@ -542,7 +543,7 @@ app
   .description('Creates a new subgraph project with basic scaffolding')
   .option('--allow-simple-name', 'Use a subgraph name without a prefix component', false)
   .action(async (subgraphName, directory, cmd) => {
-    if (!directory || directory === '' || !subgraphName || subgraphName === '') {
+    if (!subgraphName || subgraphName === '') {
       console.error('Cannot initialize new subgraph')
       console.error('--')
       outputInitConfig(directory, subgraphName)
@@ -554,14 +555,19 @@ app
 
     if (!cmd.allowSimpleName && subgraphName == path.basename(subgraphName)) {
       logger.fatal(
-        `
-Subgraph name needs to have the format <PREFIX>/${subgraphName}.
-You can bypass this with --allow-simple-name.
-`
+        `Subgraph name "${subgraphName}" needs to have the format "<PREFIX>/${subgraphName}".
+You can bypass this with --allow-simple-name.`
       )
+      logger.info(`
+Examples:
+$ graph init ${os.userInfo().username}/${subgraphName}${directory ? ` ${directory}` : ''}
+$ graph init ${subgraphName}${directory ? ` ${directory}` : ''} --allow-simple-name`)
       process.exitCode = 1
       return
     }
+
+    // Default to the subgraph name as the directory name
+    directory = directory || path.basename(subgraphName)
 
     if (fs.existsSync(directory)) {
       logger.fatal(`Directory or file "${directory}" already exists`)
@@ -642,7 +648,10 @@ cd ${directory} \
     }
 
     logger.status(
-      `Subgraph "${subgraphName}" created.`,
+      `Subgraph "${subgraphName}" created in ${path.relative(
+        process.cwd(),
+        directory
+      )}/.`,
       `
 
 Next steps:
