@@ -556,7 +556,10 @@ app
     if (!cmd.allowSimpleName && subgraphName == path.basename(subgraphName)) {
       logger.fatal(
         `Subgraph name "${subgraphName}" needs to have the format "<PREFIX>/${subgraphName}".
-You can bypass this with --allow-simple-name.`
+When using the Hosted Service at https://thegraph.com, <PREFIX> is
+going to be the name of your user or organization account.
+
+You can bypass this check with --allow-simple-name.`
       )
       logger.info(`
 Examples:
