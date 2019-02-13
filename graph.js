@@ -376,7 +376,7 @@ app
               if (hostedService) {
                 logger.info(
                   `
-You may need to created it at https://thegraph.com/explorer/dashboard`
+You may need to created it at https://thegraph.com/explorer/dashboard.`
                 )
               } else {
                 logger.info(
