@@ -540,6 +540,7 @@ app
 app
   .command('init [SUBGRAPH_NAME] [DIRECTORY]')
   .description('Creates a new subgraph project with basic scaffolding')
+  .option('--allow-simple-name', 'Use a subgraph name without a prefix component', false)
   .action(async (subgraphName, directory, cmd) => {
     if (!directory || directory === '' || !subgraphName || subgraphName === '') {
       console.error('Cannot initialize new subgraph')
@@ -550,6 +551,17 @@ app
     }
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
+
+    if (!cmd.allowSimpleName && subgraphName == path.basename(subgraphName)) {
+      logger.fatal(
+        `
+Subgraph name needs to have the format <PREFIX>/${subgraphName}.
+You can bypass this with --allow-simple-name.
+`
+      )
+      process.exitCode = 1
+      return
+    }
 
     if (fs.existsSync(directory)) {
       logger.fatal(`Directory or file "${directory}" already exists`)
