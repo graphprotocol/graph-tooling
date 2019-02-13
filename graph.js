@@ -370,17 +370,21 @@ app
           }
           if (jsonRpcError) {
             logger.fatal('Error deploying the subgraph:', jsonRpcError.message)
-            if (hostedService) {
-              logger.info(
-                `
+
+            // Provide helpful advice when the subgraph has not been created yet
+            if (jsonRpcError.message.match(/subgraph name not found/)) {
+              if (hostedService) {
+                logger.info(
+                  `
 You may need to created it at https://thegraph.com/explorer/dashboard`
-              )
-            } else {
-              logger.info(
-                `
+                )
+              } else {
+                logger.info(
+                  `
 Make sure to create the subgraph first by running the following command:
 $ graph create --node ${cmd.node} ${subgraphName}`
-              )
+                )
+              }
             }
           }
           if (!requestError && !jsonRpcError) {
