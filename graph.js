@@ -329,6 +329,8 @@ app
 
     let logger = new Logger(0, { verbosity: getVerbosity(app) })
 
+    let hostedService = cmd.node.match(/thegraph.com/)
+
     let compiler = createCompiler(
       app,
       cmd,
@@ -368,6 +370,18 @@ app
           }
           if (jsonRpcError) {
             logger.fatal('Error deploying the subgraph:', jsonRpcError.message)
+            if (hostedService) {
+              logger.info(
+                `
+You may need to created it at https://thegraph.com/explorer/dashboard`
+              )
+            } else {
+              logger.info(
+                `
+Make sure to create the subgraph first by running the following command:
+$ graph create --node ${cmd.node} ${subgraphName}`
+              )
+            }
           }
           if (!requestError && !jsonRpcError) {
             logger.status('Deployed successfully')
@@ -389,7 +403,6 @@ app
               subscriptions = base + subscriptions
             }
 
-            let hostedService = cmd.node.match(/thegraph.com/)
             if (hostedService) {
               logger.status(
                 `Live deployment:   `,
