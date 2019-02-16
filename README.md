@@ -8,6 +8,7 @@
 As of today, the command line interface consists of five commands:
 
 - `graph codegen` — Generates TypeScript code for smart contract ABIs used in subgraphs.
+- `graph create` - Creates the subgraph on the Graph Node (must be ran before `graph deploy`)
 - `graph build` — Compiles subgraphs to WebAssembly and deploys them to IPFS.
 - `graph deploy` — Deploys subgraphs to a [Graph Node](https://github.com/graphprotocol/graph-node).
 - `graph remove` — Removes subgraphs from a [Graph Node](https://github.com/graphprotocol/graph-node).
@@ -70,10 +71,9 @@ For clarity, an example of the setup below can be found in the [ENS subgraph rep
     {
       "scripts": {
         "codegen": "graph codegen --output-dir types/",
-        "build": "graph build",
-        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001",
+        "create": "graph create --node http://127.0.0.1:8020 <SUBGRAPH_NAME>",
         "deploy":
-          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name <SUBGRAPH_NAME>"
+          "graph deploy --debug --ipfs http://localhost:5001/ --node http://127.0.0.1:8020 <SUBGRAPH_NAME>"
       }
     }
     ```
@@ -86,7 +86,9 @@ For clarity, an example of the setup below can be found in the [ENS subgraph rep
 
 7.  Develop your `mapping.ts` against these generated types. If you are new to this process, read the [Getting Started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md#34-write-your-mappings) document for a beginner-friendly walkthrough of The Graph.
 
-8.  Deploy your subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node). The following command builds and deploys the subgraph continuously as you are making changes to it:
+8. Create the subgraph with `yarn create`
+
+9.  Deploy your subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node). The following command builds and deploys the subgraph continuously as you are making changes to it:
     ```sh
     graph \
        deploy \
