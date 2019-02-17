@@ -620,7 +620,7 @@ $ graph init ${subgraphName}${directory ? ` ${directory}` : ''} --allow-simple-n
     // Clone the example subgraph repository
     try {
       await exec(
-        `${git} clone http://github.com/graphprotocol/example-subgraph ${directory}`
+        `git clone http://github.com/graphprotocol/example-subgraph ${directory}`
       )
     } catch (e) {
       logger.fatal(`Failed to clone example subgraph repository:`, e)
@@ -655,7 +655,7 @@ $ graph init ${subgraphName}${directory ? ` ${directory}` : ''} --allow-simple-n
     try {
       await exec(
         `\
-cd ${directory} \
+cd "${directory}" \
   && rm -rf .git \
   && git init \
   && git add --all \
