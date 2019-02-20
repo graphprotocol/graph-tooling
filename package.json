@@ -24,7 +24,7 @@
     "winston": "^3.0.0"
   },
   "bin": {
-    "graph": "./graph.js"
+    "graph": "bin/graph"
   },
   "devDependencies": {
     "jest": "^23.6.0",
