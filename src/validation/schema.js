@@ -55,7 +55,7 @@ const validateEntityDirective = def =>
     : immutable.fromJS([
         {
           loc: def.loc,
-          entity: debug.name.value,
+          entity: def.name.value,
           message: `Defined without @entity directive`,
         },
       ])
