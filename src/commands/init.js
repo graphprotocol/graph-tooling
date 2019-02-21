@@ -1,6 +1,10 @@
 const chalk = require('chalk')
 const os = require('os')
 const path = require('path')
+const {
+  getSubgraphBasename,
+  validateSubgraphName,
+} = require('../command-helpers/subgraph')
 
 const HELP = `
 ${chalk.bold('graph init')} [options] ${chalk.bold('<subgraph-name>')}
@@ -10,25 +14,6 @@ ${chalk.dim('Options:')}
   -h, --help                Show usage information
       --allow-simple-name   Use a subgraph name without a prefix component (default: false)
 `
-
-const validateSubgraphName = (name, { allowSimpleName }) => {
-  if (allowSimpleName) {
-    return name
-  } else {
-    if (name.split('/').length !== 2) {
-      throw new Error(`Subgraph name "${name}" needs to have the format "<PREFIX>/${name}".
-When using the Hosted Service at https://thegraph.com, <PREFIX> is the
-name of your GitHub user or organization.
-
-You can bypass this check with --allow-simple-name.`)
-    }
-  }
-}
-
-const getSubgraphBasename = name => {
-  let segments = name.split('/', 2)
-  return segments[segments.length - 1]
-}
 
 module.exports = {
   description: 'Creates a new subgraph with basic scaffolding',
@@ -47,6 +32,12 @@ module.exports = {
     }
 
     // Validate the subgraph name
+    if (!subgraphName) {
+      print.error('No subgraph name provided')
+      print.info(HELP)
+      process.exitCode = 1
+      return
+    }
     try {
       validateSubgraphName(subgraphName, { allowSimpleName })
     } catch (e) {
@@ -97,12 +88,15 @@ Examples:
     let deployCommand = yarn ? 'yarn deploy' : 'npm run deploy'
 
     // Clone the example subgraph repository
+    let spinner
     try {
+      spinner = print.spin('Cloning example subgraph')
       await system.run(
         `git clone http://github.com/graphprotocol/example-subgraph ${directory}`
       )
+      spinner.stop()
     } catch (e) {
-      print.error(`Failed to clone example subgraph repository: ${e}`)
+      spinner.fail(`Failed to clone example subgraph repository: ${e}`)
       process.exitCode = 1
       return
     }
@@ -131,14 +125,16 @@ Examples:
 
     // Reset the git repository
     try {
+      spinner = print.spin('Creating initial commit')
       await filesystem.remove(filesystem.path(directory, '.git'))
       await system.run('git init', { cwd: directory })
       await system.run('git add --all', { cwd: directory })
       await system.run('git commit -m "Initial commit"', {
         cwd: directory,
       })
+      spinner.stop()
     } catch (e) {
-      print.error(
+      spinner.fail(
         `Failed to initialize the subgraph directory ${relativeDirectory}: ${e}`
       )
       process.exitCode = 1
@@ -146,7 +142,9 @@ Examples:
       return
     }
 
-    print.success(`Subgraph "${subgraphName}" created in ${relativeDirectory}/.`)
+    print.success(
+      `Subgraph "${subgraphName}" created in ${relativeDirectory}${filesystem.separator}`
+    )
     print.info(`
 Next steps:
     
@@ -163,7 +161,6 @@ Next steps:
   5. Run \`${deployCommand}\` to deploy the subgraph to
      https://thegraph.com/explorer/subgraph/${subgraphName}.
 
-Make sure to visit the documentation on https://thegraph.com/docs/ for
-further information.`)
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.`)
   },
 }
