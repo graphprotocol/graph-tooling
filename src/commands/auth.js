@@ -18,7 +18,8 @@ module.exports = {
     let { filesystem, print, system } = toolbox
 
     // Read CLI parameters
-    let { h, help, node } = toolbox.parameters.options
+    let { h, help } = toolbox.parameters.options
+    let node = toolbox.parameters.first
     let accessToken = toolbox.parameters.second
 
     // Show help text if requested
