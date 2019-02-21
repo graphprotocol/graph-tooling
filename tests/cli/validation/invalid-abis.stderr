@@ -1,0 +1,5 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Failed to load subgraph: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > mapping > abis > 0 > file
+  No valid ABI in file: InvalidAbi.json

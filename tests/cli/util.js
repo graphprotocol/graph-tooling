@@ -40,7 +40,7 @@ const cliTest = (title, testPath, options) => {
 
 const runCli = async (args = [], cwd = process.cwd()) => {
   // Resolve the path to graph.js
-  let graphCli = path.join(__dirname, '..', '..', 'graph.js')
+  let graphCli = path.join(__dirname, '..', '..', 'bin', 'graph')
 
   // Make sure to set an absolute working directory
   cwd = cwd[0] !== '/' ? path.resolve(__dirname, cwd) : cwd

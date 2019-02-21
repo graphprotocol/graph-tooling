@@ -1,4 +1,0 @@
-Failed to generate types: Failed to load subgraph: Error in schema.graphql:
-
-  MyEntity:
-  - Missing field: id: ID!
