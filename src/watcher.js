@@ -10,9 +10,9 @@ module.exports = class Watcher {
     this.onError = onError
   }
 
-  watch() {
+  async watch() {
     // Collect files to watch
-    let files = this.onCollectFiles()
+    let files = await this.onCollectFiles()
 
     // Initialize watcher
     this.watcher = chokidar.watch(files, {
@@ -43,7 +43,7 @@ module.exports = class Watcher {
     watcher.on('all', async (eventType, file) => {
       try {
         // Collect watch all new files to watch
-        let newFiles = onCollectFiles()
+        let newFiles = await onCollectFiles()
 
         // Collect watched files, if there are any
         let watchedFiles = []
