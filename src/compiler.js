@@ -4,8 +4,9 @@ const fs = require('fs-extra')
 const immutable = require('immutable')
 const path = require('path')
 const yaml = require('js-yaml')
+const toolbox = require('gluegun/toolbox')
 
-const Logger = require('./logger')
+const { withSpinner, step } = require('./command-helpers/spinner')
 const Subgraph = require('./subgraph')
 const Watcher = require('./watcher')
 const ABI = require('./abi')
@@ -15,12 +16,9 @@ class Compiler {
     this.options = options
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
-    this.logger = new Logger(this.ipfs !== undefined ? 4 : 3, {
-      verbosity: this.options.logger.verbosity,
-    })
 
     process.on('uncaughtException', function(e) {
-      this.logger.error('UNCAUGHT EXCEPTION:', e)
+      toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }
 
@@ -34,12 +32,9 @@ class Compiler {
 
   async compile() {
     try {
-      this.logger.currentStep = 0
-      this.logger.step('Load subgraph:', this.options.subgraphManifest)
-      let subgraph = this.loadSubgraph()
-
-      let compiledSubgraph = this.compileSubgraph(subgraph)
-      let localSubgraph = this.writeSubgraphToOutputDirectory(compiledSubgraph)
+      let subgraph = await this.loadSubgraph()
+      let compiledSubgraph = await this.compileSubgraph(subgraph)
+      let localSubgraph = await this.writeSubgraphToOutputDirectory(compiledSubgraph)
 
       if (this.ipfs !== undefined) {
         let ipfsHash = await this.uploadSubgraphToIPFS(localSubgraph)
@@ -50,29 +45,34 @@ class Compiler {
         return true
       }
     } catch (e) {
-      this.logger.error('Failed to compile subgraph', e)
       return false
     }
   }
 
   completed(ipfsHashOrPath) {
-    this.logger.status('Build completed')
-    this.logger.status(chalk.bold(chalk.blue('Subgraph:')), ipfsHashOrPath)
-    this.logger.note('')
+    toolbox.print.info('')
+    toolbox.print.success(`Build completed: ${chalk.blue(ipfsHashOrPath)}`)
+    toolbox.print.info('')
   }
 
-  loadSubgraph() {
-    try {
+  async loadSubgraph({ quiet } = { quiet: false }) {
+    if (quiet) {
       return Subgraph.load(this.options.subgraphManifest)
-    } catch (e) {
-      throw Error(`Failed to load subgraph: ${e.message}`)
+    } else {
+      return await withSpinner(
+        `Load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
+        `Failed to load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
+        async spinner => {
+          return Subgraph.load(this.options.subgraphManifest)
+        }
+      )
     }
   }
 
-  getFilesToWatch() {
+  async getFilesToWatch() {
     try {
       let files = []
-      let subgraph = this.loadSubgraph()
+      let subgraph = await this.loadSubgraph({ quiet: true })
 
       // Add the subgraph manifest file
       files.push(this.options.subgraphManifest)
@@ -89,27 +89,33 @@ class Compiler {
       // Make paths absolute
       return files.map(file => path.resolve(file))
     } catch (e) {
-      throw Error(`Failed to parse subgraph file locations: ${e}`)
+      throw Error(`Failed to load subgraph: ${e.message}`)
     }
   }
 
   async watchAndCompile(onCompiled = undefined) {
     let compiler = this
+    let spinner
 
     // Create watcher and recompile once and then on every change to a watched file
     let watcher = new Watcher({
-      onReady: () => compiler.logger.status('Watching subgraph files'),
-      onTrigger: async file => {
-        if (file !== undefined) {
-          compiler.logger.status('File change detected:', this.displayPath(file))
+      onReady: () => (spinner = toolbox.print.spin('Watching subgraph files')),
+      onTrigger: async changedFile => {
+        if (changedFile !== undefined) {
+          spinner.info(`File change detected: ${this.displayPath(changedFile)}\n`)
         }
         let ipfsHash = await compiler.compile()
         if (onCompiled !== undefined) {
           onCompiled(ipfsHash)
         }
+        spinner.start()
       },
-      onCollectFiles: () => compiler.getFilesToWatch(),
-      onError: error => compiler.logger.error('Error:', error),
+      onCollectFiles: async () => await compiler.getFilesToWatch(),
+      onError: error => {
+        spinner.stop()
+        toolbox.print.error(`${error.message}\n`)
+        spinner.start()
+      },
     })
 
     // Catch keyboard interrupt: close watcher and exit process
@@ -119,51 +125,51 @@ class Compiler {
     })
 
     try {
-      watcher.watch()
+      await watcher.watch()
     } catch (e) {
-      this.logger.error('Error:', e)
+      toolbox.print.error(`${e.message}`)
     }
   }
 
-  _copySubgraphFile(maybeRelativeFile, sourceDir, targetDir) {
+  _copySubgraphFile(maybeRelativeFile, sourceDir, targetDir, spinner) {
     let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
     let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
     let targetFile = path.join(targetDir, relativeSourceFile)
-    this.logger.note('Copy subgraph file:', this.displayPath(targetFile))
+    step(spinner, 'Copy subgraph file', this.displayPath(targetFile))
     fs.mkdirsSync(path.dirname(targetFile))
     fs.copyFileSync(absoluteSourceFile, targetFile)
     return targetFile
   }
 
-  _writeSubgraphFile(maybeRelativeFile, data, sourceDir, targetDir) {
+  _writeSubgraphFile(maybeRelativeFile, data, sourceDir, targetDir, spinner) {
     let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
     let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
     let targetFile = path.join(targetDir, relativeSourceFile)
-    this.logger.note('Write subgraph file:', this.displayPath(targetFile))
+    step(spinner, 'Write subgraph file', this.displayPath(targetFile))
     fs.mkdirsSync(path.dirname(targetFile))
     fs.writeFileSync(targetFile, data)
     return targetFile
   }
 
-  compileSubgraph(subgraph) {
-    try {
-      this.logger.step('Compile subgraph')
-
-      subgraph = subgraph.update('dataSources', dataSources =>
-        dataSources.map(dataSource =>
-          dataSource.updateIn(['mapping', 'file'], mappingPath =>
-            this._compileDataSourceMapping(dataSource, mappingPath)
+  async compileSubgraph(subgraph) {
+    return await withSpinner(
+      `Compile subgraph`,
+      `Failed to compile subgraph`,
+      async spinner => {
+        subgraph = subgraph.update('dataSources', dataSources =>
+          dataSources.map(dataSource =>
+            dataSource.updateIn(['mapping', 'file'], mappingPath =>
+              this._compileDataSourceMapping(dataSource, mappingPath, spinner)
+            )
           )
         )
-      )
 
-      return subgraph
-    } catch (e) {
-      throw Error(`Failed to compile subgraph: ${e}`)
-    }
+        return subgraph
+      }
+    )
   }
 
-  _compileDataSourceMapping(dataSource, mappingPath) {
+  _compileDataSourceMapping(dataSource, mappingPath, spinner) {
     try {
       let dataSourceName = dataSource.getIn(['name'])
 
@@ -174,11 +180,10 @@ class Compiler {
           : `${dataSourceName}.wast`
       )
 
-      this.logger.note(
-        'Compile data source mapping:',
-        dataSourceName,
-        '=>',
-        this.displayPath(outFile)
+      step(
+        spinner,
+        'Compile data source:',
+        `${dataSourceName} => ${this.displayPath(outFile)}`
       )
 
       let baseDir = this.sourceDir
@@ -210,113 +215,129 @@ class Compiler {
       )
       return outputFile
     } catch (e) {
-      throw Error(`Failed to compile data source mapping: ${e}`)
+      throw Error(`Failed to compile data source mapping: ${e.message}`)
     }
   }
 
-  writeSubgraphToOutputDirectory(subgraph) {
-    try {
-      this.logger.step('Write compiled subgraph to output directory')
-
-      // Copy schema and update its path
-      subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
-        path.relative(
-          this.options.outputDir,
-          this._copySubgraphFile(schemaFile, this.sourceDir, this.options.outputDir)
+  async writeSubgraphToOutputDirectory(subgraph) {
+    return await withSpinner(
+      `Write compiled subgraph to ${`${this.displayPath(this.options.outputDir)}${
+        toolbox.filesystem.separator
+      }`}`,
+      `Failed to write compiled subgraph to ${`${this.displayPath(
+        this.options.outputDir
+      )}${toolbox.filesystem.separator}`}`,
+      async spinner => {
+        // Copy schema and update its path
+        subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
+          path.relative(
+            this.options.outputDir,
+            this._copySubgraphFile(
+              schemaFile,
+              this.sourceDir,
+              this.options.outputDir,
+              spinner
+            )
+          )
         )
-      )
 
-      // Copy data source files and update their paths
-      subgraph = subgraph.update('dataSources', dataSources => {
-        return dataSources.map(dataSource =>
-          dataSource
-            .updateIn(['mapping', 'abis'], abis =>
-              abis.map(abi =>
-                abi.update('file', abiFile => {
-                  let abiData = ABI.load(abi.get('name'), abiFile)
-                  return path.relative(
-                    this.options.outputDir,
-                    this._writeSubgraphFile(
-                      abiFile,
-                      JSON.stringify(abiData.data.toJS(), null, 2),
-                      this.sourceDir,
-                      this.subgraphDir(this.options.outputDir, dataSource)
+        // Copy data source files and update their paths
+        subgraph = subgraph.update('dataSources', dataSources => {
+          return dataSources.map(dataSource =>
+            dataSource
+              .updateIn(['mapping', 'abis'], abis =>
+                abis.map(abi =>
+                  abi.update('file', abiFile => {
+                    let abiData = ABI.load(abi.get('name'), abiFile)
+                    return path.relative(
+                      this.options.outputDir,
+                      this._writeSubgraphFile(
+                        abiFile,
+                        JSON.stringify(abiData.data.toJS(), null, 2),
+                        this.sourceDir,
+                        this.subgraphDir(this.options.outputDir, dataSource),
+                        spinner
+                      )
                     )
-                  )
-                })
+                  })
+                )
               )
-            )
-            // The mapping file is already being written to the output
-            // directory by the AssemblyScript compiler
-            .updateIn(['mapping', 'file'], mappingFile =>
-              path.relative(this.options.outputDir, mappingFile)
-            )
-        )
-      })
+              // The mapping file is already being written to the output
+              // directory by the AssemblyScript compiler
+              .updateIn(['mapping', 'file'], mappingFile =>
+                path.relative(this.options.outputDir, mappingFile)
+              )
+          )
+        })
 
-      // Write the subgraph manifest itself
-      let outputFilename = path.join(this.options.outputDir, 'subgraph.yaml')
-      this.logger.note('Write subgraph manifest:', this.displayPath(outputFilename))
-      Subgraph.write(subgraph, outputFilename)
+        // Write the subgraph manifest itself
+        let outputFilename = path.join(this.options.outputDir, 'subgraph.yaml')
+        step(spinner, 'Write subgraph manifest', this.displayPath(outputFilename))
+        Subgraph.write(subgraph, outputFilename)
 
-      return subgraph
-    } catch (e) {
-      throw Error(`Failed to write compiled subgraph to output directory: ${e}`)
-    }
+        return subgraph
+      }
+    )
   }
 
   async uploadSubgraphToIPFS(subgraph) {
-    this.logger.step('Upload subgraph to IPFS')
+    return withSpinner(
+      `Upload subgraph to IPFS`,
+      `Failed to upload subgraph to IPFS`,
+      async spinner => {
+        // Collect all source (path -> hash) updates to apply them later
+        let updates = []
 
-    try {
-      // Collect all source (path -> hash) updates to apply them later
-      let updates = []
+        // Upload the schema to IPFS
+        updates.push({
+          keyPath: ['schema', 'file'],
+          value: await this._uploadFileToIPFS(
+            subgraph.getIn(['schema', 'file']),
+            spinner
+          ),
+        })
 
-      // Upload the schema to IPFS
-      updates.push({
-        keyPath: ['schema', 'file'],
-        value: await this._uploadFileToIPFS(subgraph.getIn(['schema', 'file'])),
-      })
+        // Upload the ABIs of all data sources to IPFS
+        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+          for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
+            updates.push({
+              keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
+              value: await this._uploadFileToIPFS(abi.get('file'), spinner),
+            })
+          }
+        }
 
-      // Upload the ABIs of all data sources to IPFS
-      for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-        for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
+        // Upload all mappings
+        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
           updates.push({
-            keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
-            value: await this._uploadFileToIPFS(abi.get('file')),
+            keyPath: ['dataSources', i, 'mapping', 'file'],
+            value: await this._uploadFileToIPFS(
+              dataSource.getIn(['mapping', 'file']),
+              spinner
+            ),
           })
         }
-      }
 
-      // Upload all mappings
-      for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-        updates.push({
-          keyPath: ['dataSources', i, 'mapping', 'file'],
-          value: await this._uploadFileToIPFS(dataSource.getIn(['mapping', 'file'])),
-        })
-      }
+        // Apply all updates to the subgraph
+        for (let update of updates) {
+          subgraph = subgraph.setIn(update.keyPath, update.value)
+        }
 
-      // Apply all updates to the subgraph
-      for (let update of updates) {
-        subgraph = subgraph.setIn(update.keyPath, update.value)
+        // Upload the subgraph itself
+        return await this._uploadSubgraphDefinitionToIPFS(subgraph, spinner)
       }
-
-      // Upload the subgraph itself
-      return await this._uploadSubgraphDefinitionToIPFS(subgraph)
-    } catch (e) {
-      throw new Error(`Failed to upload subgraph to IPFS: ${e}`)
-    }
+    )
   }
 
-  async _uploadFileToIPFS(maybeRelativeFile) {
+  async _uploadFileToIPFS(maybeRelativeFile, spinner) {
     let absoluteFile = path.resolve(this.options.outputDir, maybeRelativeFile)
-    this.logger.note('Add file to IPFS:', this.displayPath(absoluteFile))
+    step(spinner, 'Add file to IPFS', this.displayPath(absoluteFile))
     let content = Buffer.from(fs.readFileSync(absoluteFile), 'utf-8')
     let hash = await this._uploadToIPFS({
       path: path.relative(this.options.outputDir, absoluteFile),
       content: content,
     })
-    this.logger.note('               ..', hash)
+    step(spinner, '              ..', hash)
     return immutable.fromJS({ '/': `/ipfs/${hash}` })
   }
 
@@ -332,7 +353,7 @@ class Compiler {
       await this.ipfs.pin.add(hash)
       return hash
     } catch (e) {
-      throw Error(`Failed to upload file to IPFS: ${e}`)
+      throw Error(`Failed to upload file to IPFS: ${e.message}`)
     }
   }
 }
