@@ -1,5 +1,6 @@
 const chalk = require('chalk')
 const keytar = require('keytar')
+const { validateNodeUrl, normalizeNodeUrl } = require('../command-helpers/node')
 
 const HELP = `
 ${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
