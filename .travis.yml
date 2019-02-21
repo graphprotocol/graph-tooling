@@ -13,8 +13,8 @@ script:
   - yarn test
   - cd examples/example-subgraph
   - yarn
-  - ../../graph.js codegen --output-dir src/types --debug
-  - ../../graph.js build --debug
+  - ../../bin/graph codegen --output-dir src/types --debug
+  - ../../bin/graph build --debug
   # Run `graph auth` inside `dbus-launch` to be able to access gnome-keyring
   # secrets via keytar
-  - dbus-launch bash -c '../../graph.js auth http://some-node-ip.org test-access-token'
+  - dbus-launch bash -c '../../bin/graph auth http://some-node-ip.org test-access-token'
