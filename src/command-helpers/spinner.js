@@ -7,7 +7,7 @@ const step = (spinner, subject, text) => {
       text: toolbox.print.colors.muted(`${subject} ${text}`),
     })
   } else {
-    spinner.stopAndPersist({ text: subject })
+    spinner.stopAndPersist({ text: toolbox.print.colors.muted(subject) })
   }
   spinner.start()
   return spinner
