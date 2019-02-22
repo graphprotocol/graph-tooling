@@ -4,6 +4,7 @@ const validateSubgraphName = (name, { allowSimpleName }) => {
   } else {
     if (name.split('/').length !== 2) {
       throw new Error(`Subgraph name "${name}" needs to have the format "<PREFIX>/${name}".
+
 When using the Hosted Service at https://thegraph.com, <PREFIX> is the
 name of your GitHub user or organization.
 
