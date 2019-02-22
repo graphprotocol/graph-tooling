@@ -104,7 +104,9 @@ const processInitForm = async (toolbox, subgraphName, { allowSimpleName }) => {
 
 const loadAbiFromEtherscan = async (network, address) => {
   let result = await fetch(
-    `https://api.etherscan.io/api?module=contract&action=getabi&address=${address}`
+    `https://${
+      network === 'mainnet' ? 'api' : `api-${network}`
+    }.etherscan.io/api?module=contract&action=getabi&address=${address}`
   )
   let json = await result.json()
   return JSON.parse(json.result)
