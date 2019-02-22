@@ -9,7 +9,7 @@ ${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
 
 ${chalk.dim('Options:')}
 
-  -h, --help                Show usage information
+  -h, --help                    Show usage information
 `
 
 module.exports = {

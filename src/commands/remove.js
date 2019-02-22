@@ -9,10 +9,9 @@ ${chalk.bold('graph remove')} ${chalk.dim('[options]')} ${chalk.bold('<subgraph-
 
 ${chalk.dim('Options:')}
 
-      --access-token <token>
-                            Graph access token
-  -h, --help                Show usage information
-  -g, --node <url>          Graph node to create the subgraph in
+      --access-token <token>    Graph access token
+  -h, --help                    Show usage information
+  -g, --node <url>              Graph node to create the subgraph in
 `
 
 module.exports = {
