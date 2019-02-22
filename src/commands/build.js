@@ -7,12 +7,11 @@ ${chalk.bold('graph build')} [options] ${chalk.bold('[<subgraph-manifest>]')}
 
 Options:
 
-  -h, --help                Show usage information
-      --ipfs <node>         Upload build results to an IPFS node
-  -o, --output-dir <path>   Output directory for build results (default: build/)
-  -t, --output-format <format> 
-                            Output format for mappings (wasm, wast) (default: wasm)
-  -w, --watch               Regenerate types when subgraph files change (default: false)
+  -h, --help                    Show usage information
+      --ipfs <node>             Upload build results to an IPFS node
+  -o, --output-dir <path>       Output directory for build results (default: build/)
+  -t, --output-format <format>  Output format for mappings (wasm, wast) (default: wasm)
+  -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
 module.exports = {

@@ -6,9 +6,9 @@ ${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
 
 Options:
 
-  -h, --help                Show usage information
-  -o, --output-dir <path>   Output directory for generated types (default: generated/)
-  -w, --watch               Regenerate types when subgraph files change (default: false)
+  -h, --help                    Show usage information
+  -o, --output-dir <path>       Output directory for generated types (default: generated/)
+  -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
 module.exports = {

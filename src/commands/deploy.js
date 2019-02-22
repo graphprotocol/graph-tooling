@@ -14,13 +14,12 @@ ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk
 
 Options:
 
-      --access-token <token>
-                            Graph access token
-  -g, --node                Graph node to deploy the subgraph to
-  -h, --help                Show usage information
-      --ipfs <node>         Upload build results to an IPFS node
-  -o, --output-dir <path>   Output directory for build results (default: build/)
-  -w, --watch               Regenerate types when subgraph files change (default: false)
+      --access-token <token>    Graph access token
+  -g, --node                    Graph node to deploy the subgraph to
+  -h, --help                    Show usage information
+      --ipfs <node>             Upload build results to an IPFS node
+  -o, --output-dir <path>       Output directory for build results (default: build/)
+  -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
 module.exports = {

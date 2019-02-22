@@ -11,8 +11,8 @@ ${chalk.bold('graph init')} [options] ${chalk.bold('<subgraph-name>')}
 
 ${chalk.dim('Options:')}
 
-  -h, --help                Show usage information
-      --allow-simple-name   Use a subgraph name without a prefix component (default: false)
+  -h, --help                    Show usage information
+      --allow-simple-name       Use a subgraph name without a prefix component (default: false)
 `
 
 module.exports = {
