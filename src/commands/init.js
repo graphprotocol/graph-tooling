@@ -239,7 +239,7 @@ module.exports = {
 
     // Install dependencies
     let installed = await withSpinner(
-      `Install dependencies with \`${installCommand}\``,
+      `Install dependencies with ${print.colors.muted(installCommand)}`,
       `Failed to install dependencies`,
       async spinner => {
         await system.run(installCommand, { cwd: directory })
@@ -253,7 +253,7 @@ module.exports = {
 
     // Run code-generation
     let codegen = await withSpinner(
-      `Generate ABI and schema types with \`${codegenCommand}\``,
+      `Generate ABI and schema types with ${print.colors.muted(codegenCommand)}`,
       `Failed to generatecode from ABI and GraphQL schema`,
       async spinner => {
         await system.run(codegenCommand, { cwd: directory })
@@ -268,18 +268,20 @@ module.exports = {
     // Print instructions
     print.success(
       `
-Subgraph "${subgraphName}" created in ${directory}${filesystem.separator}
+Subgraph ${print.colors.blue(subgraphName)} created in ${print.colors.blue(directory)}
 `
     )
     print.info(`Next steps:
     
-  1. Run \`graph auth https://api.thegraph.com/deploy/ <access-token>\`
+  1. Run \`${print.colors.muted(
+    'graph auth https://api.thegraph.com/deploy/ <access-token>'
+  )}\`
      to authenticate with the hosted service. You can get the access token from
      https://thegraph.com/explorer/dashboard/.
   
-  2. Type \`cd ${directory}\` to enter the subgraph.
+  2. Type \`${print.colors.muted(`cd ${directory}`)}\` to enter the subgraph.
   
-  3. Run \`${deployCommand}\` to deploy the subgraph to
+  3. Run \`${print.colors.muted(deployCommand)}\` to deploy the subgraph to
      https://thegraph.com/explorer/subgraph/${subgraphName}.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.`)
