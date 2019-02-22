@@ -141,7 +141,7 @@ const generateMapping = ({ abi, subgraphName }) =>
     )
     .join('\n')}
   `,
-    { parser: 'typescript' }
+    { parser: 'typescript', semi: false }
   )
 
 const generateScaffold = async ({ abi, address, network, subgraphName }, spinner) => {
