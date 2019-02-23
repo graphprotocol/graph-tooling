@@ -3,6 +3,7 @@ const path = require('path')
 const prettier = require('prettier')
 const { getSubgraphBasename } = require('./command-helpers/subgraph')
 const { step } = require('./command-helpers/spinner')
+const { ascTypeForEthereum, valueTypeForAsc } = require('./codegen/types')
 
 const abiEvents = abi => abi.filter(item => item.type === 'event')
 
@@ -81,17 +82,10 @@ dataSources:
 
 // Schema
 
-// FIXME: Use the type logic in ./codegen/types
-const ETHEREUM_TYPES = {
-  address: 'Bytes',
-  bytes: 'Bytes',
-  bytes4: 'Bytes',
-  bytes32: 'Bytes',
-  string: 'String',
-  uint256: 'BigInt',
+const ethereumTypeToGraphQL = name => {
+  let ascType = ascTypeForEthereum(name)
+  return valueTypeForAsc(ascType)
 }
-
-const ethereumTypeToGraphQL = name => ETHEREUM_TYPES[name]
 
 const generateEventType = event => `type ${event.name} @entity {
       id: ID!
@@ -193,6 +187,7 @@ const writeScaffold = async (scaffold, directory, spinner) => {
 }
 
 module.exports = {
+  abiEvents,
   generateScaffold,
   writeScaffold,
 }
