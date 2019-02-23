@@ -189,6 +189,13 @@ module.exports = {
       return
     }
 
+    // Fail if the ABI does not contain any events
+    if (abi.filter(item => item.type === 'event').length === 0) {
+      print.error(`ABI does not contain any events`)
+      process.exitCode = 1
+      return
+    }
+
     // Fail if the output directory already exists
     if (toolbox.filesystem.exists(directory)) {
       print.error(`Directory or file "${directory}" already exists`)
