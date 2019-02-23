@@ -161,22 +161,24 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
 const ASSEMBLYSCRIPT_TO_VALUE = [
   // Arrays
 
+  ['Array<Address>', '[Bytes]', code => `Value.fromBytesArray(${code})`],
   ['Array<Bytes>', '[Bytes]', code => `Value.fromBytesArray(${code})`],
   ['Array<boolean>', '[Boolean]', code => `Value.fromBooleanArray(${code})`],
   ['Array<i32>', '[Int]', code => `Value.fromI32Array(${code})`],
   ['Array<BigInt>', '[BigInt]', code => `Value.fromBigIntArray(${code})`],
-  ['Array<string>', '[ID]', code => `Value.fromStringArray(${code})`],
   ['Array<string>', '[String]', code => `Value.fromStringArray(${code})`],
+  ['Array<string>', '[ID]', code => `Value.fromStringArray(${code})`],
   ['Array<string>', /\[.*\]/, code => `Value.fromStringArray(${code})`],
 
   // Scalar values
 
+  ['Address', 'Bytes', code => `Value.fromBytes(${code})`],
   ['Bytes', 'Bytes', code => `Value.fromBytes(${code})`],
   ['boolean', 'Boolean', code => `Value.fromBoolean(${code})`],
   ['i32', 'Int', code => `Value.fromI32(${code})`],
   ['BigInt', 'BigInt', code => `Value.fromBigInt(${code})`],
-  ['string', 'ID', code => `Value.fromString(${code})`],
   ['string', 'String', code => `Value.fromString(${code})`],
+  ['string', 'ID', code => `Value.fromString(${code})`],
   ['string', /.*/, code => `Value.fromString(${code})`],
 ]
 
