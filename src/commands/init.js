@@ -112,7 +112,7 @@ const loadAbiFromEtherscan = async (network, address) => {
   return JSON.parse(json.result)
 }
 
-const loadAbiFromFile = async file => await toolbox.filesystem.read(abiFile, 'json')
+const loadAbiFromFile = async file => await toolbox.filesystem.read(file, 'json')
 
 const loadAbi = async ({ abiFile, address, network, useEtherscan }) => {
   if (useEtherscan) {
