@@ -8,7 +8,7 @@ const {
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
 const { withSpinner, step } = require('../command-helpers/spinner')
-const { generateScaffold, writeScaffold } = require('../scaffold')
+const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
 
 const HELP = `
 ${chalk.bold('graph init')} [options] ${chalk.bold('<subgraph-name>')}
@@ -190,7 +190,7 @@ module.exports = {
     }
 
     // Fail if the ABI does not contain any events
-    if (abi.filter(item => item.type === 'event').length === 0) {
+    if (abiEvents(abi).length === 0) {
       print.error(`ABI does not contain any events`)
       process.exitCode = 1
       return
