@@ -98,7 +98,10 @@ const generateEventType = event => `type ${event.name} @entity {
       ${event.inputs
         // TODO: Support inputs without names
         .map(
-          input => `${input.name}: ${ethereumTypeToGraphQL(input.type)}! # ${input.type}`
+          (input, index) =>
+            `${input.name || `param${index}`}: ${ethereumTypeToGraphQL(input.type)}! # ${
+              input.type
+            }`
         )
         .join('\n')}
     }`
@@ -132,8 +135,11 @@ const generateMapping = ({ abi, subgraphName }) =>
       event.name
     }(event.transaction.hash.toHex() + '-' + event.logIndex.toString())
     ${event.inputs
-      // FIXME: Support inputs without name
-      .map(input => `entity.${input.name} = event.params.${input.name}`)
+      .map(
+        (input, index) =>
+          `entity.${input.name || `param${index}`} = event.params.${input.name ||
+            `param${index}`}`
+      )
       .join('\n')}
     entity.save()
   }
