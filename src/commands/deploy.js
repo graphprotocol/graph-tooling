@@ -17,7 +17,7 @@ Options:
       --access-token <token>    Graph access token
   -g, --node                    Graph node to deploy the subgraph to
   -h, --help                    Show usage information
-      --ipfs <node>             Upload build results to an IPFS node
+  -i, --ipfs <node>             Upload build results to an IPFS node
   -o, --output-dir <path>       Output directory for build results (default: build/)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
@@ -33,22 +33,33 @@ module.exports = {
       accessToken,
       g,
       h,
+      i,
       help,
       ipfs,
       node,
+      o,
       outputDir,
+      w,
       watch,
     } = toolbox.parameters.options
+
+    // Support both long and short option variants
+    help = help || h
+    ipfs = ipfs || i
+    node = node || g
+    outputDir = outputDir || o
+    watch = watch || w
+
+    // Fall back to default values for options / parameters
     outputDir = outputDir && outputDir !== '' ? outputDir : filesystem.path('build')
     let subgraphName = toolbox.parameters.first
     let manifest =
       toolbox.parameters.second !== undefined && toolbox.parameters.second !== ''
         ? toolbox.parameters.second
         : filesystem.resolve('subgraph.yaml')
-    node = node || g
 
     // Show help text if requested
-    if (h || help) {
+    if (help) {
       print.info(HELP)
       return
     }
