@@ -23,10 +23,13 @@ module.exports = {
     // Read CLI parameters
     let { accessToken, g, h, help, node } = toolbox.parameters.options
     let subgraphName = toolbox.parameters.first
+
+    // Support both long and short option variants
     node = node || g
+    help = help || h
 
     // Show help text if requested
-    if (h || help) {
+    if (help) {
       print.info(HELP)
       return
     }

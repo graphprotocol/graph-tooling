@@ -24,7 +24,7 @@ module.exports = {
     let accessToken = toolbox.parameters.second
 
     // Show help text if requested
-    if (h || help) {
+    if (help || h) {
       print.info(HELP)
       return
     }

@@ -18,7 +18,14 @@ module.exports = {
     let { filesystem, print, system } = toolbox
 
     // Read CLI parameters
-    let { h, help, outputDir, watch } = toolbox.parameters.options
+    let { h, help, o, outputDir, w, watch } = toolbox.parameters.options
+
+    // Support both long and short option variants
+    help = help || h
+    outputDir = outputDir || o
+    watch = watch || w
+
+    // Fall back to default values for options / parameters
     outputDir =
       outputDir !== undefined && outputDir !== ''
         ? outputDir
@@ -29,7 +36,7 @@ module.exports = {
         : filesystem.resolve('subgraph.yaml')
 
     // Show help text if requested
-    if (h || help) {
+    if (help) {
       print.info(HELP)
       return
     }

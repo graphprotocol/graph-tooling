@@ -8,7 +8,7 @@ ${chalk.bold('graph build')} [options] ${chalk.bold('[<subgraph-manifest>]')}
 Options:
 
   -h, --help                    Show usage information
-      --ipfs <node>             Upload build results to an IPFS node
+  -i, --ipfs <node>             Upload build results to an IPFS node
   -o, --output-dir <path>       Output directory for build results (default: build/)
   -t, --output-format <format>  Output format for mappings (wasm, wast) (default: wasm)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
@@ -21,7 +21,27 @@ module.exports = {
     let { filesystem, print, system } = toolbox
 
     // Parse CLI parameters
-    let { h, help, ipfs, outputDir, outputFormat, watch } = toolbox.parameters.options
+    let {
+      i,
+      h,
+      help,
+      ipfs,
+      o,
+      outputDir,
+      outputFormat,
+      t,
+      w,
+      watch,
+    } = toolbox.parameters.options
+
+    // Support both short and long option variants
+    help = help || h
+    ipfs = ipfs || i
+    outputDir = outputDir || o
+    outputFormat = outputFormat || t
+    watch = watch || w
+
+    // Fall back to default values for options / parameters
     outputFormat =
       outputFormat && ['wasm', 'wast'].indexOf(outputFormat) >= 0 ? outputFormat : 'wasm'
     outputDir = outputDir && outputDir !== '' ? outputDir : filesystem.path('build')
@@ -31,7 +51,7 @@ module.exports = {
         : filesystem.resolve('subgraph.yaml')
 
     // Show help text if requested
-    if (h || help) {
+    if (help) {
       print.info(HELP)
       return
     }
