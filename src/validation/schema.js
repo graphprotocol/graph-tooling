@@ -146,12 +146,13 @@ const validateInnerFieldType = (defs, def, field) => {
   // Look up a possible suggestion for the type to catch common mistakes
   let suggestion = TYPE_SUGGESTIONS[typeName]
 
-  // Collect all types that we can use here: built-ins + entities + enums
+  // Collect all types that we can use here: built-ins + entities + enums + interfaces
   let availableTypes = List.of(
     ...BUILTIN_SCALAR_TYPES,
     ...defs
       .filter(
-        def => def.kind === 'ObjectTypeDefinition' || def.kind === 'EnumTypeDefinition'
+        def => def.kind === 'ObjectTypeDefinition' || def.kind === 'EnumTypeDefinition' ||
+                def.kind  === 'InterfaceTypeDefinition'
       )
       .map(def => def.name.value)
   )
