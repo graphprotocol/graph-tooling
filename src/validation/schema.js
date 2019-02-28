@@ -151,8 +151,10 @@ const validateInnerFieldType = (defs, def, field) => {
     ...BUILTIN_SCALAR_TYPES,
     ...defs
       .filter(
-        def => def.kind === 'ObjectTypeDefinition' || def.kind === 'EnumTypeDefinition' ||
-                def.kind  === 'InterfaceTypeDefinition'
+        def =>
+          def.kind === 'ObjectTypeDefinition' ||
+          def.kind === 'EnumTypeDefinition' ||
+          def.kind === 'InterfaceTypeDefinition'
       )
       .map(def => def.name.value)
   )
@@ -179,9 +181,25 @@ const validateEntityFieldType = (defs, def, field) =>
     ...validateInnerFieldType(defs, def, field)
   )
 
+const validateEntityFieldArguments = (defs, def, field) =>
+  field.arguments.length > 0
+    ? immutable.fromJS([
+        {
+          loc: field.loc,
+          entity: def.name.value,
+          message: `\
+Field '${field.name.value}': \
+Field arguments are not supported.`,
+        },
+      ])
+    : List()
+
 const validateEntityFields = (defs, def) =>
   def.fields.reduce(
-    (errors, field) => errors.concat(validateEntityFieldType(defs, def, field)),
+    (errors, field) =>
+      errors
+        .concat(validateEntityFieldType(defs, def, field))
+        .concat(validateEntityFieldArguments(defs, def, field)),
     List()
   )
 

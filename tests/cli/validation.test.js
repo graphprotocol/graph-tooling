@@ -10,4 +10,5 @@ describe('Validation', () => {
     exitCode: 1,
   })
   cliTest('Invalid contract addresses', 'validation/invalid-contract-addresses')
+  cliTest('Entity field arguments', 'validation/entity-field-args', { exitCode: 1 })
 })
