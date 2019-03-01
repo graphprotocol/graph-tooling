@@ -1,0 +1,9 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Failed to load subgraph: Error in subgraph.yaml:
+
+  Path: repository
+    The subgraph manifest is still referencing the example repository at https://github.com/rodventures/gravity-subgraph.
+    Please replace it with your repository location or leave blank if you prefer to keep it private.
+
+  Path: description
+    Example subgraph description remains. Please update to provide a short description of what your subgraph is.
