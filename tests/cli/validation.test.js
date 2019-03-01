@@ -30,4 +30,10 @@ describe('Validation', () => {
   cliTest('Entity field arguments', ['codegen'], 'validation/entity-field-args', {
     exitCode: 1,
   })
+  cliTest(
+    'Example values found in manifest',
+    ['codegen'],
+    'validation/example-values-found',
+    { exitCode: 1 }
+  )
 })
