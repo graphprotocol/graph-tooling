@@ -8,19 +8,39 @@ const {
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
 const { withSpinner, step } = require('../command-helpers/spinner')
+const { fixParameters } = require('../command-helpers/gluegun')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
 
 const HELP = `
-${chalk.bold('graph init')} [options] ${chalk.bold('<subgraph-name>')}
+${chalk.bold('graph init')} [options] [subgraph-name] [directory]
 
 ${chalk.dim('Options:')}
 
-  -h, --help                    Show usage information
       --allow-simple-name       Use a subgraph name without a prefix (default: false)
+  -h, --help                    Show usage information
+
+${chalk.dim('Choose mode with one of:')}
+
+      --from-contract <address> Creates a scaffold based on an existing contract
+      --from-example            Creates a scaffold based on an example subgraph
+
+${chalk.dim('Options for --from-contract:')}
+
+      --abi <path>              Path to the contract ABI (default: download from Etherscan)
+      --network <mainnet|kovan|rinkeby|ropsten>
+                                Selects the network the contract is deployed to
 `
 
-const processInitForm = async (toolbox, subgraphName, { allowSimpleName }) => {
-  let useEtherscan = true
+const processInitForm = async (
+  toolbox,
+  { abi, address, allowSimpleName, directory, fromExample, network, subgraphName }
+) => {
+  let networkChoices = ['mainnet', 'kovan', 'rinkeby', 'ropsten']
+  let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
+
+  let abiFromEtherscan = undefined
+  let abiFromFile = undefined
+
   let questions = [
     {
       type: 'input',
@@ -49,88 +69,131 @@ const processInitForm = async (toolbox, subgraphName, { allowSimpleName }) => {
       type: 'input',
       name: 'directory',
       message: 'Directory to create the subgraph in',
-      initial: () => getSubgraphBasename(subgraphName),
+      initial: () => directory || getSubgraphBasename(subgraphName),
       validate: value =>
-        toolbox.filesystem.exists(value) ? 'Directory already exists' : true,
+        toolbox.filesystem.exists(value || directory || getSubgraphBasename(subgraphName))
+          ? 'Directory already exists'
+          : true,
     },
     {
       type: 'select',
       name: 'network',
       message: 'Ethereum network',
-      choices: ['mainnet', 'kovan', 'rinkeby', 'ropsten'],
-      initial: 'mainnet',
-    },
-    {
-      type: 'input',
-      name: 'address',
-      message: 'Contract address',
-      validate: value => {
-        // Validate whether the address is valid
-        let pattern = /^(0x)?[0-9a-fA-F]{40}$/
-        if (pattern.test(value)) {
-          return true
-        } else {
-          return `Contract address "${value}" is invalid.
-  Must be 40 hexadecimal characters, with an optional '0x' prefix.`
-        }
-      },
-    },
-    {
-      type: 'confirm',
-      name: 'useEtherscan',
-      message: 'Fetch ABI from Etherscan?',
-      initial: useEtherscan,
+      choices: networkChoices,
+      skip: fromExample !== undefined,
+      initial: network || 'mainnet',
       result: value => {
-        useEtherscan = value
+        network = value
         return value
       },
     },
     {
       type: 'input',
-      name: 'abiFile',
+      name: 'address',
+      message: 'Contract address',
+      skip: fromExample !== undefined,
+      initial: address,
+      validate: async value => {
+        // Validate whether the address is valid
+        if (!addressPattern.test(value)) {
+          return `Contract address "${value}" is invalid.
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.`
+        }
+
+        return true
+      },
+      result: async value => {
+        if (fromExample) {
+          return value
+        }
+
+        // Try loading the ABI from Etherscan
+        try {
+          abiFromEtherscan = await loadAbiFromEtherscan(network, value)
+        } catch (e) {}
+        return value
+      },
+    },
+    {
+      type: 'input',
+      name: 'abi',
       message: 'ABI file (path)',
-      skip: () => useEtherscan,
-      validate: value =>
-        toolbox.filesystem.exists(value) ? true : 'File does not exist',
+      skip: () => fromExample !== undefined || abiFromEtherscan !== undefined,
+      validate: async value => {
+        if (fromExample || abiFromEtherscan) {
+          return true
+        }
+
+        let exists = await toolbox.filesystem.exists(value)
+        if (!exists) {
+          return 'File does not exist.'
+        } else if (exists === 'dir') {
+          return 'Path points to a directory, not a file.'
+        } else if (exists === 'other') {
+          return 'Not sure what this path points to.'
+        } else {
+          abiFromFile = await toolbox.filesystem.read(value, 'json')
+          return abiFromFile ? true : 'Not a valid ABI file'
+        }
+      },
     },
   ]
 
   try {
-    return await toolbox.prompt.ask(questions)
+    let answers = await toolbox.prompt.ask(questions)
+    return { ...answers, abi: abiFromEtherscan || abiFromFile }
   } catch (e) {
     return undefined
   }
 }
 
-const loadAbiFromEtherscan = async (network, address) => {
-  let result = await fetch(
-    `https://${
-      network === 'mainnet' ? 'api' : `api-${network}`
-    }.etherscan.io/api?module=contract&action=getabi&address=${address}`
+const loadAbiFromEtherscan = async (network, address) =>
+  await withSpinner(
+    `Fetching ABI from Etherscan`,
+    `Failed to fetch ABI from Etherscan`,
+    async spinner => {
+      let result = await fetch(
+        `https://${
+          network === 'mainnet' ? 'api' : `api-${network}`
+        }.etherscan.io/api?module=contract&action=getabi&address=${address}`
+      )
+      let json = await result.json()
+      return JSON.parse(json.result)
+    }
   )
-  let json = await result.json()
-  return JSON.parse(json.result)
-}
-
-const loadAbiFromFile = async file => await toolbox.filesystem.read(file, 'json')
-
-const loadAbi = async ({ abiFile, address, network, useEtherscan }) => {
-  if (useEtherscan) {
-    return await loadAbiFromEtherscan(network, address)
-  } else {
-    return await loadAbiFromFile(abiFile)
-  }
-}
 
 module.exports = {
   description: 'Creates a new subgraph with basic scaffolding',
+  options: {
+    boolean: ['from-example'],
+  },
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { print, system } = toolbox
 
     // Read CLI parameters
-    let { allowSimpleName, h, help } = toolbox.parameters.options
-    let subgraphName = toolbox.parameters.first
+    let {
+      abi,
+      allowSimpleName,
+      fromContract,
+      fromExample,
+      h,
+      help,
+      network,
+    } = toolbox.parameters.options
+
+    if (fromContract && fromExample) {
+      print.error(`Only one of --from-example and --from-contract can be used at a time.`)
+      process.exitCode = 1
+      return
+    }
+
+    let [subgraphName, directory] = fixParameters(toolbox.parameters, {
+      fromExample,
+      allowSimpleName,
+      help,
+      h,
+    })
 
     // Show help text if requested
     if (help || h) {
@@ -159,8 +222,51 @@ module.exports = {
       return
     }
 
-    // Collect user input
-    let inputs = await processInitForm(toolbox, subgraphName, { allowSimpleName })
+    let commands = {
+      install: yarn ? 'yarn' : 'npm install',
+      codegen: yarn ? 'yarn codegen' : 'npm run codegen',
+      deploy: yarn ? 'yarn deploy' : 'npm run deploy',
+    }
+
+    // If all parameters are provided from the command-line,
+    // go straight to creating the subgraph from the example
+    if (fromExample && subgraphName && directory) {
+      return await initSubgraphFromExample(
+        toolbox,
+        { allowSimpleName, directory, subgraphName },
+        { commands }
+      )
+    }
+
+    // If all parameters are provided from the command-line,
+    // go straight to creating the subgraph from an existing contract
+    if (fromContract && subgraphName && directory && network) {
+      let abi
+      try {
+        abi = await loadAbiFromEtherscan(network, fromContract)
+      } catch (e) {
+        process.exitCode = 1
+        return
+      }
+
+      return await initSubgraphFromContract(
+        toolbox,
+        { abi, allowSimpleName, directory, address: fromContract, network, subgraphName },
+        { commands }
+      )
+    }
+
+    // Otherwise, take the user through the interactive form
+    let inputs = await processInitForm(toolbox, {
+      abi,
+      allowSimpleName,
+      directory,
+      address: fromContract,
+      fromExample,
+      network,
+      subgraphName,
+    })
+
     if (inputs === undefined) {
       process.exit(1)
       return
@@ -168,129 +274,271 @@ module.exports = {
 
     print.info('———')
 
-    // Extract user input
-    subgraphName = inputs.subgraphName
-    let { abiFile, address, directory, network, useEtherscan } = inputs
+    if (fromExample) {
+      await initSubgraphFromExample(toolbox, {
+        subgraphName: inputs.subgraphName,
+        directory: inputs.directory,
+      })
+    } else {
+      await initSubgraphFromContract(
+        toolbox,
+        {
+          allowSimpleName,
+          subgraphName: inputs.subgraphName,
+          directory: inputs.directory,
+          abi: inputs.abi,
+          network: inputs.network,
+          address: inputs.address,
+        },
+        { commands }
+      )
+    }
+  },
+}
 
-    let installCommand = yarn ? 'yarn' : 'npm install'
-    let codegenCommand = yarn ? 'yarn codegen' : 'npm run codegen'
-    let deployCommand = yarn ? 'yarn deploy' : 'npm run deploy'
+const revalidateSubgraphName = async (toolbox, subgraphName, { allowSimpleName }) => {
+  // Fail if the subgraph name is invalid
+  try {
+    validateSubgraphName(subgraphName, { allowSimpleName })
+    return true
+  } catch (e) {
+    toolbox.print.error(`${e.message}
 
-    // Obtain the ABI from the network-specific Etherscan or from the local file
-    let abi = await withSpinner(
-      `Load ABI from ${useEtherscan ? 'Etherscan' : abiFile}`,
-      `Failed to load ABI from ${useEtherscan ? 'Etherscan' : abiFile}`,
-      async spinner => {
-        return await loadAbi({ abiFile, address, network, useEtherscan })
+  Examples:
+
+    $ graph init ${os.userInfo().username}/${subgraphName}
+    $ graph init ${subgraphName} --allow-simple-name`)
+    return false
+  }
+}
+
+const initRepository = async (toolbox, directory) =>
+  await withSpinner(
+    `Initialize subgraph repository`,
+    `Failed to initialize subgraph repository`,
+    async spinner => {
+      let gitDir = path.join(directory, '.git')
+      if (toolbox.filesystem.exists(gitDir)) {
+        await toolbox.filesystem.remove(gitDir)
       }
-    )
-    if (abi === undefined) {
-      process.exitCode = 1
-      return
+      await toolbox.system.run('git init', { cwd: directory })
+      await toolbox.system.run('git add --all', { cwd: directory })
+      await toolbox.system.run('git commit -m "Initial commit"', {
+        cwd: directory,
+      })
+      return true
     }
+  )
 
-    // Fail if the ABI does not contain any events
-    if (abiEvents(abi).length === 0) {
-      print.error(`ABI does not contain any events`)
-      process.exitCode = 1
-      return
+const installDependencies = async (toolbox, directory, installCommand) =>
+  await withSpinner(
+    `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
+    `Failed to install dependencies`,
+    async spinner => {
+      await toolbox.system.run(installCommand, { cwd: directory })
+      return true
     }
+  )
 
-    // Fail if the output directory already exists
-    if (toolbox.filesystem.exists(directory)) {
-      print.error(`Directory or file "${directory}" already exists`)
-      process.exitCode = 1
-      return
+const runCodegen = async (toolbox, directory, codegenCommand) =>
+  await withSpinner(
+    `Generate ABI and schema types with ${toolbox.print.colors.muted(codegenCommand)}`,
+    `Failed to generatecode from ABI and GraphQL schema`,
+    async spinner => {
+      await toolbox.system.run(codegenCommand, { cwd: directory })
+      return true
     }
+  )
 
-    // Scaffold subgraph from ABI
-    let scaffold = await withSpinner(
-      `Create subgraph scaffold`,
-      `Failed to create subgraph scaffold`,
-      async spinner => {
-        let scaffold = await generateScaffold(
-          {
-            subgraphName,
-            abi,
-            network,
-            address,
-          },
-          spinner
-        )
-        await writeScaffold(scaffold, directory, spinner)
-        return true
-      }
-    )
-    if (scaffold !== true) {
-      process.exitCode = 1
-      return
-    }
+const printNextSteps = (toolbox, { subgraphName, directory }, { commands }) => {
+  let { print } = toolbox
 
-    // Initialize a git repository
-    let repo = await withSpinner(
-      `Initialize subgraph repository`,
-      `Failed to initialize subgraph repository`,
-      async spinner => {
-        await system.run('git init', { cwd: directory })
-        await system.run('git add --all', { cwd: directory })
-        await system.run('git commit -m "Initial commit"', {
-          cwd: directory,
-        })
-        return true
-      }
-    )
-    if (repo !== true) {
-      process.exitCode = 1
-      return
-    }
+  let relativeDir = path.relative(process.cwd(), directory)
 
-    // Install dependencies
-    let installed = await withSpinner(
-      `Install dependencies with ${print.colors.muted(installCommand)}`,
-      `Failed to install dependencies`,
-      async spinner => {
-        await system.run(installCommand, { cwd: directory })
-        return true
-      }
-    )
-    if (installed !== true) {
-      process.exitCode = 1
-      return
-    }
-
-    // Run code-generation
-    let codegen = await withSpinner(
-      `Generate ABI and schema types with ${print.colors.muted(codegenCommand)}`,
-      `Failed to generatecode from ABI and GraphQL schema`,
-      async spinner => {
-        await system.run(codegenCommand, { cwd: directory })
-        return true
-      }
-    )
-    if (codegen !== true) {
-      process.exitCode = 1
-      return
-    }
-
-    // Print instructions
-    print.success(
-      `
-Subgraph ${print.colors.blue(subgraphName)} created in ${print.colors.blue(directory)}
+  // Print instructions
+  print.success(
+    `
+Subgraph ${print.colors.blue(subgraphName)} created in ${print.colors.blue(relativeDir)}
 `
-    )
-    print.info(`Next steps:
-    
+  )
+  print.info(`Next steps:
+
   1. Run \`${print.colors.muted(
     'graph auth https://api.thegraph.com/deploy/ <access-token>'
   )}\`
      to authenticate with the hosted service. You can get the access token from
      https://thegraph.com/explorer/dashboard/.
-  
-  2. Type \`${print.colors.muted(`cd ${directory}`)}\` to enter the subgraph.
-  
-  3. Run \`${print.colors.muted(deployCommand)}\` to deploy the subgraph to
+
+  2. Type \`${print.colors.muted(`cd ${relativeDir}`)}\` to enter the subgraph.
+
+  3. Run \`${print.colors.muted(commands.deploy)}\` to deploy the subgraph to
      https://thegraph.com/explorer/subgraph/${subgraphName}.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.`)
-  },
+}
+
+const initSubgraphFromExample = async (
+  toolbox,
+  { allowSimpleName, subgraphName, directory },
+  { commands }
+) => {
+  let { filesystem, print, system } = toolbox
+
+  // Fail if the subgraph name is invalid
+  if (!revalidateSubgraphName(toolbox, subgraphName, { allowSimpleName })) {
+    process.exitCode = 1
+    return
+  }
+
+  // Fail if the output directory already exists
+  if (filesystem.exists(directory)) {
+    print.error(`Directory or file "${directory}" already exists`)
+    process.exitCode = 1
+    return
+  }
+
+  // Clone the example subgraph repository
+  let cloned = await withSpinner(
+    `Cloning example subgraph`,
+    `Failed to clone example subgraph`,
+    async spinner => {
+      await system.run(
+        `git clone http://github.com/graphprotocol/example-subgraph ${directory}`
+      )
+      return true
+    }
+  )
+  if (!cloned) {
+    process.exitCode = 1
+    return
+  }
+
+  // Update package.json to match the subgraph name
+  let prepared = await withSpinner(
+    `Update subgraph name and commands in package.json`,
+    `Failed to update subgraph name and commands in package.json`,
+    async spinner => {
+      try {
+        // Load package.json
+        let pkgJsonFilename = filesystem.path(directory, 'package.json')
+        let pkgJson = await filesystem.read(pkgJsonFilename, 'json')
+
+        pkgJson.name = getSubgraphBasename(subgraphName)
+        Object.keys(pkgJson.scripts).forEach(name => {
+          pkgJson.scripts[name] = pkgJson.scripts[name].replace('example', subgraphName)
+        })
+        delete pkgJson['license']
+        delete pkgJson['repository']
+
+        // Write package.json
+        await filesystem.write(pkgJsonFilename, pkgJson, { jsonIndent: 2 })
+        return true
+      } catch (e) {
+        print.error(`Failed to preconfigure the subgraph: ${e}`)
+        filesystem.remove(directory)
+        return false
+      }
+    }
+  )
+  if (!prepared) {
+    process.exitCode = 1
+    return
+  }
+
+  // Initialize a fresh Git repository
+  let repo = await initRepository(toolbox, directory)
+  if (repo !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  // Install dependencies
+  let installed = await installDependencies(toolbox, directory, commands.install)
+  if (installed !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  // Run code-generation
+  let codegen = await runCodegen(toolbox, directory, commands.codegen)
+  if (codegen !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  printNextSteps(toolbox, { subgraphName, directory }, { commands })
+}
+
+const initSubgraphFromContract = async (
+  toolbox,
+  { allowSimpleName, subgraphName, directory, abi, network, address },
+  { commands }
+) => {
+  let { print } = toolbox
+
+  // Fail if the subgraph name is invalid
+  if (!revalidateSubgraphName(toolbox, subgraphName, { allowSimpleName })) {
+    process.exitCode = 1
+    return
+  }
+
+  // Fail if the output directory already exists
+  if (toolbox.filesystem.exists(directory)) {
+    print.error(`Directory or file "${directory}" already exists`)
+    process.exitCode = 1
+    return
+  }
+
+  if (abiEvents(abi).length === 0) {
+    // Fail if the ABI does not contain any events
+    print.error(`ABI does not contain any events`)
+    process.exitCode = 1
+    return
+  }
+
+  // Scaffold subgraph from ABI
+  let scaffold = await withSpinner(
+    `Create subgraph scaffold`,
+    `Failed to create subgraph scaffold`,
+    async spinner => {
+      let scaffold = await generateScaffold(
+        {
+          subgraphName,
+          abi,
+          network,
+          address,
+        },
+        spinner
+      )
+      await writeScaffold(scaffold, directory, spinner)
+      return true
+    }
+  )
+  if (scaffold !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  // Initialize a fresh Git repository
+  let repo = await initRepository(toolbox, directory)
+  if (repo !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  // Install dependencies
+  let installed = await installDependencies(toolbox, directory, commands.install)
+  if (installed !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  // Run code-generation
+  let codegen = await runCodegen(toolbox, directory, commands.codegen)
+  if (codegen !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  printNextSteps(toolbox, { subgraphName, directory }, { commands })
 }
