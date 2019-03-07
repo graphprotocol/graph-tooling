@@ -221,30 +221,24 @@ ${abiEvents
   }
 
   static validateRepository(manifest, { resolveFile }) {
-    let warnings = immutable.List()
-    if (manifest.get('repository') === 'https://github.com/rodventures/gravity-subgraph') {
-      return warnings.push(immutable.fromJS({
+    return manifest.get('repository') !== 'https://github.com/rodventures/gravity-subgraph'
+      ? immutable.List()
+      : immutable.List().push(immutable.fromJS({
           path: ['repository'],
           message: `\
   The subgraph manifest is still referencing the example repository at https://github.com/rodventures/gravity-subgraph.
-  Please replace it with your repository location or leave blank if you prefer to keep it private.`,
+    Please replace it with your repository location or leave blank if you prefer to keep it private.`,
         }))
-    } else {
-      return warnings
-    }
   }
 
   static validateDescription(manifest, { resolveFile }) {
-    let warnings = immutable.List()
-    if (manifest.get('description') === 'Gravatar for Ethereum') {
-      return warnings.push(immutable.fromJS({
+    return manifest.get('description') !== 'Gravatar for Ethereum'
+    ? immutable.List()
+    : immutable.List().push(immutable.fromJS({
           path: ['description'],
           message: `\
   Example subgraph description remains. Please update to provide a short description of what your subgraph is.`,
         }))
-    } else {
-      return immutable.List()
-    }
   }
 
   static load(filename) {
