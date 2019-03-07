@@ -24,7 +24,7 @@
     "graph": "bin/graph"
   },
   "devDependencies": {
-    "jest": "^23.6.0",
+    "jest": "^24.3.0",
     "spawn-command": "^0.0.2-1",
     "strip-ansi": "^5.0.0"
   },
