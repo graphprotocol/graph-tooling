@@ -1,4 +1,5 @@
 const chalk = require('chalk')
+const immutable = require('immutable')
 const toolbox = require('gluegun/toolbox')
 
 const step = (spinner, subject, text) => {
@@ -13,12 +14,24 @@ const step = (spinner, subject, text) => {
   return spinner
 }
 
-const withSpinner = async (text, errorText, f) => {
+// A wrapper for functions (f) that provides a progress spinner and formatted alert messages.
+// For warning message support the f must return an immutable Map with result and warning keys.
+const withSpinner = async (text, errorText, warningText, f) => {
   let spinner = toolbox.print.spin(text)
   try {
     let result = await f(spinner)
-    spinner.succeed(text)
-    return result
+    if(warningText && immutable.Map.isMap(result)) {
+      if (result.get('warning', false)) {
+        spinner.stopAndPersist({symbol: '⚠️', text: `${warningText}: ${result.get('warning')}`})
+        return result.get('result')
+      } else {
+        spinner.succeed(text)
+        return result.get('result', result)
+      }
+    } else {
+      spinner.succeed(text)
+      return result
+    }
   } catch (e) {
     spinner.fail(`${errorText}: ${e.message}`)
     throw e
@@ -27,5 +40,5 @@ const withSpinner = async (text, errorText, f) => {
 
 module.exports = {
   step,
-  withSpinner,
+  withSpinner
 }

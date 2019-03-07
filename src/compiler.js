@@ -6,7 +6,7 @@ const path = require('path')
 const yaml = require('js-yaml')
 const toolbox = require('gluegun/toolbox')
 
-const { withSpinner, step } = require('./command-helpers/spinner')
+const { step, withSpinner } = require('./command-helpers/spinner')
 const Subgraph = require('./subgraph')
 const Watcher = require('./watcher')
 const ABI = require('./abi')
@@ -62,6 +62,7 @@ class Compiler {
       return await withSpinner(
         `Load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
         `Failed to load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
+        `Loaded subgraph from ${this.displayPath(this.options.subgraphManifest)} with warnings`,
         async spinner => {
           return Subgraph.load(this.options.subgraphManifest)
         }
@@ -155,6 +156,7 @@ class Compiler {
     return await withSpinner(
       `Compile subgraph`,
       `Failed to compile subgraph`,
+      null,
       async spinner => {
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
@@ -227,6 +229,7 @@ class Compiler {
       `Failed to write compiled subgraph to ${`${this.displayPath(
         this.options.outputDir
       )}${toolbox.filesystem.separator}`}`,
+      null,
       async spinner => {
         // Copy schema and update its path
         subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
@@ -284,6 +287,7 @@ class Compiler {
     return withSpinner(
       `Upload subgraph to IPFS`,
       `Failed to upload subgraph to IPFS`,
+      null,
       async spinner => {
         // Collect all source (path -> hash) updates to apply them later
         let updates = []
