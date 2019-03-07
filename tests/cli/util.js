@@ -1,41 +1,47 @@
 const path = require('path')
 const spawn = require('spawn-command')
+const stripAnsi = require('strip-ansi')
 const fs = require('fs')
 
-const cliTest = (title, testPath, options) => {
-  test(title, async () => {
-    let resolvePath = p => path.join(__dirname, p)
+const cliTest = (title, args, testPath, options) => {
+  test(
+    title,
+    async () => {
+      const resolvePath = p => path.join(__dirname, p)
 
-    let [exitCode, stdout, stderr] = await runCli(
-      ['codegen'],
-      resolvePath(`./${testPath}`)
-    )
+      // Use the provided cwd if desired
+      let cwd =
+        options !== undefined && options.cwd ? options.cwd : resolvePath(`./${testPath}`)
 
-    let expectedExitCode = undefined
-    if (options !== undefined && options.exitCode) {
-      expectedExitCode = options.exitCode
-    }
+      let [exitCode, stdout, stderr] = await runCli(args, cwd)
 
-    let expectedStdout = undefined
-    try {
-      expectedStdout = fs.readFileSync(resolvePath(`./${testPath}.stdout`), 'utf-8')
-    } catch (e) {}
+      let expectedExitCode = undefined
+      if (options !== undefined && options.exitCode) {
+        expectedExitCode = options.exitCode
+      }
 
-    let expectedStderr = undefined
-    try {
-      expectedStderr = fs.readFileSync(resolvePath(`./${testPath}.stderr`), 'utf-8')
-    } catch (e) {}
+      let expectedStdout = undefined
+      try {
+        expectedStdout = fs.readFileSync(resolvePath(`./${testPath}.stdout`), 'utf-8')
+      } catch (e) {}
 
-    if (expectedExitCode !== undefined) {
-      expect(exitCode).toBe(expectedExitCode)
-    }
-    if (expectedStdout !== undefined) {
-      expect(stdout).toBe(expectedStdout)
-    }
-    if (expectedStderr !== undefined) {
-      expect(stderr).toBe(expectedStderr)
-    }
-  })
+      let expectedStderr = undefined
+      try {
+        expectedStderr = fs.readFileSync(resolvePath(`./${testPath}.stderr`), 'utf-8')
+      } catch (e) {}
+
+      if (expectedExitCode !== undefined) {
+        expect(exitCode).toBe(expectedExitCode)
+      }
+      if (expectedStdout !== undefined) {
+        expect(stripAnsi(stdout)).toBe(expectedStdout)
+      }
+      if (expectedStderr !== undefined) {
+        expect(stripAnsi(stderr)).toBe(expectedStderr)
+      }
+    },
+    (options !== undefined && options.timeout) || undefined
+  )
 }
 
 const runCli = async (args = [], cwd = process.cwd()) => {
