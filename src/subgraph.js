@@ -23,21 +23,21 @@ const throwCombinedError = (filename, errors) => {
   )
 }
 
-const throwCombinedWarning = (filename, warnings) => {
-  toolbox.print.info('')
-  toolbox.print.warning(
-    warnings.reduce(
-      (msg, w) =>
-        `${msg}
-
-  Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
-  ${w
-          .get('message')
-          .split('\n')
-          .join('\n  ')}`,
-      `Warning in ${path.relative(process.cwd(), filename)}:`
-    )
-  )
+const buildCombinedWarning = (filename, warnings) => {
+  return (warnings.size > 0)
+    ?
+      warnings.reduce(
+        (msg, w) =>
+          `${msg}
+  
+    Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
+    ${w
+            .get('message')
+            .split('\n')
+            .join('\n  ')}`,
+        `Warning in ${path.relative(process.cwd(), filename)}:`
+      )
+    : null
 }
 
 module.exports = class Subgraph {
@@ -274,19 +274,17 @@ ${abiEvents
 
     // Perform warning validations
     let warnings = immutable.List.of(
-      ...Subgraph.validateRepository(manifest, { resolveFile }),
-      ...Subgraph.validateDescription(manifest, { resolveFile })
+      ...Subgraph.validateDescription(manifest, { resolveFile }),
+      ...Subgraph.validateRepository(manifest, { resolveFile })
     )
-
-    if (warnings.size > 0) {
-      throwCombinedWarning(filename, warnings)
-    }
 
     if (errors.size > 0) {
       throwCombinedError(filename, errors)
     }
-
-    return manifest
+    return immutable.Map({
+      result: manifest,
+      warning: buildCombinedWarning(filename, warnings)
+    })
   }
 
   static write(subgraph, filename) {

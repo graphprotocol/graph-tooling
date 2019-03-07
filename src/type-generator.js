@@ -51,6 +51,7 @@ module.exports = class TypeGenerator {
       return await withSpinner(
         `Load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
         `Failed to load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
+        `Loaded subgraph from ${this.displayPath(this.options.subgraphManifest)} with warnings`,
         async spinner => {
           try {
             return this.options.subgraph
@@ -68,6 +69,7 @@ module.exports = class TypeGenerator {
     return await withSpinner(
       'Load contract ABIs',
       'Failed to load contract ABIs',
+      null,
       async spinner => {
         try {
           return subgraph
@@ -115,6 +117,7 @@ module.exports = class TypeGenerator {
     return withSpinner(
       `Generate types for contract ABIs`,
       `Failed to generate types for contract ABIs`,
+      null,
       async spinner => {
         return await abis.map(
           async (abi, name) => await this._generateTypesForABI(abi, spinner)
@@ -160,6 +163,7 @@ module.exports = class TypeGenerator {
     return await withSpinner(
       `Load GraphQL schema from ${this.displayPath(absolutePath)}`,
       `Failed to load GraphQL schema from ${this.displayPath(absolutePath)}`,
+      null,
       async spinner => {
         let maybeRelativePath = subgraph.getIn(['schema', 'file'])
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
@@ -172,6 +176,7 @@ module.exports = class TypeGenerator {
     return await withSpinner(
       `Generate types for GraphQL schema`,
       `Failed to generate types for GraphQL schema`,
+      null,
       async spinner => {
         // Generate TypeScript module from schema
         let codeGenerator = schema.codeGenerator()
