@@ -1,0 +1,14 @@
+- Fetching ABI from Etherscan
+✔ Fetching ABI from Etherscan
+- Create subgraph scaffold
+  Generate subgraph from ABI
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize subgraph repository
+✔ Initialize subgraph repository
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen

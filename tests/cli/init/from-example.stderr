@@ -1,0 +1,10 @@
+- Cloning example subgraph
+✔ Cloning example subgraph
+- Update subgraph name and commands in package.json
+✔ Update subgraph name and commands in package.json
+- Initialize subgraph repository
+✔ Initialize subgraph repository
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
