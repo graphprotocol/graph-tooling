@@ -28,12 +28,23 @@ type EthereumContractMapping {
   file: File!
   entities: [String!]!
   abis: [EthereumContractAbi!]!
-  eventHandlers: [EthereumContractEventHandlers]!
+  blockHandlers: EthereumBlockHandler
+  transactionHandlers: [EthereumTransactionHandlers!]
+  eventHandlers: [EthereumContractEventHandlers!]
 }
 
 type EthereumContractAbi {
   name: String!
   file: File!
+}
+
+type EthereumBlockHandler {
+  handler: String!
+}
+
+type EthereumTransactionHandlers {
+  function: String!
+  handler: String!
 }
 
 type EthereumContractEventHandlers {
