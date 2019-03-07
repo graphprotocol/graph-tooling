@@ -16,6 +16,7 @@
     "jayson": "^2.0.6",
     "js-yaml": "^3.12.0",
     "keytar": "^4.3.0",
+    "node-fetch": "^2.3.0",
     "prettier": "^1.13.5",
     "request": "^2.88.0"
   },
