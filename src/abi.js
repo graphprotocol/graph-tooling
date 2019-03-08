@@ -55,7 +55,10 @@ module.exports = class ABI {
       )
       .map(
         entry =>
-          `${entry.get('name', '<default>')}(${entry
+          `${entry.get(
+            'name',
+            entry.get('type') === 'constructor' ? 'constructor' : '<default>'
+          )}(${entry
             .get('inputs', immutable.List())
             .map(input => input.get('type'))
             .join(',')})`,
