@@ -1,0 +1,11 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Failed to load subgraph: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > transactionHandlers > 0
+  Transaction function with signature 'doSomething(uint256)' not present in ABI 'ExampleContract'.
+  Available transaction functions:
+  - <default>()
+  - constructor()
+  - owner()
+  - transferOwnership(address)
+  - upgrade(address,bytes)

@@ -1,0 +1,57 @@
+[
+  {
+    "type": "event",
+    "name": "ExampleEvent",
+    "inputs": [{ "type": "string" }]
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "proxyOwner",
+    "outputs": [{ "name": "", "type": "address" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "currentContract",
+    "outputs": [{ "name": "", "type": "address" }],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "name": "", "type": "address" }],
+    "payable": false,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "name": "newContract", "type": "address" },
+      { "name": "data", "type": "bytes" }
+    ],
+    "name": "upgrade",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{ "name": "_newOwner", "type": "address" }],
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  { "stateMutability": "payable", "type": "constructor" },
+  { "payable": true, "stateMutability": "payable", "type": "fallback" }
+]
