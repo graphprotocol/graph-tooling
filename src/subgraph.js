@@ -286,7 +286,34 @@ Please replace it with a link to your subgraph source code.`,
 The description is still the one from the example subgraph.
 Please update it to tell users more about your subgraph.`,
           }),
-        )
+      )
+  }
+    
+  static validateEthereumContractHandlers(manifest) {
+    return manifest
+      .get('dataSources')
+      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
+      .reduce((errors, dataSource, dataSourceIndex) => {
+        let path = ['dataSources', dataSourceIndex, 'mapping']
+
+        let mapping = dataSource.get('mapping')
+        let blockHandlers = mapping.get('blockHandlers', immutable.List())
+        let transactionHandlers = mapping.get('transactionHandlers', immutable.List())
+        let eventHandlers = mapping.get('eventHandlers', immutable.List())
+
+        return blockHandlers.isEmpty() &&
+          transactionHandlers.isEmpty() &&
+          eventHandlers.isEmpty()
+          ? errors.push(
+              immutable.fromJS({
+                path: path,
+                message: `\
+Mapping has no blockHandlers, transactionHandlers or eventHandlers.
+At least one such handler must be defined.`,
+              })
+            )
+          : errors
+      }, immutable.List())
   }
 
   static load(filename) {
@@ -322,6 +349,7 @@ Please update it to tell users more about your subgraph.`,
     let warnings = immutable.List.of(
       ...Subgraph.validateRepository(manifest, { resolveFile }),
       ...Subgraph.validateDescription(manifest, { resolveFile }),
+      ...Subgraph.validateEthereumContractHandlers(manifest)
     )
 
     return {
