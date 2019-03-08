@@ -1,9 +1,25 @@
 - Load subgraph from subgraph.yaml
-✖ Failed to load subgraph from subgraph.yaml: Failed to load subgraph: Error in subgraph.yaml:
-
-  Path: repository
-    The subgraph manifest is still referencing the example repository at https://github.com/rodventures/gravity-subgraph.
-    Please replace it with your repository location or leave blank if you prefer to keep it private.
-
-  Path: description
-    Example subgraph description remains. Please update to provide a short description of what your subgraph is.
+⚠️ Loaded subgraph from subgraph.yaml with warnings: Warning in subgraph.yaml:
+  
+    Path: description
+      Example subgraph description remains. Please update to provide a short description of what your subgraph is.
+  
+    Path: repository
+      The subgraph manifest is still referencing the example repository at https://github.com/rodventures/gravity-subgraph.
+      Please replace it with your repository location or leave blank if you prefer to keep it private.
+- Load contract ABIs
+  [90mLoad contract ABI from Abi.json[39m
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  [90mGenerate types for contract ABI: ExampleContract (Abi.json)[39m
+- Generate types for contract ABIs
+  [90mWrite types to generated/ExampleSubgraph/ExampleContract.ts[39m
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  [90mWrite types to generated/schema.ts[39m
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
