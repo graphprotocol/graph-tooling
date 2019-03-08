@@ -34,6 +34,6 @@ describe('Validation', () => {
     'Example values found in manifest',
     ['codegen'],
     'validation/example-values-found',
-    { exitCode: 1 }
+    { exitCode: 0 }
   )
 })
