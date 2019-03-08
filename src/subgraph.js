@@ -203,16 +203,23 @@ Must be 40 hexadecimal characters, with an optional '0x' prefix.`,
   }
 
   static validateDataSourceEvents(dataSource, { resolveFile, path }) {
-    // Resolve the source ABI name into a real ABI object
-    let abiName = dataSource.getIn(['source', 'abi'])
-    let abiEntry = dataSource
-      .getIn(['mapping', 'abis'])
-      .find(abi => abi.get('name') === abiName)
-    let abi = ABI.load(abiEntry.get('name'), resolveFile(abiEntry.get('file')))
+    let abi
+    try {
+      // Resolve the source ABI name into a real ABI object
+      let abiName = dataSource.getIn(['source', 'abi'])
+      let abiEntry = dataSource
+        .getIn(['mapping', 'abis'])
+        .find(abi => abi.get('name') === abiName)
+      abi = ABI.load(abiEntry.get('name'), resolveFile(abiEntry.get('file')))
+    } catch (_) {
+      // Ignore errors silently; we can't really say anything about
+      // the events if the ABI can't even be loaded
+      return immutable.List()
+    }
 
     // Obtain event signatures from the mapping
     let manifestEvents = dataSource
-      .getIn(['mapping', 'eventHandlers'])
+      .getIn(['mapping', 'eventHandlers'], immutable.List())
       .map(handler => handler.get('event'))
 
     // Obtain event signatures from the ABI
@@ -247,18 +254,66 @@ ${abiEvents
     return dataSources
       .concat(dataSourceTemplates)
       .reduce((errors, dataSourceOrTemplate) => {
+        return errors.concat(
+          Subgraph.validateDataSourceEvents(dataSourceOrTemplate.get('dataSource'), {
+            resolveFile,
+            path: dataSourceOrTemplate.get('path'),
+          }),
+        )
+      }, immutable.List())
+  }
+
+  static validateTransactionFunctions(manifest, { resolveFile }) {
+    return manifest
+      .get('dataSources')
+      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
+      .reduce((errors, dataSource, dataSourceIndex) => {
+        let path = ['dataSources', dataSourceIndex, 'transactionHandlers']
+
+        let abi
         try {
-          return errors.concat(
-            Subgraph.validateDataSourceEvents(dataSourceOrTemplate.get('dataSource'), {
-              resolveFile,
-              path: dataSourceOrTemplate.get('path'),
-            }),
-          )
+          // Resolve the source ABI name into a real ABI object
+          let abiName = dataSource.getIn(['source', 'abi'])
+          let abiEntry = dataSource
+            .getIn(['mapping', 'abis'])
+            .find(abi => abi.get('name') === abiName)
+          abi = ABI.load(abiEntry.get('name'), resolveFile(abiEntry.get('file')))
         } catch (e) {
           // Ignore errors silently; we can't really say anything about
-          // the events if the ABI can't even be loaded
+          // the transaction functions if the ABI can't even be loaded
           return errors
         }
+
+        // Obtain event signatures from the mapping
+        let manifestFunctions = dataSource
+          .getIn(['mapping', 'transactionHandlers'], immutable.List())
+          .map(handler => handler.get('function'))
+
+        // Obtain event signatures from the ABI
+        let abiFunctions = abi.transactionFunctionSignatures()
+
+        // Add errors for every manifest event signature that is not
+        // present in the ABI
+        return manifestFunctions.reduce(
+          (errors, manifestFunction, index) =>
+            abiFunctions.includes(manifestFunction)
+              ? errors
+              : errors.push(
+                  immutable.fromJS({
+                    path: [...path, index],
+                    message: `\
+Transaction function with signature '${manifestFunction}' not present in ABI '${
+                      abi.name
+                    }'.
+Available transaction functions:
+${abiFunctions
+                      .sort()
+                      .map(tx => `- ${tx}`)
+                      .join('\n')}`,
+                  }),
+                ),
+          errors,
+        )
       }, immutable.List())
   }
 
@@ -286,9 +341,9 @@ Please replace it with a link to your subgraph source code.`,
 The description is still the one from the example subgraph.
 Please update it to tell users more about your subgraph.`,
           }),
-      )
+        )
   }
-    
+
   static validateEthereumContractHandlers(manifest) {
     return manifest
       .get('dataSources')
@@ -310,7 +365,7 @@ Please update it to tell users more about your subgraph.`,
                 message: `\
 Mapping has no blockHandlers, transactionHandlers or eventHandlers.
 At least one such handler must be defined.`,
-              })
+              }),
             )
           : errors
       }, immutable.List())
@@ -338,6 +393,7 @@ At least one such handler must be defined.`,
     let errors = immutable.List.of(
       ...Subgraph.validateAbis(manifest, { resolveFile }),
       ...Subgraph.validateContractAddresses(manifest),
+      ...Subgraph.validateEthereumContractHandlers(manifest),
       ...Subgraph.validateEvents(manifest, { resolveFile }),
     )
 
@@ -349,7 +405,8 @@ At least one such handler must be defined.`,
     let warnings = immutable.List.of(
       ...Subgraph.validateRepository(manifest, { resolveFile }),
       ...Subgraph.validateDescription(manifest, { resolveFile }),
-      ...Subgraph.validateEthereumContractHandlers(manifest)
+      ...Subgraph.validateEthereumContractHandlers(manifest),
+      ...Subgraph.validateTransactionFunctions(manifest, { resolveFile }),
     )
 
     return {
