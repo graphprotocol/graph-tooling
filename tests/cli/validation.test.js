@@ -96,4 +96,11 @@ describe('Validation', () => {
       exitCode: 0,
     },
   )
+  cliTest(
+    'Ethereum contract data source without handlers',
+    'validation/ethereum-contract-without-handlers',
+    {
+      exitCode: 1,
+    },
+  )
 })
