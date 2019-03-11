@@ -165,13 +165,13 @@ class Compiler {
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
             dataSource.updateIn(['mapping', 'file'], mappingPath =>
-              this._compileDataSourceMapping(dataSource, mappingPath, spinner)
-            )
-          )
+              this._compileDataSourceMapping(dataSource, mappingPath, spinner),
+            ),
+          ),
         )
 
         return subgraph
-      }
+      },
     )
   }
 
@@ -183,13 +183,13 @@ class Compiler {
         this.subgraphDir(this.options.outputDir, dataSource),
         this.options.outputFormat == 'wasm'
           ? `${dataSourceName}.wasm`
-          : `${dataSourceName}.wast`
+          : `${dataSourceName}.wast`,
       )
 
       step(
         spinner,
         'Compile data source:',
-        `${dataSourceName} => ${this.displayPath(outFile)}`
+        `${dataSourceName} => ${this.displayPath(outFile)}`,
       )
 
       let baseDir = this.sourceDir
@@ -217,7 +217,7 @@ class Compiler {
           if (e != null) {
             throw e
           }
-        }
+        },
       )
       return outputFile
     } catch (e) {
@@ -231,7 +231,7 @@ class Compiler {
         toolbox.filesystem.separator
       }`}`,
       `Failed to write compiled subgraph to ${`${this.displayPath(
-        this.options.outputDir
+        this.options.outputDir,
       )}${toolbox.filesystem.separator}`}`,
       null,
       async spinner => {
@@ -243,9 +243,9 @@ class Compiler {
               schemaFile,
               this.sourceDir,
               this.options.outputDir,
-              spinner
-            )
-          )
+              spinner,
+            ),
+          ),
         )
 
         // Copy data source files and update their paths
@@ -263,17 +263,17 @@ class Compiler {
                         JSON.stringify(abiData.data.toJS(), null, 2),
                         this.sourceDir,
                         this.subgraphDir(this.options.outputDir, dataSource),
-                        spinner
-                      )
+                        spinner,
+                      ),
                     )
-                  })
-                )
+                  }),
+                ),
               )
               // The mapping file is already being written to the output
               // directory by the AssemblyScript compiler
               .updateIn(['mapping', 'file'], mappingFile =>
-                path.relative(this.options.outputDir, mappingFile)
-              )
+                path.relative(this.options.outputDir, mappingFile),
+              ),
           )
         })
 
@@ -283,7 +283,7 @@ class Compiler {
         Subgraph.write(subgraph, outputFilename)
 
         return subgraph
-      }
+      },
     )
   }
 
@@ -301,7 +301,7 @@ class Compiler {
           keyPath: ['schema', 'file'],
           value: await this._uploadFileToIPFS(
             subgraph.getIn(['schema', 'file']),
-            spinner
+            spinner,
           ),
         })
 
@@ -321,7 +321,7 @@ class Compiler {
             keyPath: ['dataSources', i, 'mapping', 'file'],
             value: await this._uploadFileToIPFS(
               dataSource.getIn(['mapping', 'file']),
-              spinner
+              spinner,
             ),
           })
         }
@@ -333,7 +333,7 @@ class Compiler {
 
         // Upload the subgraph itself
         return await this._uploadSubgraphDefinitionToIPFS(subgraph, spinner)
-      }
+      },
     )
   }
 
