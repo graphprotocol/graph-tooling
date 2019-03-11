@@ -49,18 +49,18 @@ module.exports = class TypeGenerator {
         : Subgraph.load(this.options.subgraphManifest)
     } else {
       return await withSpinner(
-        `Load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Failed to load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Loaded subgraph from ${this.displayPath(this.options.subgraphManifest)} with warnings`,
+        `Load subgraph manifest ${this.displayPath(this.options.subgraphManifest)}`,
+        `Failed to load subgraph manifest ${this.displayPath(
+          this.options.subgraphManifest,
+        )}`,
+        `Warnings loading subgraph manifest ${this.displayPath(
+          this.options.subgraphManifest,
+        )}`,
         async spinner => {
-          try {
-            return this.options.subgraph
-              ? this.options.subgraph
-              : Subgraph.load(this.options.subgraphManifest)
-          } catch (e) {
-            throw Error(`Failed to load subgraph: ${e.message}`)
-          }
-        }
+          return this.options.subgraph
+            ? this.options.subgraph
+            : Subgraph.load(this.options.subgraphManifest)
+        },
       )
     }
   }
