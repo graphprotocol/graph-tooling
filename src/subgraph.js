@@ -18,8 +18,8 @@ const throwCombinedError = (filename, errors) => {
     .get('message')
     .split('\n')
     .join('\n  ')}`,
-      `Error in ${path.relative(process.cwd(), filename)}:`
-    )
+      `Error in ${path.relative(process.cwd(), filename)}:`,
+    ),
   )
 }
 
@@ -42,7 +42,7 @@ module.exports = class Subgraph {
   static validate(data, { resolveFile }) {
     // Parse the default subgraph schema
     let schema = graphql.parse(
-      fs.readFileSync(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8')
+      fs.readFileSync(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8'),
     )
 
     // Obtain the root `SubgraphManifest` type from the schema
@@ -71,11 +71,11 @@ module.exports = class Subgraph {
       error
         .get('message')
         .split('\n')
-        .join('\n    ')
+        .join('\n    '),
     )
     .map(msg => `- ${msg}`)
     .join('\n  ')}`,
-        `Error in ${path.relative(process.cwd(), filename)}:`
+        `Error in ${path.relative(process.cwd(), filename)}:`,
       )
 
       throw new Error(msg)
@@ -105,7 +105,7 @@ ${abiNames
                 .sort()
                 .map(name => `- ${name}`)
                 .join('\n')}`,
-            })
+            }),
           )
         }
       }, immutable.List())
@@ -132,11 +132,11 @@ ${abiNames
                     'file',
                   ],
                   message: e.message,
-                })
+                }),
               )
             }
           }, errors),
-        immutable.List()
+        immutable.List(),
       )
 
     return immutable.List.of(...abiReferenceErrors, ...abiFileErrors)
@@ -161,7 +161,7 @@ ${abiNames
               message: `\
 Contract address is invalid: ${address}
 Must be 40 hexadecimal characters, with an optional '0x' prefix.`,
-            })
+            }),
           )
         }
       }, immutable.List())
@@ -206,9 +206,9 @@ ${abiEvents
                         .sort()
                         .map(event => `- ${event}`)
                         .join('\n')}`,
-                    })
+                    }),
                   ),
-            errors
+            errors,
           )
         } catch (e) {
           // Ignore errors silently; we can't really say anything about
@@ -219,24 +219,29 @@ ${abiEvents
   }
 
   static validateRepository(manifest, { resolveFile }) {
-    return manifest.get('repository') !== 'https://github.com/rodventures/gravity-subgraph'
+    return manifest.get('repository') !==
+      'https://github.com/rodventures/gravity-subgraph'
       ? immutable.List()
-      : immutable.List().push(immutable.fromJS({
-          path: ['repository'],
-          message: `\
+      : immutable.List().push(
+          immutable.fromJS({
+            path: ['repository'],
+            message: `\
   The subgraph manifest is still referencing the example repository at https://github.com/rodventures/gravity-subgraph.
     Please replace it with your repository location or leave blank if you prefer to keep it private.`,
-        }))
+          }),
+        )
   }
 
   static validateDescription(manifest, { resolveFile }) {
     return manifest.get('description') !== 'Gravatar for Ethereum'
-    ? immutable.List()
-    : immutable.List().push(immutable.fromJS({
-          path: ['description'],
-          message: `\
+      ? immutable.List()
+      : immutable.List().push(
+          immutable.fromJS({
+            path: ['description'],
+            message: `\
   Example subgraph description remains. Please update to provide a short description of what your subgraph is.`,
-        }))
+          }),
+        )
   }
 
   static load(filename) {
@@ -267,7 +272,7 @@ ${abiEvents
     // Perform warning validations
     let warnings = immutable.List.of(
       ...Subgraph.validateDescription(manifest, { resolveFile }),
-      ...Subgraph.validateRepository(manifest, { resolveFile })
+      ...Subgraph.validateRepository(manifest, { resolveFile }),
     )
 
     if (errors.size > 0) {
