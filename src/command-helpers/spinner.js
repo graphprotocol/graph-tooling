@@ -14,19 +14,27 @@ const step = (spinner, subject, text) => {
   return spinner
 }
 
-// A wrapper for functions (f) that provides a progress spinner and formatted alert messages.
-// For warning message support the f must return an immutable Map with result and warning keys.
+// Executes the function `f` in a command-line spinner, using the
+// provided captions for in-progress, error and failed messages.
+//
+// If `f` throws an error, the spinner stops with the failure message
+//   and rethrows the error.
+// If `f` returns an object with a `warning` and a `result` key, the
+//   spinner stops with the warning message and returns the `result` value.
+// Otherwise the spinner prints the in-progress message with a check mark
+//   and simply returns the value returned by `f`.
 const withSpinner = async (text, errorText, warningText, f) => {
   let spinner = toolbox.print.spin(text)
   try {
     let result = await f(spinner)
-    if(warningText && immutable.Map.isMap(result)) {
-      if (result.get('warning', false)) {
-        spinner.stopAndPersist({symbol: '⚠️', text: `${warningText}: ${result.get('warning')}`})
-        return result.get('result')
+    if (typeof result === 'object') {
+      if (result.warning && Object.keys(result).indexOf('result') >= 0) {
+        spinner.warn(`${warningText}: ${result.warning}`)
+        spinner.succeed(text)
+        return result.result
       } else {
         spinner.succeed(text)
-        return result.get('result', result)
+        return result
       }
     } else {
       spinner.succeed(text)
@@ -40,5 +48,5 @@ const withSpinner = async (text, errorText, warningText, f) => {
 
 module.exports = {
   step,
-  withSpinner
+  withSpinner,
 }
