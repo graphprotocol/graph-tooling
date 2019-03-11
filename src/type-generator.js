@@ -85,17 +85,17 @@ module.exports = class TypeGenerator {
                           dataSource,
                           abi.get('name'),
                           abi.get('file'),
-                          spinner
-                        )
+                          spinner,
+                        ),
                       ),
-                    abis
+                    abis,
                   ),
-              immutable.List()
+              immutable.List(),
             )
         } catch (e) {
           throw Error(`Failed to load contract ABIs: ${e.message}`)
         }
-      }
+      },
     )
   }
 
@@ -120,9 +120,9 @@ module.exports = class TypeGenerator {
       null,
       async spinner => {
         return await abis.map(
-          async (abi, name) => await this._generateTypesForABI(abi, spinner)
+          async (abi, name) => await this._generateTypesForABI(abi, spinner),
         )
-      }
+      },
     )
   }
 
@@ -131,23 +131,23 @@ module.exports = class TypeGenerator {
       step(
         spinner,
         `Generate types for contract ABI:`,
-        `${abi.abi.name} (${this.displayPath(abi.abi.file)})`
+        `${abi.abi.name} (${this.displayPath(abi.abi.file)})`,
       )
 
       let codeGenerator = abi.abi.codeGenerator()
       let code = prettier.format(
         [...codeGenerator.generateModuleImports(), ...codeGenerator.generateTypes()].join(
-          '\n'
+          '\n',
         ),
         {
           parser: 'typescript',
-        }
+        },
       )
 
       let outputFile = path.join(
         this.options.outputDir,
         abi.dataSource.get('name'),
-        `${abi.abi.name}.ts`
+        `${abi.abi.name}.ts`,
       )
       step(spinner, `Write types to`, this.displayPath(outputFile))
       fs.mkdirsSync(path.dirname(outputFile))
@@ -168,7 +168,7 @@ module.exports = class TypeGenerator {
         let maybeRelativePath = subgraph.getIn(['schema', 'file'])
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
         return Schema.load(absolutePath)
-      }
+      },
     )
   }
 
@@ -187,14 +187,14 @@ module.exports = class TypeGenerator {
           ].join('\n'),
           {
             parser: 'typescript',
-          }
+          },
         )
 
         let outputFile = path.join(this.options.outputDir, 'schema.ts')
         step(spinner, 'Write types to', this.displayPath(outputFile))
         fs.mkdirsSync(path.dirname(outputFile))
         fs.writeFileSync(outputFile, code)
-      }
+      },
     )
   }
 
