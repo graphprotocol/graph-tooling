@@ -23,22 +23,20 @@ const throwCombinedError = (filename, errors) => {
   )
 }
 
-const buildCombinedWarning = (filename, warnings) => {
-  return (warnings.size > 0)
-    ?
-      warnings.reduce(
+const buildCombinedWarning = (filename, warnings) =>
+  warnings.size > 0
+    ? warnings.reduce(
         (msg, w) =>
           `${msg}
   
     Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
     ${w
-            .get('message')
-            .split('\n')
-            .join('\n  ')}`,
-        `Warning in ${path.relative(process.cwd(), filename)}:`
+      .get('message')
+      .split('\n')
+      .join('\n  ')}`,
+        `Warning in ${path.relative(process.cwd(), filename)}:`,
       )
     : null
-}
 
 module.exports = class Subgraph {
   static validate(data, { resolveFile }) {
@@ -275,10 +273,11 @@ ${abiEvents
     if (errors.size > 0) {
       throwCombinedError(filename, errors)
     }
-    return immutable.Map({
+
+    return {
       result: manifest,
-      warning: buildCombinedWarning(filename, warnings)
-    })
+      warning: buildCombinedWarning(filename, warnings) + `\n`,
+    }
   }
 
   static write(subgraph, filename) {
