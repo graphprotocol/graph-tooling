@@ -33,7 +33,7 @@ const buildCombinedWarning = (filename, warnings) =>
     ${w
       .get('message')
       .split('\n')
-      .join('\n  ')}`,
+      .join('\n    ')}`,
         `Warning in ${path.relative(process.cwd(), filename)}:`,
       )
     : null
@@ -226,8 +226,8 @@ ${abiEvents
           immutable.fromJS({
             path: ['repository'],
             message: `\
-  The subgraph manifest is still referencing the example repository at https://github.com/rodventures/gravity-subgraph.
-    Please replace it with your repository location or leave blank if you prefer to keep it private.`,
+The repository is still set to https://github.com/graphprotocol/example-subgraph.
+Please replace it with a link to your subgraph source code.`,
           }),
         )
   }
@@ -239,7 +239,8 @@ ${abiEvents
           immutable.fromJS({
             path: ['description'],
             message: `\
-  Example subgraph description remains. Please update to provide a short description of what your subgraph is.`,
+The description is still the one from the example subgraph.
+Please update it to tell users more about your subgraph.`,
           }),
         )
   }
@@ -271,8 +272,8 @@ ${abiEvents
 
     // Perform warning validations
     let warnings = immutable.List.of(
-      ...Subgraph.validateDescription(manifest, { resolveFile }),
       ...Subgraph.validateRepository(manifest, { resolveFile }),
+      ...Subgraph.validateDescription(manifest, { resolveFile }),
     )
 
     if (errors.size > 0) {
