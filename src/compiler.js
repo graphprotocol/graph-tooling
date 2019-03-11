@@ -60,12 +60,16 @@ class Compiler {
       return Subgraph.load(this.options.subgraphManifest)
     } else {
       return await withSpinner(
-        `Load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Failed to load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Loaded subgraph from ${this.displayPath(this.options.subgraphManifest)} with warnings`,
+        `Load subgraph manifest ${this.displayPath(this.options.subgraphManifest)}`,
+        `Failed to load subgraph manifest ${this.displayPath(
+          this.options.subgraphManifest,
+        )}`,
+        `Warnings loading subgraph manifest ${this.displayPath(
+          this.options.subgraphManifest,
+        )}`,
         async spinner => {
           return Subgraph.load(this.options.subgraphManifest)
-        }
+        },
       )
     }
   }
