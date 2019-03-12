@@ -27,7 +27,7 @@
   "devDependencies": {
     "jest": "^24.3.0",
     "spawn-command": "^0.0.2-1",
-    "strip-ansi": "^5.0.0"
+    "strip-ansi": "^5.1.0"
   },
   "scripts": {
     "test": "jest --verbose"
