@@ -5,117 +5,52 @@
 
 ## The Graph Command Line Interface
 
-As of today, the command line interface consists of five commands:
+As of today, the command line interface supports the following commands:
 
-- `graph codegen` — Generates TypeScript code for smart contract ABIs used in subgraphs.
-- `graph build` — Compiles subgraphs to WebAssembly and deploys them to IPFS.
-- `graph deploy` — Deploys subgraphs to a [Graph Node](https://github.com/graphprotocol/graph-node).
-- `graph remove` — Removes subgraphs from a [Graph Node](https://github.com/graphprotocol/graph-node).
-- `graph auth` — Saves access token for [Graph Node](https://github.com/graphprotocol/graph-node) to the system's keychain.
+- `graph init` — Creates a new subgraph project from an example or an existing contract.
+- `graph create` — Registers a subgraph name with a Graph Node.
+- `graph remove` — Unregisters a subgraph name with a Graph Node.
+- `graph codegen` — Generates AssemblyScript types for smart contract ABIs and the subgraph schema.
+- `graph build` — Compiles a subgraph to WebAssembly.
+- `graph deploy` — Deploys a subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node).
+- `graph auth` — Stores a [Graph Node](https://github.com/graphprotocol/graph-node) access token in the system's keychain.
 
 ## How It Works
 
-`graph` takes a subgraph manifest (defaults to `subgraph.yaml`) with references to:
+The Graph CLI takes a subgraph manifest (defaults to `subgraph.yaml`) with references to:
 
 - A GraphQL schema,
 - Smart contract ABIs, and
-- Mappings written in TypeScript/AssemblyScript.
+- Mappings written in AssemblyScript.
 
 It compiles the mappings to WebAssembly, builds a ready-to-use version of the subgraph saved to IPFS or a local directory for debugging, and deploys the subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node).
 
-## Usage
+## Installation
 
-Subgraphs for The Graph are set up like a typical TypeScript project. We recommend installing `graph-cli` as a local dependency via `package.json` and use `npm` scripts for code generation and building.
+The Graph CLI can be installed with `npm` or `yarn`:
 
-If you are just getting started with creating a subgraph, read the [Getting Started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md) document. Eventually, that guide will lead you back here.
+```sh
+# NPM
+npm install -g @graphprotocol/graph-cli
 
-For clarity, an example of the setup below can be found in the [ENS subgraph repository](https://github.com/graphprotocol/ens-subgraph).
+# Yarn
+npm add --global @graphprotocol/graph-cli
+```
 
 ### On Linux
 
 `libsecret` is used for storing access tokens, so you may need to install it before getting started. Use one of the following commands depending on your distribution:
+
 - Debian/Ubuntu: `sudo apt-get install libsecret-1-dev`
 - Red Hat: `sudo yum install libsecret-devel`
 - Arch Linux: `sudo pacman -S libsecret`
 
-### Steps
+## Getting Started
 
-1.  Create a project for the subgraph with a `package.json`.
-2.  Add a `subgraph.yaml` subgraph manifest with a GraphQL schema.
-3.  Add `@graphprotocol/graph-cli` and `@graphprotocol/graph-ts` dependencies with either NPM or Yarn.
+The Graph CLI can be used with a local or self-hosted [Graph Node](https://github.com/graphprotocol/graph-node) or with the [Hosted Service](https://thegraph.com/explorer/). To help you get going, there are [quick start guides](https://thegraph.com/docs/quick-start) available for both.
 
-    ```bash
-    # NPM
-    npm install --save-dev
-      @graphprotocol/graph-cli \
-      @graphprotocol/graph-ts
+If you are ready to dive into the details of building a subgraph from scratch, there is a [detailed walkthrough](https://thegraph.com/docs/define-a-subgraph) for that as well, along with API documentation for the [AssemblyScript API](https://thegraph.com/docs/assemblyscript-api).
 
-    # Yarn
-    yarn add --dev \
-      @graphprotocol/graph-cli \
-      @graphprotocol/graph-ts
-    ```
-
-4.  Add the following `tsconfig.json`:
-    ```json
-    {
-      "extends": "./node_modules/@graphprotocol/graph-ts/tsconfig.json",
-      "compilerOptions": {
-        "types": ["@graphprotocol/graph-ts"]
-      }
-    }
-    ```
-5.  Add the following to `package.json`:
-    ```json
-    {
-      "scripts": {
-        "codegen": "graph codegen --output-dir types/",
-        "build": "graph build",
-        "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001",
-        "deploy":
-          "graph deploy --ipfs /ip4/127.0.0.1/tcp/5001 --node http://127.0.0.1:8020 --subgraph-name <SUBGRAPH_NAME>"
-      }
-    }
-    ```
-    **Note:** Replace the IP addresses and ports with any [Graph Node](https://github.com/graphprotocol/graph-node) you want to deploy the subgraph to.
-6.  Generate type definitions for contract ABIs used in the subgraph with:
-    ```bash
-    yarn codegen
-    ```
-     This creates the `types/` folder. This folder does not need to be uploaded to GitHub, and the files within it should not be edited. With these types created, you can get auto complete for the types while writing the mappings.
-
-7.  Develop your `mapping.ts` against these generated types. If you are new to this process, read the [Getting Started](https://github.com/graphprotocol/graph-node/blob/master/docs/getting-started.md#34-write-your-mappings) document for a beginner-friendly walkthrough of The Graph.
-
-8.  Deploy your subgraph to a [Graph Node](https://github.com/graphprotocol/graph-node). The following command builds and deploys the subgraph continuously as you are making changes to it:
-    ```sh
-    graph \
-       deploy \
-       --watch \
-       --verbosity debug \
-       --node http://127.0.0.1:8020/ \
-       --ipfs /ip4/127.0.0.1/tcp/5001 \
-       --subgraph-name <SUBGRAPH_NAME>
-    ```
-    **Note:** If the Graph Node you are deploying to requires authorization, make sure to authorize the node using `graph auth http://127.0.0.:8020 <ACCESS_TOKEN>` before deploying.
-
-    You can also use the deploy script added into `package.json`:
-
-    ```sh
-    yarn deploy --debug
-    ```
-
-    This will deploy the subgraph. If you want it to continuously upgrade, also pass the `--watch` flag.
-
-    `yarn deploy` will create the `dist/` folder. Within this folder are the compiled WASM files from the AssemblyScript mappings. Since this folder is generated, it does not need to be tracked in version control.
-
-
-To remove a subgraph from the [Graph Node](https://github.com/graphprotocol/graph-node), use:
-```sh
-graph \
-  remove \
-  --node http://127.0.0.1:8020/ \
-  --subgraph-name <SUBGRAPH_NAME>
-```
 ## License
 
 Copyright &copy; 2018-2019 Graph Protocol, Inc. and contributors.
