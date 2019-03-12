@@ -1,7 +1,7 @@
+const fs = require('fs')
 const path = require('path')
 const spawn = require('spawn-command')
 const stripAnsi = require('strip-ansi')
-const fs = require('fs')
 
 const cliTest = (title, args, testPath, options) => {
   test(
@@ -40,7 +40,7 @@ const cliTest = (title, args, testPath, options) => {
         expect(stripAnsi(stderr)).toBe(expectedStderr)
       }
     },
-    (options !== undefined && options.timeout) || undefined
+    (options !== undefined && options.timeout) || undefined,
   )
 }
 
