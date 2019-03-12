@@ -1,6 +1,7 @@
+const fs = require('fs')
 const path = require('path')
 const spawn = require('spawn-command')
-const fs = require('fs')
+const stripAnsi = require('strip-ansi')
 
 const cliTest = (title, testPath, options) => {
   test(title, async () => {
@@ -8,7 +9,7 @@ const cliTest = (title, testPath, options) => {
 
     let [exitCode, stdout, stderr] = await runCli(
       ['codegen'],
-      resolvePath(`./${testPath}`)
+      resolvePath(`./${testPath}`),
     )
 
     let expectedExitCode = undefined
@@ -30,10 +31,10 @@ const cliTest = (title, testPath, options) => {
       expect(exitCode).toBe(expectedExitCode)
     }
     if (expectedStdout !== undefined) {
-      expect(stdout).toBe(expectedStdout)
+      expect(stripAnsi(stdout)).toBe(expectedStdout)
     }
     if (expectedStderr !== undefined) {
-      expect(stderr).toBe(expectedStderr)
+      expect(stripAnsi(stderr)).toBe(expectedStderr)
     }
   })
 }
