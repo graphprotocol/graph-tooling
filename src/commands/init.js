@@ -188,12 +188,19 @@ module.exports = {
       return
     }
 
-    let [subgraphName, directory] = fixParameters(toolbox.parameters, {
-      fromExample,
-      allowSimpleName,
-      help,
-      h,
-    })
+    let subgraphName, directory
+    try {
+      ;[subgraphName, directory] = fixParameters(toolbox.parameters, {
+        fromExample,
+        allowSimpleName,
+        help,
+        h,
+      })
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
 
     // Show help text if requested
     if (help || h) {
