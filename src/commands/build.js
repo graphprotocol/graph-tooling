@@ -1,6 +1,7 @@
 const chalk = require('chalk')
 
 const { createCompiler } = require('../command-helpers/compiler')
+const { fixParameters } = require('../command-helpers/gluegun')
 
 const HELP = `
 ${chalk.bold('graph build')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -41,13 +42,27 @@ module.exports = {
     outputFormat = outputFormat || t
     watch = watch || w
 
+    let manifest
+    try {
+      ;[manifest] = fixParameters(toolbox.parameters, {
+        h,
+        help,
+        w,
+        watch,
+      })
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
+
     // Fall back to default values for options / parameters
     outputFormat =
       outputFormat && ['wasm', 'wast'].indexOf(outputFormat) >= 0 ? outputFormat : 'wasm'
     outputDir = outputDir && outputDir !== '' ? outputDir : filesystem.path('build')
-    let manifest =
-      toolbox.parameters.first !== undefined && toolbox.parameters.first !== ''
-        ? toolbox.parameters.first
+    manifest =
+      manifest !== undefined && manifest !== ''
+        ? manifest
         : filesystem.resolve('subgraph.yaml')
 
     // Show help text if requested
