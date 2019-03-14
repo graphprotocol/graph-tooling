@@ -333,6 +333,8 @@ const initRepository = async (toolbox, directory) =>
     `Initialize subgraph repository`,
     `Failed to initialize subgraph repository`,
     async spinner => {
+      // Remove .git dir in --from-example mode; in --from-contract, we're
+      // starting from an empty directory
       let gitDir = path.join(directory, '.git')
       if (toolbox.filesystem.exists(gitDir)) {
         await toolbox.filesystem.remove(gitDir)
