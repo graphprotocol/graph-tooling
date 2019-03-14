@@ -1,11 +1,12 @@
 const chalk = require('chalk')
 
-const { createCompiler } = require('../command-helpers/compiler')
-const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
 const { identifyAccessToken } = require('../command-helpers/auth')
-const { validateSubgraphName } = require('../command-helpers/subgraph')
+const { createCompiler } = require('../command-helpers/compiler')
+const { fixParameters } = require('../command-helpers/gluegun')
+const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
 const { validateNodeUrl } = require('../command-helpers/node')
 const { withSpinner } = require('../command-helpers/spinner')
+const { validateSubgraphName } = require('../command-helpers/subgraph')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -15,7 +16,7 @@ ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk
 Options:
 
       --access-token <token>    Graph access token
-  -g, --node                    Graph node to deploy the subgraph to
+  -g, --node <node>             Graph node to deploy the subgraph to
   -h, --help                    Show usage information
   -i, --ipfs <node>             Upload build results to an IPFS node
   -o, --output-dir <path>       Output directory for build results (default: build/)
@@ -50,12 +51,25 @@ module.exports = {
     outputDir = outputDir || o
     watch = watch || w
 
+    let subgraphName, manifest
+    try {
+      ;[subgraphName, manifest] = fixParameters(toolbox.parameters, {
+        h,
+        help,
+        w,
+        watch,
+      })
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
+
     // Fall back to default values for options / parameters
     outputDir = outputDir && outputDir !== '' ? outputDir : filesystem.path('build')
-    let subgraphName = toolbox.parameters.first
-    let manifest =
-      toolbox.parameters.second !== undefined && toolbox.parameters.second !== ''
-        ? toolbox.parameters.second
+    manifest =
+      manifest !== undefined && manifest !== ''
+        ? manifest
         : filesystem.resolve('subgraph.yaml')
 
     // Show help text if requested

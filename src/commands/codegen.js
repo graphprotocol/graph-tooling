@@ -1,5 +1,7 @@
 const chalk = require('chalk')
+
 const TypeGenerator = require('../type-generator')
+const { fixParameters } = require('../command-helpers/gluegun')
 
 const HELP = `
 ${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -25,14 +27,28 @@ module.exports = {
     outputDir = outputDir || o
     watch = watch || w
 
+    let manifest
+    try {
+      ;[manifest] = fixParameters(toolbox.parameters, {
+        h,
+        help,
+        w,
+        watch,
+      })
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
+
     // Fall back to default values for options / parameters
     outputDir =
       outputDir !== undefined && outputDir !== ''
         ? outputDir
         : filesystem.path('generated')
-    let manifest =
-      toolbox.parameters.first !== undefined && toolbox.parameters.first !== ''
-        ? toolbox.parameters.first
+    manifest =
+      manifest !== undefined && manifest !== ''
+        ? manifest
         : filesystem.resolve('subgraph.yaml')
 
     // Show help text if requested
