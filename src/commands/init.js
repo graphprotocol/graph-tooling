@@ -274,6 +274,7 @@ module.exports = {
       subgraphName,
     })
 
+    // Exit immediately when the form is cancelled
     if (inputs === undefined) {
       process.exit(1)
       return
