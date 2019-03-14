@@ -94,6 +94,10 @@ const processInitForm = async (
       skip: fromExample !== undefined,
       initial: address,
       validate: async value => {
+        if (fromExample !== undefined) {
+          return true
+        }
+
         // Validate whether the address is valid
         if (!addressPattern.test(value)) {
           return `Contract address "${value}" is invalid.
@@ -103,7 +107,7 @@ const processInitForm = async (
         return true
       },
       result: async value => {
-        if (fromExample) {
+        if (fromExample !== undefined) {
           return value
         }
 
@@ -283,10 +287,14 @@ module.exports = {
     print.info('———')
 
     if (fromExample) {
-      await initSubgraphFromExample(toolbox, {
-        subgraphName: inputs.subgraphName,
-        directory: inputs.directory,
-      })
+      await initSubgraphFromExample(
+        toolbox,
+        {
+          subgraphName: inputs.subgraphName,
+          directory: inputs.directory,
+        },
+        { commands }
+      )
     } else {
       await initSubgraphFromContract(
         toolbox,
