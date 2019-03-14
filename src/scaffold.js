@@ -90,7 +90,6 @@ const ethereumTypeToGraphQL = name => {
 const generateEventType = event => `type ${event.name} @entity {
       id: ID!
       ${event.inputs
-        // TODO: Support inputs without names
         .map(
           (input, index) =>
             `${input.name || `param${index}`}: ${ethereumTypeToGraphQL(input.type)}! # ${
