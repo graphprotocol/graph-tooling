@@ -1,6 +1,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 const prettier = require('prettier')
+const pkginfo = require('pkginfo')(module)
+
 const { getSubgraphBasename } = require('./command-helpers/subgraph')
 const { step } = require('./command-helpers/spinner')
 const { ascTypeForEthereum, valueTypeForAsc } = require('./codegen/types')
@@ -31,7 +33,7 @@ const generatePackageJson = ({ subgraphName }) =>
           subgraphName,
       },
       dependencies: {
-        '@graphprotocol/graph-cli': '0.7.2',
+        '@graphprotocol/graph-cli': `${module.exports.version}`,
         '@graphprotocol/graph-ts': '0.5.1',
       },
     }),
@@ -186,6 +188,7 @@ const writeScaffold = async (scaffold, directory, spinner) => {
 }
 
 module.exports = {
+  ...module.exports,
   abiEvents,
   generateScaffold,
   writeScaffold,
