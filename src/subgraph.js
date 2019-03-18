@@ -34,7 +34,7 @@ const buildCombinedWarning = (filename, warnings) =>
       .get('message')
       .split('\n')
       .join('\n    ')}`,
-        `Warning in ${path.relative(process.cwd(), filename)}:`,
+        `Warnings in ${path.relative(process.cwd(), filename)}:`,
       )
     : null
 
