@@ -155,6 +155,7 @@ const loadAbiFromEtherscan = async (network, address) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
+    `Warnings fetching ABI from Etherscan`,
     async spinner => {
       let result = await fetch(
         `https://${
@@ -332,6 +333,7 @@ const initRepository = async (toolbox, directory) =>
   await withSpinner(
     `Initialize subgraph repository`,
     `Failed to initialize subgraph repository`,
+    `Warnings while initializing subgraph repository`,
     async spinner => {
       // Remove .git dir in --from-example mode; in --from-contract, we're
       // starting from an empty directory
@@ -352,6 +354,7 @@ const installDependencies = async (toolbox, directory, installCommand) =>
   await withSpinner(
     `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
     `Failed to install dependencies`,
+    `Warnings while installing dependencies`,
     async spinner => {
       await toolbox.system.run(installCommand, { cwd: directory })
       return true
@@ -361,7 +364,8 @@ const installDependencies = async (toolbox, directory, installCommand) =>
 const runCodegen = async (toolbox, directory, codegenCommand) =>
   await withSpinner(
     `Generate ABI and schema types with ${toolbox.print.colors.muted(codegenCommand)}`,
-    `Failed to generatecode from ABI and GraphQL schema`,
+    `Failed to generate code from ABI and GraphQL schema`,
+    `Warnings while generating code from ABI and GraphQL schema`,
     async spinner => {
       await toolbox.system.run(codegenCommand, { cwd: directory })
       return true
@@ -419,6 +423,7 @@ const initSubgraphFromExample = async (
   let cloned = await withSpinner(
     `Cloning example subgraph`,
     `Failed to clone example subgraph`,
+    `Warnings while cloning example subgraph`,
     async spinner => {
       await system.run(
         `git clone http://github.com/graphprotocol/example-subgraph ${directory}`
@@ -435,6 +440,7 @@ const initSubgraphFromExample = async (
   let prepared = await withSpinner(
     `Update subgraph name and commands in package.json`,
     `Failed to update subgraph name and commands in package.json`,
+    `Warnings while updating subgraph name and commands in package.json`,
     async spinner => {
       try {
         // Load package.json
@@ -518,6 +524,7 @@ const initSubgraphFromContract = async (
   let scaffold = await withSpinner(
     `Create subgraph scaffold`,
     `Failed to create subgraph scaffold`,
+    `Warnings while creating subgraph scaffold`,
     async spinner => {
       let scaffold = await generateScaffold(
         {
