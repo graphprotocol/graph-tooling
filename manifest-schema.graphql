@@ -28,9 +28,9 @@ type EthereumContractMapping {
   file: File!
   entities: [String!]!
   abis: [EthereumContractAbi!]!
-  blockHandlers: EthereumBlockHandler
-  transactionHandlers: [EthereumTransactionHandlers!]
-  eventHandlers: [EthereumContractEventHandlers!]
+  blockHandler: EthereumBlockHandler
+  transactionHandlers: [EthereumTransactionHandler!]
+  eventHandlers: [EthereumContractEventHandler!]
 }
 
 type EthereumContractAbi {
@@ -42,12 +42,12 @@ type EthereumBlockHandler {
   handler: String!
 }
 
-type EthereumTransactionHandlers {
+type EthereumTransactionHandler {
   function: String!
   handler: String!
 }
 
-type EthereumContractEventHandlers {
+type EthereumContractEventHandler {
   event: String!
   topic0: String
   handler: String!
