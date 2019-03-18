@@ -59,12 +59,12 @@ class Compiler {
     if (quiet) {
       return Subgraph.load(this.options.subgraphManifest)
     } else {
+      const manifestPath = this.displayPath(this.options.subgraphManifest)
+
       return await withSpinner(
-        `Load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Failed to load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Warnings loading subgraph from ${this.displayPath(
-          this.options.subgraphManifest,
-        )}`,
+        `Load subgraph from ${manifestPath}`,
+        `Failed to load subgraph from ${manifestPath}`,
+        `Warnings loading subgraph from ${manifestPath}`,
         async spinner => {
           return Subgraph.load(this.options.subgraphManifest)
         },
@@ -158,7 +158,7 @@ class Compiler {
     return await withSpinner(
       `Compile subgraph`,
       `Failed to compile subgraph`,
-      null,
+      `Warnings while compiling subgraph`,
       async spinner => {
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
@@ -224,14 +224,14 @@ class Compiler {
   }
 
   async writeSubgraphToOutputDirectory(subgraph) {
+    const displayDir = `${this.displayPath(this.options.outputDir)}/${
+      tolbox.filesystem.separator
+    }`
+
     return await withSpinner(
-      `Write compiled subgraph to ${`${this.displayPath(this.options.outputDir)}${
-        toolbox.filesystem.separator
-      }`}`,
-      `Failed to write compiled subgraph to ${`${this.displayPath(
-        this.options.outputDir,
-      )}${toolbox.filesystem.separator}`}`,
-      null,
+      `Write compiled subgraph to ${displayDir}`,
+      `Failed to write compiled subgraph to ${displayDir}`,
+      `Warnings while writing compiled subgraph to ${displayDir}`,
       async spinner => {
         // Copy schema and update its path
         subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
@@ -289,7 +289,7 @@ class Compiler {
     return withSpinner(
       `Upload subgraph to IPFS`,
       `Failed to upload subgraph to IPFS`,
-      null,
+      `Warnings while uploading subgraph to IPFS`,
       async spinner => {
         // Collect all source (path -> hash) updates to apply them later
         let updates = []

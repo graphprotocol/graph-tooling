@@ -48,12 +48,12 @@ module.exports = class TypeGenerator {
         ? this.options.subgraph
         : Subgraph.load(this.options.subgraphManifest)
     } else {
+      const manifestPath = this.displayPath(this.options.subgraphManifest)
+
       return await withSpinner(
-        `Load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Failed to load subgraph from ${this.displayPath(this.options.subgraphManifest)}`,
-        `Warnings loading subgraph from ${this.displayPath(
-          this.options.subgraphManifest,
-        )}`,
+        `Load subgraph from ${manifestPath}`,
+        `Failed to load subgraph from ${manifestPath}`,
+        `Warnings loading subgraph from ${manifestPath}`,
         async spinner => {
           return this.options.subgraph
             ? this.options.subgraph
@@ -67,7 +67,7 @@ module.exports = class TypeGenerator {
     return await withSpinner(
       'Load contract ABIs',
       'Failed to load contract ABIs',
-      null,
+      `Warnings while loading contract ABIs`,
       async spinner => {
         try {
           return subgraph
@@ -115,7 +115,7 @@ module.exports = class TypeGenerator {
     return withSpinner(
       `Generate types for contract ABIs`,
       `Failed to generate types for contract ABIs`,
-      null,
+      `Warnings while generating types for contract ABIs`,
       async spinner => {
         return await abis.map(
           async (abi, name) => await this._generateTypesForABI(abi, spinner),
@@ -161,7 +161,7 @@ module.exports = class TypeGenerator {
     return await withSpinner(
       `Load GraphQL schema from ${this.displayPath(absolutePath)}`,
       `Failed to load GraphQL schema from ${this.displayPath(absolutePath)}`,
-      null,
+      `Warnings while loading GraphQL schema from ${this.displayPath(absolutePath)}`,
       async spinner => {
         let maybeRelativePath = subgraph.getIn(['schema', 'file'])
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
@@ -174,7 +174,7 @@ module.exports = class TypeGenerator {
     return await withSpinner(
       `Generate types for GraphQL schema`,
       `Failed to generate types for GraphQL schema`,
-      null,
+      `Warnings while generating types for GraphQL schema`,
       async spinner => {
         // Generate TypeScript module from schema
         let codeGenerator = schema.codeGenerator()
