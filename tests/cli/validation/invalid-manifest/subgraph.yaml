@@ -8,3 +8,5 @@ dataSources:
       - 12
       - 13
       - 14
+    templates:
+      field: foo
