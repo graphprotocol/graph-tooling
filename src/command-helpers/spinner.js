@@ -31,7 +31,7 @@ const withSpinner = async (text, errorText, warningText, f) => {
       let hasWarning = Object.keys(result).indexOf('warning') >= 0
       let hasResult = Object.keys(result).indexOf('result') >= 0
       if (hasWarning && hasResult) {
-        if (result.warning) {
+        if (result.warning !== null) {
           spinner.warn(`${warningText}: ${result.warning}`)
         }
         spinner.succeed(text)
