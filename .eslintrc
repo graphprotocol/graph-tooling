@@ -1,0 +1,10 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "ecmaFeatures": {
+    }
+  },
+  "env": {
+    "node": true
+  }
+}
