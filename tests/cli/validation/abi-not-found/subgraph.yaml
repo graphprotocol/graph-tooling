@@ -22,3 +22,21 @@ dataSources:
       eventHandlers:
         - event: ExampleEvent(string)
           handler: handleExampleEvent
+    templates:
+      - kind: ethereum/contract
+        name: ExampleTemplate
+        source:
+          abi: ExampleContract
+        mapping:
+          kind: ethereum/events
+          apiVersion: 0.0.1
+          language: wasm/assemblyscript
+          file: ./mapping.ts
+          entities:
+            - ExampleEntity
+          abis:
+            - name: ExampleContract
+              file: ./Abi.json
+          eventHandlers:
+            - event: ExampleEvent(string,uint256)
+              handler: handleExampleEvent
