@@ -13,6 +13,7 @@ type EthereumContractDataSource {
   network: String
   source: EthereumContractSource!
   mapping: EthereumContractMapping!
+  templates: [EthereumContractDataSourceTemplate!]
 }
 
 type EthereumContractSource {
@@ -46,4 +47,16 @@ type SubgraphManifest {
   description: String
   repository: String
   dataSources: [DataSource!]!
+}
+
+type EthereumContractDataSourceTemplate {
+  kind: String!
+  name: String!
+  network: String
+  source: EthereumContractSourceTemplate!
+  mapping: EthereumContractMapping!
+}
+
+type EthereumContractSourceTemplate {
+  abi: String!
 }
