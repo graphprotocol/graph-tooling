@@ -23,5 +23,9 @@
   - 13
   - 14
 
+  Path: dataSources > 0 > templates
+  Expected list, found map:
+  field: foo
+
   Path: dataSources > 0
   Unexpected key in map: abis
