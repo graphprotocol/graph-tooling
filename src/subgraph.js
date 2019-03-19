@@ -82,64 +82,93 @@ module.exports = class Subgraph {
     }
   }
 
-  static validateAbis(manifest, { resolveFile }) {
+  static collectDataSources(manifest) {
+    return manifest
+      .get('dataSources')
+      .reduce(
+        (dataSources, dataSource, dataSourceIndex) =>
+          dataSource.get('kind') === 'ethereum/contract'
+            ? dataSources.push(
+                immutable.Map({ path: ['dataSources', dataSourceIndex], dataSource }),
+              )
+            : dataSources,
+        immutable.List(),
+      )
+  }
+
+  static collectDataSourceTemplates(manifest) {
+    return manifest.get('dataSources').reduce(
+      (templates, dataSource, dataSourceIndex) =>
+        dataSource.get('templates', immutable.List()).reduce(
+          (templates, template, templateIndex) =>
+            template.get('kind') === 'ethereum/contract'
+              ? templates.push(
+                  immutable.Map({
+                    path: ['dataSources', dataSourceIndex, 'templates', templateIndex],
+                    dataSource: template,
+                  }),
+                )
+              : templates,
+          templates,
+        ),
+      immutable.List(),
+    )
+  }
+
+  static validateDataSourceAbis(dataSource, { resolveFile, path }) {
     // Validate that the the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
-    let abiReferenceErrors = manifest
-      .get('dataSources')
-      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
-      .reduce((errors, dataSource, dataSourceIndex) => {
-        let abiName = dataSource.getIn(['source', 'abi'])
-        let abiNames = dataSource.getIn(['mapping', 'abis']).map(abi => abi.get('name'))
-
-        if (abiNames.includes(abiName)) {
-          return errors
-        } else {
-          return errors.push(
-            immutable.fromJS({
-              path: ['dataSources', dataSourceIndex, 'source', 'abi'],
-              message: `\
+    let abiName = dataSource.getIn(['source', 'abi'])
+    let abiNames = dataSource.getIn(['mapping', 'abis']).map(abi => abi.get('name'))
+    let nameErrors = abiNames.includes(abiName)
+      ? immutable.List()
+      : immutable.fromJS([
+          {
+            path: [...path, 'source', 'abi'],
+            message: `\
 ABI name '${abiName}' not found in mapping > abis.
 Available ABIs:
 ${abiNames
-                .sort()
-                .map(name => `- ${name}`)
-                .join('\n')}`,
+              .sort()
+              .map(name => `- ${name}`)
+              .join('\n')}`,
+          },
+        ])
+
+    // Validate that all ABI files are valid
+    let fileErrors = dataSource
+      .getIn(['mapping', 'abis'])
+      .reduce((errors, abi, abiIndex) => {
+        try {
+          ABI.load(abi.get('name'), resolveFile(abi.get('file')))
+          return errors
+        } catch (e) {
+          return errors.push(
+            immutable.fromJS({
+              path: [...path, 'mapping', 'abis', abiIndex, 'file'],
+              message: e.message,
             }),
           )
         }
       }, immutable.List())
 
-    // Validate that all ABI files are valid
-    let abiFileErrors = manifest
-      .get('dataSources')
-      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
-      .reduce(
-        (errors, dataSource, dataSourceIndex) =>
-          dataSource.getIn(['mapping', 'abis']).reduce((errors, abi, abiIndex) => {
-            try {
-              ABI.load(abi.get('name'), resolveFile(abi.get('file')))
-              return errors
-            } catch (e) {
-              return errors.push(
-                immutable.fromJS({
-                  path: [
-                    'dataSources',
-                    dataSourceIndex,
-                    'mapping',
-                    'abis',
-                    abiIndex,
-                    'file',
-                  ],
-                  message: e.message,
-                }),
-              )
-            }
-          }, errors),
-        immutable.List(),
-      )
+    return nameErrors.concat(fileErrors)
+  }
 
-    return immutable.List.of(...abiReferenceErrors, ...abiFileErrors)
+  static validateAbis(manifest, { resolveFile }) {
+    let dataSources = Subgraph.collectDataSources(manifest)
+    let dataSourceTemplates = Subgraph.collectDataSourceTemplates(manifest)
+
+    return dataSources.concat(dataSourceTemplates).reduce(
+      (errors, dataSourceOrTemplate) =>
+        errors.concat(
+          Subgraph.validateDataSourceAbis(dataSourceOrTemplate.get('dataSource'), {
+            resolveFile,
+            path: dataSourceOrTemplate.get('path'),
+          }),
+        ),
+      immutable.List(),
+    )
   }
 
   static validateContractAddresses(manifest) {
@@ -197,7 +226,7 @@ Must be 40 hexadecimal characters, with an optional '0x' prefix.`,
           ? errors
           : errors.push(
               immutable.fromJS({
-                path: [...path, index],
+                path: [...path, 'eventHandlers', index],
                 message: `\
 Event with signature '${manifestEvent}' not present in ABI '${abi.name}'.
 Available events:
@@ -212,46 +241,25 @@ ${abiEvents
   }
 
   static validateEvents(manifest, { resolveFile }) {
-    // Validate events in data sources
-    let dataSourceErrors = manifest
-      .get('dataSources')
-      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
-      .reduce((errors, dataSource, dataSourceIndex) => {
+    let dataSources = Subgraph.collectDataSources(manifest)
+    let dataSourceTemplates = Subgraph.collectDataSourceTemplates(manifest)
+
+    return dataSources
+      .concat(dataSourceTemplates)
+      .reduce((errors, dataSourceOrTemplate) => {
         try {
-          let path = ['dataSources', dataSourceIndex, 'eventHandlers']
-          return Subgraph.validateDataSourceEvents(dataSource, { resolveFile, path })
+          return errors.concat(
+            Subgraph.validateDataSourceEvents(dataSourceOrTemplate.get('dataSource'), {
+              resolveFile,
+              path: dataSourceOrTemplate.get('path'),
+            }),
+          )
         } catch (e) {
           // Ignore errors silently; we can't really say anything about
           // the events if the ABI can't even be loaded
           return errors
         }
       }, immutable.List())
-
-    // Validate events in data source templates
-    let templateErrors = manifest
-      .get('dataSources')
-      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
-      .filter(dataSource => immutable.List.isList(dataSource.get('templates')))
-      .reduce((errors, dataSource, dataSourceIndex) => {
-        return dataSource.get('templates').reduce((errors, template, templateIndex) => {
-          let path = [
-            'dataSources',
-            dataSourceIndex,
-            'templates',
-            templateIndex,
-            'eventHandlers',
-          ]
-          try {
-            return Subgraph.validateDataSourceEvents(template, { resolveFile, path })
-          } catch (e) {
-            // Ignore errors silently; we can't really say anything about
-            // the events if the ABI can't even be loaded
-            return errors
-          }
-        }, errors)
-      }, immutable.List())
-
-    return immutable.List.of(...dataSourceErrors, ...templateErrors)
   }
 
   static validateRepository(manifest, { resolveFile }) {
@@ -306,19 +314,19 @@ Please update it to tell users more about your subgraph.`,
       ...Subgraph.validateEvents(manifest, { resolveFile }),
     )
 
+    if (errors.size > 0) {
+      throwCombinedError(filename, errors)
+    }
+
     // Perform warning validations
     let warnings = immutable.List.of(
       ...Subgraph.validateRepository(manifest, { resolveFile }),
       ...Subgraph.validateDescription(manifest, { resolveFile }),
     )
 
-    if (errors.size > 0) {
-      throwCombinedError(filename, errors)
-    }
-
     return {
       result: manifest,
-      warning: buildCombinedWarning(filename, warnings),
+      warning: warnings.size > 0 ? buildCombinedWarning(filename, warnings) + '\n' : null,
     }
   }
 
