@@ -6,3 +6,8 @@
   Available ABIs:
   - FirstAbi
   - SecondAbi
+
+  Path: dataSources > 0 > templates > 0 > eventHandlers > 0
+  Event with signature 'ExampleEvent(string,uint256)' not present in ABI 'ExampleContract'.
+  Available events:
+  - ExampleEvent(string)
