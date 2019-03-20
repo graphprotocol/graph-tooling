@@ -169,9 +169,26 @@ class Compiler {
       async spinner => {
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
-            dataSource.updateIn(['mapping', 'file'], mappingPath =>
-              this._compileDataSourceMapping(dataSource, mappingPath, spinner),
-            ),
+            dataSource
+              .updateIn(['mapping', 'file'], mappingPath =>
+                this._compileDataSourceMapping(dataSource, mappingPath, spinner),
+              )
+              .update(
+                'templates',
+                templates =>
+                  templates === undefined
+                    ? templates
+                    : templates.map(template =>
+                        template.updateIn(['mapping', 'file'], mappingPath =>
+                          this._compileDataSourceTemplateMapping(
+                            dataSource,
+                            template,
+                            mappingPath,
+                            spinner,
+                          ),
+                        ),
+                      ),
+              ),
           ),
         )
 
@@ -227,6 +244,58 @@ class Compiler {
       return outputFile
     } catch (e) {
       throw Error(`Failed to compile data source mapping: ${e.message}`)
+    }
+  }
+
+  _compileDataSourceTemplateMapping(dataSource, template, mappingPath, spinner) {
+    try {
+      let dataSourceName = dataSource.get('name')
+      let templateName = template.get('name')
+
+      let outFile = path.join(
+        this.subgraphDir(this.options.outputDir, dataSource),
+        'templates',
+        this.options.outputFormat == 'wasm'
+          ? `${templateName}.wasm`
+          : `${templateName}.wast`,
+      )
+
+      step(
+        spinner,
+        'Compile data source template:',
+        `${dataSourceName} > ${templateName} => ${this.displayPath(outFile)}`,
+      )
+
+      let baseDir = this.sourceDir
+      let inputFile = path.relative(baseDir, mappingPath)
+      let outputFile = path.relative(baseDir, outFile)
+
+      // Create output directory
+      try {
+        fs.mkdirsSync(path.dirname(outputFile))
+      } catch (e) {
+        throw e
+      }
+
+      let libs = path.join(baseDir, 'node_modules')
+      let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
+      global = path.relative(baseDir, global)
+
+      asc.main(
+        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile],
+        {
+          stdout: process.stdout,
+          stderr: process.stdout,
+        },
+        e => {
+          if (e != null) {
+            throw e
+          }
+        },
+      )
+      return outputFile
+    } catch (e) {
+      throw Error(`Failed to compile data source template: ${e.message}`)
     }
   }
 
