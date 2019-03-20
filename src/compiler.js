@@ -326,6 +326,7 @@ class Compiler {
         subgraph = subgraph.update('dataSources', dataSources => {
           return dataSources.map(dataSource =>
             dataSource
+              // Write data source ABIs to the output directory
               .updateIn(['mapping', 'abis'], abis =>
                 abis.map(abi =>
                   abi.update('file', abiFile => {
@@ -343,10 +344,52 @@ class Compiler {
                   }),
                 ),
               )
+
               // The mapping file is already being written to the output
               // directory by the AssemblyScript compiler
               .updateIn(['mapping', 'file'], mappingFile =>
                 path.relative(this.options.outputDir, mappingFile),
+              )
+
+              .update(
+                'templates',
+                templates =>
+                  templates === undefined
+                    ? templates
+                    : templates.map(template =>
+                        template
+                          // Write data source template ABIs to the output directory
+                          .updateIn(['mapping', 'abis'], abis =>
+                            abis.map(abi =>
+                              abi.update('file', abiFile => {
+                                let abiData = ABI.load(abi.get('name'), abiFile)
+                                return path.relative(
+                                  this.options.outputDir,
+                                  this._writeSubgraphFile(
+                                    abiFile,
+                                    JSON.stringify(abiData.data.toJS(), null, 2),
+                                    this.sourceDir,
+                                    path.join(
+                                      this.subgraphDir(
+                                        this.options.outputDir,
+                                        dataSource,
+                                      ),
+                                      'templates',
+                                      template.get('name'),
+                                    ),
+                                    spinner,
+                                  ),
+                                )
+                              }),
+                            ),
+                          )
+
+                          // The mapping file is already being written to the output
+                          // directory by the AssemblyScript compiler
+                          .updateIn(['mapping', 'file'], mappingFile =>
+                            path.relative(this.options.outputDir, mappingFile),
+                          ),
+                      ),
               ),
           )
         })
