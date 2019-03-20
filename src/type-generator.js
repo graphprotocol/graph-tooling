@@ -9,6 +9,7 @@ const toolbox = require('gluegun/toolbox')
 const ABI = require('./abi')
 const Schema = require('./schema')
 const Subgraph = require('./subgraph')
+const DataSourceTemplateCodeGenerator = require('./codegen/template')
 const Watcher = require('./watcher')
 const { step, withSpinner } = require('./command-helpers/spinner')
 const { applyMigrations } = require('./migrations')
@@ -40,8 +41,16 @@ module.exports = class TypeGenerator {
       let subgraph = await this.loadSubgraph()
       let abis = await this.loadABIs(subgraph)
       await this.generateTypesForABIs(abis)
+
       let schema = await this.loadSchema(subgraph)
       await this.generateTypesForSchema(schema)
+
+      let dataSources = subgraph.get('dataSources')
+      await this.generateTypesForAllDataSourceTemplates(dataSources)
+
+      let templateAbis = await this.loadDataSourceTemplateABIs(dataSources)
+      await this.generateTypesForDataSourceTemplateABIs(templateAbis)
+
       toolbox.print.success('\nTypes generated successfully\n')
       return true
     } catch (e) {
@@ -118,6 +127,24 @@ module.exports = class TypeGenerator {
     }
   }
 
+  _loadDataSourceTemplateABI(dataSource, template, name, maybeRelativePath, spinner) {
+    try {
+      if (this.sourceDir) {
+        let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
+        step(
+          spinner,
+          `Load data source template ABI from`,
+          this.displayPath(absolutePath),
+        )
+        return { dataSource, template, abi: ABI.load(name, absolutePath) }
+      } else {
+        return { dataSource, template, abi: ABI.load(name, maybeRelativePath) }
+      }
+    } catch (e) {
+      throw Error(`Failed to load data source template ABI: ${e.message}`)
+    }
+  }
+
   generateTypesForABIs(abis) {
     return withSpinner(
       `Generate types for contract ABIs`,
@@ -162,6 +189,41 @@ module.exports = class TypeGenerator {
     }
   }
 
+  async _generateTypesForDataSourceTemplateABI(abi, spinner) {
+    try {
+      step(
+        spinner,
+        `Generate types for data source template ABI:`,
+        `${abi.dataSource.get('name')} > ${abi.template.get('name')} > ${
+          abi.abi.name
+        } (${this.displayPath(abi.abi.file)})`,
+      )
+
+      let codeGenerator = abi.abi.codeGenerator()
+      let code = prettier.format(
+        [...codeGenerator.generateModuleImports(), ...codeGenerator.generateTypes()].join(
+          '\n',
+        ),
+        {
+          parser: 'typescript',
+        },
+      )
+
+      let outputFile = path.join(
+        this.options.outputDir,
+        abi.dataSource.get('name'),
+        'templates',
+        abi.template.get('name'),
+        `${abi.abi.name}.ts`,
+      )
+      step(spinner, `Write types to`, this.displayPath(outputFile))
+      fs.mkdirsSync(path.dirname(outputFile))
+      fs.writeFileSync(outputFile, code)
+    } catch (e) {
+      throw Error(`Failed to generate types for data source template ABI: ${e.message}`)
+    }
+  }
+
   async loadSchema(subgraph) {
     let maybeRelativePath = subgraph.getIn(['schema', 'file'])
     let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
@@ -199,6 +261,112 @@ module.exports = class TypeGenerator {
         step(spinner, 'Write types to', this.displayPath(outputFile))
         fs.mkdirsSync(path.dirname(outputFile))
         fs.writeFileSync(outputFile, code)
+      },
+    )
+  }
+
+  async generateTypesForDataSourceTemplates(dataSource, spinner) {
+    // Combine the generated code for all templates in the date source
+    let codeSegments = dataSource
+      .get('templates', immutable.List())
+      .reduce((codeSegments, template) => {
+        step(
+          spinner,
+          'Generate types for data source template',
+          `${dataSource.get('name')} > ${template.get('name')}`,
+        )
+
+        let codeGenerator = new DataSourceTemplateCodeGenerator(template)
+
+        // Only generate module imports once, because they are identical for all
+        // types generate for data source templates
+        if (codeSegments.isEmpty()) {
+          codeSegments = codeSegments.concat(codeGenerator.generateModuleImports())
+        }
+
+        return codeSegments.concat(codeGenerator.generateTypes())
+      }, immutable.List())
+
+    if (!codeSegments.isEmpty()) {
+      let code = prettier.format(codeSegments.join('\n'), {
+        parser: 'typescript',
+      })
+
+      let outputFile = path.join(
+        this.options.outputDir,
+        dataSource.get('name'),
+        'templates.ts',
+      )
+      step(
+        spinner,
+        `Write types templates of data source ${dataSource.get('name')} to`,
+        this.displayPath(outputFile),
+      )
+      fs.mkdirsSync(path.dirname(outputFile))
+      fs.writeFileSync(outputFile, code)
+    }
+  }
+
+  async generateTypesForAllDataSourceTemplates(dataSources) {
+    return await withSpinner(
+      `Generate types for data source templates`,
+      `Failed to generate types for data source templates`,
+      `Warnings while generating types for data source templates`,
+      async spinner => {
+        await Promise.all(
+          dataSources.map(async dataSource => {
+            await this.generateTypesForDataSourceTemplates(dataSource, spinner)
+          }),
+        )
+      },
+    )
+  }
+
+  async loadDataSourceTemplateABIs(dataSources) {
+    return await withSpinner(
+      `Load data source template ABIs`,
+      `Failed to load data source template ABIs`,
+      `Warnings while loading data source template ABIs`,
+      async spinner => {
+        return dataSources.reduce(
+          (abis, dataSource) =>
+            dataSource
+              .get('templates', immutable.List())
+              .reduce(
+                (abis, template) =>
+                  template
+                    .getIn(['mapping', 'abis'])
+                    .reduce(
+                      (abis, abi) =>
+                        abis.push(
+                          this._loadDataSourceTemplateABI(
+                            dataSource,
+                            template,
+                            abi.get('name'),
+                            abi.get('file'),
+                            spinner,
+                          ),
+                        ),
+                      abis,
+                    ),
+                abis,
+              ),
+          immutable.List(),
+        )
+      },
+    )
+  }
+
+  async generateTypesForDataSourceTemplateABIs(abis) {
+    return await withSpinner(
+      `Generate types for data source template ABIs`,
+      `Failed to generate types for data source template ABIs`,
+      `Warnings while generating types for data source template ABIs`,
+      async spinner => {
+        return await abis.map(
+          async (abi, name) =>
+            await this._generateTypesForDataSourceTemplateABI(abi, spinner),
+        )
       },
     )
   }
