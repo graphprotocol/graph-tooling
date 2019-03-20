@@ -255,6 +255,7 @@ class Compiler {
       let outFile = path.join(
         this.subgraphDir(this.options.outputDir, dataSource),
         'templates',
+        templateName,
         this.options.outputFormat == 'wasm'
           ? `${templateName}.wasm`
           : `${templateName}.wast`,
