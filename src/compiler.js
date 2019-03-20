@@ -444,6 +444,35 @@ class Compiler {
           })
         }
 
+        // Upload the ABIs of all data source templates to IPFS
+        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+          for (let [j, template] of dataSource
+            .get('templates', immutable.List())
+            .entries()) {
+            for (let [k, abi] of template.getIn(['mapping', 'abis']).entries()) {
+              updates.push({
+                keyPath: ['dataSources', i, 'templates', j, 'mapping', 'abis', k, 'file'],
+                value: await this._uploadFileToIPFS(abi.get('file'), spinner),
+              })
+            }
+          }
+        }
+
+        // Upload all template mappings
+        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+          for (let [j, template] of dataSource
+            .get('templates', immutable.List())
+            .entries()) {
+            updates.push({
+              keyPath: ['dataSources', i, 'templates', j, 'mapping', 'file'],
+              value: await this._uploadFileToIPFS(
+                template.getIn(['mapping', 'file']),
+                spinner,
+              ),
+            })
+          }
+        }
+
         // Apply all updates to the subgraph
         for (let update of updates) {
           subgraph = subgraph.setIn(update.keyPath, update.value)
