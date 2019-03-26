@@ -53,7 +53,7 @@ module.exports = class TypeGenerator {
       return await withSpinner(
         `Load subgraph from ${manifestPath}`,
         `Failed to load subgraph from ${manifestPath}`,
-        `Warnings loading subgraph from ${manifestPath}`,
+        `Warnings while loading subgraph from ${manifestPath}`,
         async spinner => {
           return this.options.subgraph
             ? this.options.subgraph
