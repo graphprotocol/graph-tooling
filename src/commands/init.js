@@ -155,7 +155,7 @@ const loadAbiFromEtherscan = async (network, address) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
-    `Warnings fetching ABI from Etherscan`,
+    `Warnings while fetching ABI from Etherscan`,
     async spinner => {
       let result = await fetch(
         `https://${
