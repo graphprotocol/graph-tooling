@@ -24,6 +24,7 @@ module.exports = class AbiCodeGenerator {
           'Bytes',
           'Address',
           'BigInt',
+          'Tuple'
         ],
         '@graphprotocol/graph-ts'
       ),
@@ -59,18 +60,60 @@ module.exports = class AbiCodeGenerator {
             name = `param${index}`
           }
           paramsClass.addMethod(
-            tsCodegen.method(
+            input.get('type') === 'tuple' ?
+              tsCodegen.method(
+                `get ${name}`,
+                [],
+                tsCodegen.namedType(name).capitalize(),
+                `
+            return <${tsCodegen.namedType(name).capitalize()}>${typesCodegen.ethereumValueToAsc(
+                  `this._event.parameters[${index}].value`,
+                  input.get('type')
+                )}
+            `
+              ) :
+              tsCodegen.method(
+                  `get ${name}`,
+                  [],
+                   typesCodegen.ascTypeForEthereum(input.get('type')),
+                  `
+                return ${typesCodegen.ethereumValueToAsc(
+                  `this._event.parameters[${index}].value`,
+                  input.get('type')
+                )}
+                `
+              )
+          )
+        })
+
+        // Generate param getters differently for Tuple params
+        // Also generate a class for each Tuple param
+        let tupleKlasses = [];
+        event.get('inputs').filter(input => input.get('type') === 'tuple').forEach((input, index) => {
+          let tupleKlass = tsCodegen.klass(tsCodegen.namedType(input.get('name')).capitalize(), {
+            export: true,
+            extends: 'Tuple',
+          });
+          input.get('components').forEach((component, index) => {
+            let name = component.get('name')
+            if (name === undefined || name === null || name === '') {
+              name = `param${index}`
+            }
+            tupleKlass.addMethod(
+              tsCodegen.method(
               `get ${name}`,
               [],
-              typesCodegen.ascTypeForEthereum(input.get('type')),
+              typesCodegen.ascTypeForEthereum(component.get('type')),
               `
-            return ${typesCodegen.ethereumValueToAsc(
-              `this._event.parameters[${index}].value`,
-              input.get('type')
-            )}
-            `
+              return ${typesCodegen.ethereumValueToAsc(
+                `this.get("${name}")`,
+                component.get('type')
+              )}
+              `
+              )
             )
-          )
+          })
+          tupleKlasses.push(tupleKlass)
         })
 
         // Then, generate the event class itself
@@ -86,7 +129,7 @@ module.exports = class AbiCodeGenerator {
             `return new ${paramsClassName}(this)`
           )
         )
-        return [klass, paramsClass]
+        return [klass].concat(paramsClass,tupleKlasses)
       })
       .reduce(
         // flatten the array
