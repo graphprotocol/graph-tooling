@@ -9,7 +9,7 @@ const Map = immutable.Map
 const BUILTIN_SCALAR_TYPES = [
   'Boolean',
   'Int',
-  'Float',
+  'BigDecimal',
   'String',
   'BigInt',
   'Bytes',

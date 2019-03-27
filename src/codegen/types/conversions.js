@@ -138,6 +138,7 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
   ['[BigInt]', 'Array<BigInt>', code => `${code}.toBigIntArray()`],
   ['[ID]', 'Array<string>', code => `${code}.toStringArray()`],
   ['[String]', 'Array<string>', code => `${code}.toStringArray()`],
+  ['[BigDecimal]', 'Array<BigDecimal>', code => `${code}.toBigDecimalArray()`],
   [/\[.*\]/, 'Array<string>', code => `${code}.toStringArray()`],
 
   // Scalar values
@@ -148,6 +149,7 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
   ['BigInt', 'BigInt', code => `${code}.toBigInt()`],
   ['ID', 'string', code => `${code}.toString()`],
   ['String', 'string', code => `${code}.toString()`],
+  ['BigDecimal', 'BigDecimal', code => `${code}.toBigDecimal()`],
   [/.*/, 'string', code => `${code}.toString()`],
 ]
 
@@ -168,6 +170,7 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
   ['Array<BigInt>', '[BigInt]', code => `Value.fromBigIntArray(${code})`],
   ['Array<string>', '[String]', code => `Value.fromStringArray(${code})`],
   ['Array<string>', '[ID]', code => `Value.fromStringArray(${code})`],
+  ['Array<BigDecimal>', '[BigDecimal]', code => `Value.fromBigDecimalArray(${code})`],
   ['Array<string>', /\[.*\]/, code => `Value.fromStringArray(${code})`],
 
   // Scalar values
@@ -179,6 +182,7 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
   ['BigInt', 'BigInt', code => `Value.fromBigInt(${code})`],
   ['string', 'String', code => `Value.fromString(${code})`],
   ['string', 'ID', code => `Value.fromString(${code})`],
+  ['BigDecimal', 'BigDecimal', code => `Value.fromBigDecimal(${code})`],
   ['string', /.*/, code => `Value.fromString(${code})`],
 ]
 
