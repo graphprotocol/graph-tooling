@@ -27,6 +27,7 @@ module.exports = class SchemaCodeGenerator {
           'Address',
           'Bytes',
           'BigInt',
+          'BigDecimal'
         ],
         '@graphprotocol/graph-ts'
       ),
