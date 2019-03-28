@@ -10,7 +10,7 @@ const { validateSubgraphName } = require('../command-helpers/subgraph')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
-  '[<subgraph-manifest>]'
+  '[<subgraph-manifest>]',
 )}
 
 Options:
@@ -20,6 +20,7 @@ Options:
   -h, --help                    Show usage information
   -i, --ipfs <node>             Upload build results to an IPFS node
   -o, --output-dir <path>       Output directory for build results (default: build/)
+      --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
@@ -40,6 +41,7 @@ module.exports = {
       node,
       o,
       outputDir,
+      skipMigrations,
       w,
       watch,
     } = toolbox.parameters.options
@@ -113,6 +115,7 @@ module.exports = {
       ipfs,
       outputDir,
       outputFormat: 'wasm',
+      skipMigrations,
     })
 
     // Exit with an error code if the compiler couldn't be created
@@ -146,7 +149,7 @@ module.exports = {
         async (requestError, jsonRpcError, res) => {
           if (jsonRpcError) {
             spinner.fail(
-              `Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`
+              `Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`,
             )
 
             // Provide helpful advice when the subgraph has not been created yet
@@ -184,8 +187,8 @@ $ graph create --node ${node} ${subgraphName}`)
             if (hostedService) {
               print.success(
                 `Deployed to ${chalk.blue(
-                  `https://thegraph.com/explorer/subgraph/${subgraphName}`
-                )}`
+                  `https://thegraph.com/explorer/subgraph/${subgraphName}`,
+                )}`,
               )
             } else {
               print.success(`Deployed to ${chalk.blue(`${playground}`)}`)
@@ -195,7 +198,7 @@ $ graph create --node ${node} ${subgraphName}`)
             print.info(`Subscriptions (WS): ${subscriptions}`)
             print.info(``)
           }
-        }
+        },
       )
     }
 
