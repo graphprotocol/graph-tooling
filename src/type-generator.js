@@ -11,6 +11,7 @@ const Schema = require('./schema')
 const Subgraph = require('./subgraph')
 const Watcher = require('./watcher')
 const { step, withSpinner } = require('./command-helpers/spinner')
+const { applyMigrations } = require('./migrations')
 
 module.exports = class TypeGenerator {
   constructor(options) {
@@ -30,6 +31,12 @@ module.exports = class TypeGenerator {
 
   async generateTypes() {
     try {
+      if (this.options.subgraphManifest) {
+        await applyMigrations({
+          sourceDir: this.options.sourceDir,
+          manifestFile: this.options.subgraphManifest,
+        })
+      }
       let subgraph = await this.loadSubgraph()
       let abis = await this.loadABIs(subgraph)
       await this.generateTypesForABIs(abis)
