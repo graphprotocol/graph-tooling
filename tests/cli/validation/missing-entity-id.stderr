@@ -1,7 +1,3 @@
-- Apply migrations
-  Apply migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
-- Apply migrations
-✔ Apply migrations
 - Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
