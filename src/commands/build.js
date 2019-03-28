@@ -12,6 +12,7 @@ Options:
   -i, --ipfs <node>             Upload build results to an IPFS node
   -o, --output-dir <path>       Output directory for build results (default: build/)
   -t, --output-format <format>  Output format for mappings (wasm, wast) (default: wasm)
+      --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
@@ -30,6 +31,7 @@ module.exports = {
       o,
       outputDir,
       outputFormat,
+      skipMigrations,
       t,
       w,
       watch,
@@ -75,6 +77,7 @@ module.exports = {
       ipfs,
       outputDir,
       outputFormat,
+      skipMigrations,
     })
 
     // Exit with an error code if the compiler couldn't be created

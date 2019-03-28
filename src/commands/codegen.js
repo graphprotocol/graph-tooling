@@ -10,6 +10,7 @@ Options:
 
   -h, --help                    Show usage information
   -o, --output-dir <path>       Output directory for generated types (default: generated/)
+      --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
@@ -20,7 +21,7 @@ module.exports = {
     let { filesystem, print, system } = toolbox
 
     // Read CLI parameters
-    let { h, help, o, outputDir, w, watch } = toolbox.parameters.options
+    let { h, help, o, outputDir, skipMigrations, w, watch } = toolbox.parameters.options
 
     // Support both long and short option variants
     help = help || h
@@ -60,6 +61,7 @@ module.exports = {
     let generator = new TypeGenerator({
       subgraphManifest: manifest,
       outputDir: outputDir,
+      skipMigrations,
     })
 
     // Watch working directory for file updates or additions, trigger
