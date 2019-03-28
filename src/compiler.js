@@ -10,6 +10,7 @@ const { step, withSpinner } = require('./command-helpers/spinner')
 const Subgraph = require('./subgraph')
 const Watcher = require('./watcher')
 const ABI = require('./abi')
+const { applyMigrations } = require('./migrations')
 
 class Compiler {
   constructor(options) {
@@ -32,6 +33,10 @@ class Compiler {
 
   async compile() {
     try {
+      await applyMigrations({
+        sourceDir: this.sourceDir,
+        manifestFile: this.options.subgraphManifest,
+      })
       let subgraph = await this.loadSubgraph()
       let compiledSubgraph = await this.compileSubgraph(subgraph)
       let localSubgraph = await this.writeSubgraphToOutputDirectory(compiledSubgraph)
