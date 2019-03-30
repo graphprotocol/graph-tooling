@@ -20,7 +20,13 @@ module.exports = class ABI {
       event =>
         `${event.get('name')}(${event
           .get('inputs')
-          .map(input => input.get('type'))
+          .map(input => input.get('type')==='tuple' ? 
+            '(' + 
+            input.get('components')
+              .map(component => component.get('type'))
+              .join(',') + 
+            ')':
+            input.get('type'))
           .join(',')})`
     )
   }
