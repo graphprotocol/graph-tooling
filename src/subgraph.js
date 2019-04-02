@@ -35,7 +35,7 @@ const buildCombinedWarning = (filename, warnings) =>
       .split('\n')
       .join('\n    ')}`,
         `Warnings in ${path.relative(process.cwd(), filename)}:`,
-      )
+      ) + '\n'
     : null
 
 module.exports = class Subgraph {
@@ -220,7 +220,7 @@ ${abiEvents
 
   static validateRepository(manifest, { resolveFile }) {
     return manifest.get('repository') !==
-      'https://github.com/rodventures/gravity-subgraph'
+      'https://github.com/graphprotocol/example-subgraph'
       ? immutable.List()
       : immutable.List().push(
           immutable.fromJS({
@@ -282,7 +282,7 @@ Please update it to tell users more about your subgraph.`,
 
     return {
       result: manifest,
-      warning: buildCombinedWarning(filename, warnings) + `\n`,
+      warning: buildCombinedWarning(filename, warnings),
     }
   }
 
