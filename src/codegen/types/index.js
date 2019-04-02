@@ -8,7 +8,7 @@ const conversionsForTypeSystems = (fromTypeSystem, toTypeSystem) => {
   let conversions = TYPE_CONVERSIONS.getIn([fromTypeSystem, toTypeSystem])
   if (conversions === undefined) {
     throw new Error(
-      `Conversions from '${fromTypeSystem}' to '${toTypeSystem}' are not supported`
+      `Conversions from '${fromTypeSystem}' to '${toTypeSystem}' are not supported`,
     )
   }
   return conversions
@@ -35,13 +35,13 @@ const findConversionFromType = (fromTypeSystem, toTypeSystem, fromType) => {
     conversion =>
       typeof conversion.get(0) === 'string'
         ? conversion.get(0) === fromType
-        : fromType.match(conversion.get(0))
+        : fromType.match(conversion.get(0)),
   )
 
   if (conversion === undefined) {
     throw new Error(
       `Conversion from '${fromTypeSystem}' to '${toTypeSystem}' for ` +
-        `source type '${fromType}' is not supported`
+        `source type '${fromType}' is not supported`,
     )
   }
 
@@ -55,13 +55,13 @@ const findConversionToType = (fromTypeSystem, toTypeSystem, toType) => {
     conversion =>
       typeof conversion.get(1) === 'string'
         ? conversion.get(1) === toType
-        : toType.match(conversion.get(1))
+        : toType.match(conversion.get(1)),
   )
 
   if (conversion === undefined) {
     throw new Error(
       `Conversion from '${fromTypeSystem}' to '${toTypeSystem}' for ` +
-        `target type '${toType}' is not supported`
+        `target type '${toType}' is not supported`,
     )
   }
 
@@ -81,12 +81,12 @@ const ethereumTypeForAsc = ascType =>
 
 const ethereumValueToAsc = (code, ethereumType) =>
   findConversionFromType('EthereumValue', 'AssemblyScript', ethereumType).get('convert')(
-    code
+    code,
   )
 
 const ethereumValueFromAsc = (code, ethereumType) =>
   findConversionToType('AssemblyScript', 'EthereumValue', ethereumType).get('convert')(
-    code
+    code,
   )
 
 const ascTypeForValue = valueType =>
