@@ -16,7 +16,7 @@ type EthereumContractDataSource {
 }
 
 type EthereumContractSource {
-  address: String!
+  address: String
   abi: String!
 }
 

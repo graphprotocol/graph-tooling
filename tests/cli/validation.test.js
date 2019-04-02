@@ -66,4 +66,12 @@ describe('Validation', () => {
     'validation/example-values-found',
     { exitCode: 0 },
   )
+  cliTest(
+    'Source without address is valid',
+    ['codegen', '--skip-migrations'],
+    'validation/source-without-address-is-valid',
+    {
+      exitCode: 0,
+    },
+  )
 })
