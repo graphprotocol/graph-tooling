@@ -25,7 +25,7 @@ module.exports = class AbiCodeGenerator {
           'Address',
           'BigInt',
         ],
-        '@graphprotocol/graph-ts'
+        '@graphprotocol/graph-ts',
       ),
     ]
   }
@@ -49,8 +49,8 @@ module.exports = class AbiCodeGenerator {
             `constructor`,
             [tsCodegen.param(`event`, eventClassName)],
             null,
-            `this._event = event`
-          )
+            `this._event = event`,
+          ),
         )
 
         event.get('inputs').forEach((input, index) => {
@@ -73,8 +73,8 @@ module.exports = class AbiCodeGenerator {
               `this._event.parameters[${index}].value`,
               inputType,
             )}
-            `
-            )
+            `,
+            ),
           )
         })
 
@@ -88,15 +88,15 @@ module.exports = class AbiCodeGenerator {
             `get params`,
             [],
             tsCodegen.namedType(paramsClassName),
-            `return new ${paramsClassName}(this)`
-          )
+            `return new ${paramsClassName}(this)`,
+          ),
         )
         return [klass, paramsClass]
       })
       .reduce(
         // flatten the array
         (array, classes) => array.concat(classes),
-        []
+        [],
       )
   }
 
@@ -116,8 +116,8 @@ module.exports = class AbiCodeGenerator {
         tsCodegen.namedType(this.abi.name),
         `
         return new ${this.abi.name}('${this.abi.name}', address);
-        `
-      )
+        `,
+      ),
     )
 
     this.abi.data.forEach(member => {
@@ -136,7 +136,7 @@ module.exports = class AbiCodeGenerator {
               // Create a type dedicated to holding the return values
               returnType = tsCodegen.klass(
                 this.abi.name + '__' + member.get('name') + 'Result',
-                { export: true }
+                { export: true },
               )
 
               // Add a constructor to this type
@@ -148,15 +148,15 @@ module.exports = class AbiCodeGenerator {
                     .map((output, index) =>
                       tsCodegen.param(
                         `value${index}`,
-                        typesCodegen.ascTypeForEthereum(output.get('type'))
-                      )
+                        typesCodegen.ascTypeForEthereum(output.get('type')),
+                      ),
                     ),
                   null,
                   member
                     .get('outputs')
                     .map((output, index) => `this.value${index} = value${index}`)
-                    .join('\n')
-                )
+                    .join('\n'),
+                ),
               )
 
               // Add a `toMap(): TypedMap<string,EthereumValue>` function to the return type
@@ -173,13 +173,13 @@ module.exports = class AbiCodeGenerator {
                       (output, index) =>
                         `map.set('value${index}', ${typesCodegen.ethereumValueFromAsc(
                           `this.value${index}`,
-                          output.get('type')
-                        )})`
+                          output.get('type'),
+                        )})`,
                     )
                     .join(';')}
                   return map;
-                  `
-                )
+                  `,
+                ),
               )
 
               // Add value0, value1 etc. members to the type
@@ -188,8 +188,8 @@ module.exports = class AbiCodeGenerator {
                 .map((output, index) =>
                   tsCodegen.klassMember(
                     `value${index}`,
-                    typesCodegen.ascTypeForEthereum(output.get('type'))
-                  )
+                    typesCodegen.ascTypeForEthereum(output.get('type')),
+                  ),
                 )
                 .forEach(member => returnType.addMember(member))
 
@@ -203,8 +203,8 @@ module.exports = class AbiCodeGenerator {
                   member
                     .get('outputs')
                     .get(0)
-                    .get('type')
-                )
+                    .get('type'),
+                ),
               )
             }
 
@@ -218,8 +218,8 @@ module.exports = class AbiCodeGenerator {
                   .map((input, index) =>
                     tsCodegen.param(
                       paramName(input.get('name'), index),
-                      typesCodegen.ascTypeForEthereum(input.get('type'))
-                    )
+                      typesCodegen.ascTypeForEthereum(input.get('type')),
+                    ),
                   ),
                 returnType,
                 `
@@ -232,8 +232,8 @@ module.exports = class AbiCodeGenerator {
                           .map((input, index) =>
                             typesCodegen.ethereumValueFromAsc(
                               paramName(input.get('name'), index),
-                              input.get('type')
-                            )
+                              input.get('type'),
+                            ),
                           )
                           .map(coercion => coercion.toString())
                           .join(', ')
@@ -247,7 +247,7 @@ module.exports = class AbiCodeGenerator {
                         member
                           .get('outputs')
                           .get(0)
-                          .get('type')
+                          .get('type'),
                       )
                     : `new ${returnType.name}(
                   ${member
@@ -255,14 +255,14 @@ module.exports = class AbiCodeGenerator {
                     .map((output, index) =>
                       typesCodegen.ethereumValueToAsc(
                         `result[${index}]`,
-                        output.get('type')
-                      )
+                        output.get('type'),
+                      ),
                     )
                     .join(', ')}
                 )`
                 };
-                `
-              )
+                `,
+              ),
             )
           }
       }
