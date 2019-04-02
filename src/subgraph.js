@@ -148,6 +148,12 @@ ${abiNames
       .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
       .reduce((errors, dataSource, dataSourceIndex) => {
         let path = ['dataSources', dataSourceIndex, 'source', 'address']
+
+        // No need to validate if the source has no contract address
+        if (!dataSource.get('source').has('address')) {
+          return errors
+        }
+
         let address = dataSource.getIn(['source', 'address'])
 
         // Validate whether the address is valid
