@@ -34,7 +34,7 @@ The Graph CLI can be installed with `npm` or `yarn`:
 npm install -g @graphprotocol/graph-cli
 
 # Yarn
-npm add --global @graphprotocol/graph-cli
+yarn global add @graphprotocol/graph-cli
 ```
 
 ### On Linux
