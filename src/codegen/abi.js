@@ -55,18 +55,23 @@ module.exports = class AbiCodeGenerator {
 
         event.get('inputs').forEach((input, index) => {
           let name = input.get('name')
+          let inputType = input.get('indexed')
+            ? this._indexedInputType(input.get('type'))
+            : input.get('type')
+
           if (name === undefined || name === null || name === '') {
             name = `param${index}`
           }
+
           paramsClass.addMethod(
             tsCodegen.method(
               `get ${name}`,
               [],
-              typesCodegen.ascTypeForEthereum(input.get('type')),
+              typesCodegen.ascTypeForEthereum(inputType),
               `
             return ${typesCodegen.ethereumValueToAsc(
               `this._event.parameters[${index}].value`,
-              input.get('type')
+              inputType,
             )}
             `
             )
@@ -264,5 +269,18 @@ module.exports = class AbiCodeGenerator {
     })
 
     return [...types, klass]
+  }
+
+  _indexedInputType(inputType) {
+    // strings, bytes and arrays are encoded and hashed to a bytes32 value
+    if (
+      inputType === 'string' ||
+      inputType === 'bytes' ||
+      inputType.match(/\[[0-9]*\]$/g)
+    ) {
+      return 'bytes32'
+    } else {
+      return inputType
+    }
   }
 }
