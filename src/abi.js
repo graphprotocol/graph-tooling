@@ -36,7 +36,7 @@ module.exports = class ABI {
     )
   }
 
-  callFunctionSignatures() {
+  callFunctions() {
     // An entry is a function if its type is not set or if it is one of
     // 'constructor', 'function' or 'fallback'
     let functionTypes = immutable.Set(['constructor', 'function', 'fallback'])
@@ -47,22 +47,24 @@ module.exports = class ABI {
     // A function is a call function if it is nonpayable, payable or
     // not constant
     let mutabilityTypes = immutable.Set(['nonpayable', 'payable'])
-    return functions
-      .filter(
-        entry =>
-          mutabilityTypes.includes(entry.get('stateMutability')) ||
-          entry.get('constant') === false,
-      )
-      .map(
-        entry =>
-          `${entry.get(
-            'name',
-            entry.get('type') === 'constructor' ? 'constructor' : '<default>'
-          )}(${entry
-            .get('inputs', immutable.List())
-            .map(input => input.get('type'))
-            .join(',')})`,
-      )
+    return functions.filter(
+      entry =>
+        mutabilityTypes.includes(entry.get('stateMutability')) ||
+        entry.get('constant') === false,
+    )
+  }
+
+  callFunctionSignatures() {
+    return this.callFunctions().map(
+      entry =>
+        `${entry.get(
+          'name',
+          entry.get('type') === 'constructor' ? 'constructor' : '<default>',
+        )}(${entry
+          .get('inputs', immutable.List())
+          .map(input => input.get('type'))
+          .join(',')})`,
+    )
   }
 
   static load(name, file) {
