@@ -10,11 +10,16 @@ const applyMigrations = async options =>
     async spinner => {
       return Promise.all(
         MIGRATIONS.map(async migration => {
-          if (await migration.predicate(options)) {
+          let skipHint = await migration.predicate(options)
+          if (typeof skipHint !== 'string' && skipHint) {
             step(spinner, 'Apply migration:', migration.name)
             await migration.apply(options)
           } else {
-            step(spinner, 'Skip migration:', migration.name)
+            if (typeof skipHint === 'string') {
+              step(spinner, 'Skip migration:', `${migration.name} (${skipHint})`)
+            } else {
+              step(spinner, 'Skip migration:', `${migration.name}`)
+            }
           }
         }),
       )
