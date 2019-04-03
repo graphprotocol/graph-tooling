@@ -13,6 +13,7 @@ module.exports = class AbiCodeGenerator {
       tsCodegen.moduleImports(
         [
           // Base classes
+          'EthereumCall',
           'EthereumEvent',
           'SmartContract',
           'EthereumValue',
@@ -32,7 +33,104 @@ module.exports = class AbiCodeGenerator {
   }
 
   generateTypes() {
-    return [...this._generateEventTypes(), ...this._generateSmartContractClass()]
+    return [
+      ...this._generateEventTypes(),
+      ...this._generateSmartContractClass(),
+      ...this._generateCallTypes(),
+    ]
+  }
+
+  _generateCallTypes() {
+    return this.abi
+      .callFunctions()
+      .map(fn => {
+        let fnName = fn.get(
+          'name',
+          fn.get('type') === 'constructor' ? 'constructor' : 'default',
+        )
+        let fnClassName = `${fnName.charAt(0).toUpperCase()}${fnName.slice(1)}Call`
+        let tupleClasses = []
+
+        // First, generate a class with the input getters
+        let inputsClassName = fnClassName + 'Inputs'
+        let inputsClass = tsCodegen.klass(inputsClassName, { export: true })
+        inputsClass.addMember(tsCodegen.klassMember('_call', fnClassName))
+        inputsClass.addMethod(
+          tsCodegen.method(
+            `constructor`,
+            [tsCodegen.param(`call`, fnClassName)],
+            null,
+            `this._call = call`,
+          ),
+        )
+
+        // Generate getters and classes for function inputs
+        fn.get('inputs', immutable.List()).forEach((input, index) => {
+          let callInput = this._generateInputOrOutput(
+            input,
+            index,
+            fnClassName,
+            `call`,
+            `inputValues`,
+          )
+          inputsClass.addMethod(callInput.getter)
+          tupleClasses.push(...callInput.classes)
+        })
+
+        // Second, generate a class with the output getters
+        let outputsClassName = fnClassName + 'Outputs'
+        let outputsClass = tsCodegen.klass(outputsClassName, { export: true })
+        outputsClass.addMember(tsCodegen.klassMember('_call', fnClassName))
+        outputsClass.addMethod(
+          tsCodegen.method(
+            `constructor`,
+            [tsCodegen.param(`call`, fnClassName)],
+            null,
+            `this._call = call`,
+          ),
+        )
+
+        // Generate getters and classes for function outputs
+        fn.get('outputs', immutable.List()).forEach((output, index) => {
+          let callInput = this._generateInputOrOutput(
+            output,
+            index,
+            fnClassName,
+            `call`,
+            `outputValues`,
+          )
+          outputsClass.addMethod(callInput.getter)
+          tupleClasses.push(...callInput.classes)
+        })
+
+        // Then, generate the event class itself
+        let klass = tsCodegen.klass(fnClassName, {
+          export: true,
+          extends: 'EthereumCall',
+        })
+        klass.addMethod(
+          tsCodegen.method(
+            `get inputs`,
+            [],
+            tsCodegen.namedType(inputsClassName),
+            `return new ${inputsClassName}(this)`,
+          ),
+        )
+        klass.addMethod(
+          tsCodegen.method(
+            `get outputs`,
+            [],
+            tsCodegen.namedType(outputsClassName),
+            `return new ${outputsClassName}(this)`,
+          ),
+        )
+        return [klass, inputsClass, outputsClass, ...tupleClasses]
+      })
+      .reduce(
+        // flatten the array
+        (array, classes) => array.concat(classes),
+        [],
+      )
   }
 
   _generateEventTypes() {
@@ -67,11 +165,12 @@ module.exports = class AbiCodeGenerator {
 
         event.get('inputs').forEach((input, index) => {
           // Generate getters and classes for event params
-          let paramObject = this._generateEventParam(
+          let paramObject = this._generateInputOrOutput(
             input,
             index,
             eventClassName,
             `event`,
+            `parameters`,
           )
           paramsClass.addMethod(paramObject.getter)
           tupleClasses.push(...paramObject.classes)
@@ -99,41 +198,52 @@ module.exports = class AbiCodeGenerator {
       )
   }
 
-  _generateEventParam(input, index, parentClass, parentType) {
+  _generateInputOrOutput(inputOrOutput, index, parentClass, parentType, parentField) {
     // Get name and type of the param, adjusting for indexed params and missing names
-    let name = input.get('name')
-    let paramType = input.get('indexed')
-      ? this._indexedInputType(input.get('type'))
-      : input.get('type')
+    let name = inputOrOutput.get('name')
+    let valueType =
+      parentType === 'event' && inputOrOutput.get('indexed')
+        ? this._indexedInputType(inputOrOutput.get('type'))
+        : inputOrOutput.get('type')
+
     if (name === undefined || name === null || name === '') {
-      name = `param${index}`
+      name = parentType === 'event' ? `param${index}` : `value${index}`
     }
 
     // Generate getters and classes for the param (classes only created for EthereumTuple types)
-    return paramType === 'tuple'
-      ? this._generateTupleType(input, index, parentClass, parentType)
+    return valueType === 'tuple'
+      ? this._generateTupleType(
+          inputOrOutput,
+          index,
+          parentClass,
+          parentType,
+          parentField,
+        )
       : {
           getter: tsCodegen.method(
             `get ${name}`,
             [],
-            typesCodegen.ascTypeForEthereum(paramType),
+            typesCodegen.ascTypeForEthereum(valueType),
             `
-                  return ${typesCodegen.ethereumValueToAsc(
-                    parentType === 'tuple'
-                      ? `this[${index}]`
-                      : `this._event.parameters[${index}].value`,
-                    paramType,
-                  )}
+            return ${typesCodegen.ethereumValueToAsc(
+              parentType === 'tuple'
+                ? `this[${index}]`
+                : `this._${parentType}.${parentField}[${index}].value`,
+              valueType,
+            )}
             `,
           ),
           classes: [],
         }
   }
 
-  _generateTupleType(input, index, parentClass, parentType) {
-    let name = input.get('name')
-    let tupleIdentifier =
-      parentClass + tsCodegen.namedType(input.get('name')).capitalize()
+  _generateTupleType(inputOrOutput, index, parentClass, parentType, parentField) {
+    let name = inputOrOutput.get('name')
+    if (name === undefined || name === null || name === '') {
+      name = parentType === 'event' ? `param${index}` : `value${index}`
+    }
+
+    let tupleIdentifier = parentClass + tsCodegen.namedType(name).capitalize()
     let tupleClassName = tupleIdentifier + 'Struct'
     let tupleClasses = []
 
@@ -143,13 +253,13 @@ module.exports = class AbiCodeGenerator {
       [],
       tupleClassName,
       `
-            return ${typesCodegen.ethereumValueToAsc(
-              parentType === 'tuple'
-                ? `this[${index}]`
-                : `this._event.parameters[${index}].value`,
-              'tuple',
-            )} as ${tupleClassName}
-            `,
+      return ${typesCodegen.ethereumValueToAsc(
+        parentType === 'tuple'
+          ? `this[${index}]`
+          : `this._${parentType}.${parentField}[${index}].value`,
+        'tuple',
+      )} as ${tupleClassName}
+      `,
     )
 
     // Generate tuple class
@@ -161,7 +271,7 @@ module.exports = class AbiCodeGenerator {
     // Add param getters to tuple class and generate classes for each tuple parameter
     input.get('components').forEach((component, index) => {
       let name = component.get('name')
-      let paramObject = this._generateEventParam(
+      let paramObject = this._generateInputOrOutput(
         component,
         index,
         tupleIdentifier,
