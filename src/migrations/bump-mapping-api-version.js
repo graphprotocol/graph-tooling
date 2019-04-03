@@ -1,13 +1,41 @@
 const fs = require('fs-extra')
+const path = require('path')
+const semver = require('semver')
 const toolbox = require('gluegun/toolbox')
 const yaml = require('js-yaml')
+
+const getGraphTsVersion = sourceDir => {
+  let pkgJsonFile = path.join(
+    sourceDir,
+    'node_modules',
+    '@graphprotocol',
+    'graph-ts',
+    'package.json',
+  )
+  let data = fs.readFileSync(pkgJsonFile)
+  let jsonData = JSON.parse(data)
+  return jsonData.version
+}
 
 // If any of the manifest apiVersions are 0.0.1, replace them with 0.0.2
 module.exports = {
   name: 'Bump mapping apiVersion from 0.0.1 to 0.0.2',
-  predicate: async ({ manifestFile }) => {
+  predicate: async ({ sourceDir, manifestFile }) => {
+    // Obtain the graph-ts version, if possible
+    let graphTsVersion
+    try {
+      graphTsVersion = getGraphTsVersion(sourceDir)
+    } catch (_) {
+      // If we cannot obtain the version, return a hint that the graph-ts
+      // hasn't been installed yet
+      return 'graph-ts dependency not installed yet'
+    }
+
     let manifest = yaml.safeLoad(fs.readFileSync(manifestFile, 'utf-8'))
     return (
+      // Only migrate if the graph-ts version is > 0.5.1...
+      semver.gt(graphTsVersion, '0.5.0') &&
+      // ...and we have a manifest with mapping > apiVersion = 0.0.1
       manifest &&
       typeof manifest === 'object' &&
       Array.isArray(manifest.dataSources) &&

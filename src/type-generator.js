@@ -33,7 +33,7 @@ module.exports = class TypeGenerator {
     try {
       if (!this.options.skipMigrations && this.options.subgraphManifest) {
         await applyMigrations({
-          sourceDir: this.options.sourceDir,
+          sourceDir: this.sourceDir,
           manifestFile: this.options.subgraphManifest,
         })
       }
