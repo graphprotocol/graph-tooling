@@ -368,3 +368,24 @@ describe('AssemblyScript -> EthereumValue', () => {
     )
   })
 })
+
+describe('Value -> AssemblyScript', () => {
+  test('BigDecimal -> BigDecimal', () => {
+    expect(codegen.valueToAsc('x', 'BigDecimal')).toBe('x.toBigDecimal()')
+  })
+
+  test('[BigDecimal] -> Array<BigDecimal>', () => {
+    expect(codegen.valueToAsc('x', '[BigDecimal]')).toBe('x.toBigDecimalArray()')
+  })
+})
+
+
+describe('AssemblyScript -> Value', () => {
+  test('BigDecimal -> BigDecimal', () => {
+    expect(codegen.valueFromAsc('x', 'BigDecimal')).toBe('Value.fromBigDecimal(x)')
+  })
+
+  test('Array<BigDecimal> -> [BigDecimal]', () => {
+    expect(codegen.valueFromAsc('x', '[BigDecimal]')).toBe('Value.fromBigDecimalArray(x)')
+  })
+})
