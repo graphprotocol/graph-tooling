@@ -19,12 +19,12 @@ module.exports = class AbiCodeGenerator {
           'JSONValue',
           'TypedMap',
           'Entity',
+          'EthereumTuple',
 
           // AssemblyScript types
           'Bytes',
           'Address',
           'BigInt',
-          'Tuple'
         ],
         '@graphprotocol/graph-ts',
       ),
@@ -97,7 +97,7 @@ module.exports = class AbiCodeGenerator {
         event.get('inputs').filter(input => input.get('type') === 'tuple').forEach((input, index) => {
           let tupleKlass = tsCodegen.klass(tsCodegen.namedType(input.get('name')).capitalize(), {
             export: true,
-            extends: 'Tuple',
+            extends: 'EthereumTuple',
           });
           input.get('components').forEach((component, index) => {
             let name = component.get('name')
