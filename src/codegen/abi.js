@@ -344,6 +344,7 @@ module.exports = class AbiCodeGenerator {
     if (
       inputType === 'string' ||
       inputType === 'bytes' ||
+      inputType == 'tuple' ||
       // the following matches arrays of the forms `uint256[]` and `uint256[12356789]`;
       // the value type name doesn't matter here, just that the type name ends with
       // brackets and, optionally, a number inside the brackets
