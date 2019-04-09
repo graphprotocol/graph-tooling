@@ -23,8 +23,8 @@ export class ExampleEventParams {
     this._event = event;
   }
 
-  get exampleParam(): string {
-    return this._event.parameters[0].value.toString();
+  get exampleParam(): Bytes {
+    return this._event.parameters[0].value.toBytes();
   }
 }
 
