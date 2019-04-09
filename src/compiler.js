@@ -231,7 +231,7 @@ class Compiler {
   }
 
   async writeSubgraphToOutputDirectory(subgraph) {
-    const displayDir = `${this.displayPath(this.options.outputDir)}/${
+    const displayDir = `${this.displayPath(this.options.outputDir)}${
       toolbox.filesystem.separator
     }`
 
