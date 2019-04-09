@@ -4,6 +4,17 @@ const path = require('path')
 
 const AbiCodeGenerator = require('./codegen/abi')
 
+const buildSignatureParameter = input => {
+  return input.get('type') === 'tuple'
+    ? '(' +
+        input
+          .get('components')
+          .map(component => buildSignatureParameter(component))
+          .join(',') +
+        ')'
+    : input.get('type')
+}
+
 module.exports = class ABI {
   constructor(name, file, data) {
     this.name = name
@@ -16,19 +27,15 @@ module.exports = class ABI {
   }
 
   eventSignatures() {
-    return this.data.filter(entry => entry.get('type') === 'event').map(
-      event =>
-        `${event.get('name')}(${event
-          .get('inputs')
-          .map(input => input.get('type')==='tuple' ? 
-            '(' + 
-            input.get('components')
-              .map(component => component.get('type'))
-              .join(',') + 
-            ')':
-            input.get('type'))
-          .join(',')})`
-    )
+    return this.data
+      .filter(entry => entry.get('type') === 'event')
+      .map(
+        event =>
+          `${event.get('name')}(${event
+            .get('inputs')
+            .map(input => buildSignatureParameter(input))
+            .join(',')})`,
+      )
   }
 
   static load(name, file) {
