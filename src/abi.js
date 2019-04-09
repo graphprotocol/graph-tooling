@@ -36,7 +36,7 @@ module.exports = class ABI {
     )
   }
 
-  transactionFunctionSignatures() {
+  callFunctionSignatures() {
     // An entry is a function if its type is not set or if it is one of
     // 'constructor', 'function' or 'fallback'
     let functionTypes = immutable.Set(['constructor', 'function', 'fallback'])
@@ -44,7 +44,7 @@ module.exports = class ABI {
       entry => !entry.has('type') || functionTypes.includes(entry.get('type')),
     )
 
-    // A function is a transaction function if it is nonpayable, payable or
+    // A function is a call function if it is nonpayable, payable or
     // not constant
     let mutabilityTypes = immutable.Set(['nonpayable', 'payable'])
     return functions
