@@ -6,13 +6,14 @@ import {
   store,
   Address,
   Bytes,
-  BigInt
+  BigInt,
+  BigDecimal
 } from "@graphprotocol/graph-ts";
 
 export class ExampleEntity extends Entity {
   constructor(id: string) {
+    this.entries = new Array(0);
     this.set("id", Value.fromString(id));
-    return this;
   }
 
   save(): void {
@@ -353,8 +354,8 @@ export class ExampleEntity extends Entity {
 
 export class OtherEntity extends Entity {
   constructor(id: string) {
+    this.entries = new Array(0);
     this.set("id", Value.fromString(id));
-    return this;
   }
 
   save(): void {
