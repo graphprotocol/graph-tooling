@@ -40,6 +40,7 @@ module.exports = class AbiCodeGenerator {
       .filter(member => member.get('type') === 'event')
       .map(event => {
         let eventClassName = event.get('name')
+        let tupleClasses = []
 
         // First, generate a class with the param getters
         let paramsClassName = eventClassName + 'Params'
@@ -55,70 +56,15 @@ module.exports = class AbiCodeGenerator {
         )
 
         event.get('inputs').forEach((input, index) => {
-          let name = input.get('name')
-          let inputType = input.get('indexed')
-            ? this._indexedInputType(input.get('type'))
-            : input.get('type')
-
-          if (name === undefined || name === null || name === '') {
-            name = `param${index}`
-          }
-
-          paramsClass.addMethod(
-            inputType === 'tuple' ?
-              tsCodegen.method(
-                `get ${name}`,
-                [],
-                tsCodegen.namedType(name).capitalize(),
-                `
-            return <${tsCodegen.namedType(name).capitalize()}>${typesCodegen.ethereumValueToAsc(
-                  `this._event.parameters[${index}].value`,
-                  inputType
-                )}
-            `
-              ) :
-              tsCodegen.method(
-                  `get ${name}`,
-                  [],
-                   typesCodegen.ascTypeForEthereum(inputType),
-                  `
-                return ${typesCodegen.ethereumValueToAsc(
-                  `this._event.parameters[${index}].value`,
-                  inputType,
-                )}
-                `,
-              ),
+          // Generate getters and classes for event params
+          let paramObject = this._generateEventParam(
+            input,
+            index,
+            eventClassName,
+            `event`,
           )
-        })
-
-        // Generate param getters differently for Tuple params
-        // Also generate a class for each Tuple param
-        let tupleKlasses = [];
-        event.get('inputs').filter(input => input.get('type') === 'tuple').forEach((input, index) => {
-          let tupleKlass = tsCodegen.klass(tsCodegen.namedType(input.get('name')).capitalize(), {
-            export: true,
-            extends: 'EthereumTuple',
-          });
-          input.get('components').forEach((component, index) => {
-            let name = component.get('name')
-            if (name === undefined || name === null || name === '') {
-              name = `value${index}`
-            }
-            tupleKlass.addMethod(
-              tsCodegen.method(
-              `get ${name}`,
-              [],
-              typesCodegen.ascTypeForEthereum(component.get('type')),
-              `
-              return ${typesCodegen.ethereumValueToAsc(
-                `this[${index}]`,
-                component.get('type')
-              )}
-              `
-              )
-            )
-          })
-          tupleKlasses.push(tupleKlass)
+          paramsClass.addMethod(paramObject.getter)
+          tupleClasses.push(...paramObject.classes)
         })
 
         // Then, generate the event class itself
@@ -134,13 +80,92 @@ module.exports = class AbiCodeGenerator {
             `return new ${paramsClassName}(this)`,
           ),
         )
-        return [klass].concat(paramsClass,tupleKlasses)
+        return [klass, paramsClass, ...tupleClasses]
       })
       .reduce(
         // flatten the array
         (array, classes) => array.concat(classes),
         [],
       )
+  }
+
+  _generateEventParam(input, index, parentClass, parentType) {
+    // Get name and type of the param, adjusting for indexed params and missing names
+    let name = input.get('name')
+    let paramType = input.get('indexed')
+      ? this._indexedInputType(input.get('type'))
+      : input.get('type')
+    if (name === undefined || name === null || name === '') {
+      name = `param${index}`
+    }
+
+    // Generate getters and classes for the param (classes only created for EthereumTuple types)
+    return paramType === 'tuple'
+      ? this._generateTupleType(input, index, parentClass)
+      : {
+          getter: tsCodegen.method(
+            `get ${name}`,
+            [],
+            typesCodegen.ascTypeForEthereum(paramType),
+            `
+                  return ${typesCodegen.ethereumValueToAsc(
+                    parentType === 'tuple'
+                      ? `this[${index}]`
+                      : `this._event.parameters[${index}].value`,
+                    paramType,
+                  )}
+            `,
+          ),
+          classes: [],
+        }
+  }
+
+  _generateTupleType(input, index, parentClass) {
+    let name = input.get('name')
+    let tupleIdentifier =
+      parentClass + tsCodegen.namedType(input.get('name')).capitalize()
+    let tupleClassName = tupleIdentifier + 'Struct'
+    let tupleClasses = []
+
+    // Generate getter for parent class
+    let tupleGetter = tsCodegen.method(
+      `get ${name}`,
+      [],
+      tupleClassName,
+      `
+            return ${typesCodegen.ethereumValueToAsc(
+              `this._event.parameters[${index}].value`,
+              'tuple',
+            )} as ${tupleClassName}
+            `,
+    )
+
+    // Generate tuple class
+    let baseTupleClass = tsCodegen.klass(tupleClassName, {
+      export: true,
+      extends: 'EthereumTuple',
+    })
+
+    // Add param getters to tuple class and generate classes for each tuple parameter
+    input.get('components').forEach((component, index) => {
+      let name = component.get('name')
+      let paramObject = this._generateEventParam(
+        component,
+        index,
+        tupleIdentifier,
+        `tuple`,
+      )
+      baseTupleClass.addMethod(paramObject.getter)
+      tupleClasses = tupleClasses.concat(paramObject.classes)
+    })
+
+    // Combine all tuple classes generated
+    tupleClasses.unshift(baseTupleClass)
+
+    return {
+      getter: tupleGetter,
+      classes: tupleClasses,
+    }
   }
 
   _generateSmartContractClass() {
