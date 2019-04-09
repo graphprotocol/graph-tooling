@@ -17,6 +17,6 @@ dataSources:
       abis:
         - name: ExampleContract
           file: ./Abi.json
-      transactionHandlers:
+      callHandlers:
         - function: doSomething(uint256)
           handler: handleDoSomething
