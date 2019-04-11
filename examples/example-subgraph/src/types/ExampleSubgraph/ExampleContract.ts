@@ -5,6 +5,7 @@ import {
   JSONValue,
   TypedMap,
   Entity,
+  EthereumTuple,
   Bytes,
   Address,
   BigInt
