@@ -101,7 +101,7 @@ module.exports = class AbiCodeGenerator {
 
     // Generate getters and classes for the param (classes only created for EthereumTuple types)
     return paramType === 'tuple'
-      ? this._generateTupleType(input, index, parentClass)
+      ? this._generateTupleType(input, index, parentClass, parentType)
       : {
           getter: tsCodegen.method(
             `get ${name}`,
@@ -120,7 +120,7 @@ module.exports = class AbiCodeGenerator {
         }
   }
 
-  _generateTupleType(input, index, parentClass) {
+  _generateTupleType(input, index, parentClass, parentType) {
     let name = input.get('name')
     let tupleIdentifier =
       parentClass + tsCodegen.namedType(input.get('name')).capitalize()
@@ -134,7 +134,9 @@ module.exports = class AbiCodeGenerator {
       tupleClassName,
       `
             return ${typesCodegen.ethereumValueToAsc(
-              `this._event.parameters[${index}].value`,
+              parentType === 'tuple'
+                ? `this[${index}]`
+                : `this._event.parameters[${index}].value`,
               'tuple',
             )} as ${tupleClassName}
             `,
