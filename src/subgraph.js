@@ -350,18 +350,18 @@ Please update it to tell users more about your subgraph.`,
         let path = ['dataSources', dataSourceIndex, 'mapping']
 
         let mapping = dataSource.get('mapping')
-        let blockHandler = mapping.get('blockHandler', undefined)
+        let blockHandlers = mapping.get('blockHandlers', immutable.List())
         let callHandlers = mapping.get('callHandlers', immutable.List())
         let eventHandlers = mapping.get('eventHandlers', immutable.List())
 
-        return blockHandler === undefined &&
+        return blockHandlers.isEmpty() &&
           callHandlers.isEmpty() &&
           eventHandlers.isEmpty()
           ? errors.push(
               immutable.fromJS({
                 path: path,
                 message: `\
-Mapping has no blockHandler, callHandlers or eventHandlers.
+Mapping has no blockHandlers, callHandlers or eventHandlers.
 At least one such handler must be defined.`,
               }),
             )
