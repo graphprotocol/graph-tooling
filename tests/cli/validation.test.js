@@ -76,7 +76,7 @@ describe('Validation', () => {
   )
   cliTest(
     'Invalid data source template',
-    ['codegen', '--skip-migration'],
+    ['codegen', '--skip-migrations'],
     'validation/invalid-data-source-template',
     { exitCode: 1 },
   )
