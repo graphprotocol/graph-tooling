@@ -20,6 +20,12 @@
   Write types to generated/ExampleSubgraph/ExampleContract.ts
 - Generate types for contract ABIs
 ✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
 - Load GraphQL schema from schema.graphql
 ✔ Load GraphQL schema from schema.graphql
 - Generate types for GraphQL schema
