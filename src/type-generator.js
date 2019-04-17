@@ -42,14 +42,14 @@ module.exports = class TypeGenerator {
       let abis = await this.loadABIs(subgraph)
       await this.generateTypesForABIs(abis)
 
-      let schema = await this.loadSchema(subgraph)
-      await this.generateTypesForSchema(schema)
-
       let dataSources = subgraph.get('dataSources')
       await this.generateTypesForAllDataSourceTemplates(dataSources)
 
       let templateAbis = await this.loadDataSourceTemplateABIs(dataSources)
       await this.generateTypesForDataSourceTemplateABIs(templateAbis)
+
+      let schema = await this.loadSchema(subgraph)
+      await this.generateTypesForSchema(schema)
 
       toolbox.print.success('\nTypes generated successfully\n')
       return true
