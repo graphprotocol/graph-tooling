@@ -78,7 +78,7 @@ module.exports = class SchemaCodeGenerator {
       [tsCodegen.param('id', tsCodegen.namedType('string'))],
       undefined,
       `
-      this.entries = new Array(0)
+      super()
       this.set('id', Value.fromString(id))
       `
     )
