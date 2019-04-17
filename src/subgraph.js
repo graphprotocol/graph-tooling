@@ -326,7 +326,7 @@ Please update it to tell users more about your subgraph.`,
 
     return {
       result: manifest,
-      warning: warnings.size > 0 ? buildCombinedWarning(filename, warnings) + '\n' : null,
+      warning: warnings.size > 0 ? buildCombinedWarning(filename, warnings) : null,
     }
   }
 
