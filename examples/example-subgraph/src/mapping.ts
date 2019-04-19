@@ -1,6 +1,6 @@
 import { store, crypto, Entity, Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
-import { ExampleContract, ExampleEvent } from './types/ExampleSubgraph/ExampleContract'
-import { ExampleEntity } from './types/schema'
+import { ExampleContract, ExampleEvent } from './../generated/ExampleSubgraph/ExampleContract'
+import { ExampleEntity } from './../generated/schema'
 
 export function handleExampleEvent(event: ExampleEvent): void {
   let entity = new ExampleEntity('example id')
@@ -42,7 +42,7 @@ export function handleExampleEvent(event: ExampleEvent): void {
   entity.optionalIntList = [128, -500]
   entity.optionalIntList = null
 
-  let optionalInt: i32 | null = entity.optionalInt
+  let optionalInt: i32 = entity.optionalInt
   let optionalIntList: Array<i32> | null = entity.optionalIntList
 
   entity.requiredInt = 128
@@ -52,30 +52,30 @@ export function handleExampleEvent(event: ExampleEvent): void {
   let requiredInt: i32 = entity.requiredInt
   let requiredIntList: Array<i32> = entity.requiredIntList
 
-  entity.optionalBigInt = new BigInt()
+  entity.optionalBigInt = new BigInt(0)
   entity.optionalBigInt = null
-  entity.optionalBigIntList = [new BigInt(), new BigInt()]
+  entity.optionalBigIntList = [new BigInt(0), new BigInt(0)]
   entity.optionalBigIntList = null
 
   let optionalBigInt: BigInt | null = entity.optionalBigInt
   let optionalBigIntList: Array<BigInt> | null = entity.optionalBigIntList
 
-  entity.requiredBigInt = new BigInt()
-  entity.requiredBigIntList = [new BigInt(), new BigInt()]
+  entity.requiredBigInt = new BigInt(0)
+  entity.requiredBigIntList = [new BigInt(0), new BigInt(0)]
 
   let requiredBigInt: BigInt = entity.requiredBigInt
   let requiredBigIntList: Array<BigInt> = entity.requiredBigIntList
 
-  entity.optionalBytes = new Bytes()
+  entity.optionalBytes = new Bytes(0)
   entity.optionalBytes = null
-  entity.optionalBytesList = [new Bytes(), new Bytes()]
+  entity.optionalBytesList = [new Bytes(0), new Bytes(0)]
   entity.optionalBytesList = null
 
   let optionalBytes: Bytes | null = entity.optionalBytes
   let optionalBytesList: Array<Bytes> | null = entity.optionalBytesList
 
-  entity.requiredBytes = new Bytes()
-  entity.requiredBytesList = [new Bytes(), new Bytes()]
+  entity.requiredBytes = new Bytes(0)
+  entity.requiredBytesList = [new Bytes(0), new Bytes(0)]
 
   let requiredBytes: Bytes = entity.requiredBytes
   let requiredBytesList: Array<Bytes> = entity.requiredBytesList
@@ -169,8 +169,8 @@ export function handleExampleEvent(event: ExampleEvent): void {
   entity.requiredBigInt = contract.getAndReturnUint256(entity.requiredBigInt)
 
   let addrArray: Array<Address> = contract.getAndReturnAddressArray([
-    new Address(),
-    new Address(),
+    new Address(0),
+    new Address(0),
   ])
   entity.requiredStringList = contract.getAndReturnStringArray(entity.requiredStringList)
   entity.requiredBooleanList = contract.getAndReturnBoolArray(entity.requiredBooleanList)
@@ -213,8 +213,8 @@ export function handleExampleEvent(event: ExampleEvent): void {
   let u16Array: Array<i32> = contract.getAndReturnUint16Array([1 as i32, 100 as i32])
   let u24Array: Array<i32> = contract.getAndReturnUint24Array([1 as i32, 100 as i32])
   let u32Array: Array<BigInt> = contract.getAndReturnUint32Array([
-    new BigInt(),
-    new BigInt(),
+    new BigInt(0),
+    new BigInt(0),
   ])
   entity.requiredBigIntList = contract.getAndReturnUint40Array(entity.requiredBigIntList)
   entity.requiredBigIntList = contract.getAndReturnUint56Array(entity.requiredBigIntList)
