@@ -38,6 +38,7 @@ type EthereumContractAbi {
 
 type EthereumContractEventHandlers {
   event: String!
+  topic0: String
   handler: String!
 }
 
