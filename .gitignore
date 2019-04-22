@@ -63,3 +63,6 @@ typings/
 # Example subgraph build
 examples/example-subgraph/build
 examples/example-subgraph/generated
+
+# validation tests output
+tests/cli/validation/*/generated

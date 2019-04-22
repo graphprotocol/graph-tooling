@@ -80,4 +80,20 @@ describe('Validation', () => {
     'validation/invalid-data-source-template',
     { exitCode: 1 },
   )
+  cliTest(
+    'BigDecimal is a valid type',
+    ['codegen', '--skip-migrations'],
+    'validation/big-decimal-is-valid',
+    {
+      exitCode: 0,
+    },
+  )
+  cliTest(
+    'topic0 is valid in an event handler',
+    ['codegen', '--skip-migrations'],
+    'validation/topic0-is-valid',
+    {
+      exitCode: 0,
+    },
+  )
 })
