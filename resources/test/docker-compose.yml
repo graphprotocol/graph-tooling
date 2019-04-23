@@ -1,0 +1,46 @@
+version: '3'
+services:
+  test:
+    image: graph-test
+    depends_on:
+      - graph-node
+      - parity
+  graph-node:
+    image: graphprotocol/graph-node:latest
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8020:8020'
+    depends_on:
+      - ipfs
+      - parity
+      - postgres
+    environment:
+      postgres_host: postgres:5432
+      postgres_user: graph-node
+      postgres_pass: let-me-in
+      postgres_db: graph-node
+      ipfs: 'ipfs:5001'
+      ethereum: 'dev:http://parity:8545'
+      GRAPH_LOG: trace
+  parity:
+    # image: parity/parity
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - '8545:8545'
+      - '8546:8546'
+      # - '30303:30303'
+      # - '30303:30303/udp'
+    # command: --config dev --jsonrpc-interface all
+  ipfs:
+    image: ipfs/go-ipfs
+    ports:
+      - '5001:5001'
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: graph-node
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph-node
