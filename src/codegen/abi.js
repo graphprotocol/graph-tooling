@@ -36,10 +36,20 @@ module.exports = class AbiCodeGenerator {
   }
 
   _generateEventTypes() {
+    // Keep a map of how many events were generated so far with the given name.
+    // If there are no name collisions, all entries map to 1.
+    let generatedEvents = new Map()
     return this.abi.data
       .filter(member => member.get('type') === 'event')
       .map(event => {
         let eventClassName = event.get('name')
+        let currentCount = generatedEvents.get(eventClassName)
+        if (currentCount === undefined) {
+          generatedEvents.set(eventClassName, 1)
+        } else {
+          generatedEvents.set(eventClassName, currentCount + 1)
+          eventClassName += currentCount
+        }
         let tupleClasses = []
 
         // First, generate a class with the param getters
@@ -190,6 +200,7 @@ module.exports = class AbiCodeGenerator {
       ),
     )
 
+    let generatedMethods = new Map()
     this.abi.data.forEach(member => {
       switch (member.get('type')) {
         case 'function':
@@ -197,6 +208,15 @@ module.exports = class AbiCodeGenerator {
             member.get('stateMutability') === 'view' ||
             member.get('stateMutability') === 'pure'
           ) {
+            let methodName = member.get('name')
+            let currentCount = generatedMethods.get(methodName)
+            if (currentCount === undefined) {
+              generatedMethods.set(methodName, 1)
+            } else {
+              generatedMethods.set(methodName, currentCount + 1)
+              methodName += currentCount
+            }
+            
             // Generate a type for the result of calling the function
             let returnType = undefined
             let simpleReturnType = true
@@ -205,7 +225,7 @@ module.exports = class AbiCodeGenerator {
 
               // Create a type dedicated to holding the return values
               returnType = tsCodegen.klass(
-                this.abi.name + '__' + member.get('name') + 'Result',
+                this.abi.name + '__' + methodName + 'Result',
                 { export: true },
               )
 
@@ -282,7 +302,7 @@ module.exports = class AbiCodeGenerator {
             // the smart contract
             klass.addMethod(
               tsCodegen.method(
-                member.get('name'),
+                methodName,
                 member
                   .get('inputs')
                   .map((input, index) =>
