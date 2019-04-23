@@ -7,6 +7,8 @@
     "chalk": "^3.0.0",
     "chokidar": "^3.0.2",
     "debug": "^4.1.1",
+    "docker-compose": "^0.16.0",
+    "dockerode": "^2.5.8",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.2",
     "gluegun": "^4.1.2",
@@ -19,6 +21,7 @@
     "pkginfo": "^0.4.1",
     "prettier": "^1.13.5",
     "request": "^2.88.0",
+    "tmp": "^0.1.0",
     "yaml": "^1.5.1"
   },
   "optionalDependencies": {
