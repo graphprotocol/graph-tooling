@@ -62,7 +62,7 @@ module.exports = class TypeGenerator {
     if (quiet) {
       return this.options.subgraph
         ? this.options.subgraph
-        : Subgraph.load(this.options.subgraphManifest)
+        : Subgraph.load(this.options.subgraphManifest).result
     } else {
       const manifestPath = this.displayPath(this.options.subgraphManifest)
 
