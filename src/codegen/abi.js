@@ -53,7 +53,7 @@ module.exports = class AbiCodeGenerator {
         let tupleClasses = []
 
         // First, generate a class with the param getters
-        let paramsClassName = eventClassName + 'Params'
+        let paramsClassName = eventClassName + '__Params'
         let paramsClass = tsCodegen.klass(paramsClassName, { export: true })
         paramsClass.addMember(tsCodegen.klassMember('_event', eventClassName))
         paramsClass.addMethod(
