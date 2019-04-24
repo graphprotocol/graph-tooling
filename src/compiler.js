@@ -64,7 +64,7 @@ class Compiler {
 
   async loadSubgraph({ quiet } = { quiet: false }) {
     if (quiet) {
-      return Subgraph.load(this.options.subgraphManifest)
+      return Subgraph.load(this.options.subgraphManifest).result
     } else {
       const manifestPath = this.displayPath(this.options.subgraphManifest)
 
