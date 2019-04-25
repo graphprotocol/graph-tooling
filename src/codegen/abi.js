@@ -200,7 +200,6 @@ module.exports = class AbiCodeGenerator {
       ),
     )
 
-    let generatedMethods = new Map()
     this.abi.data.forEach(member => {
       switch (member.get('type')) {
         case 'function':
@@ -209,13 +208,6 @@ module.exports = class AbiCodeGenerator {
             member.get('stateMutability') === 'pure'
           ) {
             let methodName = member.get('name')
-            let currentCount = generatedMethods.get(methodName)
-            if (currentCount === undefined) {
-              generatedMethods.set(methodName, 1)
-            } else {
-              generatedMethods.set(methodName, currentCount + 1)
-              methodName += currentCount
-            }
             
             // Generate a type for the result of calling the function
             let returnType = undefined
