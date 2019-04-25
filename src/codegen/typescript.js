@@ -65,6 +65,7 @@ class Class {
     this.extends = options.extends
     this.methods = []
     this.members = []
+    this.methodNameCount = new Map() // Counts duplicate names.
     this.export = options.export || false
   }
 
@@ -73,6 +74,14 @@ class Class {
   }
 
   addMethod(method) {
+    let currentCount = this.methodNameCount.get(method.name)
+    if (currentCount === undefined) {
+      this.methodNameCount = this.methodNameCount.set(method.name, 1)
+    } else {
+      // Append the count to disambiguate.
+      this.methodNameCount = this.methodNameCount.set(method.name, currentCount + 1)
+      method.name += currentCount
+    }
     this.methods.push(method)
   }
 
