@@ -1,5 +1,4 @@
 const chalk = require('chalk')
-const keytar = require('keytar')
 const { validateNodeUrl } = require('../command-helpers/node')
 const { identifyAccessToken } = require('../command-helpers/auth')
 const { createJsonRpcClient } = require('../command-helpers/jsonrpc')

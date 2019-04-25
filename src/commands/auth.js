@@ -1,6 +1,6 @@
 const chalk = require('chalk')
-const keytar = require('keytar')
 const { validateNodeUrl, normalizeNodeUrl } = require('../command-helpers/node')
+const { saveAccessToken } = require('../command-helpers/auth')
 
 const HELP = `
 ${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
@@ -58,22 +58,10 @@ module.exports = {
     }
 
     try {
-      node = normalizeNodeUrl(node)
-      await keytar.setPassword('graphprotocol-auth', node, accessToken)
+      await saveAccessToken(node, accessToken)
       print.success(`Access token set for ${node}`)
     } catch (e) {
-      if (process.platform === 'win32') {
-        print.error(`Error storing access token in Windows Credential Vault: ${e}`)
-      } else if (process.platform === 'darwin') {
-        print.error(`Error storing access token in macOS Keychain: ${e}`)
-      } else if (process.platform === 'linux') {
-        print.error(
-          `Error storing access token with libsecret ` +
-            `(usually gnome-keyring or ksecretservice): ${e}`
-        )
-      } else {
-        print.error(`Error storing access token in OS secret storage service: ${e}`)
-      }
+      print.error(e)
       process.exitCode = 1
     }
   },
