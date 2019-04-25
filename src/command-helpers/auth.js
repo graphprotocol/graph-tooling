@@ -8,9 +8,15 @@ const requireKeytar = () => {
     return require('keytar')
   } catch (e) {
     throw new Error(
-      `require(keytar) failed: ${e.message}. on linux, this is often` +
-        `because of a missing libsecret dependency — try installing` +
-        `libsecret and reinstalling graph-cli.`,
+      `
+
+Cannot store the access token because dependencies are missing. If you
+are on Linux, try installing 'libsecret-1-dev' (Debian, Ubuntu etc.) or
+'libsecret-devel' (RedHat, Fedora etc.) and reinstalling Graph CLI
+afterwards.
+
+The original error was: ${e.message}
+      `,
     )
   }
 }
