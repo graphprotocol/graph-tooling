@@ -4,6 +4,7 @@ const fs = require('fs-extra')
 const tmp = require('tmp')
 const Docker = require('dockerode')
 const path = require('path')
+const stripAnsi = require('strip-ansi')
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -21,6 +22,7 @@ Options:
       --compose-file <file>     Custom Docker Compose file for additional services (optional)
       --dockerfile <file>       Custom Dockerfile for the test image (optional)
       --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
+      --node-logs               Always print the Graph Node logs (optional)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
@@ -37,6 +39,7 @@ module.exports = {
       h,
       help,
       nodeImage,
+      nodeLogs,
       w,
       watch,
     } = toolbox.parameters.options
@@ -51,7 +54,7 @@ module.exports = {
       dockerFile,
       h,
       help,
-      nodeImage,
+      nodeLogs,
       w,
       watch,
     })
@@ -115,8 +118,25 @@ module.exports = {
     }
 
     // Run tests
-    let out = await runTests(toolbox, compose, tempdir, testCommand)
-    toolbox.print.info(out)
+    let result = await runTests(toolbox, compose, tempdir, testCommand)
+
+    if (result.exitCode == 0) {
+      toolbox.print.success('✔ Tests passed')
+    } else {
+      toolbox.print.error('✖ Tests failed')
+    }
+
+    toolbox.print.info(result.output)
+
+    if (result.exitCode !== 0 || nodeLogs) {
+      toolbox.print.info('---')
+      toolbox.print.info('Graph Node logs')
+      toolbox.print.info('---')
+      toolbox.print.info(toolbox.print.colors.muted(result.nodeLogs))
+    }
+
+    // Propagate the exit code from the test run
+    process.exitCode = result.exitCode
   },
 }
 
@@ -206,8 +226,18 @@ const runTests = async (toolbox, compose, tempdir, testCommand) =>
         commandOptions: ['--service-ports'],
       })
 
+      // Capture node logs
+      let nodeLogs = await compose.logs('graph-node', {
+        follow: false,
+        cwd: path.join(tempdir, 'compose'),
+      })
+
       await compose.down({ cwd: path.join(tempdir, 'compose') })
 
-      return result.out
+      return {
+        exitCode: result.exitCode,
+        nodeLogs: stripAnsi(nodeLogs.out.trim()).replace(/graph-node_1  \| /g, ''),
+        output: result.out,
+      }
     },
   )
