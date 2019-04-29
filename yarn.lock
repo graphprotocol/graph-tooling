@@ -1461,10 +1461,9 @@ diff-sequences@^24.9.0:
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-24.9.0.tgz#5715d6244e2aa65f48bba0bc972db0b0b11e95b5"
   integrity sha512-Dj6Wk3tWyTE+Fo1rW8v0Xhwk80um6yFYKbuAxc9c3EZxIHFDYwbi34Uk42u1CdnIiVorvt4RmlSDjIPyzGC2ew==
 
-docker-compose@^0.16.0:
+"docker-compose@https://github.com/jannis/docker-compose#jannis/exit-code":
   version "0.16.2"
-  resolved "https://registry.yarnpkg.com/docker-compose/-/docker-compose-0.16.2.tgz#535b2c09a790f8af63a24fdedc340960e5d40367"
-  integrity sha512-uDQCsgwpmvYRxDSFJLR6Fg6sMkiakGmedvfsmxu/6tK1c6eYfMGetfsx4WcdsFqiDjGWceR6aalrsQ+4VlAjiQ==
+  resolved "https://github.com/jannis/docker-compose#1a0c9af4a6867619ec28b68e5bf79c525d8635bf"
   dependencies:
     winston "^2.3.1"
 
