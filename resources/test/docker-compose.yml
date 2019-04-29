@@ -31,6 +31,7 @@ services:
       - '8546:8546'
       # - '30303:30303'
       # - '30303:30303/udp'
+    command: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
     # command: --config dev --jsonrpc-interface all
   ipfs:
     image: ipfs/go-ipfs
