@@ -147,8 +147,9 @@ const copySourcesToDir = async (toolbox, outputDir) =>
     'Failed to copy sources to temporary directory',
     'Warnings copying sources to temporary directory',
     async spinner => {
-      await toolbox.filesystem.copy(process.cwd(), outputDir)
-      await toolbox.filesystem.remove(path.join(outputDir, 'node_modules'))
+      await toolbox.filesystem.copy(process.cwd(), outputDir, {
+        matching: ['!node_modules'],
+      })
       return true
     },
   )
