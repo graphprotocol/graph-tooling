@@ -201,11 +201,11 @@ const configureCompose = async (toolbox, compose, tempdir, composeFile, nodeImag
       let tempComposeFile = path.join(tempdir, 'compose', 'docker-compose.yml')
 
       // Copy the compose file to the temporary directory
-      toolbox.filesystem.copy(composeFile, tempComposeFile)
+      await toolbox.filesystem.copy(composeFile, tempComposeFile)
 
       // Substitute the graph-node image with the custom one, if appropriate
       if (nodeImage) {
-        toolbox.patching.replace(
+        await toolbox.patching.replace(
           tempComposeFile,
           'graphprotocol/graph-node:latest',
           nodeImage,
