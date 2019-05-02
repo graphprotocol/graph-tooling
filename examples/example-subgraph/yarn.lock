@@ -3,10 +3,10 @@
 
 
 "@graphprotocol/graph-cli@git+http://github.com/graphprotocol/graph-cli#master":
-  version "0.9.0"
-  resolved "git+http://github.com/graphprotocol/graph-cli#26a777814765c6fc9416bb8ff795ce1a213fcc55"
+  version "0.10.0"
+  resolved "git+http://github.com/graphprotocol/graph-cli#783bf2f39cb70b424c40ef434cdd3562498f9418"
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
     chalk "^2.4.1"
     chokidar "^2.0.4"
     debug "^3.1.0"
@@ -18,15 +18,16 @@
     ipfs-http-client "^28.1.2"
     jayson "^2.0.6"
     js-yaml "^3.12.0"
-    keytar "^4.3.0"
     node-fetch "^2.3.0"
     pkginfo "^0.4.1"
     prettier "^1.13.5"
     request "^2.88.0"
+  optionalDependencies:
+    keytar "^4.3.0"
 
 "@graphprotocol/graph-ts@git+http://github.com/graphprotocol/graph-ts#master":
-  version "0.9.0"
-  resolved "git+http://github.com/graphprotocol/graph-ts#0438693f40b33038365682d006dfc308da29b31a"
+  version "0.10.0"
+  resolved "git+http://github.com/graphprotocol/graph-ts#e8ddbcc3f1a838be4d2cc7aa665861843d641fb3"
   dependencies:
     assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
 
