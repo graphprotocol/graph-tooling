@@ -12,7 +12,7 @@ import {
 
 export class MyEntity extends Entity {
   constructor(id: string) {
-    this.entries = new Array(0);
+    super();
     this.set("id", Value.fromString(id));
   }
 

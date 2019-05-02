@@ -13,12 +13,12 @@ import {
 } from "@graphprotocol/graph-ts";
 
 export class ExampleEvent extends EthereumEvent {
-  get params(): ExampleEventParams {
-    return new ExampleEventParams(this);
+  get params(): ExampleEvent__Params {
+    return new ExampleEvent__Params(this);
   }
 }
 
-export class ExampleEventParams {
+export class ExampleEvent__Params {
   _event: ExampleEvent;
 
   constructor(event: ExampleEvent) {
