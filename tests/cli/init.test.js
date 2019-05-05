@@ -7,6 +7,7 @@ describe('Init', () => {
 
   let subgraphDir1 = path.join(baseDir, 'from-example')
   let subgraphDir2 = path.join(baseDir, 'from-contract')
+  let subgraphDir3 = path.join(baseDir, 'from-contract-with-abi')
 
   const removeSubgraphDirs = () => {
     if (fs.existsSync(subgraphDir1)) {
@@ -14,6 +15,9 @@ describe('Init', () => {
     }
     if (fs.existsSync(subgraphDir2)) {
       fs.removeSync(subgraphDir2)
+    }
+    if (fs.existsSync(subgraphDir3)) {
+      fs.removeSync(subgraphDir3)
     }
   }
 
@@ -28,7 +32,7 @@ describe('Init', () => {
       exitCode: 0,
       timeout: 60000,
       cwd: baseDir,
-    }
+    },
   )
 
   cliTest(
@@ -47,6 +51,23 @@ describe('Init', () => {
       exitCode: 0,
       timeout: 60000,
       cwd: baseDir,
-    }
+    },
+  )
+
+  cliTest(
+    'From contract with abi',
+    [
+      'init',
+      '--from-contract',
+      '0xF87E31492Faf9A91B02Ee0dEAAd50d51d56D5d4d',
+      '--abi',
+      path.join(baseDir, 'abis', 'Marketplace.json'),
+      '--network',
+      'mainnet',
+      'user/subgraph-from-contract-with-abi',
+      subgraphDir3,
+    ],
+    'init/from-contract-with-abi',
+    { exitCode: 0, timeout: 60000, cwd: baseDir },
   )
 })
