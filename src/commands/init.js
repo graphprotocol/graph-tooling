@@ -122,22 +122,18 @@ const processInitForm = async (
       type: 'input',
       name: 'abi',
       message: 'ABI file (path)',
+      initial: abi,
       skip: () => fromExample !== undefined || abiFromEtherscan !== undefined,
       validate: async value => {
         if (fromExample || abiFromEtherscan) {
           return true
         }
 
-        let exists = await toolbox.filesystem.exists(value)
-        if (!exists) {
-          return 'File does not exist.'
-        } else if (exists === 'dir') {
-          return 'Path points to a directory, not a file.'
-        } else if (exists === 'other') {
-          return 'Not sure what this path points to.'
-        } else {
-          abiFromFile = await toolbox.filesystem.read(value, 'json')
-          return abiFromFile ? true : 'Not a valid ABI file'
+        try {
+          abiFromFile = await loadAbiFromFile(value)
+          return true
+        } catch (e) {
+          return e.message
         }
       },
     },
@@ -166,6 +162,25 @@ const loadAbiFromEtherscan = async (network, address) =>
       return JSON.parse(json.result)
     }
   )
+
+const loadAbiFromFile = async filename => {
+  let exists = await toolbox.filesystem.exists(filename)
+
+  if (!exists) {
+    throw Error('File does not exist.')
+  } else if (exists === 'dir') {
+    throw Error('Path points to a directory, not a file.')
+  } else if (exists === 'other') {
+    throw Error('Not sure what this path points to.')
+  } else {
+    let abi = await toolbox.filesystem.read(filename, 'json')
+    if (!abi) {
+      throw Error('Not a valid ABI file.')
+    } else {
+      return abi
+    }
+  }
+}
 
 module.exports = {
   description: 'Creates a new subgraph with basic scaffolding',
@@ -253,12 +268,21 @@ module.exports = {
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract
     if (fromContract && subgraphName && directory && network) {
-      let abi
-      try {
-        abi = await loadAbiFromEtherscan(network, fromContract)
-      } catch (e) {
-        process.exitCode = 1
-        return
+      if (abi) {
+        try {
+          abi = await loadAbiFromFile(abi)
+        } catch (e) {
+          print.error(`Failed to load ABI: ${e.message}`)
+          process.exitCode = 1
+          return
+        }
+      } else {
+        try {
+          abi = await loadAbiFromEtherscan(network, fromContract)
+        } catch (e) {
+          process.exitCode = 1
+          return
+        }
       }
 
       return await initSubgraphFromContract(
