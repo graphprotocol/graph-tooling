@@ -33,7 +33,7 @@ ${chalk.dim('Options for --from-contract:')}
 
 const processInitForm = async (
   toolbox,
-  { abi, address, allowSimpleName, directory, fromExample, network, subgraphName }
+  { abi, address, allowSimpleName, directory, fromExample, network, subgraphName },
 ) => {
   let networkChoices = ['mainnet', 'kovan', 'rinkeby', 'ropsten']
   let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
@@ -156,11 +156,11 @@ const loadAbiFromEtherscan = async (network, address) =>
       let result = await fetch(
         `https://${
           network === 'mainnet' ? 'api' : `api-${network}`
-        }.etherscan.io/api?module=contract&action=getabi&address=${address}`
+        }.etherscan.io/api?module=contract&action=getabi&address=${address}`,
       )
       let json = await result.json()
       return JSON.parse(json.result)
-    }
+    },
   )
 
 const loadAbiFromFile = async filename => {
@@ -232,7 +232,7 @@ module.exports = {
     let git = await system.which('git')
     if (git === null) {
       print.error(
-        `Git was not found on your system. Please install 'git' so it is in $PATH.`
+        `Git was not found on your system. Please install 'git' so it is in $PATH.`,
       )
       process.exitCode = 1
       return
@@ -243,7 +243,7 @@ module.exports = {
     let npm = await system.which('npm')
     if (!yarn && !npm) {
       print.error(
-        `Neither Yarn nor NPM were found on your system. Please install one of them.`
+        `Neither Yarn nor NPM were found on your system. Please install one of them.`,
       )
       process.exitCode = 1
       return
@@ -261,7 +261,7 @@ module.exports = {
       return await initSubgraphFromExample(
         toolbox,
         { allowSimpleName, directory, subgraphName },
-        { commands }
+        { commands },
       )
     }
 
@@ -288,7 +288,7 @@ module.exports = {
       return await initSubgraphFromContract(
         toolbox,
         { abi, allowSimpleName, directory, address: fromContract, network, subgraphName },
-        { commands }
+        { commands },
       )
     }
 
@@ -318,7 +318,7 @@ module.exports = {
           subgraphName: inputs.subgraphName,
           directory: inputs.directory,
         },
-        { commands }
+        { commands },
       )
     } else {
       await initSubgraphFromContract(
@@ -331,7 +331,7 @@ module.exports = {
           network: inputs.network,
           address: inputs.address,
         },
-        { commands }
+        { commands },
       )
     }
   },
@@ -371,7 +371,7 @@ const initRepository = async (toolbox, directory) =>
         cwd: directory,
       })
       return true
-    }
+    },
   )
 
 const installDependencies = async (toolbox, directory, installCommand) =>
@@ -382,7 +382,7 @@ const installDependencies = async (toolbox, directory, installCommand) =>
     async spinner => {
       await toolbox.system.run(installCommand, { cwd: directory })
       return true
-    }
+    },
   )
 
 const runCodegen = async (toolbox, directory, codegenCommand) =>
@@ -393,7 +393,7 @@ const runCodegen = async (toolbox, directory, codegenCommand) =>
     async spinner => {
       await toolbox.system.run(codegenCommand, { cwd: directory })
       return true
-    }
+    },
   )
 
 const printNextSteps = (toolbox, { subgraphName, directory }, { commands }) => {
@@ -405,12 +405,12 @@ const printNextSteps = (toolbox, { subgraphName, directory }, { commands }) => {
   print.success(
     `
 Subgraph ${print.colors.blue(subgraphName)} created in ${print.colors.blue(relativeDir)}
-`
+`,
   )
   print.info(`Next steps:
 
   1. Run \`${print.colors.muted(
-    'graph auth https://api.thegraph.com/deploy/ <access-token>'
+    'graph auth https://api.thegraph.com/deploy/ <access-token>',
   )}\`
      to authenticate with the hosted service. You can get the access token from
      https://thegraph.com/explorer/dashboard/.
@@ -426,7 +426,7 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 const initSubgraphFromExample = async (
   toolbox,
   { allowSimpleName, subgraphName, directory },
-  { commands }
+  { commands },
 ) => {
   let { filesystem, print, system } = toolbox
 
@@ -450,10 +450,10 @@ const initSubgraphFromExample = async (
     `Warnings while cloning example subgraph`,
     async spinner => {
       await system.run(
-        `git clone http://github.com/graphprotocol/example-subgraph ${directory}`
+        `git clone http://github.com/graphprotocol/example-subgraph ${directory}`,
       )
       return true
-    }
+    },
   )
   if (!cloned) {
     process.exitCode = 1
@@ -486,7 +486,7 @@ const initSubgraphFromExample = async (
         filesystem.remove(directory)
         return false
       }
-    }
+    },
   )
   if (!prepared) {
     process.exitCode = 1
@@ -520,7 +520,7 @@ const initSubgraphFromExample = async (
 const initSubgraphFromContract = async (
   toolbox,
   { allowSimpleName, subgraphName, directory, abi, network, address },
-  { commands }
+  { commands },
 ) => {
   let { print } = toolbox
 
@@ -557,11 +557,11 @@ const initSubgraphFromContract = async (
           network,
           address,
         },
-        spinner
+        spinner,
       )
       await writeScaffold(scaffold, directory, spinner)
       return true
-    }
+    },
   )
   if (scaffold !== true) {
     process.exitCode = 1
