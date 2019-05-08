@@ -118,8 +118,10 @@ const generateEventFields = ({ index, input }) =>
 const generateEventType = event => `type ${event._alias} @entity {
       id: ID!
       ${event.inputs
-        .map((input, index) => generateEventFields({ input, index }))
-        .flat()
+        .reduce(
+          (acc, input, index) => acc.concat(generateEventFields({ input, index })),
+          [],
+        )
         .join('\n')}
     }`
 
@@ -143,15 +145,17 @@ const generateTupleFieldAssignments = ({ keyPath, index, component }) => {
   let nestedName = keyPath.join('.')
 
   return component.type === 'tuple'
-    ? component.components
-        .map((subComponent, subIndex) =>
-          generateTupleFieldAssignments({
-            keyPath,
-            index: subIndex,
-            component: subComponent,
-          }),
-        )
-        .flat()
+    ? component.components.reduce(
+        (acc, subComponent, subIndex) =>
+          acc.concat(
+            generateTupleFieldAssignments({
+              keyPath,
+              index: subIndex,
+              component: subComponent,
+            }),
+          ),
+        [],
+      )
     : [`entity.${flatName} = event.params.${nestedName}`]
 }
 
@@ -166,7 +170,10 @@ const generateFieldAssignments = ({ index, input }) =>
     : generateFieldAssignment([input.name || `param${index}`])
 
 const generateEventFieldAssignments = event =>
-  event.inputs.map((input, index) => generateFieldAssignments({ input, index })).flat()
+  event.inputs.reduce(
+    (acc, input, index) => acc.concat(generateFieldAssignments({ input, index })),
+    [],
+  )
 
 const generateMapping = ({ abi }) =>
   prettier.format(

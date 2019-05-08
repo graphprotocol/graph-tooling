@@ -14,18 +14,18 @@ const disambiguateNames = ({ values, getName, setName }) => {
 }
 
 const unrollTuple = ({ path, index, value }) =>
-  value.components
-    .map((component, index) => {
-      let name = component.name || `value${index}`
-      return component.type === 'tuple'
+  value.components.reduce((acc, component, index) => {
+    let name = component.name || `value${index}`
+    return acc.concat(
+      component.type === 'tuple'
         ? unrollTuple({
             path: [...path, name],
             index,
             value: component,
           })
-        : [{ path: [...path, name], type: component.type }]
-    })
-    .flat()
+        : [{ path: [...path, name], type: component.type }],
+    )
+  }, [])
 
 module.exports = {
   disambiguateNames,
