@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Transfer",
+    "type": "event",
+    "inputs": []
+  },
+  {
+    "name": "Transfer",
+    "type": "event",
+    "inputs": [
+      { "name": "to", "type": "address" }
+    ]
+  },
+  {
+    "name": "Transfer",
+    "type": "event",
+    "inputs": [
+      { "name": "from", "type": "address" },
+      { "name": "to", "type": "address" },
+      { "name": "to", "type": "address" }
+    ]
+  },
+  {
+    "name": "getSomething",
+    "type": "function",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [
+      { "type": "bytes32" }
+    ]
+  },
+  {
+    "name": "getSomething",
+    "type": "function",
+    "stateMutability": "pure",
+    "inputs": [
+      { "name": "owner", "type": "address" },
+      { "name": "owner", "type": "bytes32" }
+    ],
+    "outputs": [
+      { "name": "value", "type": "address" },
+      { "name": "value", "type": "bytes32" }
+    ]
+  },
+  {
+    "name": "getSomething",
+    "type": "function",
+    "stateMutability": "view",
+    "inputs": [
+      { "name": "value", "type": "bytes32" }
+    ],
+    "outputs": [
+      { "name": "value", "type": "bytes32" },
+      { "type": "address" }
+    ]
+  },
+  {
+    "name": "doSomething",
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "inputs": [],
+    "outputs": [
+      { "type": "bytes32" }
+    ]
+  },
+  {
+    "name": "doSomething",
+    "type": "function",
+    "stateMutability": "payable",
+    "inputs": [
+      { "name": "owner", "type": "address" },
+      { "name": "owner", "type": "bytes32" }
+    ],
+    "outputs": [
+      { "name": "value", "type": "address" },
+      { "name": "value", "type": "bytes32" }
+    ]
+  },
+  {
+    "name": "doSomething",
+    "type": "function",
+    "stateMutability": "payable",
+    "inputs": [
+      { "name": "value", "type": "bytes32" }
+    ],
+    "outputs": [
+      { "name": "value", "type": "bytes32" },
+      { "type": "address" }
+    ]
+  }
+]
