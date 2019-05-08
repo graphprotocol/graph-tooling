@@ -313,9 +313,6 @@ module.exports = class AbiCodeGenerator {
     let klass = tsCodegen.klass(this.abi.name, { export: true, extends: 'SmartContract' })
     let types = immutable.List()
 
-    const paramName = (name, index) =>
-      name === undefined || name === null || name === '' ? `param${index}` : name
-
     klass.addMethod(
       tsCodegen.staticMethod(
         'bind',
