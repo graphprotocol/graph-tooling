@@ -67,20 +67,24 @@ module.exports = class ABI {
     )
   }
 
+  static normalized(json) {
+    if (Array.isArray(json)) {
+      return json
+    } else if (json.abi !== undefined) {
+      return json.abi
+    } else if (
+      json.compilerOutput !== undefined &&
+      json.compilerOutput.abi !== undefined
+    ) {
+      return json.compilerOutput.abi
+    } else {
+      return undefined
+    }
+  }
+
   static load(name, file) {
     let data = JSON.parse(fs.readFileSync(file))
-
-    let abi = null
-    if (Array.isArray(data)) {
-      abi = data
-    } else if (data.abi !== undefined) {
-      abi = data.abi
-    } else if (
-      data.compilerOutput !== undefined &&
-      data.compilerOutput.abi !== undefined
-    ) {
-      abi = data.compilerOutput.abi
-    }
+    let abi = ABI.normalized(data)
 
     if (abi === null || abi === undefined) {
       throw Error(`No valid ABI in file: ${path.relative(process.cwd(), file)}`)
