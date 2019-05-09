@@ -63,6 +63,7 @@ typings/
 # Example subgraph build
 examples/example-subgraph/build
 examples/example-subgraph/generated
+examples/example-subgraph/node_modules
 
 # validation tests output
 tests/cli/validation/*/generated
