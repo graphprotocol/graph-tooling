@@ -2,12 +2,12 @@ const disambiguateNames = ({ values, getName, setName }) => {
   let collisionCounter = new Map()
   return values.map((value, index) => {
     let name = getName(value, index)
-    let counter = collisionCounter[name]
+    let counter = collisionCounter.get(name)
     if (counter === undefined) {
-      collisionCounter[name] = 1
+      collisionCounter.set(name, 1)
       return setName(value, name)
     } else {
-      collisionCounter[name] += 1
+      collisionCounter.set(name, counter + 1)
       return setName(value, `${name}${counter}`)
     }
   })
