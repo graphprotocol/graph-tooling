@@ -151,8 +151,8 @@ module.exports = class TypeGenerator {
       `Failed to generate types for contract ABIs`,
       `Warnings while generating types for contract ABIs`,
       async spinner => {
-        return await abis.map(
-          async (abi, name) => await this._generateTypesForABI(abi, spinner),
+        return await Promise.all(
+          abis.map(async (abi, name) => await this._generateTypesForABI(abi, spinner)),
         )
       },
     )
@@ -363,9 +363,11 @@ module.exports = class TypeGenerator {
       `Failed to generate types for data source template ABIs`,
       `Warnings while generating types for data source template ABIs`,
       async spinner => {
-        return await abis.map(
-          async (abi, name) =>
-            await this._generateTypesForDataSourceTemplateABI(abi, spinner),
+        return await Promise.all(
+          abis.map(
+            async (abi, name) =>
+              await this._generateTypesForDataSourceTemplateABI(abi, spinner),
+          ),
         )
       },
     )
