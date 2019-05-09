@@ -288,7 +288,7 @@ module.exports = class AbiCodeGenerator {
     })
 
     // Add param getters to tuple class and generate classes for each tuple parameter
-    input.get('components').forEach((component, index) => {
+    inputOrOutput.get('components').forEach((component, index) => {
       let name = component.get('name')
       let paramObject = this._generateInputOrOutput(
         component,
