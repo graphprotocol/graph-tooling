@@ -111,10 +111,12 @@ const processInitForm = async (
           return value
         }
 
-        // Try loading the ABI from Etherscan
-        try {
-          abiFromEtherscan = await loadAbiFromEtherscan(network, value)
-        } catch (e) {}
+        // Try loading the ABI from Etherscan, if none was provided
+        if (!abi) {
+          try {
+            abiFromEtherscan = await loadAbiFromEtherscan(network, value)
+          } catch (e) {}
+        }
         return value
       },
     },
