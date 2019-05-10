@@ -30,14 +30,14 @@ const cliTest = (title, args, testPath, options) => {
         expectedStderr = fs.readFileSync(resolvePath(`./${testPath}.stderr`), 'utf-8')
       } catch (e) {}
 
-      if (expectedExitCode !== undefined) {
-        expect(exitCode).toBe(expectedExitCode)
-      }
       if (expectedStdout !== undefined) {
         expect(stripAnsi(stdout)).toBe(expectedStdout)
       }
       if (expectedStderr !== undefined) {
         expect(stripAnsi(stderr)).toBe(expectedStderr)
+      }
+      if (expectedExitCode !== undefined) {
+        expect(exitCode).toBe(expectedExitCode)
       }
     },
     (options !== undefined && options.timeout) || undefined,
