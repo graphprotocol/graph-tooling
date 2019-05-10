@@ -393,6 +393,7 @@ At least one such handler must be defined.`,
       ...Subgraph.validateContractAddresses(manifest),
       ...Subgraph.validateEthereumContractHandlers(manifest),
       ...Subgraph.validateEvents(manifest, { resolveFile }),
+      ...Subgraph.validateCallFunctions(manifest, { resolveFile }),
     )
 
     if (errors.size > 0) {
@@ -404,7 +405,6 @@ At least one such handler must be defined.`,
       ...Subgraph.validateRepository(manifest, { resolveFile }),
       ...Subgraph.validateDescription(manifest, { resolveFile }),
       ...Subgraph.validateEthereumContractHandlers(manifest),
-      ...Subgraph.validateCallFunctions(manifest, { resolveFile }),
     )
 
     return {
