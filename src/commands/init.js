@@ -161,7 +161,15 @@ const loadAbiFromEtherscan = async (network, address) =>
         }.etherscan.io/api?module=contract&action=getabi&address=${address}`,
       )
       let json = await result.json()
-      return JSON.parse(json.result)
+
+      // Etherscan returns a JSON object that has a `status`, a `message` and
+      // a `result` field. The `status` is '0' in case of errors and '1' in
+      // case of success
+      if (json.status === '1') {
+        return JSON.parse(json.result)
+      } else {
+        throw new Error('ABI not found, try loading it from a local file')
+      }
     },
   )
 
