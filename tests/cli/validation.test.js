@@ -32,6 +32,14 @@ describe('Validation', () => {
     },
   )
   cliTest(
+    'Call function not found in the ABI',
+    ['codegen', '--skip-migrations'],
+    'validation/call-function-not-found',
+    {
+      exitCode: 1,
+    },
+  )
+  cliTest(
     'Missing entity "id" field',
     ['codegen', '--skip-migrations'],
     'validation/missing-entity-id',
