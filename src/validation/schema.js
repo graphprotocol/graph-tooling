@@ -17,21 +17,33 @@ const BUILTIN_SCALAR_TYPES = [
 ]
 
 // Type suggestions for common mistakes
-const TYPE_SUGGESTIONS = {
-  Address: 'Bytes',
-  address: 'Bytes',
-  bytes: 'Bytes',
-  string: 'String',
-  bool: 'Boolean',
-  boolean: 'Boolean',
-  Bool: 'Boolean',
-  int: 'Int',
-  float: 'Float',
-  uint128: 'BigInt',
-  int128: 'BigInt',
-  uint256: 'BigInt',
-  int256: 'BigInt',
-}
+const TYPE_SUGGESTIONS = [
+  ['Address', 'Bytes'],
+  ['address', 'Bytes'],
+  ['bytes', 'Bytes'],
+  ['string', 'String'],
+  ['bool', 'Boolean'],
+  ['boolean', 'Boolean'],
+  ['Bool', 'Boolean'],
+  ['float', 'BigDecimal'],
+  ['Float', 'BigDecimal'],
+  ['int', 'Int'],
+  ['uint', 'BigInt'],
+  [/^(u|uint)(8|16|24)$/, 'Int'],
+  [/^(i|int)(8|16|24|32)$/, 'Int'],
+  [/^(u|uint)32$/, 'BigInt'],
+  [
+    /^(u|uint|i|int)(40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)$/,
+    'BigInt',
+  ],
+]
+
+const typeSuggestion = typeName =>
+  TYPE_SUGGESTIONS.filter(([pattern, _]) => {
+    return typeof pattern === 'string' ? pattern === typeName : typeName.match(pattern)
+  })
+    .map(([_, suggestion]) => suggestion)
+    .find(_ => true)
 
 const loadSchema = filename => {
   try {
@@ -144,7 +156,7 @@ const validateInnerFieldType = (defs, def, field) => {
   let typeName = innerType.name.value
 
   // Look up a possible suggestion for the type to catch common mistakes
-  let suggestion = TYPE_SUGGESTIONS[typeName]
+  let suggestion = typeSuggestion(typeName)
 
   // Collect all types that we can use here: built-ins + entities + enums + interfaces
   let availableTypes = List.of(
@@ -154,9 +166,9 @@ const validateInnerFieldType = (defs, def, field) => {
         def =>
           def.kind === 'ObjectTypeDefinition' ||
           def.kind === 'EnumTypeDefinition' ||
-          def.kind === 'InterfaceTypeDefinition'
+          def.kind === 'InterfaceTypeDefinition',
       )
-      .map(def => def.name.value)
+      .map(def => def.name.value),
   )
 
   // Check whether the type name is available, otherwise return an error
@@ -178,7 +190,7 @@ Unknown type '${typeName}'.${
 const validateEntityFieldType = (defs, def, field) =>
   List.of(
     ...validateListFieldType(def, field),
-    ...validateInnerFieldType(defs, def, field)
+    ...validateInnerFieldType(defs, def, field),
   )
 
 const validateEntityFieldArguments = (defs, def, field) =>
@@ -200,7 +212,7 @@ const validateEntityFields = (defs, def) =>
       errors
         .concat(validateEntityFieldType(defs, def, field))
         .concat(validateEntityFieldArguments(defs, def, field)),
-    List()
+    List(),
   )
 
 const typeDefinitionValidators = {
@@ -208,7 +220,7 @@ const typeDefinitionValidators = {
     List.of(
       ...validateEntityDirective(def),
       ...validateEntityID(def),
-      ...validateEntityFields(defs, def)
+      ...validateEntityFields(defs, def),
     ),
 }
 
@@ -226,4 +238,4 @@ const validateSchema = filename => {
   return validateTypeDefinitions(schema.definitions)
 }
 
-module.exports = { validateSchema }
+module.exports = { typeSuggestion, validateSchema }
