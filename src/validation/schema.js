@@ -38,12 +38,14 @@ const TYPE_SUGGESTIONS = [
   ],
 ]
 
+/**
+ * Returns a GraphQL type suggestion for a given input type.
+ * Returns `undefined` if no suggestion is available for the type.
+ */
 const typeSuggestion = typeName =>
   TYPE_SUGGESTIONS.filter(([pattern, _]) => {
     return typeof pattern === 'string' ? pattern === typeName : typeName.match(pattern)
-  })
-    .map(([_, suggestion]) => suggestion)
-    .find(_ => true)
+  }).map(([_, suggestion]) => suggestion)[0]
 
 const loadSchema = filename => {
   try {
