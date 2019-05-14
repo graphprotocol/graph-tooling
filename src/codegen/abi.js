@@ -330,8 +330,9 @@ module.exports = class AbiCodeGenerator {
     let functions = this.abi.data.filter(
       member =>
         member.get('type') === 'function' &&
-        (member.get('stateMutability') === 'view' ||
-          member.get('stateMutability') === 'pure'),
+          member.get('outputs', immutable.List()).size !== 0 &&
+            (member.get('stateMutability') === 'view' ||
+              member.get('stateMutability') === 'pure'),
     )
 
     // Disambiguate functions with duplicate names
