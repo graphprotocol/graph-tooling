@@ -309,6 +309,13 @@ module.exports = class AbiCodeGenerator {
     }
   }
 
+  _generateTupleClassName(parentClass, name, index) {
+    if (name === undefined || name === null || name === '') {
+      name = `value` + index
+    }
+    return parentClass + tsCodegen.namedType(name).capitalize() + 'Struct'
+  }
+
   _generateSmartContractClass() {
     let klass = tsCodegen.klass(this.abi.name, { export: true, extends: 'SmartContract' })
     let types = immutable.List()
@@ -331,8 +338,8 @@ module.exports = class AbiCodeGenerator {
     let functions = this.abi.data.filter(
       member =>
         member.get('type') === 'function' &&
-          member.get('outputs', immutable.List()).size !== 0 &&
-            allowedMutability.indexOf(member.get('stateMutability')) !== -1,
+        member.get('outputs', immutable.List()).size !== 0 &&
+        allowedMutability.indexOf(member.get('stateMutability')) !== -1,
     )
 
     // Disambiguate functions with duplicate names
@@ -349,6 +356,7 @@ module.exports = class AbiCodeGenerator {
       // Generate a type for the result of calling the function
       let returnType = undefined
       let simpleReturnType = true
+      let tupleParentType = this.abi.name + '__' + fnAlias + 'Result__'
       if (member.get('outputs', immutable.List()).size > 1) {
         simpleReturnType = false
 
@@ -366,7 +374,13 @@ module.exports = class AbiCodeGenerator {
               .map((output, index) =>
                 tsCodegen.param(
                   `value${index}`,
-                  typesCodegen.ascTypeForEthereum(output.get('type')),
+                  output.get('type') === 'tuple'
+                    ? this._generateTupleClassName(
+                        tupleParentType,
+                        output.get('name'),
+                        index,
+                      )
+                    : typesCodegen.ascTypeForEthereum(output.get('type')),
                 ),
               ),
             null,
@@ -411,19 +425,53 @@ module.exports = class AbiCodeGenerator {
           )
           .forEach(member => returnType.addMember(member))
 
+        //Create types for Tuple members
+        member.get('outputs').forEach((output, index1) => {
+          if (output.get('type') === 'tuple') {
+            types = types.push(
+              this._generateTupleType(
+                output,
+                index1,
+                tupleParentType,
+                'function',
+                this.abi.name,
+              ).classes,
+            )
+          }
+        })
+
         // Add the type to the types we'll create
         types = types.push(returnType)
 
         returnType = tsCodegen.namedType(returnType.name)
       } else {
-        returnType = tsCodegen.namedType(
-          typesCodegen.ascTypeForEthereum(
+        let type = member
+          .get('outputs')
+          .get(0)
+          .get('type')
+        if (type === 'tuple') {
+          // Add the Tuple type to the types we'll create
+          types = types.push(
+            this._generateTupleType(
+              member.get('outputs').get(0),
+              0,
+              tupleParentType,
+              'function',
+              this.abi.name,
+            ).classes,
+          )
+
+          returnType = this._generateTupleClassName(
+            tupleParentType,
             member
               .get('outputs')
               .get(0)
-              .get('type'),
-          ),
-        )
+              .get('name'),
+            0,
+          )
+        } else {
+          returnType = tsCodegen.namedType(typesCodegen.ascTypeForEthereum(type))
+        }
       }
 
       // Disambiguate inputs with duplicate names
@@ -474,16 +522,32 @@ module.exports = class AbiCodeGenerator {
               : `new ${returnType.name}(
                   ${member
                     .get('outputs')
-                    .map((output, index) =>
-                      typesCodegen.ethereumValueToAsc(
-                        `result[${index}]`,
-                        output.get('type'),
-                      ),
+                    .map(
+                      (output, index) =>
+                        `${typesCodegen.ethereumValueToAsc(
+                          `result[${index}]`,
+                          output.get('type'),
+                        )} ${
+                          output.get('type') === 'tuple'
+                            ? 'as ' +
+                              this._generateTupleClassName(
+                                tupleParentType,
+                                output.get('name'),
+                                index,
+                              )
+                            : ''
+                        }`,
                     )
                     .join(', ')}
                 )`
-          };
-          `,
+          } ${
+            member
+              .get('outputs')
+              .get(0)
+              .get('type') === 'tuple'
+              ? 'as ' + returnType
+              : ''
+          };`,
         ),
       )
     })
