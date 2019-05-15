@@ -21,7 +21,7 @@
     "request": "^2.88.0"
   },
   "optionalDependencies": {
-    "keytar": "^4.3.0"
+    "keytar": "^4.6.0"
   },
   "bin": {
     "graph": "bin/graph"
