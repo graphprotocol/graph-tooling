@@ -1,5 +1,16 @@
-import { store, crypto, Entity, Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
-import { ExampleContract, ExampleEvent } from './../generated/ExampleSubgraph/ExampleContract'
+import {
+  Address,
+  BigInt,
+  Bytes,
+  crypto,
+  Entity,
+  log,
+  store,
+} from '@graphprotocol/graph-ts'
+import {
+  ExampleContract,
+  ExampleEvent,
+} from './../generated/ExampleSubgraph/ExampleContract'
 import { ExampleEntity } from './../generated/schema'
 
 export function handleExampleEvent(event: ExampleEvent): void {
@@ -265,4 +276,11 @@ export function handleExampleEvent(event: ExampleEvent): void {
   let bigIntTimes = entity.requiredBigInt * entity.requiredBigInt
   let bigIntDividedBy = entity.requiredBigInt / entity.requiredBigInt
   let bigIntMod = entity.requiredBigInt % entity.requiredBigInt
+
+  // Logging
+  log.debug('Hello {}', ['World'])
+  log.info('Hello {}', ['World'])
+  log.warning('Hello {}', ['World'])
+  log.error('Hello {}', ['World'])
+  log.critical('Hello {}', ['World'])
 }
