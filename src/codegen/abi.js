@@ -327,13 +327,12 @@ module.exports = class AbiCodeGenerator {
     )
 
     // Get view/pure functions from the contract
+    let allowedMutability = ['view', 'pure', 'nonpayable', 'constant'];
     let functions = this.abi.data.filter(
       member =>
         member.get('type') === 'function' &&
           member.get('outputs', immutable.List()).size !== 0 &&
-            (member.get('stateMutability') === 'view' ||
-              member.get('stateMutability') === 'pure' ||
-                member.get('stateMutability') === 'nonpayable'),
+            allowedMutability.indexOf(member.get('stateMutability')) !== -1,
     )
 
     // Disambiguate functions with duplicate names
