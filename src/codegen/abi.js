@@ -332,7 +332,8 @@ module.exports = class AbiCodeGenerator {
         member.get('type') === 'function' &&
           member.get('outputs', immutable.List()).size !== 0 &&
             (member.get('stateMutability') === 'view' ||
-              member.get('stateMutability') === 'pure'),
+              member.get('stateMutability') === 'pure' ||
+                member.get('stateMutability') === 'nonpayable'),
     )
 
     // Disambiguate functions with duplicate names
