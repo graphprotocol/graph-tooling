@@ -230,7 +230,7 @@ class Compiler {
       global = path.relative(baseDir, global)
 
       asc.main(
-        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile],
+        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile, '--optimize'],
         {
           stdout: process.stdout,
           stderr: process.stdout,
@@ -283,7 +283,7 @@ class Compiler {
       global = path.relative(baseDir, global)
 
       asc.main(
-        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile],
+        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile, '--optimize'],
         {
           stdout: process.stdout,
           stderr: process.stdout,
