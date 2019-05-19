@@ -6,10 +6,10 @@ const AbiCodeGenerator = require('./codegen/abi')
 
 const buildSignatureParameter = input => {
   return input.type === 'tuple'
-    ? '(' +
-        input.components.map(component => buildSignatureParameter(component)).join(',') +
-        ')'
-    : input.type
+    ? `(${input.indexed ? 'indexed ' : ''}${input.components
+        .map(component => buildSignatureParameter(component))
+        .join(',')})`
+    : `${input.indexed ? 'indexed ' : ''}${input.type}`
 }
 
 module.exports = class ABI {
