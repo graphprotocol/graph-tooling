@@ -4,6 +4,14 @@ const path = require('path')
 
 const AbiCodeGenerator = require('./codegen/abi')
 
+const buildOldSignatureParameter = input => {
+  return input.type === 'tuple'
+    ? `(${input.components
+        .map(component => buildSignatureParameter(component))
+        .join(',')})`
+    : `${input.type}`
+}
+
 const buildSignatureParameter = input => {
   return input.type === 'tuple'
     ? `(${input.indexed ? 'indexed ' : ''}${input.components
@@ -23,10 +31,23 @@ module.exports = class ABI {
     return new AbiCodeGenerator(this)
   }
 
+  static oldEventSignature(event) {
+    return `${event.name}(${(event.inputs || [])
+      .map(input => buildOldSignatureParameter(input))
+      .join(',')})`
+  }
+
   static eventSignature(event) {
     return `${event.name}(${(event.inputs || [])
       .map(input => buildSignatureParameter(input))
       .join(',')})`
+  }
+
+  oldEventSignatures() {
+    return this.data
+      .filter(entry => entry.get('type') === 'event')
+      .map(event => event.toJS())
+      .map(ABI.oldEventSignature)
   }
 
   eventSignatures() {
