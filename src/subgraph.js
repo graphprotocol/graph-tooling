@@ -369,7 +369,53 @@ At least one such handler must be defined.`,
       }, immutable.List())
   }
 
-  static load(filename) {
+  static dump(manifest) {
+    return yaml.safeDump(manifest.toJS(), {
+      indent: 2,
+      lineWidth: 80,
+      noRefs: true,
+      noCompatMode: true,
+      sortKeys: key =>
+        [
+          // Top level
+          'specVersion',
+          'repository',
+          'description',
+          'schema',
+          'dataSources',
+
+          // Data source
+          'kind',
+          'name',
+          'network',
+          'source',
+          'mapping',
+
+          // Source
+          'address',
+          'abi',
+
+          // Mapping
+          'apiVersion',
+          'language',
+          'file',
+          'entities',
+          'abis',
+          'blockHandlers',
+          'callHandlers',
+          'eventHandlers',
+          'templates',
+
+          // Handlers
+          'name',
+          'event',
+          'function',
+          'handler',
+        ].indexOf(key) || 10000000,
+    })
+  }
+
+  static load(filename, { skipValidation } = { skipValidation: false }) {
     // Load and validate the manifest
     let data = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'))
 
@@ -388,24 +434,28 @@ At least one such handler must be defined.`,
     Subgraph.validateSchema(manifest, { resolveFile })
 
     // Perform other validations
-    let errors = immutable.List.of(
-      ...Subgraph.validateAbis(manifest, { resolveFile }),
-      ...Subgraph.validateContractAddresses(manifest),
-      ...Subgraph.validateEthereumContractHandlers(manifest),
-      ...Subgraph.validateEvents(manifest, { resolveFile }),
-      ...Subgraph.validateCallFunctions(manifest, { resolveFile }),
-    )
+    let errors = skipValidation
+      ? immutable.List()
+      : immutable.List.of(
+          ...Subgraph.validateAbis(manifest, { resolveFile }),
+          ...Subgraph.validateContractAddresses(manifest),
+          ...Subgraph.validateEthereumContractHandlers(manifest),
+          ...Subgraph.validateEvents(manifest, { resolveFile }),
+          ...Subgraph.validateCallFunctions(manifest, { resolveFile }),
+        )
 
     if (errors.size > 0) {
       throwCombinedError(filename, errors)
     }
 
     // Perform warning validations
-    let warnings = immutable.List.of(
-      ...Subgraph.validateRepository(manifest, { resolveFile }),
-      ...Subgraph.validateDescription(manifest, { resolveFile }),
-      ...Subgraph.validateEthereumContractHandlers(manifest),
-    )
+    let warnings = skipValidation
+      ? immutable.List()
+      : immutable.List.of(
+          ...Subgraph.validateRepository(manifest, { resolveFile }),
+          ...Subgraph.validateDescription(manifest, { resolveFile }),
+          ...Subgraph.validateEthereumContractHandlers(manifest),
+        )
 
     return {
       result: manifest,
@@ -413,7 +463,7 @@ At least one such handler must be defined.`,
     }
   }
 
-  static write(subgraph, filename) {
-    fs.writeFileSync(filename, yaml.safeDump(subgraph.toJS(), { indent: 2 }))
+  static write(manifest, filename) {
+    fs.writeFileSync(filename, Subgraph.dump(manifest))
   }
 }
