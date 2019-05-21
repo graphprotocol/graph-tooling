@@ -55,16 +55,16 @@ module.exports = class ABI {
   }
 
   callFunctionSignatures() {
-    return this.callFunctions().map(
-      entry =>
-        `${entry.get(
-          'name',
-          entry.get('type') === 'constructor' ? 'constructor' : '<default>',
-        )}(${entry
+    return this.callFunctions()
+      .filter(entry => entry.get('type') !== 'constructor')
+      .map(entry => {
+        const name = entry.get('name', '<default>');
+        const inputs = entry
           .get('inputs', immutable.List())
-          .map(input => input.get('type'))
-          .join(',')})`,
-    )
+          .map(input => input.get('type'));
+
+        return `${name}(${inputs.join(',')})`;
+      });
   }
 
   static normalized(json) {
