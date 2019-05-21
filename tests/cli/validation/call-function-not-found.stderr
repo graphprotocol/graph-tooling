@@ -5,7 +5,6 @@
   Call function with signature 'doSomething(uint256)' not present in ABI 'ExampleContract'.
   Available call functions:
   - <default>()
-  - constructor()
   - owner()
   - transferOwnership(address)
   - upgrade(address,bytes)
