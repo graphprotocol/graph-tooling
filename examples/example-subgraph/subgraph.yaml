@@ -22,5 +22,5 @@ dataSources:
         - name: ExampleContract
           file: ./abis/ExampleContract.json
       eventHandlers:
-        - event: ExampleEvent(string)
+        - event: ExampleEvent(indexed string)
           handler: handleExampleEvent
