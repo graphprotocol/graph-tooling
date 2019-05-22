@@ -130,9 +130,9 @@ module.exports = class Subgraph {
 ABI name '${abiName}' not found in mapping > abis.
 Available ABIs:
 ${abiNames
-              .sort()
-              .map(name => `- ${name}`)
-              .join('\n')}`,
+  .sort()
+  .map(name => `- ${name}`)
+  .join('\n')}`,
           },
         ])
 
@@ -239,9 +239,9 @@ Must be 40 hexadecimal characters, with an optional '0x' prefix.`,
 Event with signature '${manifestEvent}' not present in ABI '${abi.name}'.
 Available events:
 ${abiEvents
-                  .sort()
-                  .map(event => `- ${event}`)
-                  .join('\n')}`,
+  .sort()
+  .map(event => `- ${event}`)
+  .join('\n')}`,
               }),
             ),
       immutable.List(),
@@ -306,9 +306,9 @@ ${abiEvents
 Call function with signature '${manifestFunction}' not present in ABI '${abi.name}'.
 Available call functions:
 ${abiFunctions
-                      .sort()
-                      .map(tx => `- ${tx}`)
-                      .join('\n')}`,
+  .sort()
+  .map(tx => `- ${tx}`)
+  .join('\n')}`,
                   }),
                 ),
           errors,
