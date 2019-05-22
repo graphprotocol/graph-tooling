@@ -116,7 +116,7 @@ module.exports = {
     let manifest = yaml.parse(fs.readFileSync(manifestFile, 'utf-8'))
     return (
       // Only migrate if the graph-cli version is > 0.12.0...
-      semver.gt(graphCliVersion, '0.11.0') && // FIXME: Change version to 0.12.0
+      semver.gt(graphCliVersion, '0.12.0') &&
       // ...and we have a manifest with event handlers or templates with event handlers
       manifest &&
       typeof manifest === 'object' &&
