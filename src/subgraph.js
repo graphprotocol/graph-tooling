@@ -1,7 +1,8 @@
 let fs = require('fs-extra')
 let immutable = require('immutable')
 let path = require('path')
-let yaml = require('js-yaml')
+let yaml = require('yaml')
+let { strOptions } = require('yaml/types')
 let graphql = require('graphql/language')
 let validation = require('./validation')
 let ABI = require('./abi')
@@ -370,54 +371,15 @@ At least one such handler must be defined.`,
   }
 
   static dump(manifest) {
-    return yaml.safeDump(manifest.toJS(), {
-      indent: 2,
-      lineWidth: 80,
-      noRefs: true,
-      noCompatMode: true,
-      sortKeys: key =>
-        [
-          // Top level
-          'specVersion',
-          'repository',
-          'description',
-          'schema',
-          'dataSources',
+    strOptions.fold.lineWidth = 90
+    strOptions.defaultType = 'PLAIN'
 
-          // Data source
-          'kind',
-          'name',
-          'network',
-          'source',
-          'mapping',
-
-          // Source
-          'address',
-          'abi',
-
-          // Mapping
-          'apiVersion',
-          'language',
-          'file',
-          'entities',
-          'abis',
-          'blockHandlers',
-          'callHandlers',
-          'eventHandlers',
-          'templates',
-
-          // Handlers
-          'name',
-          'event',
-          'function',
-          'handler',
-        ].indexOf(key) || 10000000,
-    })
+    return yaml.stringify(manifest.toJS())
   }
 
   static load(filename, { skipValidation } = { skipValidation: false }) {
     // Load and validate the manifest
-    let data = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'))
+    let data = yaml.parse(fs.readFileSync(filename, 'utf-8'))
 
     // Helper to resolve files relative to the subgraph manifest
     let resolveFile = maybeRelativeFile =>
