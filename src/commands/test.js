@@ -23,7 +23,6 @@ Options:
       --dockerfile <file>       Custom Dockerfile for the test image (optional)
       --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
       --node-logs               Always print the Graph Node logs (optional)
-  -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
 
 module.exports = {
@@ -40,13 +39,10 @@ module.exports = {
       help,
       nodeImage,
       nodeLogs,
-      w,
-      watch,
     } = toolbox.parameters.options
 
     // Support both short and long option variants
     help = help || h
-    watch = watch || w
 
     // Extract test command
     let params = fixParameters(toolbox.parameters, {
@@ -55,8 +51,6 @@ module.exports = {
       h,
       help,
       nodeLogs,
-      w,
-      watch,
     })
 
     // Show help text if requested
