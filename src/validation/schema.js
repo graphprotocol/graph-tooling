@@ -135,7 +135,7 @@ Reason: Lists with null elements are not supported.`,
         ])
       : List()
 
-const validateInnerFieldType = (defs, def, field) => {
+const unwrapType = type => {
   let innerTypeFromList = listType =>
     listType.type.kind === 'NonNullType'
       ? innerTypeFromNonNull(listType.type)
@@ -147,12 +147,27 @@ const validateInnerFieldType = (defs, def, field) => {
       : nonNullType.type
 
   // Obtain the inner-most type from the field
-  let innerType =
-    field.type.kind === 'NonNullType'
-      ? innerTypeFromNonNull(field.type)
-      : field.type.kind === 'ListType'
-        ? innerTypeFromList(field.type)
-        : field.type
+  return type.kind === 'NonNullType'
+    ? innerTypeFromNonNull(type)
+    : type.kind === 'ListType'
+      ? innerTypeFromList(type)
+      : type
+}
+
+const entityTypeByName = (defs, name) =>
+  defs
+    .filter(
+      def =>
+        def.kind === 'InterfaceTypeDefinition' || def.kind === 'ObjectTypeDefinition',
+    )
+    .filter(def => def.directives.find(directive => directive.name.value === 'entity'))
+    .find(def => def.name.value === name)
+
+const fieldTargetEntity = (defs, field) =>
+  entityTypeByName(defs, unwrapType(field.type).name.value)
+
+const validateInnerFieldType = (defs, def, field) => {
+  let innerType = unwrapType(field.type)
 
   // Get the name of the type
   let typeName = innerType.name.value
@@ -208,12 +223,93 @@ Field arguments are not supported.`,
       ])
     : List()
 
+const entityFieldExists = (entityDef, name) =>
+  entityDef.fields.find(field => field.name.value === name) !== undefined
+
+const validateDerivedFromDirective = (defs, def, field, directive) => {
+  // Validate that there is a `field` argument and nothing else
+  if (directive.arguments.length !== 1 || directive.arguments[0].name.value !== 'field') {
+    return immutable.fromJS([
+      {
+        loc: directive.loc,
+        entity: def.name.value,
+        message: `\
+Field '${field.name.value}': \
+@derivedFrom directive must have a 'field' argument`,
+      },
+    ])
+  }
+
+  // Validate that the "field" argument value is a string
+  if (directive.arguments[0].value.kind !== 'StringValue') {
+    return immutable.fromJS([
+      {
+        loc: directive.loc,
+        entity: def.name.value,
+        message: `\
+Field '${field.name.value}': \
+Value of the @derivedFrom 'field' argument must be a string`,
+      },
+    ])
+  }
+
+  let targetEntity = fieldTargetEntity(defs, field)
+  let derivedFromField = targetEntity.fields.find(
+    field => field.name.value === directive.arguments[0].value.value,
+  )
+
+  if (derivedFromField === undefined) {
+    return immutable.fromJS([
+      {
+        loc: directive.loc,
+        entity: def.name.value,
+        message: `\
+Field '${field.name.value}': \
+@derivedFrom field '${directive.arguments[0].value.value}' \
+does not exist on type '${targetEntity.name.value}'`,
+      },
+    ])
+  }
+
+  let backrefTypeName = unwrapType(derivedFromField.type)
+  let backRefEntity = entityTypeByName(defs, backrefTypeName.name.value)
+
+  if (!backRefEntity || backRefEntity.name.value !== def.name.value) {
+    return immutable.fromJS([
+      {
+        loc: directive.loc,
+        entity: def.name.value,
+        message: `\
+Field '${field.name.value}': \
+@derivedFrom field '${directive.arguments[0].value.value}' \
+on type '${targetEntity.name.value}' must have the type \
+'${def.name.value}', '${def.name.value}!' or '[${def.name.value}!]!'`,
+      },
+    ])
+  }
+
+  return List()
+}
+
+const validateEntityFieldDirective = (defs, def, field, directive) =>
+  directive.name.value === 'derivedFrom'
+    ? validateDerivedFromDirective(defs, def, field, directive)
+    : List()
+
+const validateEntityFieldDirectives = (defs, def, field) =>
+  field.directives.reduce(
+    (errors, directive) =>
+      errors.concat(validateEntityFieldDirective(defs, def, field, directive)),
+    List(),
+  )
+
 const validateEntityFields = (defs, def) =>
   def.fields.reduce(
     (errors, field) =>
       errors
         .concat(validateEntityFieldType(defs, def, field))
-        .concat(validateEntityFieldArguments(defs, def, field)),
+        .concat(validateEntityFieldArguments(defs, def, field))
+        .concat(validateEntityFieldDirectives(defs, def, field)),
     List(),
   )
 
