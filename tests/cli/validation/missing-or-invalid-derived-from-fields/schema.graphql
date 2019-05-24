@@ -1,0 +1,40 @@
+type A @entity {
+  id: ID!
+  b: B @derivedFrom(field: "a")
+  c: [C!]! @derivedFrom(field: "a")
+  d: D @derivedFrom
+  e: E @derivedFrom(attr: "a")
+  f: F @derivedFrom(field: 123)
+  g: G @derivedFrom(field: "a")
+  h: H @derivedFrom(field: "a")
+}
+
+type B @entity {
+  id: ID!
+}
+
+type C @entity {
+  id: ID!
+}
+
+type D @entity {
+  id: ID!
+}
+
+type E @entity {
+  id: ID!
+}
+
+type F @entity {
+  id: ID!
+}
+
+type G @entity {
+  id: ID!
+  a: BigInt
+}
+
+type H @entity {
+  id: ID!
+  a: A!
+}
