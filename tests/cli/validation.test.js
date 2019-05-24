@@ -112,4 +112,12 @@ describe('Validation', () => {
       exitCode: 1,
     },
   )
+  cliTest(
+    'Missing or invalid @derivedFrom fields',
+    ['codegen', '--skip-migrations'],
+    'validation/missing-or-invalid-derived-from-fields',
+    {
+      exitCode: 1
+    }
+  )
 })

@@ -1,0 +1,10 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  A:
+  - Field 'b': @derivedFrom field 'a' does not exist on type 'B'
+  - Field 'c': @derivedFrom field 'a' does not exist on type 'C'
+  - Field 'd': @derivedFrom directive must have a 'field' argument
+  - Field 'e': @derivedFrom directive must have a 'field' argument
+  - Field 'f': Value of the @derivedFrom 'field' argument must be a string
+  - Field 'g': @derivedFrom field 'a' on type 'G' must have the type 'A', 'A!' or '[A!]!'
