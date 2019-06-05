@@ -62,6 +62,21 @@ const maybeUpdateEventSignature = (manifestFile, dataSource, event) => {
     for (let i = 0; i < oldEventSignatures.size; i++) {
       // Only replace the event signature if the signature of the event has changed
       // and the old signature is not present in the new signatures anymore.
+      //
+      // Let's say an event has more than one variant, e.g. one without indexed params
+      // and one with indexed params, like
+      //
+      // - SomeEvent(uint256)
+      // - SomeEvent(indexed uint256)
+      //
+      // In the old manifest we'll find `SomeEvent(uint256)`. The question then
+      // is: do we translate this to `SomeEvent(indexed uint256)` or do we keep
+      // `SomeEvent(uint256)`? Both are present in the new set of signatures.
+      //
+      // If `SomeEvent(uint256)` is no longer present, we can simply replace it.
+      // But if it's still around, this is a decision we can't really make on
+      // the users behalf because they could mean either of the variants. In
+      // this case it's best to leave the signature untouched.
       if (
         event === oldEventSignatures.get(i) &&
         oldEventSignatures.get(i) !== newEventSignatures[i] &&
@@ -99,7 +114,7 @@ const maybeMigrateDataSource = (manifestFile, dataSource) => {
   return dataSource
 }
 
-// If any of the manifest apiVersions are 0.0.1, replace them with 0.0.2
+// Prefix indexed params in event signatures with `indexed`
 module.exports = {
   name: 'Distinguish indexed and non-indexed event parameters',
   predicate: async ({ sourceDir, manifestFile }) => {
