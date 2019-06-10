@@ -21,7 +21,7 @@ module.exports = {
     let manifest = yaml.safeLoad(fs.readFileSync(manifestFile, 'utf-8'))
     return (
       // Only migrate if the graph-ts version is > 0.5.1...
-      semver.gt(graphTsVersion, '0.5.1') &&
+      semver.gt(graphTsVersion, '0.12.0') &&
       // ...and we have a manifest with mapping > apiVersion = 0.0.2
       manifest &&
       typeof manifest === 'object' &&
