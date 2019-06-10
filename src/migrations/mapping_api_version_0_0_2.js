@@ -1,25 +1,12 @@
 const fs = require('fs-extra')
-const path = require('path')
 const semver = require('semver')
 const toolbox = require('gluegun/toolbox')
 const yaml = require('js-yaml')
+const getGraphTsVersion = require('./util/versions').getGraphTsVersion
 
-const getGraphTsVersion = sourceDir => {
-  let pkgJsonFile = path.join(
-    sourceDir,
-    'node_modules',
-    '@graphprotocol',
-    'graph-ts',
-    'package.json',
-  )
-  let data = fs.readFileSync(pkgJsonFile)
-  let jsonData = JSON.parse(data)
-  return jsonData.version
-}
-
-// If any of the manifest apiVersions are 0.0.1, replace them with 0.0.2
+// If any of the manifest apiVersions are 0.0.2, replace them with 0.0.3
 module.exports = {
-  name: 'Bump mapping apiVersion from 0.0.1 to 0.0.2',
+  name: 'Bump mapping apiVersion from 0.0.2 to 0.0.3',
   predicate: async ({ sourceDir, manifestFile }) => {
     // Obtain the graph-ts version, if possible
     let graphTsVersion
@@ -35,7 +22,7 @@ module.exports = {
     return (
       // Only migrate if the graph-ts version is > 0.5.1...
       semver.gt(graphTsVersion, '0.5.1') &&
-      // ...and we have a manifest with mapping > apiVersion = 0.0.1
+      // ...and we have a manifest with mapping > apiVersion = 0.0.2
       manifest &&
       typeof manifest === 'object' &&
       Array.isArray(manifest.dataSources) &&
@@ -45,7 +32,7 @@ module.exports = {
           (typeof dataSource === 'object' &&
             dataSource.mapping &&
             typeof dataSource.mapping === 'object' &&
-            dataSource.mapping.apiVersion === '0.0.1'),
+            dataSource.mapping.apiVersion === '0.0.2'),
         false,
       )
     )
@@ -55,16 +42,16 @@ module.exports = {
     // and replace the values in the data structures here; unfortunately
     // writing that back to the file messes with the formatting more than
     // we'd like; that's why for now, we use a simple patching approach
-    await toolbox.patching.replace(manifestFile, 'apiVersion: 0.0.1', 'apiVersion: 0.0.2')
+    await toolbox.patching.replace(manifestFile, 'apiVersion: 0.0.2', 'apiVersion: 0.0.3')
     await toolbox.patching.replace(
       manifestFile,
-      "apiVersion: '0.0.1'",
       "apiVersion: '0.0.2'",
+      "apiVersion: '0.0.3'",
     )
     await toolbox.patching.replace(
       manifestFile,
-      'apiVersion: "0.0.1"',
       'apiVersion: "0.0.2"',
+      'apiVersion: "0.0.3"',
     )
   },
 }
