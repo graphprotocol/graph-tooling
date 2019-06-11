@@ -62,9 +62,10 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
   ['Address', 'address', code => `EthereumValue.fromAddress(${code})`],
   ['boolean', 'bool', code => `EthereumValue.fromBoolean(${code})`],
   ['Bytes', 'byte', code => `EthereumValue.fromFixedBytes(${code})`],
+  ['Bytes', 'bytes', code => `EthereumValue.fromBytes(${code})`],
   [
     'Bytes',
-    /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)?$/,
+    /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)$/,
     code => `EthereumValue.fromFixedBytes(${code})`,
   ],
   ['i32', /^int(8|16|24|32)$/, code => `EthereumValue.fromI32(${code})`],
@@ -100,7 +101,12 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
   ],
   [
     'Array<Bytes>',
-    /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)?\[([0-9]+)?\]$/,
+    /bytes\[([0-9]+)?\]$/,
+    code => `EthereumValue.fromBytesArray(${code})`,
+  ],
+  [
+    'Array<Bytes>',
+    /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)\[([0-9]+)?\]$/,
     code => `EthereumValue.fromFixedBytesArray(${code})`,
   ],
   [
