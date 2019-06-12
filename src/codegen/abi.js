@@ -329,7 +329,7 @@ module.exports = class AbiCodeGenerator {
     )
 
     // Get view/pure functions from the contract
-    let allowedMutability = ['view', 'pure', 'nonpayable', 'constant'];
+    let allowedMutability = ['view', 'pure', 'nonpayable', 'constant']
     let functions = this.abi.data.filter(
       member =>
         member.get('type') === 'function' &&
@@ -428,7 +428,7 @@ module.exports = class AbiCodeGenerator {
         // Create types for Tuple outputs
         outputs.forEach((output, index) => {
           if (output.get('type') === 'tuple') {
-            types = types.push(
+            types = types.concat(
               this._generateTupleType(
                 output,
                 index,
@@ -455,8 +455,8 @@ module.exports = class AbiCodeGenerator {
             'function',
             this.abi.name,
           )
-          types = types.push(tuple.classes)
-          returnType = tuple.name
+          types = types.concat(tuple.classes)
+          returnType = tsCodegen.namedType(tuple.name)
         } else {
           returnType = tsCodegen.namedType(typesCodegen.ascTypeForEthereum(type))
         }
@@ -475,7 +475,7 @@ module.exports = class AbiCodeGenerator {
       // Create types for Tuple inputs
       inputs.forEach((input, index) => {
         if (input.get('type') === 'tuple') {
-          types = types.push(
+          types = types.concat(
             this._generateTupleType(
               input,
               index,
