@@ -9,7 +9,7 @@ const TEST_EVENT = {
   name: 'ExampleEvent',
   type: 'event',
   inputs: [
-    { name: 'a', type: 'uint256' },
+    { name: 'a', type: 'uint256', indexed: true },
     { name: 'b', type: 'bytes[4]' },
     { type: 'string' },
     {
@@ -77,7 +77,7 @@ dataSources:
         - name: Contract
           file: ./abis/Contract.json
       eventHandlers:
-        - event: ExampleEvent(uint256,bytes[4],string,tuple,string)
+        - event: ExampleEvent(indexed uint256,bytes[4],string,(uint256,bytes32,string,(uint96,string,bytes32)),indexed string)
           handler: handleExampleEvent
         - event: ExampleEvent(bytes32)
           handler: handleExampleEvent1

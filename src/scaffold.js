@@ -57,10 +57,6 @@ const generatePackageJson = ({ subgraphName }) =>
 
 // Subgraph manifest
 
-const eventSignature = event => {
-  return `${event.name}(${event.inputs.map(input => input.type).join(',')})`
-}
-
 const generateManifest = ({ abi, address, network }) =>
   prettier.format(
     `
@@ -89,7 +85,7 @@ dataSources:
         ${abiEvents(abi)
           .map(
             event => `
-        - event: ${eventSignature(event)}
+        - event: ${ABI.eventSignature(event)}
           handler: handle${event._alias}`,
           )
           .join('')}
