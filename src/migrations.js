@@ -12,21 +12,21 @@ const applyMigrations = async options =>
     `Failed to apply migrations`,
     `Warnings while applying migraitons`,
     async spinner => {
-      return Promise.all(
-        MIGRATIONS.map(async migration => {
-          let skipHint = await migration.predicate(options)
-          if (typeof skipHint !== 'string' && skipHint) {
-            step(spinner, 'Apply migration:', migration.name)
-            await migration.apply(options)
+      await MIGRATIONS.reduce(async (previousPromise, migration) => {
+        await previousPromise
+
+        let skipHint = await migration.predicate(options)
+        if (typeof skipHint !== 'string' && skipHint) {
+          step(spinner, 'Apply migration:', migration.name)
+          await migration.apply(options)
+        } else {
+          if (typeof skipHint === 'string') {
+            step(spinner, 'Skip migration:', `${migration.name} (${skipHint})`)
           } else {
-            if (typeof skipHint === 'string') {
-              step(spinner, 'Skip migration:', `${migration.name} (${skipHint})`)
-            } else {
-              step(spinner, 'Skip migration:', `${migration.name}`)
-            }
+            step(spinner, 'Skip migration:', `${migration.name}`)
           }
-        }),
-      )
+        }
+      }, Promise.resolve())
     },
   )
 
