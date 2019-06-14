@@ -21,6 +21,14 @@ describe('ABI code generation', () => {
         JSON.stringify([
           {
             constant: true,
+            inputs: [],
+            name: 'read',
+            outputs: [{ name: '', type: 'bytes32' }],
+            payable: false,
+            type: 'function',
+          },
+          {
+            constant: true,
             inputs: [
               {
                 name: 'proposalId',
@@ -143,6 +151,7 @@ describe('ABI code generation', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
       expect(contract.methods.map(method => [method.name, method.params])).toEqual([
         ['bind', immutable.List([ts.param('address', 'Address')])],
+        ['read', immutable.List()],
         [
           'getProposal',
           immutable.List([
@@ -157,6 +166,7 @@ describe('ABI code generation', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
       expect(contract.methods.map(method => [method.name, method.returnType])).toEqual([
         ['bind', ts.namedType('Contract')],
+        ['read', ts.namedType('Bytes')],
         ['getProposal', ts.namedType('Contract__getProposalResultValue0Struct')],
       ])
     })
