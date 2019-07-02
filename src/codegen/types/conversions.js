@@ -42,7 +42,7 @@ const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
     'Array<BigInt>',
     code => `${code}.toBigIntArray()`,
   ],
-  [/^string\[([0-9]+)?\]$/, 'Array<String>', code => `${code}.toStringArray()`],
+  [/^string\[([0-9]+)?\]$/, 'Array<string>', code => `${code}.toStringArray()`],
 
   // Tuple
 
@@ -130,7 +130,7 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     code => `EthereumValue.fromUnsignedBigIntArray(${code})`,
   ],
   [
-    'Array<String>',
+    'Array<string>',
     /^string\[([0-9]+)?\]$/,
     code => `EthereumValue.fromStringArray(${code})`,
   ],
