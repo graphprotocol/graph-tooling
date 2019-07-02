@@ -427,14 +427,34 @@ describe('Value -> AssemblyScript', () => {
   test('[BigDecimal] -> Array<BigDecimal>', () => {
     expect(codegen.valueToAsc('x', '[BigDecimal]')).toBe('x.toBigDecimalArray()')
   })
+
+  test('String -> string', () => {
+    expect(codegen.valueToAsc('x', 'string')).toBe('x.toString()')
+  })
+
+  test('[String] -> Array<string>', () => {
+    expect(codegen.valueToAsc('x', '[String]')).toBe('x.toStringArray()')
+  })
 })
 
 describe('AssemblyScript -> Value', () => {
   test('BigDecimal -> BigDecimal', () => {
     expect(codegen.valueFromAsc('x', 'BigDecimal')).toBe('Value.fromBigDecimal(x)')
+    expect(codegen.valueTypeForAsc('BigDecimal')).toBe('BigDecimal')
   })
 
   test('Array<BigDecimal> -> [BigDecimal]', () => {
     expect(codegen.valueFromAsc('x', '[BigDecimal]')).toBe('Value.fromBigDecimalArray(x)')
+    expect(codegen.valueTypeForAsc('Array<BigDecimal>')).toBe('[BigDecimal]')
+  })
+
+  test('string -> String', () => {
+    expect(codegen.valueFromAsc('x', 'String')).toBe('Value.fromString(x)')
+    expect(codegen.valueTypeForAsc('string')).toBe('String')
+  })
+
+  test('Array<string> -> [String]', () => {
+    expect(codegen.valueFromAsc('x', '[String]')).toBe('Value.fromStringArray(x)')
+    expect(codegen.valueTypeForAsc('Array<string>')).toBe('[String]')
   })
 })
