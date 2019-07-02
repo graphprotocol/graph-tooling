@@ -117,7 +117,15 @@ describe('Validation', () => {
     ['codegen', '--skip-migrations'],
     'validation/missing-or-invalid-derived-from-fields',
     {
-      exitCode: 1
-    }
+      exitCode: 1,
+    },
+  )
+  cliTest(
+    '@derivedFrom target type missing',
+    ['codegen', '--skip-migrations'],
+    'validation/derived-from-target-type-missing',
+    {
+      exitCode: 1,
+    },
   )
 })
