@@ -5,56 +5,69 @@ describe('EthereumValue -> AssemblyScript', () => {
 
   test('address -> Address', () => {
     expect(codegen.ethereumValueToAsc('x', 'address')).toBe('x.toAddress()')
+    expect(codegen.ascTypeForEthereum('address')).toBe('Address')
   })
 
   test('bool -> boolean', () => {
     expect(codegen.ethereumValueToAsc('x', 'bool')).toBe('x.toBoolean()')
+    expect(codegen.ascTypeForEthereum('bool')).toBe('boolean')
   })
 
   test('byte -> Bytes', () => {
     expect(codegen.ethereumValueToAsc('x', 'byte')).toBe('x.toBytes()')
+    expect(codegen.ascTypeForEthereum('byte')).toBe('Bytes')
   })
 
   test('bytes -> Bytes', () => {
     expect(codegen.ethereumValueToAsc('x', 'bytes')).toBe('x.toBytes()')
+    expect(codegen.ascTypeForEthereum('bytes')).toBe('Bytes')
   })
 
   test('bytes0 (invalid)', () => {
     expect(() => codegen.ethereumValueToAsc('x', 'bytes0')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes0')).toThrow()
   })
 
   test('bytes1..32 -> Bytes', () => {
     for (let i = 1; i <= 32; i++) {
       expect(codegen.ethereumValueToAsc('x', `bytes${i}`)).toBe('x.toBytes()')
+      expect(codegen.ascTypeForEthereum(`bytes${i}`)).toBe('Bytes')
     }
   })
 
   test('bytes33 (invalid)', () => {
     expect(() => codegen.ethereumValueToAsc('x', 'bytes33')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes33')).toThrow()
   })
 
   test('int8..32, uint8..uint24 -> i32', () => {
     for (let i = 8; i <= 32; i += 8) {
       expect(codegen.ethereumValueToAsc('x', `int${i}`)).toBe('x.toI32()')
+      expect(codegen.ascTypeForEthereum(`int${i}`)).toBe('i32')
     }
     for (let i = 8; i <= 24; i += 8) {
       expect(codegen.ethereumValueToAsc('x', `uint${i}`)).toBe('x.toI32()')
+      expect(codegen.ascTypeForEthereum(`uint${i}`)).toBe('i32')
     }
   })
 
   test('uint32 -> BigInt', () => {
     expect(codegen.ethereumValueToAsc('x', `uint32`)).toBe('x.toBigInt()')
+    expect(codegen.ascTypeForEthereum('uint32')).toBe('BigInt')
   })
 
   test('(u)int40..256 -> BigInt', () => {
     for (let i = 40; i <= 256; i += 8) {
       expect(codegen.ethereumValueToAsc('x', `int${i}`)).toBe('x.toBigInt()')
       expect(codegen.ethereumValueToAsc('x', `uint${i}`)).toBe('x.toBigInt()')
+      expect(codegen.ascTypeForEthereum(`int${i}`)).toBe('BigInt')
+      expect(codegen.ascTypeForEthereum(`uint${i}`)).toBe('BigInt')
     }
   })
 
   test('string -> String', () => {
     expect(codegen.ethereumValueToAsc('x', 'string')).toBe('x.toString()')
+    expect(codegen.ascTypeForEthereum('string')).toBe('string')
   })
 
   // Array values
@@ -63,30 +76,45 @@ describe('EthereumValue -> AssemblyScript', () => {
     expect(codegen.ethereumValueToAsc('x', 'address[]')).toBe('x.toAddressArray()')
     expect(codegen.ethereumValueToAsc('x', 'address[1]')).toBe('x.toAddressArray()')
     expect(codegen.ethereumValueToAsc('x', 'address[123]')).toBe('x.toAddressArray()')
+    expect(codegen.ascTypeForEthereum('address[]')).toBe('Array<Address>')
+    expect(codegen.ascTypeForEthereum('address[1]')).toBe('Array<Address>')
+    expect(codegen.ascTypeForEthereum('address[123]')).toBe('Array<Address>')
   })
 
   test('bool[*] -> Array<boolean>', () => {
     expect(codegen.ethereumValueToAsc('x', 'bool[]')).toBe('x.toBooleanArray()')
     expect(codegen.ethereumValueToAsc('x', 'bool[5]')).toBe('x.toBooleanArray()')
     expect(codegen.ethereumValueToAsc('x', 'bool[275]')).toBe('x.toBooleanArray()')
+    expect(codegen.ascTypeForEthereum('bool[]')).toBe('Array<boolean>')
+    expect(codegen.ascTypeForEthereum('bool[5]')).toBe('Array<boolean>')
+    expect(codegen.ascTypeForEthereum('bool[275]')).toBe('Array<boolean>')
   })
 
   test('byte[*] -> Array<Bytes>', () => {
     expect(codegen.ethereumValueToAsc('x', 'byte[]')).toBe('x.toBytesArray()')
     expect(codegen.ethereumValueToAsc('x', 'byte[7]')).toBe('x.toBytesArray()')
     expect(codegen.ethereumValueToAsc('x', 'byte[553]')).toBe('x.toBytesArray()')
+    expect(codegen.ascTypeForEthereum('byte[]')).toBe('Array<Bytes>')
+    expect(codegen.ascTypeForEthereum('byte[7]')).toBe('Array<Bytes>')
+    expect(codegen.ascTypeForEthereum('byte[553]')).toBe('Array<Bytes>')
   })
 
   test('bytes[*] -> Array<Bytes>', () => {
     expect(codegen.ethereumValueToAsc('x', 'bytes[]')).toBe('x.toBytesArray()')
     expect(codegen.ethereumValueToAsc('x', 'bytes[14]')).toBe('x.toBytesArray()')
     expect(codegen.ethereumValueToAsc('x', 'bytes[444]')).toBe('x.toBytesArray()')
+    expect(codegen.ascTypeForEthereum('bytes[]')).toBe('Array<Bytes>')
+    expect(codegen.ascTypeForEthereum('bytes[14]')).toBe('Array<Bytes>')
+    expect(codegen.ascTypeForEthereum('bytes[444]')).toBe('Array<Bytes>')
   })
 
   test('bytes0[*] (invalid)', () => {
     expect(() => codegen.ethereumValueToAsc('x', 'bytes0[]')).toThrow()
     expect(() => codegen.ethereumValueToAsc('x', 'bytes0[83]')).toThrow()
     expect(() => codegen.ethereumValueToAsc('x', 'bytes0[123]')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes0[]')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes0[83]')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes0[123]')).toThrow()
   })
 
   test('bytes1..32[*] -> Array<Bytes>', () => {
@@ -94,6 +122,9 @@ describe('EthereumValue -> AssemblyScript', () => {
       expect(codegen.ethereumValueToAsc('x', `bytes${i}[]`)).toBe('x.toBytesArray()')
       expect(codegen.ethereumValueToAsc('x', `bytes${i}[7]`)).toBe('x.toBytesArray()')
       expect(codegen.ethereumValueToAsc('x', `bytes${i}[432]`)).toBe('x.toBytesArray()')
+      expect(codegen.ascTypeForEthereum(`bytes${i}[]`)).toBe('Array<Bytes>')
+      expect(codegen.ascTypeForEthereum(`bytes${i}[7]`)).toBe('Array<Bytes>')
+      expect(codegen.ascTypeForEthereum(`bytes${i}[432]`)).toBe('Array<Bytes>')
     }
   })
 
@@ -101,6 +132,9 @@ describe('EthereumValue -> AssemblyScript', () => {
     expect(() => codegen.ethereumValueToAsc('x', 'bytes33[]')).toThrow()
     expect(() => codegen.ethereumValueToAsc('x', 'bytes33[58]')).toThrow()
     expect(() => codegen.ethereumValueToAsc('x', 'bytes33[394]')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes33[]')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes33[58]')).toThrow()
+    expect(() => codegen.ascTypeForEthereum('bytes33[394]')).toThrow()
   })
 
   test('int8..32[*], uint8..24[*] -> Array<i32>', () => {
@@ -108,11 +142,17 @@ describe('EthereumValue -> AssemblyScript', () => {
       expect(codegen.ethereumValueToAsc('x', `int${i}[]`)).toBe('x.toI32Array()')
       expect(codegen.ethereumValueToAsc('x', `int${i}[6]`)).toBe('x.toI32Array()')
       expect(codegen.ethereumValueToAsc('x', `int${i}[4638]`)).toBe('x.toI32Array()')
+      expect(codegen.ascTypeForEthereum(`int${i}[]`)).toBe('Array<i32>')
+      expect(codegen.ascTypeForEthereum(`int${i}[6]`)).toBe('Array<i32>')
+      expect(codegen.ascTypeForEthereum(`int${i}[4638]`)).toBe('Array<i32>')
     }
     for (let i = 8; i <= 24; i += 8) {
       expect(codegen.ethereumValueToAsc('x', `uint${i}[]`)).toBe('x.toI32Array()')
       expect(codegen.ethereumValueToAsc('x', `uint${i}[6]`)).toBe('x.toI32Array()')
       expect(codegen.ethereumValueToAsc('x', `uint${i}[593]`)).toBe('x.toI32Array()')
+      expect(codegen.ascTypeForEthereum(`uint${i}[]`)).toBe('Array<i32>')
+      expect(codegen.ascTypeForEthereum(`uint${i}[6]`)).toBe('Array<i32>')
+      expect(codegen.ascTypeForEthereum(`uint${i}[593]`)).toBe('Array<i32>')
     }
   })
 
@@ -120,6 +160,9 @@ describe('EthereumValue -> AssemblyScript', () => {
     expect(codegen.ethereumValueToAsc('x', `uint32[]`)).toBe('x.toBigIntArray()')
     expect(codegen.ethereumValueToAsc('x', `uint32[6]`)).toBe('x.toBigIntArray()')
     expect(codegen.ethereumValueToAsc('x', `uint32[593]`)).toBe('x.toBigIntArray()')
+    expect(codegen.ascTypeForEthereum(`uint32[]`)).toBe('Array<BigInt>')
+    expect(codegen.ascTypeForEthereum(`uint32[6]`)).toBe('Array<BigInt>')
+    expect(codegen.ascTypeForEthereum(`uint32[593]`)).toBe('Array<BigInt>')
   })
 
   test('(u)int40..256[*] -> Array<BigInt>', () => {
@@ -127,17 +170,26 @@ describe('EthereumValue -> AssemblyScript', () => {
       expect(codegen.ethereumValueToAsc('x', `int${i}[]`)).toBe('x.toBigIntArray()')
       expect(codegen.ethereumValueToAsc('x', `int${i}[7]`)).toBe('x.toBigIntArray()')
       expect(codegen.ethereumValueToAsc('x', `int${i}[6833]`)).toBe('x.toBigIntArray()')
+      expect(codegen.ascTypeForEthereum(`int${i}[]`)).toBe('Array<BigInt>')
+      expect(codegen.ascTypeForEthereum(`int${i}[7]`)).toBe('Array<BigInt>')
+      expect(codegen.ascTypeForEthereum(`int${i}[6833]`)).toBe('Array<BigInt>')
 
       expect(codegen.ethereumValueToAsc('x', `uint${i}[]`)).toBe('x.toBigIntArray()')
       expect(codegen.ethereumValueToAsc('x', `uint${i}[23]`)).toBe('x.toBigIntArray()')
       expect(codegen.ethereumValueToAsc('x', `uint${i}[467]`)).toBe('x.toBigIntArray()')
+      expect(codegen.ascTypeForEthereum(`uint${i}[]`)).toBe('Array<BigInt>')
+      expect(codegen.ascTypeForEthereum(`uint${i}[23]`)).toBe('Array<BigInt>')
+      expect(codegen.ascTypeForEthereum(`uint${i}[467]`)).toBe('Array<BigInt>')
     }
   })
 
-  test('string[*] -> Array<String>', () => {
+  test('string[*] -> Array<string>', () => {
     expect(codegen.ethereumValueToAsc('x', 'string[]')).toBe('x.toStringArray()')
     expect(codegen.ethereumValueToAsc('x', 'string[4]')).toBe('x.toStringArray()')
     expect(codegen.ethereumValueToAsc('x', 'string[754]')).toBe('x.toStringArray()')
+    expect(codegen.ascTypeForEthereum('string[]')).toBe('Array<string>')
+    expect(codegen.ascTypeForEthereum('string[4]')).toBe('Array<string>')
+    expect(codegen.ascTypeForEthereum('string[754]')).toBe('Array<string>')
   })
 })
 
