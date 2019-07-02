@@ -121,19 +121,19 @@ Reason: Lists with null elements are not supported.`,
         },
       ])
     : field.type.kind === 'ListType' && field.type.type.kind !== 'NonNullType'
-      ? immutable.fromJS([
-          {
-            loc: field.loc,
-            entity: def.name.value,
-            message: `\
+    ? immutable.fromJS([
+        {
+          loc: field.loc,
+          entity: def.name.value,
+          message: `\
 Field '${field.name.value}':
 Field has type [${field.type.type.name.value}] but
 must have type [${field.type.type.name.value}!]
 
 Reason: Lists with null elements are not supported.`,
-          },
-        ])
-      : List()
+        },
+      ])
+    : List()
 
 const unwrapType = type => {
   let innerTypeFromList = listType =>
@@ -150,8 +150,8 @@ const unwrapType = type => {
   return type.kind === 'NonNullType'
     ? innerTypeFromNonNull(type)
     : type.kind === 'ListType'
-      ? innerTypeFromList(type)
-      : type
+    ? innerTypeFromList(type)
+    : type
 }
 
 const entityTypeByName = (defs, name) =>
@@ -163,8 +163,10 @@ const entityTypeByName = (defs, name) =>
     .filter(def => def.directives.find(directive => directive.name.value === 'entity'))
     .find(def => def.name.value === name)
 
+const fieldTargetEntityName = field => unwrapType(field.type).name.value
+
 const fieldTargetEntity = (defs, field) =>
-  entityTypeByName(defs, unwrapType(field.type).name.value)
+  entityTypeByName(defs, fieldTargetEntityName(field))
 
 const validateInnerFieldType = (defs, def, field) => {
   let innerType = unwrapType(field.type)
@@ -254,6 +256,13 @@ Value of the @derivedFrom 'field' argument must be a string`,
   }
 
   let targetEntity = fieldTargetEntity(defs, field)
+  if (targetEntity === undefined) {
+    // This is handled in `validateInnerFieldType` but if we don't catch
+    // the undefined case here, the code below will throw, as it assumes
+    // the target entity exists
+    return immutable.fromJS([])
+  }
+
   let derivedFromField = targetEntity.fields.find(
     field => field.name.value === directive.arguments[0].value.value,
   )
