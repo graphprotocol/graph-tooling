@@ -6,6 +6,7 @@ type Schema {
 }
 
 union DataSource = EthereumContractDataSource
+union Template = EthereumContractDataSourceTemplate
 
 type EthereumContractDataSource {
   kind: String!
@@ -64,6 +65,7 @@ type SubgraphManifest {
   description: String
   repository: String
   dataSources: [DataSource!]!
+  templates: [Template!]
 }
 
 type EthereumContractDataSourceTemplate {
