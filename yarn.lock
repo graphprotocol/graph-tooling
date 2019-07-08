@@ -5049,10 +5049,10 @@ tar@^4:
     safe-buffer "^5.1.2"
     yallist "^3.0.2"
 
-tern@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.npmjs.org/tern/-/tern-0.23.0.tgz#35d76bc910c3d1cb053b9db879cdeb5b39421b9b"
-  integrity sha512-lST8jq/DougDUADb+vBaufwjqNChwABSJTkWf+5GG4xNVJoR/atEaMe/G7buaVZrpGCy+zoaq1TuycQy8xX+Bg==
+tern@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/tern/-/tern-0.24.0.tgz#2748d55aa285bf03e3a9473c38b277885d7f0ec6"
+  integrity sha512-VQYPvIUtWm+EFASQc2mAaG7rzxdwJDu2ahFEGfqq6i6CpNnB454KDKWpzMbZDIjz9+CIE5FDrFsEYcjiy7aYrQ==
   dependencies:
     acorn "^6.0.0"
     acorn-loose "^6.0.0"

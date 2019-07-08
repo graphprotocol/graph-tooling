@@ -32,7 +32,7 @@
     "jest": "^24.3.0",
     "spawn-command": "^0.0.2-1",
     "strip-ansi": "^5.1.0",
-    "tern": "^0.23.0"
+    "tern": "^0.24.0"
   },
   "scripts": {
     "test": "jest --verbose"
