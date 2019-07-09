@@ -5,7 +5,7 @@
   "dependencies": {
     "assemblyscript": "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3",
     "chalk": "^2.4.1",
-    "chokidar": "^2.0.4",
+    "chokidar": "^3.0.2",
     "debug": "^3.1.0",
     "fs-extra": "^7.0.1",
     "glob": "^7.1.2",
