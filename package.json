@@ -13,7 +13,7 @@
     "graphql": "^14.0.2",
     "immutable": "^3.8.2",
     "ipfs-http-client": "^28.1.2",
-    "jayson": "^2.0.6",
+    "jayson": "^3.0.2",
     "js-yaml": "^3.13.1",
     "node-fetch": "^2.3.0",
     "pkginfo": "^0.4.1",
