@@ -1408,10 +1408,10 @@ enhanced-resolve@^2.2.2:
     object-assign "^4.0.1"
     tapable "^0.2.3"
 
-enquirer@2.3.0:
-  version "2.3.0"
-  resolved "https://registry.npmjs.org/enquirer/-/enquirer-2.3.0.tgz#c362c9d84984ebe854def63caaf12983a16af552"
-  integrity sha512-RNGUbRVlfnjmpxV+Ed+7CGu0rg3MK7MmlW+DW0v7V2zdAUBC1s4BxCRiIAozbYB2UJ+q4D+8tW9UFb11kF72/g==
+enquirer@2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/enquirer/-/enquirer-2.3.1.tgz#f1bf52ea38470525f41412d723a62ba6868559c6"
+  integrity sha512-7slmHsJY+mvnIrzD0Z0FfTFLmVJuIzRNCW72X9s35BshOoC+MI4jLJ8aPyAC/BelAirXBZB+Mu1wSqP0wpW4Kg==
   dependencies:
     ansi-colors "^3.2.1"
 
@@ -1956,9 +1956,9 @@ globals@^11.1.0, globals@^11.7.0:
   integrity sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==
 
 gluegun@^3.0.0:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/gluegun/-/gluegun-3.3.1.tgz#0d3a709676a3219ec16906f94bd8c560e843017f"
-  integrity sha512-AKcdkg/3S3hGFh5RhcVzs2rnikwU6MJh5e6UYpdvcppvuusCau5gm2iqb7OiwNLHS7rrw1x1RvAEeQUWazUUUg==
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/gluegun/-/gluegun-3.3.2.tgz#bf516dbffedb0af1309cbd3db4a429ab3d0f4faa"
+  integrity sha512-zlJdpCFnU+Wvke5mQ7RGpLW+tRL4qRu0a/hee5DsNvwa2C0RK8RwPFOaXsvGM+nk6VlobYtZ6Sv828PEXNUitQ==
   dependencies:
     apisauce "^1.0.1"
     app-module-path "^2.2.0"
@@ -1967,7 +1967,7 @@ gluegun@^3.0.0:
     cosmiconfig "5.1.0"
     cross-spawn "^6.0.5"
     ejs "^2.6.1"
-    enquirer "2.3.0"
+    enquirer "2.3.1"
     execa "^1.0.0"
     fs-jetpack "^2.2.2"
     lodash.camelcase "^4.3.0"
