@@ -702,10 +702,15 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bignumber.js@^8.0.1, bignumber.js@^8.0.2:
+bignumber.js@^8.0.1:
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-8.1.1.tgz#4b072ae5aea9c20f6730e4e5d529df1271c4d885"
   integrity sha512-QD46ppGintwPGuL1KqmwhR0O+N2cZUg8JG/VzwI2e28sM9TqHjQB10lI4QAaMHVbLzwVLLAwEglpKPViWX+5NQ==
+
+bignumber.js@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
+  integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
 
 binary-extensions@^2.0.0:
   version "2.0.0"
@@ -2262,13 +2267,13 @@ ipfs-block@~0.8.1:
     cids "~0.7.0"
     class-is "^1.1.0"
 
-ipfs-http-client@^32.0.1:
-  version "32.0.1"
-  resolved "https://registry.yarnpkg.com/ipfs-http-client/-/ipfs-http-client-32.0.1.tgz#4f5845c56717c748751e70e5d579b7b18af9e824"
-  integrity sha512-uDJjjAg9zvuiAucBE/o0I+xHu9Q9ZoLvj0cTyk+Jf+0duom1iIt2iEEN1HW+PNnZu12zYQWV3sB+tI5TN2lo7A==
+ipfs-http-client@^33.1.0:
+  version "33.1.0"
+  resolved "https://registry.yarnpkg.com/ipfs-http-client/-/ipfs-http-client-33.1.0.tgz#4d3beceba27fcef26cf1940375a5f8c9d609f0dd"
+  integrity sha512-hkS8nXay3DGKb/KXU1RDvTyxnvkAdhS5enlXxNXaS7yKvADlf5SEuQGYjW+VknkPPQ4FNbY3JttQ3YW+LTuoRA==
   dependencies:
     async "^2.6.1"
-    bignumber.js "^8.0.2"
+    bignumber.js "^9.0.0"
     bl "^3.0.0"
     bs58 "^4.0.1"
     buffer "^5.2.1"
@@ -2284,6 +2289,7 @@ ipfs-http-client@^32.0.1:
     ipfs-utils "~0.0.3"
     ipld-dag-cbor "~0.15.0"
     ipld-dag-pb "~0.17.3"
+    ipld-raw "^4.0.0"
     is-ipfs "~0.6.1"
     is-pull-stream "0.0.0"
     is-stream "^2.0.0"
@@ -2347,6 +2353,15 @@ ipld-dag-pb@~0.17.3:
     multihashing-async "~0.7.0"
     protons "^1.0.1"
     stable "~0.1.8"
+
+ipld-raw@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/ipld-raw/-/ipld-raw-4.0.0.tgz#dd31f75dba2fad9cc8bb084d07ce1ea74fd47734"
+  integrity sha512-yNQG5zQqm/RH8aNQxcvcsAdHJW4q+LJ3cPfFzHOtujEa/PRlT5YCOVpAFh61HfpsWFm2GJrb2G+HHgtDDlFSMw==
+  dependencies:
+    cids "~0.7.0"
+    multicodec "~0.5.0"
+    multihashing-async "~0.7.0"
 
 is-accessor-descriptor@^0.1.6:
   version "0.1.6"
