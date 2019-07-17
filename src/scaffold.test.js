@@ -1,3 +1,5 @@
+const ABI = require('./abi')
+const immutable = require('immutable')
 const {
   generateEventFieldAssignments,
   generateManifest,
@@ -45,7 +47,31 @@ const TEST_CONTRACT = {
   type: 'contract',
 }
 
-const TEST_ABI = [TEST_EVENT, OVERLOADED_EVENT, TEST_CONTRACT]
+const TEST_CALLABLE_FUNCTIONS = [
+  {
+    name: 'someVariable',
+    type: 'function',
+    stateMutability: 'view',
+    outputs: [{ type: 'uint256' }],
+  },
+  {
+    name: 'getSomeValue',
+    type: 'function',
+    stateMutability: 'pure',
+    outputs: [{ type: 'tuple', components: [{ type: 'uint256' }] }],
+  },
+]
+
+const TEST_ABI = new ABI(
+  'Contract',
+  undefined,
+  immutable.fromJS([
+    TEST_EVENT,
+    OVERLOADED_EVENT,
+    TEST_CONTRACT,
+    ...TEST_CALLABLE_FUNCTIONS,
+  ]),
+)
 
 describe('Subgraph scaffolding', () => {
   test('Manifest', () => {
@@ -85,8 +111,19 @@ dataSources:
 `)
   })
 
-  test('Schema', () => {
+  test('Schema (default)', () => {
     expect(generateSchema({ abi: TEST_ABI })).toEqual(`\
+type ExampleEntity @entity {
+  id: ID!
+  count: BigInt!
+  a: BigInt! # uint256
+  b: [Bytes]! # bytes[4]
+}
+`)
+  })
+
+  test('Schema (for indexing events)', () => {
+    expect(generateSchema({ abi: TEST_ABI, indexEvents: true })).toEqual(`\
 type ExampleEvent @entity {
   id: ID!
   a: BigInt! # uint256
@@ -108,8 +145,64 @@ type ExampleEvent1 @entity {
 `)
   })
 
-  test('Mapping', () => {
+  test('Mapping (default)', () => {
     expect(generateMapping({ abi: TEST_ABI })).toEqual(`\
+import { BigInt } from "@graphprotocol/graph-ts"
+import {
+  Contract,
+  ExampleEvent,
+  ExampleEvent1
+} from "../generated/Contract/Contract"
+import { ExampleEntity } from "../generated/schema"
+
+export function handleExampleEvent(event: ExampleEvent): void {
+  // Entities can be loaded from the store using an event ID (a string)
+  let entity = ExampleEntity.load(event.transaction.from.toHex())
+
+  // Entities only exist after they have been saved to the store;
+  // \`null\` checks allow to create entities on demand
+  if (entity == null) {
+    entity = new ExampleEntity(event.transaction.from.toHex())
+
+    // Entity fields can be set using simple assignments
+    entity.count = BigInt.fromI32(0)
+  }
+
+  // BigInt and BigDecimal math are supported
+  entity.count = entity.count + BigInt.fromI32(1)
+
+  // Entity fields can be set based on event parameters
+  entity.a = event.params.a
+  entity.b = event.params.b
+
+  // Entities can be written to the store with \`.save()\`
+  entity.save()
+
+  // Note: If a handler doesn't require existing field values, it is faster
+  // _not_ to load the entity from the store. Instead, create it fresh with
+  // \`new Entity(...)\`, set the fields that should be updated and save the
+  // entity back to the store. Fields that were not set or unset remain
+  // unchanged, allowing for partial updates to be applied.
+
+  // It is also possible to access smart contracts from mappings. For
+  // example, the contract that has emitted the event can be connected to
+  // with:
+  //
+  // let contract = Contract.bind(event.address)
+  //
+  // The following functions can then be called on this contract to access
+  // state variables and other data:
+  //
+  // - contract.someVariable(...)
+  // - contract.getSomeValue(...)
+}
+
+export function handleExampleEvent1(event: ExampleEvent1): void {}
+`)
+  })
+
+  test('Mapping (for indexing events)', () => {
+    expect(generateMapping({ abi: TEST_ABI, indexEvents: true })).toEqual(`\
 import {
   ExampleEvent as ExampleEventEvent,
   ExampleEvent1 as ExampleEvent1Event

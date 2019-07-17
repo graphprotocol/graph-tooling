@@ -7,22 +7,15 @@ const { getSubgraphBasename } = require('./command-helpers/subgraph')
 const { step } = require('./command-helpers/spinner')
 const { ascTypeForEthereum, valueTypeForAsc } = require('./codegen/types')
 const ABI = require('./abi')
+const AbiCodeGenerator = require('./codegen/abi')
 const util = require('./codegen/util')
 
-const abiEvents = abi => {
-  abi = ABI.normalized(abi)
-  if (abi === null || abi === undefined) {
-    throw new Error('Invalid ABI')
-  }
-  return util.disambiguateNames({
-    values: abi.filter(item => item.type === 'event'),
-    getName: event => event.name,
-    setName: (event, name) => {
-      event._alias = name
-      return event
-    },
+const abiEvents = abi =>
+  util.disambiguateNames({
+    values: abi.data.filter(item => item.get('type') === 'event'),
+    getName: event => event.get('name'),
+    setName: (event, name) => event.set('_alias', name),
   })
-}
 
 // package.json
 
@@ -76,7 +69,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         ${abiEvents(abi)
-          .map(event => `- ${event._alias}`)
+          .map(event => `- ${event.get('_alias')}`)
           .join('\n        ')}
       abis:
         - name: Contract
@@ -86,7 +79,7 @@ dataSources:
           .map(
             event => `
         - event: ${ABI.eventSignature(event)}
-          handler: handle${event._alias}`,
+          handler: handle${event.get('_alias')}`,
           )
           .join('')}
       file: ./src/mapping.ts
@@ -121,15 +114,36 @@ const generateEventType = event => `type ${event._alias} @entity {
         .join('\n')}
     }`
 
-const generateSchema = ({ abi }) =>
-  prettier.format(
-    abiEvents(abi)
-      .map(generateEventType)
-      .join('\n\n'),
+const generateExampleEntityType = events => {
+  if (events.length > 0) {
+    return `type ExampleEntity @entity {
+  id: ID!
+  count: BigInt!
+  ${events[0].inputs
+    .reduce((acc, input, index) => acc.concat(generateEventFields({ input, index })), [])
+    .slice(0, 2)
+    .join('\n')}
+}`
+  } else {
+    return `type ExampleEntity @entity {
+  id: ID!
+  block: Bytes!
+  transaction: Bytes!
+}`
+  }
+}
+
+const generateSchema = ({ abi, indexEvents }) => {
+  let events = abiEvents(abi).toJS()
+  return prettier.format(
+    indexEvents
+      ? events.map(generateEventType).join('\n\n')
+      : generateExampleEntityType(events),
     {
       parser: 'graphql',
     },
   )
+}
 
 // Mapping
 
@@ -171,15 +185,14 @@ const generateEventFieldAssignments = event =>
     [],
   )
 
-const generateMapping = ({ abi }) =>
-  prettier.format(
-    `
-  import { ${abiEvents(abi).map(
+const generateEventIndexingHandlers = events =>
+  `
+  import { ${events.map(
     event => `${event._alias} as ${event._alias}Event`,
   )}} from '../generated/Contract/Contract'
-  import { ${abiEvents(abi).map(event => event._alias)} } from '../generated/schema'
-  
-  ${abiEvents(abi)
+  import { ${events.map(event => event._alias)} } from '../generated/schema'
+
+  ${events
     .map(
       event =>
         `
@@ -193,16 +206,97 @@ const generateMapping = ({ abi }) =>
     `,
     )
     .join('\n')}
-  `,
+`
+
+const generatePlaceholderHandlers = ({ abi, events }) =>
+  `
+  import { BigInt } from '@graphprotocol/graph-ts'
+  import { Contract, ${events.map(event => event._alias)} }
+    from '../generated/Contract/Contract'
+  import { ExampleEntity } from '../generated/schema'
+
+  ${events
+    .map((event, index) =>
+      index === 0
+        ? `
+    export function handle${event._alias}(event: ${event._alias}): void {
+      // Entities can be loaded from the store using an event ID (a string)
+      let entity = ExampleEntity.load(event.transaction.from.toHex())
+
+      // Entities only exist after they have been saved to the store;
+      // \`null\` checks allow to create entities on demand
+      if (entity == null) {
+        entity = new ExampleEntity(event.transaction.from.toHex())
+
+        // Entity fields can be set using simple assignments
+        entity.count = BigInt.fromI32(0)
+      }
+
+      // BigInt and BigDecimal math are supported
+      entity.count = entity.count + BigInt.fromI32(1)
+
+      // Entity fields can be set based on event parameters
+      ${generateEventFieldAssignments(event)
+        .slice(0, 2)
+        .join('\n')}
+
+      // Entities can be written to the store with \`.save()\`
+      entity.save()
+
+      // Note: If a handler doesn't require existing field values, it is faster
+      // _not_ to load the entity from the store. Instead, create it fresh with
+      // \`new Entity(...)\`, set the fields that should be updated and save the
+      // entity back to the store. Fields that were not set or unset remain
+      // unchanged, allowing for partial updates to be applied.
+
+      // It is also possible to access smart contracts from mappings. For
+      // example, the contract that has emitted the event can be connected to
+      // with:
+      //
+      // let contract = Contract.bind(event.address)
+      //
+      // The following functions can then be called on this contract to access
+      // state variables and other data:
+      //
+      // ${
+        abi
+          .codeGenerator()
+          .callableFunctions()
+          .isEmpty()
+          ? 'None'
+          : abi
+              .codeGenerator()
+              .callableFunctions()
+              .map(fn => `- contract.${fn.get('name')}(...)`)
+              .join('\n// ')
+      }
+    }
+    `
+        : `
+export function handle${event._alias}(event: ${event._alias}): void {}
+`,
+    )
+    .join('\n')}`
+
+const generateMapping = ({ abi, indexEvents }) => {
+  let events = abiEvents(abi).toJS()
+  return prettier.format(
+    indexEvents
+      ? generateEventIndexingHandlers(events)
+      : generatePlaceholderHandlers({ abi, events: events }),
     { parser: 'typescript', semi: false },
   )
+}
 
-const generateScaffold = async ({ abi, address, network, subgraphName }, spinner) => {
+const generateScaffold = async (
+  { abi, address, network, subgraphName, indexEvents },
+  spinner,
+) => {
   step(spinner, 'Generate subgraph from ABI')
   let packageJson = generatePackageJson({ subgraphName })
   let manifest = generateManifest({ abi, address, network })
-  let schema = generateSchema({ abi })
-  let mapping = generateMapping({ abi, subgraphName })
+  let schema = generateSchema({ abi, indexEvents })
+  let mapping = generateMapping({ abi, subgraphName, indexEvents })
 
   return {
     'package.json': packageJson,
@@ -210,7 +304,7 @@ const generateScaffold = async ({ abi, address, network, subgraphName }, spinner
     'schema.graphql': schema,
     src: { 'mapping.ts': mapping },
     abis: {
-      'Contract.json': prettier.format(JSON.stringify(abi), {
+      'Contract.json': prettier.format(JSON.stringify(abi.data), {
         parser: 'json',
       }),
     },
