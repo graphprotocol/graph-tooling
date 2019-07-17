@@ -329,14 +329,7 @@ module.exports = class AbiCodeGenerator {
     )
 
     // Get view/pure functions from the contract
-    let allowedMutability = ['view', 'pure', 'nonpayable', 'constant']
-    let functions = this.abi.data.filter(
-      member =>
-        member.get('type') === 'function' &&
-        member.get('outputs', immutable.List()).size !== 0 &&
-        (allowedMutability.includes(member.get('stateMutability')) ||
-          (member.get('stateMutability') === undefined && !member.get('payable', false))),
-    )
+    let functions = this.callableFunctions()
 
     // Disambiguate functions with duplicate names
     functions = util.disambiguateNames({
@@ -573,5 +566,16 @@ module.exports = class AbiCodeGenerator {
     } else {
       return inputType
     }
+  }
+
+  callableFunctions() {
+    let allowedMutability = ['view', 'pure', 'nonpayable', 'constant']
+    return this.abi.data.filter(
+      member =>
+        member.get('type') === 'function' &&
+        member.get('outputs', immutable.List()).size !== 0 &&
+        (allowedMutability.includes(member.get('stateMutability')) ||
+          (member.get('stateMutability') === undefined && !member.get('payable', false))),
+    )
   }
 }
