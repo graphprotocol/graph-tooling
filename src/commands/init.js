@@ -1,8 +1,10 @@
 const chalk = require('chalk')
 const fetch = require('node-fetch')
+const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
+
 const {
   getSubgraphBasename,
   validateSubgraphName,
@@ -10,6 +12,7 @@ const {
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
+const ABI = require('../abi')
 
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
@@ -29,6 +32,7 @@ ${chalk.dim('Options for --from-contract:')}
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
       --network <mainnet|kovan|rinkeby|ropsten|goerli>
                                 Selects the network the contract is deployed to
+      --index-events            Index contract events as entities
 `
 
 const processInitForm = async (
@@ -166,7 +170,7 @@ const loadAbiFromEtherscan = async (network, address) =>
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
-        return JSON.parse(json.result)
+        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
       } else {
         throw new Error('ABI not found, try loading it from a local file')
       }
@@ -183,12 +187,7 @@ const loadAbiFromFile = async filename => {
   } else if (exists === 'other') {
     throw Error('Not sure what this path points to.')
   } else {
-    let abi = await toolbox.filesystem.read(filename, 'json')
-    if (!abi) {
-      throw Error('Not a valid ABI file.')
-    } else {
-      return abi
-    }
+    return await ABI.load('Contract', filename)
   }
 }
 
@@ -209,6 +208,7 @@ module.exports = {
       fromExample,
       h,
       help,
+      indexEvents,
       network,
     } = toolbox.parameters.options
 
@@ -225,6 +225,7 @@ module.exports = {
         allowSimpleName,
         help,
         h,
+        indexEvents,
       })
     } catch (e) {
       print.error(e.message)
@@ -297,7 +298,15 @@ module.exports = {
 
       return await initSubgraphFromContract(
         toolbox,
-        { abi, allowSimpleName, directory, address: fromContract, network, subgraphName },
+        {
+          abi,
+          allowSimpleName,
+          directory,
+          address: fromContract,
+          indexEvents,
+          network,
+          subgraphName,
+        },
         { commands },
       )
     }
@@ -340,6 +349,7 @@ module.exports = {
           abi: inputs.abi,
           network: inputs.network,
           address: inputs.address,
+          indexEvents,
         },
         { commands },
       )
@@ -529,7 +539,7 @@ const initSubgraphFromExample = async (
 
 const initSubgraphFromContract = async (
   toolbox,
-  { allowSimpleName, subgraphName, directory, abi, network, address },
+  { allowSimpleName, subgraphName, directory, abi, network, address, indexEvents },
   { commands },
 ) => {
   let { print } = toolbox
@@ -566,6 +576,7 @@ const initSubgraphFromContract = async (
           abi,
           network,
           address,
+          indexEvents,
         },
         spinner,
       )
