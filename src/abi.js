@@ -5,19 +5,21 @@ const path = require('path')
 const AbiCodeGenerator = require('./codegen/abi')
 
 const buildOldSignatureParameter = input => {
-  return input.type === 'tuple'
-    ? `(${input.components
+  return input.get('type') === 'tuple'
+    ? `(${input
+        .get('components')
         .map(component => buildSignatureParameter(component))
         .join(',')})`
-    : `${input.type}`
+    : `${input.get('type')}`
 }
 
 const buildSignatureParameter = input => {
-  return input.type === 'tuple'
-    ? `(${input.indexed ? 'indexed ' : ''}${input.components
+  return input.get('type') === 'tuple'
+    ? `(${input.get('indexed') ? 'indexed ' : ''}${input
+        .get('components')
         .map(component => buildSignatureParameter(component))
         .join(',')})`
-    : `${input.indexed ? 'indexed ' : ''}${input.type}`
+    : `${input.get('indexed') ? 'indexed ' : ''}${input.get('type')}`
 }
 
 module.exports = class ABI {
@@ -32,13 +34,13 @@ module.exports = class ABI {
   }
 
   static oldEventSignature(event) {
-    return `${event.name}(${(event.inputs || [])
+    return `${event.get('name')}(${(event.get('inputs') || [])
       .map(input => buildOldSignatureParameter(input))
       .join(',')})`
   }
 
   static eventSignature(event) {
-    return `${event.name}(${(event.inputs || [])
+    return `${event.get('name')}(${(event.get('inputs') || [])
       .map(input => buildSignatureParameter(input))
       .join(',')})`
   }
@@ -46,14 +48,12 @@ module.exports = class ABI {
   oldEventSignatures() {
     return this.data
       .filter(entry => entry.get('type') === 'event')
-      .map(event => event.toJS())
       .map(ABI.oldEventSignature)
   }
 
   eventSignatures() {
     return this.data
       .filter(entry => entry.get('type') === 'event')
-      .map(event => event.toJS())
       .map(ABI.eventSignature)
   }
 
@@ -79,13 +79,13 @@ module.exports = class ABI {
     return this.callFunctions()
       .filter(entry => entry.get('type') !== 'constructor')
       .map(entry => {
-        const name = entry.get('name', '<default>');
+        const name = entry.get('name', '<default>')
         const inputs = entry
           .get('inputs', immutable.List())
-          .map(input => input.get('type'));
+          .map(input => input.get('type'))
 
-        return `${name}(${inputs.join(',')})`;
-      });
+        return `${name}(${inputs.join(',')})`
+      })
   }
 
   static normalized(json) {
