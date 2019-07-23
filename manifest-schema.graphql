@@ -14,7 +14,6 @@ type EthereumContractDataSource {
   network: String
   source: EthereumContractSource!
   mapping: EthereumContractMapping!
-  templates: [EthereumContractDataSourceTemplate!]
 }
 
 type EthereumContractSource {
