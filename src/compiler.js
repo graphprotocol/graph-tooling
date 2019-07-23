@@ -169,27 +169,20 @@ class Compiler {
       async spinner => {
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
-            dataSource
-              .updateIn(['mapping', 'file'], mappingPath =>
-                this._compileDataSourceMapping(dataSource, mappingPath, spinner),
-              )
-              .update(
-                'templates',
-                templates =>
-                  templates === undefined
-                    ? templates
-                    : templates.map(template =>
-                        template.updateIn(['mapping', 'file'], mappingPath =>
-                          this._compileDataSourceTemplateMapping(
-                            dataSource,
-                            template,
-                            mappingPath,
-                            spinner,
-                          ),
-                        ),
-                      ),
-              ),
+            dataSource.updateIn(['mapping', 'file'], mappingPath =>
+              this._compileDataSourceMapping(dataSource, mappingPath, spinner),
+            ),
           ),
+        )
+
+        subgraph = subgraph.update('templates', templates =>
+          templates === undefined
+            ? templates
+            : templates.map(template =>
+                template.updateIn(['mapping', 'file'], mappingPath =>
+                  this._compileDataSourceMapping(template, mappingPath, spinner),
+                ),
+              ),
         )
 
         return subgraph
@@ -230,7 +223,17 @@ class Compiler {
       global = path.relative(baseDir, global)
 
       asc.main(
-        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile, '--optimize'],
+        [
+          inputFile,
+          global,
+          '--baseDir',
+          baseDir,
+          '--lib',
+          libs,
+          '--outFile',
+          outputFile,
+          '--optimize',
+        ],
         {
           stdout: process.stdout,
           stderr: process.stdout,
@@ -283,7 +286,17 @@ class Compiler {
       global = path.relative(baseDir, global)
 
       asc.main(
-        [inputFile, global, '--baseDir', baseDir, '--lib', libs, '--outFile', outputFile, '--optimize'],
+        [
+          inputFile,
+          global,
+          '--baseDir',
+          baseDir,
+          '--lib',
+          libs,
+          '--outFile',
+          outputFile,
+          '--optimize',
+        ],
         {
           stdout: process.stdout,
           stderr: process.stdout,
@@ -350,49 +363,41 @@ class Compiler {
               // directory by the AssemblyScript compiler
               .updateIn(['mapping', 'file'], mappingFile =>
                 path.relative(this.options.outputDir, mappingFile),
-              )
-
-              .update(
-                'templates',
-                templates =>
-                  templates === undefined
-                    ? templates
-                    : templates.map(template =>
-                        template
-                          // Write data source template ABIs to the output directory
-                          .updateIn(['mapping', 'abis'], abis =>
-                            abis.map(abi =>
-                              abi.update('file', abiFile => {
-                                let abiData = ABI.load(abi.get('name'), abiFile)
-                                return path.relative(
-                                  this.options.outputDir,
-                                  this._writeSubgraphFile(
-                                    abiFile,
-                                    JSON.stringify(abiData.data.toJS(), null, 2),
-                                    this.sourceDir,
-                                    path.join(
-                                      this.subgraphDir(
-                                        this.options.outputDir,
-                                        dataSource,
-                                      ),
-                                      'templates',
-                                      template.get('name'),
-                                    ),
-                                    spinner,
-                                  ),
-                                )
-                              }),
-                            ),
-                          )
-
-                          // The mapping file is already being written to the output
-                          // directory by the AssemblyScript compiler
-                          .updateIn(['mapping', 'file'], mappingFile =>
-                            path.relative(this.options.outputDir, mappingFile),
-                          ),
-                      ),
               ),
           )
+        })
+
+        // Copy template files and update their paths
+        subgraph = subgraph.update('templates', templates => {
+          return templates === undefined
+            ? templates
+            : templates.map(template =>
+                template
+                  // Write template ABIs to the output directory
+                  .updateIn(['mapping', 'abis'], abis =>
+                    abis.map(abi =>
+                      abi.update('file', abiFile => {
+                        let abiData = ABI.load(abi.get('name'), abiFile)
+                        return path.relative(
+                          this.options.outputDir,
+                          this._writeSubgraphFile(
+                            abiFile,
+                            JSON.stringify(abiData.data.toJS(), null, 2),
+                            this.sourceDir,
+                            this.subgraphDir(this.options.outputDir, template),
+                            spinner,
+                          ),
+                        )
+                      }),
+                    ),
+                  )
+
+                  // The mapping file is already being written to the output
+                  // directory by the AssemblyScript compiler
+                  .updateIn(['mapping', 'file'], mappingFile =>
+                    path.relative(this.options.outputDir, mappingFile),
+                  ),
+              )
         })
 
         // Write the subgraph manifest itself
@@ -453,38 +458,22 @@ class Compiler {
           })
         }
 
-        // Upload the ABIs of all data source templates to IPFS
-        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-          for (let [j, template] of dataSource
-            .get('templates', immutable.List())
-            .entries()) {
-            for (let [k, abi] of template.getIn(['mapping', 'abis']).entries()) {
-              updates.push({
-                keyPath: ['dataSources', i, 'templates', j, 'mapping', 'abis', k, 'file'],
-                value: await this._uploadFileToIPFS(
-                  abi.get('file'),
-                  uploadedFiles,
-                  spinner,
-                ),
-              })
-            }
-          }
-        }
-
-        // Upload all template mappings
-        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-          for (let [j, template] of dataSource
-            .get('templates', immutable.List())
-            .entries()) {
+        // Upload the mapping and ABIs of all data source templates
+        for (let [i, template] of subgraph.get('templates', immutable.List()).entries()) {
+          for (let [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
             updates.push({
-              keyPath: ['dataSources', i, 'templates', j, 'mapping', 'file'],
-              value: await this._uploadFileToIPFS(
-                template.getIn(['mapping', 'file']),
-                uploadedFiles,
-                spinner,
-              ),
+              keyPath: ['templates', i, 'mapping', 'abis', j, 'file'],
+              value: await this._uploadFileToIPFS(abi.get('file'), uploadedFiles, spinner),
             })
           }
+
+          updates.push({
+            keyPath: ['templates', i, 'mapping', 'file'],
+            value: await this._uploadFileToIPFS(
+              template.getIn(['mapping', 'file']),
+              spinner,
+            ),
+          })
         }
 
         // Apply all updates to the subgraph
