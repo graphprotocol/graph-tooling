@@ -6,7 +6,7 @@
     "assemblyscript": "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3",
     "chalk": "^2.4.1",
     "chokidar": "^3.0.2",
-    "debug": "^3.1.0",
+    "debug": "^4.1.1",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.2",
     "gluegun": "^3.0.0",
