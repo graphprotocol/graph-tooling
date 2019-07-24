@@ -220,7 +220,8 @@ const generatePlaceholderHandlers = ({ abi, events }) =>
       index === 0
         ? `
     export function handle${event._alias}(event: ${event._alias}): void {
-      // Entities can be loaded from the store using an event ID (a string)
+      // Entities can be loaded from the store using a string ID; this ID
+      // needs to be unique across all entities of the same type
       let entity = ExampleEntity.load(event.transaction.from.toHex())
 
       // Entities only exist after they have been saved to the store;
