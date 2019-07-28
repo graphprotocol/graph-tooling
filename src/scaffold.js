@@ -42,7 +42,7 @@ const generatePackageJson = ({ subgraphName }) =>
       },
       dependencies: {
         '@graphprotocol/graph-cli': `${module.exports.version}`,
-        '@graphprotocol/graph-ts': `0.13.0`,
+        '@graphprotocol/graph-ts': `0.14.0`,
       },
     }),
     { parser: 'json' },
