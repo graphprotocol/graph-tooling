@@ -39,10 +39,10 @@ const resolveType = (schema, type) =>
   type.has('type')
     ? resolveType(schema, type.get('type'))
     : type.get('kind') === 'NamedType'
-      ? schema
-          .get('definitions')
-          .find(def => def.getIn(['name', 'value']) === type.getIn(['name', 'value']))
-      : 'resolveType: unimplemented'
+    ? schema
+        .get('definitions')
+        .find(def => def.getIn(['name', 'value']) === type.getIn(['name', 'value']))
+    : 'resolveType: unimplemented'
 
 /**
  * A map of supported validators.
@@ -56,13 +56,13 @@ const validators = immutable.fromJS({
       .getIn(['type', 'types'])
       .reduce(
         (errors, type) => errors.concat(validateValue(value, ctx.set('type', type))),
-        List()
+        List(),
       ),
 
   NamedType: (value, ctx) =>
     validateValue(
       value,
-      ctx.update('type', type => resolveType(ctx.get('schema'), type))
+      ctx.update('type', type => resolveType(ctx.get('schema'), type)),
     ),
 
   NonNullType: (value, ctx) =>
@@ -84,10 +84,10 @@ const validators = immutable.fromJS({
                 value,
                 ctx
                   .update('path', path => path.push(i))
-                  .update('type', type => type.get('type'))
-              )
+                  .update('type', type => type.get('type')),
+              ),
             ),
-          List()
+          List(),
         )
       : immutable.fromJS([
           {
@@ -111,16 +111,23 @@ const validators = immutable.fromJS({
                       value.get(key),
                       ctx
                         .update('path', path => path.push(key))
-                        .set('type', getFieldType(ctx.get('type'), key))
-                    )
+                        .set('type', getFieldType(ctx.get('type'), key)),
+                    ),
                   )
                 : errors.push(
-                    immutable.fromJS({
-                      path: ctx.get('path'),
-                      message: `Unexpected key in map: ${key}`,
-                    })
+                    key == 'templates'
+                      ? immutable.fromJS({
+                          path: ctx.get('path'),
+                          message: `The way to declare data source templates has changed, ` + 
+                                `please move the templates from inside data sources to ` +
+                                `a \`templates:\` field at the top-level of the manifest.`,
+                        })
+                      : immutable.fromJS({
+                          path: ctx.get('path'),
+                          message: `Unexpected key in map: ${key}`,
+                        }),
                   ),
-            List()
+            List(),
           )
       : immutable.fromJS([
           {
@@ -191,7 +198,7 @@ const validateManifest = (value, type, schema, { resolveFile }) =>
           path: [],
           errors: [],
           resolveFile,
-        })
+        }),
       )
     : immutable.fromJS([
         {
