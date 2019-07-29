@@ -2261,9 +2261,9 @@ ipfs-block@~0.8.1:
     class-is "^1.1.0"
 
 ipfs-http-client@^33.1.0:
-  version "33.1.0"
-  resolved "https://registry.yarnpkg.com/ipfs-http-client/-/ipfs-http-client-33.1.0.tgz#4d3beceba27fcef26cf1940375a5f8c9d609f0dd"
-  integrity sha512-hkS8nXay3DGKb/KXU1RDvTyxnvkAdhS5enlXxNXaS7yKvADlf5SEuQGYjW+VknkPPQ4FNbY3JttQ3YW+LTuoRA==
+  version "33.1.1"
+  resolved "https://registry.yarnpkg.com/ipfs-http-client/-/ipfs-http-client-33.1.1.tgz#6ddc13e86f8db768093290b19537d2388c74dd45"
+  integrity sha512-iwtLL3lOIzxXJFwLnOEtFUv1cYTuWJ0NauD7rpMEd/y4C7z6fuN6TSF4h547lxMh7sJWv+6Z0PmOA5N8FzUHJw==
   dependencies:
     async "^2.6.1"
     bignumber.js "^9.0.0"
