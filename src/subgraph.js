@@ -98,20 +98,16 @@ module.exports = class Subgraph {
   }
 
   static collectDataSourceTemplates(manifest) {
-    return manifest.get('dataSources').reduce(
-      (templates, dataSource, dataSourceIndex) =>
-        dataSource.get('templates', immutable.List()).reduce(
-          (templates, template, templateIndex) =>
-            template.get('kind') === 'ethereum/contract'
-              ? templates.push(
-                  immutable.Map({
-                    path: ['dataSources', dataSourceIndex, 'templates', templateIndex],
-                    dataSource: template,
-                  }),
-                )
-              : templates,
-          templates,
-        ),
+    return manifest.get('templates', immutable.List()).reduce(
+      (templates, template, templateIndex) =>
+        template.get('kind') === 'ethereum/contract'
+          ? templates.push(
+              immutable.Map({
+                path: ['templates', templateIndex],
+                dataSource: template,
+              }),
+            )
+          : templates,
       immutable.List(),
     )
   }
