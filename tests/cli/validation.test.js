@@ -128,4 +128,12 @@ describe('Validation', () => {
       exitCode: 1,
     },
   )
+  cliTest(
+    'deprecated template format gives nice error',
+    ['codegen', '--skip-migrations'],
+    'validation/nested-template-nice-error',
+    {
+      exitCode: 1,
+    },
+  )
 })
