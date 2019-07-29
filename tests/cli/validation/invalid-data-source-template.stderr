@@ -4,27 +4,27 @@
   Path: dataSources > 0 > mapping > abis > 0 > file
   File does not exist: Abi.json
 
-  Path: dataSources > 0 > templates > 0 > kind
+  Path: templates > 0 > kind
   No value provided
 
-  Path: dataSources > 0 > templates > 0 > name
+  Path: templates > 0 > name
   Expected string, found number:
   5
 
-  Path: dataSources > 0 > templates > 0 > source
+  Path: templates > 0 > source
   Unexpected key in map: address
 
-  Path: dataSources > 0 > templates > 0 > mapping > entities
+  Path: templates > 0 > mapping > entities
   No value provided
 
-  Path: dataSources > 0 > templates > 0 > mapping > abis > 0 > file
+  Path: templates > 0 > mapping > abis > 0 > file
   File does not exist: NonexistentAbi.json
 
-  Path: dataSources > 0 > templates > 0 > mapping > language
+  Path: templates > 0 > mapping > language
   No value provided
 
-  Path: dataSources > 0 > templates > 0 > mapping > file
+  Path: templates > 0 > mapping > file
   No value provided
 
-  Path: dataSources > 0 > templates > 0 > mapping > apiVersion
+  Path: templates > 0 > mapping > apiVersion
   No value provided
