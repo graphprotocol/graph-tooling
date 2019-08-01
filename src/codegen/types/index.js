@@ -79,9 +79,10 @@ const ascTypeForEthereum = ethereumType =>
 const ethereumTypeForAsc = ascType =>
   findConversionFromType('AssemblyScript', 'EthereumValue', ascType).getIn(['to', 'type'])
 
-const ethereumValueToAsc = (code, ethereumType) =>
+const ethereumValueToAsc = (code, ethereumType, internalType) =>
   findConversionFromType('EthereumValue', 'AssemblyScript', ethereumType).get('convert')(
     code,
+    internalType
   )
 
 const ethereumValueFromAsc = (code, ethereumType) =>
