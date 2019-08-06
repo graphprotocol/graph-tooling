@@ -3,6 +3,7 @@ const { withSpinner, step } = require('./command-helpers/spinner')
 const MIGRATIONS = [
   require('./migrations/mapping_api_version_0_0_1'),
   require('./migrations/mapping_api_version_0_0_2'),
+  require('./migrations/spec_version_0_0_2'),
 ]
 
 const applyMigrations = async options =>

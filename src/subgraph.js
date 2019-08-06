@@ -6,7 +6,6 @@ let { strOptions } = require('yaml/types')
 let graphql = require('graphql/language')
 let validation = require('./validation')
 let ABI = require('./abi')
-const toolbox = require('gluegun/toolbox')
 
 const throwCombinedError = (filename, errors) => {
   throw new Error(
