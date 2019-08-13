@@ -129,7 +129,7 @@ describe('Validation', () => {
     },
   )
   cliTest(
-    'deprecated template format gives nice error',
+    'Deprecated template format gives nice error',
     ['codegen', '--skip-migrations'],
     'validation/nested-template-nice-error',
     {

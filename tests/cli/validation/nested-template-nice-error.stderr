@@ -2,4 +2,4 @@
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > mapping
-  The way to declare data source templates has changed, please move the templates from inside data sources to a `templates:` field at the top-level of the manifest.
+  The way to declare data source templates has changed, please move the templates from inside data sources to a `templates:` field at the top level of the manifest.
