@@ -120,7 +120,7 @@ const validators = immutable.fromJS({
                           path: ctx.get('path'),
                           message: `The way to declare data source templates has changed, ` + 
                                 `please move the templates from inside data sources to ` +
-                                `a \`templates:\` field at the top-level of the manifest.`,
+                                `a \`templates:\` field at the top level of the manifest.`,
                         })
                       : immutable.fromJS({
                           path: ctx.get('path'),
