@@ -290,8 +290,8 @@ module.exports = class TypeGenerator {
 
             let codeGenerator = new DataSourceTemplateCodeGenerator(template)
 
-            // Only generate module imports once, because they are identical for all
-            // types generate for data source templates
+            // Only generate module imports once, because they are identical for
+            // all types generated for data source templates.
             if (codeSegments.isEmpty()) {
               codeSegments = codeSegments.concat(codeGenerator.generateModuleImports())
             }
