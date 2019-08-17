@@ -13,6 +13,14 @@ const disambiguateNames = ({ values, getName, setName }) => {
   })
 }
 
+const containsTupleType = t => {
+  return t === 'tuple' || t.match(/^tuple\[([0-9]+)?\]$/)
+}
+
+const isTupleArrayType = t => {
+  return t.match(/^tuple\[([0-9]+)?\]$/)
+}
+
 const unrollTuple = ({ path, index, value }) =>
   value.components.reduce((acc, component, index) => {
     let name = component.name || `value${index}`
@@ -28,6 +36,8 @@ const unrollTuple = ({ path, index, value }) =>
   }, [])
 
 module.exports = {
+  containsTupleType,
   disambiguateNames,
+  isTupleArrayType,
   unrollTuple,
 }
