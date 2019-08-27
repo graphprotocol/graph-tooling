@@ -152,8 +152,16 @@ describe('ABI code generation', () => {
       expect(contract.methods.map(method => [method.name, method.params])).toEqual([
         ['bind', immutable.List([ts.param('address', 'Address')])],
         ['read', immutable.List()],
+        ['try_read', immutable.List()],
         [
           'getProposal',
+          immutable.List([
+            ts.param('proposalId', 'BigInt'),
+            ts.param('param1', 'Contract__getProposalInputParam1Struct'),
+          ]),
+        ],
+        [
+          'try_getProposal',
           immutable.List([
             ts.param('proposalId', 'BigInt'),
             ts.param('param1', 'Contract__getProposalInputParam1Struct'),
@@ -167,7 +175,9 @@ describe('ABI code generation', () => {
       expect(contract.methods.map(method => [method.name, method.returnType])).toEqual([
         ['bind', ts.namedType('Contract')],
         ['read', ts.namedType('Bytes')],
+        ['try_read', 'CallResult<Bytes>'],
         ['getProposal', ts.namedType('Contract__getProposalResultValue0Struct')],
+        ['try_getProposal', 'CallResult<Contract__getProposalResultValue0Struct>'],
       ])
     })
   })

@@ -27,6 +27,7 @@ module.exports = class AbiCodeGenerator {
           'Bytes',
           'Address',
           'BigInt',
+          'CallResult',
         ],
         '@graphprotocol/graph-ts',
       ),
@@ -520,13 +521,22 @@ module.exports = class AbiCodeGenerator {
           : ''
       }]`
 
-      let methodCallBody = () =>
+      let methodCallBody = isTry =>
         `
-        let result = super.call(${superInputs});
-        return ${
+        let result = ${isTry ? 'super.tryCall' : 'super.call'}(${superInputs})
+        ${
+          isTry
+            ? `if (result.reverted) {
+            return new CallResult()
+          }
+          let value = result.value
+          `
+            : ''
+        }
+        return ${isTry ? 'CallResult.fromValue(' : ''} ${
           simpleReturnType
             ? typesCodegen.ethereumValueToAsc(
-                'result[0]',
+                isTry ? 'value[0]' : 'result[0]',
                 outputs.get(0).get('type'),
                 util.isTupleArrayType(outputs.get(0).get('type'))
                   ? this._tupleTypeName(
@@ -542,7 +552,7 @@ module.exports = class AbiCodeGenerator {
                   .map(
                     (output, index) =>
                       `${typesCodegen.ethereumValueToAsc(
-                        `result[${index}]`,
+                        isTry ? `value[${index}]` : `result[${index}]`,
                         output.get('type'),
                       )} ${
                         output.get('type') === 'tuple'
@@ -558,9 +568,22 @@ module.exports = class AbiCodeGenerator {
                   )
                   .join(', ')}
               )`
-        } ${outputs.get(0).get('type') === 'tuple' ? 'as ' + returnType : ''};`
+        } ${outputs.get(0).get('type') === 'tuple' ? 'as ' + returnType : ''} ${
+          isTry ? ')' : ''
+        };`
 
-      klass.addMethod(tsCodegen.method(fnAlias, params, returnType, methodCallBody()))
+      // Generate method with an without `try_`.
+      klass.addMethod(
+        tsCodegen.method(fnAlias, params, returnType, methodCallBody(false)),
+      )
+      klass.addMethod(
+        tsCodegen.method(
+          'try_' + fnAlias,
+          params,
+          'CallResult<' + returnType + '>',
+          methodCallBody(true),
+        ),
+      )
     })
 
     return [...types, klass]
