@@ -42,15 +42,19 @@ module.exports = {
     // and replace the values in the data structures here; unfortunately
     // writing that back to the file messes with the formatting more than
     // we'd like; that's why for now, we use a simple patching approach
-    await toolbox.patching.replace(manifestFile, 'apiVersion: 0.0.1', 'apiVersion: 0.0.2')
     await toolbox.patching.replace(
       manifestFile,
-      "apiVersion: '0.0.1'",
+      new RegExp('apiVersion: 0.0.1', 'g'),
+      'apiVersion: 0.0.2',
+    )
+    await toolbox.patching.replace(
+      manifestFile,
+      new RegExp("apiVersion: '0.0.1'", 'g'),
       "apiVersion: '0.0.2'",
     )
     await toolbox.patching.replace(
       manifestFile,
-      'apiVersion: "0.0.1"',
+      new RegExp('apiVersion: "0.0.1"', 'g'),
       'apiVersion: "0.0.2"',
     )
   },
