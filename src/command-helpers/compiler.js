@@ -3,7 +3,7 @@ const toolbox = require('gluegun/toolbox')
 const Compiler = require('../compiler')
 
 // Helper function to construct a subgraph compiler
-const createCompiler = (manifest, { ipfs, outputDir, outputFormat }) => {
+const createCompiler = (manifest, { ipfs, outputDir, outputFormat, skipMigrations }) => {
   // Parse the IPFS URL
   let url
   try {
@@ -29,6 +29,7 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`)
     subgraphManifest: manifest,
     outputDir: outputDir,
     outputFormat: outputFormat,
+    skipMigrations,
   })
 }
 
