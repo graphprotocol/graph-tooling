@@ -411,6 +411,9 @@ class Compiler {
       `Failed to upload subgraph to IPFS`,
       `Warnings while uploading subgraph to IPFS`,
       async spinner => {
+        // Collect uploaded files and their IPFS hashes to only upload files once
+        let uploadedFiles = new Map()
+
         // Collect all source (path -> hash) updates to apply them later
         let updates = []
 
@@ -419,6 +422,7 @@ class Compiler {
           keyPath: ['schema', 'file'],
           value: await this._uploadFileToIPFS(
             subgraph.getIn(['schema', 'file']),
+            uploadedFiles,
             spinner,
           ),
         })
@@ -428,7 +432,11 @@ class Compiler {
           for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
             updates.push({
               keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
-              value: await this._uploadFileToIPFS(abi.get('file'), spinner),
+              value: await this._uploadFileToIPFS(
+                abi.get('file'),
+                uploadedFiles,
+                spinner,
+              ),
             })
           }
         }
@@ -439,6 +447,7 @@ class Compiler {
             keyPath: ['dataSources', i, 'mapping', 'file'],
             value: await this._uploadFileToIPFS(
               dataSource.getIn(['mapping', 'file']),
+              uploadedFiles,
               spinner,
             ),
           })
@@ -452,7 +461,11 @@ class Compiler {
             for (let [k, abi] of template.getIn(['mapping', 'abis']).entries()) {
               updates.push({
                 keyPath: ['dataSources', i, 'templates', j, 'mapping', 'abis', k, 'file'],
-                value: await this._uploadFileToIPFS(abi.get('file'), spinner),
+                value: await this._uploadFileToIPFS(
+                  abi.get('file'),
+                  uploadedFiles,
+                  spinner,
+                ),
               })
             }
           }
@@ -467,6 +480,7 @@ class Compiler {
               keyPath: ['dataSources', i, 'templates', j, 'mapping', 'file'],
               value: await this._uploadFileToIPFS(
                 template.getIn(['mapping', 'file']),
+                uploadedFiles,
                 spinner,
               ),
             })
@@ -484,15 +498,27 @@ class Compiler {
     )
   }
 
-  async _uploadFileToIPFS(maybeRelativeFile, spinner) {
+  async _uploadFileToIPFS(maybeRelativeFile, uploadedFiles, spinner) {
     let absoluteFile = path.resolve(this.options.outputDir, maybeRelativeFile)
     step(spinner, 'Add file to IPFS', this.displayPath(absoluteFile))
-    let content = Buffer.from(fs.readFileSync(absoluteFile), 'utf-8')
-    let hash = await this._uploadToIPFS({
-      path: path.relative(this.options.outputDir, absoluteFile),
-      content: content,
-    })
-    step(spinner, '              ..', hash)
+
+    let alreadyUploaded = uploadedFiles.has(absoluteFile)
+    if (!alreadyUploaded) {
+      let content = Buffer.from(fs.readFileSync(absoluteFile), 'utf-8')
+      let hash = await this._uploadToIPFS({
+        path: path.relative(this.options.outputDir, absoluteFile),
+        content: content,
+      })
+
+      uploadedFiles.set(absoluteFile, hash)
+    }
+
+    let hash = uploadedFiles.get(absoluteFile)
+    step(
+      spinner,
+      '              ..',
+      `${hash}${alreadyUploaded ? ' (already uploaded)' : ''}`,
+    )
     return immutable.fromJS({ '/': `/ipfs/${hash}` })
   }
 
