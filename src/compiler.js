@@ -180,7 +180,7 @@ class Compiler {
             ? templates
             : templates.map(template =>
                 template.updateIn(['mapping', 'file'], mappingPath =>
-                  this._compileDataSourceMapping(template, mappingPath, spinner),
+                  this._compileTemplateMapping(template, mappingPath, spinner),
                 ),
               ),
         )
@@ -250,13 +250,12 @@ class Compiler {
     }
   }
 
-  _compileDataSourceTemplateMapping(dataSource, template, mappingPath, spinner) {
+  _compileTemplateMapping(template, mappingPath, spinner) {
     try {
-      let dataSourceName = dataSource.get('name')
       let templateName = template.get('name')
 
       let outFile = path.join(
-        this.subgraphDir(this.options.outputDir, dataSource),
+        this.options.outputDir,
         'templates',
         templateName,
         this.options.outputFormat == 'wasm'
@@ -267,7 +266,7 @@ class Compiler {
       step(
         spinner,
         'Compile data source template:',
-        `${dataSourceName} > ${templateName} => ${this.displayPath(outFile)}`,
+        `${templateName} => ${this.displayPath(outFile)}`,
       )
 
       let baseDir = this.sourceDir
@@ -463,7 +462,11 @@ class Compiler {
           for (let [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
             updates.push({
               keyPath: ['templates', i, 'mapping', 'abis', j, 'file'],
-              value: await this._uploadFileToIPFS(abi.get('file'), uploadedFiles, spinner),
+              value: await this._uploadFileToIPFS(
+                abi.get('file'),
+                uploadedFiles,
+                spinner,
+              ),
             })
           }
 
@@ -471,6 +474,7 @@ class Compiler {
             keyPath: ['templates', i, 'mapping', 'file'],
             value: await this._uploadFileToIPFS(
               template.getIn(['mapping', 'file']),
+              uploadedFiles,
               spinner,
             ),
           })
