@@ -523,31 +523,35 @@ module.exports = class AbiCodeGenerator {
 
       let methodCallBody = isTry =>
         `
-        let result = ${isTry ? 'super.tryCall' : 'super.call'}(${superInputs})
         ${
           isTry
-            ? `if (result.reverted) {
-            return new CallResult()
-          }
-          let value = result.value
-          `
-            : ''
+            ? `
+        let result = super.tryCall(${superInputs})
+        if (result.reverted) {
+          return new CallResult()
         }
-        return ${isTry ? 'CallResult.fromValue(' : ''} ${
-          simpleReturnType
-            ? typesCodegen.ethereumValueToAsc(
-                isTry ? 'value[0]' : 'result[0]',
-                outputs.get(0).get('type'),
-                util.isTupleArrayType(outputs.get(0).get('type'))
-                  ? this._tupleTypeName(
-                      outputs.get(0),
-                      0,
-                      tupleResultParentType,
-                      this.abi.name,
-                    )
-                  : '',
-              )
-            : `new ${returnType.name}(
+        let value = result.value
+        return CallResult.fromValue(`
+            : `
+        let result = super.call(${superInputs})
+        
+        return (`
+        }
+      ${
+        simpleReturnType
+          ? typesCodegen.ethereumValueToAsc(
+              isTry ? 'value[0]' : 'result[0]',
+              outputs.get(0).get('type'),
+              util.isTupleArrayType(outputs.get(0).get('type'))
+                ? this._tupleTypeName(
+                    outputs.get(0),
+                    0,
+                    tupleResultParentType,
+                    this.abi.name,
+                  )
+                : '',
+            )
+          : `new ${returnType.name}(
                 ${outputs
                   .map(
                     (output, index) =>
@@ -568,9 +572,7 @@ module.exports = class AbiCodeGenerator {
                   )
                   .join(', ')}
               )`
-        } ${outputs.get(0).get('type') === 'tuple' ? 'as ' + returnType : ''} ${
-          isTry ? ')' : ''
-        };`
+      } ${outputs.get(0).get('type') === 'tuple' ? 'as ' + returnType : ''} )`
 
       // Generate method with an without `try_`.
       klass.addMethod(
