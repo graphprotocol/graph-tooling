@@ -370,11 +370,6 @@
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
 
-"@types/node@^10.3.5":
-  version "10.14.7"
-  resolved "https://registry.npmjs.org/@types/node/-/node-10.14.7.tgz#1854f0a9aa8d2cd6818d607b3d091346c6730362"
-  integrity sha512-on4MmIDgHXiuJDELPk1NFaKVUxxCFr37tm8E9yN6rAiF5Pzp/9bBfBHkoexqRiY+hk/Z04EJU9kKEb59YqJ82A==
-
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
   resolved "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
@@ -2749,11 +2744,10 @@ iterall@^1.2.2:
   integrity sha512-yynBb1g+RFUPY64fTrFv7nsjRrENBQJaX2UL+2Szc9REFrSNm1rpSXHGzhmAy7a9uv3vlvgBlXnf9RqmPH1/DA==
 
 jayson@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/jayson/-/jayson-3.0.2.tgz#3fdd1ba8d780fe4600d2f9aa80a8639f3a799b08"
-  integrity sha512-jru45VNl0S9tkwNxd9ZlAwAJpAFZaCTy9GVgPhDocCSs32bysslYTrbvTq/QrrFDLp2q6M81q3S6qxvS43AMPg==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/jayson/-/jayson-3.1.0.tgz#a7c529cd2f0dbd5751e2a6320c74531c3d15162a"
+  integrity sha512-H4sgDVxSDeUX4wGOBq+J7Js0vDs7r178LLiXECKvh3a26lmjz5orAyXjZeslyW7kwbiqzCqPHh+zrv3ijiLzCQ==
   dependencies:
-    "@types/node" "^10.3.5"
     JSONStream "^1.3.1"
     commander "^2.12.2"
     es6-promisify "^5.0.0"
