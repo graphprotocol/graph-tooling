@@ -1,0 +1,5 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: templates > 1 > name
+  More than one template named 'ExampleSubgraph', template names must be unique.

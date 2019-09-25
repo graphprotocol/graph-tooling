@@ -1,0 +1,5 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 1 > name
+  More than one data source named 'ExampleSubgraph', data source names must be unique.
