@@ -365,6 +365,45 @@ At least one such handler must be defined.`,
       }, immutable.List())
   }
 
+  // Validate that data source names are unique, so they don't overwrite each other.
+  static validateUniqueDataSourceNames(manifest) {
+    let names = []
+    return manifest.get('dataSources').reduce((errors, dataSource, dataSourceIndex) => {
+      let path = ['dataSources', dataSourceIndex, 'name']
+      let name = dataSource.get('name')
+      if (names.includes(name)) {
+        errors = errors.push(
+          immutable.fromJS({
+            path,
+            message: `\
+More than one data source named '${name}', data source names must be unique.`,
+          }),
+        )
+      }
+      names.push(name)
+      return errors
+    }, immutable.List())
+  }
+
+  static validateUniqueTemplateNames(manifest) {
+    let names = []
+    return manifest.get('templates', immutable.List()).reduce((errors, template, templateIndex) => {
+      let path = ['templates', templateIndex, 'name']
+      let name = template.get('name')
+      if (names.includes(name)) {
+        errors = errors.push(
+          immutable.fromJS({
+            path,
+            message: `\
+More than one template named '${name}', template names must be unique.`,
+          }),
+        )
+      }
+      names.push(name)
+      return errors
+    }, immutable.List())
+  }
+
   static dump(manifest) {
     strOptions.fold.lineWidth = 90
     strOptions.defaultType = 'PLAIN'
@@ -399,6 +438,8 @@ At least one such handler must be defined.`,
           ...Subgraph.validateEthereumContractHandlers(manifest),
           ...Subgraph.validateEvents(manifest, { resolveFile }),
           ...Subgraph.validateCallFunctions(manifest, { resolveFile }),
+          ...Subgraph.validateUniqueDataSourceNames(manifest),
+          ...Subgraph.validateUniqueTemplateNames(manifest),
         )
 
     if (errors.size > 0) {
