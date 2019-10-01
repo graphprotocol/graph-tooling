@@ -52,6 +52,7 @@ class Compiler {
         return true
       }
     } catch (e) {
+      console.log(e)
       return false
     }
   }
@@ -208,7 +209,8 @@ class Compiler {
       )
 
       let baseDir = this.sourceDir
-      let inputFile = path.relative(baseDir, mappingPath)
+      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
+      let inputFile = path.relative(baseDir, absoluteMappingPath)
       let outputFile = path.relative(baseDir, outFile)
 
       // Create output directory
@@ -270,7 +272,8 @@ class Compiler {
       )
 
       let baseDir = this.sourceDir
-      let inputFile = path.relative(baseDir, mappingPath)
+      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
+      let inputFile = path.relative(baseDir, absoluteMappingPath)
       let outputFile = path.relative(baseDir, outFile)
 
       // Create output directory
@@ -343,6 +346,7 @@ class Compiler {
               .updateIn(['mapping', 'abis'], abis =>
                 abis.map(abi =>
                   abi.update('file', abiFile => {
+                    abiFile = path.resolve(this.sourceDir, abiFile)
                     let abiData = ABI.load(abi.get('name'), abiFile)
                     return path.relative(
                       this.options.outputDir,
@@ -376,6 +380,7 @@ class Compiler {
                   .updateIn(['mapping', 'abis'], abis =>
                     abis.map(abi =>
                       abi.update('file', abiFile => {
+                        abiFile = path.resolve(this.sourceDir, abiFile)
                         let abiData = ABI.load(abi.get('name'), abiFile)
                         return path.relative(
                           this.options.outputDir,
