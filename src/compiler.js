@@ -52,7 +52,7 @@ class Compiler {
         return true
       }
     } catch (e) {
-      console.log(e)
+      toolbox.print.error(e)
       return false
     }
   }
