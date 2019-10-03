@@ -1,5 +1,6 @@
 scalar String
 scalar File
+scalar BigInt
 
 type Schema {
   file: File!
@@ -19,6 +20,7 @@ type EthereumContractDataSource {
 type EthereumContractSource {
   address: String
   abi: String!
+  startBlock: BigInt
 }
 
 type EthereumContractMapping {

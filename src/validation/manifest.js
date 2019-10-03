@@ -147,6 +147,16 @@ const validators = immutable.fromJS({
           },
         ]),
 
+  BigInt: (value, ctx) =>
+    typeof value === 'number'
+      ? List()
+      : immutable.fromJS([
+        {
+          path: ctx.get('path'),
+          message: `Expected BigInt, found ${typeName(value)}:\n${toYAML(value)}`,
+        },
+      ]),
+
   File: (value, ctx) =>
     typeof value === 'string'
       ? require('fs').existsSync(ctx.get('resolveFile')(value))
