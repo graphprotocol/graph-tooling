@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3",
