@@ -9,7 +9,7 @@
     "debug": "^4.1.1",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.2",
-    "gluegun": "^3.0.0",
+    "gluegun": "^4.0.1",
     "graphql": "^14.0.2",
     "immutable": "^3.8.2",
     "ipfs-http-client": "^34.0.0",
