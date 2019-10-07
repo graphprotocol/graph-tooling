@@ -220,7 +220,17 @@ class Compiler {
         throw e
       }
 
+      // Look for `node_modules` in the same dir as `subgraph.yaml`.
       let libs = path.join(baseDir, 'node_modules')
+      if (!fs.existsSync(libs)) {
+        // It's not there, so look in up to three directories above.
+        for (let i = 1; i <= 3; i++) {
+          let upwardPath = path.resolve(libs, ...Array(i).fill('..'), 'node_modules')
+          if (fs.existsSync(upwardPath)) {
+            libs = upwardPath
+          }
+        }
+      }
       let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
       global = path.relative(baseDir, global)
 
