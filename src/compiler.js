@@ -223,8 +223,9 @@ class Compiler {
       // Look for `node_modules` in the same dir as `subgraph.yaml`.
       let libs = path.join(baseDir, 'node_modules')
       if (!fs.existsSync(libs)) {
-        // It's not there, so look in up to three directories above.
-        for (let i = 1; i <= 3; i++) {
+        // It's not there, so look in the directories above. This, in practice, checks all ancestor
+        // directories but keeps the loop simple.
+        for (let i = 1; i <= 100; i++) {
           let upwardPath = path.resolve(libs, ...Array(i).fill('..'), 'node_modules')
           if (fs.existsSync(upwardPath)) {
             libs = upwardPath
