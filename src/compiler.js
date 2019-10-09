@@ -220,18 +220,23 @@ class Compiler {
         throw e
       }
 
-      // Look for `node_modules` in the same dir as `subgraph.yaml`.
-      let libs = path.join(baseDir, 'node_modules')
-      if (!fs.existsSync(libs)) {
-        // It's not there, so look in the directories above. This, in practice, checks all ancestor
-        // directories but keeps the loop simple.
-        for (let i = 1; i <= 100; i++) {
-          let upwardPath = path.resolve(libs, ...Array(i).fill('..'), 'node_modules')
-          if (fs.existsSync(upwardPath)) {
-            libs = upwardPath
-          }
+      let libs
+      for (
+        let dir = path.resolve(baseDir);
+        // Terminate after the root dir or when we have found node_modules
+        dir !== undefined && libs === undefined;
+        // Continue with the parent directory, terminate after the root dir
+        dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
+      ) {
+        if (fs.existsSync(path.join(dir, 'node_modules'))) {
+          libs = path.join(dir, 'node_modules')
         }
       }
+
+      if (libs === undefined) {
+        throw Error(`could not find \`node_modules\` path`)
+      }
+
       let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
       global = path.relative(baseDir, global)
 
