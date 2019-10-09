@@ -234,7 +234,9 @@ class Compiler {
       }
 
       if (libs === undefined) {
-        throw Error(`could not find \`node_modules\` path`)
+        throw Error(
+          `could not locate \`node_modules\` in parent directories of subgraph manifest`,
+        )
       }
 
       let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
