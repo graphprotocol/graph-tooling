@@ -163,8 +163,10 @@ Make sure to create the subgraph first by running the following command:
 $ graph create --node ${node} ${subgraphName}`)
               }
             }
+            process.exitCode = 1
           } else if (requestError) {
             spinner.fail(`HTTP error deploying the subgraph ${requestError.code}`)
+	    process.exitCode = 1
           } else {
             spinner.stop()
 
