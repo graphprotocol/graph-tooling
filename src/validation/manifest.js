@@ -199,23 +199,68 @@ const validateValue = (value, ctx) => {
   }
 }
 
-const validateManifest = (value, type, schema, { resolveFile }) =>
-  value !== null && value !== undefined
-    ? validateValue(
-        immutable.fromJS(value),
-        immutable.fromJS({
-          schema: schema,
-          type: type,
-          path: [],
-          errors: [],
-          resolveFile,
-        }),
-      )
-    : immutable.fromJS([
+const validateDataSourceNetworks = value => {
+  let networks = [...value.dataSources, ...(value.templates || [])]
+    .filter(dataSource => dataSource.kind === 'ethereum/contract')
+    .reduce(
+      (networks, dataSource) =>
+        networks.update(dataSource.network, dataSources =>
+          (dataSources || immutable.OrderedSet()).add(dataSource.name),
+        ),
+      immutable.OrderedMap(),
+    )
+
+  return networks.size > 1
+    ? immutable.fromJS([
         {
           path: [],
-          message: `Expected non-empty value, found ${typeName(value)}:\n  ${value}`,
+          message: `Conflicting networks used in data sources and templates:
+${networks
+  .map(
+    (dataSources, network) =>
+      `  ${
+        network === undefined
+          ? 'Data sources and templates having no network set'
+          : `Data sources and templates using '${network}'`
+      }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
+  )
+  .join('\n')}
+Recommendation: Make all data sources use the same network name.`,
         },
       ])
+    : List()
+}
+
+const validateManifest = (value, type, schema, { resolveFile }) => {
+  // Validate manifest using the GraphQL schema that defines its structure
+  let errors =
+    value !== null && value !== undefined
+      ? validateValue(
+          immutable.fromJS(value),
+          immutable.fromJS({
+            schema: schema,
+            type: type,
+            path: [],
+            errors: [],
+            resolveFile,
+          }),
+        )
+      : immutable.fromJS([
+          {
+            path: [],
+            message: `Expected non-empty value, found ${typeName(value)}:\n  ${value}`,
+          },
+        ])
+
+  // Fail early because a broken manifest prevents us from performing
+  // additional validation steps
+  if (!errors.isEmpty()) {
+    return errors
+  }
+
+  // Validate that all data sources are for the same `network` (this includes
+  // _no_ network at all)
+  return validateDataSourceNetworks(value)
+}
 
 module.exports = { validateManifest }
