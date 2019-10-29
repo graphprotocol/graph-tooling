@@ -118,9 +118,10 @@ const validators = immutable.fromJS({
                     key == 'templates'
                       ? immutable.fromJS({
                           path: ctx.get('path'),
-                          message: `The way to declare data source templates has changed, ` + 
-                                `please move the templates from inside data sources to ` +
-                                `a \`templates:\` field at the top level of the manifest.`,
+                          message:
+                            `The way to declare data source templates has changed, ` +
+                            `please move the templates from inside data sources to ` +
+                            `a \`templates:\` field at the top level of the manifest.`,
                         })
                       : immutable.fromJS({
                           path: ctx.get('path'),
@@ -151,11 +152,11 @@ const validators = immutable.fromJS({
     typeof value === 'number'
       ? List()
       : immutable.fromJS([
-        {
-          path: ctx.get('path'),
-          message: `Expected BigInt, found ${typeName(value)}:\n${toYAML(value)}`,
-        },
-      ]),
+          {
+            path: ctx.get('path'),
+            message: `Expected BigInt, found ${typeName(value)}:\n${toYAML(value)}`,
+          },
+        ]),
 
   File: (value, ctx) =>
     typeof value === 'string'
