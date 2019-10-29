@@ -225,7 +225,7 @@ ${networks
       }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
   )
   .join('\n')}
-Recommendation: Make all data sources use the same network name.`,
+Recommendation: Make all data sources and templates use the same network name.`,
         },
       ])
     : List()
