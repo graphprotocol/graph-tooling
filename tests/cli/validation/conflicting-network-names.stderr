@@ -1,0 +1,10 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: /
+  Conflicting networks used in data sources and templates:
+    Data sources and templates using 'mainnet':
+      - ExampleSubgraph
+    Data sources and templates having no network set:
+      - ExampleTemplate
+  Recommendation: Make all data sources use the same network name.
