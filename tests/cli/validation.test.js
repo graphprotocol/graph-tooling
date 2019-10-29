@@ -154,4 +154,22 @@ describe('Validation', () => {
       exitCode: 1,
     },
   )
+
+  cliTest(
+    'No network names (valid)',
+    ['codegen', '--skip-migrations'],
+    'validation/no-network-names',
+    {
+      exitCode: 0,
+    },
+  )
+
+  cliTest(
+    'Conflicting network names',
+    ['codegen', '--skip-migrations'],
+    'validation/conflicting-network-names',
+    {
+      exitCode: 1,
+    },
+  )
 })
