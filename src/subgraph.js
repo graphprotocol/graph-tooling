@@ -387,21 +387,23 @@ More than one data source named '${name}', data source names must be unique.`,
 
   static validateUniqueTemplateNames(manifest) {
     let names = []
-    return manifest.get('templates', immutable.List()).reduce((errors, template, templateIndex) => {
-      let path = ['templates', templateIndex, 'name']
-      let name = template.get('name')
-      if (names.includes(name)) {
-        errors = errors.push(
-          immutable.fromJS({
-            path,
-            message: `\
+    return manifest
+      .get('templates', immutable.List())
+      .reduce((errors, template, templateIndex) => {
+        let path = ['templates', templateIndex, 'name']
+        let name = template.get('name')
+        if (names.includes(name)) {
+          errors = errors.push(
+            immutable.fromJS({
+              path,
+              message: `\
 More than one template named '${name}', template names must be unique.`,
-          }),
-        )
-      }
-      names.push(name)
-      return errors
-    }, immutable.List())
+            }),
+          )
+        }
+        names.push(name)
+        return errors
+      }, immutable.List())
   }
 
   static dump(manifest) {

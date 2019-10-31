@@ -322,13 +322,196 @@ const validateEntityFields = (defs, def) =>
     List(),
   )
 
+const validateNoImportsDirective = def =>
+  def.directives.find(directive => directive.name.value == 'imports')
+    ? List().push(
+        immutable.fromJS({
+          loc: def.name.loc,
+          entity: def.name.value,
+          message: '@imports directive only allowed on `_SubgraphSchema_` type',
+        }),
+      )
+    : List()
+
+const importDirectiveTypeValidators = {
+  StringValue: (_def, _directive, _type) => List(),
+  ObjectValue: (def, directive, type) => {
+    let errors = List()
+    if (type.fields.length != 2) {
+      return errors.push(
+        immutable.fromJS({
+          loc: directive.name.loc,
+          entity: def.name.value,
+          message: '@imports type objects accept and require two fields: [name, as]',
+        }),
+      )
+    }
+    return type.fields.reduce((errors, field) => {
+      if (!['name', 'as'].includes(field.name.value)) {
+        return errors.push(
+          immutable.fromJS({
+            loc: directive.name.loc,
+            entity: def.name.value,
+            message: `@imports type object field '${field.name.value}' invalid,  may only be one of: [name, as]`,
+          }),
+        )
+      }
+      if (field.value.kind != 'StringValue') {
+        return errors.push(
+          immutable.fromJS({
+            loc: directive.name.loc,
+            entity: def.name.value,
+            message: '@imports type object fields [name, as] must be strings',
+          }),
+        )
+      }
+      return errors
+    }, errors)
+  },
+}
+
+const validateImportDirectiveType = (def, directive, type) =>
+  importDirectiveTypeValidators[type.kind]
+    ? importDirectiveTypeValidators[type.kind(def, directive, type)]
+    : List().push(
+        immutable.fromJS({
+          loc: directive.name.loc,
+          entity: def.name.value,
+          message: 'Imported type must be either String | {name: String, as: String}',
+        }),
+      )
+
+const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
+  if (argument.value.kind != 'ListValue') {
+    return List().push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: '@imports directive argument: types must be an list',
+      }),
+    )
+  }
+
+  return argument.value.values.reduce(
+    (errors, type) => errors.append(validateImportDirectiveType(def, directive, type)),
+    List(),
+  )
+}
+
+const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
+  if (argument.value.kind != 'ObjectValue') {
+    return List().push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: '@imports directive argument: `from` must be an object',
+      }),
+    )
+  }
+  if (argument.value.fields.length != 1) {
+    return List().push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: '@imports directive argument: `from` must have one field of [id, name]',
+      }),
+    )
+  }
+  return argument.value.fields.reduce((errors, field) => {
+    if (!['name', 'id'].includes(field.name.value)) {
+      return errors.push(
+        immutable.fromJS({
+          loc: field.name.loc,
+          entity: def.name.value,
+          message: '@imports directive from: only fields `id` or `name` allowed',
+        }),
+      )
+    }
+    if (field.value.kind != 'StringValue') {
+      return errors.push(
+        immutable.fromJS({
+          loc: field.name.loc,
+          entity: def.name.value,
+          message: '@imports directive from: fields must have string values',
+        }),
+      )
+    }
+  })
+}
+
+const validateImportDirective = (def, directive) => {
+  let errors = List()
+
+  if (directive.name.value != 'imports') {
+    return errors.push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: '_SubgraphSchema_ directives: only @import directives allowed',
+      }),
+    )
+  }
+
+  let types = directive.arguments.find(argument => argument.name.value == 'types')
+  if (!types) {
+    errors = errors.push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `@import argument 'types' must be specified`,
+      }),
+    )
+  } else {
+    errors = errors.concat(validateImportDirectiveArgumentTypes(directive, types))
+  }
+
+  let from = directive.arguments.find(argument => argument.name.value == 'from')
+  if (!from) {
+    errors = errors.push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `@import argument 'from' required: specify the subgraph to import types from`,
+      }),
+    )
+  } else {
+    errors = errors.concat(validateImportDirectiveArgumentFrom(directive, from))
+  }
+
+  return errors
+}
+
+const validateSubgraphSchemaDirectives = def =>
+  def.directives.reduce(
+    (errors, directive) => errors.concat(validateImportDirective(def, directive)),
+    List(),
+  )
+
+const validateTypeHasNoFields = def => {
+  let errors = List()
+  if (def.fields.length) {
+    return errors.push(
+      immutable.fromJS({
+        loc: def.name.loc,
+        entity: def.name.value,
+        message: `${def.name.value} type is not allowed any fields by convention`,
+      }),
+    )
+  }
+  return errors
+}
+
 const typeDefinitionValidators = {
   ObjectTypeDefinition: (defs, def) =>
-    List.of(
-      ...validateEntityDirective(def),
-      ...validateEntityID(def),
-      ...validateEntityFields(defs, def),
-    ),
+    def.name && def.name.value == '_SubgraphSchema_'
+      ? List.of(validateSubgraphSchemaDirectives(def), validateTypeHasNoFields(def))
+      : List.of(
+          ...validateEntityDirective(def),
+          ...validateEntityID(def),
+          ...validateEntityFields(defs, def),
+          ...validateNoImportsDirective(def),
+        ),
+  ObjectTypeExtension: (defs, def) => List(),
 }
 
 const validateTypeDefinition = (defs, def) =>
