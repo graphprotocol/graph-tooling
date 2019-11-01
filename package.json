@@ -35,6 +35,8 @@
     "tern": "^0.24.0"
   },
   "scripts": {
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "release:patch": "npm version patch && npm publish && git push origin master && git push --tags",
+    "release:minor": "npm version minor && npm publish && git push origin master && git push --tags"
   }
 }
