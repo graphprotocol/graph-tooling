@@ -504,6 +504,8 @@ const validateTypeHasNoFields = def => {
   return errors
 }
 
+const validateAtLeastOneExtensionField = def => List()
+
 const typeDefinitionValidators = {
   ObjectTypeDefinition: (defs, def) =>
     def.name && def.name.value == '_SubgraphSchema_'
@@ -514,7 +516,7 @@ const typeDefinitionValidators = {
           ...validateEntityFields(defs, def),
           ...validateNoImportsDirective(def),
         ),
-  ObjectTypeExtension: (_defs, _def) => List(),
+  ObjectTypeExtension: (_defs, def) => List.of(...validateAtLeastOneExtensionField(def)),
 }
 
 const validateTypeDefinition = (defs, def) =>
