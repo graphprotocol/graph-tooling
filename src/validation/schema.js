@@ -372,7 +372,7 @@ const importDirectiveTypeValidators = {
 
 const validateImportDirectiveType = (def, directive, type) =>
   importDirectiveTypeValidators[type.kind]
-    ? importDirectiveTypeValidators[type.kind(def, directive, type)]
+    ? importDirectiveTypeValidators[type.kind](def, directive, type)
     : List().push(
         immutable.fromJS({
           loc: directive.name.loc,
@@ -393,7 +393,7 @@ const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
   }
 
   return argument.value.values.reduce(
-    (errors, type) => errors.append(validateImportDirectiveType(def, directive, type)),
+    (errors, type) => errors.concat(validateImportDirectiveType(def, directive, type)),
     List(),
   )
 }
@@ -408,6 +408,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
       }),
     )
   }
+
   if (argument.value.fields.length != 1) {
     return List().push(
       immutable.fromJS({
@@ -417,6 +418,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
       }),
     )
   }
+
   return argument.value.fields.reduce((errors, field) => {
     if (!['name', 'id'].includes(field.name.value)) {
       return errors.push(
@@ -436,7 +438,8 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
         }),
       )
     }
-  })
+    return errors
+  }, List())
 }
 
 const validateImportDirective = (def, directive) => {
@@ -462,7 +465,7 @@ const validateImportDirective = (def, directive) => {
       }),
     )
   } else {
-    errors = errors.concat(validateImportDirectiveArgumentTypes(directive, types))
+    errors = errors.concat(validateImportDirectiveArgumentTypes(def, directive, types))
   }
 
   let from = directive.arguments.find(argument => argument.name.value == 'from')
@@ -475,7 +478,7 @@ const validateImportDirective = (def, directive) => {
       }),
     )
   } else {
-    errors = errors.concat(validateImportDirectiveArgumentFrom(directive, from))
+    errors = errors.concat(validateImportDirectiveArgumentFrom(def, directive, from))
   }
 
   return errors
@@ -504,14 +507,14 @@ const validateTypeHasNoFields = def => {
 const typeDefinitionValidators = {
   ObjectTypeDefinition: (defs, def) =>
     def.name && def.name.value == '_SubgraphSchema_'
-      ? List.of(validateSubgraphSchemaDirectives(def), validateTypeHasNoFields(def))
+      ? List.of(...validateSubgraphSchemaDirectives(def), ...validateTypeHasNoFields(def))
       : List.of(
           ...validateEntityDirective(def),
           ...validateEntityID(def),
           ...validateEntityFields(defs, def),
           ...validateNoImportsDirective(def),
         ),
-  ObjectTypeExtension: (defs, def) => List(),
+  ObjectTypeExtension: (_defs, _def) => List(),
 }
 
 const validateTypeDefinition = (defs, def) =>
