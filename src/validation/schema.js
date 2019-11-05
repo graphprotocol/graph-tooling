@@ -3,7 +3,7 @@ const graphql = require('graphql/language')
 const immutable = require('immutable')
 
 const List = immutable.List
-const Map = immutable.Map
+const Set = immutable.Set
 
 // Builtin scalar types
 const BUILTIN_SCALAR_TYPES = [
@@ -580,10 +580,36 @@ const validateTypeDefinition = (defs, def) =>
 const validateTypeDefinitions = defs =>
   defs.reduce((errors, def) => errors.concat(validateTypeDefinition(defs, def)), List())
 
+const validateNamingCollisionsInTypes = types => {
+  let memo = Set()
+  return types.reduce((errors, type) => {
+    if (memo.has(type)) {
+      errors = errors.push(
+        immutable.fromJS({
+          loc: { start: 1, end: 1 },
+          entity: type,
+          message: `Type ${type} is defined more than once`,
+        }),
+      )
+    }
+    memo = memo.add(type)
+    return errors
+  }, List())
+}
+
+const validateNamingCollisions = (local, foreign) =>
+  List.of(...validateNamingCollisionsInTypes(local.concat(foreign)))
+
 const validateSchema = filename => {
   let doc = loadSchema(filename)
   let schema = parseSchema(doc)
-  return validateTypeDefinitions(schema.definitions)
+  return List.of(
+    ...validateTypeDefinitions(schema.definitions),
+    ...validateNamingCollisions(
+      gatherLocalTypes(schema.definitions),
+      gatherForeignTypes(schema.definitions),
+    ),
+  )
 }
 
 module.exports = { typeSuggestion, validateSchema }
