@@ -188,6 +188,41 @@ const validateInnerFieldType = (defs, def, field) => {
           def.kind === 'InterfaceTypeDefinition',
       )
       .map(def => def.name.value),
+    ...defs
+      .filter(
+        def =>
+          def.kind === 'ObjectTypeDefinition' &&
+          def.name.value == '_SubgraphSchema_' &&
+          def.directives.find(
+            directive =>
+              directive.name.value == 'imports' &&
+              directive.arguments.find(argument => argument.name.value == 'types'),
+          ),
+      )
+      .map(def => {
+        let imports = def.directives.filter(
+          directive =>
+            directive.name.value == 'imports' &&
+            directive.arguments.find(argument => argument.name.value == 'types'),
+        )
+        let type_args = imports.map(imp =>
+          imp.arguments.find(argument => argument.name.value == 'types'),
+        )
+        type_args.map(types =>
+          types.map(type =>
+            type.kind == 'StringValue'
+              ? type.value
+              : type.kind == 'ObjectValue' &&
+                type.fields.find(
+                  field => field.name.value == 'as' && field.value.kind == 'StringValue',
+                )
+              ? type.fields.find(field => field.name.value == 'as').value.value
+              : undefined,
+          ),
+        )
+      })
+      .flat()
+      .filter(type => type != undefined),
   )
 
   // Check whether the type name is available, otherwise return an error
