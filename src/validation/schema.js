@@ -206,10 +206,13 @@ const validateInnerFieldType = (defs, def, field) => {
             directive.arguments.find(argument => argument.name.value == 'types'),
         )
         let type_args = imports.map(imp =>
-          imp.arguments.find(argument => argument.name.value == 'types'),
+          imp.arguments.find(
+            argument =>
+              argument.name.value == 'types' && argument.value.kind == 'ListValue',
+          ),
         )
-        type_args.map(types =>
-          types.map(type =>
+        return type_args.map(arg =>
+          arg.value.values.map(type =>
             type.kind == 'StringValue'
               ? type.value
               : type.kind == 'ObjectValue' &&
@@ -221,8 +224,12 @@ const validateInnerFieldType = (defs, def, field) => {
           ),
         )
       })
-      .flat()
-      .filter(type => type != undefined),
+      .reduce((flattened, types_args) => {
+        return types_args.reduce((flattened, types_arg) => {
+          types_arg.forEach(type => (type ? flattened.push(type) : undefined))
+          return flattened
+        }, [])
+      }, []),
   )
 
   // Check whether the type name is available, otherwise return an error
