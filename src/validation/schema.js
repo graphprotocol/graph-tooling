@@ -154,6 +154,65 @@ const unwrapType = type => {
     : type
 }
 
+const gatherLocalTypes = defs =>
+  defs
+    .filter(
+      def =>
+        def.kind === 'ObjectTypeDefinition' ||
+        def.kind === 'EnumTypeDefinition' ||
+        def.kind === 'InterfaceTypeDefinition',
+    )
+    .map(def => def.name.value)
+
+const gatherForeignTypes = defs =>
+  defs
+    .filter(
+      def =>
+        def.kind === 'ObjectTypeDefinition' &&
+        def.name.value == '_SubgraphSchema_' &&
+        def.directives.find(
+          directive =>
+            directive.name.value == 'imports' &&
+            directive.arguments.find(argument => argument.name.value == 'types'),
+        ),
+    )
+    .map(def =>
+      def.directives
+        .filter(
+          directive =>
+            directive.name.value == 'imports' &&
+            directive.arguments.find(argument => argument.name.value == 'types'),
+        )
+        .map(imp =>
+          imp.arguments.find(
+            argument =>
+              argument.name.value == 'types' && argument.value.kind == 'ListValue',
+          ),
+        )
+        .map(arg =>
+          arg.value.values.map(type =>
+            type.kind == 'StringValue'
+              ? type.value
+              : type.kind == 'ObjectValue' &&
+                type.fields.find(
+                  field => field.name.value == 'as' && field.value.kind == 'StringValue',
+                )
+              ? type.fields.find(field => field.name.value == 'as').value.value
+              : undefined,
+          ),
+        ),
+    )
+    .reduce(
+      (flattened, types_args) =>
+        flattened.concat(
+          types_args.reduce((flattened, types_arg) => {
+            types_arg.forEach(type => (type ? flattened.push(type) : undefined))
+            return flattened
+          }, []),
+        ),
+      [],
+    )
+
 const entityTypeByName = (defs, name) =>
   defs
     .filter(
@@ -180,56 +239,8 @@ const validateInnerFieldType = (defs, def, field) => {
   // Collect all types that we can use here: built-ins + entities + enums + interfaces
   let availableTypes = List.of(
     ...BUILTIN_SCALAR_TYPES,
-    ...defs
-      .filter(
-        def =>
-          def.kind === 'ObjectTypeDefinition' ||
-          def.kind === 'EnumTypeDefinition' ||
-          def.kind === 'InterfaceTypeDefinition',
-      )
-      .map(def => def.name.value),
-    ...defs
-      .filter(
-        def =>
-          def.kind === 'ObjectTypeDefinition' &&
-          def.name.value == '_SubgraphSchema_' &&
-          def.directives.find(
-            directive =>
-              directive.name.value == 'imports' &&
-              directive.arguments.find(argument => argument.name.value == 'types'),
-          ),
-      )
-      .map(def => {
-        let imports = def.directives.filter(
-          directive =>
-            directive.name.value == 'imports' &&
-            directive.arguments.find(argument => argument.name.value == 'types'),
-        )
-        let type_args = imports.map(imp =>
-          imp.arguments.find(
-            argument =>
-              argument.name.value == 'types' && argument.value.kind == 'ListValue',
-          ),
-        )
-        return type_args.map(arg =>
-          arg.value.values.map(type =>
-            type.kind == 'StringValue'
-              ? type.value
-              : type.kind == 'ObjectValue' &&
-                type.fields.find(
-                  field => field.name.value == 'as' && field.value.kind == 'StringValue',
-                )
-              ? type.fields.find(field => field.name.value == 'as').value.value
-              : undefined,
-          ),
-        )
-      })
-      .reduce((flattened, types_args) => {
-        return types_args.reduce((flattened, types_arg) => {
-          types_arg.forEach(type => (type ? flattened.push(type) : undefined))
-          return flattened
-        }, [])
-      }, []),
+    ...gatherLocalTypes(defs),
+    ...gatherForeignTypes(defs),
   )
 
   // Check whether the type name is available, otherwise return an error
