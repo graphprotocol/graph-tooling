@@ -30,7 +30,7 @@ ${chalk.dim('Choose mode with one of:')}
 ${chalk.dim('Options for --from-contract:')}
 
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --network <mainnet|kovan|rinkeby|ropsten|goerli>
+      --network <mainnet|kovan|rinkeby|ropsten|goerli|poa-core>
                                 Selects the network the contract is deployed to
       --index-events            Index contract events as entities
 `
@@ -39,7 +39,7 @@ const processInitForm = async (
   toolbox,
   { abi, address, allowSimpleName, directory, fromExample, network, subgraphName },
 ) => {
-  let networkChoices = ['mainnet', 'kovan', 'rinkeby', 'ropsten', 'goerli']
+  let networkChoices = ['mainnet', 'kovan', 'rinkeby', 'ropsten', 'goerli', 'poa-core']
   let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
 
   let abiFromEtherscan = undefined
@@ -118,7 +118,11 @@ const processInitForm = async (
         // Try loading the ABI from Etherscan, if none was provided
         if (!abi) {
           try {
-            abiFromEtherscan = await loadAbiFromEtherscan(network, value)
+            if (network === 'poa-core') {
+              abiFromBlockScout = await loadAbiFromBlockScout(network, value)
+            } else {
+              abiFromEtherscan = await loadAbiFromEtherscan(network, value)
+            }
           } catch (e) {}
         }
         return value
@@ -152,6 +156,30 @@ const processInitForm = async (
     return undefined
   }
 }
+
+const loadAbiFromBlockScout = async (network, address) =>
+  await withSpinner(
+    `Fetching ABI from BlockScout`,
+    `Failed to fetch ABI from BlockScout`,
+    `Warnings while fetching ABI from BlockScout`,
+    async spinner => {
+      let result = await fetch(
+        `https://blockscout.com/${
+          network.replace('-', '/')
+        }/api?module=contract&action=getabi&address=${address}`,
+      )
+      let json = await result.json()
+
+      // BlockScout returns a JSON object that has a `status`, a `message` and
+      // a `result` field. The `status` is '0' in case of errors and '1' in
+      // case of success
+      if (json.status === '1') {
+        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
+      } else {
+        throw new Error('ABI not found, try loading it from a local file')
+      }
+    },
+  )
 
 const loadAbiFromEtherscan = async (network, address) =>
   await withSpinner(
@@ -289,7 +317,11 @@ module.exports = {
         }
       } else {
         try {
-          abi = await loadAbiFromEtherscan(network, fromContract)
+          if (network === 'poa-core') {
+            abi = await loadAbiFromBlockScout(network, fromContract)
+          } else {
+            abi = await loadAbiFromEtherscan(network, fromContract)
+          }
         } catch (e) {
           process.exitCode = 1
           return
