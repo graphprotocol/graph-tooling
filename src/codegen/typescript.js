@@ -99,6 +99,17 @@ class ClassMember {
   }
 }
 
+class NamedUnionType {
+  constructor(name, types) {
+    this.name = name
+    this.union = new UnionType(types)
+  }
+
+  toString() {
+    return `export type ${this.name} = ${this.union.toString()}`
+  }
+}
+
 class NamedType {
   constructor(name) {
     this.name = name
@@ -114,9 +125,22 @@ class NamedType {
   }
 
   isPrimitive() {
-   let primitives = ["boolean", "u8", "i8", "u16", "i16", "u32", 
-                     "i32", "u64", "i64", "f32", "f64", "usize", "isize"]
-   return primitives.includes(this.name)
+    let primitives = [
+      'boolean',
+      'u8',
+      'i8',
+      'u16',
+      'i16',
+      'u32',
+      'i32',
+      'u64',
+      'i64',
+      'f32',
+      'f64',
+      'usize',
+      'isize',
+    ]
+    return primitives.includes(this.name)
   }
 }
 
@@ -217,6 +241,7 @@ const staticMethod = (name, params, returnType, body) =>
 const klass = (name, options) => new Class(name, options)
 const klassMember = (name, type) => new ClassMember(name, type)
 const unionType = (...types) => new UnionType(types)
+const namedUnionType = (name, ...types) => new NamedUnionType(name, types)
 const nullableType = type => new NullableType(type)
 const moduleImports = (nameOrNames, module) => new ModuleImports(nameOrNames, module)
 
@@ -235,5 +260,6 @@ module.exports = {
   param,
   nullableType,
   unionType,
+  namedUnionType,
   moduleImports,
 }
