@@ -99,17 +99,6 @@ class ClassMember {
   }
 }
 
-class NamedUnionType {
-  constructor(name, types) {
-    this.name = name
-    this.union = new UnionType(types)
-  }
-
-  toString() {
-    return `export type ${this.name} = ${this.union.toString()}`
-  }
-}
-
 class NamedType {
   constructor(name) {
     this.name = name
@@ -241,7 +230,6 @@ const staticMethod = (name, params, returnType, body) =>
 const klass = (name, options) => new Class(name, options)
 const klassMember = (name, type) => new ClassMember(name, type)
 const unionType = (...types) => new UnionType(types)
-const namedUnionType = (name, ...types) => new NamedUnionType(name, types)
 const nullableType = type => new NullableType(type)
 const moduleImports = (nameOrNames, module) => new ModuleImports(nameOrNames, module)
 
@@ -260,6 +248,5 @@ module.exports = {
   param,
   nullableType,
   unionType,
-  namedUnionType,
   moduleImports,
 }
