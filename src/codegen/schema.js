@@ -35,23 +35,10 @@ module.exports = class SchemaCodeGenerator {
   }
 
   generateTypes() {
-    return [
-      ...this.schema.ast
-        .get('definitions')
-        .filter(def => this._isEntityTypeDefinition(def))
-        .map(def => this._generateEntityType(def)),
-      ...this.schema.ast
-        .get('definitions')
-        .filter(def => this._isSubgraphSchemaType(def))
-        .map(def =>
-          def.get('directives').filter(directive => this._isImportsDirective(directive)),
-        )
-        .map(directives => this._generateImportedTypes(directives))
-        .reduce((flattened, types) => {
-          types.forEach(type => flattened.push(type))
-          return flattened
-        }, []),
-    ]
+    return this.schema.ast
+      .get('definitions')
+      .filter(def => this._isEntityTypeDefinition(def))
+      .map(def => this._generateEntityType(def))
   }
 
   _isEntityTypeDefinition(def) {
@@ -61,53 +48,6 @@ module.exports = class SchemaCodeGenerator {
         .get('directives')
         .find(directive => directive.getIn(['name', 'value']) === 'entity') !== undefined
     )
-  }
-
-  _isSubgraphSchemaType(def) {
-    return (
-      def.get('kind') === 'ObjectTypeDefinition' &&
-      def.getIn(['name', 'value']) === '_SubgraphSchema_' &&
-      def
-        .get('directives')
-        .find(directive => directive.getIn(['name', 'value']) === 'imports')
-    )
-  }
-
-  _isImportsDirective(directive) {
-    return directive.getIn(['name', 'value']) === 'imports'
-  }
-
-  _generateImportedTypes(importDirectives) {
-    let importedTypes = importDirectives
-      .map(directive =>
-        directive
-          .get('arguments')
-          .find(argument => argument.getIn(['name', 'value']) === 'types'),
-      )
-      .map(types =>
-        types
-          .getIn(['value', 'values'])
-          .filter(
-            type =>
-              type.get('kind') === 'StringValue' || type.get('kind') === 'ObjectValue',
-          )
-          .map(type => {
-            if (type.get('kind') == 'StringValue') {
-              return tsCodegen.namedUnionType(type.get('value'), 'string', 'null')
-            } else {
-              let field = type
-                .get('fields')
-                .find(field => field.getIn(['name', 'value']) === 'as')
-              let typeName = field.getIn(['value', 'value'])
-              return tsCodegen.namedUnionType(typeName, 'string', 'null')
-            }
-          }),
-      )
-      .reduce((flattened, namedTypes) => {
-        namedTypes.forEach(namedType => flattened.push(namedType))
-        return flattened
-      }, [])
-    return importedTypes
   }
 
   _generateEntityType(def) {
