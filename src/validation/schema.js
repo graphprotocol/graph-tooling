@@ -470,7 +470,7 @@ const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) =>
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@imports directive argument: `from` must have one field of [id, name]',
+        message: `@imports directive argument: 'from' must have one field of id or name`,
       }),
     )
   }
@@ -481,7 +481,7 @@ const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) =>
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: '@imports directive from: only fields `id` or `name` allowed',
+          message: `@imports directive from: only fields 'id' or 'name' allowed`,
         }),
       )
     }
