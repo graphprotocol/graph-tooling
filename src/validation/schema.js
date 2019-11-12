@@ -437,7 +437,7 @@ const validateImportDirectiveType = (def, directive, type) =>
         }),
       )
 
-const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
+const validateImportDirectiveArgumentTypesIsValid = (def, directive, argument) => {
   if (argument.value.kind != 'ListValue') {
     return List().push(
       immutable.fromJS({
@@ -454,7 +454,7 @@ const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
   )
 }
 
-const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
+const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) => {
   if (argument.value.kind != 'ObjectValue') {
     return List().push(
       immutable.fromJS({
@@ -498,47 +498,49 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
   }, List())
 }
 
-const validateImportDirective = (def, directive) => {
-  let errors = List()
-
-  if (directive.name.value != 'imports') {
-    return errors.push(
-      immutable.fromJS({
-        loc: directive.name.loc,
-        entity: def.name.value,
-        message: `${SUBGRAPH_SCHEMA} directives: only @import directives allowed`,
-      }),
-    )
-  }
-
+const validateImportDirectiveTypes = (def, directive) => {
   let types = directive.arguments.find(argument => argument.name.value == 'types')
-  if (!types) {
-    errors = errors.push(
-      immutable.fromJS({
-        loc: directive.name.loc,
-        entity: def.name.value,
-        message: `@import argument 'types' must be specified`,
-      }),
-    )
-  } else {
-    errors = errors.concat(validateImportDirectiveArgumentTypes(def, directive, types))
-  }
-
-  let from = directive.arguments.find(argument => argument.name.value == 'from')
-  if (!from) {
-    errors = errors.push(
-      immutable.fromJS({
-        loc: directive.name.loc,
-        entity: def.name.value,
-        message: `@import argument 'from' required: specify the subgraph to import types from`,
-      }),
-    )
-  } else {
-    errors = errors.concat(validateImportDirectiveArgumentFrom(def, directive, from))
-  }
-
-  return errors
+  return types
+    ? validateImportDirectiveArgumentTypesIsValid(def, directive, types)
+    : List([
+        immutable.fromJS({
+          loc: directive.name.loc,
+          entity: def.name.value,
+          message: `@import argument 'types' must be specified`,
+        }),
+      ])
 }
+
+const validateImportDirectiveFrom = (def, directive) => {
+  let from = directive.arguments.find(argument => argument.name.value == 'from')
+  return from
+    ? validateImportDirectiveArgumentFromIsValid(def, directive, from)
+    : List([
+        immutable.fromJS({
+          loc: directive.name.loc,
+          entity: def.name.value,
+          message: `@import argument 'from' required: specify the subgraph to import types from`,
+        }),
+      ])
+}
+
+const validateImportDirectiveName = directive =>
+  directive.name.value != 'imports'
+    ? List([
+        immutable.fromJS({
+          loc: directive.name.loc,
+          entity: def.name.value,
+          message: `${SUBGRAPH_SCHEMA} directives: only @import directives allowed`,
+        }),
+      ])
+    : List()
+
+const validateImportDirective = (def, directive) =>
+  List.of(
+    ...validateImportDirectiveName(directive),
+    ...validateImportDirectiveTypes(def, directive),
+    ...validateImportDirectiveFrom(def, directive),
+  )
 
 const validateSubgraphSchemaDirectives = def =>
   def.directives.reduce(
