@@ -38,6 +38,8 @@ const TYPE_SUGGESTIONS = [
   ],
 ]
 
+const SUBGRAPH_SCHEMA = '_SubgraphSchema_'
+
 /**
  * Returns a GraphQL type suggestion for a given input type.
  * Returns `undefined` if no suggestion is available for the type.
@@ -169,7 +171,7 @@ const gatherForeignTypes = defs =>
     .filter(
       def =>
         def.kind === 'ObjectTypeDefinition' &&
-        def.name.value == '_SubgraphSchema_' &&
+        def.name.value == SUBGRAPH_SCHEMA &&
         def.directives.find(
           directive =>
             directive.name.value == 'imports' &&
@@ -381,7 +383,7 @@ const validateNoImportsDirective = def =>
         immutable.fromJS({
           loc: def.name.loc,
           entity: def.name.value,
-          message: '@imports directive only allowed on `_SubgraphSchema_` type',
+          message: `@imports directive only allowed on '${SUBGRAPH_SCHEMA}' type`,
         }),
       )
     : List()
@@ -503,7 +505,7 @@ const validateImportDirective = (def, directive) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '_SubgraphSchema_ directives: only @import directives allowed',
+        message: `${SUBGRAPH_SCHEMA} directives: only @import directives allowed`,
       }),
     )
   }
@@ -561,7 +563,7 @@ const validateAtLeastOneExtensionField = def => List()
 
 const typeDefinitionValidators = {
   ObjectTypeDefinition: (defs, def) =>
-    def.name && def.name.value == '_SubgraphSchema_'
+    def.name && def.name.value == SUBGRAPH_SCHEMA
       ? List.of(...validateSubgraphSchemaDirectives(def), ...validateTypeHasNoFields(def))
       : List.of(
           ...validateEntityDirective(def),
