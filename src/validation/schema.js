@@ -38,6 +38,7 @@ const TYPE_SUGGESTIONS = [
   ],
 ]
 
+// As a convention, the type _SubgraphSchema_ is reserved to define imports on.
 const SUBGRAPH_SCHEMA = '_SubgraphSchema_'
 
 /**
