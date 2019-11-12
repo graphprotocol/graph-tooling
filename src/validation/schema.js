@@ -548,13 +548,13 @@ const validateSubgraphSchemaDirectives = def =>
 
 const validateTypeHasNoFields = def =>
   def.fields.length
-    ? List[
+    ? List([
         immutable.fromJS({
           loc: def.name.loc,
           entity: def.name.value,
           message: `${def.name.value} type is not allowed any fields by convention`,
-        })
-      ]
+        }),
+      ])
     : List()
 
 const validateAtLeastOneExtensionField = def => List()
