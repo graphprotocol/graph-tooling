@@ -584,9 +584,10 @@ const validateTypeDefinitions = defs =>
   defs.reduce((errors, def) => errors.concat(validateTypeDefinition(defs, def)), List())
 
 const validateNamingCollisionsInTypes = types => {
-  let memo = Set()
+  let seen = Set()
+  let errored = Set()
   return types.reduce((errors, type) => {
-    if (memo.has(type)) {
+    if (seen.has(type) && !errored.has(type)) {
       errors = errors.push(
         immutable.fromJS({
           loc: { start: 1, end: 1 },
@@ -594,8 +595,10 @@ const validateNamingCollisionsInTypes = types => {
           message: `Type ${type} is defined more than once`,
         }),
       )
+      errored = errored.add(type)
+    } else {
+      seen = seen.add(type)
     }
-    memo = memo.add(type)
     return errors
   }, List())
 }
