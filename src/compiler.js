@@ -175,10 +175,18 @@ class Compiler {
       `Failed to compile subgraph`,
       `Warnings while compiling subgraph`,
       async spinner => {
+        // Cache compiled files so identical input files are only compiled once
+        let compiledFiles = new Map()
+
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
             dataSource.updateIn(['mapping', 'file'], mappingPath =>
-              this._compileDataSourceMapping(dataSource, mappingPath, spinner),
+              this._compileDataSourceMapping(
+                dataSource,
+                mappingPath,
+                compiledFiles,
+                spinner,
+              ),
             ),
           ),
         )
@@ -188,7 +196,12 @@ class Compiler {
             ? templates
             : templates.map(template =>
                 template.updateIn(['mapping', 'file'], mappingPath =>
-                  this._compileTemplateMapping(template, mappingPath, spinner),
+                  this._compileTemplateMapping(
+                    template,
+                    mappingPath,
+                    compiledFiles,
+                    spinner,
+                  ),
                 ),
               ),
         )
@@ -198,9 +211,27 @@ class Compiler {
     )
   }
 
-  _compileDataSourceMapping(dataSource, mappingPath, spinner) {
+  _compileDataSourceMapping(dataSource, mappingPath, compiledFiles, spinner) {
     try {
       let dataSourceName = dataSource.getIn(['name'])
+
+      let baseDir = this.sourceDir
+      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
+      let inputFile = path.relative(baseDir, absoluteMappingPath)
+
+      // If the file has already been compiled elsewhere, just use that output
+      // file and return early
+      let inputCacheKey = this.cacheKeyForFile(absoluteMappingPath)
+      let alreadyCompiled = compiledFiles.has(inputCacheKey)
+      if (alreadyCompiled) {
+        let outFile = compiledFiles.get(inputCacheKey)
+        step(
+          spinner,
+          'Compile data source:',
+          `${dataSourceName} => ${this.displayPath(outFile)} (already compiled)`,
+        )
+        return path.relative(baseDir, outFile)
+      }
 
       let outFile = path.join(
         this.subgraphDir(this.options.outputDir, dataSource),
@@ -215,9 +246,6 @@ class Compiler {
         `${dataSourceName} => ${this.displayPath(outFile)}`,
       )
 
-      let baseDir = this.sourceDir
-      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
-      let inputFile = path.relative(baseDir, absoluteMappingPath)
       let outputFile = path.relative(baseDir, outFile)
 
       // Create output directory
@@ -271,15 +299,37 @@ class Compiler {
           }
         },
       )
+
+      // Remember the output file to avoid compiling the same file again
+      compiledFiles.set(inputCacheKey, outputFile)
+
       return outputFile
     } catch (e) {
       throw Error(`Failed to compile data source mapping: ${e.message}`)
     }
   }
 
-  _compileTemplateMapping(template, mappingPath, spinner) {
+  _compileTemplateMapping(template, mappingPath, compiledFiles, spinner) {
     try {
       let templateName = template.get('name')
+
+      let baseDir = this.sourceDir
+      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
+      let inputFile = path.relative(baseDir, absoluteMappingPath)
+
+      // If the file has already been compiled elsewhere, just use that output
+      // file and return early
+      let inputCacheKey = this.cacheKeyForFile(absoluteMappingPath)
+      let alreadyCompiled = compiledFiles.has(inputCacheKey)
+      if (alreadyCompiled) {
+        let outFile = compiledFiles.get(inputCacheKey)
+        step(
+          spinner,
+          'Compile data source template:',
+          `${templateName} => ${this.displayPath(outFile)} (already compiled)`,
+        )
+        return path.relative(baseDir, outFile)
+      }
 
       let outFile = path.join(
         this.options.outputDir,
@@ -296,9 +346,6 @@ class Compiler {
         `${templateName} => ${this.displayPath(outFile)}`,
       )
 
-      let baseDir = this.sourceDir
-      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
-      let inputFile = path.relative(baseDir, absoluteMappingPath)
       let outputFile = path.relative(baseDir, outFile)
 
       // Create output directory
@@ -334,6 +381,10 @@ class Compiler {
           }
         },
       )
+
+      // Remember the output file to avoid compiling the same file again
+      compiledFiles.set(inputCacheKey, outputFile)
+
       return outputFile
     } catch (e) {
       throw Error(`Failed to compile data source template: ${e.message}`)
