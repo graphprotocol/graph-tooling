@@ -1,5 +1,6 @@
 const asc = require('assemblyscript/cli/asc')
 const chalk = require('chalk')
+const crypto = require('crypto')
 const fs = require('fs-extra')
 const immutable = require('immutable')
 const path = require('path')
@@ -29,6 +30,12 @@ class Compiler {
 
   displayPath(p) {
     return path.relative(process.cwd(), p)
+  }
+
+  cacheKeyForFile(filename) {
+    let hash = crypto.createHash('sha1')
+    hash.update(fs.readFileSync(filename))
+    return hash.digest('hex')
   }
 
   async compile() {
@@ -438,7 +445,7 @@ class Compiler {
       `Failed to upload subgraph to IPFS`,
       `Warnings while uploading subgraph to IPFS`,
       async spinner => {
-        // Collect uploaded files and their IPFS hashes to only upload files once
+        // Cache uploaded IPFS files so identical files are only uploaded once
         let uploadedFiles = new Map()
 
         // Collect all source (path -> hash) updates to apply them later
@@ -518,7 +525,9 @@ class Compiler {
     let absoluteFile = path.resolve(this.options.outputDir, maybeRelativeFile)
     step(spinner, 'Add file to IPFS', this.displayPath(absoluteFile))
 
-    let alreadyUploaded = uploadedFiles.has(absoluteFile)
+    let uploadCacheKey = this.cacheKeyForFile(absoluteFile)
+    let alreadyUploaded = uploadedFiles.has(uploadCacheKey)
+
     if (!alreadyUploaded) {
       let content = Buffer.from(fs.readFileSync(absoluteFile), 'utf-8')
       let hash = await this._uploadToIPFS({
@@ -526,10 +535,10 @@ class Compiler {
         content: content,
       })
 
-      uploadedFiles.set(absoluteFile, hash)
+      uploadedFiles.set(uploadCacheKey, hash)
     }
 
-    let hash = uploadedFiles.get(absoluteFile)
+    let hash = uploadedFiles.get(uploadCacheKey)
     step(
       spinner,
       '              ..',
