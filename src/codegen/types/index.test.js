@@ -240,7 +240,7 @@ describe('AssemblyScript -> EthereumValue', () => {
     }
     for (let i = 8; i <= 24; i += 8) {
       expect(codegen.ethereumValueFromAsc('x', `uint${i}`)).toBe(
-        `EthereumValue.fromI32(x)`,
+        `EthereumValue.fromUnsignedBigInt(BigInt.fromI32(x))`,
       )
     }
   })
