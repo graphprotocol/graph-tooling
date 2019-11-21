@@ -70,7 +70,7 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     code => `EthereumValue.fromFixedBytes(${code})`,
   ],
   ['i32', /^int(8|16|24|32)$/, code => `EthereumValue.fromI32(${code})`],
-  ['i32', /^uint(8|16|24)$/, code => `EthereumValue.fromI32(${code})`],
+  ['i32', /^uint(8|16|24)$/, code => `EthereumValue.fromUnsignedBigInt(BigInt.fromI32(${code}))`],
   [
     'BigInt',
     /^int(40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)$/,
