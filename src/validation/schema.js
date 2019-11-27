@@ -398,7 +398,7 @@ const importDirectiveTypeValidators = {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: '@imports type objects accept and require two fields: [name, as]',
+          message: 'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
         }),
       )
     }
@@ -433,7 +433,7 @@ const validateImportDirectiveType = (def, directive, type) =>
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: 'Imported type must be either String | {name: String, as: String}',
+          message: 'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
         }),
       )
 
@@ -443,7 +443,7 @@ const validateImportDirectiveArgumentTypesIsValid = (def, directive, argument) =
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@imports directive argument: types must be an list',
+        message: '@imports directive argument: `types` must be an list',
       }),
     )
   }
@@ -481,7 +481,7 @@ const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) =>
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: `@imports directive from: only fields 'id' or 'name' allowed`,
+          message: `@imports directive argument: 'from' must be one of { name: "Name" } or { id: "ID" }`,
         }),
       )
     }
@@ -584,9 +584,9 @@ const validateTypeDefinitions = defs =>
 
 const validateNamingCollisionsInTypes = types => {
   let seen = Set()
-  let errored = Set()
+  let conflicting = Set()
   return types.reduce((errors, type) => {
-    if (seen.has(type) && !errored.has(type)) {
+    if (seen.has(type) && !conflicting.has(type)) {
       errors = errors.push(
         immutable.fromJS({
           loc: { start: 1, end: 1 },
@@ -594,7 +594,7 @@ const validateNamingCollisionsInTypes = types => {
           message: `Type ${type} is defined more than once`,
         }),
       )
-      errored = errored.add(type)
+      conflicting = conflicting.add(type)
     } else {
       seen = seen.add(type)
     }
@@ -602,8 +602,7 @@ const validateNamingCollisionsInTypes = types => {
   }, List())
 }
 
-const validateNamingCollisions = (local, foreign) =>
-  List.of(...validateNamingCollisionsInTypes(local.concat(foreign)))
+const validateNamingCollisions = (local, foreign) => validateNamingCollisionsInTypes(local.concat(foreign))
 
 const validateSchema = filename => {
   let doc = loadSchema(filename)
