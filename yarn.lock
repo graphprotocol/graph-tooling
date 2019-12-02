@@ -2798,9 +2798,9 @@ iterall@^1.2.2:
   integrity sha512-yynBb1g+RFUPY64fTrFv7nsjRrENBQJaX2UL+2Szc9REFrSNm1rpSXHGzhmAy7a9uv3vlvgBlXnf9RqmPH1/DA==
 
 jayson@^3.0.2:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/jayson/-/jayson-3.1.1.tgz#2faedb6e8c8df266c7ef3d9d6a6cc2d2655e226d"
-  integrity sha512-w+RKdtrRNlqFlyDxcALzTrcKSwETYcU+P9/cqWn8RogXkcV9RSmdL1tUb6E8hglFh8r3I62vVP8xrXkaaKyQdQ==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/jayson/-/jayson-3.2.0.tgz#df6d8139cd9f6ee2f56c8c2deaee448da7eccf1b"
+  integrity sha512-DZQnwA57GcStw4soSYB2VntWXFfoWvmSarlaWePDYOWhjxT72PBM4atEBomaTaS1uqk3jFC9UO9AyWjlujo3xw==
   dependencies:
     "@types/connect" "^3.4.32"
     "@types/express-serve-static-core" "^4.16.9"
