@@ -173,6 +173,11 @@ module.exports = class TypeGenerator {
       let code = prettier.format(
         [
           GENERATED_FILE_NOTE,
+          `\
+// @abiName ${abi.abi.name}
+// @abiFile ${abi.abi.file}
+// @abiHash ${abi.abi.hash}
+`,
           ...codeGenerator.generateModuleImports(),
           ...codeGenerator.generateTypes(),
         ].join('\n'),
@@ -208,6 +213,11 @@ module.exports = class TypeGenerator {
       let code = prettier.format(
         [
           GENERATED_FILE_NOTE,
+          `\
+// @abiName ${abi.abi.name}
+// @abiFile ${abi.abi.file}
+// @abiHash ${abi.abi.hash}
+`,
           ...codeGenerator.generateModuleImports(),
           ...codeGenerator.generateTypes(),
         ].join('\n'),
