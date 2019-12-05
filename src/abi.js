@@ -1,6 +1,7 @@
 const fs = require('fs-extra')
 const immutable = require('immutable')
 const path = require('path')
+const crypto = require('crypto')
 
 const AbiCodeGenerator = require('./codegen/abi')
 
@@ -23,9 +24,10 @@ const buildSignatureParameter = input => {
 }
 
 module.exports = class ABI {
-  constructor(name, file, data) {
+  constructor(name, file, hash, data) {
     this.name = name
     this.file = file
+    this.hash = hash
     this.data = data
   }
 
@@ -88,6 +90,12 @@ module.exports = class ABI {
       })
   }
 
+  static hash(filename) {
+    let hash = crypto.createHash('sha1')
+    hash.update(fs.readFileSync(filename))
+    return hash.digest('hex')
+  }
+
   static normalized(json) {
     if (Array.isArray(json)) {
       return json
@@ -111,6 +119,8 @@ module.exports = class ABI {
       throw Error(`No valid ABI in file: ${path.relative(process.cwd(), file)}`)
     }
 
-    return new ABI(name, file, immutable.fromJS(abi))
+    let hash = ABI.hash(file)
+
+    return new ABI(name, file, hash, immutable.fromJS(abi))
   }
 }
