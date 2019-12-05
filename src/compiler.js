@@ -181,8 +181,9 @@ class Compiler {
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
             dataSource.updateIn(['mapping', 'file'], mappingPath =>
-              this._compileDataSourceMapping(
+              this._compileMapping(
                 dataSource,
+                false,
                 mappingPath,
                 compiledFiles,
                 spinner,
@@ -196,8 +197,9 @@ class Compiler {
             ? templates
             : templates.map(template =>
                 template.updateIn(['mapping', 'file'], mappingPath =>
-                  this._compileTemplateMapping(
+                  this._compileMapping(
                     template,
+                    true,
                     mappingPath,
                     compiledFiles,
                     spinner,
@@ -211,9 +213,9 @@ class Compiler {
     )
   }
 
-  _compileDataSourceMapping(dataSource, mappingPath, compiledFiles, spinner) {
+  _compileMapping(dataSource, isTemplate, mappingPath, compiledFiles, spinner) {
     try {
-      let dataSourceName = dataSource.getIn(['name'])
+      let dataSourceName = dataSource.get('name')
 
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
@@ -227,22 +229,24 @@ class Compiler {
         let outFile = compiledFiles.get(inputCacheKey)
         step(
           spinner,
-          'Compile data source:',
+          isTemplate ? 'Compile data source template:' : 'Compile data source:',
           `${dataSourceName} => ${this.displayPath(outFile)} (already compiled)`,
         )
         return path.relative(baseDir, outFile)
       }
 
-      let outFile = path.join(
-        this.subgraphDir(this.options.outputDir, dataSource),
+      let outBasename =
         this.options.outputFormat == 'wasm'
           ? `${dataSourceName}.wasm`
-          : `${dataSourceName}.wast`,
-      )
+          : `${dataSourceName}.wast`
+
+      let outFile = isTemplate
+        ? path.join(this.options.outputDir, 'templates', dataSourceName, outBasename)
+        : path.join(this.subgraphDir(this.options.outputDir, dataSource), outBasename)
 
       step(
         spinner,
-        'Compile data source:',
+        isTemplate ? 'Compile data source template:' : 'Compile data source:',
         `${dataSourceName} => ${this.displayPath(outFile)}`,
       )
 
@@ -277,6 +281,9 @@ class Compiler {
       let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
       global = path.relative(baseDir, global)
 
+      // All source files used during the build
+      let collectedSourceFiles = new Set()
+
       asc.main(
         [
           inputFile,
@@ -292,6 +299,18 @@ class Compiler {
         {
           stdout: process.stdout,
           stderr: process.stdout,
+
+          // Hook into the compiler to collect all source files using the build
+          readFile: (filename, baseDir) => {
+            try {
+              let fullPath = path.resolve(baseDir, filename)
+              let text = fs.readFileSync(fullPath, 'utf-8')
+              collectedSourceFiles.add(fullPath)
+              return text
+            } catch (e) {
+              return null
+            }
+          },
         },
         e => {
           if (e != null) {
@@ -300,94 +319,73 @@ class Compiler {
         },
       )
 
+      // Check whether the source files used match the data source
+      this._validateUsedSourceFiles(dataSource, isTemplate, collectedSourceFiles)
+
       // Remember the output file to avoid compiling the same file again
       compiledFiles.set(inputCacheKey, outputFile)
 
       return outputFile
     } catch (e) {
-      throw Error(`Failed to compile data source mapping: ${e.message}`)
+      throw Error(
+        isTemplate
+          ? `Failed to compile data source template: ${e.message}`
+          : `Failed to compile data source: ${e.message}`,
+      )
     }
   }
 
-  _compileTemplateMapping(template, mappingPath, compiledFiles, spinner) {
-    try {
-      let templateName = template.get('name')
+  _validateUsedSourceFiles(dataSource, isTemplate, sourceFiles) {
+    let label = isTemplate
+      ? `Data source template '${dataSource.get('name')}'`
+      : `Data source '${dataSource.get('name')}'`
 
-      let baseDir = this.sourceDir
-      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
-      let inputFile = path.relative(baseDir, absoluteMappingPath)
+    let errors = [...sourceFiles]
+      .map(sourceFile => {
+        toolbox.print.info(`Validate source file: ${this.displayPath(sourceFile)}`)
 
-      // If the file has already been compiled elsewhere, just use that output
-      // file and return early
-      let inputCacheKey = this.cacheKeyForFile(absoluteMappingPath)
-      let alreadyCompiled = compiledFiles.has(inputCacheKey)
-      if (alreadyCompiled) {
-        let outFile = compiledFiles.get(inputCacheKey)
-        step(
-          spinner,
-          'Compile data source template:',
-          `${templateName} => ${this.displayPath(outFile)} (already compiled)`,
-        )
-        return path.relative(baseDir, outFile)
-      }
+        // Pull ABI name and hash from the file
+        let text = fs.readFileSync(sourceFile, 'utf-8')
 
-      let outFile = path.join(
-        this.options.outputDir,
-        'templates',
-        templateName,
-        this.options.outputFormat == 'wasm'
-          ? `${templateName}.wasm`
-          : `${templateName}.wast`,
-      )
+        let sourceAbiNameMatch = text.match(/@abiName (.+)/g)
+        let sourceAbiHashMatch = text.match(/@abiHash (.+)/g)
 
-      step(
-        spinner,
-        'Compile data source template:',
-        `${templateName} => ${this.displayPath(outFile)}`,
-      )
+        if (sourceAbiNameMatch && sourceAbiHashMatch) {
+          let sourceAbiName = sourceAbiNameMatch[0].replace(/@abiName /, '')
+          let sourceAbiHash = sourceAbiHashMatch[0].replace(/@abiHash /, '')
 
-      let outputFile = path.relative(baseDir, outFile)
+          toolbox.print.info(
+            `Checking for ABI mismatch: ${sourceAbiName} (${sourceAbiHash})`,
+          )
 
-      // Create output directory
-      try {
-        fs.mkdirsSync(path.dirname(outputFile))
-      } catch (e) {
-        throw e
-      }
+          let abi = dataSource
+            .getIn(['mapping', 'abis'], immutable.List())
+            .find(abi => abi.get('name') === sourceAbiName)
 
-      let libs = path.join(baseDir, 'node_modules')
-      let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
-      global = path.relative(baseDir, global)
-
-      asc.main(
-        [
-          inputFile,
-          global,
-          '--baseDir',
-          baseDir,
-          '--lib',
-          libs,
-          '--outFile',
-          outputFile,
-          '--optimize',
-        ],
-        {
-          stdout: process.stdout,
-          stderr: process.stdout,
-        },
-        e => {
-          if (e != null) {
-            throw e
+          if (!abi) {
+            return new Error(`\
+${label}: Code generated for ABI '${sourceAbiName}' (${this.displayPath(sourceFile)}) \
+is used in the mapping but not found in its ABIs.`)
           }
-        },
-      )
 
-      // Remember the output file to avoid compiling the same file again
-      compiledFiles.set(inputCacheKey, outputFile)
+          let absolutePath = path.resolve(this.sourceDir, abi.get('file'))
+          let abiHash = ABI.hash(absolutePath)
 
-      return outputFile
-    } catch (e) {
-      throw Error(`Failed to compile data source template: ${e.message}`)
+          if (sourceAbiHash !== abiHash) {
+            return new Error(`\
+${label}: Code generated for ABI '${sourceAbiName}' (${this.displayPath(sourceFile)}) \
+is used in the mapping but does not match the ABI with the same name \
+(${this.displayPath(abi.get('file'))}).
+`)
+          }
+        }
+      }, [])
+      .filter(error => error !== undefined)
+
+    if (errors.length > 0) {
+      throw new Error(`\
+Mapping source files and ABIs do not match:
+${errors.map(e => `- ${e.message}`).join('\n')}`)
     }
   }
 
