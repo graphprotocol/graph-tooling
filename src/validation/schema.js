@@ -574,7 +574,7 @@ const typeDefinitionValidators = {
           ...validateEntityFields(defs, def),
           ...validateNoImportsDirective(def),
         ),
-  ObjectTypeExtension: (_defs, def) => List.of(...validateAtLeastOneExtensionField(def)),
+  ObjectTypeExtension: (_defs, def) => validateAtLeastOneExtensionField(def),
 }
 
 const validateTypeDefinition = (defs, def) =>
