@@ -38,8 +38,8 @@ const TYPE_SUGGESTIONS = [
   ],
 ]
 
-// As a convention, the type _SubgraphSchema_ is reserved to define imports on.
-const SUBGRAPH_SCHEMA = '_SubgraphSchema_'
+// As a convention, the type _schema_ is reserved to define imports on.
+const RESERVED_TYPE = '_schema_'
 
 /**
  * Returns a GraphQL type suggestion for a given input type.
@@ -172,7 +172,7 @@ const gatherForeignTypes = defs =>
     .filter(
       def =>
         def.kind === 'ObjectTypeDefinition' &&
-        def.name.value == SUBGRAPH_SCHEMA &&
+        def.name.value == RESERVED_TYPE &&
         def.directives.find(
           directive =>
             directive.name.value == 'imports' &&
@@ -384,7 +384,7 @@ const validateNoImportsDirective = def =>
         immutable.fromJS({
           loc: def.name.loc,
           entity: def.name.value,
-          message: `@imports directive only allowed on '${SUBGRAPH_SCHEMA}' type`,
+          message: `@imports directive only allowed on '${RESERVED_TYPE}' type`,
         }),
       )
     : List()
@@ -398,7 +398,8 @@ const importDirectiveTypeValidators = {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: 'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
+          message:
+            'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
         }),
       )
     }
@@ -426,16 +427,18 @@ const importDirectiveTypeValidators = {
   },
 }
 
-const validateImportDirectiveType = (def, directive, type) =>
-  importDirectiveTypeValidators[type.kind]
+const validateImportDirectiveType = (def, directive, type) => {
+  return importDirectiveTypeValidators[type.kind]
     ? importDirectiveTypeValidators[type.kind](def, directive, type)
     : List().push(
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: 'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
+          message:
+            'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
         }),
       )
+}
 
 const validateImportDirectiveArgumentTypesIsValid = (def, directive, argument) => {
   if (argument.value.kind != 'ListValue') {
@@ -530,7 +533,7 @@ const validateImportDirectiveName = directive =>
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `${SUBGRAPH_SCHEMA} directives: only @import directives allowed`,
+          message: `${RESERVED_TYPE} directives: only @import directives allowed`,
         }),
       ])
     : List()
@@ -563,7 +566,7 @@ const validateAtLeastOneExtensionField = def => List()
 
 const typeDefinitionValidators = {
   ObjectTypeDefinition: (defs, def) =>
-    def.name && def.name.value == SUBGRAPH_SCHEMA
+    def.name && def.name.value == RESERVED_TYPE
       ? List.of(...validateSubgraphSchemaDirectives(def), ...validateTypeHasNoFields(def))
       : List.of(
           ...validateEntityDirective(def),
@@ -602,7 +605,8 @@ const validateNamingCollisionsInTypes = types => {
   }, List())
 }
 
-const validateNamingCollisions = (local, foreign) => validateNamingCollisionsInTypes(local.concat(foreign))
+const validateNamingCollisions = (local, foreign) =>
+  validateNamingCollisionsInTypes(local.concat(foreign))
 
 const validateSchema = filename => {
   let doc = loadSchema(filename)
