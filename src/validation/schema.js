@@ -493,7 +493,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: '@import directive from: fields must have string values',
+          message: `@import argument: 'from' fields must have string values`,
         }),
       )
     }
