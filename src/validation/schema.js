@@ -504,7 +504,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
 const validateImportDirectiveTypes = (def, directive) => {
   let types = directive.arguments.find(argument => argument.name.value == 'types')
   return types
-    ? validateImportDirectiveArgumentTypesIsValid(def, directive, types)
+    ? validateImportDirectiveArgumentTypes(def, directive, types)
     : List([
         immutable.fromJS({
           loc: directive.name.loc,
@@ -517,7 +517,7 @@ const validateImportDirectiveTypes = (def, directive) => {
 const validateImportDirectiveFrom = (def, directive) => {
   let from = directive.arguments.find(argument => argument.name.value == 'from')
   return from
-    ? validateImportDirectiveArgumentFromIsValid(def, directive, from)
+    ? validateImportDirectiveArgumentFrom(def, directive, from)
     : List([
         immutable.fromJS({
           loc: directive.name.loc,
