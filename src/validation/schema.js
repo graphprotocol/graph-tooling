@@ -418,7 +418,7 @@ const importDirectiveTypeValidators = {
           immutable.fromJS({
             loc: directive.name.loc,
             entity: def.name.value,
-            message: '@import type object fields [name, as] must be strings',
+            message: '@import fields [name, as] must be strings',
           }),
         )
       }
