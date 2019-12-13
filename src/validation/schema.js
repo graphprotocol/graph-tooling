@@ -484,7 +484,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: `@import directive argument: 'from' must be one of { name: "Name" } or { id: "ID" }`,
+          message: `@import argument: 'from' must be one of { name: "Name" } or { id: "ID" }`,
         }),
       )
     }
@@ -522,7 +522,7 @@ const validateImportDirectiveFrom = (def, directive) => {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `@import argument 'from' required: specify the subgraph to import types from`,
+          message: `@import argument 'from' must be specified`,
         }),
       ])
 }
