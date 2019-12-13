@@ -175,7 +175,7 @@ const gatherImportedTypes = defs =>
         def.name.value == RESERVED_TYPE &&
         def.directives.find(
           directive =>
-            directive.name.value == 'imports' &&
+            directive.name.value == 'import' &&
             directive.arguments.find(argument => argument.name.value == 'types'),
         ),
     )
@@ -183,7 +183,7 @@ const gatherImportedTypes = defs =>
       def.directives
         .filter(
           directive =>
-            directive.name.value == 'imports' &&
+            directive.name.value == 'import' &&
             directive.arguments.find(argument => argument.name.value == 'types'),
         )
         .map(imp =>
@@ -378,13 +378,13 @@ const validateEntityFields = (defs, def) =>
     List(),
   )
 
-const validateNoImportsDirective = def =>
-  def.directives.find(directive => directive.name.value == 'imports')
+const validateNoImportDirective = def =>
+  def.directives.find(directive => directive.name.value == 'import')
     ? List().push(
         immutable.fromJS({
           loc: def.name.loc,
           entity: def.name.value,
-          message: `@imports directive only allowed on '${RESERVED_TYPE}' type`,
+          message: `@import directive only allowed on '${RESERVED_TYPE}' type`,
         }),
       )
     : List()
@@ -409,7 +409,7 @@ const importDirectiveTypeValidators = {
           immutable.fromJS({
             loc: directive.name.loc,
             entity: def.name.value,
-            message: `@imports type object field '${field.name.value}' invalid,  may only be one of: [name, as]`,
+            message: `@import type object field '${field.name.value}' invalid,  may only be one of: [name, as]`,
           }),
         )
       }
@@ -418,7 +418,7 @@ const importDirectiveTypeValidators = {
           immutable.fromJS({
             loc: directive.name.loc,
             entity: def.name.value,
-            message: '@imports type object fields [name, as] must be strings',
+            message: '@import type object fields [name, as] must be strings',
           }),
         )
       }
@@ -446,7 +446,7 @@ const validateImportDirectiveArgumentTypesIsValid = (def, directive, argument) =
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@imports directive argument: `types` must be an list',
+        message: '@import directive argument: `types` must be an list',
       }),
     )
   }
@@ -463,7 +463,7 @@ const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) =>
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@imports directive argument: `from` must be an object',
+        message: '@import directive argument: `from` must be an object',
       }),
     )
   }
@@ -473,7 +473,7 @@ const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) =>
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@imports directive argument: 'from' must have one field of id or name`,
+        message: `@import directive argument: 'from' must have one field of id or name`,
       }),
     )
   }
@@ -484,7 +484,7 @@ const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) =>
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: `@imports directive argument: 'from' must be one of { name: "Name" } or { id: "ID" }`,
+          message: `@import directive argument: 'from' must be one of { name: "Name" } or { id: "ID" }`,
         }),
       )
     }
@@ -493,7 +493,7 @@ const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) =>
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: '@imports directive from: fields must have string values',
+          message: '@import directive from: fields must have string values',
         }),
       )
     }
@@ -528,7 +528,7 @@ const validateImportDirectiveFrom = (def, directive) => {
 }
 
 const validateImportDirectiveName = directive =>
-  directive.name.value != 'imports'
+  directive.name.value != 'import'
     ? List([
         immutable.fromJS({
           loc: directive.name.loc,
@@ -572,7 +572,7 @@ const typeDefinitionValidators = {
           ...validateEntityDirective(def),
           ...validateEntityID(def),
           ...validateEntityFields(defs, def),
-          ...validateNoImportsDirective(def),
+          ...validateNoImportDirective(def),
         ),
   ObjectTypeExtension: (_defs, def) => validateAtLeastOneExtensionField(def),
 }
