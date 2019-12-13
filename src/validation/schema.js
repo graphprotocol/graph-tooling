@@ -409,7 +409,7 @@ const importDirectiveTypeValidators = {
           immutable.fromJS({
             loc: directive.name.loc,
             entity: def.name.value,
-            message: `@import type object field '${field.name.value}' invalid,  may only be one of: [name, as]`,
+            message: `@import field '${field.name.value}' invalid, may only be one of: [name, as]`,
           }),
         )
       }
