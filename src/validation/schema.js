@@ -399,7 +399,7 @@ const importDirectiveTypeValidators = {
           loc: directive.name.loc,
           entity: def.name.value,
           message:
-            'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
+            'Import must be one of "Name" or { name: "Name", as: "Alias" }',
         }),
       )
     }
@@ -435,7 +435,7 @@ const validateImportDirectiveType = (def, directive, type) => {
           loc: directive.name.loc,
           entity: def.name.value,
           message:
-            'Imported type must be one of "Name", { name: "Name" }, or { name: "Name", as: "Alias" }',
+            'Import must be one of "Name" or { name: "Name", as: "Alias" }',
         }),
       )
 }
