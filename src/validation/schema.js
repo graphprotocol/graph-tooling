@@ -440,7 +440,7 @@ const validateImportDirectiveType = (def, directive, type) => {
       )
 }
 
-const validateImportDirectiveArgumentTypesIsValid = (def, directive, argument) => {
+const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
   if (argument.value.kind != 'ListValue') {
     return List().push(
       immutable.fromJS({
