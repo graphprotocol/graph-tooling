@@ -399,7 +399,7 @@ const importDirectiveTypeValidators = {
           loc: directive.name.loc,
           entity: def.name.value,
           message:
-            'Import must be one of "Name" or { name: "Name", as: "Alias" }',
+            `Import must be one of "Name" or { name: "Name", as: "Alias" }`,
         }),
       )
     }
@@ -418,7 +418,7 @@ const importDirectiveTypeValidators = {
           immutable.fromJS({
             loc: directive.name.loc,
             entity: def.name.value,
-            message: '@import fields [name, as] must be strings',
+            message: `@import fields [name, as] must be strings`,
           }),
         )
       }
@@ -435,7 +435,7 @@ const validateImportDirectiveType = (def, directive, type) => {
           loc: directive.name.loc,
           entity: def.name.value,
           message:
-            'Import must be one of "Name" or { name: "Name", as: "Alias" }',
+            `Import must be one of "Name" or { name: "Name", as: "Alias" }`,
         }),
       )
 }
@@ -446,7 +446,7 @@ const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@import argument: `types` must be an list',
+        message: `@import argument: 'types' must be an list`,
       }),
     )
   }
@@ -463,7 +463,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@import directive argument: `from` must be an object',
+        message: `@import directive argument: 'from' must be an object`,
       }),
     )
   }
@@ -473,7 +473,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@import argument: `from` must have an `id` or `name` field',
+        message: `@import argument: 'from' must have an 'id' or 'name' field`,
       }),
     )
   }
@@ -594,7 +594,7 @@ const validateNamingCollisionsInTypes = types => {
         immutable.fromJS({
           loc: { start: 1, end: 1 },
           entity: type,
-          message: `Type ${type} is defined more than once`,
+          message: `Type '${type}' is defined more than once`,
         }),
       )
       conflicting = conflicting.add(type)
