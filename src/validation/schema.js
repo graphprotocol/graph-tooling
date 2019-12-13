@@ -446,7 +446,7 @@ const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: '@import directive argument: `types` must be an list',
+        message: '@import argument: `types` must be an list',
       }),
     )
   }
