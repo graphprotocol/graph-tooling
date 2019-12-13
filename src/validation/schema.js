@@ -457,7 +457,7 @@ const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
   )
 }
 
-const validateImportDirectiveArgumentFromIsValid = (def, directive, argument) => {
+const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
   if (argument.value.kind != 'ObjectValue') {
     return List().push(
       immutable.fromJS({
