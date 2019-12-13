@@ -38,8 +38,8 @@ const TYPE_SUGGESTIONS = [
   ],
 ]
 
-// As a convention, the type _schema_ is reserved to define imports on.
-const RESERVED_TYPE = '_schema_'
+// As a convention, the type _Schema_ is reserved to define imports on.
+const RESERVED_TYPE = '_Schema_'
 
 /**
  * Returns a GraphQL type suggestion for a given input type.
