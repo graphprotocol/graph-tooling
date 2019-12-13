@@ -605,8 +605,8 @@ const validateNamingCollisionsInTypes = types => {
   }, List())
 }
 
-const validateNamingCollisions = (local, foreign) =>
-  validateNamingCollisionsInTypes(local.concat(foreign))
+const validateNamingCollisions = (local, imported) =>
+  validateNamingCollisionsInTypes(local.concat(imported))
 
 const validateSchema = filename => {
   let doc = loadSchema(filename)
