@@ -167,7 +167,7 @@ const gatherLocalTypes = defs =>
     )
     .map(def => def.name.value)
 
-const gatherForeignTypes = defs =>
+const gatherImportedTypes = defs =>
   defs
     .filter(
       def =>
@@ -243,7 +243,7 @@ const validateInnerFieldType = (defs, def, field) => {
   let availableTypes = List.of(
     ...BUILTIN_SCALAR_TYPES,
     ...gatherLocalTypes(defs),
-    ...gatherForeignTypes(defs),
+    ...gatherImportedTypes(defs),
   )
 
   // Check whether the type name is available, otherwise return an error
@@ -615,7 +615,7 @@ const validateSchema = filename => {
     ...validateTypeDefinitions(schema.definitions),
     ...validateNamingCollisions(
       gatherLocalTypes(schema.definitions),
-      gatherForeignTypes(schema.definitions),
+      gatherImportedTypes(schema.definitions),
     ),
   )
 }
