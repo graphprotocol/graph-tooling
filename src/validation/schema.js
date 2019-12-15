@@ -446,7 +446,7 @@ const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@import argument: 'types' must be an list`,
+        message: `@import argument 'types' must be an list`,
       }),
     )
   }
@@ -463,7 +463,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@import argument: 'from' must be an object`,
+        message: `@import argument 'from' must be an object`,
       }),
     )
   }
@@ -473,7 +473,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@import argument: 'from' must have an 'id' or 'name' field`,
+        message: `@import argument 'from' must have an 'id' or 'name' field`,
       }),
     )
   }
@@ -484,7 +484,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: `@import argument: 'from' must be one of { name: "Name" } or { id: "ID" }`,
+          message: `@import argument 'from' must be one of { name: "Name" } or { id: "ID" }`,
         }),
       )
     }
@@ -493,7 +493,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
         immutable.fromJS({
           loc: field.name.loc,
           entity: def.name.value,
-          message: `@import argument: 'from' must be one of { name: "Name" } or { id: "ID" } with string values`,
+          message: `@import argument 'from' must be one of { name: "Name" } or { id: "ID" } with string values`,
         }),
       )
     }
@@ -533,7 +533,7 @@ const validateImportDirectiveName = directive =>
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `${RESERVED_TYPE} directives: only @import directives allowed`,
+          message: `${RESERVED_TYPE} directives only allows @import directives`,
         }),
       ])
     : List()
