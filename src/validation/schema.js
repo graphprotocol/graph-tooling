@@ -463,7 +463,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@import directive argument: 'from' must be an object`,
+        message: `@import argument: 'from' must be an object`,
       }),
     )
   }
