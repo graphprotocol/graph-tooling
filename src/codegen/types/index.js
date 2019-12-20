@@ -31,11 +31,10 @@ const objectifyConversion = (fromTypeSystem, toTypeSystem, conversion) => {
 const findConversionFromType = (fromTypeSystem, toTypeSystem, fromType) => {
   let conversions = conversionsForTypeSystems(fromTypeSystem, toTypeSystem)
 
-  let conversion = conversions.find(
-    conversion =>
-      typeof conversion.get(0) === 'string'
-        ? conversion.get(0) === fromType
-        : fromType.match(conversion.get(0)),
+  let conversion = conversions.find(conversion =>
+    typeof conversion.get(0) === 'string'
+      ? conversion.get(0) === fromType
+      : fromType.match(conversion.get(0)),
   )
 
   if (conversion === undefined) {
@@ -51,11 +50,10 @@ const findConversionFromType = (fromTypeSystem, toTypeSystem, fromType) => {
 const findConversionToType = (fromTypeSystem, toTypeSystem, toType) => {
   let conversions = conversionsForTypeSystems(fromTypeSystem, toTypeSystem)
 
-  let conversion = conversions.find(
-    conversion =>
-      typeof conversion.get(1) === 'string'
-        ? conversion.get(1) === toType
-        : toType.match(conversion.get(1)),
+  let conversion = conversions.find(conversion =>
+    typeof conversion.get(1) === 'string'
+      ? conversion.get(1) === toType
+      : toType.match(conversion.get(1)),
   )
 
   if (conversion === undefined) {
@@ -71,24 +69,19 @@ const findConversionToType = (fromTypeSystem, toTypeSystem, toType) => {
 // High-level type system API
 
 const ascTypeForEthereum = ethereumType =>
-  findConversionFromType('EthereumValue', 'AssemblyScript', ethereumType).getIn([
-    'to',
-    'type',
-  ])
+  findConversionFromType('ethereum', 'AssemblyScript', ethereumType).getIn(['to', 'type'])
 
 const ethereumTypeForAsc = ascType =>
-  findConversionFromType('AssemblyScript', 'EthereumValue', ascType).getIn(['to', 'type'])
+  findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn(['to', 'type'])
 
-const ethereumValueToAsc = (code, ethereumType, internalType) =>
-  findConversionFromType('EthereumValue', 'AssemblyScript', ethereumType).get('convert')(
+const ethereumToAsc = (code, ethereumType, internalType) =>
+  findConversionFromType('ethereum', 'AssemblyScript', ethereumType).get('convert')(
     code,
-    internalType
+    internalType,
   )
 
-const ethereumValueFromAsc = (code, ethereumType) =>
-  findConversionToType('AssemblyScript', 'EthereumValue', ethereumType).get('convert')(
-    code,
-  )
+const ethereumFromAsc = (code, ethereumType) =>
+  findConversionToType('AssemblyScript', 'ethereum', ethereumType).get('convert')(code)
 
 const ascTypeForValue = valueType =>
   findConversionFromType('Value', 'AssemblyScript', valueType).getIn(['to', 'type'])
@@ -103,11 +96,11 @@ const valueFromAsc = (code, valueType) =>
   findConversionToType('AssemblyScript', 'Value', valueType).get('convert')(code)
 
 module.exports = {
-  // EthereumValue <-> AssemblyScript
+  // ethereum <-> AssemblyScript
   ascTypeForEthereum,
   ethereumTypeForAsc,
-  ethereumValueToAsc,
-  ethereumValueFromAsc,
+  ethereumToAsc,
+  ethereumFromAsc,
 
   // Value <-> AssemblyScript
   ascTypeForValue,

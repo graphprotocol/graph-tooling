@@ -1,7 +1,7 @@
 const immutable = require('immutable')
 
 /**
- * EthereumValue -> AssemblyScript conversions
+ * ethereum.Value -> AssemblyScript conversions
  */
 const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
   // Scalar values
@@ -46,97 +46,109 @@ const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
 
   // Tuples
 
-  ['tuple', 'EthereumTuple', code => `${code}.toTuple()`],
-  [/^tuple\[([0-9]+)?\]$/, 'Array<EthereumTuple>', (code, type) => `${code}.toTupleArray<${type}>()`],
+  ['tuple', 'ethereum.Tuple', code => `${code}.toTuple()`],
+  [
+    /^tuple\[([0-9]+)?\]$/,
+    'Array<ethereum.Tuple>',
+    (code, type) => `${code}.toTupleArray<${type}>()`,
+  ],
 ]
 
 /**
- * AssemblyScript -> EthereumValue conversions
+ * AssemblyScript -> ethereum.Value conversions
  *
  * Note: The order and patterns for conversions in this direction differ slightly
- * from EthereumValue -> AssemblyScript, which is why there is a separate table
+ * from ethereum.Value -> AssemblyScript, which is why there is a separate table
  * for them.
  */
 const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
   // Scalar values
 
-  ['Address', 'address', code => `EthereumValue.fromAddress(${code})`],
-  ['boolean', 'bool', code => `EthereumValue.fromBoolean(${code})`],
-  ['Bytes', 'byte', code => `EthereumValue.fromFixedBytes(${code})`],
-  ['Bytes', 'bytes', code => `EthereumValue.fromBytes(${code})`],
+  ['Address', 'address', code => `ethereum.Value.fromAddress(${code})`],
+  ['boolean', 'bool', code => `ethereum.Value.fromBoolean(${code})`],
+  ['Bytes', 'byte', code => `ethereum.Value.fromFixedBytes(${code})`],
+  ['Bytes', 'bytes', code => `ethereum.Value.fromBytes(${code})`],
   [
     'Bytes',
     /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)$/,
-    code => `EthereumValue.fromFixedBytes(${code})`,
+    code => `ethereum.Value.fromFixedBytes(${code})`,
   ],
-  ['i32', /^int(8|16|24|32)$/, code => `EthereumValue.fromI32(${code})`],
-  ['i32', /^uint(8|16|24)$/, code => `EthereumValue.fromUnsignedBigInt(BigInt.fromI32(${code}))`],
+  ['i32', /^int(8|16|24|32)$/, code => `ethereum.Value.fromI32(${code})`],
+  [
+    'i32',
+    /^uint(8|16|24)$/,
+    code => `ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(${code}))`,
+  ],
   [
     'BigInt',
     /^int(40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)$/,
-    code => `EthereumValue.fromSignedBigInt(${code})`,
+    code => `ethereum.Value.fromSignedBigInt(${code})`,
   ],
   [
     'BigInt',
     /^uint(32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)$/,
-    code => `EthereumValue.fromUnsignedBigInt(${code})`,
+    code => `ethereum.Value.fromUnsignedBigInt(${code})`,
   ],
-  ['string', 'string', code => `EthereumValue.fromString(${code})`],
+  ['string', 'string', code => `ethereum.Value.fromString(${code})`],
 
   // Arrays
 
   [
     'Array<Address>',
     /^address\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromAddressArray(${code})`,
+    code => `ethereum.Value.fromAddressArray(${code})`,
   ],
   [
     'Array<boolean>',
     /^bool\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromBooleanArray(${code})`,
+    code => `ethereum.Value.fromBooleanArray(${code})`,
   ],
   [
     'Array<Bytes>',
     /^byte\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromFixedBytesArray(${code})`,
+    code => `ethereum.Value.fromFixedBytesArray(${code})`,
   ],
   [
     'Array<Bytes>',
     /bytes\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromBytesArray(${code})`,
+    code => `ethereum.Value.fromBytesArray(${code})`,
   ],
   [
     'Array<Bytes>',
     /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromFixedBytesArray(${code})`,
+    code => `ethereum.Value.fromFixedBytesArray(${code})`,
   ],
   [
     'Array<i32>',
     /^int(8|16|24|32)\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromI32Array(${code})`,
+    code => `ethereum.Value.fromI32Array(${code})`,
   ],
   [
     'Array<i32>',
     /^uint(8|16|24)\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromI32Array(${code})`,
+    code => `ethereum.Value.fromI32Array(${code})`,
   ],
   [
     'Array<BigInt>',
     /^int(40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromSignedBigIntArray(${code})`,
+    code => `ethereum.Value.fromSignedBigIntArray(${code})`,
   ],
   [
     'Array<BigInt>',
     /^uint(32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromUnsignedBigIntArray(${code})`,
+    code => `ethereum.Value.fromUnsignedBigIntArray(${code})`,
   ],
   [
     'Array<string>',
     /^string\[([0-9]+)?\]$/,
-    code => `EthereumValue.fromStringArray(${code})`,
+    code => `ethereum.Value.fromStringArray(${code})`,
   ],
-  ['Tuple', 'tuple', code => `EthereumValue.fromTuple(${code})`],
-  ['Array<Tuple>', /^tuple\[([0-9]+)?\]$/, code => `EthereumValue.fromTupleArray(${code})`],
+  ['Tuple', 'tuple', code => `ethereum.Value.fromTuple(${code})`],
+  [
+    'Array<Tuple>',
+    /^tuple\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromTupleArray(${code})`,
+  ],
 ]
 
 /**
@@ -203,11 +215,11 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
  * Type conversions
  */
 module.exports = immutable.fromJS({
-  EthereumValue: {
+  ethereum: {
     AssemblyScript: ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT,
   },
   AssemblyScript: {
-    EthereumValue: ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE,
+    ethereum: ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE,
     Value: ASSEMBLYSCRIPT_TO_VALUE,
   },
   Value: {

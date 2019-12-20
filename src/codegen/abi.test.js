@@ -175,9 +175,12 @@ describe('ABI code generation', () => {
       expect(contract.methods.map(method => [method.name, method.returnType])).toEqual([
         ['bind', ts.namedType('Contract')],
         ['read', ts.namedType('Bytes')],
-        ['try_read', 'CallResult<Bytes>'],
+        ['try_read', 'ethereum.CallResult<Bytes>'],
         ['getProposal', ts.namedType('Contract__getProposalResultValue0Struct')],
-        ['try_getProposal', 'CallResult<Contract__getProposalResultValue0Struct>'],
+        [
+          'try_getProposal',
+          'ethereum.CallResult<Contract__getProposalResultValue0Struct>',
+        ],
       ])
     })
   })
