@@ -13,21 +13,18 @@ module.exports = class AbiCodeGenerator {
     return [
       tsCodegen.moduleImports(
         [
+          // Ethereum integration
+          'ethereum',
+
           // Base classes
-          'EthereumCall',
-          'EthereumEvent',
-          'SmartContract',
-          'EthereumValue',
           'JSONValue',
           'TypedMap',
           'Entity',
-          'EthereumTuple',
 
           // AssemblyScript types
           'Bytes',
           'Address',
           'BigInt',
-          'CallResult',
         ],
         '@graphprotocol/graph-ts',
       ),
@@ -123,7 +120,7 @@ module.exports = class AbiCodeGenerator {
         // Then, generate the event class itself
         let klass = tsCodegen.klass(fnClassName, {
           export: true,
-          extends: 'EthereumCall',
+          extends: 'ethereum.Call',
         })
         klass.addMethod(
           tsCodegen.method(
@@ -199,7 +196,7 @@ module.exports = class AbiCodeGenerator {
         // Then, generate the event class itself
         let klass = tsCodegen.klass(eventClassName, {
           export: true,
-          extends: 'EthereumEvent',
+          extends: 'ethereum.Event',
         })
         klass.addMethod(
           tsCodegen.method(
@@ -230,7 +227,7 @@ module.exports = class AbiCodeGenerator {
       name = parentType === 'event' ? `param${index}` : `value${index}`
     }
 
-    // Generate getters and classes for the param (classes only created for EthereumTuple types)
+    // Generate getters and classes for the param (classes only created for Ethereum tuple types)
     return valueType === 'tuple'
       ? this._generateTupleType(
           inputOrOutput,
@@ -246,7 +243,7 @@ module.exports = class AbiCodeGenerator {
             [],
             typesCodegen.ascTypeForEthereum(valueType),
             `
-            return ${typesCodegen.ethereumValueToAsc(
+            return ${typesCodegen.ethereumToAsc(
               parentType === 'tuple'
                 ? `this[${index}]`
                 : `this._${parentType}.${parentField}[${index}].value`,
@@ -278,7 +275,7 @@ module.exports = class AbiCodeGenerator {
       [],
       tupleClassName,
       `
-      return ${typesCodegen.ethereumValueToAsc(
+      return ${typesCodegen.ethereumToAsc(
         parentType === 'tuple'
           ? `this[${index}]`
           : `this._${parentType}.${parentField}[${index}].value`,
@@ -290,7 +287,7 @@ module.exports = class AbiCodeGenerator {
     // Generate tuple class
     let baseTupleClass = tsCodegen.klass(tupleClassName, {
       export: true,
-      extends: 'EthereumTuple',
+      extends: 'ethereum.Tuple',
     })
 
     // Add param getters to tuple class and generate classes for each tuple parameter
@@ -317,7 +314,10 @@ module.exports = class AbiCodeGenerator {
   }
 
   _generateSmartContractClass() {
-    let klass = tsCodegen.klass(this.abi.name, { export: true, extends: 'SmartContract' })
+    let klass = tsCodegen.klass(this.abi.name, {
+      export: true,
+      extends: 'ethereum.SmartContract',
+    })
     let types = immutable.List()
 
     klass.addMethod(
@@ -398,18 +398,18 @@ module.exports = class AbiCodeGenerator {
           ),
         )
 
-        // Add a `toMap(): TypedMap<string,EthereumValue>` function to the return type
+        // Add a `toMap(): TypedMap<string,ethereum.Value>` function to the return type
         returnType.addMethod(
           tsCodegen.method(
             'toMap',
             [],
-            tsCodegen.namedType('TypedMap<string,EthereumValue>'),
+            tsCodegen.namedType('TypedMap<string,ethereum.Value>'),
             `
-            let map = new TypedMap<string,EthereumValue>();
+            let map = new TypedMap<string,ethereum.Value>();
             ${outputs
               .map(
                 (output, index) =>
-                  `map.set('value${index}', ${typesCodegen.ethereumValueFromAsc(
+                  `map.set('value${index}', ${typesCodegen.ethereumFromAsc(
                     `this.value${index}`,
                     output.get('type'),
                   )})`,
@@ -514,7 +514,7 @@ module.exports = class AbiCodeGenerator {
         inputs.size > 0
           ? inputs
               .map(input =>
-                typesCodegen.ethereumValueFromAsc(input.get('name'), input.get('type')),
+                typesCodegen.ethereumFromAsc(input.get('name'), input.get('type')),
               )
               .map(coercion => coercion.toString())
               .join(', ')
@@ -528,18 +528,18 @@ module.exports = class AbiCodeGenerator {
             ? `
         let result = super.tryCall(${superInputs})
         if (result.reverted) {
-          return new CallResult()
+          return new ethereum.CallResult()
         }
         let value = result.value
-        return CallResult.fromValue(`
+        return ethereum.CallResult.fromValue(`
             : `
         let result = super.call(${superInputs})
-        
+
         return (`
         }
       ${
         simpleReturnType
-          ? typesCodegen.ethereumValueToAsc(
+          ? typesCodegen.ethereumToAsc(
               isTry ? 'value[0]' : 'result[0]',
               outputs.get(0).get('type'),
               util.isTupleArrayType(outputs.get(0).get('type'))
@@ -555,7 +555,7 @@ module.exports = class AbiCodeGenerator {
                 ${outputs
                   .map(
                     (output, index) =>
-                      `${typesCodegen.ethereumValueToAsc(
+                      `${typesCodegen.ethereumToAsc(
                         isTry ? `value[${index}]` : `result[${index}]`,
                         output.get('type'),
                       )} ${
@@ -582,7 +582,7 @@ module.exports = class AbiCodeGenerator {
         tsCodegen.method(
           'try_' + fnAlias,
           params,
-          'CallResult<' + returnType + '>',
+          'ethereum.CallResult<' + returnType + '>',
           methodCallBody(true),
         ),
       )
