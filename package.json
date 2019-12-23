@@ -22,7 +22,7 @@
     "yaml": "^1.5.1"
   },
   "optionalDependencies": {
-    "keytar": "^4.6.0"
+    "keytar": "^5.0.0"
   },
   "bin": {
     "graph": "bin/graph"
