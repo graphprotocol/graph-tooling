@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 description: "example of a subgraph"
 repository: https://github.com/graphprotocol/graph-cli.git
 schema:
