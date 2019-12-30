@@ -5369,9 +5369,9 @@ tar@^4:
     yallist "^3.0.2"
 
 tern@^0.24.0:
-  version "0.24.2"
-  resolved "https://registry.yarnpkg.com/tern/-/tern-0.24.2.tgz#a6826756afe87a539b4629375721fad2536de48e"
-  integrity sha512-pVJhZp1vvv2ewgPv6YwNsyCU+ComJdHBtTajDo/EdfGHY2CLCQ53ucgCzvWfFx+KXls0H6sRwnDMY8Qo+aQviw==
+  version "0.24.3"
+  resolved "https://registry.yarnpkg.com/tern/-/tern-0.24.3.tgz#da0d9118490c15af4b1c94553d5f0fafc77a0977"
+  integrity sha512-Z8uvtdWIlFn1GWy0HW5FhZ8VDryZwoJUdnjZU25C7/PBOltLIn1uv+WF3rVq6S1761YbsmbZYRP/l0ZJBCkvrw==
   dependencies:
     acorn "^6.0.0"
     acorn-loose "^6.0.0"
