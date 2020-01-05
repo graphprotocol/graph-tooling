@@ -1,10 +1,13 @@
 const chalk = require('chalk')
 const compose = require('docker-compose')
 const fs = require('fs-extra')
+const http = require('http')
 const tmp = require('tmp')
 const Docker = require('dockerode')
 const path = require('path')
 const stripAnsi = require('strip-ansi')
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -91,28 +94,26 @@ module.exports = {
 
     // Create temporary directory to operate in
     let tempdir = tmp.dirSync({ prefix: 'graph-test', unsafeCleanup: true }).name
-
-    // Copy source tree into the temporary directory under sources/
-    let sources = path.join(tempdir, 'sources')
-    if (!(await copySourcesToDir(toolbox, sources))) {
+    if (!(await configureCompose(toolbox, tempdir, composeFile, nodeImage))) {
       process.exitCode = 1
       return
     }
 
-    // Build the Docker test image from sources/
-    if (!(await buildTestImage(toolbox, docker, sources, dockerFile))) {
-      process.exitCode = 1
-      return
-    }
-
-    // Create docker-compose configuration
-    if (!(await configureCompose(toolbox, compose, tempdir, composeFile, nodeImage))) {
+    // Bring up Graph Node
+    if (!(await startGraphNode(toolbox, tempdir))) {
+      toolbox.print.error('')
+      toolbox.print.error('  Graph Node')
+      toolbox.print.error('  ----------')
+      toolbox.print.error(indent('  ', await graphNodeLogs(toolbox, tempdir)))
       process.exitCode = 1
       return
     }
 
     // Run tests
-    let result = await runTests(toolbox, compose, tempdir, testCommand)
+    let result = await runTests(toolbox, tempdir, testCommand)
+
+    // Bring down Graph Node
+    await stopGraphNode(toolbox, tempdir)
 
     if (result.exitCode == 0) {
       toolbox.print.success('✔ Tests passed')
@@ -120,19 +121,41 @@ module.exports = {
       toolbox.print.error('✖ Tests failed')
     }
 
-    toolbox.print.info(result.output)
+    // Always print the test output
+    toolbox.print.info('')
+    toolbox.print.info('  Output')
+    toolbox.print.info('  ------')
+    toolbox.print.info('')
+    toolbox.print.info(indent('  ', result.stdout.trim()))
+
+    if (result.exitCode !== 0) {
+      // If there was an error, print the error output as well
+      toolbox.print.error('')
+      toolbox.print.error('  Errors')
+      toolbox.print.error('  ------')
+      toolbox.print.error('')
+      toolbox.print.error(indent('  ', result.stderr.trim()))
+    }
 
     if (result.exitCode !== 0 || nodeLogs) {
-      toolbox.print.info('---')
-      toolbox.print.info('Graph Node logs')
-      toolbox.print.info('---')
-      toolbox.print.info(toolbox.print.colors.muted(result.nodeLogs))
+      toolbox.print.info('')
+      toolbox.print.info('  Graph Node')
+      toolbox.print.info('  ----------')
+      toolbox.print.info('')
+      toolbox.print.info(indent('  ', result.nodeLogs))
     }
 
     // Propagate the exit code from the test run
     process.exitCode = result.exitCode
   },
 }
+
+// Indents all lines of a string
+const indent = (indentation, str) =>
+  str
+    .split('\n')
+    .map(s => `${indentation}${s}`)
+    .join('\n')
 
 // Copy source directory into the temporary directory
 const copySourcesToDir = async (toolbox, outputDir) =>
@@ -148,44 +171,7 @@ const copySourcesToDir = async (toolbox, outputDir) =>
     },
   )
 
-const buildTestImage = async (toolbox, docker, context, dockerFile) =>
-  await withSpinner(
-    `Build test image`,
-    `Failed to build test image`,
-    `Warnings building test image`,
-    async spinner => {
-      // Copy the dockerFile to the temporary source directory
-      await toolbox.filesystem.copy(dockerFile, path.join(context, 'Dockerfile'))
-      await toolbox.filesystem.copy(
-        path.join(path.dirname(dockerFile), 'run-tests.sh'),
-        path.join(context, 'run-tests.sh'),
-      )
-
-      // Build the testing image
-      let buildStream = await docker.buildImage(
-        {
-          context,
-          src: [path.basename(dockerFile), '.'],
-        },
-        {
-          // FIXME: Give this a project-specific name
-          t: 'graph-test',
-
-          // Keep intermediate containers to speed up future test runs
-          rm: false,
-        },
-      )
-
-      return await new Promise((resolve, reject) =>
-        docker.modem.followProgress(
-          buildStream,
-          (err, res) => (err ? reject(err) : resolve(res)),
-        ),
-      )
-    },
-  )
-
-const configureCompose = async (toolbox, compose, tempdir, composeFile, nodeImage) =>
+const configureCompose = async (toolbox, tempdir, composeFile, nodeImage) =>
   await withSpinner(
     `Configure Docker Compose`,
     `Failed to configure Docker Compose`,
@@ -210,29 +196,89 @@ const configureCompose = async (toolbox, compose, tempdir, composeFile, nodeImag
     },
   )
 
-const runTests = async (toolbox, compose, tempdir, testCommand) =>
+const startGraphNode = async (toolbox, tempdir) =>
+  await withSpinner(
+    `Start Graph Node`,
+    `Failed to start Graph Node`,
+    `Warnings starting Graph Node`,
+    async spinner => {
+      // Bring up Graph Node
+      await compose.upAll({
+        cwd: path.join(tempdir, 'compose'),
+      })
+
+      // Wait for Graph Node
+      await waitForGraphNode(toolbox)
+      return true
+    },
+  )
+
+const stopGraphNode = async (toolbox, tempdir) =>
+  await compose.down({ cwd: path.join(tempdir, 'compose') })
+
+const waitForGraphNode = toolbox => {
+  // Give the node 30 seconds to come up
+  let deadline = Date.now() + 30 * 1000
+
+  let lastError = undefined
+
+  return new Promise((resolve, reject) => {
+    const pingNode = () => {
+      if (Date.now() > deadline) {
+        reject(`Failed to connect to Graph Node: ${lastError}`)
+      } else {
+        http
+          .get('http://localhost:8000/subgraphs', response => {
+            if (response.statusCode < 400) {
+              resolve()
+            } else {
+              setTimeout(pingNode, 500)
+            }
+          })
+          .on('error', e => {
+            lastError = e
+            setTimeout(pingNode, 500)
+          })
+      }
+    }
+
+    setTimeout(pingNode, 0)
+  })
+}
+
+const graphNodeLogs = async (toolbox, tempdir) => {
+  let logs = await compose.logs('graph-node', {
+    follow: false,
+    cwd: path.join(tempdir, 'compose'),
+  })
+  return stripAnsi(logs.out.trim()).replace(/graph-node_1  \| /g, '')
+}
+
+const runTests = async (toolbox, tempdir, testCommand) =>
   await withSpinner(
     `Run tests`,
     `Failed to run tests`,
     `Warnings running tests`,
     async spinner => {
-      let result = await compose.run('test', testCommand, {
-        cwd: path.join(tempdir, 'compose'),
-        commandOptions: ['--service-ports'],
-      })
+      // Run the test command
+      let result = {
+        exitCode: 0,
+        output: '',
+      }
 
-      // Capture node logs
-      let nodeLogs = await compose.logs('graph-node', {
-        follow: false,
-        cwd: path.join(tempdir, 'compose'),
-      })
-
-      await compose.down({ cwd: path.join(tempdir, 'compose') })
+      try {
+        let { stdout, stderr } = await exec(testCommand, { trim: true })
+        result.stdout = stdout
+        result.stderr = undefined
+      } catch (e) {
+        result.exitCode = e.code
+        result.stdout = e.stdout
+        result.stderr = e.stderr
+      }
 
       return {
-        exitCode: result.exitCode,
-        nodeLogs: stripAnsi(nodeLogs.out.trim()).replace(/graph-node_1  \| /g, ''),
-        output: result.out,
+        ...result,
+        nodeLogs: await graphNodeLogs(toolbox, tempdir),
       }
     },
   )
