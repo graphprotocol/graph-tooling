@@ -7,6 +7,8 @@ node_js:
   - '10'
   - '11'
 cache: yarn
+services:
+  - docker
 # before_install:
 #  - sudo apt-get install libsecret-1-dev dbus gnome-keyring python-keyring python-gnomekeyring
 # before_script:
