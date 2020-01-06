@@ -23,9 +23,9 @@ Options:
 
   -h, --help                    Show usage information
       --compose-file <file>     Custom Docker Compose file for additional services (optional)
-      --dockerfile <file>       Custom Dockerfile for the test image (optional)
       --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
-      --node-logs               Always print the Graph Node logs (optional)
+      --node-logs               Print the Graph Node logs (optional)
+      --deterministic-output    Make the output deterministic by redacting known variable parts
 `
 
 module.exports = {
@@ -37,7 +37,7 @@ module.exports = {
     // Parse CLI parameters
     let {
       composeFile,
-      dockerFile,
+      deterministicOutput,
       h,
       help,
       nodeImage,
@@ -49,8 +49,7 @@ module.exports = {
 
     // Extract test command
     let params = fixParameters(toolbox.parameters, {
-      composeFile,
-      dockerFile,
+      deterministicOutput,
       h,
       help,
       nodeLogs,
@@ -126,7 +125,7 @@ module.exports = {
     toolbox.print.info('  Output')
     toolbox.print.info('  ------')
     toolbox.print.info('')
-    toolbox.print.info(indent('  ', result.stdout.trim()))
+    toolbox.print.info(indent('  ', prepareOutput(result.stdout, deterministicOutput)))
 
     if (result.exitCode !== 0) {
       // If there was an error, print the error output as well
@@ -134,7 +133,7 @@ module.exports = {
       toolbox.print.error('  Errors')
       toolbox.print.error('  ------')
       toolbox.print.error('')
-      toolbox.print.error(indent('  ', result.stderr.trim()))
+      toolbox.print.error(indent('  ', prepareOutput(result.stderr, deterministicOutput)))
     }
 
     if (result.exitCode !== 0 || nodeLogs) {
@@ -142,7 +141,9 @@ module.exports = {
       toolbox.print.info('  Graph Node')
       toolbox.print.info('  ----------')
       toolbox.print.info('')
-      toolbox.print.info(indent('  ', result.nodeLogs))
+      toolbox.print.info(
+        indent('  ', prepareOutput(result.nodeLogs, deterministicOutput)),
+      )
     }
 
     // Propagate the exit code from the test run
@@ -150,11 +151,15 @@ module.exports = {
   },
 }
 
-// Indents all lines of a string
+/**
+ * Indents all lines of a string
+ */
 const indent = (indentation, str) =>
   str
     .split('\n')
     .map(s => `${indentation}${s}`)
+    // Remove whitespace from empty lines
+    .map(s => s.replace(/^\s+$/g, ''))
     .join('\n')
 
 // Copy source directory into the temporary directory
@@ -170,6 +175,26 @@ const copySourcesToDir = async (toolbox, outputDir) =>
       return true
     },
   )
+/**
+ * Transforms a test output string so it is deterministic.
+ */
+const prepareOutput = (str, deterministic) =>
+  stripAnsi(str)
+    // Remove leading and trailing whitespace
+    .trim()
+    // Split up into an array of lines
+    .split('\n')
+    // Substitute temporary truffle directory to make output deterministic
+    .map(s =>
+      deterministic ? s.replace(/^(> Artifacts written to) .*$/g, '$1 TEMPDIR') : s,
+    )
+    // Substitute output timing to make output deterministic
+    .map(s =>
+      deterministic
+        ? s.replace(/^(.* passing) \([0-9\.]+s\).*/g, '$1 (TIME REDACTED)')
+        : s,
+    )
+    .join('\n')
 
 const configureCompose = async (toolbox, tempdir, composeFile, nodeImage) =>
   await withSpinner(
