@@ -1,0 +1,23 @@
+{
+  "name": "basic-event-handlers",
+  "version": "0.1.0",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "test": "truffle test --network test",
+    "create-local": "graph create test/basic-event-handlers --node http://127.0.0.1:8020",
+    "deploy-local": "graph deploy test/basic-event-handlers --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.17.1",
+    "@graphprotocol/graph-ts": "^0.17.0",
+    "apollo-fetch": "^0.7.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "truffle": "^5.0.4",
+    "truffle-contract": "^4.0.5",
+    "truffle-hdwallet-provider": "^1.0.4"
+  }
+}
