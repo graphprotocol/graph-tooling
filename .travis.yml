@@ -16,11 +16,18 @@ services:
   # properly when needed
   # - dbus-launch /usr/bin/python -c "import gnomekeyring;gnomekeyring.create_sync('login', '');"
 script:
+  # Run the test suite
   - yarn test
+  # Test codegen and build in the example subgraph
   - cd examples/example-subgraph
   - yarn
   - ../../bin/graph codegen --debug
   - ../../bin/graph build --debug
+  # Exercise `graph test` with another example subgraph
+  - cd ../../examples/basic-event-handlers
+  - yarn
+  - ../../bin/graph test "yarn test"
+  
   # Run `graph auth` inside `dbus-launch` to be able to access gnome-keyring
   # secrets via keytar
   # - dbus-launch bash -c '../../bin/graph auth http://some-node-ip.org test-access-token'
