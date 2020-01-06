@@ -72,15 +72,6 @@ module.exports = {
     // Create Docker client
     let docker = new Docker()
 
-    // Obtain the docker file to build the test image from
-    dockerFile =
-      dockerFile || path.join(__dirname, '..', '..', 'resources', 'test', 'Dockerfile')
-    if (!filesystem.exists(dockerFile)) {
-      print.error(`Dockerfile \`${dockerFile}\` for the test image not found`)
-      process.exitCode = 1
-      return
-    }
-
     // Obtain the Docker Compose file for services that the tests run against
     composeFile =
       composeFile ||
@@ -162,19 +153,6 @@ const indent = (indentation, str) =>
     .map(s => s.replace(/^\s+$/g, ''))
     .join('\n')
 
-// Copy source directory into the temporary directory
-const copySourcesToDir = async (toolbox, outputDir) =>
-  await withSpinner(
-    'Copy sources to temporary directory',
-    'Failed to copy sources to temporary directory',
-    'Warnings copying sources to temporary directory',
-    async spinner => {
-      await toolbox.filesystem.copy(process.cwd(), outputDir, {
-        matching: ['!node_modules'],
-      })
-      return true
-    },
-  )
 /**
  * Transforms a test output string so it is deterministic.
  */
