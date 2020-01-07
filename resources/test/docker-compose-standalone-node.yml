@@ -1,0 +1,20 @@
+version: '3'
+services:
+  ethereum:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - '8545:8545'
+      - '8546:8546'
+    command: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
+  ipfs:
+    image: ipfs/go-ipfs
+    ports:
+      - '5001:5001'
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: graph
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph
