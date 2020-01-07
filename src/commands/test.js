@@ -24,6 +24,7 @@ ${chalk.bold('graph test')} [options] ${chalk.bold('<test-command>')}
 Options:
 
   -h, --help                    Show usage information
+      --node-logs               Print the Graph Node logs (optional)
       --compose-file <file>     Custom Docker Compose file for additional services (optional)
       --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
       --standalone-node <cmd>   Use a standalone Graph Node outside Docker Compose (optional)
@@ -31,7 +32,6 @@ Options:
       --skip-wait-for-ipfs      Don't wait for IPFS to be up at localhost:5001 (optional)
       --skip-wait-for-ethereum  Don't wait for Ethereum to be up at localhost:8545 (optional)
       --skip-wait-for-postgres  Don't wait for Postgres to be up at localhost:5432 (optional)
-      --node-logs               Print the Graph Node logs (optional)
 `
 
 module.exports = {
