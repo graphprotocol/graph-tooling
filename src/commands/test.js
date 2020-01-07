@@ -411,10 +411,7 @@ const startGraphNode = async (
         GRAPH_TOKIO_THREAD_COUNT: 10,
       }
 
-      let args = [
-        ...defaultArgs,
-        ...(standaloneNodeArgs ? standaloneNodeArgs.split(' ') : []),
-      ]
+      let args = standaloneNodeArgs ? standaloneNodeArgs.split(' ') : defaultArgs
       let env = { ...defaultEnv, ...process.env }
 
       let nodeProcess = spawn(standaloneNode, args, {
