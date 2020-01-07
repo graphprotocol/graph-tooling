@@ -25,7 +25,6 @@ Options:
       --compose-file <file>     Custom Docker Compose file for additional services (optional)
       --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
       --node-logs               Print the Graph Node logs (optional)
-      --deterministic-output    Make the output deterministic by redacting known variable parts
 `
 
 module.exports = {
@@ -35,21 +34,13 @@ module.exports = {
     let { filesystem, print, system } = toolbox
 
     // Parse CLI parameters
-    let {
-      composeFile,
-      deterministicOutput,
-      h,
-      help,
-      nodeImage,
-      nodeLogs,
-    } = toolbox.parameters.options
+    let { composeFile, h, help, nodeImage, nodeLogs } = toolbox.parameters.options
 
     // Support both short and long option variants
     help = help || h
 
     // Extract test command
     let params = fixParameters(toolbox.parameters, {
-      deterministicOutput,
       h,
       help,
       nodeLogs,
@@ -116,7 +107,7 @@ module.exports = {
     toolbox.print.info('  Output')
     toolbox.print.info('  ------')
     toolbox.print.info('')
-    toolbox.print.info(indent('  ', prepareOutput(result.stdout, deterministicOutput)))
+    toolbox.print.info(indent('  ', prepareOutput(result.stdout)))
 
     if (result.exitCode !== 0) {
       // If there was an error, print the error output as well
@@ -124,7 +115,7 @@ module.exports = {
       toolbox.print.error('  Errors')
       toolbox.print.error('  ------')
       toolbox.print.error('')
-      toolbox.print.error(indent('  ', prepareOutput(result.stderr, deterministicOutput)))
+      toolbox.print.error(indent('  ', prepareOutput(result.stderr)))
     }
 
     if (result.exitCode !== 0 || nodeLogs) {
@@ -132,9 +123,7 @@ module.exports = {
       toolbox.print.info('  Graph Node')
       toolbox.print.info('  ----------')
       toolbox.print.info('')
-      toolbox.print.info(
-        indent('  ', prepareOutput(result.nodeLogs, deterministicOutput)),
-      )
+      toolbox.print.info(indent('  ', prepareOutput(result.nodeLogs)))
     }
 
     // Propagate the exit code from the test run
@@ -151,27 +140,6 @@ const indent = (indentation, str) =>
     .map(s => `${indentation}${s}`)
     // Remove whitespace from empty lines
     .map(s => s.replace(/^\s+$/g, ''))
-    .join('\n')
-
-/**
- * Transforms a test output string so it is deterministic.
- */
-const prepareOutput = (str, deterministic) =>
-  stripAnsi(str)
-    // Remove leading and trailing whitespace
-    .trim()
-    // Split up into an array of lines
-    .split('\n')
-    // Substitute temporary truffle directory to make output deterministic
-    .map(s =>
-      deterministic ? s.replace(/^(> Artifacts written to) .*$/g, '$1 TEMPDIR') : s,
-    )
-    // Substitute output timing to make output deterministic
-    .map(s =>
-      deterministic
-        ? s.replace(/^(.* passing) \([0-9\.]+s\).*/g, '$1 (TIME REDACTED)')
-        : s,
-    )
     .join('\n')
 
 const configureCompose = async (toolbox, tempdir, composeFile, nodeImage) =>
