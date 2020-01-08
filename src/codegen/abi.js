@@ -3,6 +3,7 @@ const immutable = require('immutable')
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
 const util = require('./util')
+const ABI = require('../abi')
 
 module.exports = class AbiCodeGenerator {
   constructor(abi) {
@@ -346,6 +347,7 @@ module.exports = class AbiCodeGenerator {
     functions.forEach(member => {
       let fnName = member.get('name')
       let fnAlias = member.get('_alias')
+      let fnSignature = this.abi.functionSignature(member)
 
       // Generate a type for the result of calling the function
       let returnType = undefined
@@ -382,13 +384,13 @@ module.exports = class AbiCodeGenerator {
                       this.abi.name,
                     )
                   : util.isTupleArrayType(output.get('type'))
-                  ? `Array<${this._tupleTypeName(
-                      output,
-                      index,
-                      tupleResultParentType,
-                      this.abi.name,
-                    )}>`
-                  : typesCodegen.ascTypeForEthereum(output.get('type')),
+                    ? `Array<${this._tupleTypeName(
+                        output,
+                        index,
+                        tupleResultParentType,
+                        this.abi.name,
+                      )}>`
+                    : typesCodegen.ascTypeForEthereum(output.get('type')),
               ),
             ),
             null,
@@ -503,13 +505,14 @@ module.exports = class AbiCodeGenerator {
           input.get('type') === 'tuple'
             ? this._tupleTypeName(input, index, tupleInputParentType, this.abi.name)
             : util.isTupleArrayType(input.get('type'))
-            ? `Array<${this._tupleTypeName(input, index, tupleInputParentType)}>`
-            : typesCodegen.ascTypeForEthereum(input.get('type')),
+              ? `Array<${this._tupleTypeName(input, index, tupleInputParentType)}>`
+              : typesCodegen.ascTypeForEthereum(input.get('type')),
         ),
       )
 
       let superInputs = `
       '${fnName}',
+      '${fnSignature}',
       [${
         inputs.size > 0
           ? inputs
