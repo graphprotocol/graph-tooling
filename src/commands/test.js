@@ -209,13 +209,6 @@ module.exports = {
       // do nothing (the spinner already logs the problem)
     }
 
-    // Always print the test output
-    toolbox.print.info('')
-    toolbox.print.info('  Output')
-    toolbox.print.info('  ------')
-    toolbox.print.info('')
-    toolbox.print.info(indent('  ', result.output))
-
     if (nodeLogs) {
       toolbox.print.info('')
       toolbox.print.info('  Graph node')
@@ -231,6 +224,13 @@ module.exports = {
       toolbox.print.info('')
       toolbox.print.info(indent('  ', ethereumLogs))
     }
+
+    // Always print the test output
+    toolbox.print.info('')
+    toolbox.print.info('  Output')
+    toolbox.print.info('  ------')
+    toolbox.print.info('')
+    toolbox.print.info(indent('  ', result.output))
 
     // Propagate the exit code from the test run
     process.exitCode = result.exitCode
