@@ -7,9 +7,8 @@ const tmp = require('tmp')
 const Docker = require('dockerode')
 const path = require('path')
 const stripAnsi = require('strip-ansi')
-const util = require('util')
-const exec = util.promisify(require('child_process').exec)
 const spawn = require('child_process').spawn
+const execSync = require('child_process').execSync
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -25,6 +24,7 @@ Options:
 
   -h, --help                    Show usage information
       --node-logs               Print the Graph Node logs (optional)
+      --ethereum-logs           Print the Ethereum logs (optional)
       --compose-file <file>     Custom Docker Compose file for additional services (optional)
       --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
       --standalone-node <cmd>   Use a standalone Graph Node outside Docker Compose (optional)
@@ -43,6 +43,7 @@ module.exports = {
     // Parse CLI parameters
     let {
       composeFile,
+      ethereumLogs,
       h,
       help,
       nodeImage,
@@ -59,6 +60,7 @@ module.exports = {
 
     // Extract test command
     let params = fixParameters(toolbox.parameters, {
+      ethereumLogs,
       h,
       help,
       nodeLogs,
@@ -166,7 +168,7 @@ module.exports = {
       toolbox.print.error(
         indent(
           '  ',
-          await graphNodeLogs(toolbox, tempdir, standaloneNode, nodeOutputChunks),
+          await collectGraphNodeLogs(toolbox, tempdir, standaloneNode, nodeOutputChunks),
         ),
       )
       toolbox.print.error('')
@@ -187,6 +189,19 @@ module.exports = {
       }
     }
 
+    if (result.exitCode == 0) {
+      toolbox.print.success('✔ Tests passed')
+    } else {
+      toolbox.print.error('✖ Tests failed')
+    }
+
+    // Capture logs
+    nodeLogs =
+      nodeLogs || result.exitCode !== 0
+        ? await collectGraphNodeLogs(toolbox, tempdir, standaloneNode, nodeOutputChunks)
+        : undefined
+    ethereumLogs = ethereumLogs ? await collectEthereumLogs(toolbox, tempdir) : undefined
+
     // Bring down the test environment
     try {
       await stopTestEnvironment(toolbox, tempdir)
@@ -194,39 +209,27 @@ module.exports = {
       // do nothing (the spinner already logs the problem)
     }
 
-    if (result.exitCode == 0) {
-      toolbox.print.success('✔ Tests passed')
-    } else {
-      toolbox.print.error('✖ Tests failed')
-    }
-
     // Always print the test output
     toolbox.print.info('')
     toolbox.print.info('  Output')
     toolbox.print.info('  ------')
     toolbox.print.info('')
-    toolbox.print.info(indent('  ', result.stdout))
+    toolbox.print.info(indent('  ', result.output))
 
-    if (result.exitCode !== 0) {
-      // If there was an error, print the error output as well
-      toolbox.print.error('')
-      toolbox.print.error('  Errors')
-      toolbox.print.error('  ------')
-      toolbox.print.error('')
-      toolbox.print.error(indent('  ', result.stderr))
-    }
-
-    if (result.exitCode !== 0 || nodeLogs) {
+    if (nodeLogs) {
       toolbox.print.info('')
-      toolbox.print.info('  Graph Node')
+      toolbox.print.info('  Graph node')
       toolbox.print.info('  ----------')
       toolbox.print.info('')
-      toolbox.print.info(
-        indent(
-          '  ',
-          await graphNodeLogs(toolbox, tempdir, standaloneNode, nodeOutputChunks),
-        ),
-      )
+      toolbox.print.info(indent('  ', nodeLogs))
+    }
+
+    if (ethereumLogs) {
+      toolbox.print.info('')
+      toolbox.print.info('  Ethereum')
+      toolbox.print.info('  --------')
+      toolbox.print.info('')
+      toolbox.print.info(indent('  ', ethereumLogs))
     }
 
     // Propagate the exit code from the test run
@@ -407,8 +410,7 @@ const startGraphNode = async (
       ]
 
       let defaultEnv = {
-        GRAPH_LOG: 'trace',
-        GRAPH_TOKIO_THREAD_COUNT: 10,
+        GRAPH_LOG: 'debug',
       }
 
       let args = standaloneNodeArgs ? standaloneNodeArgs.split(' ') : defaultArgs
@@ -442,7 +444,9 @@ const waitForGraphNode = async toolbox =>
         10000,
         async () =>
           new Promise((resolve, reject) => {
-            http.get('http://localhost:8000', () => resolve()).on('error', e => reject(e))
+            http
+              .get('http://localhost:8000', { timeout: 10000 }, () => resolve())
+              .on('error', e => reject(e))
           }),
       )
     },
@@ -454,11 +458,16 @@ const stopGraphNode = async (toolbox, nodeProcess) =>
     `Failed to stop Graph node`,
     `Warnings stopping Graph node`,
     async spinner => {
-      nodeProcess.kill()
+      nodeProcess.kill(9)
     },
   )
 
-const graphNodeLogs = async (toolbox, tempdir, standaloneNode, nodeOutputChunks) => {
+const collectGraphNodeLogs = async (
+  toolbox,
+  tempdir,
+  standaloneNode,
+  nodeOutputChunks,
+) => {
   if (standaloneNode) {
     // Pull the logs from the captured output
     return stripAnsi(Buffer.concat(nodeOutputChunks).toString('utf-8'))
@@ -472,27 +481,30 @@ const graphNodeLogs = async (toolbox, tempdir, standaloneNode, nodeOutputChunks)
   }
 }
 
+const collectEthereumLogs = async (toolbox, tempdir) => {
+  let logs = await compose.logs('ethereum', {
+    follow: false,
+    cwd: path.join(tempdir, 'compose'),
+  })
+  return stripAnsi(logs.out.trim()).replace(/ethereum_1  \| /g, '')
+}
+
 const runTests = async (toolbox, tempdir, testCommand) =>
   await withSpinner(
     `Run tests`,
     `Failed to run tests`,
     `Warnings running tests`,
-    async spinner => {
-      let result = {
-        exitCode: 0,
-        output: '',
-      }
-
-      try {
-        let { stdout, stderr } = await exec(testCommand, { trim: true })
-        result.stdout = stdout
-        result.stderr = undefined
-      } catch (e) {
-        result.exitCode = e.code
-        result.stdout = e.stdout
-        result.stderr = e.stderr
-      }
-
-      return result
-    },
+    async spinner =>
+      new Promise((resolve, reject) => {
+        let output = []
+        let testProcess = spawn(`${testCommand}`, { shell: true })
+        testProcess.stdout.on('data', data => output.push(Buffer.from(data)))
+        testProcess.stderr.on('data', data => output.push(Buffer.from(data)))
+        testProcess.on('close', code => {
+          resolve({
+            exitCode: code,
+            output: Buffer.concat(output).toString('utf-8'),
+          })
+        })
+      }),
   )
