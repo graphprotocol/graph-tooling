@@ -99,6 +99,51 @@ describe('ABI code generation', () => {
             stateMutability: 'view',
             type: 'function',
           },
+          {
+            type: 'function',
+            stateMutability: 'view',
+            name: 'overloaded',
+            inputs: [
+              {
+                type: 'string',
+              },
+            ],
+            outputs: [
+              {
+                type: 'string',
+              },
+            ],
+          },
+          {
+            type: 'function',
+            stateMutability: 'view',
+            name: 'overloaded',
+            inputs: [
+              {
+                type: 'uint256',
+              },
+            ],
+            outputs: [
+              {
+                type: 'string',
+              },
+            ],
+          },
+          {
+            type: 'function',
+            stateMutability: 'view',
+            name: 'overloaded',
+            inputs: [
+              {
+                type: 'bytes32',
+              },
+            ],
+            outputs: [
+              {
+                type: 'string',
+              },
+            ],
+          },
         ]),
         'utf-8',
       )
@@ -167,6 +212,12 @@ describe('ABI code generation', () => {
             ts.param('param1', 'Contract__getProposalInputParam1Struct'),
           ]),
         ],
+        ['overloaded', immutable.List([ts.param('param0', 'string')])],
+        ['try_overloaded', immutable.List([ts.param('param0', 'string')])],
+        ['overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
+        ['try_overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
+        ['overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
+        ['try_overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
       ])
     })
 
@@ -181,6 +232,12 @@ describe('ABI code generation', () => {
           'try_getProposal',
           'ethereum.CallResult<Contract__getProposalResultValue0Struct>',
         ],
+        ['overloaded', ts.namedType('string')],
+        ['try_overloaded', 'ethereum.CallResult<string>'],
+        ['overloaded1', ts.namedType('string')],
+        ['try_overloaded1', 'ethereum.CallResult<string>'],
+        ['overloaded2', ts.namedType('string')],
+        ['try_overloaded2', 'ethereum.CallResult<string>'],
       ])
     })
   })
