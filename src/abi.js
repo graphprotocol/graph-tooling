@@ -34,15 +34,29 @@ module.exports = class ABI {
   }
 
   static oldEventSignature(event) {
-    return `${event.get('name')}(${(event.get('inputs') || [])
+    return `${event.get('name')}(${event
+      .get('inputs', [])
       .map(input => buildOldSignatureParameter(input))
       .join(',')})`
   }
 
   static eventSignature(event) {
-    return `${event.get('name')}(${(event.get('inputs') || [])
+    return `${event.get('name')}(${event
+      .get('inputs', [])
       .map(input => buildSignatureParameter(input))
       .join(',')})`
+  }
+
+  functionSignature(fn) {
+    let inputs = fn
+      .get('inputs', [])
+      .map(buildSignatureParameter)
+      .join(',')
+    let outputs = fn
+      .get('outputs', [])
+      .map(buildSignatureParameter)
+      .join(',')
+    return `${fn.get('name')}(${inputs})${outputs.length > 0 ? `:(${outputs})` : ''}`
   }
 
   oldEventSignatures() {
