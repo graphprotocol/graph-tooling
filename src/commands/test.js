@@ -1,6 +1,5 @@
 const chalk = require('chalk')
 const compose = require('docker-compose')
-const fs = require('fs-extra')
 const http = require('http')
 const net = require('net')
 const tmp = require('tmp')
@@ -8,9 +7,7 @@ const Docker = require('dockerode')
 const path = require('path')
 const stripAnsi = require('strip-ansi')
 const spawn = require('child_process').spawn
-const execSync = require('child_process').execSync
 
-const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { step, withSpinner } = require('../command-helpers/spinner')
 
@@ -38,7 +35,7 @@ module.exports = {
   description: 'Tests the current project against a Graph Node and Parity testnet',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { filesystem, print } = toolbox
 
     // Parse CLI parameters
     let {
@@ -114,7 +111,7 @@ module.exports = {
 
     // Bring up test environment
     try {
-      await startTestEnvironment(toolbox, tempdir)
+      await startTestEnvironment(tempdir)
     } catch {
       process.exitCode = 1
       return
@@ -122,13 +119,13 @@ module.exports = {
 
     // Wait for test environment to come up
     try {
-      await waitForTestEnvironment(toolbox, {
+      await waitForTestEnvironment({
         skipWaitForEthereum,
         skipWaitForIpfs,
         skipWaitForPostgres,
       })
     } catch {
-      await stopTestEnvironment(toolbox, tempdir)
+      await stopTestEnvironment(tempdir)
       process.exitCode = 1
       return
     }
@@ -139,7 +136,6 @@ module.exports = {
     if (standaloneNode) {
       try {
         nodeProcess = await startGraphNode(
-          toolbox,
           standaloneNode,
           standaloneNodeArgs,
           nodeOutputChunks,
@@ -152,7 +148,7 @@ module.exports = {
           indent('  ', Buffer.concat(nodeOutputChunks).toString('utf-8')),
         )
         toolbox.print.error('')
-        await stopTestEnvironment(toolbox, tempdir)
+        await stopTestEnvironment(tempdir)
         process.exitCode = 1
         return
       }
@@ -160,7 +156,7 @@ module.exports = {
 
     // Wait for Graph Node to come up
     try {
-      await waitForGraphNode(toolbox)
+      await waitForGraphNode()
     } catch {
       toolbox.print.error('')
       toolbox.print.error('  Graph Node')
@@ -168,22 +164,22 @@ module.exports = {
       toolbox.print.error(
         indent(
           '  ',
-          await collectGraphNodeLogs(toolbox, tempdir, standaloneNode, nodeOutputChunks),
+          await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks),
         ),
       )
       toolbox.print.error('')
-      await stopTestEnvironment(toolbox, tempdir)
+      await stopTestEnvironment(tempdir)
       process.exitCode = 1
       return
     }
 
     // Run tests
-    let result = await runTests(toolbox, tempdir, testCommand)
+    let result = await runTests(testCommand)
 
     // Bring down Graph Node, if a standalone node is used
     if (nodeProcess) {
       try {
-        await stopGraphNode(toolbox, nodeProcess)
+        await stopGraphNode(nodeProcess)
       } catch {
         // do nothing (the spinner already logs the problem)
       }
@@ -198,13 +194,13 @@ module.exports = {
     // Capture logs
     nodeLogs =
       nodeLogs || result.exitCode !== 0
-        ? await collectGraphNodeLogs(toolbox, tempdir, standaloneNode, nodeOutputChunks)
+        ? await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks)
         : undefined
-    ethereumLogs = ethereumLogs ? await collectEthereumLogs(toolbox, tempdir) : undefined
+    ethereumLogs = ethereumLogs ? await collectEthereumLogs(tempdir) : undefined
 
     // Bring down the test environment
     try {
-      await stopTestEnvironment(toolbox, tempdir)
+      await stopTestEnvironment(tempdir)
     } catch {
       // do nothing (the spinner already logs the problem)
     }
@@ -293,12 +289,12 @@ const waitFor = async (timeout, testFn) => {
   })
 }
 
-const startTestEnvironment = async (toolbox, tempdir) =>
+const startTestEnvironment = async tempdir =>
   await withSpinner(
     `Start test environment`,
     `Failed to start test environment`,
     `Warnings starting test environment`,
-    async spinner => {
+    async _spinner => {
       // Bring up the test environment
       await compose.upAll({
         cwd: path.join(tempdir, 'compose'),
@@ -306,10 +302,11 @@ const startTestEnvironment = async (toolbox, tempdir) =>
     },
   )
 
-const waitForTestEnvironment = async (
-  toolbox,
-  { skipWaitForEthereum, skipWaitForIpfs, skipWaitForPostgres },
-) =>
+const waitForTestEnvironment = async ({
+  skipWaitForEthereum,
+  skipWaitForIpfs,
+  skipWaitForPostgres,
+}) =>
   await withSpinner(
     `Wait for test environment`,
     `Failed to wait for test environment`,
@@ -364,11 +361,7 @@ const waitForTestEnvironment = async (
           async () =>
             new Promise((resolve, reject) => {
               try {
-                let socket = net.connect(
-                  5432,
-                  'localhost',
-                  () => resolve(),
-                )
+                let socket = net.connect(5432, 'localhost', () => resolve())
                 socket.on('error', e =>
                   reject(new Error(`Could not connect to Postgres: ${e}`)),
                 )
@@ -383,7 +376,7 @@ const waitForTestEnvironment = async (
     },
   )
 
-const stopTestEnvironment = async (toolbox, tempdir) =>
+const stopTestEnvironment = async tempdir =>
   await withSpinner(
     `Stop test environment`,
     `Failed to stop test environment`,
@@ -393,12 +386,7 @@ const stopTestEnvironment = async (toolbox, tempdir) =>
     },
   )
 
-const startGraphNode = async (
-  toolbox,
-  standaloneNode,
-  standaloneNodeArgs,
-  nodeOutputChunks,
-) =>
+const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChunks) =>
   await withSpinner(
     `Start Graph node`,
     `Failed to start Graph node`,
@@ -438,7 +426,7 @@ const startGraphNode = async (
     },
   )
 
-const waitForGraphNode = async toolbox =>
+const waitForGraphNode = async () =>
   await withSpinner(
     `Wait for Graph node`,
     `Failed to wait for Graph node`,
@@ -456,7 +444,7 @@ const waitForGraphNode = async toolbox =>
     },
   )
 
-const stopGraphNode = async (toolbox, nodeProcess) =>
+const stopGraphNode = async nodeProcess =>
   await withSpinner(
     `Stop Graph node`,
     `Failed to stop Graph node`,
@@ -466,12 +454,7 @@ const stopGraphNode = async (toolbox, nodeProcess) =>
     },
   )
 
-const collectGraphNodeLogs = async (
-  toolbox,
-  tempdir,
-  standaloneNode,
-  nodeOutputChunks,
-) => {
+const collectGraphNodeLogs = async (tempdir, standaloneNode, nodeOutputChunks) => {
   if (standaloneNode) {
     // Pull the logs from the captured output
     return stripAnsi(Buffer.concat(nodeOutputChunks).toString('utf-8'))
@@ -485,7 +468,7 @@ const collectGraphNodeLogs = async (
   }
 }
 
-const collectEthereumLogs = async (toolbox, tempdir) => {
+const collectEthereumLogs = async tempdir => {
   let logs = await compose.logs('ethereum', {
     follow: false,
     cwd: path.join(tempdir, 'compose'),
@@ -493,7 +476,7 @@ const collectEthereumLogs = async (toolbox, tempdir) => {
   return stripAnsi(logs.out.trim()).replace(/ethereum_1  \| /g, '')
 }
 
-const runTests = async (toolbox, tempdir, testCommand) =>
+const runTests = async testCommand =>
   await withSpinner(
     `Run tests`,
     `Failed to run tests`,
