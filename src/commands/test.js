@@ -32,7 +32,7 @@ Options:
 `
 
 module.exports = {
-  description: 'Tests the current project against a Graph Node and Parity testnet',
+  description: 'Runs tests against a Graph Node environment (using Ganache by default)',
   run: async toolbox => {
     // Obtain tools
     let { filesystem, print } = toolbox
@@ -361,7 +361,11 @@ const waitForTestEnvironment = async ({
           async () =>
             new Promise((resolve, reject) => {
               try {
-                let socket = net.connect(5432, 'localhost', () => resolve())
+                let socket = net.connect(
+                  5432,
+                  'localhost',
+                  () => resolve(),
+                )
                 socket.on('error', e =>
                   reject(new Error(`Could not connect to Postgres: ${e}`)),
                 )
