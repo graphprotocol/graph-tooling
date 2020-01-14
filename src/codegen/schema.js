@@ -129,7 +129,7 @@ module.exports = class SchemaCodeGenerator {
                             'value',
                             fieldValueType
                           )}`
-    let getNullable = `if (value === null) {
+    let getNullable = `if (value === null || value.kind === ValueKind.NULL) {
                           return null
                         } else {
                           ${getNonNullable}
