@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "git+http://github.com/graphprotocol/graph-cli#master",
-    "@graphprotocol/graph-ts": "git+http://github.com/graphprotocol/graph-ts#master"
+    "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#jannis/overloaded-contract-functions"
   }
 }

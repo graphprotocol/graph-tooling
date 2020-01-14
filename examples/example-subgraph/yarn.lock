@@ -55,6 +55,12 @@
   dependencies:
     assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
 
+"@graphprotocol/graph-ts@https://github.com/graphprotocol/graph-ts#jannis/overloaded-contract-functions":
+  version "0.17.0"
+  resolved "https://github.com/graphprotocol/graph-ts#8724434ac73f0617ee963b1bd577e417b2e50dd1"
+  dependencies:
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
+
 "@protobufjs/utf8@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
