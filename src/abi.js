@@ -36,14 +36,14 @@ module.exports = class ABI {
   static oldEventSignature(event) {
     return `${event.get('name')}(${event
       .get('inputs', [])
-      .map(input => buildOldSignatureParameter(input))
+      .map(buildOldSignatureParameter)
       .join(',')})`
   }
 
   static eventSignature(event) {
     return `${event.get('name')}(${event
       .get('inputs', [])
-      .map(input => buildSignatureParameter(input))
+      .map(buildSignatureParameter)
       .join(',')})`
   }
 
