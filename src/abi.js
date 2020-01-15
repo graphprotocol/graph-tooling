@@ -47,6 +47,18 @@ module.exports = class ABI {
       .join(',')})`
   }
 
+  /**
+   * For the ABI of a function, returns a string function signature compatible
+   * with the Rust `ethabi` library. It is of the form
+   *
+   *     <function>([<input-type-1>, ...])[:(<output-type-1,...)]
+   *
+   * A few examples for a function called `example`:
+   *
+   * - No inputs or outputs: `example()`
+   * - One input and output: `example(uint256):(bool)`
+   * - Multiple inputs and outputs: `example(uint256,(string,bytes32)):(bool,uint256)`
+   */
   functionSignature(fn) {
     let inputs = fn
       .get('inputs', [])
