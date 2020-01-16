@@ -7,7 +7,7 @@
     "build-wast": "graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "git+http://github.com/graphprotocol/graph-cli#master",
-    "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#jannis/overloaded-contract-functions"
+    "@graphprotocol/graph-cli": "https://github.com/graphprotocol/graph-cli#master",
+    "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#master"
   }
 }
