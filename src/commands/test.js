@@ -399,6 +399,16 @@ const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChun
         'postgresql://graph:let-me-in@localhost:15432/graph',
         '--ethereum-rpc',
         'test:http://localhost:18545',
+        '--http-port',
+        '18000',
+        '--ws-port',
+        '18001',
+        '--admin-port',
+        '18020',
+        '--index-node-port',
+        '18030',
+        '--metrics-port',
+        '18040',
       ]
 
       let defaultEnv = {
