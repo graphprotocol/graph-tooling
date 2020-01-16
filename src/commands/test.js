@@ -26,9 +26,9 @@ Options:
       --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
       --standalone-node <cmd>   Use a standalone Graph Node outside Docker Compose (optional)
       --standalone-node-args    Custom arguments to be passed to the standalone Graph Node (optional)
-      --skip-wait-for-ipfs      Don't wait for IPFS to be up at localhost:5001 (optional)
-      --skip-wait-for-ethereum  Don't wait for Ethereum to be up at localhost:8545 (optional)
-      --skip-wait-for-postgres  Don't wait for Postgres to be up at localhost:5432 (optional)
+      --skip-wait-for-ipfs      Don't wait for IPFS to be up at localhost:15001 (optional)
+      --skip-wait-for-ethereum  Don't wait for Ethereum to be up at localhost:18545 (optional)
+      --skip-wait-for-postgres  Don't wait for Postgres to be up at localhost:15432 (optional)
 `
 
 module.exports = {
@@ -321,7 +321,7 @@ const waitForTestEnvironment = async ({
           async () =>
             new Promise((resolve, reject) => {
               http
-                .get('http://localhost:5001/api/v0/version', response => {
+                .get('http://localhost:15001/api/v0/version', response => {
                   resolve()
                 })
                 .on('error', e => {
@@ -341,7 +341,7 @@ const waitForTestEnvironment = async ({
           async () =>
             new Promise((resolve, reject) => {
               http
-                .get('http://localhost:8545', response => {
+                .get('http://localhost:18545', response => {
                   resolve()
                 })
                 .on('error', e => {
@@ -361,11 +361,7 @@ const waitForTestEnvironment = async ({
           async () =>
             new Promise((resolve, reject) => {
               try {
-                let socket = net.connect(
-                  5432,
-                  'localhost',
-                  () => resolve(),
-                )
+                let socket = net.connect(15432, 'localhost', () => resolve())
                 socket.on('error', e =>
                   reject(new Error(`Could not connect to Postgres: ${e}`)),
                 )
@@ -398,11 +394,11 @@ const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChun
     async spinner => {
       let defaultArgs = [
         '--ipfs',
-        'localhost:5001',
+        'localhost:15001',
         '--postgres-url',
-        'postgresql://graph:let-me-in@localhost:5432/graph',
+        'postgresql://graph:let-me-in@localhost:15432/graph',
         '--ethereum-rpc',
-        'test:http://localhost:8545',
+        'test:http://localhost:18545',
       ]
 
       let defaultEnv = {
@@ -441,7 +437,7 @@ const waitForGraphNode = async () =>
         async () =>
           new Promise((resolve, reject) => {
             http
-              .get('http://localhost:8000', { timeout: 10000 }, () => resolve())
+              .get('http://localhost:18000', { timeout: 10000 }, () => resolve())
               .on('error', e => reject(e))
           }),
       )

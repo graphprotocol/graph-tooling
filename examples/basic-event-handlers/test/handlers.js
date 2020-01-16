@@ -6,9 +6,9 @@ const GravatarRegistry = artifacts.require('./GravatarRegistry.sol')
 
 const srcDir = path.join(__dirname, '..')
 
-const fetchSubgraphs = createApolloFetch({ uri: 'http://localhost:8030/graphql' })
+const fetchSubgraphs = createApolloFetch({ uri: 'http://localhost:18030/graphql' })
 const fetchSubgraph = createApolloFetch({
-  uri: 'http://localhost:8000/subgraphs/name/test/basic-event-handlers',
+  uri: 'http://localhost:18000/subgraphs/name/test/basic-event-handlers',
 })
 
 const waitForSubgraphToBeSynced = async () =>
@@ -61,8 +61,8 @@ contract('Basic event handlers', accounts => {
 
     // Create and deploy the subgraph
     await system.run(`yarn codegen`, { cwd: srcDir })
-    await system.run(`yarn create-local`, { cwd: srcDir })
-    await system.run(`yarn deploy-local`, { cwd: srcDir })
+    await system.run(`yarn create-test`, { cwd: srcDir })
+    await system.run(`yarn deploy-test`, { cwd: srcDir })
 
     // Wait for the subgraph to be indexed
     await waitForSubgraphToBeSynced()
