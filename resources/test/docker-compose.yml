@@ -3,11 +3,11 @@ services:
   graph-node:
     image: graphprotocol/graph-node:latest
     ports:
-      - '8000:8000'
-      - '8001:8001'
-      - '8020:8020'
-      - '8030:8030'
-      - '8040:8040'
+      - '18000:8000'
+      - '18001:8001'
+      - '18020:8020'
+      - '18030:8030'
+      - '18040:8040'
     depends_on:
       - ipfs
       - ethereum
@@ -23,17 +23,17 @@ services:
   ethereum:
     image: trufflesuite/ganache-cli:latest
     ports:
-      - '8545:8545'
-      - '8546:8546'
+      - '18545:8545'
+      - '18546:8546'
     command: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
   ipfs:
     image: ipfs/go-ipfs
     ports:
-      - '5001:5001'
+      - '15001:5001'
   postgres:
     image: postgres
     ports:
-      - '5432:5432'
+      - '15432:5432'
     environment:
       POSTGRES_USER: graph
       POSTGRES_PASSWORD: let-me-in

@@ -5,8 +5,8 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "test": "truffle test --network test",
-    "create-local": "graph create test/basic-event-handlers --node http://127.0.0.1:8020",
-    "deploy-local": "graph deploy test/basic-event-handlers --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "create-test": "graph create test/basic-event-handlers --node http://127.0.0.1:18020",
+    "deploy-test": "graph deploy test/basic-event-handlers --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.17.1",
