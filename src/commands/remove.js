@@ -1,3 +1,4 @@
+const URL = require('url').URL
 const chalk = require('chalk')
 const { validateNodeUrl } = require('../command-helpers/node')
 const { identifyAccessToken } = require('../command-helpers/auth')
