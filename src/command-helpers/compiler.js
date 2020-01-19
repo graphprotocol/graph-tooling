@@ -1,3 +1,4 @@
+const URL = require('url').URL
 const ipfsHttpClient = require('ipfs-http-client')
 const toolbox = require('gluegun/toolbox')
 const Compiler = require('../compiler')
