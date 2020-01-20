@@ -8,7 +8,7 @@
     "chokidar": "^3.0.2",
     "debug": "^4.1.1",
     "docker-compose": "^0.17.2",
-    "dockerode": "^2.5.8",
+    "dockerode": "^3.0.2",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.2",
     "gluegun": "^4.1.2",
