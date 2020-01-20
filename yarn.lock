@@ -1441,10 +1441,10 @@ diff-sequences@^24.9.0:
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-24.9.0.tgz#5715d6244e2aa65f48bba0bc972db0b0b11e95b5"
   integrity sha512-Dj6Wk3tWyTE+Fo1rW8v0Xhwk80um6yFYKbuAxc9c3EZxIHFDYwbi34Uk42u1CdnIiVorvt4RmlSDjIPyzGC2ew==
 
-docker-compose@^0.17.2:
-  version "0.17.2"
-  resolved "https://registry.npmjs.org/docker-compose/-/docker-compose-0.17.2.tgz#1c17c82cc1bb79f29f0962ddc77ca8cb60811bec"
-  integrity sha512-R3o+paZuocT1t6XGoce6sTxYYjzfpjyZ+MeGN0yqcaVv0G/25V/MZKxKYlq/cv3H0j1Njv1RL6vGnwok6ZtJ6Q==
+docker-compose@^0.23.2:
+  version "0.23.2"
+  resolved "https://registry.yarnpkg.com/docker-compose/-/docker-compose-0.23.2.tgz#1df67182f59f8490f6b6276215e56214462ba88f"
+  integrity sha512-ERapDQEaq7vuPBoH4olEn8Jv56JTmJAZhTEhrKfskBdRlRHAXqdW87oSAjCT0GxZQbKgMBUVrp8Jtufsfu4QHA==
 
 docker-modem@^1.0.8:
   version "1.0.9"
