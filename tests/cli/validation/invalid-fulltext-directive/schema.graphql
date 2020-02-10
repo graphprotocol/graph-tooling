@@ -1,5 +1,5 @@
 type _Schema_
-  @fullText(
+  @fulltext(
     name: "jf"
     language: "english"
     algorithm: ranked

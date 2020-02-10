@@ -390,12 +390,12 @@ const validateNoImportDirective = def =>
     : List()
 
 const validateNoFullTextDirective = def =>
-  def.directives.find(directive => directive.name.value == 'fullText')
+  def.directives.find(directive => directive.name.value == 'fulltext')
     ? List().push(
         immutable.fromJS({
           loc: def.name.loc,
           entity: def.name.value,
-          message: `@fullText directive only allowed on '${RESERVED_TYPE}' type`,
+          message: `@fulltext directive only allowed on '${RESERVED_TYPE}' type`,
         }),
       )
     : List()
@@ -409,7 +409,7 @@ const validateFullTextDirectiveFields = (def, directive) => {
             immutable.fromJS({
               loc: directive.name.loc,
               entity: def.name.value,
-              message: `found invalid argument: '${argument.name.value}', @fullText directives only allow 'name','language', 'algorithm', and 'includes' arguments`,
+              message: `found invalid argument: '${argument.name.value}', @fulltext directives only allow 'name','language', 'algorithm', and 'includes' arguments`,
             }),
           ]),
     )
@@ -424,7 +424,7 @@ const validateFullTextDirectiveName = (def, directive) => {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `@fullText argument 'name' must be specified`,
+          message: `@fulltext argument 'name' must be specified`,
         }),
       ])
 }
@@ -435,7 +435,7 @@ const validateFullTextDirectiveArgumentName = (def, directive, argument) => {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `@fullText argument 'name' must be a string`,
+          message: `@fulltext argument 'name' must be a string`,
         }),
       )
     : List([])
@@ -449,7 +449,7 @@ const validateFullTextDirectiveLanguage = (def, directive) => {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `@fullText argument 'language' must be specified`,
+          message: `@fulltext argument 'language' must be specified`,
         }),
       ])
 }
@@ -460,7 +460,7 @@ const validateFullTextDirectiveArgumentLanguage = (def, directive, argument) => 
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `@fullText argument 'language' must be a string`,
+          message: `@fulltext argument 'language' must be a string`,
         }),
       )
     : List([])
@@ -474,7 +474,7 @@ const validateFullTextDirectiveAlgorithm = (def, directive) => {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `@fullText argument 'algorithm' must be specified`,
+          message: `@fulltext argument 'algorithm' must be specified`,
         }),
       ])
 }
@@ -485,7 +485,7 @@ const validateFullTextDirectiveArgumentAlgorithm = (def, directive, argument) =>
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fullText argument 'algorithm' must be an enum`,
+        message: `@fulltext argument 'algorithm' must be an enum`,
       }),
     )
   } else if (!['ranked', 'proximityRank'].includes(argument.value.value)) {
@@ -493,7 +493,7 @@ const validateFullTextDirectiveArgumentAlgorithm = (def, directive, argument) =>
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fullText 'algorithm' value, '${argument.value.value}', is not a variant of the _FullTextAlgorithm enum`,
+        message: `@fulltext 'algorithm' value, '${argument.value.value}', is not a variant of the _FullTextAlgorithm enum`,
       }),
     )
   } else {
@@ -509,7 +509,7 @@ const validateFullTextDirectiveInclude = (def, directive) => {
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
-          message: `@fullText argument 'include' must be a list`,
+          message: `@fulltext argument 'include' must be a list`,
         }),
       )
     }
@@ -523,7 +523,7 @@ const validateFullTextDirectiveInclude = (def, directive) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fullText argument 'include' must be specified`,
+        message: `@fulltext argument 'include' must be specified`,
       }),
     ])
   }
@@ -535,7 +535,7 @@ const validateFullTextDirectiveArgumentInclude = (def, directive, argument) => {
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fullText argument 'include' must be an object`,
+        message: `@fulltext argument 'include' must be an object`,
       }),
     )
   }
@@ -610,7 +610,7 @@ const validateFulltextDirectiveArgumentIncludeArgumentFieldsObjects = (
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fullText argument 'include' entity fields items must be objects`,
+        message: `@fulltext argument 'include' entity fields items must be objects`,
       }),
     )
   } else {
@@ -841,14 +841,14 @@ const validateFullTextDirective = (def, directive) =>
 const validateSubgraphSchemaDirective = (def, directive) => {
   if (directive.name.value == 'import') {
     return validateImportDirective(def, directive)
-  } else if (directive.name.value == 'fullText') {
+  } else if (directive.name.value == 'fulltext') {
     return validateFullTextDirective(def, directive)
   } else {
     return List([
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `${RESERVED_TYPE} type only allows @import and @fullText directives`,
+        message: `${RESERVED_TYPE} type only allows @import and @fulltext directives`,
       }),
     ])
   }
