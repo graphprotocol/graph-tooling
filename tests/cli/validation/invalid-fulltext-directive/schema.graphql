@@ -1,0 +1,20 @@
+type _Schema_
+  @fullText(
+    name: "jf"
+    language: "english"
+    algorithm: ranked
+    include: [
+      {
+        entity: "Musician",
+        fields: [
+          { name: 9, weight: 10 },
+          { name: "bio", weight: 5 },
+        ]
+      }
+    ]
+)
+
+type B @entity {
+  id: ID!
+  foo: String!
+}
