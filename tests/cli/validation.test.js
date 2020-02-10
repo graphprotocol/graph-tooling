@@ -172,4 +172,13 @@ describe('Validation', () => {
       exitCode: 1,
     },
   )
+
+  cliTest(
+    'Invalid @fullText directive',
+    ['codegen', '--skip-migrations'],
+    'validation/invalid-fulltext-directive',
+    {
+      exitCode: 1,
+    },
+  )
 })
