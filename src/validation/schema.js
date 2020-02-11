@@ -488,7 +488,7 @@ const validateFullTextDirectiveArgumentAlgorithm = (def, directive, argument) =>
         message: `@fulltext argument 'algorithm' must be an enum`,
       }),
     )
-  } else if (!['ranked', 'proximityRank'].includes(argument.value.value)) {
+  } else if (!['RANKED', 'PROXIMITY_RANK'].includes(argument.value.value)) {
     return List().push(
       immutable.fromJS({
         loc: directive.name.loc,
