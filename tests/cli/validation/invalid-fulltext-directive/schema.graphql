@@ -2,7 +2,7 @@ type _Schema_
   @fulltext(
     name: "jf"
     language: "english"
-    algorithm: ranked
+    algorithm: RANKED
     include: [
       {
         entity: "Musician",
