@@ -455,15 +455,26 @@ const validateFullTextDirectiveLanguage = (def, directive) => {
 }
 
 const validateFullTextDirectiveArgumentLanguage = (def, directive, argument) => {
-  return argument.value.kind != 'StringValue'
-    ? List().push(
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          message: `@fulltext argument 'language' must be a string`,
-        }),
-      )
-    : List([])
+  let languages = ['SIMPLE','DANISH','DUTCH','ENGLISH','FINNISH','FRENCH','GERMAN','HUNGARIAN','ITALIAN','NORWEGIAN','PORTUGUESE','ROMANIAN','RUSSIAN','SPANISH','SWEDISH','TURKISH']
+  if (argument.value.kind != 'EnumValue') {
+    return List().push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `@fulltext argument 'language' must be a string`,
+      }),
+    )
+  } else if (!languages.includes(argument.value.value)) {
+    return List().push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `@fulltext 'language' value is not a variant of the _FullTextLanguage enum`,
+      }),
+    )
+  } else {
+    return List([])
+  }
 }
 
 const validateFullTextDirectiveAlgorithm = (def, directive) => {
@@ -658,16 +669,25 @@ const validateFulltextDirectiveArgumentIncludeArgumentFieldsObject = (
         message: `@fulltext include field 'name' must be a string`,
       }),
     )
-  } else if (field.name.value == 'weight' && field.value.kind != 'IntValue') {
+  } else if (field.name.value == 'weight' && field.value.kind != 'EnumValue') {
     return List([]).push(
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fulltext include field 'weight' must be an int`,
+        message: `@fulltext include field 'weight' must be an Enum`,
       }),
     )
+  } else if (field.name.value == 'weight' && !['A', 'B', 'C', 'D'].includes(field.value.value)) {
+    return List().push(
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `@fulltext 'weight' value, '${field.value.value}', is not a variant of the _FullTextWeight enum`,
+      }),
+    )
+  } else {
+    return List([])
   }
-  return List([])
 }
 
 const importDirectiveTypeValidators = {

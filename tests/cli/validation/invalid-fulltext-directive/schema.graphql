@@ -1,14 +1,14 @@
 type _Schema_
   @fulltext(
     name: "jf"
-    language: "english"
+    language: ENGLISH
     algorithm: RANKED
     include: [
       {
         entity: "Musician",
         fields: [
-          { name: 9, weight: 10 },
-          { name: "bio", weight: 5 },
+          { name: 9, weight: A },
+          { name: "bio", weight: B },
         ]
       }
     ]
