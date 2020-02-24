@@ -104,7 +104,7 @@ module.exports = {
     let tempdir = tmp.dirSync({ prefix: 'graph-test', unsafeCleanup: true }).name
     try {
       await configureTestEnvironment(toolbox, tempdir, composeFile, nodeImage)
-    } catch {
+    } catch(e) {
       process.exitCode = 1
       return
     }
@@ -112,7 +112,7 @@ module.exports = {
     // Bring up test environment
     try {
       await startTestEnvironment(tempdir)
-    } catch {
+    } catch(e) {
       process.exitCode = 1
       return
     }
@@ -124,7 +124,7 @@ module.exports = {
         skipWaitForIpfs,
         skipWaitForPostgres,
       })
-    } catch {
+    } catch(e) {
       await stopTestEnvironment(tempdir)
       process.exitCode = 1
       return
@@ -140,7 +140,7 @@ module.exports = {
           standaloneNodeArgs,
           nodeOutputChunks,
         )
-      } catch {
+      } catch(e) {
         toolbox.print.error('')
         toolbox.print.error('  Graph Node')
         toolbox.print.error('  ----------')
@@ -157,7 +157,7 @@ module.exports = {
     // Wait for Graph Node to come up
     try {
       await waitForGraphNode()
-    } catch {
+    } catch(e) {
       toolbox.print.error('')
       toolbox.print.error('  Graph Node')
       toolbox.print.error('  ----------')
@@ -180,7 +180,7 @@ module.exports = {
     if (nodeProcess) {
       try {
         await stopGraphNode(nodeProcess)
-      } catch {
+      } catch(e) {
         // do nothing (the spinner already logs the problem)
       }
     }
@@ -201,7 +201,7 @@ module.exports = {
     // Bring down the test environment
     try {
       await stopTestEnvironment(tempdir)
-    } catch {
+    } catch(e) {
       // do nothing (the spinner already logs the problem)
     }
 
