@@ -8,7 +8,7 @@
   File does not exist: non-existent.grapqhl
 
   Path: dataSources > 0 > kind
-  No value provided
+  Datasources of kind "not/supported" are not supported
 
   Path: templates
   Expected list, found map:
