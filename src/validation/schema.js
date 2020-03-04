@@ -455,13 +455,13 @@ const validateFullTextDirectiveLanguage = (def, directive) => {
 }
 
 const validateFullTextDirectiveArgumentLanguage = (def, directive, argument) => {
-  let languages = ['SIMPLE','DANISH','DUTCH','ENGLISH','FINNISH','FRENCH','GERMAN','HUNGARIAN','ITALIAN','NORWEGIAN','PORTUGUESE','ROMANIAN','RUSSIAN','SPANISH','SWEDISH','TURKISH']
+  let languages = ['SIMPLE','DA','NL','EN','FI','FR','DE','HU','IT','NO','PT','RO','RU','ES','SV','TR']
   if (argument.value.kind != 'EnumValue') {
     return List().push(
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fulltext argument 'language' must be a string`,
+        message: `@fulltext argument 'language' must be an enum`,
       }),
     )
   } else if (!languages.includes(argument.value.value)) {

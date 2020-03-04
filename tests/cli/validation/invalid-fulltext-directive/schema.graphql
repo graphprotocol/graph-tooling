@@ -1,7 +1,7 @@
 type _Schema_
   @fulltext(
     name: "jf"
-    language: ENGLISH
+    language: EN
     algorithm: RANKED
     include: [
       {
