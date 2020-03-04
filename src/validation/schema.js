@@ -625,15 +625,6 @@ const validateFulltextDirectiveArgumentIncludeArgumentFieldsObjects = (
       }),
     )
   } else {
-    if (argument.fields.length != 2) {
-      return List().push(
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          message: `@fulltext include argument fields objects must include, 'name' and 'weight' fields}`,
-        }),
-      )
-    }
     return argument.fields.reduce(
       (errors, field) =>
         errors.concat(
@@ -653,12 +644,12 @@ const validateFulltextDirectiveArgumentIncludeArgumentFieldsObject = (
   directive,
   field,
 ) => {
-  if (!['name', 'weight'].includes(field.name.value)) {
+  if (!['name'].includes(field.name.value)) {
     return List([]).push(
       immutable.fromJS({
         loc: directive.name.loc,
         entity: def.name.value,
-        message: `@fulltext field '${field.name.value}' invalid, may only be one of: [name, weight]`,
+        message: `@fulltext field '${field.name.value}' invalid, may only be one of: [name]`,
       }),
     )
   } else if (field.name.value == 'name' && field.value.kind != 'StringValue') {
@@ -667,22 +658,6 @@ const validateFulltextDirectiveArgumentIncludeArgumentFieldsObject = (
         loc: directive.name.loc,
         entity: def.name.value,
         message: `@fulltext include field 'name' must be a string`,
-      }),
-    )
-  } else if (field.name.value == 'weight' && field.value.kind != 'EnumValue') {
-    return List([]).push(
-      immutable.fromJS({
-        loc: directive.name.loc,
-        entity: def.name.value,
-        message: `@fulltext include field 'weight' must be an Enum`,
-      }),
-    )
-  } else if (field.name.value == 'weight' && !['A', 'B', 'C', 'D'].includes(field.value.value)) {
-    return List().push(
-      immutable.fromJS({
-        loc: directive.name.loc,
-        entity: def.name.value,
-        message: `@fulltext 'weight' value, '${field.value.value}', is not a variant of the _FullTextWeight enum`,
       }),
     )
   } else {

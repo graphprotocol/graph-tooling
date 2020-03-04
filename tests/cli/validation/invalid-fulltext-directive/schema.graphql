@@ -7,12 +7,17 @@ type _Schema_
       {
         entity: "Musician",
         fields: [
-          { name: 9, weight: A },
-          { name: "bio", weight: B },
+          { name: 9 },
+          { name: "bio" },
         ]
       }
     ]
 )
+
+enum __FulltextAlgorithm {
+  RANKED
+  PROXIMITY_RANKED
+}
 
 type B @entity {
   id: ID!
