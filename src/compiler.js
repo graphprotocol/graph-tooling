@@ -230,7 +230,7 @@ class Compiler {
           'Compile data source:',
           `${dataSourceName} => ${this.displayPath(outFile)} (already compiled)`,
         )
-        return path.relative(baseDir, outFile)
+        return outFile
       }
 
       let outFile = path.join(
@@ -328,7 +328,7 @@ class Compiler {
           'Compile data source template:',
           `${templateName} => ${this.displayPath(outFile)} (already compiled)`,
         )
-        return path.relative(baseDir, outFile)
+        return outFile
       }
 
       let outFile = path.join(
@@ -441,7 +441,10 @@ class Compiler {
               // The mapping file is already being written to the output
               // directory by the AssemblyScript compiler
               .updateIn(['mapping', 'file'], mappingFile =>
-                path.relative(this.options.outputDir, mappingFile),
+                path.relative(
+                  this.options.outputDir,
+                  path.resolve(this.sourceDir, mappingFile),
+                ),
               ),
           )
         })
@@ -475,7 +478,10 @@ class Compiler {
                   // The mapping file is already being written to the output
                   // directory by the AssemblyScript compiler
                   .updateIn(['mapping', 'file'], mappingFile =>
-                    path.relative(this.options.outputDir, mappingFile),
+                    path.relative(
+                      this.options.outputDir,
+                      path.resolve(this.sourceDir, mappingFile),
+                    ),
                   ),
               )
         })
