@@ -10,7 +10,7 @@ module.exports = class DataSourceTemplateCodeGenerator {
   generateModuleImports() {
     return [
       tsCodegen.moduleImports(
-        ['Address', 'DataSourceTemplate'],
+        ['Address', 'DataSourceTemplate', 'Entity'],
         '@graphprotocol/graph-ts',
       ),
     ]
@@ -25,6 +25,7 @@ module.exports = class DataSourceTemplateCodeGenerator {
 
     let klass = tsCodegen.klass(name, { export: true, extends: 'DataSourceTemplate' })
     klass.addMethod(this._generateCreateMethod())
+    klass.addMethod(this._generateCreateWithContextMethod())
     return klass
   }
 
@@ -40,6 +41,31 @@ module.exports = class DataSourceTemplateCodeGenerator {
           tsCodegen.namedType('void'),
           `
           DataSourceTemplate.create('${name}', [address.toHex()])
+          `,
+        )
+
+      default:
+        throw new Error(
+          `Data sources with kind != 'ethereum/contract' are not supported yet`,
+        )
+    }
+  }
+
+  _generateCreateWithContextMethod() {
+    let name = this.template.get('name')
+    let kind = this.template.get('kind')
+
+    switch (kind) {
+      case 'ethereum/contract':
+        return tsCodegen.staticMethod(
+          'createWithContext',
+          [
+            tsCodegen.param('address', tsCodegen.namedType('Address')),
+            tsCodegen.param('context', tsCodegen.namedType('Entity')),
+          ],
+          tsCodegen.namedType('void'),
+          `
+          DataSourceTemplate.createWithContext('${name}', [address.toHex()], context)
           `,
         )
 
