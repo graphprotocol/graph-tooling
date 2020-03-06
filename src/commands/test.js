@@ -113,6 +113,7 @@ module.exports = {
     try {
       await startTestEnvironment(tempdir)
     } catch(e) {
+      console.log(e)
       process.exitCode = 1
       return
     }
