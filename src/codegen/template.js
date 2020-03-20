@@ -10,7 +10,7 @@ module.exports = class DataSourceTemplateCodeGenerator {
   generateModuleImports() {
     return [
       tsCodegen.moduleImports(
-        ['Address', 'DataSourceTemplate', 'Entity'],
+        ['Address', 'DataSourceTemplate', 'DataSourceContext'],
         '@graphprotocol/graph-ts',
       ),
     ]
@@ -61,7 +61,7 @@ module.exports = class DataSourceTemplateCodeGenerator {
           'createWithContext',
           [
             tsCodegen.param('address', tsCodegen.namedType('Address')),
-            tsCodegen.param('context', tsCodegen.namedType('Entity')),
+            tsCodegen.param('context', tsCodegen.namedType('DataSourceContext')),
           ],
           tsCodegen.namedType('void'),
           `
