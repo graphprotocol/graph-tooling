@@ -455,7 +455,7 @@ const validateFulltextDirectiveLanguage = (def, directive) => {
 }
 
 const validateFulltextDirectiveArgumentLanguage = (def, directive, argument) => {
-  let languages = ['SIMPLE','DA','NL','EN','FI','FR','DE','HU','IT','NO','PT','RO','RU','ES','SV','TR']
+  let languages = ['simple','da','nl','en','fi','fr','de','hu','it','no','pt','ro','ru','es','sv','tr']
   if (argument.value.kind != 'EnumValue') {
     return List().push(
       immutable.fromJS({
@@ -499,7 +499,7 @@ const validateFulltextDirectiveArgumentAlgorithm = (def, directive, argument) =>
         message: `@fulltext argument 'algorithm' must be an enum`,
       }),
     )
-  } else if (!['RANKED', 'PROXIMITY_RANK'].includes(argument.value.value)) {
+  } else if (!['ranked', 'proximity_rank'].includes(argument.value.value)) {
     return List().push(
       immutable.fromJS({
         loc: directive.name.loc,
