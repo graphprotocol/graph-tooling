@@ -1,25 +1,128 @@
 type _Schema_
   @fulltext(
-    name: "jf"
-    language: EN
-    algorithm: RANKED
+    name: bad_values_provided
+    language: english
+    algorithm: ranked
     include: [
       {
         entity: "Musician",
         fields: [
           { name: 9 },
           { name: "bio" },
+          "friend"
         ]
       }
     ]
 )
+@fulltext(
+  name: "invalid_argument"
+  language: en
+  algorithm: rank
+  style: best
+  include: [
+    {
+      entity: "Musician",
+      fields: [
+        { name: "ok" },
+        { name: "bio" },
+      ]
+    }
+  ]
+)
+@fulltext(
+  name: "include_not_a_list"
+  language: en
+  algorithm: rank
+  include:
+    {
+      entity: "Musician",
+      fields: [
+        { name: "ok" },
+        { name: "bio" },
+      ]
+    }
+)
+@fulltext(
+  language: en
+  algorithm: rank
+  include:
+  {
+    entity: "Musician",
+    fields: [
+      { name: "ok" },
+      { name: "bio" },
+    ]
+  }
+)
+@fulltext(
+  name: "missing_language_and_algorithm_and_include"
+)
+@fulltext(
+  name: "include_item_not_an_object"
+  language: en
+  algorithm: rank
+  include: [
+    "Musician",
+  ]
+)
+@fulltext(
+  name: "include_missing_entity_field"
+  language: en
+  algorithm: rank
+  include: [
+    {
+      fields: [
+        { name: "ok" },
+        { name: "bio" },
+      ]
+    }
+  ]
+)
+@fulltext(
+  name: "invalid_include_argument_other"
+  language: en
+  algorithm: rank
+  include: [
+    {
+      other: "wrong"
+      fields: [
+        { name: "ok" },
+        { name: "bio" },
+      ],
+    }
+  ]
+)
+@fulltext(
+  name: "include_fields_must_be_a_list"
+  language: en
+  algorithm: rank
+  include: [
+    {
+      entity: "Musician",
+      fields: "instrument",
+    }
+  ]
+)
 
-enum __FulltextAlgorithm {
-  RANKED
-  PROXIMITY_RANKED
+type A @entity @fulltext(
+  name: "fulltext_on_wrong_type"
+  language: en
+  algorithm: rank
+  include: [
+    {
+      entity: "Musician",
+      fields: [
+        { name: "9" },
+        { name: "bio" },
+      ]
+    }
+  ]
+) {
+  id: ID!
 }
 
 type B @entity {
   id: ID!
   foo: String!
 }
+

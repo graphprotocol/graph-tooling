@@ -1,5 +1,23 @@
 - Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
+  A:
+  - @fulltext directive only allowed on '_Schema_' type
+
   _Schema_:
-  - @fulltext include field 'name' must be a string
+  - @fulltext argument 'name' must be a string
+  - @fulltext 'language' value must be one of: simple, da, nl, en, fi, fr , de , hu , it , no , pt , ro , ru , es , sv , tr . For more details refer to the docs https://thegraph.com/docs/define-a-subgraph#defining-fulltext-search-fields.
+  - @fulltext 'algorithm' value, 'ranked', must be one of: rank, proximityRank
+  - @fulltext argument 'include > fields > name' must be the name of an entity field enclosed in double quotes
+  - @fulltext argument 'include > fields' must have the form '[{ name: "fieldName" }, ...]
+  - found invalid argument: 'style', @fulltext directives only allow 'name', 'language', 'algorithm', and 'includes' arguments
+  - @fulltext argument 'include' must be a list
+  - @fulltext argument 'name' must be specified
+  - @fulltext argument 'include' must be a list
+  - @fulltext argument 'language' must be specified
+  - @fulltext argument 'algorithm' must be specified
+  - @fulltext argument 'include' must be specified
+  - @fulltext argument 'include' must have the form '[{ entity: "entityName", fields: [{name: "fieldName"},...]}...]
+  - @fulltext argument include must have two fields, 'entity' and 'fields'}
+  - @fulltext argument 'include > other' must be be one of: [entity, fields]
+  - @fulltext include 'fields' must be a list
