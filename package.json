@@ -39,6 +39,8 @@
   },
   "scripts": {
     "test": "jest --verbose",
+    "test:init": "jest tests/cli/init.test.js --verbose",
+    "test:validation": "jest tests/cli/validation.test.js --verbose",
     "release:patch": "npm version patch && npm publish && git push origin master && git push --tags",
     "release:minor": "npm version minor && npm publish && git push origin master && git push --tags"
   }
