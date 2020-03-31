@@ -1,21 +1,34 @@
 type _Schema_
-  @fulltext(
-    name: bad_values_provided
-    language: english
-    algorithm: ranked
-    include: [
-      {
-        entity: "Musician",
-        fields: [
-          { name: 9 },
-          { name: "bio" },
-          "friend"
-        ]
-      }
-    ]
+@fulltext(
+  name: badValuesProvided
+  language: english
+  algorithm: ranked
+  include: [
+    {
+      entity: "Musician",
+      fields: [
+        { name: "9" },
+        { name: "bio" },
+      ]
+    }
+  ]
 )
 @fulltext(
-  name: "invalid_argument"
+  name: "invalidField"
+  language: english
+  algorithm: rank
+  include: [
+    {
+      entity: "Musician",
+      fields: [
+        { name:  "9" },
+        "bio"
+      ]
+    }
+  ]
+)
+@fulltext(
+  name: "invalidArgument"
   language: en
   algorithm: rank
   style: best
@@ -30,19 +43,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "include_not_a_list"
-  language: en
-  algorithm: rank
-  include:
-    {
-      entity: "Musician",
-      fields: [
-        { name: "ok" },
-        { name: "bio" },
-      ]
-    }
-)
-@fulltext(
+  name: "includeMustBeList"
   language: en
   algorithm: rank
   include:
@@ -55,10 +56,10 @@ type _Schema_
   }
 )
 @fulltext(
-  name: "missing_language_and_algorithm_and_include"
+  name: "missingLanguageAlgorithmInclude"
 )
 @fulltext(
-  name: "include_item_not_an_object"
+  name: "includeItemNotObject"
   language: en
   algorithm: rank
   include: [
@@ -66,7 +67,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "include_missing_entity_field"
+  name: "includeMissingEntityField"
   language: en
   algorithm: rank
   include: [
@@ -79,7 +80,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "invalid_include_argument_other"
+  name: "invalidIncludeArgumentOther"
   language: en
   algorithm: rank
   include: [
@@ -93,7 +94,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "include_fields_must_be_a_list"
+  name: "includeFieldsMustBeList"
   language: en
   algorithm: rank
   include: [
@@ -103,9 +104,21 @@ type _Schema_
     }
   ]
 )
-
+@fulltext(
+  language: en
+  algorithm: rank
+  include: [
+    {
+      entity: "Musician",
+      fields: [
+        { name: "ok" },
+        { name: "bio" },
+      ]
+    }
+  ]
+)
 type A @entity @fulltext(
-  name: "fulltext_on_wrong_type"
+  name: "fulltextOnWrongType"
   language: en
   algorithm: rank
   include: [
@@ -125,4 +138,3 @@ type B @entity {
   id: ID!
   foo: String!
 }
-
