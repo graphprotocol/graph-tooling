@@ -444,9 +444,9 @@ const validateFulltextArgumentName = (def, directive, argument) => {
     : List([])
 }
 
-const fulltextDirectiveName = (directive) => {
-    let arg = directive.arguments.find(argument => argument.name.value == 'name')
-    return arg ? arg.value.value : "undefinedDirectiveName"
+const fulltextDirectiveName = directive => {
+  let arg = directive.arguments.find(argument => argument.name.value == 'name')
+  return arg ? arg.value.value : 'Other'
 }
 
 const validateFulltextLanguage = (def, directive) => {
@@ -497,7 +497,9 @@ const validateFulltextArgumentLanguage = (def, directive, argument) => {
         loc: directive.name.loc,
         entity: def.name.value,
         directive: fulltextDirectiveName(directive),
-        message: `@fulltext directive 'language' value must be one of: ${languages.join(', ')}`,
+        message: `@fulltext directive 'language' value must be one of: ${languages.join(
+          ', ',
+        )}`,
       }),
     ])
   } else {
@@ -580,7 +582,7 @@ const validateFulltextArgumentInclude = (def, directive, argument) => {
         loc: directive.name.loc,
         entity: def.name.value,
         directive: fulltextDirectiveName(directive),
-        message: `@fulltext argument 'include' must have the form '[{entity: "entityName", fields: [{name: "fieldName"},... ]}... ]`,
+        message: `@fulltext argument 'include' must have the form '[{entity: "entityName", fields: [{name: "fieldName"}, ...]} ...]`,
       }),
     ])
   }

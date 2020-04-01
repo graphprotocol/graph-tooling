@@ -1,42 +1,32 @@
 - Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
-    A:
-    - @fulltext directive only allowed on '_Schema_' type
+  A:
+  - @fulltext directive only allowed on '_Schema_' type
 
-    _Schema_:
-
-      badValuesProvided:
-      - @fulltext argument 'name' must be a string
-      - @fulltext directive 'language' value must be one of: simple, da, nl, en, fi, fr, de, hu, it, no, pt, ro, ru, es, sv, tr
-      - @fulltext 'algorithm' value, 'ranked', must be one of: rank, proximityRank
-
-      invalidField:
-      - @fulltext directive 'language' value must be one of: simple, da, nl, en, fi, fr, de, hu, it, no, pt, ro, ru, es, sv, tr
-      - @fulltext argument 'include > fields' must have the form '[{ name: "fieldName" }, ...]
-
-      invalidArgument:
-      - found invalid argument: 'style', @fulltext directives only allow 'name', 'language', 'algorithm', and 'includes' arguments
-
-      includeMustBeList:
-      - @fulltext argument 'include' must be a list
-
-      missingLanguageAlgorithmInclude:
-      - @fulltext argument 'language' must be specified
-      - @fulltext argument 'algorithm' must be specified
-      - @fulltext argument 'include' must be specified
-
-      includeItemNotObject:
-      - @fulltext argument 'include' must have the form '[{entity: "entityName", fields: [{name: "fieldName"},... ]}... ]
-
-      includeMissingEntityField:
-      - @fulltext argument include must have two fields, 'entity' and 'fields'
-
-      invalidIncludeArgumentOther:
-      - @fulltext argument 'include > other' must be be one of: entity, fields
-
-      includeFieldsMustBeList:
-      - @fulltext argument 'include > fields' must be a list
-
-      undefinedDirectiveName:
-      - @fulltext argument 'name' must be specified
+  _Schema_:
+    BadValuesProvided:
+    - @fulltext argument 'name' must be a string
+    - @fulltext directive 'language' value must be one of: simple, da, nl, en, fi, fr, de, hu, it, no, pt, ro, ru, es, sv, tr
+    - @fulltext 'algorithm' value, 'ranked', must be one of: rank, proximityRank
+    InvalidField:
+    - @fulltext directive 'language' value must be one of: simple, da, nl, en, fi, fr, de, hu, it, no, pt, ro, ru, es, sv, tr
+    - @fulltext argument 'include > fields' must have the form '[{ name: "fieldName" }, ...]
+    InvalidArgument:
+    - found invalid argument: 'style', @fulltext directives only allow 'name', 'language', 'algorithm', and 'includes' arguments
+    IncludeMustBeList:
+    - @fulltext argument 'include' must be a list
+    MissingLanguageAlgorithmInclude:
+    - @fulltext argument 'language' must be specified
+    - @fulltext argument 'algorithm' must be specified
+    - @fulltext argument 'include' must be specified
+    IncludeItemNotObject:
+    - @fulltext argument 'include' must have the form '[{entity: "entityName", fields: [{name: "fieldName"}, ...]} ...]
+    IncludeMissingEntityField:
+    - @fulltext argument include must have two fields, 'entity' and 'fields'
+    InvalidIncludeArgumentOther:
+    - @fulltext argument 'include > other' must be be one of: entity, fields
+    IncludeFieldsMustBeList:
+    - @fulltext argument 'include > fields' must be a list
+    Other:
+    - @fulltext argument 'name' must be specified
