@@ -63,27 +63,26 @@ module.exports = class Subgraph {
       let msg = errors.reduce((msg, errors, entity) => {
         errors = errors.groupBy(error => error.get('directive'))
         let inner_msgs = errors.reduce((msg, errors, directive) => {
-          return `${msg}${directive ? `
+          return `${msg}${
+            directive
+              ? `
+    ${directive}:`
+              : ''
+          }
+  ${errors
+    .map(error =>
+      error
+        .get('message')
+        .split('\n')
+        .join('\n  '),
+    )
+    .map(msg => `${directive ? '  ' : ''}- ${msg}`)
+    .join('\n  ')}`
+        }, ``)
+        return `${msg}
 
-      ${directive}:` : ''}
-    ${errors
-      .map(error =>
-        error
-          .get('message')
-          .split('\n')
-          .join('\n    '),
-      )
-      .map(msg => `${directive ? '  ' : ''}- ${msg}`)
-      .join('\n    ')}`}
-            ,
-          ``,
-          )
-          return `${msg}
-
-    ${entity}:${inner_msgs}`
-        },
-        `Error in ${path.relative(process.cwd(), filename)}:`
-      )
+  ${entity}:${inner_msgs}`
+      }, `Error in ${path.relative(process.cwd(), filename)}:`)
 
       throw new Error(msg)
     }

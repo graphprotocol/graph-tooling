@@ -1,6 +1,6 @@
 type _Schema_
 @fulltext(
-  name: badValuesProvided
+  name: BadValuesProvided
   language: english
   algorithm: ranked
   include: [
@@ -14,7 +14,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "invalidField"
+  name: "InvalidField"
   language: english
   algorithm: rank
   include: [
@@ -28,7 +28,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "invalidArgument"
+  name: "InvalidArgument"
   language: en
   algorithm: rank
   style: best
@@ -43,7 +43,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "includeMustBeList"
+  name: "IncludeMustBeList"
   language: en
   algorithm: rank
   include:
@@ -56,10 +56,10 @@ type _Schema_
   }
 )
 @fulltext(
-  name: "missingLanguageAlgorithmInclude"
+  name: "MissingLanguageAlgorithmInclude"
 )
 @fulltext(
-  name: "includeItemNotObject"
+  name: "IncludeItemNotObject"
   language: en
   algorithm: rank
   include: [
@@ -67,7 +67,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "includeMissingEntityField"
+  name: "IncludeMissingEntityField"
   language: en
   algorithm: rank
   include: [
@@ -80,7 +80,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "invalidIncludeArgumentOther"
+  name: "InvalidIncludeArgumentOther"
   language: en
   algorithm: rank
   include: [
@@ -94,7 +94,7 @@ type _Schema_
   ]
 )
 @fulltext(
-  name: "includeFieldsMustBeList"
+  name: "IncludeFieldsMustBeList"
   language: en
   algorithm: rank
   include: [
@@ -118,7 +118,7 @@ type _Schema_
   ]
 )
 type A @entity @fulltext(
-  name: "fulltextOnWrongType"
+  name: "FulltextOnWrongType"
   language: en
   algorithm: rank
   include: [
