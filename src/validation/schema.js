@@ -531,7 +531,7 @@ const validateFulltextArgumentAlgorithm = (def, directive, argument) => {
         message: `@fulltext argument 'algorithm' must be one of: rank, proximityRank`,
       }),
     ])
-  } else if (!['rank', 'proximity_rank'].includes(argument.value.value)) {
+  } else if (!['rank', 'proximityRank'].includes(argument.value.value)) {
     return List([
       immutable.fromJS({
         loc: directive.name.loc,
