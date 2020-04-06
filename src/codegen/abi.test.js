@@ -102,6 +102,25 @@ describe('ABI code generation', () => {
           {
             type: 'function',
             stateMutability: 'view',
+            payable: 'false',
+            name: 'getProposals',
+            outputs: [
+              {
+                type: 'uint256',
+                name: 'size',
+              },
+              {
+                type: 'tuple[]',
+                components: [
+                  { name: 'first', type: 'uint256' },
+                  { name: 'second', type: 'string' },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'function',
+            stateMutability: 'view',
             name: 'overloaded',
             inputs: [
               {
@@ -165,6 +184,8 @@ describe('ABI code generation', () => {
         'Contract__getProposalResultValue0Struct',
         'Contract__getProposalInputParam1Struct',
         'Contract__getProposalInputParam1BarStruct',
+        'Contract__getProposalsResultValue1Struct',
+        'Contract__getProposalsResult',
         'Contract',
       ])
     })
@@ -212,6 +233,8 @@ describe('ABI code generation', () => {
             ts.param('param1', 'Contract__getProposalInputParam1Struct'),
           ]),
         ],
+        ['getProposals', immutable.List()],
+        ['try_getProposals', immutable.List()],
         ['overloaded', immutable.List([ts.param('param0', 'string')])],
         ['try_overloaded', immutable.List([ts.param('param0', 'string')])],
         ['overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
@@ -232,6 +255,8 @@ describe('ABI code generation', () => {
           'try_getProposal',
           'ethereum.CallResult<Contract__getProposalResultValue0Struct>',
         ],
+        ['getProposals', ts.namedType('Contract__getProposalsResult')],
+        ['try_getProposals', 'ethereum.CallResult<Contract__getProposalsResult>'],
         ['overloaded', ts.namedType('string')],
         ['try_overloaded', 'ethereum.CallResult<string>'],
         ['overloaded1', ts.namedType('string')],
@@ -294,6 +319,16 @@ describe('ABI code generation', () => {
         ['get yesCount', 'BigInt'],
         ['get noCount', 'BigInt'],
       ])
+    })
+
+    test('Function bodies are generated correctly for tuple arrays', () => {
+      let contract = generatedTypes.find(type => type.name === 'Contract')
+      let getter = contract.methods.find(method => method.name === 'getProposals')
+
+      expect(getter.body).not.toContain('toTupleArray<undefined>')
+      expect(getter.body).toContain(
+        'result[1].toTupleArray<Contract__getProposalsResultValue1Struct>()',
+      )
     })
   })
 })
