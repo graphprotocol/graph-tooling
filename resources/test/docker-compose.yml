@@ -27,7 +27,7 @@ services:
       - '18546:8546'
     command: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
   ipfs:
-    image: ipfs/go-ipfs
+    image: ipfs/go-ipfs:v0.4.23
     ports:
       - '15001:5001'
   postgres:
