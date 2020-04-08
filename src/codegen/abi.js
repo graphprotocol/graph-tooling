@@ -489,7 +489,7 @@ module.exports = class AbiCodeGenerator {
       let params = inputs.map((input, index) =>
         tsCodegen.param(
           input.get('name'),
-          this._getTupleParamType(input, index, tupleResultParentType),
+          this._getTupleParamType(input, index, tupleInputParentType),
         ),
       )
 
@@ -585,15 +585,15 @@ module.exports = class AbiCodeGenerator {
     return [...types, klass]
   }
 
-  _getTupleParamType(inputOrOutput, index, tupleResultParentType) {
+  _getTupleParamType(inputOrOutput, index, tupleParentType) {
     const type = inputOrOutput.get('type')
     return util.isTupleType(type)
-      ? this._tupleTypeName(inputOrOutput, index, tupleResultParentType, this.abi.name)
+      ? this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)
       : util.isTupleArrayType(type)
       ? `Array<${this._tupleTypeName(
           inputOrOutput,
           index,
-          tupleResultParentType,
+          tupleParentType,
           this.abi.name,
         )}>`
       : typesCodegen.ascTypeForEthereum(type)
