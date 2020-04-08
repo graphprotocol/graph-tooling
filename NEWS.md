@@ -7,6 +7,10 @@ repo.
 
 ## Unreleased
 
+tbd
+
+## 0.18.0
+
 ### Feature: `graph test` (#414, #420, #421)
 
 This release introduces a new `graph test` command that can be used to run
@@ -47,6 +51,7 @@ against mainnet for instance.
 
 ### Misc
 
+- Fix codegen for tuple arrays (#455 via #456). Thanks @JamesLefrere!
 - Add `createWithContext()` code generation for data source templates (#446).
 - Fix building in situations where `subgraph.yaml` is not in the working
   directory (#443).
