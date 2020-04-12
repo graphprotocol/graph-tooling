@@ -50,7 +50,7 @@ const generatePackageJson = ({ subgraphName }) =>
 
 // Subgraph manifest
 
-const generateManifest = ({ abi, address, network }) =>
+const generateManifest = ({ abi, address, network, contractName }) =>
   prettier.format(
     `
 specVersion: 0.0.1
@@ -58,11 +58,11 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Contract
+    name: ${contractName}
     network: ${network}
     source:
       address: '${address}'
-      abi: Contract
+      abi: ${contractName}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.2
@@ -72,8 +72,8 @@ dataSources:
           .map(event => `- ${event.get('_alias')}`)
           .join('\n        ')}
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
+        - name: ${contractName}
+          file: ./abis/${contractName}.json
       eventHandlers:
         ${abiEvents(abi)
           .map(
@@ -185,11 +185,11 @@ const generateEventFieldAssignments = event =>
     [],
   )
 
-const generateEventIndexingHandlers = events =>
+const generateEventIndexingHandlers = (events, contractName) =>
   `
   import { ${events.map(
     event => `${event._alias} as ${event._alias}Event`,
-  )}} from '../generated/Contract/Contract'
+  )}} from '../generated/${contractName}/${contractName}'
   import { ${events.map(event => event._alias)} } from '../generated/schema'
 
   ${events
@@ -208,11 +208,11 @@ const generateEventIndexingHandlers = events =>
     .join('\n')}
 `
 
-const generatePlaceholderHandlers = ({ abi, events }) =>
+const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
   `
   import { BigInt } from '@graphprotocol/graph-ts'
-  import { Contract, ${events.map(event => event._alias)} }
-    from '../generated/Contract/Contract'
+  import { ${contractName}, ${events.map(event => event._alias)} }
+    from '../generated/${contractName}/${contractName}'
   import { ExampleEntity } from '../generated/schema'
 
   ${events
@@ -279,25 +279,25 @@ export function handle${event._alias}(event: ${event._alias}): void {}
     )
     .join('\n')}`
 
-const generateMapping = ({ abi, indexEvents }) => {
+const generateMapping = ({ abi, indexEvents, contractName }) => {
   let events = abiEvents(abi).toJS()
   return prettier.format(
     indexEvents
-      ? generateEventIndexingHandlers(events)
-      : generatePlaceholderHandlers({ abi, events: events }),
+      ? generateEventIndexingHandlers(events, contractName)
+      : generatePlaceholderHandlers({ abi, events: events, contractName }),
     { parser: 'typescript', semi: false },
   )
 }
 
 const generateScaffold = async (
-  { abi, address, network, subgraphName, indexEvents },
+  { abi, address, network, subgraphName, indexEvents, contractName='Contract' },
   spinner,
 ) => {
   step(spinner, 'Generate subgraph from ABI')
   let packageJson = generatePackageJson({ subgraphName })
-  let manifest = generateManifest({ abi, address, network })
-  let schema = generateSchema({ abi, indexEvents })
-  let mapping = generateMapping({ abi, subgraphName, indexEvents })
+  let manifest = generateManifest({ abi, address, network, contractName })
+  let schema = generateSchema({ abi, indexEvents, contractName })
+  let mapping = generateMapping({ abi, subgraphName, indexEvents, contractName })
 
   return {
     'package.json': packageJson,
@@ -305,7 +305,7 @@ const generateScaffold = async (
     'schema.graphql': schema,
     src: { 'mapping.ts': mapping },
     abis: {
-      'Contract.json': prettier.format(JSON.stringify(abi.data), {
+      [`${contractName}.json`]: prettier.format(JSON.stringify(abi.data), {
         parser: 'json',
       }),
     },

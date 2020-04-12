@@ -80,6 +80,7 @@ describe('Subgraph scaffolding', () => {
         abi: TEST_ABI,
         network: 'kovan',
         address: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
+        contractName: 'Contract'
       }),
     ).toEqual(`\
 specVersion: 0.0.1
@@ -146,7 +147,7 @@ type ExampleEvent1 @entity {
   })
 
   test('Mapping (default)', () => {
-    expect(generateMapping({ abi: TEST_ABI })).toEqual(`\
+    expect(generateMapping({ abi: TEST_ABI, contractName: 'Contract' })).toEqual(`\
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
   Contract,
@@ -203,7 +204,7 @@ export function handleExampleEvent1(event: ExampleEvent1): void {}
   })
 
   test('Mapping (for indexing events)', () => {
-    expect(generateMapping({ abi: TEST_ABI, indexEvents: true })).toEqual(`\
+    expect(generateMapping({ abi: TEST_ABI, indexEvents: true, contractName: 'Contract' })).toEqual(`\
 import {
   ExampleEvent as ExampleEventEvent,
   ExampleEvent1 as ExampleEvent1Event
