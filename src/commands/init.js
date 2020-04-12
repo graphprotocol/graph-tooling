@@ -33,11 +33,12 @@ ${chalk.dim('Options for --from-contract:')}
       --network <mainnet|kovan|rinkeby|ropsten|goerli|poa-core>
                                 Selects the network the contract is deployed to
       --index-events            Index contract events as entities
+      --contract-name           Name of the contract (default: Contract)      
 `
 
 const processInitForm = async (
   toolbox,
-  { abi, address, allowSimpleName, directory, fromExample, network, subgraphName },
+  {abi, address, allowSimpleName, directory, fromExample, network, subgraphName, contractName},
 ) => {
   let networkChoices = ['mainnet', 'kovan', 'rinkeby', 'ropsten', 'goerli', 'poa-core']
   let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
@@ -147,6 +148,18 @@ const processInitForm = async (
         }
       },
     },
+    {
+      type: 'input',
+      name: 'contractName',
+      message: 'Contract Name',
+      initial: contractName || 'Contract',
+      skip: () => fromExample !== undefined,
+      validate: value => value && value.length > 0,
+      result: value => {
+        contractName = value;
+        return value;
+      }
+    },
   ]
 
   try {
@@ -233,6 +246,7 @@ module.exports = {
       abi,
       allowSimpleName,
       fromContract,
+      contractName,
       fromExample,
       h,
       help,
@@ -338,6 +352,7 @@ module.exports = {
           indexEvents,
           network,
           subgraphName,
+          contractName,
         },
         { commands },
       )
@@ -352,6 +367,7 @@ module.exports = {
       fromExample,
       network,
       subgraphName,
+      contractName
     })
 
     // Exit immediately when the form is cancelled
@@ -382,6 +398,7 @@ module.exports = {
           network: inputs.network,
           address: inputs.address,
           indexEvents,
+          contractName: inputs.contractName
         },
         { commands },
       )
@@ -571,7 +588,7 @@ const initSubgraphFromExample = async (
 
 const initSubgraphFromContract = async (
   toolbox,
-  { allowSimpleName, subgraphName, directory, abi, network, address, indexEvents },
+  {allowSimpleName, subgraphName, directory, abi, network, address, indexEvents, contractName},
   { commands },
 ) => {
   let { print } = toolbox
@@ -609,6 +626,7 @@ const initSubgraphFromContract = async (
           network,
           address,
           indexEvents,
+          contractName,
         },
         spinner,
       )
