@@ -60,11 +60,17 @@ type EthereumContractEventHandler {
   handler: String!
 }
 
+type Graft {
+  base: String!
+  block: BigInt!
+}
+
 type SubgraphManifest {
   specVersion: String!
   schema: Schema!
   description: String
   repository: String
+  graft: Graft
   dataSources: [DataSource!]!
   templates: [DataSourceTemplate!]
 }
