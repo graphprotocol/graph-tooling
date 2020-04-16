@@ -1,5 +1,4 @@
 const immutable = require('immutable')
-const path = require('path')
 
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
@@ -9,7 +8,10 @@ const ABI = require('../abi')
 module.exports = class AbiCodeGenerator {
   constructor(abi) {
     this.abi = abi
-    this.name = path.basename(abi.name)
+    this.name = abi.name
+      .split('/')
+      .reverse()
+      .shift()
   }
 
   generateModuleImports() {

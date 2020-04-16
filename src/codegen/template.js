@@ -1,5 +1,4 @@
 const immutable = require('immutable')
-const path = require('path')
 
 const tsCodegen = require('./typescript')
 
@@ -23,8 +22,12 @@ module.exports = class DataSourceTemplateCodeGenerator {
 
   _generateTemplateType() {
     let name = this.template.get('name')
+    let base = name
+      .split('/')
+      .reverse()
+      .shift()
 
-    let klass = tsCodegen.klass(path.basename(name), {
+    let klass = tsCodegen.klass(base, {
       export: true,
       extends: 'DataSourceTemplate',
     })
