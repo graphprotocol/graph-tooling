@@ -1,6 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const prettier = require('prettier')
+const fetch = require('node-fetch')
 const pkginfo = require('pkginfo')(module)
 
 const { getSubgraphBasename } = require('./command-helpers/subgraph')
@@ -50,14 +51,38 @@ const generatePackageJson = ({ subgraphName }) =>
 
 // Subgraph manifest
 
-const generateManifest = ({ abis, addresses, network, contractNames }) =>
+const getStartBlock = async(address, network, etherscanApikey) => {
+
+  if(network == 'poa-core'){
+    return 0;
+  }
+
+  const url = `https://${
+    network === 'mainnet' ? 'api' : `api-${network}`
+  }.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc${etherscanApikey?'&apikey='+etherscanApikey:''}`;
+
+  let result = await fetch(url)
+  let json = await result.json()
+
+  // Etherscan returns a JSON object that has a `status`, a `message` and
+  // a `result` field. The `status` is '0' in case of errors and '1' in
+  // case of success
+  if (json.status === '1') {
+    return json.result.length>0? json.result[0].blockNumber:0;
+  } else {
+    return 0;
+  }
+
+}
+
+const generateManifest = async ({ abis, addresses, network, contractNames, etherscanApikey }) =>
   prettier.format(
     `
 specVersion: 0.0.1
 schema:
   file: ./schema.graphql
 dataSources:
-  ${abis.map((abi, i) => 
+  ${(await Promise.all(abis.map(async(abi, i) => 
  ` 
   - kind: ethereum/contract
     name: ${contractNames[i]}
@@ -65,6 +90,7 @@ dataSources:
     source:
       address: '${addresses[i]}'
       abi: ${contractNames[i]}
+      startBlock: ${await getStartBlock(addresses[i], network, etherscanApikey)}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.2
@@ -85,7 +111,7 @@ dataSources:
           )
           .join('')}
       file: ./src/${contractNames[i]}Mapping.ts`
-    ).join('')}
+    ))).join('')}
 `,
     { parser: 'yaml' },
   )
@@ -296,12 +322,12 @@ const generateMapping = ({ abi, indexEvents, contractName }) => {
 }
 
 const generateScaffold = async (
-  { abis, addresses, network, subgraphName, indexEvents, contractNames },
+  { abis, addresses, network, subgraphName, indexEvents, contractNames, etherscanApikey },
   spinner,
 ) => {
   step(spinner, 'Generate subgraph from ABI')
   let packageJson = generatePackageJson({ subgraphName })
-  let manifest = generateManifest({ abis, addresses, network, contractNames })
+  let manifest = await generateManifest({ abis, addresses, network, contractNames, etherscanApikey })
   let schema = generateSchema({ abis, indexEvents, contractNames })
 
   const mappingMap = {};
