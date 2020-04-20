@@ -16,10 +16,9 @@ const cliTest = (title, args, testPath, options) => {
       let [exitCode, stdout, stderr] = await runCli(args, cwd)
 
       let expectedExitCode = undefined
-      if (options !== undefined && options.exitCode) {
+      if (options !== undefined && options.exitCode !== undefined) {
         expectedExitCode = options.exitCode
       }
-
       let expectedStdout = undefined
       try {
         expectedStdout = fs.readFileSync(resolvePath(`./${testPath}.stdout`), 'utf-8')
