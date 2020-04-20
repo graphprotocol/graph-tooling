@@ -220,9 +220,9 @@ const entityTypeByName = (defs, name) =>
   defs
     .filter(
       def =>
-        def.kind === 'InterfaceTypeDefinition' || def.kind === 'ObjectTypeDefinition',
+        def.kind === 'InterfaceTypeDefinition' ||
+        (def.kind === 'ObjectTypeDefinition' && def.directives.find(directive => directive.name.value === 'entity'))
     )
-    .filter(def => def.directives.find(directive => directive.name.value === 'entity'))
     .find(def => def.name.value === name)
 
 const fieldTargetEntityName = field => unwrapType(field.type).name.value
