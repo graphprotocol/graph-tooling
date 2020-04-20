@@ -339,7 +339,9 @@ does not exist on type '${targetEntity.name.value}'`,
   let backrefTypeName = unwrapType(derivedFromField.type)
   let backRefEntity = entityTypeByName(defs, backrefTypeName.name.value)
 
-  if (!backRefEntity || backRefEntity.name.value !== def.name.value) {
+  // The field we are deriving from must either have type 'def' or one of the
+  // interface types that 'def' is implementing
+  if (!backRefEntity || (backRefEntity.name.value !== def.name.value && !def.interfaces.find(intf => intf.name.value === backRefEntity.name.value))) {
     return immutable.fromJS([
       {
         loc: directive.loc,
@@ -348,7 +350,8 @@ does not exist on type '${targetEntity.name.value}'`,
 Field '${field.name.value}': \
 @derivedFrom field '${directive.arguments[0].value.value}' \
 on type '${targetEntity.name.value}' must have the type \
-'${def.name.value}', '${def.name.value}!' or '[${def.name.value}!]!'`,
+'${def.name.value}', '${def.name.value}!', '[${def.name.value}!]!', \
+or one of the interface types that '${def.name.value}' implements`,
       },
     ])
   }

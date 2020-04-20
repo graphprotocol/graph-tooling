@@ -121,6 +121,14 @@ describe('Validation', () => {
     },
   )
   cliTest(
+    'Deriving from interface-typed fields is allowed',
+    ['codegen', '--skip-migrations'],
+    'validation/derived-from-with-interface',
+    {
+      exitCode: 0,
+    },
+  )
+  cliTest(
     '@derivedFrom target type missing',
     ['codegen', '--skip-migrations'],
     'validation/derived-from-target-type-missing',

@@ -7,4 +7,4 @@
   - Field 'd': @derivedFrom directive must have a 'field' argument
   - Field 'e': @derivedFrom directive must have a 'field' argument
   - Field 'f': Value of the @derivedFrom 'field' argument must be a string
-  - Field 'g': @derivedFrom field 'a' on type 'G' must have the type 'A', 'A!' or '[A!]!'
+  - Field 'g': @derivedFrom field 'a' on type 'G' must have the type 'A', 'A!', '[A!]!', or one of the interface types that 'A' implements
