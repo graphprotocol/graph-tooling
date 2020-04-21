@@ -18,24 +18,38 @@ class Compiler {
     this.options = options
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
+    this.libsDirs = []
 
     for (
       let dir = path.resolve(this.sourceDir);
       // Terminate after the root dir or when we have found node_modules
-      dir !== undefined && this.libsDir === undefined;
+      dir !== undefined;
       // Continue with the parent directory, terminate after the root dir
       dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
     ) {
       if (fs.existsSync(path.join(dir, 'node_modules'))) {
-        this.libsDir = path.join(dir, 'node_modules')
+        this.libsDirs.push(path.join(dir, 'node_modules'))
       }
     }
 
-    if (this.libsDir === undefined) {
+    if (this.libsDirs.length === 0) {
       throw Error(
         `could not locate \`node_modules\` in parent directories of subgraph manifest`,
       )
     }
+
+    const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts')
+    const globalsLib = this.libsDirs.find(item => {
+      return fs.existsSync(path.join(item, globalsFile))
+    })
+
+    if (!globalsLib) {
+      throw Error(
+        'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
+      )
+    }
+
+    this.globalsFile = path.join(globalsLib, globalsFile)
 
     process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
@@ -273,9 +287,8 @@ class Compiler {
         throw e
       }
 
-      let libs = this.libsDir
-      let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
-      global = path.relative(baseDir, global)
+      let libs = this.libsDirs.join(',')
+      let global = path.relative(baseDir, this.globalsFile)
 
       asc.main(
         [
@@ -355,9 +368,8 @@ class Compiler {
         throw e
       }
 
-      let libs = this.libsDir
-      let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
-      global = path.relative(baseDir, global)
+      let libs = this.libsDirs.join(',')
+      let global = path.relative(baseDir, this.globalsFile)
 
       asc.main(
         [
