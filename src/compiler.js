@@ -19,6 +19,24 @@ class Compiler {
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
 
+    for (
+      let dir = path.resolve(this.sourceDir);
+      // Terminate after the root dir or when we have found node_modules
+      dir !== undefined && this.libsDir === undefined;
+      // Continue with the parent directory, terminate after the root dir
+      dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
+    ) {
+      if (fs.existsSync(path.join(dir, 'node_modules'))) {
+        this.libsDir = path.join(dir, 'node_modules')
+      }
+    }
+
+    if (this.libsDir === undefined) {
+      throw Error(
+        `could not locate \`node_modules\` in parent directories of subgraph manifest`,
+      )
+    }
+
     process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
@@ -233,7 +251,7 @@ class Compiler {
         return outFile
       }
 
-      let outFile = path.join(
+      let outFile = path.resolve(
         this.subgraphDir(this.options.outputDir, dataSource),
         this.options.outputFormat == 'wasm'
           ? `${dataSourceName}.wasm`
@@ -250,30 +268,12 @@ class Compiler {
 
       // Create output directory
       try {
-        fs.mkdirsSync(path.dirname(outputFile))
+        fs.mkdirsSync(path.dirname(outFile))
       } catch (e) {
         throw e
       }
 
-      let libs
-      for (
-        let dir = path.resolve(baseDir);
-        // Terminate after the root dir or when we have found node_modules
-        dir !== undefined && libs === undefined;
-        // Continue with the parent directory, terminate after the root dir
-        dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
-      ) {
-        if (fs.existsSync(path.join(dir, 'node_modules'))) {
-          libs = path.join(dir, 'node_modules')
-        }
-      }
-
-      if (libs === undefined) {
-        throw Error(
-          `could not locate \`node_modules\` in parent directories of subgraph manifest`,
-        )
-      }
-
+      let libs = this.libsDir
       let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
       global = path.relative(baseDir, global)
 
@@ -301,9 +301,9 @@ class Compiler {
       )
 
       // Remember the output file to avoid compiling the same file again
-      compiledFiles.set(inputCacheKey, outputFile)
+      compiledFiles.set(inputCacheKey, outFile)
 
-      return outputFile
+      return outFile
     } catch (e) {
       throw Error(`Failed to compile data source mapping: ${e.message}`)
     }
@@ -331,7 +331,7 @@ class Compiler {
         return outFile
       }
 
-      let outFile = path.join(
+      let outFile = path.resolve(
         this.options.outputDir,
         'templates',
         templateName,
@@ -350,12 +350,12 @@ class Compiler {
 
       // Create output directory
       try {
-        fs.mkdirsSync(path.dirname(outputFile))
+        fs.mkdirsSync(path.dirname(outFile))
       } catch (e) {
         throw e
       }
 
-      let libs = path.join(baseDir, 'node_modules')
+      let libs = this.libsDir
       let global = path.join(libs, '@graphprotocol', 'graph-ts', 'global', 'global.ts')
       global = path.relative(baseDir, global)
 
@@ -383,9 +383,9 @@ class Compiler {
       )
 
       // Remember the output file to avoid compiling the same file again
-      compiledFiles.set(inputCacheKey, outputFile)
+      compiledFiles.set(inputCacheKey, outFile)
 
-      return outputFile
+      return outFile
     } catch (e) {
       throw Error(`Failed to compile data source template: ${e.message}`)
     }
