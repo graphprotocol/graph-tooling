@@ -170,7 +170,7 @@ class Compiler {
   _copySubgraphFile(maybeRelativeFile, sourceDir, targetDir, spinner) {
     let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
     let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
-    let targetFile = path.join(targetDir, relativeSourceFile)
+    let targetFile = path.resolve(targetDir, relativeSourceFile)
     step(spinner, 'Copy subgraph file', this.displayPath(targetFile))
     fs.mkdirsSync(path.dirname(targetFile))
     fs.copyFileSync(absoluteSourceFile, targetFile)
@@ -402,17 +402,14 @@ class Compiler {
       `Warnings while writing compiled subgraph to ${displayDir}`,
       async spinner => {
         // Copy schema and update its path
-        subgraph = subgraph.updateIn(['schema', 'file'], schemaFile =>
-          path.relative(
-            this.options.outputDir,
-            this._copySubgraphFile(
-              schemaFile,
-              this.sourceDir,
-              this.options.outputDir,
-              spinner,
-            ),
-          ),
-        )
+        subgraph = subgraph.updateIn(['schema', 'file'], schemaFile => {
+          const schemaFilePath = path.resolve(this.sourceDir, schemaFile)
+          const schemaFileName = path.basename(schemaFile)
+          const targetFile = path.resolve(this.options.outputDir, schemaFileName)
+          step(spinner, 'Copy schema file', this.displayPath(targetFile))
+          fs.copyFileSync(schemaFilePath, targetFile)
+          return path.relative(this.options.outputDir, targetFile)
+        })
 
         // Copy data source files and update their paths
         subgraph = subgraph.update('dataSources', dataSources => {
