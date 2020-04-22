@@ -181,16 +181,6 @@ class Compiler {
     }
   }
 
-  _copySubgraphFile(maybeRelativeFile, sourceDir, targetDir, spinner) {
-    let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
-    let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
-    let targetFile = path.resolve(targetDir, relativeSourceFile)
-    step(spinner, 'Copy subgraph file', this.displayPath(targetFile))
-    fs.mkdirsSync(path.dirname(targetFile))
-    fs.copyFileSync(absoluteSourceFile, targetFile)
-    return targetFile
-  }
-
   _writeSubgraphFile(maybeRelativeFile, data, sourceDir, targetDir, spinner) {
     let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
     let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
