@@ -125,9 +125,8 @@ module.exports = class SchemaCodeGenerator {
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
     let returnType = this._typeFromGraphQl(gqlType)
 
-
     let getNonNullable = `return ${typesCodegen.valueToAsc('value', fieldValueType)}`
-    let getNullable = `if (value === null) {
+    let getNullable = `if (value === null || value.kind == ValueKind.NULL) {
                           return null
                         } else {
                           ${getNonNullable}
