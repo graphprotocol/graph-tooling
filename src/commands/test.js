@@ -104,7 +104,7 @@ module.exports = {
     let tempdir = tmp.dirSync({ prefix: 'graph-test', unsafeCleanup: true }).name
     try {
       await configureTestEnvironment(toolbox, tempdir, composeFile, nodeImage)
-    } catch(e) {
+    } catch (e) {
       process.exitCode = 1
       return
     }
@@ -112,7 +112,7 @@ module.exports = {
     // Bring up test environment
     try {
       await startTestEnvironment(tempdir)
-    } catch(e) {
+    } catch (e) {
       print.error(`${e}`)
       process.exitCode = 1
       return
@@ -125,7 +125,7 @@ module.exports = {
         skipWaitForIpfs,
         skipWaitForPostgres,
       })
-    } catch(e) {
+    } catch (e) {
       await stopTestEnvironment(tempdir)
       process.exitCode = 1
       return
@@ -141,7 +141,7 @@ module.exports = {
           standaloneNodeArgs,
           nodeOutputChunks,
         )
-      } catch(e) {
+      } catch (e) {
         toolbox.print.error('')
         toolbox.print.error('  Graph Node')
         toolbox.print.error('  ----------')
@@ -158,7 +158,7 @@ module.exports = {
     // Wait for Graph Node to come up
     try {
       await waitForGraphNode()
-    } catch(e) {
+    } catch (e) {
       toolbox.print.error('')
       toolbox.print.error('  Graph Node')
       toolbox.print.error('  ----------')
@@ -181,7 +181,7 @@ module.exports = {
     if (nodeProcess) {
       try {
         await stopGraphNode(nodeProcess)
-      } catch(e) {
+      } catch (e) {
         // do nothing (the spinner already logs the problem)
       }
     }
@@ -202,7 +202,7 @@ module.exports = {
     // Bring down the test environment
     try {
       await stopTestEnvironment(tempdir)
-    } catch(e) {
+    } catch (e) {
       // do nothing (the spinner already logs the problem)
     }
 
@@ -383,6 +383,9 @@ const stopTestEnvironment = async tempdir =>
     `Failed to stop test environment`,
     `Warnings stopping test environment`,
     async spinner => {
+      // Our containers do not respond quickly to the SIGTERM which `down` tries before timing out
+      // and killing them, so speed things up by sending a SIGKILL right away.
+      await compose.kill({ cwd: path.join(tempdir, 'compose') })
       await compose.down({ cwd: path.join(tempdir, 'compose') })
     },
   )
