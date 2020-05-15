@@ -122,6 +122,7 @@ const generateExampleEntityType = events => {
     return `type ExampleEntity @entity {
   id: ID!
   count: BigInt!
+  timestamp: BigInt! # uint256
   ${events[0].inputs
     .reduce((acc, input, index) => acc.concat(generateEventFields({ input, index })), [])
     .slice(0, 2)
@@ -207,6 +208,7 @@ const generateEventIndexingHandlers = (events, contractName) =>
       event._alias
     }(event.transaction.hash.toHex() + '-' + event.logIndex.toString())
     ${generateEventFieldAssignments(event).join('\n')}
+    entity.timestamp = event.block.timestamp
     entity.save()
   }
     `,
@@ -309,9 +311,9 @@ const generateScaffold = async (
 
   for(let i=0; i< abis.length; i++) {
     mappingMap[`${contractNames[i]}Mapping.ts`] = generateMapping({
-       abi:abis[i], 
-       subgraphName, 
-       indexEvents, 
+       abi:abis[i],
+       subgraphName,
+       indexEvents,
        contractName: contractNames[i],
        });
     abiMap[`${contractNames[i]}.json`] = prettier.format(JSON.stringify(abis[i].data), {
