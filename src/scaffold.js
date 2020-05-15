@@ -109,6 +109,7 @@ const generateEventFields = ({ index, input }) =>
 
 const generateEventType = event => `type ${event._alias} @entity {
       id: ID!
+      timestamp: BigInt! # uint256
       ${event.inputs
         .reduce(
           (acc, input, index) => acc.concat(generateEventFields({ input, index })),
@@ -122,7 +123,6 @@ const generateExampleEntityType = events => {
     return `type ExampleEntity @entity {
   id: ID!
   count: BigInt!
-  timestamp: BigInt! # uint256
   ${events[0].inputs
     .reduce((acc, input, index) => acc.concat(generateEventFields({ input, index })), [])
     .slice(0, 2)
