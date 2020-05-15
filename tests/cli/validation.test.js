@@ -40,6 +40,14 @@ describe('Validation', () => {
     },
   )
   cliTest(
+    'Call handler with tuple',
+    ['codegen', '--skip-migrations'],
+    'validation/call-handler-with-tuple',
+    {
+      exitCode: 0,
+    },
+  )
+  cliTest(
     'Missing entity "id" field',
     ['codegen', '--skip-migrations'],
     'validation/missing-entity-id',

@@ -108,7 +108,7 @@ module.exports = class ABI {
         const name = entry.get('name', '<default>')
         const inputs = entry
           .get('inputs', immutable.List())
-          .map(input => input.get('type'))
+          .map(input => buildSignatureParameter(input))
 
         return `${name}(${inputs.join(',')})`
       })
