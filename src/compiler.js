@@ -291,6 +291,7 @@ class Compiler {
           '--outFile',
           outputFile,
           '--optimize',
+          '--debug',
         ],
         {
           stdout: process.stdout,
@@ -372,6 +373,7 @@ class Compiler {
           '--outFile',
           outputFile,
           '--optimize',
+          '--debug',
         ],
         {
           stdout: process.stdout,
