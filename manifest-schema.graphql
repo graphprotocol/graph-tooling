@@ -42,6 +42,7 @@ type EthereumContractAbi {
 
 type EthereumBlockHandler {
   handler: String!
+  input: String
   filter: EthereumBlockFilter
 }
 
