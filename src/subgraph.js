@@ -24,6 +24,13 @@ const throwCombinedError = (filename, errors) => {
   )
 }
 
+// Define conversions from a 'blockFormat' value in the manifest to its corresponding struct name
+const blockFormatToStructName = immutable.Map({
+  'block-only': 'Block',
+  'block-with-transactions': 'BlockWithTransactions',
+  'block-with-receipts': 'BlockWithReceipts',
+})
+
 const buildCombinedWarning = (filename, warnings) =>
   warnings.size > 0
     ? warnings.reduce(
@@ -343,7 +350,7 @@ ${abiFunctions
         )
 
         // Ensure each blockHandler has a corresponding mapping handler
-        // with a compatible function signature
+        // with a compatible function signature and uses a supported `blockFormat` value.
         return errors.concat(
           blockHandlers.reduce(
             (errors, handler, index) =>
@@ -358,12 +365,13 @@ ${abiFunctions
                       functionDeclaration =>
                         functionDeclaration.name.text === handler.get('handler') &&
                         functionDeclaration.signature.parameters.length === 1 &&
-                        functionDeclaration.signature.parameters[0].name.text ==
-                          'block' &&
                         functionDeclaration.signature.parameters[0].type.name.identifier
                           .text === 'ethereum' &&
                         functionDeclaration.signature.parameters[0].type.name.next
-                          .identifier.text === handler.get('input', 'Block') &&
+                          .identifier.text ===
+                          blockFormatToStructName.get(
+                            handler.get('blockFormat', 'block-only'),
+                          ) &&
                         functionDeclaration.signature.parameters[0].type.name.next
                           .next === null &&
                         functionDeclaration.signature.returnType.name.identifier.text ===
@@ -371,15 +379,29 @@ ${abiFunctions
                     ),
                 )
                 ? errors
-                : errors.push(
+                : blockFormatToStructName.get(handler.get('blockFormat', 'block-only'))
+                ? errors.push(
                     immutable.fromJS({
                       path: [...path, index],
                       message: `\
 Matching mapping handler not found in '${mappingFile}' for blockHandler: '${handler.get(
                         'handler',
                       )}'.
-Signature: 
-  ${handler.get('handler')}(block: ethereum.${handler.get('input', 'Block')}): void`,
+Signature:
+  ${handler.get('handler')}(block: ethereum.${blockFormatToStructName.get(
+                        handler.get('blockFormat', 'block-only'),
+                      )}): void`,
+                    }),
+                  )
+                : errors.push(
+                    immutable.fromJS({
+                      path: [...path, index],
+                      message: `Unsupported blockFormat, '${handler.get(
+                        'blockFormat',
+                      )}', specified for the '${handler.get('handler')}' blockHandler. 
+Please use one of the supported blockFormats: ${JSON.stringify(
+                        blockFormatToStructName.keySeq(),
+                      )}`,
                     }),
                   ),
             immutable.List(),
