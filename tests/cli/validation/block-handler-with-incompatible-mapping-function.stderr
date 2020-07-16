@@ -1,0 +1,7 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > blockHandlers > 0
+  Matching mapping handler not found in './mapping.ts' for blockHandler: 'handleBlock'.
+  Signature:
+    handleBlock(block: ethereum.BlockWithTransactions): void
