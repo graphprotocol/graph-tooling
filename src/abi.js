@@ -4,6 +4,8 @@ const path = require('path')
 
 const AbiCodeGenerator = require('./codegen/abi')
 
+const TUPLE_ARRAY_PATTERN = /^tuple\[([0-9]*)\]$/
+
 const buildOldSignatureParameter = input => {
   return input.get('type') === 'tuple'
     ? `(${input
@@ -14,12 +16,20 @@ const buildOldSignatureParameter = input => {
 }
 
 const buildSignatureParameter = input => {
-  return input.get('type') === 'tuple'
-    ? `(${input.get('indexed') ? 'indexed ' : ''}${input
-        .get('components')
-        .map(component => buildSignatureParameter(component))
-        .join(',')})`
-    : `${input.get('indexed') ? 'indexed ' : ''}${input.get('type')}`
+  if (input.get('type') === 'tuple') {
+    return `(${input.get('indexed') ? 'indexed ' : ''}${input
+      .get('components')
+      .map(component => buildSignatureParameter(component))
+      .join(',')})`
+  } else if (input.get('type').match(TUPLE_ARRAY_PATTERN)) {
+    const length = input.get('type').match(TUPLE_ARRAY_PATTERN)[1]
+    return `(${input.get('indexed') ? 'indexed ' : ''}${input
+      .get('components')
+      .map(component => buildSignatureParameter(component))
+      .join(',')})[${length ? length : ''}]`
+  } else {
+    return `${input.get('indexed') ? 'indexed ' : ''}${input.get('type')}`
+  }
 }
 
 module.exports = class ABI {
