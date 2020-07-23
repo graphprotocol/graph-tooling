@@ -385,7 +385,12 @@ const stopTestEnvironment = async tempdir =>
     async spinner => {
       // Our containers do not respond quickly to the SIGTERM which `down` tries before timing out
       // and killing them, so speed things up by sending a SIGKILL right away.
-      await compose.kill({ cwd: path.join(tempdir, 'compose') })
+      try {
+        await compose.kill({ cwd: path.join(tempdir, 'compose') })
+      } catch (e) {
+        // Do nothing, we will just try to run 'down'
+        // to bring down the environment
+      }
       await compose.down({ cwd: path.join(tempdir, 'compose') })
     },
   )
