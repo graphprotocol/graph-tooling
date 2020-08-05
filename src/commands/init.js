@@ -34,11 +34,12 @@ ${chalk.dim('Options for --from-contract:')}
                                 Selects the network the contract is deployed to
       --index-events            Index contract events as entities
       --contract-name           Name of the contract (default: Contract). Accepts comma separated contract names.
+      --etherscan-apikey        Etherscan API key. Default etherscan rate limit is 1 transaction per 3 sec. API key will increase ratelimt. 
 `
 
 const processInitForm = async (
   toolbox,
-  {abis, addresses, allowSimpleName, directory, fromExample, network, subgraphName, contractNames},
+  {abis, addresses, allowSimpleName, directory, fromExample, network, subgraphName, contractNames, etherscanApikey},
 ) => {
   let networkChoices = ['mainnet', 'kovan', 'rinkeby', 'ropsten', 'goerli', 'poa-core']
   let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
@@ -126,7 +127,7 @@ const processInitForm = async (
             if (network === 'poa-core') {
               abiFromBlockScout = await Promise.all(value.map((c) => loadAbiFromBlockScout(network, c)))
             } else {
-              abiFromEtherscan = await Promise.all(value.map((c) => loadAbiFromEtherscan(network, c)))
+              abiFromEtherscan = await Promise.all(value.map((c) => loadAbiFromEtherscan(network, c, etherscanApikey)))
             }
           } catch (e) {}
         }
@@ -201,7 +202,7 @@ const loadAbiFromBlockScout = async (network, address) =>
     },
   )
 
-const loadAbiFromEtherscan = async (network, address) =>
+const loadAbiFromEtherscan = async (network, address, etherscanApikey) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
@@ -210,7 +211,7 @@ const loadAbiFromEtherscan = async (network, address) =>
       let result = await fetch(
         `https://${
           network === 'mainnet' ? 'api' : `api-${network}`
-        }.etherscan.io/api?module=contract&action=getabi&address=${address}`,
+        }.etherscan.io/api?module=contract&action=getabi&address=${address}${etherscanApikey?'&apikey='+etherscanApikey:''}`,
       )
       let json = await result.json()
 
@@ -259,6 +260,7 @@ module.exports = {
       help,
       indexEvents,
       network,
+      etherscanApikey
     } = toolbox.parameters.options
 
     let abis = abi && abi.split(",").map((a) => a.trim());
@@ -346,7 +348,7 @@ module.exports = {
 
             abis = await Promise.all(fromContracts.map((c) => loadAbiFromBlockScout(network, c)))
           } else {
-            abis = await Promise.all(fromContracts.map((c) => loadAbiFromEtherscan(network, c)))
+            abis = await Promise.all(fromContracts.map((c) => loadAbiFromEtherscan(network, c, etherscanApikey)))
           }
         } catch (e) {
           process.exitCode = 1
@@ -365,6 +367,7 @@ module.exports = {
           network,
           subgraphName,
           contractNames,
+          etherscanApikey,
         },
         { commands },
       )
@@ -379,7 +382,8 @@ module.exports = {
       fromExample,
       network,
       subgraphName,
-      contractNames
+      contractNames,
+      etherscanApikey
     })
 
     // Exit immediately when the form is cancelled
@@ -410,7 +414,8 @@ module.exports = {
           network: inputs.network,
           addresses: inputs.addresses,
           indexEvents,
-          contractNames: inputs.contractNames
+          contractNames: inputs.contractNames,
+          etherscanApikey,
         },
         { commands },
       )
@@ -600,7 +605,7 @@ const initSubgraphFromExample = async (
 
 const initSubgraphFromContract = async (
   toolbox,
-  {allowSimpleName, subgraphName, directory, abis, network, addresses, indexEvents, contractNames=["Contract"]},
+  {allowSimpleName, subgraphName, directory, abis, network, addresses, indexEvents, contractNames=["Contract"], etherscanApikey},
   { commands },
 ) => {
   let { print } = toolbox
@@ -650,6 +655,7 @@ const initSubgraphFromContract = async (
           addresses,
           indexEvents,
           contractNames,
+          etherscanApikey
         },
         spinner,
       )
