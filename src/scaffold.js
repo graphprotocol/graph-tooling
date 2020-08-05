@@ -311,9 +311,9 @@ const generateScaffold = async (
 
   for(let i=0; i< abis.length; i++) {
     mappingMap[`${contractNames[i]}Mapping.ts`] = generateMapping({
-       abi:abis[i],
-       subgraphName,
-       indexEvents,
+       abi:abis[i], 
+       subgraphName, 
+       indexEvents, 
        contractName: contractNames[i],
        });
     abiMap[`${contractNames[i]}.json`] = prettier.format(JSON.stringify(abis[i].data), {
