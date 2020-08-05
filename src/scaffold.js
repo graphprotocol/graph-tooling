@@ -50,19 +50,21 @@ const generatePackageJson = ({ subgraphName }) =>
 
 // Subgraph manifest
 
-const generateManifest = ({ abi, address, network, contractName }) =>
+const generateManifest = ({ abis, addresses, network, contractNames }) =>
   prettier.format(
     `
 specVersion: 0.0.1
 schema:
   file: ./schema.graphql
 dataSources:
+  ${abis.map((abi, i) => 
+ ` 
   - kind: ethereum/contract
-    name: ${contractName}
+    name: ${contractNames[i]}
     network: ${network}
     source:
-      address: '${address}'
-      abi: ${contractName}
+      address: '${addresses[i]}'
+      abi: ${contractNames[i]}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.2
@@ -72,8 +74,8 @@ dataSources:
           .map(event => `- ${event.get('_alias')}`)
           .join('\n        ')}
       abis:
-        - name: ${contractName}
-          file: ./abis/${contractName}.json
+        - name: ${contractNames[i]}
+          file: ./abis/${contractNames[i]}.json
       eventHandlers:
         ${abiEvents(abi)
           .map(
@@ -82,7 +84,8 @@ dataSources:
           handler: handle${event.get('_alias')}`,
           )
           .join('')}
-      file: ./src/mapping.ts
+      file: ./src/${contractNames[i]}Mapping.ts`
+    ).join('')}
 `,
     { parser: 'yaml' },
   )
@@ -106,6 +109,7 @@ const generateEventFields = ({ index, input }) =>
 
 const generateEventType = event => `type ${event._alias} @entity {
       id: ID!
+      timestamp: BigInt! # uint256
       ${event.inputs
         .reduce(
           (acc, input, index) => acc.concat(generateEventFields({ input, index })),
@@ -133,7 +137,9 @@ const generateExampleEntityType = events => {
   }
 }
 
-const generateSchema = ({ abi, indexEvents }) => {
+const generateSchema = ({ abis, indexEvents }) => {
+
+return abis.map((abi) => {
   let events = abiEvents(abi).toJS()
   return prettier.format(
     indexEvents
@@ -143,6 +149,7 @@ const generateSchema = ({ abi, indexEvents }) => {
       parser: 'graphql',
     },
   )
+ }).join('\n')
 }
 
 // Mapping
@@ -201,6 +208,7 @@ const generateEventIndexingHandlers = (events, contractName) =>
       event._alias
     }(event.transaction.hash.toHex() + '-' + event.logIndex.toString())
     ${generateEventFieldAssignments(event).join('\n')}
+    entity.timestamp = event.block.timestamp
     entity.save()
   }
     `,
@@ -290,25 +298,35 @@ const generateMapping = ({ abi, indexEvents, contractName }) => {
 }
 
 const generateScaffold = async (
-  { abi, address, network, subgraphName, indexEvents, contractName='Contract' },
+  { abis, addresses, network, subgraphName, indexEvents, contractNames },
   spinner,
 ) => {
   step(spinner, 'Generate subgraph from ABI')
   let packageJson = generatePackageJson({ subgraphName })
-  let manifest = generateManifest({ abi, address, network, contractName })
-  let schema = generateSchema({ abi, indexEvents, contractName })
-  let mapping = generateMapping({ abi, subgraphName, indexEvents, contractName })
+  let manifest = generateManifest({ abis, addresses, network, contractNames })
+  let schema = generateSchema({ abis, indexEvents, contractNames })
+
+  const mappingMap = {};
+  const abiMap = {};
+
+  for(let i=0; i< abis.length; i++) {
+    mappingMap[`${contractNames[i]}Mapping.ts`] = generateMapping({
+       abi:abis[i],
+       subgraphName,
+       indexEvents,
+       contractName: contractNames[i],
+       });
+    abiMap[`${contractNames[i]}.json`] = prettier.format(JSON.stringify(abis[i].data), {
+      parser: 'json',
+    });
+  }
 
   return {
     'package.json': packageJson,
     'subgraph.yaml': manifest,
     'schema.graphql': schema,
-    src: { 'mapping.ts': mapping },
-    abis: {
-      [`${contractName}.json`]: prettier.format(JSON.stringify(abi.data), {
-        parser: 'json',
-      }),
-    },
+    src: mappingMap,
+    abis: abiMap,
   }
 }
 
