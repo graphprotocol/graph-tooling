@@ -207,12 +207,14 @@ $ graph create --node ${node} ${subgraphName}`)
 
     if (watch) {
       await compiler.watchAndCompile(async ipfsHash => {
+        console.log('IPFS hash  '+ipfsHash);
         if (ipfsHash !== undefined) {
           await deploySubgraph(ipfsHash)
         }
       })
     } else {
       let result = await compiler.compile()
+      console.log('result  '+result);
       if (result === undefined || result === false) {
         // Compilation failed, not deploying.
         process.exitCode = 1

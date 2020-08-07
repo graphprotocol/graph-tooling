@@ -83,6 +83,7 @@ class Compiler {
       let localSubgraph = await this.writeSubgraphToOutputDirectory(compiledSubgraph)
 
       if (this.ipfs !== undefined) {
+        console.log('subgraph  debug '+localSubgraph);
         let ipfsHash = await this.uploadSubgraphToIPFS(localSubgraph)
         this.completed(ipfsHash)
         return ipfsHash
@@ -574,6 +575,7 @@ class Compiler {
         }
 
         // Upload the subgraph itself
+        console.log('subgraph debug 1 '+subgraph);
         return await this._uploadSubgraphDefinitionToIPFS(subgraph, spinner)
       },
     )

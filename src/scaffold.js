@@ -15,7 +15,14 @@ const abiEvents = abi =>
   util.disambiguateNames({
     values: abi.data.filter(item => item.get('type') === 'event'),
     getName: event => event.get('name'),
-    setName: (event, name) => event.set('_alias', name),
+    setName: (event, name) => event.set('_alias', name.replace(/[^a-zA-Z0-9]/g, '')),
+  })
+
+  const abiMethods = abi =>   
+  util.disambiguateNames({
+    values: abi.data.filter(item => item.get('type') === 'function' && item.get('stateMutability') !== 'view'  && item.get('stateMutability') !== 'pure'),
+    getName: event => event.get('name'),
+    setName: (event, name) => event.set('_alias', name.replace(/[^a-zA-Z0-9]/g, '')),
   })
 
 // package.json
@@ -99,9 +106,25 @@ dataSources:
         ${abiEvents(abi)
           .map(event => `- ${event.get('_alias')}`)
           .join('\n        ')}
+        ${abiMethods(abi)
+          .map(method => `- ${contractNames[i]}${method.get('_alias')}`)
+          .join('\n        ')}  
       abis:
         - name: ${contractNames[i]}
           file: ./abis/${contractNames[i]}.json
+      callHandlers:
+        ${abiMethods(abi)
+          // .filter(m=> {
+          //   console.log(JSON.stringify(m));
+          //   console.log('m.stateMutability '+m.stateMutability);
+          //   return m.stateMutability !== 'view'
+          // })
+          .map(
+            method => `
+        - function: ${ABI.eventSignature(method)}
+          handler: handle${method.get('_alias')}`,
+          )
+          .join('')}    
       eventHandlers:
         ${abiEvents(abi)
           .map(
@@ -126,14 +149,14 @@ const ethereumTypeToGraphQL = name => {
 const generateField = ({ name, type }) =>
   `${name}: ${ethereumTypeToGraphQL(type)}! # ${type}`
 
-const generateEventFields = ({ index, input }) =>
+const generateEventFields = ({ index, input, context = 'event' }) =>
   input.type == 'tuple'
     ? util
         .unrollTuple({ value: input, path: [input.name || `param${index}`], index })
         .map(({ path, type }) => generateField({ name: path.join('_'), type }))
-    : [generateField({ name: input.name || `param${index}`, type: input.type })]
+    : [generateField({ name: input.name || (context == 'event' ? `param${index}`: `value${index}`), type: input.type })]
 
-const generateEventType = event => `type ${event._alias} @entity {
+const generateEventType = (event, contractName) => `type ${contractName}_${event._alias} @entity {
       id: ID!
       timestamp: BigInt! # uint256
       ${event.inputs
@@ -142,6 +165,23 @@ const generateEventType = event => `type ${event._alias} @entity {
           [],
         )
         .join('\n')}
+    }`
+
+    const generateMethodType = (method, contractName) => `type ${contractName}${method._alias} @entity {
+      id: ID!
+      timestamp: BigInt! # uint256
+      ${method.inputs
+        .reduce(
+          (acc, input, index) => acc.concat(generateEventFields({ input, index })),
+          [],
+        )
+        .join('\n')}
+        ${method.outputs
+          .reduce(
+            (acc, input, index) => acc.concat(generateEventFields({ input, index, context: 'method' })),
+            [],
+          )
+          .join('\n')}
     }`
 
 const generateExampleEntityType = events => {
@@ -163,14 +203,17 @@ const generateExampleEntityType = events => {
   }
 }
 
-const generateSchema = ({ abis, indexEvents }) => {
+const generateSchema = ({ abis, indexEvents, contractNames }) => {
 
-return abis.map((abi) => {
+return abis.map((abi, index) => {
   let events = abiEvents(abi).toJS()
+  let methods = abiMethods(abi).toJS();
+  let contractName = contractNames[index];
+  
   return prettier.format(
     indexEvents
-      ? events.map(generateEventType).join('\n\n')
-      : generateExampleEntityType(events),
+      ? [...events].map(e => generateEventType(e, contractName)).join('\n\n')
+      : methods.map(m => generateMethodType(m, contractName)).join('\n\n'),
     {
       parser: 'graphql',
     },
@@ -180,7 +223,7 @@ return abis.map((abi) => {
 
 // Mapping
 
-const generateTupleFieldAssignments = ({ keyPath, index, component }) => {
+const generateTupleFieldAssignments = ({ keyPath, index, component, context = 'event', field ='params' }) => {
   let name = component.name || `value${index}`
   keyPath = [...keyPath, name]
 
@@ -199,18 +242,18 @@ const generateTupleFieldAssignments = ({ keyPath, index, component }) => {
           ),
         [],
       )
-    : [`entity.${flatName} = event.params.${nestedName}`]
+    : [`entity.${flatName} = ${context}.${field}.${nestedName}`]
 }
 
-const generateFieldAssignment = path =>
-  `entity.${path.join('_')} = event.params.${path.join('.')}`
+const generateFieldAssignment = (path, context = 'event', field = 'params') =>
+  `entity.${path.join('_')} = ${context}.${field}.${path.join('.')}`
 
-const generateFieldAssignments = ({ index, input }) =>
+const generateFieldAssignments = ({ index, input, context = 'event', field = 'params' }) =>
   input.type === 'tuple'
     ? util
-        .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
-        .map(({ path }) => generateFieldAssignment(path))
-    : generateFieldAssignment([input.name || `param${index}`])
+        .unrollTuple({ value: input, index, path: [input.name || (context === 'event' ? `param${index}` : `value${index}`)] })
+        .map(({ path }) => generateFieldAssignment(path,context, field))
+    : generateFieldAssignment([input.name || (context === 'event' ? `param${index}` : `value${index}`)], context, field)
 
 const generateEventFieldAssignments = event =>
   event.inputs.reduce(
@@ -218,12 +261,35 @@ const generateEventFieldAssignments = event =>
     [],
   )
 
-const generateEventIndexingHandlers = (events, contractName) =>
+  const generateMethodFieldAssignments = method => {
+   let output = [];
+    output = method.inputs.reduce(
+      (acc, input, index) => acc.concat(generateFieldAssignments({ input, index, context:'call', field: 'inputs' })),
+      output,
+    );
+
+    output = method.outputs.reduce(
+      (acc, input, index) => acc.concat(generateFieldAssignments({ input, index, context:'call', field: 'outputs'})),
+      output,
+    );
+
+    return output;
+  }
+
+const toTitleCase = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+const generateEventIndexingHandlers = (events, methods ,contractName) =>
   `
   import { ${events.map(
     event => `${event._alias} as ${event._alias}Event`,
   )}} from '../generated/${contractName}/${contractName}'
+  import { ${methods.filter(m => m.stateMutability !== 'pure' && m.stateMutability !== 'view').map(
+    method => `${toTitleCase(method.name)}Call`,
+  )}} from '../generated/${contractName}/${contractName}'
   import { ${events.map(event => event._alias)} } from '../generated/schema'
+  import { ${methods.map(method => contractName+method._alias)} } from '../generated/schema'
 
   ${events
     .map(
@@ -235,6 +301,22 @@ const generateEventIndexingHandlers = (events, contractName) =>
     }(event.transaction.hash.toHex() + '-' + event.logIndex.toString())
     ${generateEventFieldAssignments(event).join('\n')}
     entity.timestamp = event.block.timestamp
+    entity.save()
+  }
+    `,
+    )
+    .join('\n')}
+
+
+  ${methods
+    .map(
+      method =>
+        `
+  export function handle${method._alias}(call: ${toTitleCase(method.name)}Call): void {
+    let id = call.transaction.hash.toHex()
+    let entity = new ${contractName}${method._alias}(id);
+    ${generateMethodFieldAssignments(method).join('\n')}
+    entity.timestamp = call.block.timestamp
     entity.save()
   }
     `,
@@ -315,10 +397,9 @@ export function handle${event._alias}(event: ${event._alias}): void {}
 
 const generateMapping = ({ abi, indexEvents, contractName }) => {
   let events = abiEvents(abi).toJS()
+  let methods = abiMethods(abi).toJS()
   return prettier.format(
-    indexEvents
-      ? generateEventIndexingHandlers(events, contractName)
-      : generatePlaceholderHandlers({ abi, events: events, contractName }),
+    generateEventIndexingHandlers([],methods , contractName),
     { parser: 'typescript', semi: false },
   )
 }

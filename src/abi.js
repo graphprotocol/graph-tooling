@@ -59,7 +59,7 @@ module.exports = class ABI {
    * - One input and output: `example(uint256):(bool)`
    * - Multiple inputs and outputs: `example(uint256,(string,bytes32)):(bool,uint256)`
    */
-  functionSignature(fn) {
+functionSignature(fn) {
     let inputs = fn
       .get('inputs', [])
       .map(buildSignatureParameter)
