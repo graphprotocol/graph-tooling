@@ -15,7 +15,14 @@ const abiEvents = abi =>
   util.disambiguateNames({
     values: abi.data.filter(item => item.get('type') === 'event'),
     getName: event => event.get('name'),
-    setName: (event, name) => event.set('_alias', name),
+    setName: (event, name) => event.set('_alias', name.replace(/[^a-zA-Z0-9]/g, '')),
+  })
+
+  const abiMethods = abi =>   
+  util.disambiguateNames({
+    values: abi.data.filter(item => item.get('type') === 'function' && item.get('stateMutability') !== 'view'  && item.get('stateMutability') !== 'pure'),
+    getName: method => method.get('name'),
+    setName: (method, name) => method.set('_alias', name.replace(/[^a-zA-Z0-9]/g, '')),
   })
 
 // package.json
@@ -49,6 +56,12 @@ const generatePackageJson = ({ subgraphName }) =>
     { parser: 'json' },
   )
 
+
+  function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  } 
 // Subgraph manifest
 
 const getStartBlock = async(address, network, etherscanApikey) => {
@@ -60,30 +73,33 @@ const getStartBlock = async(address, network, etherscanApikey) => {
   const url = `https://${
     network === 'mainnet' ? 'api' : `api-${network}`
   }.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc${etherscanApikey?'&apikey='+etherscanApikey:''}`;
-
+  
   let result = await fetch(url)
   let json = await result.json()
-
+  let blockNumber = 0
   // Etherscan returns a JSON object that has a `status`, a `message` and
   // a `result` field. The `status` is '0' in case of errors and '1' in
   // case of success
   if (json.status === '1') {
-    return json.result.length>0? json.result[0].blockNumber:0;
-  } else {
-    return 0;
-  }
-
+    blockNumber = json.result.length>0? json.result[0].blockNumber:0;
+    
+  } 
+  console.log(`Start block number for contract ${address} is ${blockNumber}`);
+  await sleep(1000);
+  return blockNumber;
 }
 
-const generateManifest = async ({ abis, addresses, network, contractNames, etherscanApikey }) =>
-  prettier.format(
-    `
-specVersion: 0.0.1
-schema:
-  file: ./schema.graphql
-dataSources:
-  ${(await Promise.all(abis.map(async(abi, i) => 
- ` 
+const entityNameByEvent = (eventName, contractName) => `${contractName}${eventName}Event`;
+const entityNameByMethod = (methodName, contractName) => `${contractName}${methodName}Call` ;
+
+
+const generateDataSource = async({ abis, addresses, network, contractNames, etherscanApikey }) => {
+
+
+    const result = [];
+    for(let i =0; i< abis.length; i++) {
+      const abi = abis[i];
+      const r = ` 
   - kind: ethereum/contract
     name: ${contractNames[i]}
     network: ${network}
@@ -97,21 +113,45 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         ${abiEvents(abi)
-          .map(event => `- ${event.get('_alias')}`)
+          .map(event => `- ${entityNameByEvent(event.get('_alias'),contractNames[i])}`)
+          .join('\n        ')}
+        ${abiMethods(abi)
+          .map(method => `- ${entityNameByMethod(method.get('_alias'), contractNames[i])}`)
           .join('\n        ')}
       abis:
         - name: ${contractNames[i]}
           file: ./abis/${contractNames[i]}.json
+      callHandlers:
+        ${abiMethods(abi)
+          .map(
+            method => `
+        - function: ${ABI.eventSignature(method)}
+          handler: handle${method.get('_alias')}Call`,
+          )
+          .join('')}    
       eventHandlers:
         ${abiEvents(abi)
           .map(
             event => `
         - event: ${ABI.eventSignature(event)}
-          handler: handle${event.get('_alias')}`,
+          handler: handle${event.get('_alias')}Event`,
           )
           .join('')}
       file: ./src/${contractNames[i]}Mapping.ts`
-    ))).join('')}
+      result.push(r);
+    }
+
+    return result.join('');
+
+}
+const generateManifest = async ({ abis, addresses, network, contractNames, etherscanApikey }) =>
+  prettier.format(
+    `
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  ${await generateDataSource({ abis, addresses, network, contractNames, etherscanApikey })}
 `,
     { parser: 'yaml' },
   )
@@ -126,14 +166,14 @@ const ethereumTypeToGraphQL = name => {
 const generateField = ({ name, type }) =>
   `${name}: ${ethereumTypeToGraphQL(type)}! # ${type}`
 
-const generateEventFields = ({ index, input }) =>
+const generateEventFields = ({ index, input, context = 'event' }) =>
   input.type == 'tuple'
     ? util
         .unrollTuple({ value: input, path: [input.name || `param${index}`], index })
         .map(({ path, type }) => generateField({ name: path.join('_'), type }))
-    : [generateField({ name: input.name || `param${index}`, type: input.type })]
+    : [generateField({ name: input.name || (context == 'event' ? `param${index}`: `value${index}`), type: input.type })]
 
-const generateEventType = event => `type ${event._alias} @entity {
+const generateEventType = (event, contractName) => `type ${entityNameByEvent(event._alias, contractName)} @entity {
       id: ID!
       timestamp: BigInt! # uint256
       ${event.inputs
@@ -144,33 +184,35 @@ const generateEventType = event => `type ${event._alias} @entity {
         .join('\n')}
     }`
 
-const generateExampleEntityType = events => {
-  if (events.length > 0) {
-    return `type ExampleEntity @entity {
-  id: ID!
-  count: BigInt!
-  ${events[0].inputs
-    .reduce((acc, input, index) => acc.concat(generateEventFields({ input, index })), [])
-    .slice(0, 2)
-    .join('\n')}
-}`
-  } else {
-    return `type ExampleEntity @entity {
-  id: ID!
-  block: Bytes!
-  transaction: Bytes!
-}`
-  }
-}
+    const generateMethodType = (method, contractName) => `type ${entityNameByMethod(method._alias, contractName)} @entity {
+      id: ID!
+      timestamp: BigInt! # uint256
+      ${method.inputs
+        .reduce(
+          (acc, input, index) => acc.concat(generateEventFields({ input, index })),
+          [],
+        )
+        .join('\n')}
+        ${method.outputs
+          .reduce(
+            (acc, input, index) => acc.concat(generateEventFields({ input, index, context: 'method' })),
+            [],
+          )
+          .join('\n')}
+    }`
 
-const generateSchema = ({ abis, indexEvents }) => {
 
-return abis.map((abi) => {
+const generateSchema = ({ abis, indexEvents, contractNames }) => {
+
+return abis.map((abi, index) => {
   let events = abiEvents(abi).toJS()
+  let methods = abiMethods(abi).toJS();
+  let contractName = contractNames[index];
+  
+  const eventSchema = [...events].map(e => generateEventType(e, contractName)).join('\n\n');
+  const methodSchema = methods.map(m => generateMethodType(m, contractName)).join('\n\n');
   return prettier.format(
-    indexEvents
-      ? events.map(generateEventType).join('\n\n')
-      : generateExampleEntityType(events),
+    [eventSchema, methodSchema].join('\n\n'),
     {
       parser: 'graphql',
     },
@@ -180,7 +222,7 @@ return abis.map((abi) => {
 
 // Mapping
 
-const generateTupleFieldAssignments = ({ keyPath, index, component }) => {
+const generateTupleFieldAssignments = ({ keyPath, index, component, context = 'event', field ='params' }) => {
   let name = component.name || `value${index}`
   keyPath = [...keyPath, name]
 
@@ -199,18 +241,18 @@ const generateTupleFieldAssignments = ({ keyPath, index, component }) => {
           ),
         [],
       )
-    : [`entity.${flatName} = event.params.${nestedName}`]
+    : [`entity.${flatName} = ${context}.${field}.${nestedName}`]
 }
 
-const generateFieldAssignment = path =>
-  `entity.${path.join('_')} = event.params.${path.join('.')}`
+const generateFieldAssignment = (path, context = 'event', field = 'params') =>
+  `entity.${path.join('_')} = ${context}.${field}.${path.join('.')}`
 
-const generateFieldAssignments = ({ index, input }) =>
+const generateFieldAssignments = ({ index, input, context = 'event', field = 'params' }) =>
   input.type === 'tuple'
     ? util
-        .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
-        .map(({ path }) => generateFieldAssignment(path))
-    : generateFieldAssignment([input.name || `param${index}`])
+        .unrollTuple({ value: input, index, path: [input.name || (context === 'event' ? `param${index}` : `value${index}`)] })
+        .map(({ path }) => generateFieldAssignment(path,context, field))
+    : generateFieldAssignment([input.name || (context === 'event' ? `param${index}` : `value${index}`)], context, field)
 
 const generateEventFieldAssignments = event =>
   event.inputs.reduce(
@@ -218,23 +260,62 @@ const generateEventFieldAssignments = event =>
     [],
   )
 
-const generateEventIndexingHandlers = (events, contractName) =>
+  const generateMethodFieldAssignments = method => {
+   let output = [];
+    output = method.inputs.reduce(
+      (acc, input, index) => acc.concat(generateFieldAssignments({ input, index, context:'call', field: 'inputs' })),
+      output,
+    );
+
+    output = method.outputs.reduce(
+      (acc, input, index) => acc.concat(generateFieldAssignments({ input, index, context:'call', field: 'outputs'})),
+      output,
+    );
+
+    return output;
+  }
+
+const toTitleCase = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+const generateEventIndexingHandlers = (events, methods ,contractName) =>
   `
   import { ${events.map(
     event => `${event._alias} as ${event._alias}Event`,
   )}} from '../generated/${contractName}/${contractName}'
-  import { ${events.map(event => event._alias)} } from '../generated/schema'
+  import { ${methods.map(
+    method => `${toTitleCase(method.name)}Call as ${toTitleCase(method._alias)}Call`,
+  )}} from '../generated/${contractName}/${contractName}'
+  import { ${events.map(event => entityNameByEvent(event._alias, contractName))} } from '../generated/schema'
+  import { ${methods.map(method => entityNameByMethod(method._alias, contractName))} } from '../generated/schema'
 
   ${events
     .map(
       event =>
         `
-  export function handle${event._alias}(event: ${event._alias}Event): void {
+  export function handle${event._alias}Event(event: ${event._alias}Event): void {
     let entity = new ${
-      event._alias
+      entityNameByEvent(event._alias, contractName)
     }(event.transaction.hash.toHex() + '-' + event.logIndex.toString())
     ${generateEventFieldAssignments(event).join('\n')}
     entity.timestamp = event.block.timestamp
+    entity.save()
+  }
+    `,
+    )
+    .join('\n')}
+
+
+  ${methods
+    .map(
+      method =>
+        `
+  export function handle${method._alias}Call(call: ${toTitleCase(method._alias)}Call): void {
+    let id = call.transaction.hash.toHex()
+    let entity = new ${entityNameByMethod(method._alias, contractName)}(id);
+    ${generateMethodFieldAssignments(method).join('\n')}
+    entity.timestamp = call.block.timestamp
     entity.save()
   }
     `,
@@ -315,10 +396,9 @@ export function handle${event._alias}(event: ${event._alias}): void {}
 
 const generateMapping = ({ abi, indexEvents, contractName }) => {
   let events = abiEvents(abi).toJS()
+  let methods = abiMethods(abi).toJS()
   return prettier.format(
-    indexEvents
-      ? generateEventIndexingHandlers(events, contractName)
-      : generatePlaceholderHandlers({ abi, events: events, contractName }),
+    generateEventIndexingHandlers(events,methods , contractName),
     { parser: 'typescript', semi: false },
   )
 }

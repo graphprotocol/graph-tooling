@@ -264,7 +264,11 @@ module.exports = {
     } = toolbox.parameters.options
 
     let abis = abi && abi.split(",").map((a) => a.trim());
-    let contractNames = contractName && contractName.split(",").map((c) => c.trim());
+    let contractNames = contractName && contractName.split(",").map((c) => {
+      const temp = c.trim();
+      return temp.replace(/[^a-zA-Z0-9]/g, '');
+    });
+    
     let fromContracts = fromContract && fromContract.split(",").map((fc) => fc.trim())
 
     if (fromContracts && fromExample) {
