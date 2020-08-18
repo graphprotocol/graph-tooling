@@ -8,19 +8,17 @@ const run = async argv => {
     .brand('graph')
     .src(__dirname)
 
-  const pluginDirs = []
-  try {
-    const npmGlobalRoot = await system.run('npm root -g', { trim: true })
-    pluginDirs.push(npmGlobalRoot)
-  } catch (_) {}
-  try {
-    const npmUserRoot = await system.run('npm root', { trim: true })
-    pluginDirs.push(npmUserRoot)
-  } catch (_) {}
-  try {
-    const yarnUserRoot = await system.run('yarn global dir', { trim: true })
-    pluginDirs.push(yarnUserRoot)
-  } catch (_) {}
+  const pluginDirs = (
+    await Promise.all(
+      ['npm root -g', 'npm root', 'yarn global dir'].map(async cmd => {
+        try {
+          return await system.run(cmd, { trim: true })
+        } catch (_) {
+          return undefined
+        }
+      }),
+    )
+  ).filter(dir => dir !== undefined)
 
   // Inject potential plugin directories
   cli = pluginDirs.reduce(
