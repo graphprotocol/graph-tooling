@@ -2368,10 +2368,10 @@ globals@^12.1.0:
   dependencies:
     type-fest "^0.8.1"
 
-gluegun@^4.1.2:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/gluegun/-/gluegun-4.3.0.tgz#1e873605cf51a8954c10b4005af3854df556712a"
-  integrity sha512-NxjvfuBwVkC2o9cuUUJerLJFIDUs7IfxJagc5prLrLbmPUI/Xek3mA9OQK6FL5nlUwVGT7BYlw7og0mehAyfGQ==
+gluegun@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.npmjs.org/gluegun/-/gluegun-4.3.1.tgz#b93a8619e2e9546ab3451ad94f7be9097c75083a"
+  integrity sha512-TyOf60807SUYvd0v7fiRbhWrBSl9974clwZwCVc3qxYB83TQQQUSggwcz3yUeOl1MBALpwrz0Q0GUmi25quVOg==
   dependencies:
     apisauce "^1.0.1"
     app-module-path "^2.2.0"
