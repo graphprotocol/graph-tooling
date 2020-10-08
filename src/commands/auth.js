@@ -59,7 +59,7 @@ module.exports = {
 
     try {
       await saveAccessToken(node, accessToken)
-      print.success(`Access token set for ${node}`)
+      print.success(`Access token set for ${normalizeNodeUrl(node)}`)
     } catch (e) {
       print.error(e)
       process.exitCode = 1
