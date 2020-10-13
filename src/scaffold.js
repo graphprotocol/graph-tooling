@@ -42,7 +42,7 @@ const generatePackageJson = ({ subgraphName }) =>
       },
       dependencies: {
         '@graphprotocol/graph-cli': `${module.exports.version}`,
-        '@graphprotocol/graph-ts': `0.18.0`,
+        '@graphprotocol/graph-ts': `0.19.0`,
       },
     }),
     { parser: 'json' },
@@ -290,7 +290,7 @@ const generateMapping = ({ abi, indexEvents, contractName }) => {
 }
 
 const generateScaffold = async (
-  { abi, address, network, subgraphName, indexEvents, contractName='Contract' },
+  { abi, address, network, subgraphName, indexEvents, contractName = 'Contract' },
   spinner,
 ) => {
   step(spinner, 'Generate subgraph from ABI')
