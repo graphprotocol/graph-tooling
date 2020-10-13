@@ -7,7 +7,22 @@ repo.
 
 ## Unreleased
 
-tbd
+## 0.19.0
+
+- Add support for CLI plugins (e.g. `graph indexer ...`).
+- `graph init`: Add contract name support.
+- `graph test`: Speed up `docker-compose down`.
+- `graph test`: Make `docker-compose kill` optional (depending on the system).
+- Allow deriving from interface-typed fields.
+- Allow specifying a graft base in the manifest.
+- Fix `Value is not a XYZ` errors for null values.
+- Fix path lookups in compiler script (thanks @fubhy!).
+- Add support for yarn workspaces and otherwise hoisted node modules (thanks
+  @fubhy!).
+- Fix validating call handlers for functions with tuple parameters (#500).
+- Properly unfold tuple event/call parameters in signatures.
+- Pass `--debug` to AssemblyScript compiler.
+- Dependency updates: acorn, fs-extra, yaml, docker-compose, gluegun, jest.
 
 ## 0.18.0
 
