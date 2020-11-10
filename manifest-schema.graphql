@@ -67,6 +67,7 @@ type Graft {
 
 type SubgraphManifest {
   specVersion: String!
+  features: [String!]
   schema: Schema!
   description: String
   repository: String
