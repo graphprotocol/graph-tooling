@@ -13,7 +13,7 @@ services:
       - ethereum
       - postgres
     environment:
-      postgres_host: postgres:5432
+      postgres_host: postgres
       postgres_user: graph
       postgres_pass: let-me-in
       postgres_db: graph
