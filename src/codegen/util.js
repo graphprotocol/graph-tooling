@@ -22,7 +22,7 @@ const containsTupleType = t => {
 }
 
 const isTupleArrayType = t => {
-  return t.match(/^tuple\[([0-9]+)?\]$/)
+  return t.match(/^tuple(\[([0-9]+)?\])+$/)
 }
 
 const unrollTuple = ({ path, index, value }) =>

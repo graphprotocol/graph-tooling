@@ -48,7 +48,7 @@ const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
 
   ['tuple', 'ethereum.Tuple', code => `${code}.toTuple()`],
   [
-    /^tuple\[([0-9]+)?\]$/,
+    /^tuple(\[([0-9]+)?\])+$/,
     'Array<ethereum.Tuple>',
     (code, type) => `${code}.toTupleArray<${type}>()`,
   ],
