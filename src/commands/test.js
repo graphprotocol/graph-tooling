@@ -29,6 +29,7 @@ Options:
       --skip-wait-for-ipfs      Don't wait for IPFS to be up at localhost:15001 (optional)
       --skip-wait-for-ethereum  Don't wait for Ethereum to be up at localhost:18545 (optional)
       --skip-wait-for-postgres  Don't wait for Postgres to be up at localhost:15432 (optional)
+      --timeout                 Time to wait for service containers. (optional, defaults to 10000 milliseconds)
 `
 
 module.exports = {
@@ -50,6 +51,7 @@ module.exports = {
       skipWaitForPostgres,
       standaloneNode,
       standaloneNodeArgs,
+      timeout,
     } = toolbox.parameters.options
 
     // Support both short and long option variants
@@ -94,6 +96,10 @@ module.exports = {
         'test',
         standaloneNode ? 'docker-compose-standalone-node.yml' : 'docker-compose.yml',
       )
+
+    // parse timeout. Defaults to 10 seconds
+    timeout = Math.abs(parseInt(timeout)) || 10000
+
     if (!filesystem.exists(composeFile)) {
       print.error(`Docker Compose file \`${composeFile}\` not found`)
       process.exitCode = 1
@@ -124,6 +130,7 @@ module.exports = {
         skipWaitForEthereum,
         skipWaitForIpfs,
         skipWaitForPostgres,
+	timeout,
       })
     } catch (e) {
       await stopTestEnvironment(tempdir)
@@ -157,7 +164,7 @@ module.exports = {
 
     // Wait for Graph Node to come up
     try {
-      await waitForGraphNode()
+      await waitForGraphNode(timeout)
     } catch (e) {
       toolbox.print.error('')
       toolbox.print.error('  Graph Node')
@@ -307,6 +314,7 @@ const waitForTestEnvironment = async ({
   skipWaitForEthereum,
   skipWaitForIpfs,
   skipWaitForPostgres,
+  timeout,
 }) =>
   await withSpinner(
     `Wait for test environment`,
@@ -318,7 +326,7 @@ const waitForTestEnvironment = async ({
         step(spinner, 'Skip waiting for IPFS')
       } else {
         await waitFor(
-          10000,
+          timeout,
           async () =>
             new Promise((resolve, reject) => {
               http
@@ -338,7 +346,7 @@ const waitForTestEnvironment = async ({
         step(spinner, 'Skip waiting for Ethereum')
       } else {
         await waitFor(
-          10000,
+          timeout,
           async () =>
             new Promise((resolve, reject) => {
               http
@@ -358,7 +366,7 @@ const waitForTestEnvironment = async ({
         step(spinner, 'Skip waiting for Postgres')
       } else {
         await waitFor(
-          10000,
+          timeout,
           async () =>
             new Promise((resolve, reject) => {
               try {
@@ -445,18 +453,18 @@ const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChun
     },
   )
 
-const waitForGraphNode = async () =>
+const waitForGraphNode = async ( timeout ) =>
   await withSpinner(
     `Wait for Graph node`,
     `Failed to wait for Graph node`,
     `Warnings waiting for Graph node`,
     async spinner => {
       await waitFor(
-        10000,
+        timeout,
         async () =>
           new Promise((resolve, reject) => {
             http
-              .get('http://localhost:18000', { timeout: 10000 }, () => resolve())
+              .get('http://localhost:18000', { timeout }, () => resolve())
               .on('error', e => reject(e))
           }),
       )
