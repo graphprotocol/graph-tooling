@@ -29,7 +29,7 @@ Options:
       --skip-wait-for-ipfs      Don't wait for IPFS to be up at localhost:15001 (optional)
       --skip-wait-for-ethereum  Don't wait for Ethereum to be up at localhost:18545 (optional)
       --skip-wait-for-postgres  Don't wait for Postgres to be up at localhost:15432 (optional)
-      --timeout                 Time to wait for service containers. (optional, defaults to 10000 milliseconds)
+      --timeout                 Time to wait for service containers. (optional, defaults to 120000 milliseconds)
 `
 
 module.exports = {
@@ -97,8 +97,8 @@ module.exports = {
         standaloneNode ? 'docker-compose-standalone-node.yml' : 'docker-compose.yml',
       )
 
-    // parse timeout. Defaults to 10 seconds
-    timeout = Math.abs(parseInt(timeout)) || 10000
+    // parse timeout. Defaults to 120 seconds
+    timeout = Math.abs(parseInt(timeout)) || 120000
 
     if (!filesystem.exists(composeFile)) {
       print.error(`Docker Compose file \`${composeFile}\` not found`)
