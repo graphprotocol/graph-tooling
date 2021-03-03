@@ -20,13 +20,13 @@ module.exports = {
 
     let manifest = yaml.safeLoad(fs.readFileSync(manifestFile, 'utf-8'))
     return (
-      // Only migrate if the graph-ts version is > 0.5.1...
+      // Only migrate if the graph-ts version is > 0.12.0...
       semver.gt(graphTsVersion, '0.12.0') &&
       // ...and we have a manifest with mapping > apiVersion = 0.0.2
       manifest &&
       typeof manifest === 'object' &&
       Array.isArray(manifest.dataSources) &&
-      manifest.dataSources.reduce(
+      (manifest.dataSources.reduce(
         (hasOldMappings, dataSource) =>
           hasOldMappings ||
           (typeof dataSource === 'object' &&
@@ -34,7 +34,17 @@ module.exports = {
             typeof dataSource.mapping === 'object' &&
             dataSource.mapping.apiVersion === '0.0.2'),
         false,
-      )
+      ) ||
+        (Array.isArray(manifest.templates) &&
+          manifest.templates.reduce(
+            (hasOldMappings, template) =>
+              hasOldMappings ||
+              (typeof template === 'object' &&
+                template.mapping &&
+                typeof template.mapping === 'object' &&
+                template.mapping.apiVersion === '0.0.2'),
+            false,
+          )))
     )
   },
   apply: async ({ manifestFile }) => {
