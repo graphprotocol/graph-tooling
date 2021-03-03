@@ -26,7 +26,7 @@ module.exports = {
       manifest &&
       typeof manifest === 'object' &&
       Array.isArray(manifest.dataSources) &&
-      manifest.dataSources.reduce(
+      (manifest.dataSources.reduce(
         (hasOldMappings, dataSource) =>
           hasOldMappings ||
           (typeof dataSource === 'object' &&
@@ -34,7 +34,17 @@ module.exports = {
             typeof dataSource.mapping === 'object' &&
             dataSource.mapping.apiVersion === '0.0.3'),
         false,
-      )
+      ) ||
+        (Array.isArray(manifest.templates) &&
+          manifest.templates.reduce(
+            (hasOldMappings, template) =>
+              hasOldMappings ||
+              (typeof template === 'object' &&
+                template.mapping &&
+                typeof template.mapping === 'object' &&
+                template.mapping.apiVersion === '0.0.3'),
+            false,
+          )))
     )
   },
   apply: async ({ manifestFile }) => {
