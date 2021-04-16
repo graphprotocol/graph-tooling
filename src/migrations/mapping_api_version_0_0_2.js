@@ -1,7 +1,6 @@
-const fs = require('fs-extra')
 const semver = require('semver')
 const toolbox = require('gluegun/toolbox')
-const yaml = require('js-yaml')
+const { loadManifest } = require('./util/load-manifest')
 const { getGraphTsVersion } = require('./util/versions')
 
 // If any of the manifest apiVersions are 0.0.2, replace them with 0.0.3
@@ -18,7 +17,7 @@ module.exports = {
       return 'graph-ts dependency not installed yet'
     }
 
-    let manifest = yaml.safeLoad(fs.readFileSync(manifestFile, 'utf-8'))
+    let manifest = loadManifest(manifestFile)
     return (
       // Only migrate if the graph-ts version is > 0.12.0...
       semver.gt(graphTsVersion, '0.12.0') &&

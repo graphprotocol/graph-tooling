@@ -421,7 +421,13 @@ More than one template named '${name}', template names must be unique.`,
 
   static load(filename, { skipValidation } = { skipValidation: false }) {
     // Load and validate the manifest
-    let data = yaml.parse(fs.readFileSync(filename, 'utf-8'))
+    let data = null
+
+    try {
+      data = require(path.resolve(filename))
+    } catch(_) {
+      data = yaml.parse(fs.readFileSync(filename, 'utf-8'))
+    }
 
     // Helper to resolve files relative to the subgraph manifest
     let resolveFile = maybeRelativeFile =>
