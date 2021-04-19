@@ -157,7 +157,7 @@ module.exports = {
             if (jsonRpcError.message.match(/subgraph name not found/)) {
               if (hostedService) {
                 print.info(`
-You may need to created it at https://thegraph.com/explorer/dashboard.`)
+You may need to create it at https://thegraph.com/explorer/dashboard.`)
               } else {
                 print.info(`
 Make sure to create the subgraph first by running the following command:
