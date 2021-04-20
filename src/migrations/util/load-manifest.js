@@ -1,11 +1,12 @@
 const fs = require('fs-extra')
 const path = require('path')
+const yaml = require('yaml')
 
 function loadManifest(manifestFile) {
-  try {
+  if(manifestFile.match(/.js$/)) {
     return require(path.resolve(manifestFile))
   }
-  catch(_) {
+  else {
     return yaml.safeLoad(fs.readFileSync(manifestFile, 'utf-8'))
   }
 }

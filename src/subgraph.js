@@ -423,9 +423,10 @@ More than one template named '${name}', template names must be unique.`,
     // Load and validate the manifest
     let data = null
 
-    try {
+    if(filename.match(/.js$/)) {
       data = require(path.resolve(filename))
-    } catch(_) {
+    }
+    else {
       data = yaml.parse(fs.readFileSync(filename, 'utf-8'))
     }
 
