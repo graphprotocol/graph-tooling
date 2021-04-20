@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const yaml = require('yaml')
+const yaml = require('js-yaml')
 
 function loadManifest(manifestFile) {
   if(manifestFile.match(/.js$/)) {
