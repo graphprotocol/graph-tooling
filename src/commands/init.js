@@ -11,6 +11,7 @@ const {
 } = require('../command-helpers/subgraph')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
+const { chooseNodeUrl } = require('../command-helpers/node')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
 const ABI = require('../abi')
 
@@ -19,6 +20,10 @@ ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
 
 ${chalk.dim('Options:')}
 
+      --product <subgraph-studio|hosted-service>
+                                Selects the product for which to initialize
+      --studio                  Shortcut for --product subgraph-studio
+  -g, --node <node>             Graph node for which to initialize
       --allow-simple-name       Use a subgraph name without a prefix (default: false)
   -h, --help                    Show usage information
 
@@ -38,7 +43,19 @@ ${chalk.dim('Options for --from-contract:')}
 
 const processInitForm = async (
   toolbox,
-  {abi, address, allowSimpleName, directory, fromExample, network, subgraphName, contractName},
+  {
+    product,
+    studio,
+    node,
+    abi,
+    allowSimpleName,
+    directory,
+    address,
+    fromExample,
+    network,
+    subgraphName,
+    contractName
+  },
 ) => {
   let networkChoices = [
     'mainnet',
@@ -62,6 +79,19 @@ const processInitForm = async (
   let abiFromFile = undefined
 
   let questions = [
+    {
+      type: 'select',
+      name: 'product',
+      message: 'Product for which to initialize',
+      choices: ['subgraph-studio', 'hosted-service'],
+      skip: product !== undefined || studio !== undefined ||  node !== undefined,
+      result: value => {
+        if (value == 'subgraph-studio') {
+          allowSimpleName = true
+        }
+        return value
+      },
+    },
     {
       type: 'input',
       name: 'subgraphName',
@@ -258,6 +288,10 @@ module.exports = {
 
     // Read CLI parameters
     let {
+      product,
+      studio,
+      node,
+      g,
       abi,
       allowSimpleName,
       fromContract,
@@ -269,6 +303,9 @@ module.exports = {
       network,
     } = toolbox.parameters.options
 
+    node = node || g
+    ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
+    
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
       process.exitCode = 1
@@ -335,7 +372,7 @@ module.exports = {
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract
-    if (fromContract && subgraphName && directory && network) {
+    if (fromContract && subgraphName && directory && network && node) {
       if (abi) {
         try {
           abi = await loadAbiFromFile(abi)
@@ -368,6 +405,7 @@ module.exports = {
           network,
           subgraphName,
           contractName,
+          node
         },
         { commands },
       )
@@ -375,6 +413,9 @@ module.exports = {
 
     // Otherwise, take the user through the interactive form
     let inputs = await processInitForm(toolbox, {
+      product,
+      studio,
+      node,
       abi,
       allowSimpleName,
       directory,
@@ -402,6 +443,12 @@ module.exports = {
         { commands },
       )
     } else {
+      ;({ node, allowSimpleName } = chooseNodeUrl({
+        product: inputs.product,
+        studio,
+        node,
+        allowSimpleName
+      }))
       await initSubgraphFromContract(
         toolbox,
         {
@@ -412,7 +459,8 @@ module.exports = {
           network: inputs.network,
           address: inputs.address,
           indexEvents,
-          contractName: inputs.contractName
+          contractName: inputs.contractName,
+          node
         },
         { commands },
       )
@@ -492,16 +540,11 @@ Subgraph ${print.colors.blue(subgraphName)} created in ${print.colors.blue(relat
   )
   print.info(`Next steps:
 
-  1. Run \`${print.colors.muted(
-    'graph auth https://api.thegraph.com/deploy/ <access-token>',
-  )}\`
-     to authenticate with the hosted service. You can get the access token from
-     https://thegraph.com/explorer/dashboard/.
+  1. Run \`${print.colors.muted('graph auth')}\` to authenticate with your deploy key.
 
   2. Type \`${print.colors.muted(`cd ${relativeDir}`)}\` to enter the subgraph.
 
-  3. Run \`${print.colors.muted(commands.deploy)}\` to deploy the subgraph to
-     https://thegraph.com/explorer/subgraph/${subgraphName}.
+  3. Run \`${print.colors.muted(commands.deploy)}\` to deploy the subgraph.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.`)
 }
@@ -602,7 +645,7 @@ const initSubgraphFromExample = async (
 
 const initSubgraphFromContract = async (
   toolbox,
-  {allowSimpleName, subgraphName, directory, abi, network, address, indexEvents, contractName},
+  {allowSimpleName, subgraphName, directory, abi, network, address, indexEvents, contractName, node},
   { commands },
 ) => {
   let { print } = toolbox
@@ -641,6 +684,7 @@ const initSubgraphFromContract = async (
           address,
           indexEvents,
           contractName,
+          node,
         },
         spinner,
       )

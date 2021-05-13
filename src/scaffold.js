@@ -19,7 +19,7 @@ const abiEvents = abi =>
 
 // package.json
 
-const generatePackageJson = ({ subgraphName }) =>
+const generatePackageJson = ({ subgraphName, node }) =>
   prettier.format(
     JSON.stringify({
       name: getSubgraphBasename(subgraphName),
@@ -28,9 +28,11 @@ const generatePackageJson = ({ subgraphName }) =>
         codegen: 'graph codegen',
         build: 'graph build',
         deploy:
-          `graph deploy ` +
-          `--node https://api.thegraph.com/deploy/ ` +
-          `--ipfs https://api.thegraph.com/ipfs/ ` +
+          // TODO: switch back to normal node executable after testing
+          `${path.join(__dirname, '../bin/graph')} deploy ` +
+          `--node ${node} ` +
+          // TODO: change to production ipfs after testing
+          `--ipfs https://api.staging.thegraph.com/ipfs/ ` +
           subgraphName,
         'create-local': `graph create --node http://localhost:8020/ ${subgraphName}`,
         'remove-local': `graph remove --node http://localhost:8020/ ${subgraphName}`,
@@ -290,11 +292,11 @@ const generateMapping = ({ abi, indexEvents, contractName }) => {
 }
 
 const generateScaffold = async (
-  { abi, address, network, subgraphName, indexEvents, contractName = 'Contract' },
+  { abi, address, network, subgraphName, indexEvents, contractName = 'Contract', node },
   spinner,
 ) => {
   step(spinner, 'Generate subgraph from ABI')
-  let packageJson = generatePackageJson({ subgraphName })
+  let packageJson = generatePackageJson({ subgraphName, node })
   let manifest = generateManifest({ abi, address, network, contractName })
   let schema = generateSchema({ abi, indexEvents, contractName })
   let mapping = generateMapping({ abi, subgraphName, indexEvents, contractName })
