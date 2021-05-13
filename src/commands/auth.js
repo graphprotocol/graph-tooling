@@ -1,27 +1,69 @@
 const chalk = require('chalk')
-const { validateNodeUrl, normalizeNodeUrl } = require('../command-helpers/node')
-const { saveAccessToken } = require('../command-helpers/auth')
+const { saveDeployKey } = require('../command-helpers/auth')
+const { chooseNodeUrl } = require('../command-helpers/node')
 
 const HELP = `
-${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
-  '<access-token>'
-)}
+${chalk.bold('graph auth')} [options]
 
 ${chalk.dim('Options:')}
 
+      --product <subgraph-studio|hosted-service>
+                                Selects the product for which to authenticate
+      --studio                  Shortcut for --product subgraph-studio
+  -g, --node <node>             Graph node for which to authenticate
+      --deploy-key <key>        User deploy key
   -h, --help                    Show usage information
 `
 
+const processForm = async (
+  toolbox,
+  {
+    product,
+    studio,
+    node,
+    deployKey,
+  },
+) => {
+  const questions = [
+    {
+      type: 'select',
+      name: 'product',
+      message: 'Product for which to initialize',
+      choices: ['subgraph-studio', 'hosted-service'],
+      skip: product !== undefined || studio !== undefined || node !== undefined,
+    },
+    {
+      type: 'password',
+      name: 'deployKey',
+      message: 'Deploy key',
+      skip: deployKey !== undefined,
+    },
+  ]
+
+  try {
+    const answers = await toolbox.prompt.ask(questions)
+    return answers
+  } catch (e) {
+    return undefined
+  }
+}
+
 module.exports = {
-  description: 'Sets the access token to use when deploying to a Graph node',
+  description: 'Sets the deploy key to use when deploying to a Graph node',
   run: async toolbox => {
     // Obtain tools
     let { filesystem, print, system } = toolbox
 
     // Read CLI parameters
-    let { h, help } = toolbox.parameters.options
-    let node = toolbox.parameters.first
-    let accessToken = toolbox.parameters.second
+    let {
+      product,
+      studio,
+      node,
+      g,
+      deployKey,
+      h,
+      help,
+    } = toolbox.parameters.options
 
     // Show help text if requested
     if (help || h) {
@@ -29,37 +71,45 @@ module.exports = {
       return
     }
 
-    // Fail if no valid Graph node was provided
+    node = node || g
+    ;({ node } = chooseNodeUrl({ product, studio, node }))
+    
+    // Ask for missing params in the interactive form
+    let inputs = await processForm(toolbox, {
+      product,
+      studio,
+      node,
+      deployKey
+    })
+    if (inputs === undefined) {
+      process.exit(1)
+    }
     if (!node) {
-      print.error(`No Graph node provided`)
-      print.info(HELP)
-      process.exitCode = 1
-      return
+      ;({ node } = chooseNodeUrl({
+        product: inputs.product,
+        studio,
+        node,
+      }))
     }
-    try {
-      validateNodeUrl(node)
-    } catch (e) {
-      print.error(`Graph node "${node}" is invalid: ${e.message}`)
-      process.exitCode = 1
-      return
+    if (!deployKey) {
+      deployKey = inputs.deployKey
     }
 
-    // Fail if no access token was provided
-    if (!accessToken) {
-      print.error(`No access token provided`)
+    if (!deployKey) {
+      print.error(`No deploy key provided`)
       print.info(HELP)
       process.exitCode = 1
       return
     }
-    if (accessToken.length > 200) {
-      print.error(`Access token must not exceed 200 characters`)
+    if (deployKey.length > 200) {
+      print.error(`Deploy key must not exceed 200 characters`)
       process.exitCode = 1
       return
     }
 
     try {
-      await saveAccessToken(node, accessToken)
-      print.success(`Access token set for ${node}`)
+      await saveDeployKey(node, deployKey)
+      print.success(`Deploy key set for ${node}`)
     } catch (e) {
       print.error(e)
       process.exitCode = 1

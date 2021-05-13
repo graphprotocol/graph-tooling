@@ -1,11 +1,11 @@
 const URL = require('url').URL
 const chalk = require('chalk')
 
-const { identifyAccessToken } = require('../command-helpers/auth')
+const { identifyDeployKey } = require('../command-helpers/auth')
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
-const { validateNodeUrl } = require('../command-helpers/node')
+const { chooseNodeUrl } = require('../command-helpers/node')
 const { withSpinner } = require('../command-helpers/spinner')
 const { validateSubgraphName } = require('../command-helpers/subgraph')
 
@@ -16,14 +16,51 @@ ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk
 
 Options:
 
-      --access-token <token>    Graph access token
-  -g, --node <node>             Graph node to deploy the subgraph to
+      --product <subgraph-studio|hosted-service>
+                                Selects the product to which to deploy
+      --studio                  Shortcut for --product subgraph-studio
+  -g, --node <node>             Graph node to which to deploy
+      --deploy-key <key>        User deploy key
+      --version-label <label>   Version label used for the deployment
   -h, --help                    Show usage information
   -i, --ipfs <node>             Upload build results to an IPFS node
   -o, --output-dir <path>       Output directory for build results (default: build/)
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
 `
+
+const processForm = async (
+  toolbox,
+  {
+    product,
+    studio,
+    node,
+    versionLabel,
+  },
+) => {
+  const questions = [
+    {
+      type: 'select',
+      name: 'product',
+      message: 'Product for which to deploy',
+      choices: ['subgraph-studio', 'hosted-service'],
+      skip: product !== undefined || studio !== undefined || node !== undefined,
+    },
+    {
+      type: 'input',
+      name: 'versionLabel',
+      message: 'Version Label',
+      skip: versionLabel !== undefined && versionLabel !== true,
+    },
+  ]
+
+  try {
+    const answers = await toolbox.prompt.ask(questions)
+    return answers
+  } catch (e) {
+    return undefined
+  }
+}
 
 module.exports = {
   description: 'Deploys the subgraph to a Graph node',
@@ -33,7 +70,10 @@ module.exports = {
 
     // Parse CLI parameters
     let {
-      accessToken,
+      product,
+      studio,
+      deployKey,
+      versionLabel,
       g,
       h,
       i,
@@ -61,6 +101,7 @@ module.exports = {
         help,
         w,
         watch,
+        studio
       })
     } catch (e) {
       print.error(e.message)
@@ -81,6 +122,29 @@ module.exports = {
       return
     }
 
+    ;({ node } = chooseNodeUrl({ product, studio, node }))
+
+    // Ask for missing params in the interactive form
+    let inputs = await processForm(toolbox, {
+      product,
+      studio,
+      node,
+      versionLabel,
+    })
+    if (inputs === undefined) {
+      process.exit(1)
+    }
+    if (!node) {
+      ;({ node } = chooseNodeUrl({
+        product: inputs.product,
+        studio,
+        node,
+      }))
+    }
+    if (!versionLabel) {
+      versionLabel = inputs.versionLabel
+    }
+
     // Validate the subgraph name
     if (!subgraphName) {
       print.error('No subgraph name provided')
@@ -93,13 +157,6 @@ module.exports = {
     if (!node) {
       print.error(`No Graph node provided`)
       print.info(HELP)
-      process.exitCode = 1
-      return
-    }
-    try {
-      validateNodeUrl(node)
-    } catch (e) {
-      print.error(`Graph node "${node}" is invalid: ${e.message}`)
       process.exitCode = 1
       return
     }
@@ -125,7 +182,7 @@ module.exports = {
       return
     }
 
-    let hostedService = node.match(/thegraph.com/)
+    let hostedService = node.match(/thegraph.com/) && !node.match(/studio/)
     let requestUrl = new URL(node)
     let client = createJsonRpcClient(requestUrl)
 
@@ -135,10 +192,10 @@ module.exports = {
       return
     }
 
-    // Use the access token, if one is set
-    accessToken = await identifyAccessToken(node, accessToken)
-    if (accessToken !== undefined && accessToken !== null) {
-      client.options.headers = { Authorization: 'Bearer ' + accessToken }
+    // Use the deploy key, if one is set
+    deployKey = await identifyDeployKey(node, deployKey)
+    if (deployKey !== undefined && deployKey !== null) {
+      client.options.headers = { Authorization: 'Bearer ' + deployKey }
     }
 
     let deploySubgraph = async ipfsHash => {
@@ -146,7 +203,7 @@ module.exports = {
       //       `Failed to deploy to Graph node ${requestUrl}`,
       client.request(
         'subgraph_deploy',
-        { name: subgraphName, ipfs_hash: ipfsHash },
+        { name: subgraphName, ipfs_hash: ipfsHash, version_label: versionLabel },
         async (requestError, jsonRpcError, res) => {
           if (jsonRpcError) {
             spinner.fail(

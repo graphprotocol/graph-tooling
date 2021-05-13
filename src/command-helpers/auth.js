@@ -10,7 +10,7 @@ const requireKeytar = () => {
     throw new Error(
       `
 
-Cannot store the access token because dependencies are missing. If you
+Cannot store the deploy key because dependencies are missing. If you
 are on Linux, try installing 'libsecret-1-dev' (Debian, Ubuntu etc.) or
 'libsecret-devel' (RedHat, Fedora etc.) and reinstalling Graph CLI
 afterwards.
@@ -21,12 +21,12 @@ The original error was: ${e.message}
   }
 }
 
-const identifyAccessToken = async (node, accessToken) => {
-  // Determine the access token to use, if any:
-  // - First try using --access-token, if provided
-  // - Then see if we have an access token set for the Graph node
-  if (accessToken !== undefined) {
-    return accessToken
+const identifyDeployKey = async (node, deployKey) => {
+  // Determine the deploy key to use, if any:
+  // - First try using --deploy-key, if provided
+  // - Then see if we have an deploy key set for the Graph node
+  if (deployKey !== undefined) {
+    return deployKey
   } else {
     try {
       const keytar = requireKeytar()
@@ -35,49 +35,49 @@ const identifyAccessToken = async (node, accessToken) => {
     } catch (e) {
       if (process.platform === 'win32') {
         toolbox.print.warning(
-          `Could not get access token from Windows Credential Vault: ${e.message}`,
+          `Could not get deploy key from Windows Credential Vault: ${e.message}`,
         )
       } else if (process.platform === 'darwin') {
         toolbox.print.warning(
-          `Could not get access token from macOS Keychain: ${e.message}`,
+          `Could not get deploy key from macOS Keychain: ${e.message}`,
         )
       } else if (process.platform === 'linux') {
         toolbox.print.warning(
-          `Could not get access token from libsecret ` +
+          `Could not get deploy key from libsecret ` +
             `(usually gnome-keyring or ksecretservice): ${e.message}`,
         )
       } else {
         toolbox.print.warning(
-          `Could not get access token from OS secret storage service: ${e.message}`,
+          `Could not get deploy key from OS secret storage service: ${e.message}`,
         )
       }
-      toolbox.print.info(`Continuing without an access token\n`)
+      toolbox.print.info(`Continuing without an deploy key\n`)
     }
   }
 }
 
-const saveAccessToken = async (node, accessToken) => {
+const saveDeployKey = async (node, deployKey) => {
   try {
     const keytar = requireKeytar()
     node = normalizeNodeUrl(node)
-    await keytar.setPassword('graphprotocol-auth', node, accessToken)
+    await keytar.setPassword('graphprotocol-auth', node, deployKey)
   } catch (e) {
     if (process.platform === 'win32') {
-      throw new Error(`Error storing access token in Windows Credential Vault: ${e}`)
+      throw new Error(`Error storing deploy key in Windows Credential Vault: ${e}`)
     } else if (process.platform === 'darwin') {
-      throw new Error(`Error storing access token in macOS Keychain: ${e}`)
+      throw new Error(`Error storing deploy key in macOS Keychain: ${e}`)
     } else if (process.platform === 'linux') {
       throw new Error(
-        `Error storing access token with libsecret ` +
+        `Error storing deploy key with libsecret ` +
           `(usually gnome-keyring or ksecretservice): ${e}`,
       )
     } else {
-      throw new Error(`Error storing access token in OS secret storage service: ${e}`)
+      throw new Error(`Error storing deploy key in OS secret storage service: ${e}`)
     }
   }
 }
 
 module.exports = {
-  identifyAccessToken,
-  saveAccessToken,
+  identifyDeployKey,
+  saveDeployKey,
 }

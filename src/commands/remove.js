@@ -1,7 +1,7 @@
 const URL = require('url').URL
 const chalk = require('chalk')
 const { validateNodeUrl } = require('../command-helpers/node')
-const { identifyAccessToken } = require('../command-helpers/auth')
+const { identifyDeployKey: identifyAccessToken } = require('../command-helpers/auth')
 const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
 
 const HELP = `
