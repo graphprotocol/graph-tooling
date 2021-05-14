@@ -320,6 +320,7 @@ module.exports = {
         help,
         h,
         indexEvents,
+        studio
       })
     } catch (e) {
       print.error(e.message)
