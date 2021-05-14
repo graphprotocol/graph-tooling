@@ -21,7 +21,7 @@ Options:
       --studio                  Shortcut for --product subgraph-studio
   -g, --node <node>             Graph node to which to deploy
       --deploy-key <key>        User deploy key
-      --version-label <label>   Version label used for the deployment
+  -l  --version-label <label>   Version label used for the deployment
   -h, --help                    Show usage information
   -i, --ipfs <node>             Upload build results to an IPFS node
   -o, --output-dir <path>       Output directory for build results (default: build/)
@@ -74,6 +74,7 @@ module.exports = {
       studio,
       deployKey,
       versionLabel,
+      l,
       g,
       h,
       i,
@@ -93,6 +94,7 @@ module.exports = {
     node = node || g
     outputDir = outputDir || o
     watch = watch || w
+    versionLabel = versionLabel || l
 
     let subgraphName, manifest
     try {
