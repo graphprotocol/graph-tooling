@@ -3,15 +3,15 @@ const { saveDeployKey } = require('../command-helpers/auth')
 const { chooseNodeUrl } = require('../command-helpers/node')
 
 const HELP = `
-${chalk.bold('graph auth')} [options]
+${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
+  '<deploy-key>'
+)}
 
 ${chalk.dim('Options:')}
 
       --product <subgraph-studio|hosted-service>
                                 Selects the product for which to authenticate
       --studio                  Shortcut for --product subgraph-studio
-  -g, --node <node>             Graph node for which to authenticate
-      --deploy-key <key>        User deploy key
   -h, --help                    Show usage information
 `
 
@@ -58,12 +58,11 @@ module.exports = {
     let {
       product,
       studio,
-      node,
-      g,
-      deployKey,
       h,
       help,
     } = toolbox.parameters.options
+    let node = toolbox.parameters.first
+    let deployKey = toolbox.parameters.second
 
     // Show help text if requested
     if (help || h) {
@@ -71,28 +70,27 @@ module.exports = {
       return
     }
 
-    node = node || g
     ;({ node } = chooseNodeUrl({ product, studio, node }))
-    
-    // Ask for missing params in the interactive form
-    let inputs = await processForm(toolbox, {
-      product,
-      studio,
-      node,
-      deployKey
-    })
-    if (inputs === undefined) {
-      process.exit(1)
-    }
-    if (!node) {
-      ;({ node } = chooseNodeUrl({
-        product: inputs.product,
+    if (!node || !deployKey) {
+      const inputs = await processForm(toolbox, {
+        product,
         studio,
         node,
-      }))
-    }
-    if (!deployKey) {
-      deployKey = inputs.deployKey
+        deployKey
+      })
+      if (inputs === undefined) {
+        process.exit(1)
+      }
+      if (!node) {
+        ;({ node } = chooseNodeUrl({
+          product: inputs.product,
+          studio,
+          node,
+        }))
+      }
+      if (!deployKey) {
+        deployKey = inputs.deployKey
+      }
     }
 
     if (!deployKey) {
