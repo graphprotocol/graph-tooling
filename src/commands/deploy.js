@@ -50,7 +50,7 @@ const processForm = async (
       type: 'input',
       name: 'versionLabel',
       message: 'Version Label',
-      skip: versionLabel !== undefined && versionLabel !== true,
+      skip: versionLabel !== undefined,
     },
   ]
 
@@ -73,6 +73,7 @@ module.exports = {
       product,
       studio,
       deployKey,
+      accessToken,
       versionLabel,
       l,
       g,
@@ -125,26 +126,21 @@ module.exports = {
     }
 
     ;({ node } = chooseNodeUrl({ product, studio, node }))
-
-    // Ask for missing params in the interactive form
-    let inputs = await processForm(toolbox, {
-      product,
-      studio,
-      node,
-      versionLabel,
-    })
-    if (inputs === undefined) {
-      process.exit(1)
-    }
     if (!node) {
+      const inputs = await processForm(toolbox, {
+        product,
+        studio,
+        node,
+        versionLabel: 'skip', // determine label requirement later
+      })
+      if (inputs === undefined) {
+        process.exit(1)
+      }
       ;({ node } = chooseNodeUrl({
         product: inputs.product,
         studio,
         node,
       }))
-    }
-    if (!versionLabel) {
-      versionLabel = inputs.versionLabel
     }
 
     // Validate the subgraph name
@@ -185,6 +181,21 @@ module.exports = {
     }
 
     let hostedService = node.match(/thegraph.com/) && !node.match(/studio/)
+
+    // Ask for label if not on hosted service
+    if (!versionLabel && !hostedService) {
+      const inputs = await processForm(toolbox, {
+        product,
+        studio,
+        node,
+        versionLabel,
+      })
+      if (inputs === undefined) {
+        process.exit(1)
+      }
+      versionLabel = inputs.versionLabel
+    }
+
     let requestUrl = new URL(node)
     let client = createJsonRpcClient(requestUrl)
 
@@ -195,6 +206,9 @@ module.exports = {
     }
 
     // Use the deploy key, if one is set
+    if (!deployKey && accessToken) {
+      deployKey = accessToken // backwards compatibility
+    }
     deployKey = await identifyDeployKey(node, deployKey)
     if (deployKey !== undefined && deployKey !== null) {
       client.options.headers = { Authorization: 'Bearer ' + deployKey }
