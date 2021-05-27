@@ -30,7 +30,7 @@ ${chalk.dim('Choose mode with one of:')}
 ${chalk.dim('Options for --from-contract:')}
 
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --network <mainnet|kovan|rinkeby|ropsten|goerli|poa-core|poa-sokol|xdai|matic|mumbai|fantom|bsc|clover>
+      --network <mainnet|kovan|rinkeby|ropsten|goerli|poa-core|poa-sokol|xdai|matic|mumbai|fantom|bsc|clover|arbitrum-testnet-v5>
                                 Selects the network the contract is deployed to
       --index-events            Index contract events as entities
       --contract-name           Name of the contract (default: Contract)      
@@ -54,6 +54,7 @@ const processInitForm = async (
     'fantom',
     'bsc',
     'clover',
+    'arbitrum-testnet-v5',
   ]
   let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
 
@@ -387,7 +388,6 @@ module.exports = {
     // Exit immediately when the form is cancelled
     if (inputs === undefined) {
       process.exit(1)
-      return
     }
 
     print.info('———')
