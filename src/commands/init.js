@@ -84,18 +84,19 @@ const processInitForm = async (
       name: 'product',
       message: 'Product for which to initialize',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: product !== undefined || studio !== undefined ||  node !== undefined,
+      skip: product !== undefined || studio !== undefined || node !== undefined,
       result: value => {
         if (value == 'subgraph-studio') {
           allowSimpleName = true
         }
+        product = value
         return value
       },
     },
     {
       type: 'input',
       name: 'subgraphName',
-      message: 'Subgraph name',
+      message: () => product == 'subgraph-studio' ? 'Subgraph slug' : 'Subgraph name',
       initial: subgraphName,
       validate: name => {
         try {
