@@ -136,8 +136,9 @@ module.exports = {
       if (inputs === undefined) {
         process.exit(1)
       }
+      product = inputs.product
       ;({ node } = chooseNodeUrl({
-        product: inputs.product,
+        product,
         studio,
         node,
       }))
@@ -145,7 +146,7 @@ module.exports = {
 
     // Validate the subgraph name
     if (!subgraphName) {
-      print.error('No subgraph name provided')
+      print.error(`No subgraph ${product == 'subgraph-studio' ? 'slug' : 'name'} provided`)
       print.info(HELP)
       process.exitCode = 1
       return
