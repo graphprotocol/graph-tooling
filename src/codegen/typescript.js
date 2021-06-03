@@ -154,26 +154,6 @@ class NullableType {
   }
 }
 
-class UnionType {
-  constructor(types) {
-    this.types = types
-  }
-
-  toString() {
-    return this.types.map(t => t.toString()).join(' | ')
-  }
-}
-
-class MaybeType {
-  constructor(type) {
-    this.type = type
-  }
-
-  toString() {
-    return `?${this.type.name}`
-  }
-}
-
 class ModuleImports {
   constructor(nameOrNames, module) {
     this.nameOrNames = nameOrNames
@@ -187,39 +167,6 @@ class ModuleImports {
   }
 }
 
-class ModuleImport {
-  constructor(alias, module) {
-    this.alias = alias
-    this.module = module
-  }
-
-  toString() {
-    return `import * as ${this.alias} from "${this.module}"`
-  }
-}
-
-class ValueToCoercion {
-  constructor(expr, type) {
-    this.expr = expr
-    this.type = type
-  }
-
-  toString() {
-    return `${this.expr}.${valueToTypeFunction(this.type)}()`
-  }
-}
-
-class ValueFromCoercion {
-  constructor(expr, type) {
-    this.expr = expr
-    this.type = type
-  }
-
-  toString() {
-    return `Value.${valueFromTypeFunction(this.type)}(${this.expr})`
-  }
-}
-
 const namedType = name => new NamedType(name)
 const arrayType = name => new ArrayType(name)
 const param = (name, type) => new Param(name, type)
@@ -229,7 +176,6 @@ const staticMethod = (name, params, returnType, body) =>
   new StaticMethod(name, params, returnType, body)
 const klass = (name, options) => new Class(name, options)
 const klassMember = (name, type) => new ClassMember(name, type)
-const unionType = (...types) => new UnionType(types)
 const nullableType = type => new NullableType(type)
 const moduleImports = (nameOrNames, module) => new ModuleImports(nameOrNames, module)
 
@@ -247,6 +193,5 @@ module.exports = {
   staticMethod,
   param,
   nullableType,
-  unionType,
   moduleImports,
 }
