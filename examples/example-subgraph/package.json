@@ -11,6 +11,6 @@
     "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#master"
   },
   "resolutions": {
-    "assemblyscript": "^0.8.0"
+    "assemblyscript": "git+https://github.com/AssemblyScript/assemblyscript.git#v0.6"
   }
 }
