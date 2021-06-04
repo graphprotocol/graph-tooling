@@ -6,15 +6,16 @@ language: node_js
 node_js:
   - '10'
   - '11'
-cache: yarn
+cache:
+  yarn: false
 services:
   - docker
 # before_install:
 #  - sudo apt-get install libsecret-1-dev dbus gnome-keyring python-keyring python-gnomekeyring
 # before_script:
-  # Create a new 'login' keyring; this appearas to be necessary for gnome-keyring to auto-launch
-  # properly when needed
-  # - dbus-launch /usr/bin/python -c "import gnomekeyring;gnomekeyring.create_sync('login', '');"
+# Create a new 'login' keyring; this appearas to be necessary for gnome-keyring to auto-launch
+# properly when needed
+# - dbus-launch /usr/bin/python -c "import gnomekeyring;gnomekeyring.create_sync('login', '');"
 script:
   # Run the test suite
   - yarn test
@@ -27,7 +28,6 @@ script:
   - cd ../../examples/basic-event-handlers
   - yarn
   - ../../bin/graph test "yarn test"
-  
   # Run `graph auth` inside `dbus-launch` to be able to access gnome-keyring
   # secrets via keytar
   # - dbus-launch bash -c '../../bin/graph auth http://some-node-ip.org test-access-token'
