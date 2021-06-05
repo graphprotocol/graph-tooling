@@ -10,14 +10,14 @@ module.exports = {
     // Obtain the graph-ts version, if possible
     let graphTsVersion
     try {
-      graphTsVersion = getGraphTsVersion(sourceDir)
+      graphTsVersion = await getGraphTsVersion(sourceDir)
     } catch (_) {
       // If we cannot obtain the version, return a hint that the graph-ts
       // hasn't been installed yet
       return 'graph-ts dependency not installed yet'
     }
 
-    let manifest = loadManifest(manifestFile)
+    let manifest = await loadManifest(manifestFile)
     return (
       // Only migrate if the graph-ts version is > 0.12.0...
       semver.gt(graphTsVersion, '0.12.0') &&
