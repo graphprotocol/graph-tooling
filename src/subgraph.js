@@ -39,10 +39,10 @@ const buildCombinedWarning = (filename, warnings) =>
     : null
 
 module.exports = class Subgraph {
-  static validate(data, { resolveFile }) {
+  static async validate(data, { resolveFile }) {
     // Parse the default subgraph schema
     let schema = graphql.parse(
-      fs.readFileSync(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8'),
+      await fs.readFile(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8'),
     )
 
     // Obtain the root `SubgraphManifest` type from the schema
@@ -419,7 +419,7 @@ More than one template named '${name}', template names must be unique.`,
     return yaml.stringify(manifest.toJS())
   }
 
-  static load(filename, { skipValidation } = { skipValidation: false }) {
+  static async load(filename, { skipValidation } = { skipValidation: false }) {
     // Load and validate the manifest
     let data = null
 
@@ -427,14 +427,14 @@ More than one template named '${name}', template names must be unique.`,
       data = require(path.resolve(filename))
     }
     else {
-      data = yaml.parse(fs.readFileSync(filename, 'utf-8'))
+      data = yaml.parse(await fs.readFile(filename, 'utf-8'))
     }
 
     // Helper to resolve files relative to the subgraph manifest
     let resolveFile = maybeRelativeFile =>
       path.resolve(path.dirname(filename), maybeRelativeFile)
 
-    let manifestErrors = Subgraph.validate(data, { resolveFile })
+    let manifestErrors = await Subgraph.validate(data, { resolveFile })
     if (manifestErrors.size > 0) {
       throwCombinedError(filename, manifestErrors)
     }
@@ -476,7 +476,7 @@ More than one template named '${name}', template names must be unique.`,
     }
   }
 
-  static write(manifest, filename) {
-    fs.writeFileSync(filename, Subgraph.dump(manifest))
+  static async write(manifest, filename) {
+    await fs.writeFile(filename, Subgraph.dump(manifest))
   }
 }
