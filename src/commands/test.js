@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const compose = require('docker-compose')
 const http = require('http')
 const net = require('net')
-const tmp = require('tmp')
+const tmp = require('tmp-promise')
 const Docker = require('dockerode')
 const path = require('path')
 const stripAnsi = require('strip-ansi')
@@ -107,7 +107,7 @@ module.exports = {
     }
 
     // Create temporary directory to operate in
-    let tempdir = tmp.dirSync({ prefix: 'graph-test', unsafeCleanup: true }).name
+    let { path: tempdir } = await tmp.dir({ prefix: 'graph-test', unsafeCleanup: true })
     try {
       await configureTestEnvironment(toolbox, tempdir, composeFile, nodeImage)
     } catch (e) {
