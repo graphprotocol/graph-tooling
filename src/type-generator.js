@@ -187,8 +187,8 @@ module.exports = class TypeGenerator {
         `${abi.abi.name}.ts`,
       )
       step(spinner, `Write types to`, this.displayPath(outputFile))
-      fs.mkdirsSync(path.dirname(outputFile))
-      fs.writeFileSync(outputFile, code)
+      await fs.mkdirs(path.dirname(outputFile))
+      await fs.writeFile(outputFile, code)
     } catch (e) {
       throw Error(`Failed to generate types for contract ABI: ${e.message}`)
     }
@@ -223,8 +223,8 @@ module.exports = class TypeGenerator {
         `${abi.abi.name}.ts`,
       )
       step(spinner, `Write types to`, this.displayPath(outputFile))
-      fs.mkdirsSync(path.dirname(outputFile))
-      fs.writeFileSync(outputFile, code)
+      await fs.mkdirs(path.dirname(outputFile))
+      await fs.writeFile(outputFile, code)
     } catch (e) {
       throw Error(`Failed to generate types for data source template ABI: ${e.message}`)
     }
@@ -266,8 +266,8 @@ module.exports = class TypeGenerator {
 
         let outputFile = path.join(this.options.outputDir, 'schema.ts')
         step(spinner, 'Write types to', this.displayPath(outputFile))
-        fs.mkdirsSync(path.dirname(outputFile))
-        fs.writeFileSync(outputFile, code)
+        await fs.mkdirs(path.dirname(outputFile))
+        await fs.writeFile(outputFile, code)
       },
     )
   }
@@ -306,8 +306,8 @@ module.exports = class TypeGenerator {
 
           let outputFile = path.join(this.options.outputDir, 'templates.ts')
           step(spinner, `Write types for templates to`, this.displayPath(outputFile))
-          fs.mkdirsSync(path.dirname(outputFile))
-          fs.writeFileSync(outputFile, code)
+          await fs.mkdirs(path.dirname(outputFile))
+          await fs.writeFile(outputFile, code)
         }
       },
     )
