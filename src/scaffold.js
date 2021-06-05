@@ -314,19 +314,21 @@ const generateScaffold = async (
 
 const writeScaffoldDirectory = async (scaffold, directory, spinner) => {
   // Create directory itself
-  fs.mkdirsSync(directory)
+  await fs.mkdirs(directory)
 
-  Object.keys(scaffold).forEach(basename => {
+  let promises = Object.keys(scaffold).map(async basename => {
     let content = scaffold[basename]
     let filename = path.join(directory, basename)
 
     // Write file or recurse into subdirectory
     if (typeof content === 'string') {
-      fs.writeFileSync(filename, content, { encoding: 'utf-8' })
+      await fs.writeFile(filename, content, { encoding: 'utf-8' })
     } else {
       writeScaffoldDirectory(content, path.join(directory, basename), spinner)
     }
   })
+
+  await Promise.all(promises)
 }
 
 const writeScaffold = async (scaffold, directory, spinner) => {
