@@ -587,7 +587,7 @@ class Compiler {
     let alreadyUploaded = uploadedFiles.has(uploadCacheKey)
 
     if (!alreadyUploaded) {
-      let content = Buffer.from(fs.readFileSync(absoluteFile), 'utf-8')
+      let content = Buffer.from(await fs.readFile(absoluteFile), 'utf-8')
       let hash = await this._uploadToIPFS({
         path: path.relative(this.options.outputDir, absoluteFile),
         content: content,
