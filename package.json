@@ -21,7 +21,7 @@
     "pkginfo": "^0.4.1",
     "prettier": "^1.13.5",
     "request": "^2.88.0",
-    "tmp": "^0.1.0",
+    "tmp-promise": "^3.0.2",
     "yaml": "^1.5.1"
   },
   "optionalDependencies": {
