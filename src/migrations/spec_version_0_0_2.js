@@ -8,7 +8,7 @@ const { loadManifest } = require('./util/load-manifest')
 module.exports = {
   name: 'Bump mapping specVersion from 0.0.1 to 0.0.2',
   predicate: async ({ sourceDir, manifestFile }) => {
-    let manifest = loadManifest(manifestFile)
+    let manifest = await loadManifest(manifestFile)
     return (
       manifest &&
       typeof manifest === 'object' &&
