@@ -11,12 +11,12 @@ let abi
 let generatedTypes
 
 describe('ABI code generation', () => {
-  beforeAll(() => {
-    tempdir = fs.mkdtempSync('abi-codegen')
+  beforeAll(async () => {
+    tempdir = await fs.mkdtemp('abi-codegen')
 
     try {
       let filename = path.join(tempdir, 'ABI.json')
-      fs.writeFileSync(
+      await fs.writeFile(
         filename,
         JSON.stringify([
           {
@@ -170,12 +170,12 @@ describe('ABI code generation', () => {
       let codegen = new AbiCodeGenerator(abi)
       generatedTypes = codegen.generateTypes()
     } finally {
-      fs.removeSync(tempdir)
+      await fs.remove(tempdir)
     }
   })
 
-  afterAll(() => {
-    fs.removeSync(tempdir)
+  afterAll(async () => {
+    await fs.remove(tempdir)
   })
 
   describe('Generated types', () => {
