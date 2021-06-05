@@ -490,7 +490,7 @@ class Compiler {
         // Write the subgraph manifest itself
         let outputFilename = path.join(this.options.outputDir, 'subgraph.yaml')
         step(spinner, 'Write subgraph manifest', this.displayPath(outputFilename))
-        Subgraph.write(subgraph, outputFilename)
+        await Subgraph.write(subgraph, outputFilename)
 
         return subgraph
       },
