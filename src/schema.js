@@ -15,8 +15,8 @@ module.exports = class Schema {
     return new SchemaCodeGenerator(this)
   }
 
-  static load(filename) {
-    let document = fs.readFileSync(filename, 'utf-8')
+  static async load(filename) {
+    let document = await fs.readFile(filename, 'utf-8')
     let ast = graphql.parse(document)
     return new Schema(filename, document, immutable.fromJS(ast))
   }
