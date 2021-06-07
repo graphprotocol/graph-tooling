@@ -92,13 +92,13 @@ module.exports = class SchemaCodeGenerator {
         tsCodegen.namedType('void'),
         `
         let id = this.get('id')
-        assert(id !== null, 'Cannot save ${entityName} entity without an ID')
+        assert(id != null, 'Cannot save ${entityName} entity without an ID')
         assert(
-          id.kind == ValueKind.STRING,
+          id && id.kind == ValueKind.STRING,
           'Cannot save ${entityName} entity with non-string ID. ' +
           'Considering using .toHex() to convert the "id" to a string.'
         )
-        store.set('${entityName}', id.toString(), this)`,
+        if (id) store.set('${entityName}', id.toString(), this)`,
       ),
 
       tsCodegen.staticMethod(
