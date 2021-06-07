@@ -9,5 +9,8 @@
   "devDependencies": {
     "@graphprotocol/graph-cli": "https://github.com/graphprotocol/graph-cli#master",
     "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#master"
+  },
+  "resolutions": {
+    "assemblyscript": "git+https://github.com/AssemblyScript/assemblyscript.git#v0.6"
   }
 }
