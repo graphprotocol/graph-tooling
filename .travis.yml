@@ -6,7 +6,8 @@ language: node_js
 node_js:
   - '10'
   - '11'
-cache: yarn
+cache:
+  yarn: false
 services:
   - docker
 # before_install:
