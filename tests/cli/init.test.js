@@ -38,7 +38,7 @@ describe('Init', () => {
     'init/from-example',
     {
       exitCode: 0,
-      timeout: 60000,
+      timeout: 100000,
       cwd: baseDir,
     },
   )
@@ -57,7 +57,7 @@ describe('Init', () => {
     'init/from-contract',
     {
       exitCode: 0,
-      timeout: 60000,
+      timeout: 100000,
       cwd: baseDir,
     },
   )
@@ -76,7 +76,7 @@ describe('Init', () => {
       subgraphDir3,
     ],
     'init/from-contract-with-abi',
-    { exitCode: 0, timeout: 60000, cwd: baseDir },
+    { exitCode: 0, timeout: 100000, cwd: baseDir },
   )
 
   cliTest(
@@ -93,7 +93,7 @@ describe('Init', () => {
       subgraphDir4,
     ],
     'init/from-contract-with-abi-and-structs',
-    { exitCode: 0, timeout: 60000, cwd: baseDir },
+    { exitCode: 0, timeout: 100000, cwd: baseDir },
   )
 
   cliTest(
@@ -110,6 +110,6 @@ describe('Init', () => {
       subgraphDir5,
     ],
     'init/from-contract-with-overloaded-elements',
-    { exitCode: 0, timeout: 60000, cwd: baseDir },
+    { exitCode: 0, timeout: 100000, cwd: baseDir },
   )
 })
