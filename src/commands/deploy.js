@@ -146,7 +146,7 @@ module.exports = {
 
     // Validate the subgraph name
     if (!subgraphName) {
-      print.error(`No subgraph ${product == 'subgraph-studio' ? 'slug' : 'name'} provided`)
+      print.error(`No subgraph ${product == 'subgraph-studio' || studio ? 'slug' : 'name'} provided`)
       print.info(HELP)
       process.exitCode = 1
       return
