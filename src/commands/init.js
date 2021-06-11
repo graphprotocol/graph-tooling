@@ -96,7 +96,7 @@ const processInitForm = async (
     {
       type: 'input',
       name: 'subgraphName',
-      message: () => product == 'subgraph-studio' ? 'Subgraph slug' : 'Subgraph name',
+      message: () => product == 'subgraph-studio' || studio ? 'Subgraph slug' : 'Subgraph name',
       initial: subgraphName,
       validate: name => {
         try {
