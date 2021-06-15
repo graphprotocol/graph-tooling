@@ -31,8 +31,6 @@ const generatePackageJson = ({ subgraphName, node }) =>
           // TODO: switch back to normal node executable after testing
           `${path.join(__dirname, '../bin/graph')} deploy ` +
           `--node ${node} ` +
-          // TODO: change to production ipfs after testing
-          `--ipfs https://api.staging.thegraph.com/ipfs/ ` +
           subgraphName,
         'create-local': `graph create --node http://localhost:8020/ ${subgraphName}`,
         'remove-local': `graph remove --node http://localhost:8020/ ${subgraphName}`,
