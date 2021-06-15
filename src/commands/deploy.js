@@ -8,6 +8,7 @@ const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
 const { chooseNodeUrl } = require('../command-helpers/node')
 const { withSpinner } = require('../command-helpers/spinner')
 const { validateSubgraphName } = require('../command-helpers/subgraph')
+const { DEFAULT_IPFS_URL } = require('../command-helpers/ipfs')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -23,7 +24,7 @@ Options:
       --deploy-key <key>        User deploy key
   -l  --version-label <label>   Version label used for the deployment
   -h, --help                    Show usage information
-  -i, --ipfs <node>             Upload build results to an IPFS node
+  -i, --ipfs <node>             Upload build results to an IPFS node (default: ${DEFAULT_IPFS_URL})
   -o, --output-dir <path>       Output directory for build results (default: build/)
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
@@ -91,7 +92,7 @@ module.exports = {
 
     // Support both long and short option variants
     help = help || h
-    ipfs = ipfs || i
+    ipfs = ipfs || i || DEFAULT_IPFS_URL
     node = node || g
     outputDir = outputDir || o
     watch = watch || w
