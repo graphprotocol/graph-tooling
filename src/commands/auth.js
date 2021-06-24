@@ -1,6 +1,7 @@
 const chalk = require('chalk')
 const { saveDeployKey } = require('../command-helpers/auth')
 const { chooseNodeUrl } = require('../command-helpers/node')
+const { fixParameters } = require('../command-helpers/gluegun')
 
 const HELP = `
 ${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
@@ -30,7 +31,10 @@ const processForm = async (
       name: 'product',
       message: 'Product for which to initialize',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: product !== undefined || studio !== undefined || node !== undefined,
+      skip: 
+        product === 'subgraph-studio' ||
+        product === 'hosted-service' ||
+        studio !== undefined || node !== undefined,
     },
     {
       type: 'password',
@@ -61,8 +65,6 @@ module.exports = {
       h,
       help,
     } = toolbox.parameters.options
-    let node = toolbox.parameters.first
-    let deployKey = toolbox.parameters.second
 
     // Show help text if requested
     if (help || h) {
@@ -70,7 +72,30 @@ module.exports = {
       return
     }
 
-    ;({ node } = chooseNodeUrl({ product, studio, node }))
+    let firstParam, secondParam
+    try {
+      ;[firstParam, secondParam] = fixParameters(toolbox.parameters, {
+        h,
+        help,
+        studio
+      })
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
+
+    // if user specifies --product or --studio then deployKey is the first parameter
+    let node
+    let deployKey
+    if (product || studio) {
+      ;({ node } = chooseNodeUrl({ product, studio, node }))
+      deployKey = firstParam
+    } else {
+      node = firstParam
+      deployKey = secondParam
+    }
+
     if (!node || !deployKey) {
       const inputs = await processForm(toolbox, {
         product,

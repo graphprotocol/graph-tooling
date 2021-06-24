@@ -45,7 +45,10 @@ const processForm = async (
       name: 'product',
       message: 'Product for which to deploy',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: product !== undefined || studio !== undefined || node !== undefined,
+      skip: 
+        product === 'subgraph-studio' ||
+        product === 'hosted-service' ||
+        studio !== undefined || node !== undefined,
     },
     {
       type: 'input',
