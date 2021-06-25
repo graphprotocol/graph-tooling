@@ -34,7 +34,13 @@ describe('Init', () => {
 
   cliTest(
     'From example',
-    ['init', '--from-example', 'user/example-subgraph', subgraphDir1],
+    [
+      'init', 
+      '--studio', 
+      '--from-example', 
+      'user/example-subgraph', 
+      subgraphDir1
+    ],
     'init/from-example',
     {
       exitCode: 0,
@@ -47,6 +53,7 @@ describe('Init', () => {
     'From contract',
     [
       'init',
+      '--studio', 
       '--from-contract',
       '0xF87E31492Faf9A91B02Ee0dEAAd50d51d56D5d4d',
       '--network',
@@ -66,6 +73,7 @@ describe('Init', () => {
     'From contract with abi',
     [
       'init',
+      '--studio', 
       '--from-contract',
       '0xF87E31492Faf9A91B02Ee0dEAAd50d51d56D5d4d',
       '--abi',
@@ -83,6 +91,7 @@ describe('Init', () => {
     'From contract with abi and structs',
     [
       'init',
+      '--studio', 
       '--from-contract',
       '0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e',
       '--abi',
@@ -100,6 +109,7 @@ describe('Init', () => {
     'From contract with overloaded elements',
     [
       'init',
+      '--studio', 
       '--from-contract',
       '0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e',
       '--abi',
