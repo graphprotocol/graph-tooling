@@ -1,5 +1,5 @@
 {
-  "name": "@graphprotocol/graph-cli",
+  "name": "@graphprotocol/graph-cli-private",
   "version": "0.20.1",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
