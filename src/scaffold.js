@@ -28,8 +28,7 @@ const generatePackageJson = ({ subgraphName, node }) =>
         codegen: 'graph codegen',
         build: 'graph build',
         deploy:
-          // TODO: switch back to normal node executable after testing
-          `${path.join(__dirname, '../bin/graph')} deploy ` +
+          `graph deploy ` +
           `--node ${node} ` +
           subgraphName,
         'create-local': `graph create --node http://localhost:8020/ ${subgraphName}`,
