@@ -53,7 +53,7 @@ const processForm = async (
     {
       type: 'input',
       name: 'versionLabel',
-      message: 'Version Label',
+      message: 'Version Label (e.g. v0.0.1)',
       skip: versionLabel !== undefined,
     },
   ]
