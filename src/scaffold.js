@@ -40,7 +40,8 @@ const generatePackageJson = ({ subgraphName, node }) =>
           subgraphName,
       },
       dependencies: {
-        '@graphprotocol/graph-cli': `${module.exports.version}`,
+        // TODO: set dependency to not private
+        '@graphprotocol/graph-cli-private': `${module.exports.version}`,
         '@graphprotocol/graph-ts': `0.20.0`,
       },
     }),
