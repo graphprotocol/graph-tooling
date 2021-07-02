@@ -6,6 +6,7 @@ let { strOptions } = require('yaml/types')
 let graphql = require('graphql/language')
 let validation = require('./validation')
 let ABI = require('./abi')
+let asc = require('assemblyscript')
 
 const throwCombinedError = (filename, errors) => {
   throw new Error(
@@ -22,6 +23,13 @@ const throwCombinedError = (filename, errors) => {
     ),
   )
 }
+
+// Define conversions from a 'blockFormat' value in the manifest to its corresponding struct name
+const blockFormatToStructName = immutable.Map({
+  'block-only': 'Block',
+  'block-with-transactions': 'BlockWithTransactions',
+  'block-with-receipts': 'BlockWithReceipts',
+})
 
 const buildCombinedWarning = (filename, warnings) =>
   warnings.size > 0
@@ -317,6 +325,91 @@ ${abiFunctions
       }, immutable.List())
   }
 
+  static validateBlockFunctions(manifest, { resolveFile }) {
+    return manifest
+      .get('dataSources')
+      .filter(
+        dataSource =>
+          dataSource.get('kind') === 'ethereum/contract' &&
+          dataSource.getIn(['mapping', 'blockHandlers'], immutable.List()).count() > 0,
+      )
+      .reduce((errors, dataSource, dataSourceIndex) => {
+        let path = ['dataSources', dataSourceIndex, 'blockHandlers']
+        // Use the Assemblyscript parser to generate an AST from the mapping file
+        let mappingFile = dataSource.getIn(['mapping', 'file'])
+        let mappingParser = new asc.Parser()
+        mappingParser.parseFile(
+          fs.readFileSync(resolveFile(mappingFile), 'utf-8'),
+          '',
+          false,
+        )
+
+        let blockHandlers = dataSource.getIn(
+          ['mapping', 'blockHandlers'],
+          immutable.List(),
+        )
+
+        // Ensure each blockHandler has a corresponding mapping handler
+        // with a compatible function signature and uses a supported `blockFormat` value.
+        return errors.concat(
+          blockHandlers.reduce(
+            (errors, handler, index) =>
+              mappingParser.program.sources
+                .filter(source => source.kind == asc.SourceKind.DEFAULT)
+                .some(source =>
+                  source.statements
+                    .filter(
+                      statement => statement.kind === asc.NodeKind.FUNCTIONDECLARATION,
+                    )
+                    .some(
+                      functionDeclaration =>
+                        functionDeclaration.name.text === handler.get('handler') &&
+                        functionDeclaration.signature.parameters.length === 1 &&
+                        functionDeclaration.signature.parameters[0].type.name.identifier
+                          .text === 'ethereum' &&
+                        functionDeclaration.signature.parameters[0].type.name.next
+                          .identifier.text ===
+                          blockFormatToStructName.get(
+                            handler.get('blockFormat', 'block-only'),
+                          ) &&
+                        functionDeclaration.signature.parameters[0].type.name.next
+                          .next === null &&
+                        functionDeclaration.signature.returnType.name.identifier.text ===
+                          'void',
+                    ),
+                )
+                ? errors
+                : blockFormatToStructName.get(handler.get('blockFormat', 'block-only'))
+                ? errors.push(
+                    immutable.fromJS({
+                      path: [...path, index],
+                      message: `\
+Matching mapping handler not found in '${mappingFile}' for blockHandler: '${handler.get(
+                        'handler',
+                      )}'.
+Signature:
+  ${handler.get('handler')}(block: ethereum.${blockFormatToStructName.get(
+                        handler.get('blockFormat', 'block-only'),
+                      )}): void`,
+                    }),
+                  )
+                : errors.push(
+                    immutable.fromJS({
+                      path: [...path, index],
+                      message: `Unsupported blockFormat, '${handler.get(
+                        'blockFormat',
+                      )}', specified for the '${handler.get('handler')}' blockHandler. 
+Please use one of the supported blockFormats: ${JSON.stringify(
+                        blockFormatToStructName.keySeq(),
+                      )}`,
+                    }),
+                  ),
+            immutable.List(),
+          ),
+        )
+      }, immutable.List())
+  }
+
   static validateRepository(manifest, { resolveFile }) {
     return manifest.get('repository') !==
       'https://github.com/graphprotocol/example-subgraph'
@@ -453,6 +546,7 @@ More than one template named '${name}', template names must be unique.`,
           ...Subgraph.validateEthereumContractHandlers(manifest),
           ...Subgraph.validateEvents(manifest, { resolveFile }),
           ...Subgraph.validateCallFunctions(manifest, { resolveFile }),
+          ...Subgraph.validateBlockFunctions(manifest, { resolveFile }),
           ...Subgraph.validateUniqueDataSourceNames(manifest),
           ...Subgraph.validateUniqueTemplateNames(manifest),
         )

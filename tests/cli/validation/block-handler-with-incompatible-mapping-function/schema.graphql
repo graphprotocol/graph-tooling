@@ -1,0 +1,5 @@
+type ExampleBlockEntity @entity {
+  id: ID!
+  number: BigInt!
+  hash: Bytes!
+}

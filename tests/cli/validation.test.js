@@ -197,4 +197,13 @@ describe('Validation', () => {
       exitCode: 1,
     },
   )
+
+  cliTest(
+    'Block handler with incompatible mapping function',
+    ['codegen', '--skip-migrations'],
+    'validation/block-handler-with-incompatible-mapping-function',
+    {
+      exitCode: 1,
+    },
+  )
 })
