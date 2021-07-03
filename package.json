@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli-private",
-  "version": "0.20.3-studio",
+  "version": "0.20.5-studio",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "git+https://github.com/AssemblyScript/assemblyscript.git#v0.6",
@@ -23,9 +23,6 @@
     "request": "^2.88.0",
     "tmp-promise": "^3.0.2",
     "yaml": "^1.5.1"
-  },
-  "optionalDependencies": {
-    "keytar": "^7.4.0"
   },
   "bin": {
     "graph": "bin/graph"
