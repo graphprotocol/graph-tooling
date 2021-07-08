@@ -19,7 +19,7 @@ const getConfig = () => {
 const identifyDeployKey = async (node, deployKey) => {
   // Determine the deploy key to use, if any:
   // - First try using --deploy-key, if provided
-  // - Then see if we have an deploy key set for the Graph node
+  // - Then see if we have a deploy key set for the Graph node
   if (deployKey !== undefined) {
     return deployKey
   } else {
@@ -29,7 +29,7 @@ const identifyDeployKey = async (node, deployKey) => {
       return config[node]
     } catch (e) {
       toolbox.print.warning(`Could not get deploy key: ${e.message}`)
-      toolbox.print.info(`Continuing without an deploy key\n`)
+      toolbox.print.info(`Continuing without a deploy key\n`)
     }
   }
 }
