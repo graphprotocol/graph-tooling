@@ -29,7 +29,7 @@ function chooseNodeUrl ({ product, studio, node, allowSimpleName }) {
         break
     }
   }
-  if (node?.match(/studio/) || product === 'subgraph-studio') {
+  if ((node && node.match(/studio/)) || product === 'subgraph-studio') {
     allowSimpleName = true
   }
   return { node, allowSimpleName }
