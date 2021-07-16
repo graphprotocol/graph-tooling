@@ -172,11 +172,15 @@ module.exports = {
       return
     }
 
+    const isStudio = node.match(/studio/)
+    const isHostedService = node.match(/thegraph.com/) && !isStudio
+
     let compiler = createCompiler(manifest, {
       ipfs,
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
+      blockIpfsMethods: isStudio  // Network does not support publishing subgraphs with IPFS methods
     })
 
     // Exit with an error code if the compiler couldn't be created
@@ -185,10 +189,8 @@ module.exports = {
       return
     }
 
-    let hostedService = node.match(/thegraph.com/) && !node.match(/studio/)
-
     // Ask for label if not on hosted service
-    if (!versionLabel && !hostedService) {
+    if (!versionLabel && !isHostedService) {
       const inputs = await processForm(toolbox, {
         product,
         studio,
@@ -233,7 +235,7 @@ module.exports = {
 
             // Provide helpful advice when the subgraph has not been created yet
             if (jsonRpcError.message.match(/subgraph name not found/)) {
-              if (hostedService) {
+              if (isHostedService) {
                 print.info(`
 You may need to create it at https://thegraph.com/explorer/dashboard.`)
               } else {
@@ -265,7 +267,7 @@ $ graph create --node ${node} ${subgraphName}`)
               subscriptions = base + subscriptions
             }
 
-            if (hostedService) {
+            if (isHostedService) {
               print.success(
                 `Deployed to ${chalk.blue(
                   `https://thegraph.com/explorer/subgraph/${subgraphName}`,
