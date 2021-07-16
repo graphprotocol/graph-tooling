@@ -18,6 +18,7 @@ class Compiler {
     this.options = options
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
+    this.blockIpfsMethods = options.blockIpfsMethods
     this.libsDirs = []
 
     for (
@@ -240,6 +241,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
+      this._validateMappingContent(inputFile)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -320,6 +322,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
+      this._validateMappingContent(inputFile)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -392,6 +395,20 @@ class Compiler {
       return outFile
     } catch (e) {
       throw Error(`Failed to compile data source template: ${e.message}`)
+    }
+  }
+
+  async _validateMappingContent(filePath) {
+    const data = fs.readFileSync(filePath)
+    if (
+      this.blockIpfsMethods && 
+      (data.includes('ipfs.cat') || data.includes('ipfs.map'))
+    ) {
+      throw Error(`
+      Subgraph Studio does not support mappings with ipfs methods.
+      Please remove all instances of ipfs.cat and ipfs.map from
+      ${filePath}
+      `)
     }
   }
 
