@@ -258,6 +258,9 @@ const loadAbiFromEtherscan = async (network, address) =>
         case 'bsc':
           url = `https://api.bscscan.com/api?module=contract&action=getabi&address=${address}`;
           break;
+        case 'matic':
+          url = `https://api.polygonscan.com/api?module=contract&action=getabi&address=${address}`;
+          break;
         default:
           url = `api-${network}.etherscan.io/api?module=contract&action=getabi&address=${address}`;
           break
