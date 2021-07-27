@@ -132,7 +132,7 @@ module.exports = class SchemaCodeGenerator {
     let getNullable = `if (!value || value.kind == ValueKind.NULL) {
                           return null
                         } else {
-                          ${getNonNullable}
+                          return ${typesCodegen.valueToAsc('value', fieldValueType)}
                         }`
 
     return tsCodegen.method(
