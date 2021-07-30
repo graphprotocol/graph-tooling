@@ -153,6 +153,21 @@ module.exports = class SchemaCodeGenerator {
     let paramType = this._typeFromGraphQl(gqlType)
     let isNullable = paramType instanceof tsCodegen.NullableType
     let paramTypeString = isNullable ? paramType.inner.toString() : paramType.toString()
+    let isArray = paramType instanceof tsCodegen.ArrayType
+
+    if (
+      isArray &&
+      paramType.inner instanceof tsCodegen.NullableType
+    ) {
+      let arrayTypeWithoutClosingBracked = fieldValueType.slice(0, -1)
+      let suggestedType = `${arrayTypeWithoutClosingBracked}!]`
+
+      throw new Error(`
+GraphQL schema can't have List's with Nullable members.
+Error in '${name}' field of type '${fieldValueType}'.
+Suggestion: add an '!' to the member type of the List, change from '${fieldValueType}' to '${suggestedType}'`
+      )
+    }
 
     let setNonNullable = `
       this.set('${name}', ${typesCodegen.valueFromAsc(`value`, fieldValueType)})
