@@ -197,4 +197,13 @@ describe('Validation', () => {
       exitCode: 1,
     },
   )
+
+  cliTest(
+    'Invalid GraphQL schema',
+    ['codegen', '--skip-migrations'],
+    'validation/invalid-graphql-schema',
+    {
+      exitCode: 1,
+    },
+  )
 })
