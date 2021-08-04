@@ -2,7 +2,6 @@ const asc = require('assemblyscript/cli/asc')
 
 const createExitHandler = inputFile => () => {
   throw new Error(`The AssemblyScript compiler crashed when compiling this file: '${inputFile}'
-Unfortunately this error has not been mapped yet.
 Suggestion: try to comment the whole file and uncomment it little by little while re-running the graph-cli until you isolate the line where the problem happens.
 Also, please contact us so we can make the CLI better by handling errors like this. You can reach out in any of these links:
 - Discord channel: https://discord.gg/eM8CA6WA9r
