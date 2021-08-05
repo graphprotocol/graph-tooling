@@ -1,7 +1,9 @@
 const chalk = require('chalk')
+const path = require('path')
 
 const TypeGenerator = require('../type-generator')
 const { fixParameters } = require('../command-helpers/gluegun')
+const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
 
 const HELP = `
 ${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -55,6 +57,21 @@ module.exports = {
     // Show help text if requested
     if (help) {
       print.info(HELP)
+      return
+    }
+
+    try {
+      // Checks to make sure codegen doesn't run against
+      // older subgraphs (both apiVersion and graph-ts version).
+      //
+      // We don't want codegen to run without these conditions
+      // because that would mean the CLI would generate code to
+      // the wrong AssemblyScript version.
+      await assertManifestApiVersion(manifest, '0.0.5')
+      await assertGraphTsVersion(path.dirname(manifest), '0.21.0')
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
       return
     }
 
