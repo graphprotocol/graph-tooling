@@ -9,7 +9,7 @@ dataSources:
       abi: NonExistentAbi
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./mapping.ts
       entities:
@@ -29,7 +29,7 @@ templates:
       abi: ExampleContract
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./mapping.ts
       entities:
