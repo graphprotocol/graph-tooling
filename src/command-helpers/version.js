@@ -13,25 +13,27 @@ const assertManifestApiVersion = async (manifestPath, minimumApiVersion) => {
 
   let isLessThanMinimumVersion = false
 
-  if (manifest && manifest.dataSources) {
-    isLessThanMinimumVersion = manifest.dataSources.some(
-      dataSource =>
-        dataSource &&
+  if (manifest) {
+    if (manifest.dataSources && Array.isArray(manifest.dataSources)) {
+      isLessThanMinimumVersion = manifest.dataSources.some(
+        dataSource =>
+          dataSource &&
           dataSource.mapping &&
           dataSource.mapping.apiVersion &&
           lessThanMinimumVersion(dataSource.mapping.apiVersion)
-    )
-  }
+      )
+    }
 
-  if (manifest && manifest.templates) {
-    isLessThanMinimumVersion = isLessThanMinimumVersion || 
-      manifest.templates.some(
-        template =>
-          template &&
+    if (manifest.templates && Array.isArray(manifest.templates)) {
+      isLessThanMinimumVersion = isLessThanMinimumVersion ||
+        manifest.templates.some(
+          template =>
+            template &&
             template.mapping &&
             template.mapping.apiVersion &&
             lessThanMinimumVersion(template.mapping.apiVersion)
-      )
+        )
+    }
   }
 
   if (isLessThanMinimumVersion) {
