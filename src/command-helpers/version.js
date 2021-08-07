@@ -61,7 +61,7 @@ const assertGraphTsVersion = async (sourceDir, minimumGraphTsVersion) => {
   if (graphTsVersion && semver.lt(graphTsVersion, minimumGraphTsVersion)) {
     throw new Error(
       `To use this version of the graph-cli you must upgrade the graph-ts dependency to a version greater than or equal to ${minimumGraphTsVersion}
-Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://thegraph.com/docs/assemblyscript-migration-guide`
+Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://gist.github.com/otaviopace/8406cb39644d2e7678570d1e7f50dac4`
     )
   }
 }
