@@ -48,14 +48,7 @@ const assertGraphTsVersion = async (sourceDir, minimumGraphTsVersion) => {
   try {
     graphTsVersion = await graphTsUtil.getGraphTsVersion(sourceDir)
   } catch (_) {
-    // We don't throw here yet because the 'validation' tests don't install
-    // the dependencies, so they break here.
-    //
-    // TODO: uncomment the throw below after making validation tests
-    // don't break for not having package.json dependencies installed.
-    // Also remove .skip in test 0489e986-f0b6-419f-b9c0-eda21bab47c3
-    //
-    // // throw new Error("graph-ts dependency not installed yet")
+    // We only do the assertion if `graph-ts` is installed.
   }
 
   if (graphTsVersion && semver.lt(graphTsVersion, minimumGraphTsVersion)) {

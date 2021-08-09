@@ -190,14 +190,6 @@ describe('Version Command Helpers', () => {
     const fakeNodeModulesDir = 'fake/path/to/node/modules'
     const minimumGraphTsVersion = '0.21.0'
 
-    // TODO: remove skip, look for 0489e986-f0b6-419f-b9c0-eda21bab47c3
-    test.skip('When graph-ts is NOT installed', async () => {
-      graphTsUtil.getGraphTsVersion = jest.fn().mockImplementation(() => Promise.reject())
-
-      await expect(assertGraphTsVersion(fakeNodeModulesDir, minimumGraphTsVersion))
-        .rejects
-        .toThrow(new Error("graph-ts dependency not installed yet"))
-    })
     test('When the installed graph-ts version is less than what\'s supported', async () => {
       graphTsUtil.getGraphTsVersion = jest.fn().mockImplementation(() => Promise.resolve('0.19.0'))
 
