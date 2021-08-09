@@ -21,8 +21,10 @@ module.exports = {
 
     let manifest = loadManifest(manifestFile)
     return (
-      // Only migrate if the graph-ts version is >= 0.21.0...
-      semver.gte(graphTsVersion, '0.21.0') &&
+      // Only migrate if the graph-ts version is >= 0.22.0...
+      // Coerce needed because we may be dealing with an alpha version
+      // and in the `semver` library this would not return true on equality.
+      semver.gte(semver.coerce(graphTsVersion), '0.22.0') &&
       // ...and we have a manifest with mapping > apiVersion = 0.0.4
       manifest &&
       typeof manifest === 'object' &&
