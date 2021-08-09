@@ -11,6 +11,6 @@
     "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#otavio/update-assembly-script"
   },
   "resolutions": {
-    "assemblyscript": "0.19.2"
+    "assemblyscript": "0.19.10"
   }
 }

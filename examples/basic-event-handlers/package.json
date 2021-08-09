@@ -20,6 +20,6 @@
     "truffle-hdwallet-provider": "^1.0.4"
   },
   "resolutions": {
-    "assemblyscript": "0.19.2"
+    "assemblyscript": "0.19.10"
   }
 }
