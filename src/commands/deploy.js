@@ -182,7 +182,7 @@ module.exports = {
       // because that would mean the CLI would try to compile code
       // using the wrong AssemblyScript compiler.
       await assertManifestApiVersion(manifest, '0.0.5')
-      await assertGraphTsVersion(path.dirname(manifest), '0.21.0')
+      await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
     } catch (e) {
       print.error(e.message)
       process.exitCode = 1

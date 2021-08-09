@@ -51,7 +51,10 @@ const assertGraphTsVersion = async (sourceDir, minimumGraphTsVersion) => {
     // We only do the assertion if `graph-ts` is installed.
   }
 
-  if (graphTsVersion && semver.lt(graphTsVersion, minimumGraphTsVersion)) {
+  // Coerce needed because we may be dealing with an alpha version
+  // and in the `semver` library, this would return true when comparing
+  // the same version.
+  if (graphTsVersion && semver.lt(semver.coerce(graphTsVersion), minimumGraphTsVersion)) {
     throw new Error(
       `To use this version of the graph-cli you must upgrade the graph-ts dependency to a version greater than or equal to ${minimumGraphTsVersion}
 Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://gist.github.com/otaviopace/8406cb39644d2e7678570d1e7f50dac4`

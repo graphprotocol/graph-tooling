@@ -188,7 +188,7 @@ describe('Version Command Helpers', () => {
   })
   describe('assertGraphTsVersion', () => {
     const fakeNodeModulesDir = 'fake/path/to/node/modules'
-    const minimumGraphTsVersion = '0.21.0'
+    const minimumGraphTsVersion = '0.22.0'
 
     test('When the installed graph-ts version is less than what\'s supported', async () => {
       graphTsUtil.getGraphTsVersion = jest.fn().mockImplementation(() => Promise.resolve('0.19.0'))
@@ -201,7 +201,7 @@ Also, you'll probably need to take a look at our AssemblyScript migration guide 
         ))
     })
     test('When the installed graph-ts version is a supported one', async () => {
-      graphTsUtil.getGraphTsVersion = jest.fn().mockImplementation(() => Promise.resolve('0.21.0'))
+      graphTsUtil.getGraphTsVersion = jest.fn().mockImplementation(() => Promise.resolve('0.22.0'))
 
       await expect(assertGraphTsVersion(fakeNodeModulesDir, minimumGraphTsVersion))
         .resolves
