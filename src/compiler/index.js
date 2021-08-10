@@ -284,24 +284,6 @@ class Compiler {
       let libs = this.libsDirs.join(',')
       let global = path.relative(baseDir, this.globalsFile)
 
-      let compilerArgs = 
-        [
-          '--explicitStart',
-          '--exportRuntime',
-          '--runtime',
-          'stub',
-          inputFile,
-          global,
-          '--baseDir',
-          baseDir,
-          '--lib',
-          libs,
-          '--outFile',
-          outputFile,
-          '--optimize',
-          '--debug',
-        ];
-
       asc.compile({
         inputFile,
         global,
@@ -368,24 +350,6 @@ class Compiler {
 
       let libs = this.libsDirs.join(',')
       let global = path.relative(baseDir, this.globalsFile)
-
-      let compilerArgs = 
-        [
-          '--explicitStart',
-          '--exportRuntime',
-          '--runtime',
-          'stub',
-          inputFile,
-          global,
-          '--baseDir',
-          baseDir,
-          '--lib',
-          libs,
-          '--outFile',
-          outputFile,
-          '--optimize',
-          '--debug',
-        ];
 
       asc.compile({
         inputFile,
