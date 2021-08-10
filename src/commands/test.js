@@ -430,6 +430,7 @@ const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChun
 
       let defaultEnv = {
         GRAPH_LOG: 'debug',
+        GRAPH_MAX_API_VERSION: '0.0.5',
       }
 
       let args = standaloneNodeArgs ? standaloneNodeArgs.split(' ') : defaultArgs
