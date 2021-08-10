@@ -40,7 +40,7 @@ const generatePackageJson = ({ subgraphName, node }) =>
           subgraphName,
       },
       dependencies: {
-        '@graphprotocol/graph-cli': `https://github.com/graphprotocol/graph-cli#otavio/update-assembly-script`,
+        '@graphprotocol/graph-cli': `${module.exports.version}`,
         '@graphprotocol/graph-ts': `0.22.0-alpha.0`,
       },
     }),

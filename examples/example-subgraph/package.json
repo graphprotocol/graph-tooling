@@ -7,7 +7,7 @@
     "build-wast": "graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "https://github.com/graphprotocol/graph-cli#otavio/update-assembly-script",
+    "@graphprotocol/graph-cli": "0.22.0-alpha.0",
     "@graphprotocol/graph-ts": "0.22.0-alpha.0"
   },
   "resolutions": {

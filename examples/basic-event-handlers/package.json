@@ -9,7 +9,7 @@
     "deploy-test": "graph deploy test/basic-event-handlers --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "https://github.com/graphprotocol/graph-cli#otavio/update-assembly-script",
+    "@graphprotocol/graph-cli": "0.22.0-alpha.0",
     "@graphprotocol/graph-ts": "0.22.0-alpha.0",
     "apollo-fetch": "^0.7.0"
   },
