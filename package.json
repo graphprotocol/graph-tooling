@@ -40,6 +40,7 @@
     "test:validation": "jest tests/cli/validation.test.js --verbose",
     "release:patch": "npm version patch && npm publish && git push origin master && git push --tags",
     "release:minor": "npm version minor && npm publish && git push origin master && git push --tags",
-    "release:alpha:minor": "npm version preminor --preid alpha && npm publish --tag alpha && git push origin master && git push --tags"
+    "release:alpha:minor": "npm version preminor --preid alpha && npm publish --tag alpha && git push origin master && git push --tags",
+    "release:alpha:prerelease": "npm version prerelease --preid alpha && npm publish --tag alpha && git push origin master && git push --tags"
   }
 }
