@@ -57,7 +57,7 @@ ${chalk.dim('Options:')}
 ${chalk.dim('Choose mode with one of:')}
 
       --from-contract <address> Creates a scaffold based on an existing contract
-      --from-example            Creates a scaffold based on an example subgraph
+      --from-example <truffle|hardhat> Creates a scaffold based on an example subgraph (default: truffle)
 
 ${chalk.dim('Options for --from-contract:')}
 
@@ -95,7 +95,7 @@ const processInitForm = async (
       name: 'product',
       message: 'Product for which to initialize',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: 
+      skip:
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
         studio !== undefined || node !== undefined,
@@ -151,6 +151,14 @@ const processInitForm = async (
         network = value
         return value
       },
+    },
+    {
+      type: 'select',
+      name: 'fromExample',
+      message: 'Suite to use for the example',
+      choices: ['truffle', 'hardhat'],
+      initial: fromExample || 'truffle',
+      result: (value) => (fromExample = value)
     },
     {
       type: 'input',
@@ -320,7 +328,7 @@ module.exports = {
 
     node = node || g
     ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
-    
+
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
       process.exitCode = 1
@@ -330,7 +338,6 @@ module.exports = {
     let subgraphName, directory
     try {
       ;[subgraphName, directory] = fixParameters(toolbox.parameters, {
-        fromExample,
         allowSimpleName,
         help,
         h,
@@ -381,7 +388,7 @@ module.exports = {
     if (fromExample && subgraphName && directory) {
       return await initSubgraphFromExample(
         toolbox,
-        { allowSimpleName, directory, subgraphName },
+        { allowSimpleName, directory, subgraphName, fromExample },
         { commands },
       )
     }
@@ -455,6 +462,7 @@ module.exports = {
         {
           subgraphName: inputs.subgraphName,
           directory: inputs.directory,
+          fromExample: inputs.fromExample,
         },
         { commands },
       )
@@ -567,7 +575,7 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 
 const initSubgraphFromExample = async (
   toolbox,
-  { allowSimpleName, subgraphName, directory },
+  { allowSimpleName, subgraphName, directory, fromExample },
   { commands },
 ) => {
   let { filesystem, print, system } = toolbox
@@ -591,8 +599,14 @@ const initSubgraphFromExample = async (
     `Failed to clone example subgraph`,
     `Warnings while cloning example subgraph`,
     async spinner => {
+      let subgraphExample = `graphprotocol/example-subgraph`
+
+      if (fromExample === 'hardhat') {
+        subgraphExample = `fernandomg/example-subgraph-hardhat`
+      }
+
       await system.run(
-        `git clone http://github.com/graphprotocol/example-subgraph ${directory}`,
+        `git clone https://github.com/${subgraphExample} ${directory}`,
       )
       return true
     },
