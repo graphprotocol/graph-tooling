@@ -602,7 +602,7 @@ const initSubgraphFromExample = async (
       let subgraphExample = `graphprotocol/example-subgraph`
 
       if (fromExample === 'hardhat') {
-        subgraphExample = `fernandomg/example-subgraph-hardhat`
+        subgraphExample = `BootNodeDev/example-subgraph-hardhat`
       }
 
       await system.run(
