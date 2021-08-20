@@ -599,14 +599,14 @@ const initSubgraphFromExample = async (
     `Failed to clone example subgraph`,
     `Warnings while cloning example subgraph`,
     async spinner => {
-      let subgraphExample = `graphprotocol/example-subgraph`
+      let subgraphExample = `example-subgraph`
 
       if (fromExample === 'hardhat') {
-        subgraphExample = `BootNodeDev/example-subgraph-hardhat`
+        subgraphExample = `example-subgraph-hardhat`
       }
 
       await system.run(
-        `git clone https://github.com/${subgraphExample} ${directory}`,
+        `git clone https://github.com/graphprotocol/${subgraphExample} ${directory}`,
       )
       return true
     },
