@@ -55,7 +55,7 @@ module.exports = class SchemaCodeGenerator {
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
 
     // Generate and add a constructor
-    klass.addMethod(this._generateConstructor(name))
+    klass.addMethod(this._generateConstructor(name, def.get('fields')))
 
     // Generate and add save() and getById() methods
     this._generateStoreMethods(name).forEach(method => klass.addMethod(method))
@@ -72,7 +72,31 @@ module.exports = class SchemaCodeGenerator {
     return klass
   }
 
-  _generateConstructor(entityName) {
+  // Fields that are non-nullable get an empty/zero value set in the class constructor.
+  _generateDefaultFieldValues(fields) {
+    const indexOfIdField = fields.findIndex(field => field.getIn(['name', 'value']) === 'id')
+    const fieldsWithoutId = fields.remove(indexOfIdField)
+
+    const fieldsSetCalls = fieldsWithoutId
+      .map(field => {
+        const name = field.getIn(['name', 'value'])
+        const type = this._typeFromGraphQl(field.get('type'))
+        const isNullable = type instanceof tsCodegen.NullableType
+
+        return { name, type, isNullable }
+      })
+      .filter(({ isNullable }) => !isNullable)
+      .map(({ name, type, isNullable }) => {
+        const fieldTypeString = isNullable ? type.inner.toString() : type.toString()
+
+        return `
+        this.set('${name}', ${typesCodegen.initializedValueFromAsc(fieldTypeString)})`
+      })
+
+    return fieldsSetCalls.join('')
+  }
+
+  _generateConstructor(entityName, fields) {
     return tsCodegen.method(
       'constructor',
       [tsCodegen.param('id', tsCodegen.namedType('string'))],
@@ -80,6 +104,7 @@ module.exports = class SchemaCodeGenerator {
       `
       super()
       this.set('id', Value.fromString(id))
+      ${this._generateDefaultFieldValues(fields)}
       `,
     )
   }
