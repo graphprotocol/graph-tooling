@@ -2,6 +2,33 @@
 # yarn lockfile v1
 
 
+"@graphprotocol/graph-cli@file:../..":
+  "resolved" "file:../.."
+  "version" "0.22.0-alpha.1"
+  dependencies:
+    "assemblyscript" "0.19.10"
+    "binary-install" "git://github.com/georg-getz/binary-install.git"
+    "chalk" "^3.0.0"
+    "chokidar" "^3.0.2"
+    "debug" "^4.1.1"
+    "docker-compose" "^0.23.2"
+    "dockerode" "^2.5.8"
+    "fs-extra" "^9.0.0"
+    "glob" "^7.1.2"
+    "gluegun" "^4.3.1"
+    "graphql" "^15.5.0"
+    "immutable" "^3.8.2"
+    "ipfs-http-client" "^34.0.0"
+    "jayson" "^3.0.2"
+    "js-yaml" "^3.13.1"
+    "node-fetch" "^2.3.0"
+    "pkginfo" "^0.4.1"
+    "prettier" "^1.13.5"
+    "request" "^2.88.0"
+    "tmp-promise" "^3.0.2"
+    "xmlhttprequest" "^1.8.0"
+    "yaml" "^1.5.1"
+
 "@graphprotocol/graph-ts@0.22.0-alpha.1":
   "integrity" "sha512-Vkvb9mPX4qAZCVm0fGNZtD9nHCZ8jKsAlvewgIZw1b4/68RhHRup2l2m9VDCvKPmU1QsxALKDLYPm4XXrdH1AA=="
   "resolved" "https://registry.npmjs.org/@graphprotocol/graph-ts/-/graph-ts-0.22.0-alpha.1.tgz"

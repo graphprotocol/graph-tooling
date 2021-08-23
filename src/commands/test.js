@@ -1,5 +1,5 @@
 const tmp = require('tmp-promise')
-const { Binary } = require('binary-install')
+const { Binary } = require('binary-install-raw')
 const { XMLHttpRequest } = require('xmlhttprequest')
 const os = require('os')
 
@@ -15,12 +15,14 @@ module.exports = {
     xmlHttp.send();
     const jsonResponse = JSON.parse(xmlHttp.responseText);
     const version = jsonResponse.tag_name;
-    const url = `https://github.com/LimeChain/matchstick/releases/download/0.1.0-no-test-text/${ platform }.tar.gz`;
+    const url = `https://github.com/LimeChain/matchstick/releases/download/${ version }/${ platform }`;
     const name = 'matchstick';
     console.log(version)
-    let binary = new Binary(name, url);
-    binary.run();
-    return binary;  
+    let binary = new Binary(platform, url);
+    binary.installRawBinary();
+    setTimeout(() => binary.run(), 15000);
+    // binary.run();
+    return binary;
   }
 }
 
