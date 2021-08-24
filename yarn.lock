@@ -916,10 +916,10 @@
   "resolved" "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.0.0.tgz"
   "version" "2.0.0"
 
-"binary-install-raw@0.0.2":
-  "integrity" "sha512-Uwbu91hpoHHkvX8Wb6qIuRPHbzc+85m33UIUqk1Lnr/PApKJgS4dv/A6O7ImWDYm8G05U4pRgepizT6eU5ORZg=="
-  "resolved" "https://registry.npmjs.org/binary-install-raw/-/binary-install-raw-0.0.2.tgz"
-  "version" "0.0.2"
+"binary-install-raw@0.0.3":
+  "integrity" "sha512-g4jBZ62P0nBPOPdH8oU6UUX7aH0dWhnIm7xe7EcNvKXGIrzC+rBWftbXzEbUpRTD5LXJSpoKpVGOvXSBv/x3Ow=="
+  "resolved" "https://registry.npmjs.org/binary-install-raw/-/binary-install-raw-0.0.3.tgz"
+  "version" "0.0.3"
   dependencies:
     "axios" "^0.21.1"
     "rimraf" "^3.0.2"
