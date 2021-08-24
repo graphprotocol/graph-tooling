@@ -9,6 +9,7 @@ tmp.setGracefulCleanup()
 module.exports = {
   description: 'Runs rust binary for subgraph testing',
   run: async toolbox => {
+    console.log(toolbox);
     const platform = getPlatform();
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.open('GET', 'https://api.github.com/repos/LimeChain/matchstick/releases/latest', false);
