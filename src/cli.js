@@ -12,6 +12,7 @@ const run = async argv => {
     await Promise.all(
       ['npm root -g', 'npm root', 'yarn global dir'].map(async cmd => {
         try {
+          console.log(cmd);
           return await system.run(cmd, { trim: true })
         } catch (_) {
           return undefined

@@ -7,7 +7,7 @@ const os = require('os')
 tmp.setGracefulCleanup()
 
 module.exports = {
-  description: 'Runs tests against a Graph Node environment (using Ganache by default)',
+  description: 'Runs rust binary for subgraph testing',
   run: async toolbox => {
     const platform = getPlatform();
     let xmlHttp = new XMLHttpRequest();
