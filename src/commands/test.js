@@ -20,10 +20,10 @@ module.exports = {
     const name = 'matchstick';
     console.log(version)
     let binary = new Binary(platform, url);
-    binary.install();
+    await binary.install();
       // .then(() => binary.run());
-    setTimeout(() => binary.run(toolbox.parameters.first), 5000);
-    // binary.run();
+    // setTimeout(() => binary.run(toolbox.parameters.first), 5000);
+    binary.run();
     return binary;
   }
 }
