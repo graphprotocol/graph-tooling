@@ -19,7 +19,7 @@ module.exports = {
     const name = 'matchstick';
     console.log(version)
     let binary = new Binary(platform, url);
-    binary.installRawBinary();
+    binary.install();
       // .then(() => binary.run());
     setTimeout(() => binary.run(), 5000);
     // binary.run();
