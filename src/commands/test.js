@@ -20,7 +20,8 @@ module.exports = {
     console.log(version)
     let binary = new Binary(platform, url);
     binary.installRawBinary();
-    setTimeout(() => binary.run(), 15000);
+      // .then(() => binary.run());
+    setTimeout(() => binary.run(), 5000);
     // binary.run();
     return binary;
   }
