@@ -22,7 +22,7 @@ module.exports = {
     let binary = new Binary(platform, url);
     binary.install();
       // .then(() => binary.run());
-    setTimeout(() => binary.run(), 5000);
+    setTimeout(() => binary.run(toolbox.parameters.first), 5000);
     // binary.run();
     return binary;
   }
