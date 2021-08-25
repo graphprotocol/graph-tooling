@@ -19,11 +19,11 @@ module.exports = {
     const url = `https://github.com/LimeChain/matchstick/releases/download/${ version }/${ platform }`;
     const name = 'matchstick';
     console.log(version)
-    let binary = new Binary(platform, url);
+
+    let binary = new Binary(platform, url, version);
     await binary.install();
-      // .then(() => binary.run());
-    // setTimeout(() => binary.run(toolbox.parameters.first), 5000);
     binary.run(toolbox.parameters.first);
+
     return binary;
   }
 }
