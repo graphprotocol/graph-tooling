@@ -23,7 +23,7 @@ module.exports = {
     await binary.install();
       // .then(() => binary.run());
     // setTimeout(() => binary.run(toolbox.parameters.first), 5000);
-    binary.run();
+    binary.run(toolbox.parameters.first);
     return binary;
   }
 }
