@@ -23,6 +23,7 @@
     "request": "^2.88.0",
     "semver": "7.3.5",
     "tmp-promise": "^3.0.2",
+    "which": "2.0.2",
     "yaml": "^1.5.1"
   },
   "bin": {
