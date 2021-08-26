@@ -32,10 +32,6 @@ module.exports = {
     help = help || h
     version = version || v
 
-    console.log(force);
-    console.log(help);
-    console.log(version);
-
     // Show help text if requested
     if (help) {
       print.info(HELP)
@@ -53,13 +49,10 @@ module.exports = {
     }
 
     const url = `https://github.com/LimeChain/matchstick/releases/download/${ version }/${ platform }`;
-    console.log(version)
 
     let binary = new Binary(platform, url, version);
     await binary.install(force);
     binary.run(datasource);
-
-    return binary;
   }
 }
 
