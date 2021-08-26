@@ -1,0 +1,8 @@
+type Something @entity {
+  id: ID!
+}
+
+type MyEntity @entity {
+  id: ID!
+  invalidField: [Something]!
+}

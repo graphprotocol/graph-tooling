@@ -66,6 +66,27 @@ const findConversionToType = (fromTypeSystem, toTypeSystem, toType) => {
   return objectifyConversion(fromTypeSystem, toTypeSystem, conversion)
 }
 
+const findInitializationForType = (fromTypeSystem, toTypeSystem, ascType) => {
+  const conversions = conversionsForTypeSystems(fromTypeSystem, toTypeSystem)
+
+  const conversion = conversions.find(conversion =>
+    typeof conversion.get(0) === 'string'
+      ? conversion.get(0) === ascType
+      : ascType.match(conversion.get(0)),
+  )
+
+  if (conversion === undefined) {
+    throw new Error(
+      `Conversion from '${fromTypeSystem}' to '${toTypeSystem}' for ` +
+        `target type '${ascType}' is not supported`,
+    )
+  }
+
+  const conversionObj = objectifyConversion(fromTypeSystem, toTypeSystem, conversion)
+
+  return conversionObj.get('convert')(conversion.get(3))
+}
+
 // High-level type system API
 
 const ascTypeForEthereum = ethereumType =>
@@ -95,6 +116,9 @@ const valueToAsc = (code, valueType) =>
 const valueFromAsc = (code, valueType) =>
   findConversionToType('AssemblyScript', 'Value', valueType).get('convert')(code)
 
+const initializedValueFromAsc = ascType =>
+  findInitializationForType('AssemblyScript', 'Value', ascType)
+
 module.exports = {
   // ethereum <-> AssemblyScript
   ascTypeForEthereum,
@@ -107,4 +131,5 @@ module.exports = {
   valueTypeForAsc,
   valueToAsc,
   valueFromAsc,
+  initializedValueFromAsc,
 }

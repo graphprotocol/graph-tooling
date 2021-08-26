@@ -20,22 +20,24 @@ export class NewGravatar extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save NewGravatar entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save NewGravatar entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("NewGravatar", id.toString(), this);
+    assert(id != null, "Cannot save NewGravatar entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save NewGravatar entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("NewGravatar", id.toString(), this);
+    }
   }
 
   static load(id: string): NewGravatar | null {
-    return store.get("NewGravatar", id) as NewGravatar | null;
+    return changetype<NewGravatar | null>(store.get("NewGravatar", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -44,7 +46,7 @@ export class NewGravatar extends Entity {
 
   get owner(): Bytes {
     let value = this.get("owner");
-    return value.toBytes();
+    return value!.toBytes();
   }
 
   set owner(value: Bytes) {
@@ -53,7 +55,7 @@ export class NewGravatar extends Entity {
 
   get displayName(): string {
     let value = this.get("displayName");
-    return value.toString();
+    return value!.toString();
   }
 
   set displayName(value: string) {
@@ -62,7 +64,7 @@ export class NewGravatar extends Entity {
 
   get imageUrl(): string {
     let value = this.get("imageUrl");
-    return value.toString();
+    return value!.toString();
   }
 
   set imageUrl(value: string) {
@@ -78,22 +80,24 @@ export class UpdatedGravatar extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save UpdatedGravatar entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save UpdatedGravatar entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("UpdatedGravatar", id.toString(), this);
+    assert(id != null, "Cannot save UpdatedGravatar entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save UpdatedGravatar entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("UpdatedGravatar", id.toString(), this);
+    }
   }
 
   static load(id: string): UpdatedGravatar | null {
-    return store.get("UpdatedGravatar", id) as UpdatedGravatar | null;
+    return changetype<UpdatedGravatar | null>(store.get("UpdatedGravatar", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -102,7 +106,7 @@ export class UpdatedGravatar extends Entity {
 
   get owner(): Bytes {
     let value = this.get("owner");
-    return value.toBytes();
+    return value!.toBytes();
   }
 
   set owner(value: Bytes) {
@@ -111,7 +115,7 @@ export class UpdatedGravatar extends Entity {
 
   get displayName(): string {
     let value = this.get("displayName");
-    return value.toString();
+    return value!.toString();
   }
 
   set displayName(value: string) {
@@ -120,7 +124,7 @@ export class UpdatedGravatar extends Entity {
 
   get imageUrl(): string {
     let value = this.get("imageUrl");
-    return value.toString();
+    return value!.toString();
   }
 
   set imageUrl(value: string) {
