@@ -1,11 +1,7 @@
-const tmp = require('tmp-promise')
 const { Binary } = require('binary-install-raw')
 const { XMLHttpRequest } = require('xmlhttprequest')
 const os = require('os')
 const chalk = require('chalk')
-
-// Clean up temporary files even when an uncaught exception occurs
-tmp.setGracefulCleanup()
 
 const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
