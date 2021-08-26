@@ -13,7 +13,6 @@
     "apollo-fetch": "^0.7.0"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "file:../..",
     "babel-polyfill": "^6.26.0",
     "babel-register": "^6.26.0",
     "truffle": "^5.0.4",

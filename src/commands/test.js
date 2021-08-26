@@ -34,7 +34,6 @@ module.exports = {
       return
     }
 
-    // console.log(toolbox);
     const platform = getPlatform();
     if (!version) {
       let xmlHttp = new XMLHttpRequest();
