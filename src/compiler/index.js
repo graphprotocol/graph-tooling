@@ -1,4 +1,3 @@
-const asc = require('assemblyscript/cli/asc')
 const chalk = require('chalk')
 const crypto = require('crypto')
 const fs = require('fs-extra')
@@ -7,17 +6,19 @@ const path = require('path')
 const yaml = require('js-yaml')
 const toolbox = require('gluegun/toolbox')
 
-const { step, withSpinner } = require('./command-helpers/spinner')
-const Subgraph = require('./subgraph')
-const Watcher = require('./watcher')
-const ABI = require('./abi')
-const { applyMigrations } = require('./migrations')
+const { step, withSpinner } = require('../command-helpers/spinner')
+const Subgraph = require('../subgraph')
+const Watcher = require('../watcher')
+const ABI = require('../abi')
+const { applyMigrations } = require('../migrations')
+const asc = require('./asc')
 
 class Compiler {
   constructor(options) {
     this.options = options
     this.ipfs = options.ipfs
     this.sourceDir = path.dirname(options.subgraphManifest)
+    this.blockIpfsMethods = options.blockIpfsMethods
     this.libsDirs = []
 
     for (
@@ -200,6 +201,8 @@ class Compiler {
         // Cache compiled files so identical input files are only compiled once
         let compiledFiles = new Map()
 
+        await asc.ready()
+
         subgraph = subgraph.update('dataSources', dataSources =>
           dataSources.map(dataSource =>
             dataSource.updateIn(['mapping', 'file'], mappingPath =>
@@ -240,6 +243,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
+      this._validateMappingContent(inputFile)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -280,29 +284,13 @@ class Compiler {
       let libs = this.libsDirs.join(',')
       let global = path.relative(baseDir, this.globalsFile)
 
-      asc.main(
-        [
-          inputFile,
-          global,
-          '--baseDir',
-          baseDir,
-          '--lib',
-          libs,
-          '--outFile',
-          outputFile,
-          '--optimize',
-          '--debug',
-        ],
-        {
-          stdout: process.stdout,
-          stderr: process.stdout,
-        },
-        e => {
-          if (e != null) {
-            throw e
-          }
-        },
-      )
+      asc.compile({
+        inputFile,
+        global,
+        baseDir,
+        libs,
+        outputFile,
+      })
 
       // Remember the output file to avoid compiling the same file again
       compiledFiles.set(inputCacheKey, outFile)
@@ -320,6 +308,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
+      this._validateMappingContent(inputFile)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -362,29 +351,13 @@ class Compiler {
       let libs = this.libsDirs.join(',')
       let global = path.relative(baseDir, this.globalsFile)
 
-      asc.main(
-        [
-          inputFile,
-          global,
-          '--baseDir',
-          baseDir,
-          '--lib',
-          libs,
-          '--outFile',
-          outputFile,
-          '--optimize',
-          '--debug',
-        ],
-        {
-          stdout: process.stdout,
-          stderr: process.stdout,
-        },
-        e => {
-          if (e != null) {
-            throw e
-          }
-        },
-      )
+      asc.compile({
+        inputFile,
+        global,
+        baseDir,
+        libs,
+        outputFile,
+      })
 
       // Remember the output file to avoid compiling the same file again
       compiledFiles.set(inputCacheKey, outFile)
@@ -392,6 +365,20 @@ class Compiler {
       return outFile
     } catch (e) {
       throw Error(`Failed to compile data source template: ${e.message}`)
+    }
+  }
+
+  async _validateMappingContent(filePath) {
+    const data = fs.readFileSync(filePath)
+    if (
+      this.blockIpfsMethods && 
+      (data.includes('ipfs.cat') || data.includes('ipfs.map'))
+    ) {
+      throw Error(`
+      Subgraph Studio does not support mappings with ipfs methods.
+      Please remove all instances of ipfs.cat and ipfs.map from
+      ${filePath}
+      `)
     }
   }
 

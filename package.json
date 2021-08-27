@@ -1,9 +1,9 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.21.0",
+  "version": "0.22.0-alpha.2",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
-    "assemblyscript": "git+https://github.com/AssemblyScript/assemblyscript.git#v0.6",
+    "assemblyscript": "0.19.10",
     "chalk": "^3.0.0",
     "chokidar": "^3.0.2",
     "debug": "^4.1.1",
@@ -21,7 +21,9 @@
     "pkginfo": "^0.4.1",
     "prettier": "^1.13.5",
     "request": "^2.88.0",
+    "semver": "7.3.5",
     "tmp-promise": "^3.0.2",
+    "which": "2.0.2",
     "yaml": "^1.5.1"
   },
   "bin": {
@@ -39,6 +41,8 @@
     "test:init": "jest tests/cli/init.test.js --verbose",
     "test:validation": "jest tests/cli/validation.test.js --verbose",
     "release:patch": "npm version patch && npm publish && git push origin master && git push --tags",
-    "release:minor": "npm version minor && npm publish && git push origin master && git push --tags"
+    "release:minor": "npm version minor && npm publish && git push origin master && git push --tags",
+    "release:alpha:minor": "npm version preminor --preid alpha && npm publish --tag alpha && git push origin master && git push --tags",
+    "release:alpha:prerelease": "npm version prerelease --preid alpha && npm publish --tag alpha && git push origin master && git push --tags"
   }
 }

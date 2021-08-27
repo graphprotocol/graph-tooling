@@ -41,7 +41,7 @@ const generatePackageJson = ({ subgraphName, node }) =>
       },
       dependencies: {
         '@graphprotocol/graph-cli': `${module.exports.version}`,
-        '@graphprotocol/graph-ts': `0.20.0`,
+        '@graphprotocol/graph-ts': `0.22.0-alpha.2`,
       },
     }),
     { parser: 'json' },
@@ -64,7 +64,7 @@ dataSources:
       abi: ${contractName}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         ${abiEvents(abi)
@@ -225,7 +225,7 @@ const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
 
       // Entities only exist after they have been saved to the store;
       // \`null\` checks allow to create entities on demand
-      if (entity == null) {
+      if (!entity) {
         entity = new ExampleEntity(event.transaction.from.toHex())
 
         // Entity fields can be set using simple assignments

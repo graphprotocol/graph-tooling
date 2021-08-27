@@ -1,5 +1,6 @@
 const URL = require('url').URL
 const chalk = require('chalk')
+const path = require('path')
 
 const { identifyDeployKey } = require('../command-helpers/auth')
 const { createCompiler } = require('../command-helpers/compiler')
@@ -9,6 +10,7 @@ const { chooseNodeUrl } = require('../command-helpers/node')
 const { withSpinner } = require('../command-helpers/spinner')
 const { validateSubgraphName } = require('../command-helpers/subgraph')
 const { DEFAULT_IPFS_URL } = require('../command-helpers/ipfs')
+const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -172,11 +174,30 @@ module.exports = {
       return
     }
 
+    try {
+      // Checks to make sure deploy doesn't run against
+      // older subgraphs (both apiVersion and graph-ts version).
+      //
+      // We don't want the deploy to run without these conditions
+      // because that would mean the CLI would try to compile code
+      // using the wrong AssemblyScript compiler.
+      await assertManifestApiVersion(manifest, '0.0.5')
+      await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
+
+    const isStudio = node.match(/studio/)
+    const isHostedService = node.match(/thegraph.com/) && !isStudio
+
     let compiler = createCompiler(manifest, {
       ipfs,
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
+      blockIpfsMethods: isStudio  // Network does not support publishing subgraphs with IPFS methods
     })
 
     // Exit with an error code if the compiler couldn't be created
@@ -185,10 +206,8 @@ module.exports = {
       return
     }
 
-    let hostedService = node.match(/thegraph.com/) && !node.match(/studio/)
-
     // Ask for label if not on hosted service
-    if (!versionLabel && !hostedService) {
+    if (!versionLabel && !isHostedService) {
       const inputs = await processForm(toolbox, {
         product,
         studio,
@@ -233,7 +252,7 @@ module.exports = {
 
             // Provide helpful advice when the subgraph has not been created yet
             if (jsonRpcError.message.match(/subgraph name not found/)) {
-              if (hostedService) {
+              if (isHostedService) {
                 print.info(`
 You may need to create it at https://thegraph.com/explorer/dashboard.`)
               } else {
@@ -265,7 +284,7 @@ $ graph create --node ${node} ${subgraphName}`)
               subscriptions = base + subscriptions
             }
 
-            if (hostedService) {
+            if (isHostedService) {
               print.success(
                 `Deployed to ${chalk.blue(
                   `https://thegraph.com/explorer/subgraph/${subgraphName}`,

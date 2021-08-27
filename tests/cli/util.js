@@ -30,6 +30,18 @@ const cliTest = (title, args, testPath, options) => {
       } catch (e) {}
 
       if (expectedStderr !== undefined) {
+        // For some reason the error sometimes comes in stdout, then
+        // stderr comes empty.
+        //
+        // If that's the case, we should throw it so it's easier
+        // to debug the error.
+        //
+        // TODO: investigate why that happens (somewhere it should
+        // be using console.error or print.error for example) so this
+        // check can be removed.
+        if (stderr.length === 0 && stdout.length !== 0) {
+          throw new Error(stdout)
+        }
         expect(stripAnsi(stderr)).toBe(expectedStderr)
       }
       if (expectedExitCode !== undefined) {

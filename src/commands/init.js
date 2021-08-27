@@ -15,6 +15,33 @@ const { chooseNodeUrl } = require('../command-helpers/node')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
 const ABI = require('../abi')
 
+const networkChoices = [
+  'mainnet',
+  'kovan',
+  'rinkeby',
+  'ropsten',
+  'goerli',
+  'poa-core',
+  'poa-sokol',
+  'xdai',
+  'matic',
+  'mumbai',
+  'fantom',
+  'bsc',
+  'chapel',
+  'clover',
+  'avalanche',
+  'fuji',
+  'celo',
+  'celo-alfajores',
+  'fuse',
+  'mbase',
+  'arbitrum-one',
+  'arbitrum-rinkeby',
+  'optimism',
+  'optimism-kovan'
+]
+
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
 
@@ -35,7 +62,7 @@ ${chalk.dim('Choose mode with one of:')}
 ${chalk.dim('Options for --from-contract:')}
 
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --network <mainnet|kovan|rinkeby|ropsten|goerli|poa-core|poa-sokol|xdai|matic|mumbai|fantom|bsc|clover|arbitrum-testnet-v5>
+      --network <${networkChoices.join('|')}>
                                 Selects the network the contract is deployed to
       --index-events            Index contract events as entities
       --contract-name           Name of the contract (default: Contract)      
@@ -57,22 +84,6 @@ const processInitForm = async (
     contractName
   },
 ) => {
-  let networkChoices = [
-    'mainnet',
-    'kovan',
-    'rinkeby',
-    'ropsten',
-    'goerli',
-    'poa-core',
-    'poa-sokol',
-    'xdai',
-    'matic',
-    'mumbai',
-    'fantom',
-    'bsc',
-    'clover',
-    'arbitrum-testnet-v5',
-  ]
   let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
 
   let abiFromEtherscan = undefined

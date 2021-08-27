@@ -1,0 +1,25 @@
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+✖ Failed to generate types for GraphQL schema: 
+GraphQL schema can't have List's with Nullable members.
+Error in 'invalidField' field of type '[Something]'.
+Suggestion: add an '!' to the member type of the List, change from '[Something]' to '[Something!]'

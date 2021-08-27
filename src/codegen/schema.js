@@ -55,7 +55,7 @@ module.exports = class SchemaCodeGenerator {
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
 
     // Generate and add a constructor
-    klass.addMethod(this._generateConstructor(name))
+    klass.addMethod(this._generateConstructor(name, def.get('fields')))
 
     // Generate and add save() and getById() methods
     this._generateStoreMethods(name).forEach(method => klass.addMethod(method))
@@ -72,7 +72,31 @@ module.exports = class SchemaCodeGenerator {
     return klass
   }
 
-  _generateConstructor(entityName) {
+  // Fields that are non-nullable get an empty/zero value set in the class constructor.
+  _generateDefaultFieldValues(fields) {
+    const indexOfIdField = fields.findIndex(field => field.getIn(['name', 'value']) === 'id')
+    const fieldsWithoutId = fields.remove(indexOfIdField)
+
+    const fieldsSetCalls = fieldsWithoutId
+      .map(field => {
+        const name = field.getIn(['name', 'value'])
+        const type = this._typeFromGraphQl(field.get('type'))
+        const isNullable = type instanceof tsCodegen.NullableType
+
+        return { name, type, isNullable }
+      })
+      .filter(({ isNullable }) => !isNullable)
+      .map(({ name, type, isNullable }) => {
+        const fieldTypeString = isNullable ? type.inner.toString() : type.toString()
+
+        return `
+        this.set('${name}', ${typesCodegen.initializedValueFromAsc(fieldTypeString)})`
+      })
+
+    return fieldsSetCalls.join('')
+  }
+
+  _generateConstructor(entityName, fields) {
     return tsCodegen.method(
       'constructor',
       [tsCodegen.param('id', tsCodegen.namedType('string'))],
@@ -80,6 +104,7 @@ module.exports = class SchemaCodeGenerator {
       `
       super()
       this.set('id', Value.fromString(id))
+      ${this._generateDefaultFieldValues(fields)}
       `,
     )
   }
@@ -92,13 +117,15 @@ module.exports = class SchemaCodeGenerator {
         tsCodegen.namedType('void'),
         `
         let id = this.get('id')
-        assert(id !== null, 'Cannot save ${entityName} entity without an ID')
-        assert(
-          id.kind == ValueKind.STRING,
-          'Cannot save ${entityName} entity with non-string ID. ' +
-          'Considering using .toHex() to convert the "id" to a string.'
-        )
-        store.set('${entityName}', id.toString(), this)`,
+        assert(id != null, 'Cannot save ${entityName} entity without an ID')
+        if (id) {
+          assert(
+            id.kind == ValueKind.STRING,
+            'Cannot save ${entityName} entity with non-string ID. ' +
+            'Considering using .toHex() to convert the "id" to a string.'
+          )
+          store.set('${entityName}', id.toString(), this)
+        }`,
       ),
 
       tsCodegen.staticMethod(
@@ -106,7 +133,7 @@ module.exports = class SchemaCodeGenerator {
         [tsCodegen.param('id', tsCodegen.namedType('string'))],
         tsCodegen.nullableType(tsCodegen.namedType(entityName)),
         `
-        return store.get('${entityName}', id) as ${entityName} | null
+        return changetype<${entityName} | null>(store.get('${entityName}', id))
         `,
       ),
     )
@@ -124,15 +151,15 @@ module.exports = class SchemaCodeGenerator {
     let gqlType = fieldDef.get('type')
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
     let returnType = this._typeFromGraphQl(gqlType)
+    let isNullable = returnType instanceof tsCodegen.NullableType
 
-    let getNonNullable = `return ${typesCodegen.valueToAsc('value', fieldValueType)}`
-    let getNullable = `if (value === null || value.kind == ValueKind.NULL) {
+    let getNonNullable = `return ${typesCodegen.valueToAsc('value!', fieldValueType)}`
+    let getNullable = `if (!value || value.kind == ValueKind.NULL) {
                           return null
                         } else {
-                          ${getNonNullable}
+                          return ${typesCodegen.valueToAsc('value', fieldValueType)}
                         }`
 
-    let isNullable = returnType instanceof tsCodegen.NullableType
     return tsCodegen.method(
       `get ${name}`,
       [],
@@ -151,16 +178,31 @@ module.exports = class SchemaCodeGenerator {
     let paramType = this._typeFromGraphQl(gqlType)
     let isNullable = paramType instanceof tsCodegen.NullableType
     let paramTypeString = isNullable ? paramType.inner.toString() : paramType.toString()
+    let isArray = paramType instanceof tsCodegen.ArrayType
+
+    if (
+      isArray &&
+      paramType.inner instanceof tsCodegen.NullableType
+    ) {
+      let arrayTypeWithoutClosingBracked = fieldValueType.slice(0, -1)
+      let suggestedType = `${arrayTypeWithoutClosingBracked}!]`
+
+      throw new Error(`
+GraphQL schema can't have List's with Nullable members.
+Error in '${name}' field of type '${fieldValueType}'.
+Suggestion: add an '!' to the member type of the List, change from '${fieldValueType}' to '${suggestedType}'`
+      )
+    }
 
     let setNonNullable = `
       this.set('${name}', ${typesCodegen.valueFromAsc(`value`, fieldValueType)})
     `
     let setNullable = `
-      if (value === null) {
+      if (!value) {
         this.unset('${name}')
       } else {
         this.set('${name}', ${typesCodegen.valueFromAsc(
-      `value as ${paramTypeString}`,
+        `<${paramTypeString}>value`,
       fieldValueType,
     )})
       }

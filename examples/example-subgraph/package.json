@@ -1,16 +1,15 @@
 {
   "name": "example-event-handler",
   "scripts": {
-    "codegen": "graph codegen --output-dir src/types/ subgraph.yaml",
-    "build": "graph build subgraph.yaml",
-    "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
-    "build-wast": "graph build -t wast subgraph.yaml"
+    "codegen": "../../bin/graph codegen --output-dir src/types/ subgraph.yaml",
+    "build": "../../bin/graph build subgraph.yaml",
+    "build-ipfs": "../../bin/graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
+    "build-wast": "../../bin/graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "https://github.com/graphprotocol/graph-cli#master",
-    "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#master"
+    "@graphprotocol/graph-ts": "0.22.0-alpha.2"
   },
   "resolutions": {
-    "assemblyscript": "git+https://github.com/AssemblyScript/assemblyscript.git#v0.6"
+    "assemblyscript": "0.19.10"
   }
 }
