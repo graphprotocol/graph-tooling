@@ -33,6 +33,8 @@ script:
   # Run `graph auth` inside `dbus-launch` to be able to access gnome-keyring
   # secrets via keytar
   # - dbus-launch bash -c '../../bin/graph auth http://some-node-ip.org test-access-token'
+  - cd ../../
+  - yarn lint
 env:
   global:
     - secure: eFOq9UQXTWRvqkIzu1VwUiG3sRb6v4XA8CDayRmGhx58WWJDw1EoX8tXJ5r8K3aj4sh66LKYD5ONIBFP/DjiH28xnC9EkIGlPfKzwUPxDl+seswgqO2VIiVLRdPpmXS0j1FWfDpqpyBB6q9uUA9nToU/aK6lUKHS+tN0iEdOWn6bw4Q3ruaIygm4oijuXOlPfgCnfQLX4iDtGOq0mpRrcAGI71yVHq8MtV0ou1a63bWo9tCrrDDp2xfPGrwf5gnD0hC3hLyrHQHI0B1Ob8gWlU031/VXiQuDn8/FQGKI3dqCLyuQLM75PhQHK7aAbxXMrC4vAQZ9nECN0ZwJEbfrd4HO7gG22NDMRzixOVVDwkg14HgYGBdrBJKjcp1NTCLZJc/feqmbsNvdoUPJ3NXZoD5UM216V8jboOLX7cH1B3e20xFHCv2sOYYx2PfdczbWHnX1/+vXWyKL0srl4n2GHilDpk9cXuPgNlE5Z184bI0lm+VxEePDKJi+YGXQSHQvj1vH1K3/TAPq2RMoA3ucbuLhgj1K7K7zK1of3usmaB6bGF5vHiE6BJ/0ZdBYTNL1IEtURykqRRDKAu5CDXek3UySTTUmMiU9Qp5iUXfsA9Y3A0qeXbglAfFvfIAOd4wYw53JhhgWiA8uPaI4Oo7k6+ooAUvBGwfzAZ+0Qz7h1Is=
