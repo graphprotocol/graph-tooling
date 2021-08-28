@@ -74,6 +74,7 @@ module.exports = {
 
     let firstParam, secondParam
     try {
+      // eslint-disable-next-line no-extra-semi
       ;[firstParam, secondParam] = fixParameters(toolbox.parameters, {
         h,
         help,
@@ -89,6 +90,7 @@ module.exports = {
     let node
     let deployKey
     if (product || studio) {
+      // eslint-disable-next-line no-extra-semi
       ;({ node } = chooseNodeUrl({ product, studio, node }))
       deployKey = firstParam
     } else {
@@ -107,6 +109,7 @@ module.exports = {
         process.exit(1)
       }
       if (!node) {
+        // eslint-disable-next-line no-extra-semi
         ;({ node } = chooseNodeUrl({
           product: inputs.product,
           studio,

@@ -329,6 +329,7 @@ module.exports = {
 
     let subgraphName, directory
     try {
+      // eslint-disable-next-line no-extra-semi
       ;[subgraphName, directory] = fixParameters(toolbox.parameters, {
         fromExample,
         allowSimpleName,
@@ -459,6 +460,7 @@ module.exports = {
         { commands },
       )
     } else {
+      // eslint-disable-next-line no-extra-semi
       ;({ node, allowSimpleName } = chooseNodeUrl({
         product: inputs.product,
         studio,

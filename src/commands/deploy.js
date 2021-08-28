@@ -103,6 +103,7 @@ module.exports = {
 
     let subgraphName, manifest
     try {
+      // eslint-disable-next-line no-extra-semi
       ;[subgraphName, manifest] = fixParameters(toolbox.parameters, {
         h,
         help,
@@ -129,6 +130,7 @@ module.exports = {
       return
     }
 
+    // eslint-disable-next-line no-extra-semi
     ;({ node } = chooseNodeUrl({ product, studio, node }))
     if (!node) {
       const inputs = await processForm(toolbox, {
