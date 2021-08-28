@@ -18,7 +18,7 @@ module.exports = {
   description: 'Registers a subgraph name',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { print } = toolbox
 
     // Read CLI parameters
     let { accessToken, g, h, help, node } = toolbox.parameters.options
@@ -76,7 +76,7 @@ module.exports = {
     client.request('subgraph_create', { name: subgraphName }, function(
       requestError,
       jsonRpcError,
-      res
+      _res
     ) {
       if (jsonRpcError) {
         spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)

@@ -20,7 +20,7 @@ module.exports = {
   description: 'Builds a subgraph and (optionally) uploads it to IPFS',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { filesystem, print } = toolbox
 
     // Parse CLI parameters
     let {

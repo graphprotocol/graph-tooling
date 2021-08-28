@@ -25,7 +25,7 @@ const isTupleArrayType = t => {
   return t.match(/^tuple\[([0-9]+)?\]$/)
 }
 
-const unrollTuple = ({ path, index, value }) =>
+const unrollTuple = ({ path, index: _index, value }) =>
   value.components.reduce((acc, component, index) => {
     let name = component.name || `value${index}`
     return acc.concat(

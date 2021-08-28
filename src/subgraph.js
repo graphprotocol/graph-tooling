@@ -317,7 +317,7 @@ ${abiFunctions
       }, immutable.List())
   }
 
-  static validateRepository(manifest, { resolveFile }) {
+  static validateRepository(manifest, { resolveFile: _resolveFile }) {
     return manifest.get('repository') !==
       'https://github.com/graphprotocol/example-subgraph'
       ? immutable.List()
@@ -331,7 +331,7 @@ Please replace it with a link to your subgraph source code.`,
         )
   }
 
-  static validateDescription(manifest, { resolveFile }) {
+  static validateDescription(manifest, { resolveFile: _resolveFile }) {
     return manifest.get('description') !== 'Gravatar for Ethereum'
       ? immutable.List()
       : immutable.List().push(

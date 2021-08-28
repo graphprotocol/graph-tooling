@@ -1,6 +1,3 @@
-let immutable = require('immutable')
-let Map = immutable.Map
-
 class Param {
   constructor(name, type) {
     this.name = name
@@ -9,17 +6,6 @@ class Param {
 
   toString() {
     return `${this.name}: ${this.type.toString()}`
-  }
-}
-
-class ReturnType {
-  constructor(name, type) {
-    this.name = name
-    this.type = type
-  }
-
-  toString() {
-    return `${this.type.toString()}`
   }
 }
 

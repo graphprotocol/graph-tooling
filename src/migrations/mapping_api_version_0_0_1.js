@@ -1,7 +1,5 @@
-const fs = require('fs-extra')
 const semver = require('semver')
 const toolbox = require('gluegun/toolbox')
-const yaml = require('js-yaml')
 const { getGraphTsVersion } = require('./util/versions')
 const { loadManifest } = require('./util/load-manifest')
 

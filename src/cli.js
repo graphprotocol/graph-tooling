@@ -1,6 +1,4 @@
 const path = require('path')
-const { exec } = require('child_process')
-const which = require('which')
 const { build, system } = require('gluegun')
 
 const run = async argv => {

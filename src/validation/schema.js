@@ -281,9 +281,6 @@ Field arguments are not supported.`,
       ])
     : List()
 
-const entityFieldExists = (entityDef, name) =>
-  entityDef.fields.find(field => field.name.value === name) !== undefined
-
 const validateDerivedFromDirective = (defs, def, field, directive) => {
   // Validate that there is a `field` argument and nothing else
   if (directive.arguments.length !== 1 || directive.arguments[0].name.value !== 'field') {
@@ -894,7 +891,7 @@ const validateTypeHasNoFields = def =>
       ])
     : List()
 
-const validateAtLeastOneExtensionField = def => List()
+const validateAtLeastOneExtensionField = _def => List()
 
 const typeDefinitionValidators = {
   ObjectTypeDefinition: (defs, def) =>

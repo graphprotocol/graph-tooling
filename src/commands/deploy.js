@@ -7,8 +7,6 @@ const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
 const { chooseNodeUrl } = require('../command-helpers/node')
-const { withSpinner } = require('../command-helpers/spinner')
-const { validateSubgraphName } = require('../command-helpers/subgraph')
 const { DEFAULT_IPFS_URL } = require('../command-helpers/ipfs')
 const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
 
@@ -72,7 +70,7 @@ module.exports = {
   description: 'Deploys the subgraph to a Graph node',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { filesystem, print } = toolbox
 
     // Parse CLI parameters
     let {

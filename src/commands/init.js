@@ -9,7 +9,7 @@ const {
   getSubgraphBasename,
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
-const { withSpinner, step } = require('../command-helpers/spinner')
+const { withSpinner } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
@@ -235,7 +235,7 @@ const loadAbiFromBlockScout = async (network, address) =>
     `Fetching ABI from BlockScout`,
     `Failed to fetch ABI from BlockScout`,
     `Warnings while fetching ABI from BlockScout`,
-    async spinner => {
+    async _spinner => {
       let result = await fetch(
         `https://blockscout.com/${
           network.replace('-', '/')
@@ -259,7 +259,7 @@ const loadAbiFromEtherscan = async (network, address) =>
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
     `Warnings while fetching ABI from Etherscan`,
-    async spinner => {
+    async _spinner => {
       let result = await fetch(
         `https://${
           network === 'mainnet' ? 'api' : `api-${network}`
@@ -505,7 +505,7 @@ const initRepository = async (toolbox, directory) =>
     `Initialize subgraph repository`,
     `Failed to initialize subgraph repository`,
     `Warnings while initializing subgraph repository`,
-    async spinner => {
+    async _spinner => {
       // Remove .git dir in --from-example mode; in --from-contract, we're
       // starting from an empty directory
       let gitDir = path.join(directory, '.git')
@@ -526,7 +526,7 @@ const installDependencies = async (toolbox, directory, installCommand) =>
     `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
     `Failed to install dependencies`,
     `Warnings while installing dependencies`,
-    async spinner => {
+    async _spinner => {
       await toolbox.system.run(installCommand, { cwd: directory })
       return true
     },
@@ -537,7 +537,7 @@ const runCodegen = async (toolbox, directory, codegenCommand) =>
     `Generate ABI and schema types with ${toolbox.print.colors.muted(codegenCommand)}`,
     `Failed to generate code from ABI and GraphQL schema`,
     `Warnings while generating code from ABI and GraphQL schema`,
-    async spinner => {
+    async _spinner => {
       await toolbox.system.run(codegenCommand, { cwd: directory })
       return true
     },
@@ -590,7 +590,7 @@ const initSubgraphFromExample = async (
     `Cloning example subgraph`,
     `Failed to clone example subgraph`,
     `Warnings while cloning example subgraph`,
-    async spinner => {
+    async _spinner => {
       await system.run(
         `git clone http://github.com/graphprotocol/example-subgraph ${directory}`,
       )
@@ -607,7 +607,7 @@ const initSubgraphFromExample = async (
     `Update subgraph name and commands in package.json`,
     `Failed to update subgraph name and commands in package.json`,
     `Warnings while updating subgraph name and commands in package.json`,
-    async spinner => {
+    async _spinner => {
       try {
         // Load package.json
         let pkgJsonFilename = filesystem.path(directory, 'package.json')

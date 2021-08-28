@@ -20,7 +20,7 @@ module.exports = {
   description: 'Generates AssemblyScript types for a subgraph',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { filesystem, print } = toolbox
 
     // Read CLI parameters
     let { h, help, o, outputDir, skipMigrations, w, watch } = toolbox.parameters.options

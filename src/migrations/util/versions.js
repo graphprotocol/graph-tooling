@@ -1,6 +1,5 @@
 const path = require('path')
 const fs = require('fs-extra')
-const yaml = require('js-yaml')
 
 const getGraphTsVersion = async sourceDir => {
   let graphTsPath

@@ -1,7 +1,6 @@
 const ABI = require('./abi')
 const immutable = require('immutable')
 const {
-  generateEventFieldAssignments,
   generateManifest,
   generateMapping,
   generateSchema,

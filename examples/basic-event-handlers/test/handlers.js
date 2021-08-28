@@ -46,7 +46,7 @@ const waitForSubgraphToBeSynced = async () =>
     setTimeout(checkSubgraphSynced, 0)
   })
 
-contract('Basic event handlers', accounts => {
+contract('Basic event handlers', _accounts => {
   // Deploy the subgraph once before all tests
   before(async () => {
     // Deploy the contract

@@ -3,7 +3,6 @@ const immutable = require('immutable')
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
 const util = require('./util')
-const ABI = require('../abi')
 
 module.exports = class AbiCodeGenerator {
   constructor(abi) {
@@ -298,7 +297,6 @@ module.exports = class AbiCodeGenerator {
 
     // Add param getters to tuple class and generate classes for each tuple parameter
     inputOrOutput.get('components').forEach((component, index) => {
-      let name = component.get('name')
       let paramObject = this._generateInputOrOutput(
         component,
         index,

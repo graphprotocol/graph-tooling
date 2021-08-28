@@ -56,7 +56,7 @@ module.exports = {
   description: 'Sets the deploy key to use when deploying to a Graph node',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { print } = toolbox
 
     // Read CLI parameters
     let {

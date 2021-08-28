@@ -113,7 +113,7 @@ class Compiler {
         `Load subgraph from ${manifestPath}`,
         `Failed to load subgraph from ${manifestPath}`,
         `Warnings loading subgraph from ${manifestPath}`,
-        async spinner => {
+        async _spinner => {
           return Subgraph.load(this.options.subgraphManifest)
         },
       )
