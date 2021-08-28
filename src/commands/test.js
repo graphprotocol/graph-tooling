@@ -3,6 +3,7 @@ const compose = require('docker-compose')
 const http = require('http')
 const net = require('net')
 const tmp = require('tmp-promise')
+const Docker = require('dockerode')
 const path = require('path')
 const stripAnsi = require('strip-ansi')
 const spawn = require('child_process').spawn
@@ -80,6 +81,7 @@ module.exports = {
     }
 
     let testCommand = params[0]
+    new Docker()
 
     // Obtain the Docker Compose file for services that the tests run against
     composeFile =
