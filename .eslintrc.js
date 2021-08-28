@@ -12,4 +12,6 @@ module.exports = {
         'no-empty': ['error', { 'allowEmptyCatch': true }],
         'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
+    // TODO: remove this and fix the no-undef rule error
+    ignorePatterns: ['examples/basic-event-handlers/migrations', 'examples/basic-event-handlers/test'],
 }
