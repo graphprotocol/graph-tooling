@@ -30,13 +30,14 @@
     "graph": "bin/graph"
   },
   "devDependencies": {
-    "eslint": "^6.0.1",
+    "eslint": "7.32.0",
     "jest": "^26.0.0",
     "spawn-command": "^0.0.2-1",
     "strip-ansi": "^6.0.0",
     "tern": "^0.24.0"
   },
   "scripts": {
+    "lint": "eslint .",
     "test": "jest --verbose",
     "test:init": "jest tests/cli/init.test.js --verbose",
     "test:validation": "jest tests/cli/validation.test.js --verbose",
