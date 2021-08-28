@@ -179,11 +179,7 @@ const processInitForm = async (
         // Try loading the ABI from Etherscan, if none was provided
         if (!abi) {
           try {
-            if (network === 'poa-core') {
-              abiFromBlockScout = await loadAbiFromBlockScout(network, value)
-            } else {
-              abiFromEtherscan = await loadAbiFromEtherscan(network, value)
-            }
+            abiFromEtherscan = await loadAbiFromEtherscan(network, value)
           } catch (e) {}
         }
         return value
