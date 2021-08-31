@@ -42,6 +42,7 @@ module.exports = {
       // xmlHttp.send();
       let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest');
       let json = await result.json();
+      console.log(json);
       const jsonResponse = JSON.parse(json.result);
       version = jsonResponse.tag_name;
       console.log(version);
