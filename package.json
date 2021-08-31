@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.22.0-alpha.1",
+  "version": "0.22.0-alpha.2",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "0.19.10",
@@ -22,6 +22,7 @@
     "pkginfo": "^0.4.1",
     "prettier": "^1.13.5",
     "request": "^2.88.0",
+    "semver": "7.3.5",
     "tmp-promise": "^3.0.2",
     "which": "2.0.2",
     "xmlhttprequest": "^1.8.0",

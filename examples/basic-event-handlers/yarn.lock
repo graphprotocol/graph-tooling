@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@graphprotocol/graph-ts@0.22.0-alpha.1":
-  version "0.22.0-alpha.1"
-  resolved "https://registry.npmjs.org/@graphprotocol/graph-ts/-/graph-ts-0.22.0-alpha.1.tgz"
-  integrity sha512-Vkvb9mPX4qAZCVm0fGNZtD9nHCZ8jKsAlvewgIZw1b4/68RhHRup2l2m9VDCvKPmU1QsxALKDLYPm4XXrdH1AA==
+"@graphprotocol/graph-ts@0.22.0-alpha.2":
+  version "0.22.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.22.0-alpha.2.tgz#df2200a20bb8ceaeb835ba905430cf75b37a4874"
+  integrity sha512-UeoNfZLz7S4OAby/2K0zt3lGfcLqa8viujH6D5gjhDjFWTd6TiLb60OToFv7963YBHHdyjeEfIlmm2IuXSQeLA==
   dependencies:
     assemblyscript "0.19.10"
 
