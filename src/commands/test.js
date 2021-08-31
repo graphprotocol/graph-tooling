@@ -2,6 +2,7 @@ const { Binary } = require('binary-install-raw')
 const { XMLHttpRequest } = require('xmlhttprequest')
 const os = require('os')
 const chalk = require('chalk')
+const fetch = require('node-fetch')
 
 const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
@@ -36,14 +37,16 @@ module.exports = {
 
     const platform = getPlatform();
     if (!version) {
-      let xmlHttp = new XMLHttpRequest();
-      xmlHttp.open('GET', 'https://api.github.com/repos/LimeChain/matchstick/releases/latest', false);
-      xmlHttp.send();
-      const jsonResponse = JSON.parse(xmlHttp.responseText);
+      // let xmlHttp = new XMLHttpRequest();
+      // xmlHttp.open('GET', 'https://api.github.com/repos/LimeChain/matchstick/releases/latest', false);
+      // xmlHttp.send();
+      let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest');
+      const jsonResponse = JSON.parse(await result.json());
       version = jsonResponse.tag_name;
+      console.log(version);
     }
 
-    const url = `https://github.com/LimeChain/matchstick/releases/download/${ version }/${ platform }`;
+    const url = `https://github.com/LimeChain/matchstick/releases/download/${version}/${platform}`;
 
     let binary = new Binary(platform, url, version);
     await binary.install(force);
@@ -55,9 +58,11 @@ function getPlatform() {
   const type = os.type();
   const arch = os.arch();
 
-  if (type === 'Windows_NT' && arch === 'x64') return 'binary-windows';
-  if (type === 'Linux' && arch === 'x64') return 'binary-linux';
-  if (type === 'Darwin' && arch === 'x64') return 'binary-macos';
+  if (arch === 'x64') {
+    if (type === 'Darwin') return 'binary-macos';
+    if (type === 'Linux') return 'binary-linux';
+    if (type === 'Windows_NT') return 'binary-windows';
+  }
 
   throw new Error(`Unsupported platform: ${type} ${arch}`);
 }
