@@ -15,7 +15,7 @@ const { step, withSpinner } = require('../command-helpers/spinner')
 tmp.setGracefulCleanup()
 
 const HELP = `
-${chalk.bold('graph test')} [options] ${chalk.bold('<test-command>')}
+${chalk.bold('graph local')} [options] ${chalk.bold('<local-command>')}
 
 Options:
 
@@ -33,7 +33,7 @@ Options:
 `
 
 module.exports = {
-  description: 'Runs tests against a Graph Node environment (using Ganache by default)',
+  description: 'Runs local tests against a Graph Node environment (using Ganache by default)',
   run: async toolbox => {
     // Obtain tools
     let { filesystem, print } = toolbox
