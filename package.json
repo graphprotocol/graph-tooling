@@ -24,7 +24,6 @@
     "request": "^2.88.0",
     "tmp-promise": "^3.0.2",
     "which": "2.0.2",
-    "xmlhttprequest": "^1.8.0",
     "yaml": "^1.5.1"
   },
   "bin": {

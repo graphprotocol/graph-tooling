@@ -1,5 +1,4 @@
 const { Binary } = require('binary-install-raw')
-const { XMLHttpRequest } = require('xmlhttprequest')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
@@ -37,14 +36,9 @@ module.exports = {
 
     const platform = getPlatform();
     if (!version) {
-      // let xmlHttp = new XMLHttpRequest();
-      // xmlHttp.open('GET', 'https://api.github.com/repos/LimeChain/matchstick/releases/latest', false);
-      // xmlHttp.send();
       let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest');
       let json = await result.json();
-      console.log(json);
       version = json.tag_name;
-      console.log(version);
     }
 
     const url = `https://github.com/LimeChain/matchstick/releases/download/${version}/${platform}`;
