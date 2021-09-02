@@ -52,7 +52,9 @@ module.exports = {
 function getPlatform() {
   const type = os.type();
   const arch = os.arch();
-  const majorVersion = os.release().substr(0, os.release().indexOf('.'));
+  const release = os.release()
+  const majorVersion = release.substr(0, release.indexOf('.'));
+  console.log(release);
   console.log(os.version());
 
 
