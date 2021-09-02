@@ -27,7 +27,7 @@ script:
   - ../../bin/graph codegen --debug
   - ../../bin/graph build --debug
   # Exercise `graph local` with another example subgraph
-  - cd ../../examples/basic-event-handlers
+  - cd ../basic-event-handlers
   - yarn
   - ../../bin/graph test -v 0.1.1-test-bin "yarn test"
   # Run `graph auth` inside `dbus-launch` to be able to access gnome-keyring
