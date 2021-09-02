@@ -65,11 +65,10 @@ function getPlatform() {
         return 'binary-macos-10.14';
       }
     } else if (type === 'Linux') {
-      if (majorVersion === '20') {
-        return 'binary-linux-20';
-      } else if (majorVersion === '18') {
+      if (majorVersion === '18') {
         return 'binary-linux-18';
       }
+      return 'binary-linux-20';
     } else if (type === 'Windows_NT') {
       return 'binary-windows';
     }
