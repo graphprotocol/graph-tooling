@@ -52,6 +52,9 @@ module.exports = {
 function getPlatform() {
   const type = os.type();
   const arch = os.arch();
+  console.log(os.release());
+  console.log(os.version());
+
 
   if (arch === 'x64') {
     if (type === 'Darwin') return 'binary-macos';
