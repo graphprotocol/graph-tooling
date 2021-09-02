@@ -29,7 +29,7 @@ script:
   # Exercise `graph local` with another example subgraph
   - cd ../../examples/basic-event-handlers
   - yarn
-  - ../../bin/graph local "yarn test"
+  - ../../bin/graph test -v 0.1.1-test-bin "yarn test"
   # Run `graph auth` inside `dbus-launch` to be able to access gnome-keyring
   # secrets via keytar
   # - dbus-launch bash -c '../../bin/graph auth http://some-node-ip.org test-access-token'
