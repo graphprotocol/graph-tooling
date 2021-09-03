@@ -57,13 +57,12 @@ function getPlatform() {
 
   if (arch === 'x64') {
     if (type === 'Darwin') {
-      if (majorVersion === '20') {
-        return 'binary-macos-11';
-      } else if (majorVersion === '19') {
+      if (majorVersion === '19') {
         return 'binary-macos-10.15';
       } else if (majorVersion === '18') {
         return 'binary-macos-10.14';
       }
+      return 'binary-macos-11'
     } else if (type === 'Linux') {
       if (majorVersion === '18') {
         return 'binary-linux-18';
