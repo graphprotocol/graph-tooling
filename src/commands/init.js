@@ -9,9 +9,11 @@ const {
   getSubgraphBasename,
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
+const { validateStudioNetwork } = require('../command-helpers/studio')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
+const { loadManifest } = require('../migrations/util/load-manifest')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
 const ABI = require('../abi')
 
@@ -381,7 +383,7 @@ module.exports = {
     if (fromExample && subgraphName && directory) {
       return await initSubgraphFromExample(
         toolbox,
-        { allowSimpleName, directory, subgraphName },
+        { allowSimpleName, directory, subgraphName, studio, product },
         { commands },
       )
     }
@@ -421,7 +423,9 @@ module.exports = {
           network,
           subgraphName,
           contractName,
-          node
+          node,
+          studio,
+          product,
         },
         { commands },
       )
@@ -455,6 +459,8 @@ module.exports = {
         {
           subgraphName: inputs.subgraphName,
           directory: inputs.directory,
+          studio: inputs.studio,
+          product: inputs.product,
         },
         { commands },
       )
@@ -476,7 +482,9 @@ module.exports = {
           address: inputs.address,
           indexEvents,
           contractName: inputs.contractName,
-          node
+          node,
+          studio: inputs.studio,
+          product: inputs.product,
         },
         { commands },
       )
@@ -567,7 +575,7 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 
 const initSubgraphFromExample = async (
   toolbox,
-  { allowSimpleName, subgraphName, directory },
+  { allowSimpleName, subgraphName, directory, studio, product },
   { commands },
 ) => {
   let { filesystem, print, system } = toolbox
@@ -598,6 +606,24 @@ const initSubgraphFromExample = async (
     },
   )
   if (!cloned) {
+    process.exitCode = 1
+    return
+  }
+
+  try {
+    // It doesn't matter if we changed the URL we clone the YAML,
+    // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
+    let manifestFile = await loadManifest(path.join(directory, 'subgraph.yaml'))
+
+    for (const { network } of manifestFile.dataSources || []) {
+      validateStudioNetwork({ studio, product, network })
+    }
+
+    for (const { network } of manifestFile.templates || []) {
+      validateStudioNetwork({ studio, product, network })
+    }
+  } catch (e) {
+    print.error(e.message)
     process.exitCode = 1
     return
   }
@@ -661,7 +687,19 @@ const initSubgraphFromExample = async (
 
 const initSubgraphFromContract = async (
   toolbox,
-  {allowSimpleName, subgraphName, directory, abi, network, address, indexEvents, contractName, node},
+  {
+    allowSimpleName,
+    subgraphName,
+    directory,
+    abi,
+    network,
+    address,
+    indexEvents,
+    contractName,
+    node,
+    studio,
+    product,
+  },
   { commands },
 ) => {
   let { print } = toolbox
@@ -682,6 +720,17 @@ const initSubgraphFromContract = async (
   if (abiEvents(abi).length === 0) {
     // Fail if the ABI does not contain any events
     print.error(`ABI does not contain any events`)
+    process.exitCode = 1
+    return
+  }
+
+  // We can validate this before the scaffold because we receive
+  // the network from the form or via command line argument.
+  // We don't need to read the manifest in this case.
+  try {
+    validateStudioNetwork({ studio, product, network })
+  } catch (e) {
+    print.error(e.message)
     process.exitCode = 1
     return
   }
