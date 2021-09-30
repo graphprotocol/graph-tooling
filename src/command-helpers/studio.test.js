@@ -1,4 +1,4 @@
-const { validateStudioNetwork } = require('./studio')
+const { validateStudioNetwork, allowedStudioNetworks } = require('./studio')
 
 describe('Version Command Helpers', () => {
   describe('validateStudioNetwork', () => {
@@ -9,7 +9,7 @@ describe('Version Command Helpers', () => {
           network: 'mainnet',
         }))
           .not
-          .toThrow(new Error('Non Ethereum mainnet subgraphs should not be deployed to the studio'))
+          .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
       })
 
       test("And it's NOT Ethereum mainnet", () => {
@@ -17,18 +17,18 @@ describe('Version Command Helpers', () => {
           product: 'subgraph-studio',
           network: 'xdai',
         }))
-          .toThrow(new Error('Non Ethereum mainnet subgraphs should not be deployed to the studio'))
+          .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
       })
     })
 
     describe("When it's NOT studio", () => {
-      test("And it's Ethereum mainnet", () => {
+      test("And it's Rinkeby", () => {
         expect(() => validateStudioNetwork({
           studio: false,
-          network: 'mainnet',
+          network: 'rinkeby',
         }))
           .not
-          .toThrow(new Error('Non Ethereum mainnet subgraphs should not be deployed to the studio'))
+          .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
       })
 
       test("And it's NOT Ethereum mainnet", () => {
@@ -37,7 +37,7 @@ describe('Version Command Helpers', () => {
           network: 'xdai',
         }))
           .not
-          .toThrow(new Error('Non Ethereum mainnet subgraphs should not be deployed to the studio'))
+          .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
       })
     })
   })
