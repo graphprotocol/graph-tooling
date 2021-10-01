@@ -1,12 +1,15 @@
+const allowedStudioNetworks = ['mainnet', 'rinkeby']
+
 const validateStudioNetwork = ({ studio, product, network }) => {
   let isStudio = studio || product === 'subgraph-studio'
-  let isEthereumMainnet = network === 'mainnet'
+  let isAllowedNetwork = allowedStudioNetworks.includes(network)
 
-  if (isStudio && !isEthereumMainnet) {
-    throw new Error(`Non Ethereum mainnet subgraphs should not be deployed to the studio`)
+  if (isStudio && !isAllowedNetwork) {
+    throw new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`)
   }
 }
 
 module.exports = {
+  allowedStudioNetworks,
   validateStudioNetwork,
 }
