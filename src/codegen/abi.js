@@ -274,8 +274,8 @@ module.exports = class AbiCodeGenerator {
     let isTupleType = util.isTupleType(type)
     let returnValue = typesCodegen.ethereumToAsc(
       parentType === 'tuple'
-      ? `this[${index}]`
-      : `this._${parentType}.${parentField}[${index}].value`,
+        ? `this[${index}]`
+        : `this._${parentType}.${parentField}[${index}].value`,
       type,
       tupleClassName,
     )
@@ -286,7 +286,9 @@ module.exports = class AbiCodeGenerator {
       [],
       util.isTupleArrayType(type) ? `Array<${tupleClassName}>` : tupleClassName,
       `
-      return ${isTupleType ? `changetype<${tupleClassName}>(${returnValue})` : `${returnValue}`}
+      return ${
+        isTupleType ? `changetype<${tupleClassName}>(${returnValue})` : `${returnValue}`
+      }
       `,
     )
 
@@ -510,8 +512,8 @@ module.exports = class AbiCodeGenerator {
           : ''
       }]`
 
-      let methodCallBody = isTry =>
-        `
+      let methodCallBody = isTry => {
+        const methodBody = `
         ${
           isTry
             ? `
@@ -525,9 +527,9 @@ module.exports = class AbiCodeGenerator {
         let result = super.call(${superInputs})
 
         return (`
-        }
-      ${
-        simpleReturnType
+        }`
+
+        const returnVal = simpleReturnType
           ? typesCodegen.ethereumToAsc(
               isTry ? 'value[0]' : 'result[0]',
               outputs.get(0).get('type'),
@@ -542,34 +544,36 @@ module.exports = class AbiCodeGenerator {
             )
           : `new ${returnType.name}(
                 ${outputs
-                  .map(
-                    (output, index) =>
-                      `${typesCodegen.ethereumToAsc(
-                        isTry ? `value[${index}]` : `result[${index}]`,
-                        output.get('type'),
-                        util.isTupleArrayType(output.get('type'))
-                          ? this._tupleTypeName(
-                              output,
-                              index,
-                              tupleResultParentType,
-                              this.abi.name,
-                            )
-                          : '',
-                      )} ${
-                        util.isTupleType(output.get('type'))
-                          ? 'as ' +
-                            this._tupleTypeName(
-                              output,
-                              index,
-                              tupleResultParentType,
-                              this.abi.name,
-                            )
-                          : ''
-                      }`,
-                  )
+                  .map((output, index) => {
+                    const val = typesCodegen.ethereumToAsc(
+                      isTry ? `value[${index}]` : `result[${index}]`,
+                      output.get('type'),
+                      util.isTupleArrayType(output.get('type'))
+                        ? this._tupleTypeName(
+                            output,
+                            index,
+                            tupleResultParentType,
+                            this.abi.name,
+                          )
+                        : '',
+                    )
+                    return util.isTupleType(output.get('type'))
+                      ? `changetype<${this._tupleTypeName(
+                          output,
+                          index,
+                          tupleResultParentType,
+                          this.abi.name,
+                        )}>(${val})`
+                      : val
+                  })
                   .join(', ')}
               )`
-      } ${util.isTupleType(outputs.get(0).get('type')) ? 'as ' + returnType : ''} )`
+
+        const isTuple = util.isTupleType(outputs.get(0).get('type'))
+        return `${methodBody} ${
+          isTuple ? `changetype<${returnType}>(${returnVal})` : returnVal
+        })`
+      }
 
       // Generate method with an without `try_`.
       klass.addMethod(
