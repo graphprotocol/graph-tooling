@@ -6,8 +6,13 @@ type Schema {
   file: File!
 }
 
-union DataSource = EthereumContractDataSource
-union DataSourceTemplate = EthereumContractDataSourceTemplate
+union DataSource =
+  EthereumContractDataSource |
+  NearContractDataSource
+
+union DataSourceTemplate =
+  EthereumContractDataSourceTemplate |
+  NearContractDataSourceTemplate
 
 type EthereumContractDataSource {
   kind: String!
@@ -17,14 +22,27 @@ type EthereumContractDataSource {
   mapping: EthereumContractMapping!
 }
 
+type NearContractDataSource {
+  kind: String!
+  name: String!
+  network: String
+  source: NearContractSource!
+  mapping: NearContractMapping!
+}
+
 type EthereumContractSource {
   address: String
   abi: String!
   startBlock: BigInt
 }
 
+type NearContractSource {
+  address: String
+  startBlock: BigInt
+}
+
 type EthereumContractMapping {
-  kind: String!
+  kind: String
   apiVersion: String!
   language: String!
   file: File!
@@ -33,6 +51,16 @@ type EthereumContractMapping {
   blockHandlers: [EthereumBlockHandler!]
   callHandlers: [EthereumCallHandler!]
   eventHandlers: [EthereumContractEventHandler!]
+}
+
+type NearContractMapping {
+  apiVersion: String!
+  language: String!
+  file: File!
+  entities: [String!]!
+  blockHandlers: [NearBlockHandler!]
+  receiptHandlers: [NearReceiptHandler!]
+  functionCallHandlers: [NearFunctionCallHandler!]
 }
 
 type EthereumContractAbi {
@@ -49,14 +77,27 @@ type EthereumBlockFilter {
   kind: String!
 }
 
+type NearBlockHandler {
+  handler: String!
+}
+
 type EthereumCallHandler {
   function: String!
+  handler: String!
+}
+
+type NearReceiptHandler {
   handler: String!
 }
 
 type EthereumContractEventHandler {
   event: String!
   topic0: String
+  handler: String!
+}
+
+type NearFunctionCallHandler {
+  function: String!
   handler: String!
 }
 
@@ -82,6 +123,13 @@ type EthereumContractDataSourceTemplate {
   network: String
   source: EthereumContractSourceTemplate!
   mapping: EthereumContractMapping!
+}
+
+type NearContractDataSourceTemplate {
+  kind: String!
+  name: String!
+  network: String
+  mapping: NearContractMapping!
 }
 
 type EthereumContractSourceTemplate {

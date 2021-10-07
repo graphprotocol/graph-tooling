@@ -51,13 +51,24 @@ const validators = immutable.fromJS({
   ScalarTypeDefinition: (value, ctx) =>
     validators.get(ctx.getIn(['type', 'name', 'value']))(value, ctx),
 
-  UnionTypeDefinition: (value, ctx) =>
-    ctx
+  UnionTypeDefinition: (value, ctx) => {
+    const unionVariants = ctx
       .getIn(['type', 'types'])
-      .reduce(
-        (errors, type) => errors.concat(validateValue(value, ctx.set('type', type))),
-        List(),
-      ),
+
+    let errors = List()
+
+    for (const variantType of unionVariants) {
+      const variantErrors = validateValue(value, ctx.set('type', variantType))
+      // No errors found, union variant matched, early return
+      if (variantErrors.isEmpty()) {
+        return List()
+      }
+      errors = errors.push(variantErrors)
+    }
+
+    // Return errors from variant that matched the most
+    return List(errors.minBy(variantErrors => variantErrors.count()))
+  },
 
   NamedType: (value, ctx) =>
     validateValue(
@@ -199,9 +210,15 @@ const validateValue = (value, ctx) => {
   }
 }
 
-const validateDataSourceNetworks = value => {
-  let networks = [...value.dataSources, ...(value.templates || [])]
-    .filter(dataSource => dataSource.kind === 'ethereum/contract')
+const availableNetworks = immutable.fromJS({
+  // `ethereum/contract` is kept for backwards compatibility.
+  // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
+  ethereum: ['ethereum', 'ethereum/contract'],
+  near: ['near'],
+})
+
+const validateDataSourceForNetwork = (dataSources, network) =>
+  dataSources.filter(dataSource => availableNetworks.get(network, List()).includes(dataSource.kind))
     .reduce(
       (networks, dataSource) =>
         networks.update(dataSource.network, dataSources =>
@@ -210,25 +227,35 @@ const validateDataSourceNetworks = value => {
       immutable.OrderedMap(),
     )
 
-  return networks.size > 1
-    ? immutable.fromJS([
+const validateDataSourceNetworks = value => {
+  const dataSources = [...value.dataSources, ...(value.templates || [])]
+
+  const ethereumNetworks = validateDataSourceForNetwork(dataSources, 'ethereum')
+  const nearNetworks = validateDataSourceForNetwork(dataSources, 'near')
+
+  for (const networks of [ethereumNetworks, nearNetworks]) {
+    if (networks.size > 1) {
+      return immutable.fromJS([
         {
           path: [],
           message: `Conflicting networks used in data sources and templates:
 ${networks
   .map(
     (dataSources, network) =>
-      `  ${
+    `  ${
         network === undefined
           ? 'Data sources and templates having no network set'
           : `Data sources and templates using '${network}'`
-      }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
+        }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
   )
   .join('\n')}
 Recommendation: Make all data sources and templates use the same network name.`,
         },
       ])
-    : List()
+    }
+  }
+
+  return List()
 }
 
 const validateManifest = (value, type, schema, { resolveFile }) => {
