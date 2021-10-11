@@ -9,11 +9,11 @@ const {
   getSubgraphBasename,
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
+const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
-const { loadManifest } = require('../migrations/util/load-manifest')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
 const ABI = require('../abi')
 
@@ -613,13 +613,9 @@ const initSubgraphFromExample = async (
   try {
     // It doesn't matter if we changed the URL we clone the YAML,
     // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
-    let manifestFile = await loadManifest(path.join(directory, 'subgraph.yaml'))
+    const dataSourcesAndTemplates = await getDataSourcesAndTemplates(path.join(directory, 'subgraph.yaml'))
 
-    for (const { network } of manifestFile.dataSources || []) {
-      validateStudioNetwork({ studio, product, network })
-    }
-
-    for (const { network } of manifestFile.templates || []) {
+    for (const { network } of dataSourcesAndTemplates) {
       validateStudioNetwork({ studio, product, network })
     }
   } catch (e) {

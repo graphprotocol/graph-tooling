@@ -11,8 +11,8 @@ const { withSpinner } = require('../command-helpers/spinner')
 const { validateSubgraphName } = require('../command-helpers/subgraph')
 const { DEFAULT_IPFS_URL } = require('../command-helpers/ipfs')
 const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
+const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
-const { loadManifest } = require('../migrations/util/load-manifest')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -128,13 +128,9 @@ module.exports = {
         : filesystem.resolve('subgraph.yaml')
 
     try {
-      let manifestFile = await loadManifest(manifest)
+      const dataSourcesAndTemplates = await getDataSourcesAndTemplates(manifest)
 
-      for (const { network } of manifestFile.dataSources || []) {
-        validateStudioNetwork({ studio, product, network })
-      }
-
-      for (const { network } of manifestFile.templates || []) {
+      for (const { network } of dataSourcesAndTemplates) {
         validateStudioNetwork({ studio, product, network })
       }
     } catch (e) {
