@@ -13,6 +13,7 @@ const { DEFAULT_IPFS_URL } = require('../command-helpers/ipfs')
 const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
 const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
+const Protocol = require('../protocols')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -188,6 +189,7 @@ module.exports = {
       return
     }
 
+    let protocol
     try {
       // Checks to make sure deploy doesn't run against
       // older subgraphs (both apiVersion and graph-ts version).
@@ -197,6 +199,10 @@ module.exports = {
       // using the wrong AssemblyScript compiler.
       await assertManifestApiVersion(manifest, '0.0.5')
       await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
+
+      const dataSourcesAndTemplates = await getDataSourcesAndTemplates(manifest)
+
+      protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     } catch (e) {
       print.error(e.message)
       process.exitCode = 1
@@ -211,7 +217,8 @@ module.exports = {
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
-      blockIpfsMethods: isStudio  // Network does not support publishing subgraphs with IPFS methods
+      blockIpfsMethods: isStudio,  // Network does not support publishing subgraphs with IPFS methods
+      protocol,
     })
 
     // Exit with an error code if the compiler couldn't be created
