@@ -9,7 +9,6 @@ const toolbox = require('gluegun/toolbox')
 const { step, withSpinner } = require('../command-helpers/spinner')
 const Subgraph = require('../subgraph')
 const Watcher = require('../watcher')
-const ABI = require('../protocols/ethereum/abi')
 const { applyMigrations } = require('../migrations')
 const asc = require('./asc')
 
@@ -53,6 +52,7 @@ class Compiler {
     this.globalsFile = path.join(globalsLib, globalsFile)
 
     this.protocol = this.options.protocol
+    this.ABI = this.protocol.getABI()
 
     process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
@@ -419,7 +419,7 @@ class Compiler {
                   abis.map(abi =>
                     abi.update('file', abiFile => {
                       abiFile = path.resolve(this.sourceDir, abiFile)
-                      let abiData = ABI.load(abi.get('name'), abiFile)
+                      let abiData = this.ABI.load(abi.get('name'), abiFile)
                       return path.relative(
                         this.options.outputDir,
                         this._writeSubgraphFile(
@@ -460,7 +460,7 @@ class Compiler {
                     abis.map(abi =>
                       abi.update('file', abiFile => {
                         abiFile = path.resolve(this.sourceDir, abiFile)
-                        let abiData = ABI.load(abi.get('name'), abiFile)
+                        let abiData = this.ABI.load(abi.get('name'), abiFile)
                         return path.relative(
                           this.options.outputDir,
                           this._writeSubgraphFile(
