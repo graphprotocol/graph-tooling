@@ -2,6 +2,8 @@ const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const NearTemplateCodeGen = require('./near/codegen/template')
 const EthereumABI = require('./ethereum/abi')
+const EthereumSubgraph = require('./ethereum/subgraph')
+const NearSubgraph = require('./near/subgraph')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -54,6 +56,16 @@ module.exports = class Protocol {
         return EthereumABI
       case 'near':
         return null
+    }
+  }
+
+  getSubgraph(options) {
+    switch (this.name) {
+      case 'ethereum':
+      case 'ethereum/contract':
+        return new EthereumSubgraph(options)
+      case 'near':
+        return new NearSubgraph(options)
     }
   }
 }

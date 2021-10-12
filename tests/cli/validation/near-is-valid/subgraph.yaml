@@ -7,7 +7,7 @@ dataSources:
   - kind: near
     name: NearSubgraph
     source:
-      address: wnear.flux-dev 
+      address: wnear.flux-dev
       startBlock: 1
     mapping:
       apiVersion: 0.0.5

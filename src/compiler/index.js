@@ -106,8 +106,10 @@ class Compiler {
   }
 
   async loadSubgraph({ quiet } = { quiet: false }) {
+    const subgraphLoadOptions = { protocol: this.protocol, skipValidation: false }
+
     if (quiet) {
-      return Subgraph.load(this.options.subgraphManifest).result
+      return Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions).result
     } else {
       const manifestPath = this.displayPath(this.options.subgraphManifest)
 
@@ -116,7 +118,7 @@ class Compiler {
         `Failed to load subgraph from ${manifestPath}`,
         `Warnings loading subgraph from ${manifestPath}`,
         async spinner => {
-          return Subgraph.load(this.options.subgraphManifest)
+          return Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)
         },
       )
     }

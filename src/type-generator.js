@@ -78,10 +78,12 @@ module.exports = class TypeGenerator {
   }
 
   async loadSubgraph({ quiet } = { quiet: false }) {
+    const subgraphLoadOptions = { protocol: this.protocol, skipValidation: false }
+
     if (quiet) {
       return this.options.subgraph
         ? this.options.subgraph
-        : Subgraph.load(this.options.subgraphManifest).result
+        : Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions).result
     } else {
       const manifestPath = TypeGenerator.displayPath(this.options.subgraphManifest)
 
@@ -92,7 +94,7 @@ module.exports = class TypeGenerator {
         async spinner => {
           return this.options.subgraph
             ? this.options.subgraph
-            : Subgraph.load(this.options.subgraphManifest)
+            : Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)
         },
       )
     }
