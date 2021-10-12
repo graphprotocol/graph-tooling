@@ -2,8 +2,8 @@ const fs = require('fs-extra')
 const path = require('path')
 const immutable = require('immutable')
 
-const ABI = require('../protocols/ethereum/abi')
-const ts = require('./typescript')
+const ABI = require('../abi')
+const ts = require('../../../codegen/typescript')
 const AbiCodeGenerator = require('./abi')
 
 let tempdir

@@ -1,9 +1,9 @@
 const immutable = require('immutable')
 
-const tsCodegen = require('./typescript')
-const typesCodegen = require('./types')
-const util = require('./util')
-const ABI = require('../protocols/ethereum/abi')
+const tsCodegen = require('../../../codegen/typescript')
+const typesCodegen = require('../../../codegen/types')
+const util = require('../../../codegen/util')
+const ABI = require('../abi')
 
 module.exports = class AbiCodeGenerator {
   constructor(abi) {
@@ -48,7 +48,7 @@ module.exports = class AbiCodeGenerator {
       setName: (fn, name) => fn.set('_alias', name),
     })
 
-    return callFunctions
+    callFunctions = callFunctions
       .map(fn => {
         let fnAlias = fn.get('_alias')
         let fnClassName = `${fnAlias.charAt(0).toUpperCase()}${fnAlias.slice(1)}Call`
@@ -141,6 +141,8 @@ module.exports = class AbiCodeGenerator {
         )
         return [klass, inputsClass, outputsClass, ...tupleClasses]
       })
+
+    return callFunctions
       .reduce(
         // flatten the array
         (array, classes) => array.concat(classes),
@@ -156,7 +158,7 @@ module.exports = class AbiCodeGenerator {
       setName: (event, name) => event.set('_alias', name),
     })
 
-    return events
+    events = events
       .map(event => {
         let eventClassName = event.get('_alias')
         let tupleClasses = []
@@ -209,6 +211,8 @@ module.exports = class AbiCodeGenerator {
         )
         return [klass, paramsClass, ...tupleClasses]
       })
+
+    return events
       .reduce(
         // flatten the array
         (array, classes) => array.concat(classes),
