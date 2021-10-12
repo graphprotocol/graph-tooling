@@ -156,7 +156,7 @@ module.exports = class TypeGenerator {
               `${template.get('name')}`,
             )
 
-            let codeGenerator = new DataSourceTemplateCodeGenerator(template)
+            let codeGenerator = new DataSourceTemplateCodeGenerator(template, this.protocol)
 
             // Only generate module imports once, because they are identical for
             // all types generated for data source templates.

@@ -1,4 +1,6 @@
 const EthereumTypeGenerator = require('./ethereum/type-generator')
+const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
+const NearTemplateCodeGen = require('./near/codegen/template')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -27,6 +29,20 @@ module.exports = class Protocol {
         return new EthereumTypeGenerator(options)
       case 'near':
         return null
+    }
+  }
+
+  getTemplateCodeGen(template) {
+    switch (this.name) {
+      case 'ethereum':
+      case 'ethereum/contract':
+        return new EthereumTemplateCodeGen(template)
+      case 'near':
+        return new NearTemplateCodeGen(template)
+      default:
+        throw new Error(
+          `Data sources with kind '${this.name}' are not supported yet`,
+        )
     }
   }
 }
