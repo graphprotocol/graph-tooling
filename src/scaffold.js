@@ -6,7 +6,7 @@ const pkginfo = require('pkginfo')(module)
 const { getSubgraphBasename } = require('./command-helpers/subgraph')
 const { step } = require('./command-helpers/spinner')
 const { ascTypeForEthereum, valueTypeForAsc } = require('./codegen/types')
-const ABI = require('./abi')
+const ABI = require('./protocols/ethereum/abi')
 const AbiCodeGenerator = require('./codegen/abi')
 const util = require('./codegen/util')
 

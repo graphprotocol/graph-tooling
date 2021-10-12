@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const immutable = require('immutable')
 const path = require('path')
 
-const AbiCodeGenerator = require('./codegen/abi')
+const AbiCodeGenerator = require('../../codegen/abi')
 
 const TUPLE_ARRAY_PATTERN = /^tuple\[([0-9]*)\]$/
 

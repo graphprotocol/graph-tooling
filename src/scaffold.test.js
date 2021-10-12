@@ -1,4 +1,4 @@
-const ABI = require('./abi')
+const ABI = require('./protocols/ethereum/abi')
 const immutable = require('immutable')
 const {
   generateEventFieldAssignments,

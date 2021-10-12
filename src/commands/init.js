@@ -15,7 +15,7 @@ const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
-const ABI = require('../abi')
+const ABI = require('../protocols/ethereum/abi')
 
 const networkChoices = [
   'mainnet',

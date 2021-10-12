@@ -3,7 +3,7 @@ const immutable = require('immutable')
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
 const util = require('./util')
-const ABI = require('../abi')
+const ABI = require('../protocols/ethereum/abi')
 
 module.exports = class AbiCodeGenerator {
   constructor(abi) {

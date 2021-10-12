@@ -9,7 +9,7 @@ const toolbox = require('gluegun/toolbox')
 const { step, withSpinner } = require('../command-helpers/spinner')
 const Subgraph = require('../subgraph')
 const Watcher = require('../watcher')
-const ABI = require('../abi')
+const ABI = require('../protocols/ethereum/abi')
 const { applyMigrations } = require('../migrations')
 const asc = require('./asc')
 

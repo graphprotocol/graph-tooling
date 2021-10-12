@@ -5,7 +5,7 @@ let yaml = require('yaml')
 let { strOptions } = require('yaml/types')
 let graphql = require('graphql/language')
 let validation = require('./validation')
-let ABI = require('./abi')
+let ABI = require('./protocols/ethereum/abi')
 
 const throwCombinedError = (filename, errors) => {
   throw new Error(

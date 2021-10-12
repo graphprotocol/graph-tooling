@@ -2,7 +2,9 @@ const chalk = require('chalk')
 const path = require('path')
 
 const TypeGenerator = require('../type-generator')
+const Protocol = require('../protocols')
 const { fixParameters } = require('../command-helpers/gluegun')
+const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
 const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
 
 const HELP = `
@@ -60,6 +62,7 @@ module.exports = {
       return
     }
 
+    let protocol
     try {
       // Checks to make sure codegen doesn't run against
       // older subgraphs (both apiVersion and graph-ts version).
@@ -69,6 +72,10 @@ module.exports = {
       // the wrong AssemblyScript version.
       await assertManifestApiVersion(manifest, '0.0.5')
       await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
+
+      const dataSourcesAndTemplates = await getDataSourcesAndTemplates(manifest)
+
+      protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     } catch (e) {
       print.error(e.message)
       process.exitCode = 1
@@ -79,6 +86,7 @@ module.exports = {
       subgraphManifest: manifest,
       outputDir: outputDir,
       skipMigrations,
+      protocol,
     })
 
     // Watch working directory for file updates or additions, trigger
