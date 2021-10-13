@@ -243,7 +243,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
-      this._validateMappingContent(inputFile)
+      this._validateMappingContent(absoluteMappingPath)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -308,7 +308,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
-      this._validateMappingContent(inputFile)
+      this._validateMappingContent(absoluteMappingPath)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
