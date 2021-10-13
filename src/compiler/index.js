@@ -368,7 +368,7 @@ class Compiler {
     }
   }
 
-  async _validateMappingContent(filePath) {
+  _validateMappingContent(filePath) {
     const data = fs.readFileSync(filePath)
     if (
       this.blockIpfsMethods && 
