@@ -1,4 +1,8 @@
 type MyEntity @entity {
   id: ID!
-  x: BigDecimal!
+  x: Account!
+}
+
+type Account @entity {
+  id: ID!
 }
