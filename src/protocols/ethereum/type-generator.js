@@ -2,9 +2,10 @@ const fs = require('fs-extra')
 const path = require('path')
 const immutable = require('immutable')
 const prettier = require('prettier')
-const TypeGenerator = require('../../type-generator')
 const ABI = require('./abi')
 const { step, withSpinner } = require('../../command-helpers/spinner')
+const { GENERATED_FILE_NOTE } = require('../../codegen/typescript')
+const { displayPath } = require('../../command-helpers/fs')
 
 module.exports = class EthereumTypeGenerator {
   constructor(options = {}) {
@@ -50,7 +51,7 @@ module.exports = class EthereumTypeGenerator {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
-        step(spinner, `Load contract ABI from`, TypeGenerator.displayPath(absolutePath))
+        step(spinner, `Load contract ABI from`, displayPath(absolutePath))
         return { dataSource: dataSource, abi: ABI.load(name, absolutePath) }
       } else {
         return { dataSource: dataSource, abi: ABI.load(name, maybeRelativePath) }
@@ -91,7 +92,7 @@ module.exports = class EthereumTypeGenerator {
         step(
           spinner,
           `Load data source template ABI from`,
-          TypeGenerator.displayPath(absolutePath),
+          displayPath(absolutePath),
         )
         return { template, abi: ABI.load(name, absolutePath) }
       } else {
@@ -120,13 +121,13 @@ module.exports = class EthereumTypeGenerator {
       step(
         spinner,
         `Generate types for contract ABI:`,
-        `${abi.abi.name} (${TypeGenerator.displayPath(abi.abi.file)})`,
+        `${abi.abi.name} (${displayPath(abi.abi.file)})`,
       )
 
       let codeGenerator = abi.abi.codeGenerator()
       let code = prettier.format(
         [
-          TypeGenerator.getGeneratedFileNote(),
+          GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
           ...codeGenerator.generateTypes(),
         ].join('\n'),
@@ -140,7 +141,7 @@ module.exports = class EthereumTypeGenerator {
         abi.dataSource.get('name'),
         `${abi.abi.name}.ts`,
       )
-      step(spinner, `Write types to`, TypeGenerator.displayPath(outputFile))
+      step(spinner, `Write types to`, displayPath(outputFile))
       await fs.mkdirs(path.dirname(outputFile))
       await fs.writeFile(outputFile, code)
     } catch (e) {
@@ -169,7 +170,7 @@ module.exports = class EthereumTypeGenerator {
       step(
         spinner,
         `Generate types for data source template ABI:`,
-        `${abi.template.get('name')} > ${abi.abi.name} (${TypeGenerator.displayPath(
+        `${abi.template.get('name')} > ${abi.abi.name} (${displayPath(
           abi.abi.file,
         )})`,
       )
@@ -177,7 +178,7 @@ module.exports = class EthereumTypeGenerator {
       let codeGenerator = abi.abi.codeGenerator()
       let code = prettier.format(
         [
-          TypeGenerator.getGeneratedFileNote(),
+          GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
           ...codeGenerator.generateTypes(),
         ].join('\n'),
@@ -192,7 +193,7 @@ module.exports = class EthereumTypeGenerator {
         abi.template.get('name'),
         `${abi.abi.name}.ts`,
       )
-      step(spinner, `Write types to`, TypeGenerator.displayPath(outputFile))
+      step(spinner, `Write types to`, displayPath(outputFile))
       await fs.mkdirs(path.dirname(outputFile))
       await fs.writeFile(outputFile, code)
     } catch (e) {
