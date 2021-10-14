@@ -53,16 +53,19 @@ function getPlatform() {
   const type = os.type();
   const arch = os.arch();
   const release = os.release();
+  const cpuCore = os.cpus()[0];
   const majorVersion = release.substr(0, release.indexOf('.'));
 
-  if (arch === 'x64') {
+  if (arch === 'x64' || (arch === 'arm64' && cpuCore.model.includes("M1"))) {
     if (type === 'Darwin') {
       if (majorVersion === '19') {
         return 'binary-macos-10.15';
       } else if (majorVersion === '18') {
         return 'binary-macos-10.14';
+      } else if (cpuCore.model.includes("M1")) {
+        return 'binary-macos-11-m1';
       }
-      return 'binary-macos-11'
+      return 'binary-macos-11';
     } else if (type === 'Linux') {
       if (majorVersion === '18') {
         return 'binary-linux-18';
