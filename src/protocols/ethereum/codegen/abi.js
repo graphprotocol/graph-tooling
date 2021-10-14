@@ -3,7 +3,6 @@ const immutable = require('immutable')
 const tsCodegen = require('../../../codegen/typescript')
 const typesCodegen = require('../../../codegen/types')
 const util = require('../../../codegen/util')
-const ABI = require('../abi')
 
 module.exports = class AbiCodeGenerator {
   constructor(abi) {
