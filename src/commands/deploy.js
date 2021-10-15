@@ -11,7 +11,7 @@ const { withSpinner } = require('../command-helpers/spinner')
 const { validateSubgraphName } = require('../command-helpers/subgraph')
 const { DEFAULT_IPFS_URL } = require('../command-helpers/ipfs')
 const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
-const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
+const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
 const Protocol = require('../protocols')
 
@@ -129,7 +129,7 @@ module.exports = {
         : filesystem.resolve('subgraph.yaml')
 
     try {
-      const dataSourcesAndTemplates = await getDataSourcesAndTemplates(manifest)
+      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
 
       for (const { network } of dataSourcesAndTemplates) {
         validateStudioNetwork({ studio, product, network })
@@ -200,7 +200,7 @@ module.exports = {
       await assertManifestApiVersion(manifest, '0.0.5')
       await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
 
-      const dataSourcesAndTemplates = await getDataSourcesAndTemplates(manifest)
+      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
 
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     } catch (e) {

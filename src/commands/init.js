@@ -9,7 +9,7 @@ const {
   getSubgraphBasename,
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
-const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
+const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -614,7 +614,7 @@ const initSubgraphFromExample = async (
   try {
     // It doesn't matter if we changed the URL we clone the YAML,
     // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
-    const dataSourcesAndTemplates = await getDataSourcesAndTemplates(path.join(directory, 'subgraph.yaml'))
+    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(path.join(directory, 'subgraph.yaml'))
 
     for (const { network } of dataSourcesAndTemplates) {
       validateStudioNetwork({ studio, product, network })

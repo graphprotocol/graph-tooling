@@ -1,6 +1,6 @@
 const immutable = require('immutable')
 const ABI = require('./abi')
-const { collectDataSources, collectDataSourceTemplates } = require('../../command-helpers/data-sources')
+const DataSourceExtractor = require('../../command-helpers/data-sources')
 const { validateContractAddresses } = require('../../validation')
 
 module.exports = class EthereumSubgraph {
@@ -17,10 +17,9 @@ module.exports = class EthereumSubgraph {
   }
 
   validateAbis() {
-    let dataSources = collectDataSources(this.manifest, 'ethereum/contract')
-    let dataSourceTemplates = collectDataSourceTemplates(this.manifest, 'ethereum/contract')
+    const dataSourcesAndTemplates = DataSourceExtractor.fromManifest(this.manifest, 'ethereum/contract')
 
-    return dataSources.concat(dataSourceTemplates).reduce(
+    return dataSourcesAndTemplates.reduce(
       (errors, dataSourceOrTemplate) =>
         errors.concat(
           this.validateDataSourceAbis(
@@ -84,11 +83,9 @@ ${abiNames
   }
 
   validateEvents() {
-    let dataSources = collectDataSources(this.manifest, 'ethereum/contract')
-    let dataSourceTemplates = collectDataSourceTemplates(this.manifest, 'ethereum/contract')
+    const dataSourcesAndTemplates = DataSourceExtractor.fromManifest(this.manifest, 'ethereum/contract')
 
-    return dataSources
-      .concat(dataSourceTemplates)
+    return dataSourcesAndTemplates
       .reduce((errors, dataSourceOrTemplate) => {
         return errors.concat(
           this.validateDataSourceEvents(

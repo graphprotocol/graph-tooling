@@ -2,7 +2,7 @@ const chalk = require('chalk')
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
-const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
+const DataSourcesExtractor = require('../command-helpers/data-sources')
 const Protocol = require('../protocols')
 
 const HELP = `
@@ -77,7 +77,7 @@ module.exports = {
 
     let protocol
     try {
-      const dataSourcesAndTemplates = await getDataSourcesAndTemplates(manifest)
+      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
 
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     } catch (e) {

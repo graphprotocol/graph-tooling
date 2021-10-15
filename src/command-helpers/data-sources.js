@@ -1,43 +1,38 @@
 const immutable = require('immutable')
 const { loadManifest } = require('../migrations/util/load-manifest')
 
-// From file path
-const getDataSourcesAndTemplates = async manifestPath => {
+// Loads manifest from file path and returns all:
+// - data sources
+// - templates
+// In a single list.
+const fromFilePath = async manifestPath => {
   const { dataSources = [], templates = [] } = await loadManifest(manifestPath)
 
   return dataSources.concat(templates)
 }
 
-// From in memory immutable data structure
-const collectDataSources = (manifest, protocolName) =>
+const extractDataSourceByType = (manifest, dataSourceType, protocolName) =>
   manifest
-    .get('dataSources')
+    .get(dataSourceType, immutable.List())
     .reduce(
       (dataSources, dataSource, dataSourceIndex) =>
       dataSource.get('kind') === protocolName
       ? dataSources.push(
-        immutable.Map({ path: ['dataSources', dataSourceIndex], dataSource }),
+        immutable.Map({ path: [dataSourceType, dataSourceIndex], dataSource }),
       )
       : dataSources,
       immutable.List(),
     )
 
-const collectDataSourceTemplates = (manifest, protocolName) =>
-  manifest.get('templates', immutable.List()).reduce(
-    (templates, template, templateIndex) =>
-    template.get('kind') === protocolName
-    ? templates.push(
-      immutable.Map({
-        path: ['templates', templateIndex],
-        dataSource: template,
-      }),
-    )
-    : templates,
-    immutable.List(),
-  )
+// Extracts data sources and templates from a immutable manifest data structure
+const fromManifest = (manifest, protocolName) => {
+  const dataSources = extractDataSourceByType(manifest, 'dataSources', protocolName)
+  const templates = extractDataSourceByType(manifest, 'templates', protocolName)
+
+  return dataSources.concat(templates)
+}
 
 module.exports = {
-  getDataSourcesAndTemplates,
-  collectDataSources,
-  collectDataSourceTemplates,
+  fromFilePath,
+  fromManifest,
 }

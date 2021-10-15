@@ -4,7 +4,7 @@ const path = require('path')
 const TypeGenerator = require('../type-generator')
 const Protocol = require('../protocols')
 const { fixParameters } = require('../command-helpers/gluegun')
-const { getDataSourcesAndTemplates } = require('../command-helpers/data-sources')
+const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
 
 const HELP = `
@@ -73,7 +73,7 @@ module.exports = {
       await assertManifestApiVersion(manifest, '0.0.5')
       await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
 
-      const dataSourcesAndTemplates = await getDataSourcesAndTemplates(manifest)
+      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
 
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     } catch (e) {
