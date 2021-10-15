@@ -87,64 +87,6 @@ module.exports = class Subgraph {
     }
   }
 
-  static collectDataSources(manifest, protocolName) {
-    return manifest
-      .get('dataSources')
-      .reduce(
-        (dataSources, dataSource, dataSourceIndex) =>
-          dataSource.get('kind') === protocolName
-            ? dataSources.push(
-                immutable.Map({ path: ['dataSources', dataSourceIndex], dataSource }),
-              )
-            : dataSources,
-        immutable.List(),
-      )
-  }
-
-  static collectDataSourceTemplates(manifest, protocolName) {
-    return manifest.get('templates', immutable.List()).reduce(
-      (templates, template, templateIndex) =>
-        template.get('kind') === protocolName
-          ? templates.push(
-              immutable.Map({
-                path: ['templates', templateIndex],
-                dataSource: template,
-              }),
-            )
-          : templates,
-      immutable.List(),
-    )
-  }
-
-  static validateContractAddresses(manifest, protocolName, validator, errorMessage) {
-    return manifest
-      .get('dataSources')
-      .filter(dataSource => dataSource.get('kind') === protocolName)
-      .reduce((errors, dataSource, dataSourceIndex) => {
-        let path = ['dataSources', dataSourceIndex, 'source', 'address']
-
-        // No need to validate if the source has no contract address
-        if (!dataSource.get('source').has('address')) {
-          return errors
-        }
-
-        let address = dataSource.getIn(['source', 'address'])
-
-        // Validate whether the address is valid
-        if (validator(address)) {
-          return errors
-        } else {
-          return errors.push(
-            immutable.fromJS({
-              path,
-              message: `\
-Contract address is invalid: ${address}${errorMessage ? `\n${errorMessage}` : ''}`,
-            }),
-          )
-        }
-      }, immutable.List())
-  }
-
   static validateRepository(manifest, { resolveFile }) {
     return manifest.get('repository') !==
       'https://github.com/graphprotocol/example-subgraph'

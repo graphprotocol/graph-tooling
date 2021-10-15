@@ -1,5 +1,5 @@
 const immutable = require('immutable')
-const Subgraph = require('../../subgraph')
+const { validateContractAddresses } = require('../../validation')
 
 module.exports = class NearSubgraph {
   constructor(options = {}) {
@@ -20,7 +20,7 @@ module.exports = class NearSubgraph {
       accountId.length <= MAXIMUM_ACCOUNT_ID_LENGTH
     const nearAccountIdPattern = /^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$/
 
-    return Subgraph.validateContractAddresses(
+    return validateContractAddresses(
       this.manifest,
       'near',
       accountId => validateLength(accountId) && nearAccountIdPattern.test(accountId),
