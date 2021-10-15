@@ -38,7 +38,7 @@ const buildCombinedWarning = (filename, warnings) =>
     : null
 
 module.exports = class Subgraph {
-  static async validate(data, { resolveFile }) {
+  static async validate(data, protocol, { resolveFile }) {
     // Parse the default subgraph schema
     let schema = graphql.parse(
       await fs.readFile(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8'),
@@ -50,7 +50,7 @@ module.exports = class Subgraph {
     })
 
     // Validate the subgraph manifest using this schema
-    return validation.validateManifest(data, rootType, schema, { resolveFile })
+    return validation.validateManifest(data, rootType, schema, protocol, { resolveFile })
   }
 
   static validateSchema(manifest, { resolveFile }) {
@@ -115,10 +115,10 @@ Please update it to tell users more about your subgraph.`,
       : immutable.List()
   }
 
-  static validateHandlers(manifest, protocolName, protocolSubgraph) {
+  static validateHandlers(manifest, protocol, protocolSubgraph) {
     return manifest
       .get('dataSources')
-      .filter(dataSource => dataSource.get('kind') === protocolName)
+      .filter(dataSource => protocol.isValidKindName(dataSource.get('kind')))
       .reduce((errors, dataSource, dataSourceIndex) => {
         let path = ['dataSources', dataSourceIndex, 'mapping']
 
@@ -130,12 +130,14 @@ Please update it to tell users more about your subgraph.`,
           .map(handlerType => mapping.get(handlerType, immutable.List()))
           .every(handlers => handlers.isEmpty())
 
+        const handlerNamesWithoutLast = handlerTypes.pop().join(', ')
+
         return areAllHandlersEmpty
           ? errors.push(
               immutable.fromJS({
                 path: path,
                 message: `\
-Mapping has no blockHandlers, callHandlers or eventHandlers.
+Mapping has no ${handlerNamesWithoutLast} or ${handlerTypes.get(-1)}.
 At least one such handler must be defined.`,
               }),
             )
@@ -209,7 +211,7 @@ More than one template named '${name}', template names must be unique.`,
     let resolveFile = maybeRelativeFile =>
       path.resolve(path.dirname(filename), maybeRelativeFile)
 
-    let manifestErrors = await Subgraph.validate(data, { resolveFile })
+    let manifestErrors = await Subgraph.validate(data, protocol, { resolveFile })
     if (manifestErrors.size > 0) {
       throwCombinedError(filename, manifestErrors)
     }
@@ -231,7 +233,7 @@ More than one template named '${name}', template names must be unique.`,
           ...protocolSubgraph.validateManifest(),
           ...Subgraph.validateUniqueDataSourceNames(manifest),
           ...Subgraph.validateUniqueTemplateNames(manifest),
-          ...Subgraph.validateHandlers(manifest, protocol.name, protocolSubgraph),
+          ...Subgraph.validateHandlers(manifest, protocol, protocolSubgraph),
         )
 
     if (errors.size > 0) {

@@ -1,12 +1,13 @@
 const immutable = require('immutable')
 const ABI = require('./abi')
-const DataSourceExtractor = require('../../command-helpers/data-sources')
+const DataSourcesExtractor = require('../../command-helpers/data-sources')
 const { validateContractAddresses } = require('../../validation')
 
 module.exports = class EthereumSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
+    this.protocol = options.protocol
   }
 
   validateManifest() {
@@ -17,7 +18,7 @@ module.exports = class EthereumSubgraph {
   }
 
   validateAbis() {
-    const dataSourcesAndTemplates = DataSourceExtractor.fromManifest(this.manifest, 'ethereum/contract')
+    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol)
 
     return dataSourcesAndTemplates.reduce(
       (errors, dataSourceOrTemplate) =>
@@ -76,14 +77,14 @@ ${abiNames
 
     return validateContractAddresses(
       this.manifest,
-      'ethereum/contract',
+      this.protocol,
       address => ethereumAddressPattern.test(address),
       "Must be 40 hexadecimal characters, with an optional '0x' prefix.",
     )
   }
 
   validateEvents() {
-    const dataSourcesAndTemplates = DataSourceExtractor.fromManifest(this.manifest, 'ethereum/contract')
+    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol)
 
     return dataSourcesAndTemplates
       .reduce((errors, dataSourceOrTemplate) => {
@@ -144,7 +145,7 @@ ${abiEvents
   validateCallFunctions() {
     return this.manifest
       .get('dataSources')
-      .filter(dataSource => dataSource.get('kind') === 'ethereum/contract')
+      .filter(dataSource => this.protocol.isValidKindName(dataSource.get('kind')))
       .reduce((errors, dataSource, dataSourceIndex) => {
         let path = ['dataSources', dataSourceIndex, 'callHandlers']
 

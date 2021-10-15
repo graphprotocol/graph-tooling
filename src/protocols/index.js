@@ -1,3 +1,4 @@
+const immutable = require('immutable')
 const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const NearTemplateCodeGen = require('./near/codegen/template')
@@ -12,7 +13,29 @@ module.exports = class Protocol {
   }
 
   constructor(name) {
-    this.name = name
+    this.name = this.normalizeName(name)
+  }
+
+  availableProtocols() {
+    return immutable.fromJS({
+      // `ethereum/contract` is kept for backwards compatibility.
+      // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
+      ethereum: ['ethereum', 'ethereum/contract'],
+      near: ['near'],
+    })
+  }
+
+  normalizeName(name) {
+    return this.availableProtocols()
+      .findKey(possibleNames => possibleNames.includes(name))
+  }
+
+  // Receives a data source kind, and checks if it's valid
+  // for the given protocol instance (this).
+  isValidKindName(kind) {
+    return this.availableProtocols()
+      .get(this.name, immutable.List())
+      .includes(kind)
   }
 
   hasABIs() {
@@ -59,13 +82,15 @@ module.exports = class Protocol {
     }
   }
 
-  getSubgraph(options) {
+  getSubgraph(options = {}) {
+    const optionsWithProtocol = { ...options, protocol: this }
+
     switch (this.name) {
       case 'ethereum':
       case 'ethereum/contract':
-        return new EthereumSubgraph(options)
+        return new EthereumSubgraph(optionsWithProtocol)
       case 'near':
-        return new NearSubgraph(options)
+        return new NearSubgraph(optionsWithProtocol)
     }
   }
 }

@@ -11,12 +11,12 @@ const fromFilePath = async manifestPath => {
   return dataSources.concat(templates)
 }
 
-const extractDataSourceByType = (manifest, dataSourceType, protocolName) =>
+const extractDataSourceByType = (manifest, dataSourceType, protocol) =>
   manifest
     .get(dataSourceType, immutable.List())
     .reduce(
       (dataSources, dataSource, dataSourceIndex) =>
-      dataSource.get('kind') === protocolName
+      protocol.isValidKindName(dataSource.get('kind'))
       ? dataSources.push(
         immutable.Map({ path: [dataSourceType, dataSourceIndex], dataSource }),
       )
@@ -25,9 +25,9 @@ const extractDataSourceByType = (manifest, dataSourceType, protocolName) =>
     )
 
 // Extracts data sources and templates from a immutable manifest data structure
-const fromManifest = (manifest, protocolName) => {
-  const dataSources = extractDataSourceByType(manifest, 'dataSources', protocolName)
-  const templates = extractDataSourceByType(manifest, 'templates', protocolName)
+const fromManifest = (manifest, protocol) => {
+  const dataSources = extractDataSourceByType(manifest, 'dataSources', protocol)
+  const templates = extractDataSourceByType(manifest, 'templates', protocol)
 
   return dataSources.concat(templates)
 }

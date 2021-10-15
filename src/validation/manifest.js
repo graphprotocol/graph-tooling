@@ -210,15 +210,8 @@ const validateValue = (value, ctx) => {
   }
 }
 
-const availableNetworks = immutable.fromJS({
-  // `ethereum/contract` is kept for backwards compatibility.
-  // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
-  ethereum: ['ethereum', 'ethereum/contract'],
-  near: ['near'],
-})
-
-const validateDataSourceForNetwork = (dataSources, network) =>
-  dataSources.filter(dataSource => availableNetworks.get(network, List()).includes(dataSource.kind))
+const validateDataSourceForNetwork = (dataSources, protocol) =>
+  dataSources.filter(dataSource => protocol.isValidKindName(dataSource.kind))
     .reduce(
       (networks, dataSource) =>
         networks.update(dataSource.network, dataSources =>
@@ -227,38 +220,37 @@ const validateDataSourceForNetwork = (dataSources, network) =>
       immutable.OrderedMap(),
     )
 
-const validateDataSourceNetworks = value => {
+const validateDataSourceNetworks = (value, protocol) => {
   const dataSources = [...value.dataSources, ...(value.templates || [])]
 
-  const ethereumNetworks = validateDataSourceForNetwork(dataSources, 'ethereum')
-  const nearNetworks = validateDataSourceForNetwork(dataSources, 'near')
+  // Networks found valid for a protocol.
+  // By searching through all data sources and templates.
+  const networks = validateDataSourceForNetwork(dataSources, protocol)
 
-  for (const networks of [ethereumNetworks, nearNetworks]) {
-    if (networks.size > 1) {
-      return immutable.fromJS([
-        {
-          path: [],
-          message: `Conflicting networks used in data sources and templates:
+  if (networks.size > 1) {
+    return immutable.fromJS([
+      {
+        path: [],
+        message: `Conflicting networks used in data sources and templates:
 ${networks
   .map(
     (dataSources, network) =>
     `  ${
         network === undefined
           ? 'Data sources and templates having no network set'
-          : `Data sources and templates using '${network}'`
+        : `Data sources and templates using '${network}'`
         }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
   )
   .join('\n')}
 Recommendation: Make all data sources and templates use the same network name.`,
-        },
-      ])
-    }
+      },
+    ])
   }
 
   return List()
 }
 
-const validateManifest = (value, type, schema, { resolveFile }) => {
+const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
   // Validate manifest using the GraphQL schema that defines its structure
   let errors =
     value !== null && value !== undefined
@@ -287,13 +279,13 @@ const validateManifest = (value, type, schema, { resolveFile }) => {
 
   // Validate that all data sources are for the same `network` (this includes
   // _no_ network at all)
-  return validateDataSourceNetworks(value)
+  return validateDataSourceNetworks(value, protocol)
 }
 
-const validateContractAddresses = (manifest, protocolName, validator, errorMessage) =>
+const validateContractAddresses = (manifest, protocol, validator, errorMessage) =>
   manifest
     .get('dataSources')
-    .filter(dataSource => dataSource.get('kind') === protocolName)
+    .filter(dataSource => protocol.isValidKindName(dataSource.get('kind')))
     .reduce((errors, dataSource, dataSourceIndex) => {
       let path = ['dataSources', dataSourceIndex, 'source', 'address']
 

@@ -5,6 +5,7 @@ module.exports = class NearSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
+    this.protocol = options.protocol
   }
 
   validateManifest() {
@@ -22,7 +23,7 @@ module.exports = class NearSubgraph {
 
     return validateContractAddresses(
       this.manifest,
-      'near',
+      this.protocol,
       accountId => validateLength(accountId) && nearAccountIdPattern.test(accountId),
       `Must be between '${MINIMUM_ACCOUNT_ID_LENGTH}' and '${MAXIMUM_ACCOUNT_ID_LENGTH}' characters
 An Account ID consists of Account ID parts separated by '.' (dots)
