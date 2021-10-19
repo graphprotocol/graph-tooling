@@ -2,6 +2,7 @@ const { Binary } = require('binary-install-raw')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
+const semver = require('semver')
 
 const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
@@ -53,16 +54,20 @@ function getPlatform() {
   const type = os.type();
   const arch = os.arch();
   const release = os.release();
-  const majorVersion = release.substr(0, release.indexOf('.'));
+  const cpuCore = os.cpus()[0];
+  const majorVersion = semver.major(release);
+  const isM1 = cpuCore.model.includes("Apple M1");
 
-  if (arch === 'x64') {
+  if (arch === 'x64' || (arch === 'arm64' && isM1)) {
     if (type === 'Darwin') {
       if (majorVersion === '19') {
         return 'binary-macos-10.15';
       } else if (majorVersion === '18') {
         return 'binary-macos-10.14';
+      } else if (isM1) {
+        return 'binary-macos-11-m1';
       }
-      return 'binary-macos-11'
+      return 'binary-macos-11';
     } else if (type === 'Linux') {
       if (majorVersion === '18') {
         return 'binary-linux-18';
