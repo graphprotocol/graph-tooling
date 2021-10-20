@@ -19,6 +19,3 @@ dataSources:
         - handler: handleNewBlock
       receiptHandlers:
         - handler: handleReceipt
-      functionCallHandlers:
-        - function: setPurpose
-          handler: handleSetPurpose

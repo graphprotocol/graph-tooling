@@ -37,7 +37,6 @@ For further information look for: https://docs.near.org/docs/concepts/account#ac
     return immutable.List([
       'blockHandlers',
       'receiptHandlers',
-      'functionCallHandlers',
     ])
   }
 }

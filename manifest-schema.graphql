@@ -58,7 +58,6 @@ type NearContractMapping {
   entities: [String!]!
   blockHandlers: [NearBlockHandler!]
   receiptHandlers: [NearReceiptHandler!]
-  functionCallHandlers: [NearFunctionCallHandler!]
 }
 
 type EthereumContractAbi {
@@ -91,11 +90,6 @@ type NearReceiptHandler {
 type EthereumContractEventHandler {
   event: String!
   topic0: String
-  handler: String!
-}
-
-type NearFunctionCallHandler {
-  function: String!
   handler: String!
 }
 
