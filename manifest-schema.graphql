@@ -10,9 +10,7 @@ union DataSource =
   EthereumContractDataSource |
   NearContractDataSource
 
-union DataSourceTemplate =
-  EthereumContractDataSourceTemplate |
-  NearContractDataSourceTemplate
+union DataSourceTemplate = EthereumContractDataSourceTemplate
 
 type EthereumContractDataSource {
   kind: String!
@@ -123,13 +121,6 @@ type EthereumContractDataSourceTemplate {
   network: String
   source: EthereumContractSourceTemplate!
   mapping: EthereumContractMapping!
-}
-
-type NearContractDataSourceTemplate {
-  kind: String!
-  name: String!
-  network: String
-  mapping: NearContractMapping!
 }
 
 type EthereumContractSourceTemplate {

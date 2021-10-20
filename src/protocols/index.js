@@ -1,7 +1,6 @@
 const immutable = require('immutable')
 const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
-const NearTemplateCodeGen = require('./near/codegen/template')
 const EthereumABI = require('./ethereum/abi')
 const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
@@ -63,11 +62,9 @@ module.exports = class Protocol {
       case 'ethereum':
       case 'ethereum/contract':
         return new EthereumTemplateCodeGen(template)
-      case 'near':
-        return new NearTemplateCodeGen(template)
       default:
         throw new Error(
-          `Data sources with kind '${this.name}' are not supported yet`,
+          `Template data sources with kind '${this.name}' are not supported yet`,
         )
     }
   }
