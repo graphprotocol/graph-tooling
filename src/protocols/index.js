@@ -88,6 +88,10 @@ module.exports = class Protocol {
         return new EthereumSubgraph(optionsWithProtocol)
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
+      default:
+        throw new Error(
+          `Data sources with kind '${this.name}' are not supported yet`,
+        )
     }
   }
 }
