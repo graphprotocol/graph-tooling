@@ -1,7 +1,7 @@
 const immutable = require('immutable')
 const ABI = require('./abi')
 const DataSourcesExtractor = require('../../command-helpers/data-sources')
-const { validateContractAddresses } = require('../../validation')
+const { validateContractValues } = require('../../validation')
 
 module.exports = class EthereumSubgraph {
   constructor(options = {}) {
@@ -75,9 +75,10 @@ ${abiNames
   validateContractAddresses() {
     const ethereumAddressPattern = /^(0x)?[0-9a-fA-F]{40}$/
 
-    return validateContractAddresses(
+    return validateContractValues(
       this.manifest,
       this.protocol,
+      'address',
       address => ethereumAddressPattern.test(address),
       "Must be 40 hexadecimal characters, with an optional '0x' prefix.",
     )

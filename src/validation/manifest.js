@@ -282,29 +282,29 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
   return validateDataSourceNetworks(value, protocol)
 }
 
-const validateContractAddresses = (manifest, protocol, validator, errorMessage) =>
+const validateContractValues = (manifest, protocol, fieldName, validator, errorMessage) =>
   manifest
     .get('dataSources')
     .filter(dataSource => protocol.isValidKindName(dataSource.get('kind')))
     .reduce((errors, dataSource, dataSourceIndex) => {
-      let path = ['dataSources', dataSourceIndex, 'source', 'address']
+      let path = ['dataSources', dataSourceIndex, 'source', fieldName]
 
-      // No need to validate if the source has no contract address
-      if (!dataSource.get('source').has('address')) {
+      // No need to validate if the source has no contract field
+      if (!dataSource.get('source').has(fieldName)) {
         return errors
       }
 
-      let address = dataSource.getIn(['source', 'address'])
+      let contractValue = dataSource.getIn(['source', fieldName])
 
-      // Validate whether the address is valid
-      if (validator(address)) {
+      // Validate whether the contract is valid
+      if (validator(contractValue)) {
         return errors
       } else {
         return errors.push(
           immutable.fromJS({
             path,
             message: `\
-Contract address is invalid: ${address}${errorMessage ? `\n${errorMessage}` : ''}`,
+Contract ${fieldName} is invalid: ${contractValue}${errorMessage ? `\n${errorMessage}` : ''}`,
           }),
         )
       }
@@ -312,5 +312,5 @@ Contract address is invalid: ${address}${errorMessage ? `\n${errorMessage}` : ''
 
 module.exports = {
   validateManifest,
-  validateContractAddresses,
+  validateContractValues,
 }

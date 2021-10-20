@@ -1,5 +1,5 @@
 const immutable = require('immutable')
-const { validateContractAddresses } = require('../../validation')
+const { validateContractValues } = require('../../validation')
 
 module.exports = class NearSubgraph {
   constructor(options = {}) {
@@ -9,10 +9,10 @@ module.exports = class NearSubgraph {
   }
 
   validateManifest() {
-    return this.validateContractAddresses()
+    return this.validateContractAccounts()
   }
 
-  validateContractAddresses() {
+  validateContractAccounts() {
     // Reference: https://docs.near.org/docs/concepts/account#account-id-rules
     const MINIMUM_ACCOUNT_ID_LENGTH = 2
     const MAXIMUM_ACCOUNT_ID_LENGTH = 64
@@ -21,9 +21,10 @@ module.exports = class NearSubgraph {
       accountId.length <= MAXIMUM_ACCOUNT_ID_LENGTH
     const nearAccountIdPattern = /^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$/
 
-    return validateContractAddresses(
+    return validateContractValues(
       this.manifest,
       this.protocol,
+      'account',
       accountId => validateLength(accountId) && nearAccountIdPattern.test(accountId),
       `Must be between '${MINIMUM_ACCOUNT_ID_LENGTH}' and '${MAXIMUM_ACCOUNT_ID_LENGTH}' characters
 An Account ID consists of Account ID parts separated by '.' (dots)

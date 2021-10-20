@@ -37,7 +37,7 @@ type EthereumContractSource {
 }
 
 type NearContractSource {
-  address: String
+  account: String
   startBlock: BigInt
 }
 
