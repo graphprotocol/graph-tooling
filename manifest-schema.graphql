@@ -52,6 +52,7 @@ type EthereumContractMapping {
 }
 
 type NearContractMapping {
+  kind: String # This will be removed, it isn't used / it doesn't mean anything
   apiVersion: String!
   language: String!
   file: File!
