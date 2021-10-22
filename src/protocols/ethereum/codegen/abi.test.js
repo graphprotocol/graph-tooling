@@ -3,7 +3,7 @@ const path = require('path')
 const immutable = require('immutable')
 
 const ABI = require('../abi')
-const ts = require('./typescript')
+const ts = require('../../../codegen/typescript')
 const AbiCodeGenerator = require('./abi')
 
 let tempdir

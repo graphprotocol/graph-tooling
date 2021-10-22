@@ -23,8 +23,7 @@ module.exports = class SchemaCodeGenerator {
           // APIs
           'store',
 
-          // Basic Ethereum types
-          'Address',
+          // Basic Scalar types
           'Bytes',
           'BigInt',
           'BigDecimal',

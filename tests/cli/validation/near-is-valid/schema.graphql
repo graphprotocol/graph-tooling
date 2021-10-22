@@ -1,0 +1,8 @@
+type MyEntity @entity {
+  id: ID!
+  x: Account!
+}
+
+type Account @entity {
+  id: ID!
+}

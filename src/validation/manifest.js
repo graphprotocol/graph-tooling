@@ -51,13 +51,24 @@ const validators = immutable.fromJS({
   ScalarTypeDefinition: (value, ctx) =>
     validators.get(ctx.getIn(['type', 'name', 'value']))(value, ctx),
 
-  UnionTypeDefinition: (value, ctx) =>
-    ctx
+  UnionTypeDefinition: (value, ctx) => {
+    const unionVariants = ctx
       .getIn(['type', 'types'])
-      .reduce(
-        (errors, type) => errors.concat(validateValue(value, ctx.set('type', type))),
-        List(),
-      ),
+
+    let errors = List()
+
+    for (const variantType of unionVariants) {
+      const variantErrors = validateValue(value, ctx.set('type', variantType))
+      // No errors found, union variant matched, early return
+      if (variantErrors.isEmpty()) {
+        return List()
+      }
+      errors = errors.push(variantErrors)
+    }
+
+    // Return errors from variant that matched the most
+    return List(errors.minBy(variantErrors => variantErrors.count()))
+  },
 
   NamedType: (value, ctx) =>
     validateValue(
@@ -199,9 +210,8 @@ const validateValue = (value, ctx) => {
   }
 }
 
-const validateDataSourceNetworks = value => {
-  let networks = [...value.dataSources, ...(value.templates || [])]
-    .filter(dataSource => dataSource.kind === 'ethereum/contract')
+const validateDataSourceForNetwork = (dataSources, protocol) =>
+  dataSources.filter(dataSource => protocol.isValidKindName(dataSource.kind))
     .reduce(
       (networks, dataSource) =>
         networks.update(dataSource.network, dataSources =>
@@ -210,28 +220,37 @@ const validateDataSourceNetworks = value => {
       immutable.OrderedMap(),
     )
 
-  return networks.size > 1
-    ? immutable.fromJS([
-        {
-          path: [],
-          message: `Conflicting networks used in data sources and templates:
+const validateDataSourceNetworks = (value, protocol) => {
+  const dataSources = [...value.dataSources, ...(value.templates || [])]
+
+  // Networks found valid for a protocol.
+  // By searching through all data sources and templates.
+  const networks = validateDataSourceForNetwork(dataSources, protocol)
+
+  if (networks.size > 1) {
+    return immutable.fromJS([
+      {
+        path: [],
+        message: `Conflicting networks used in data sources and templates:
 ${networks
   .map(
     (dataSources, network) =>
-      `  ${
+    `  ${
         network === undefined
           ? 'Data sources and templates having no network set'
-          : `Data sources and templates using '${network}'`
-      }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
+        : `Data sources and templates using '${network}'`
+        }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
   )
   .join('\n')}
 Recommendation: Make all data sources and templates use the same network name.`,
-        },
-      ])
-    : List()
+      },
+    ])
+  }
+
+  return List()
 }
 
-const validateManifest = (value, type, schema, { resolveFile }) => {
+const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
   // Validate manifest using the GraphQL schema that defines its structure
   let errors =
     value !== null && value !== undefined
@@ -260,7 +279,38 @@ const validateManifest = (value, type, schema, { resolveFile }) => {
 
   // Validate that all data sources are for the same `network` (this includes
   // _no_ network at all)
-  return validateDataSourceNetworks(value)
+  return validateDataSourceNetworks(value, protocol)
 }
 
-module.exports = { validateManifest }
+const validateContractValues = (manifest, protocol, fieldName, validator, errorMessage) =>
+  manifest
+    .get('dataSources')
+    .filter(dataSource => protocol.isValidKindName(dataSource.get('kind')))
+    .reduce((errors, dataSource, dataSourceIndex) => {
+      let path = ['dataSources', dataSourceIndex, 'source', fieldName]
+
+      // No need to validate if the source has no contract field
+      if (!dataSource.get('source').has(fieldName)) {
+        return errors
+      }
+
+      let contractValue = dataSource.getIn(['source', fieldName])
+
+      // Validate whether the contract is valid
+      if (validator(contractValue)) {
+        return errors
+      } else {
+        return errors.push(
+          immutable.fromJS({
+            path,
+            message: `\
+Contract ${fieldName} is invalid: ${contractValue}${errorMessage ? `\n${errorMessage}` : ''}`,
+          }),
+        )
+      }
+    }, immutable.List())
+
+module.exports = {
+  validateManifest,
+  validateContractValues,
+}
