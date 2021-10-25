@@ -412,10 +412,6 @@ module.exports = {
         try {
           if (network === 'poa-core') {
             abi = await loadAbiFromBlockScout(network, fromContract)
-          } else if(network === 'bsc') {
-            abi = await loadAbiFromBscscan(network, fromContract)
-          } else if(network === 'matic') {
-            abi = await loadAbiFromBscscan(network, fromContract)
           } else {
             abi = await loadAbiFromEtherscan(network, fromContract)
           }
