@@ -257,16 +257,24 @@ const loadAbiFromBlockScout = async (network, address) =>
     },
   )
 
+const getEtherscanLikeAPIUrl = (network) => {
+  switch(network){
+    case "mainnet": return `https://api.etherscan.io/api`;
+    case "bsc": return `https://api.bscscan.com/api`;
+    case "matic": return `https://api.polygonscan.com/api`;
+    default: return `https://api-${network}.etherscan.io/api`;
+  }
+} 
+
 const loadAbiFromEtherscan = async (network, address) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
     `Warnings while fetching ABI from Etherscan`,
     async spinner => {
+      const scanApiUrl = getEtherscanLikeAPIUrl(network);
       let result = await fetch(
-        `https://${
-          network === 'mainnet' ? 'api' : `api-${network}`
-        }.etherscan.io/api?module=contract&action=getabi&address=${address}`,
+        `${scanApiUrl}?module=contract&action=getabi&address=${address}`,
       )
       let json = await result.json()
 
@@ -279,7 +287,7 @@ const loadAbiFromEtherscan = async (network, address) =>
         throw new Error('ABI not found, try loading it from a local file')
       }
     },
-  )
+  ) 
 
 const loadAbiFromFile = async filename => {
   let exists = await toolbox.filesystem.exists(filename)
@@ -404,6 +412,10 @@ module.exports = {
         try {
           if (network === 'poa-core') {
             abi = await loadAbiFromBlockScout(network, fromContract)
+          } else if(network === 'bsc') {
+            abi = await loadAbiFromBscscan(network, fromContract)
+          } else if(network === 'matic') {
+            abi = await loadAbiFromBscscan(network, fromContract)
           } else {
             abi = await loadAbiFromEtherscan(network, fromContract)
           }
