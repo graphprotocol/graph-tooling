@@ -46,7 +46,7 @@ module.exports = {
 
     let binary = new Binary(platform, url, version);
     await binary.install(force);
-    binary.run(datasource);
+    datasource ? binary.run(datasource) : binary.run();
   }
 }
 
