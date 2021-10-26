@@ -287,7 +287,7 @@ const loadAbiFromEtherscan = async (network, address) =>
         throw new Error('ABI not found, try loading it from a local file')
       }
     },
-  ) 
+  )
 
 const loadAbiFromFile = async filename => {
   let exists = await toolbox.filesystem.exists(filename)
