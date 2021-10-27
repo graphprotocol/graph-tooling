@@ -19,7 +19,6 @@ services:
 # - dbus-launch /usr/bin/python -c "import gnomekeyring;gnomekeyring.create_sync('login', '');"
 script:
   - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-  - export GRAPH_CLI_TESTS=1
   # Run the test suite
   - yarn test
   # Test codegen and build in the example subgraph
