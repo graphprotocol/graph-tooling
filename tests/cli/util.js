@@ -89,7 +89,13 @@ const runGraphCli = async (args, cwd) => {
   return await runCommand(graphCli, args, cwd)
 }
 
+const npmLinkCli = () => runCommand('npm', ['link'])
+
+const npmUnlinkCli = () => runCommand('npm', ['unlink'])
+
 module.exports = {
   cliTest,
+  npmLinkCli,
+  npmUnlinkCli,
   runGraphCli,
 }
