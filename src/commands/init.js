@@ -665,6 +665,11 @@ const initSubgraphFromExample = async (
         delete pkgJson['license']
         delete pkgJson['repository']
 
+        // Remove example's cli in favor of the local one (added via `npm link`)
+        if (process.env.GRAPH_CLI_TESTS) {
+          delete pkgJson['devDependencies']['@graphprotocol/graph-cli']
+        }
+
         // Write package.json
         await filesystem.write(pkgJsonFilename, pkgJson, { jsonIndent: 2 })
         return true
