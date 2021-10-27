@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const cliTest = require('./util').cliTest
+const { cliTest } = require('./util')
 
 describe('Init', () => {
   let baseDir = path.join(__dirname, 'init')
