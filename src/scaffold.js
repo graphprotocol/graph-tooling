@@ -152,6 +152,14 @@ const generateSchema = ({ abi, indexEvents }) => {
   )
 }
 
+const tsConfig = prettier.format(
+  JSON.stringify({
+    extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
+    include: ['src'],
+  }),
+  { parser: 'json' },
+)
+
 // Mapping
 
 const generateTupleFieldAssignments = ({ keyPath, index, component }) => {
@@ -310,6 +318,7 @@ const generateScaffold = async (
     'package.json': packageJson,
     'subgraph.yaml': manifest,
     'schema.graphql': schema,
+    'tsconfig.json': tsConfig,
     src: { 'mapping.ts': mapping },
     abis: {
       [`${contractName}.json`]: prettier.format(JSON.stringify(abi.data), {
