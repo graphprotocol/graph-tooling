@@ -538,12 +538,26 @@ const initRepository = async (toolbox, directory) =>
     },
   )
 
+// Only used for local testing / continuous integration.
+//
+// This requires that the command `npm link` is called
+// on the root directory of this repository, as described here:
+// https://docs.npmjs.com/cli/v7/commands/npm-link.
+const npmLinkToLocalCli = async (toolbox, directory) => {
+  if (process.env.GRAPH_CLI_TESTS) {
+    await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory })
+  }
+}
+
 const installDependencies = async (toolbox, directory, installCommand) =>
   await withSpinner(
     `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
     `Failed to install dependencies`,
     `Warnings while installing dependencies`,
     async spinner => {
+      // Links to local graph-cli if we're running the automated tests
+      await npmLinkToLocalCli(toolbox, directory)
+
       await toolbox.system.run(installCommand, { cwd: directory })
       return true
     },
@@ -650,6 +664,11 @@ const initSubgraphFromExample = async (
         })
         delete pkgJson['license']
         delete pkgJson['repository']
+
+        // Remove example's cli in favor of the local one (added via `npm link`)
+        if (process.env.GRAPH_CLI_TESTS) {
+          delete pkgJson['devDependencies']['@graphprotocol/graph-cli']
+        }
 
         // Write package.json
         await filesystem.write(pkgJsonFilename, pkgJson, { jsonIndent: 2 })

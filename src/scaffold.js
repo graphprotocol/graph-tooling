@@ -18,6 +18,13 @@ const abiEvents = abi =>
     setName: (event, name) => event.set('_alias', name),
   })
 
+const graphCliVersion = process.env.GRAPH_CLI_TESTS
+  // JSON.stringify should remove this key, we will install the local
+  // graph-cli for the tests using `npm link` instead of fetching from npm.
+  ? undefined
+  // For scaffolding real subgraphs
+  : `${module.exports.version}`
+
 // package.json
 
 const generatePackageJson = ({ subgraphName, node }) =>
@@ -41,7 +48,7 @@ const generatePackageJson = ({ subgraphName, node }) =>
           subgraphName,
       },
       dependencies: {
-        '@graphprotocol/graph-cli': `${module.exports.version}`,
+        '@graphprotocol/graph-cli': graphCliVersion,
         '@graphprotocol/graph-ts': `0.22.1`,
       },
     }),
