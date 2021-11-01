@@ -49,7 +49,7 @@ const generatePackageJson = ({ subgraphName, node }) =>
       },
       dependencies: {
         '@graphprotocol/graph-cli': graphCliVersion,
-        '@graphprotocol/graph-ts': `0.22.1`,
+        '@graphprotocol/graph-ts': `0.23.1`,
       },
     }),
     { parser: 'json' },
@@ -151,6 +151,14 @@ const generateSchema = ({ abi, indexEvents }) => {
     },
   )
 }
+
+const tsConfig = prettier.format(
+  JSON.stringify({
+    extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
+    include: ['src'],
+  }),
+  { parser: 'json' },
+)
 
 // Mapping
 
@@ -310,6 +318,7 @@ const generateScaffold = async (
     'package.json': packageJson,
     'subgraph.yaml': manifest,
     'schema.graphql': schema,
+    'tsconfig.json': tsConfig,
     src: { 'mapping.ts': mapping },
     abis: {
       [`${contractName}.json`]: prettier.format(JSON.stringify(abi.data), {
