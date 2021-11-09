@@ -1,0 +1,21 @@
+specVersion: 0.0.1
+repository: https://github.com/graphprotocol/near-subgraph
+description: NEAR subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: near
+    name: NearSubgraph
+    source:
+      account: wnear.flux-dev
+      startBlock: 1
+    mapping:
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./mapping.ts
+      entities:
+        - ExampleEntity
+      blockHandlers:
+        - handler: handleNewBlock
+      receiptHandlers:
+        - handler: handleReceipt

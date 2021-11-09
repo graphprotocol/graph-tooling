@@ -6,8 +6,9 @@ const pkginfo = require('pkginfo')(module)
 const { getSubgraphBasename } = require('./command-helpers/subgraph')
 const { step } = require('./command-helpers/spinner')
 const { ascTypeForEthereum, valueTypeForAsc } = require('./codegen/types')
-const ABI = require('./abi')
-const AbiCodeGenerator = require('./codegen/abi')
+// TODO: Use Protocol class to getABI
+const ABI = require('./protocols/ethereum/abi')
+const AbiCodeGenerator = require('./protocols/ethereum/codegen/abi')
 const util = require('./codegen/util')
 
 const abiEvents = abi =>
@@ -16,6 +17,13 @@ const abiEvents = abi =>
     getName: event => event.get('name'),
     setName: (event, name) => event.set('_alias', name),
   })
+
+const graphCliVersion = process.env.GRAPH_CLI_TESTS
+  // JSON.stringify should remove this key, we will install the local
+  // graph-cli for the tests using `npm link` instead of fetching from npm.
+  ? undefined
+  // For scaffolding real subgraphs
+  : `${module.exports.version}`
 
 // package.json
 
@@ -40,8 +48,8 @@ const generatePackageJson = ({ subgraphName, node }) =>
           subgraphName,
       },
       dependencies: {
-        '@graphprotocol/graph-cli': `${module.exports.version}`,
-        '@graphprotocol/graph-ts': `0.22.1`,
+        '@graphprotocol/graph-cli': graphCliVersion,
+        '@graphprotocol/graph-ts': `0.23.1`,
       },
     }),
     { parser: 'json' },
@@ -143,6 +151,14 @@ const generateSchema = ({ abi, indexEvents }) => {
     },
   )
 }
+
+const tsConfig = prettier.format(
+  JSON.stringify({
+    extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
+    include: ['src'],
+  }),
+  { parser: 'json' },
+)
 
 // Mapping
 
@@ -302,6 +318,7 @@ const generateScaffold = async (
     'package.json': packageJson,
     'subgraph.yaml': manifest,
     'schema.graphql': schema,
+    'tsconfig.json': tsConfig,
     src: { 'mapping.ts': mapping },
     abis: {
       [`${contractName}.json`]: prettier.format(JSON.stringify(abi.data), {

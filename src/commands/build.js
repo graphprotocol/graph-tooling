@@ -2,6 +2,8 @@ const chalk = require('chalk')
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
+const DataSourcesExtractor = require('../command-helpers/data-sources')
+const Protocol = require('../protocols')
 
 const HELP = `
 ${chalk.bold('graph build')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -73,11 +75,23 @@ module.exports = {
       return
     }
 
+    let protocol
+    try {
+      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
+
+      protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
+
     let compiler = createCompiler(manifest, {
       ipfs,
       outputDir,
       outputFormat,
       skipMigrations,
+      protocol,
     })
 
     // Exit with an error code if the compiler couldn't be created

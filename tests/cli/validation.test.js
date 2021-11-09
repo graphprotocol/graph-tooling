@@ -145,6 +145,14 @@ describe('Validation', () => {
     },
   )
   cliTest(
+    'NEAR is a valid chain',
+    ['codegen', '--skip-migrations'],
+    'validation/near-is-valid',
+    {
+      exitCode: 0,
+    },
+  )
+  cliTest(
     'Deprecated template format gives nice error',
     ['codegen', '--skip-migrations'],
     'validation/nested-template-nice-error',

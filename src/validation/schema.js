@@ -20,6 +20,12 @@ const BUILTIN_SCALAR_TYPES = [
 const TYPE_SUGGESTIONS = [
   ['Address', 'Bytes'],
   ['address', 'Bytes'],
+  ['Account', 'String'],
+  ['account', 'String'],
+  ['AccountId', 'String'],
+  ['AccountID', 'String'],
+  ['accountId', 'String'],
+  ['accountid', 'String'],
   ['bytes', 'Bytes'],
   ['string', 'String'],
   ['bool', 'Boolean'],

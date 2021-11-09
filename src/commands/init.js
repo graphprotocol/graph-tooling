@@ -9,13 +9,14 @@ const {
   getSubgraphBasename,
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
+const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
-const { loadManifest } = require('../migrations/util/load-manifest')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
-const ABI = require('../abi')
+// TODO: Use Protocol class to getABI
+const ABI = require('../protocols/ethereum/abi')
 
 const networkChoices = [
   'mainnet',
@@ -256,16 +257,24 @@ const loadAbiFromBlockScout = async (network, address) =>
     },
   )
 
+const getEtherscanLikeAPIUrl = (network) => {
+  switch(network){
+    case "mainnet": return `https://api.etherscan.io/api`;
+    case "bsc": return `https://api.bscscan.com/api`;
+    case "matic": return `https://api.polygonscan.com/api`;
+    default: return `https://api-${network}.etherscan.io/api`;
+  }
+} 
+
 const loadAbiFromEtherscan = async (network, address) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
     `Warnings while fetching ABI from Etherscan`,
     async spinner => {
+      const scanApiUrl = getEtherscanLikeAPIUrl(network);
       let result = await fetch(
-        `https://${
-          network === 'mainnet' ? 'api' : `api-${network}`
-        }.etherscan.io/api?module=contract&action=getabi&address=${address}`,
+        `${scanApiUrl}?module=contract&action=getabi&address=${address}`,
       )
       let json = await result.json()
 
@@ -529,12 +538,26 @@ const initRepository = async (toolbox, directory) =>
     },
   )
 
+// Only used for local testing / continuous integration.
+//
+// This requires that the command `npm link` is called
+// on the root directory of this repository, as described here:
+// https://docs.npmjs.com/cli/v7/commands/npm-link.
+const npmLinkToLocalCli = async (toolbox, directory) => {
+  if (process.env.GRAPH_CLI_TESTS) {
+    await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory })
+  }
+}
+
 const installDependencies = async (toolbox, directory, installCommand) =>
   await withSpinner(
     `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
     `Failed to install dependencies`,
     `Warnings while installing dependencies`,
     async spinner => {
+      // Links to local graph-cli if we're running the automated tests
+      await npmLinkToLocalCli(toolbox, directory)
+
       await toolbox.system.run(installCommand, { cwd: directory })
       return true
     },
@@ -613,13 +636,9 @@ const initSubgraphFromExample = async (
   try {
     // It doesn't matter if we changed the URL we clone the YAML,
     // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
-    let manifestFile = await loadManifest(path.join(directory, 'subgraph.yaml'))
+    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(path.join(directory, 'subgraph.yaml'))
 
-    for (const { network } of manifestFile.dataSources || []) {
-      validateStudioNetwork({ studio, product, network })
-    }
-
-    for (const { network } of manifestFile.templates || []) {
+    for (const { network } of dataSourcesAndTemplates) {
       validateStudioNetwork({ studio, product, network })
     }
   } catch (e) {
@@ -645,6 +664,11 @@ const initSubgraphFromExample = async (
         })
         delete pkgJson['license']
         delete pkgJson['repository']
+
+        // Remove example's cli in favor of the local one (added via `npm link`)
+        if (process.env.GRAPH_CLI_TESTS) {
+          delete pkgJson['devDependencies']['@graphprotocol/graph-cli']
+        }
 
         // Write package.json
         await filesystem.write(pkgJsonFilename, pkgJson, { jsonIndent: 2 })

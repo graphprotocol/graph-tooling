@@ -6,7 +6,10 @@ type Schema {
   file: File!
 }
 
-union DataSource = EthereumContractDataSource
+union DataSource =
+  EthereumContractDataSource |
+  NearContractDataSource
+
 union DataSourceTemplate = EthereumContractDataSourceTemplate
 
 type EthereumContractDataSource {
@@ -17,14 +20,27 @@ type EthereumContractDataSource {
   mapping: EthereumContractMapping!
 }
 
+type NearContractDataSource {
+  kind: String!
+  name: String!
+  network: String
+  source: NearContractSource!
+  mapping: NearContractMapping!
+}
+
 type EthereumContractSource {
   address: String
   abi: String!
   startBlock: BigInt
 }
 
+type NearContractSource {
+  account: String
+  startBlock: BigInt
+}
+
 type EthereumContractMapping {
-  kind: String!
+  kind: String
   apiVersion: String!
   language: String!
   file: File!
@@ -33,6 +49,15 @@ type EthereumContractMapping {
   blockHandlers: [EthereumBlockHandler!]
   callHandlers: [EthereumCallHandler!]
   eventHandlers: [EthereumContractEventHandler!]
+}
+
+type NearContractMapping {
+  apiVersion: String!
+  language: String!
+  file: File!
+  entities: [String!]!
+  blockHandlers: [NearBlockHandler!]
+  receiptHandlers: [NearReceiptHandler!]
 }
 
 type EthereumContractAbi {
@@ -49,8 +74,16 @@ type EthereumBlockFilter {
   kind: String!
 }
 
+type NearBlockHandler {
+  handler: String!
+}
+
 type EthereumCallHandler {
   function: String!
+  handler: String!
+}
+
+type NearReceiptHandler {
   handler: String!
 }
 

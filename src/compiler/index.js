@@ -9,7 +9,6 @@ const toolbox = require('gluegun/toolbox')
 const { step, withSpinner } = require('../command-helpers/spinner')
 const Subgraph = require('../subgraph')
 const Watcher = require('../watcher')
-const ABI = require('../abi')
 const { applyMigrations } = require('../migrations')
 const asc = require('./asc')
 
@@ -51,6 +50,9 @@ class Compiler {
     }
 
     this.globalsFile = path.join(globalsLib, globalsFile)
+
+    this.protocol = this.options.protocol
+    this.ABI = this.protocol.getABI()
 
     process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
@@ -104,8 +106,10 @@ class Compiler {
   }
 
   async loadSubgraph({ quiet } = { quiet: false }) {
+    const subgraphLoadOptions = { protocol: this.protocol, skipValidation: false }
+
     if (quiet) {
-      return Subgraph.load(this.options.subgraphManifest).result
+      return Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions).result
     } else {
       const manifestPath = this.displayPath(this.options.subgraphManifest)
 
@@ -114,7 +118,7 @@ class Compiler {
         `Failed to load subgraph from ${manifestPath}`,
         `Warnings loading subgraph from ${manifestPath}`,
         async spinner => {
-          return Subgraph.load(this.options.subgraphManifest)
+          return Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)
         },
       )
     }
@@ -132,9 +136,12 @@ class Compiler {
       files.push(path.resolve(subgraph.getIn(['schema', 'file'])))
       subgraph.get('dataSources').map(dataSource => {
         files.push(dataSource.getIn(['mapping', 'file']))
-        dataSource.getIn(['mapping', 'abis']).map(abi => {
-          files.push(abi.get('file'))
-        })
+        // Only watch ABI related files if the target protocol has support/need for them.
+        if (this.protocol.hasABIs()) {
+          dataSource.getIn(['mapping', 'abis']).map(abi => {
+            files.push(abi.get('file'))
+          })
+        }
       })
 
       // Make paths absolute
@@ -243,7 +250,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
-      this._validateMappingContent(inputFile)
+      this._validateMappingContent(absoluteMappingPath)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -308,7 +315,7 @@ class Compiler {
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
       let inputFile = path.relative(baseDir, absoluteMappingPath)
-      this._validateMappingContent(inputFile)
+      this._validateMappingContent(absoluteMappingPath)
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -368,7 +375,7 @@ class Compiler {
     }
   }
 
-  async _validateMappingContent(filePath) {
+  _validateMappingContent(filePath) {
     const data = fs.readFileSync(filePath)
     if (
       this.blockIpfsMethods && 
@@ -403,52 +410,59 @@ class Compiler {
         })
 
         // Copy data source files and update their paths
-        subgraph = subgraph.update('dataSources', dataSources => {
-          return dataSources.map(dataSource =>
-            dataSource
-              // Write data source ABIs to the output directory
-              .updateIn(['mapping', 'abis'], abis =>
-                abis.map(abi =>
-                  abi.update('file', abiFile => {
-                    abiFile = path.resolve(this.sourceDir, abiFile)
-                    let abiData = ABI.load(abi.get('name'), abiFile)
-                    return path.relative(
-                      this.options.outputDir,
-                      this._writeSubgraphFile(
-                        abiFile,
-                        JSON.stringify(abiData.data.toJS(), null, 2),
-                        this.sourceDir,
-                        this.subgraphDir(this.options.outputDir, dataSource),
-                        spinner,
-                      ),
-                    )
-                  }),
-                ),
-              )
+        subgraph = subgraph.update('dataSources', dataSources =>
+          dataSources.map(dataSource => {
+            let updatedDataSource = dataSource
 
-              // The mapping file is already being written to the output
-              // directory by the AssemblyScript compiler
-              .updateIn(['mapping', 'file'], mappingFile =>
-                path.relative(
-                  this.options.outputDir,
-                  path.resolve(this.sourceDir, mappingFile),
-                ),
+            if (this.protocol.hasABIs()) {
+              updatedDataSource = updatedDataSource
+                // Write data source ABIs to the output directory
+                .updateIn(['mapping', 'abis'], abis =>
+                  abis.map(abi =>
+                    abi.update('file', abiFile => {
+                      abiFile = path.resolve(this.sourceDir, abiFile)
+                      let abiData = this.ABI.load(abi.get('name'), abiFile)
+                      return path.relative(
+                        this.options.outputDir,
+                        this._writeSubgraphFile(
+                          abiFile,
+                          JSON.stringify(abiData.data.toJS(), null, 2),
+                          this.sourceDir,
+                          this.subgraphDir(this.options.outputDir, dataSource),
+                          spinner,
+                        ),
+                      )
+                    }),
+                  ),
+                )
+            }
+
+            // The mapping file is already being written to the output
+            // directory by the AssemblyScript compiler
+            return updatedDataSource.updateIn(['mapping', 'file'], mappingFile =>
+              path.relative(
+                this.options.outputDir,
+                path.resolve(this.sourceDir, mappingFile),
               ),
-          )
-        })
+            )
+          })
+        )
 
         // Copy template files and update their paths
-        subgraph = subgraph.update('templates', templates => {
-          return templates === undefined
+        subgraph = subgraph.update('templates', templates =>
+          templates === undefined
             ? templates
-            : templates.map(template =>
-                template
+            : templates.map(template => {
+              let updatedTemplate = template
+
+              if (this.protocol.hasABIs()) {
+                updatedTemplate = updatedTemplate
                   // Write template ABIs to the output directory
                   .updateIn(['mapping', 'abis'], abis =>
                     abis.map(abi =>
                       abi.update('file', abiFile => {
                         abiFile = path.resolve(this.sourceDir, abiFile)
-                        let abiData = ABI.load(abi.get('name'), abiFile)
+                        let abiData = this.ABI.load(abi.get('name'), abiFile)
                         return path.relative(
                           this.options.outputDir,
                           this._writeSubgraphFile(
@@ -462,17 +476,18 @@ class Compiler {
                       }),
                     ),
                   )
+              }
 
-                  // The mapping file is already being written to the output
-                  // directory by the AssemblyScript compiler
-                  .updateIn(['mapping', 'file'], mappingFile =>
-                    path.relative(
-                      this.options.outputDir,
-                      path.resolve(this.sourceDir, mappingFile),
-                    ),
-                  ),
+              // The mapping file is already being written to the output
+              // directory by the AssemblyScript compiler
+              return updatedTemplate.updateIn(['mapping', 'file'], mappingFile =>
+                path.relative(
+                  this.options.outputDir,
+                  path.resolve(this.sourceDir, mappingFile),
+                ),
               )
-        })
+            })
+        )
 
         // Write the subgraph manifest itself
         let outputFilename = path.join(this.options.outputDir, 'subgraph.yaml')
@@ -506,17 +521,18 @@ class Compiler {
           ),
         })
 
-        // Upload the ABIs of all data sources to IPFS
-        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-          for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
-            updates.push({
-              keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
-              value: await this._uploadFileToIPFS(
-                abi.get('file'),
-                uploadedFiles,
-                spinner,
-              ),
-            })
+        if (this.protocol.hasABIs()) {
+          for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+            for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
+              updates.push({
+                keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
+                value: await this._uploadFileToIPFS(
+                  abi.get('file'),
+                  uploadedFiles,
+                  spinner,
+                ),
+              })
+            }
           }
         }
 
@@ -532,17 +548,18 @@ class Compiler {
           })
         }
 
-        // Upload the mapping and ABIs of all data source templates
         for (let [i, template] of subgraph.get('templates', immutable.List()).entries()) {
-          for (let [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
-            updates.push({
-              keyPath: ['templates', i, 'mapping', 'abis', j, 'file'],
-              value: await this._uploadFileToIPFS(
-                abi.get('file'),
-                uploadedFiles,
-                spinner,
-              ),
-            })
+          if (this.protocol.hasABIs()) {
+            for (let [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
+              updates.push({
+                keyPath: ['templates', i, 'mapping', 'abis', j, 'file'],
+                value: await this._uploadFileToIPFS(
+                  abi.get('file'),
+                  uploadedFiles,
+                  spinner,
+                ),
+              })
+            }
           }
 
           updates.push({

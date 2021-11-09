@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.22.3",
+  "version": "0.23.1",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "0.19.10",
@@ -40,10 +40,6 @@
   "scripts": {
     "test": "jest --verbose",
     "test:init": "jest tests/cli/init.test.js --verbose",
-    "test:validation": "jest tests/cli/validation.test.js --verbose",
-    "release:patch": "npm version patch && npm publish && git push origin master && git push --tags",
-    "release:minor": "npm version minor && npm publish && git push origin master && git push --tags",
-    "release:alpha:minor": "npm version preminor --preid alpha && npm publish --tag alpha && git push origin master && git push --tags",
-    "release:alpha:prerelease": "npm version prerelease --preid alpha && npm publish --tag alpha && git push origin master && git push --tags"
+    "test:validation": "jest tests/cli/validation.test.js --verbose"
   }
 }
