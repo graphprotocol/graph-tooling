@@ -58,6 +58,11 @@ function getPlatform() {
   const majorVersion = semver.major(release);
   const isM1 = cpuCore.model.includes("Apple M1");
 
+  console.log("os type: " + type)
+  console.log("os arch: " + arch)
+  console.log("os release: " + release)
+  console.log("os major version: " + majorVersion)
+
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
     if (type === 'Darwin') {
       if (majorVersion === '19') {
