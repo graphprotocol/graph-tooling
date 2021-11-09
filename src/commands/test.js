@@ -11,7 +11,7 @@ ${chalk.dim('Options:')}
 
   -f  --force                   Overwrite folder + file when downloading
   -h, --help                    Show usage information
-  -l, --logs                    Logs to the console the value of almost every single variable
+  -l, --logs                    Logs to the console information about the OS, CPU model and download url (debugging purposes)
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
   `
 
