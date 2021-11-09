@@ -65,7 +65,11 @@ function getPlatform(logs) {
   const isM1 = cpuCore.model.includes("Apple M1")
 
   if (logs) {
-    console.log(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    console.log(`OS type: ${type}
+      OS arch: ${arch}
+      OS release: ${release}
+      OS major version: ${majorVersion}
+      CPU model: ${cpuCore.model}`)
   }
 
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
