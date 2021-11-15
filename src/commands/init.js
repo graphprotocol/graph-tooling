@@ -15,9 +15,11 @@ const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
 const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
+const Protocol = require('../protocols')
 // TODO: Use Protocol class to getABI
 const ABI = require('../protocols/ethereum/abi')
 
+const protocolChoices = Array.from(Protocol.availableProtocols().keys())
 const networkChoices = [
   'mainnet',
   'kovan',
@@ -50,6 +52,7 @@ ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
 
 ${chalk.dim('Options:')}
 
+      --protocol <${protocolChoices.join('|')}>
       --product <subgraph-studio|hosted-service>
                                 Selects the product for which to initialize
       --studio                  Shortcut for --product subgraph-studio
@@ -74,6 +77,7 @@ ${chalk.dim('Options for --from-contract:')}
 const processInitForm = async (
   toolbox,
   {
+    protocol,
     product,
     studio,
     node,
@@ -95,17 +99,37 @@ const processInitForm = async (
   let questions = [
     {
       type: 'select',
+      name: 'protocol',
+      message: 'Protocol',
+      choices: protocolChoices,
+      skip: protocolChoices.includes(protocol),
+      result: value => {
+        protocol = protocol || value
+        return protocol
+      },
+    },
+    {
+      type: 'select',
       name: 'product',
       message: 'Product for which to initialize',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: 
+      skip: () =>
+        protocol === 'near' ||
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
         studio !== undefined || node !== undefined,
       result: value => {
+        // For now we only support NEAR subgraphs in the Hosted Service
+        if (protocol === 'near') {
+          // Can be overwritten because the question will be skipped (product === undefined)
+          product = 'hosted-service'
+          return product
+        }
+
         if (value == 'subgraph-studio') {
           allowSimpleName = true
         }
+
         product = value
         return value
       },
@@ -315,6 +339,7 @@ module.exports = {
 
     // Read CLI parameters
     let {
+      protocol,
       product,
       studio,
       node,
@@ -443,6 +468,7 @@ module.exports = {
 
     // Otherwise, take the user through the interactive form
     let inputs = await processInitForm(toolbox, {
+      protocol,
       product,
       studio,
       node,

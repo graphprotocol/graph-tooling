@@ -15,7 +15,7 @@ module.exports = class Protocol {
     this.name = this.normalizeName(name)
   }
 
-  availableProtocols() {
+  static availableProtocols() {
     return immutable.fromJS({
       // `ethereum/contract` is kept for backwards compatibility.
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
@@ -25,14 +25,14 @@ module.exports = class Protocol {
   }
 
   normalizeName(name) {
-    return this.availableProtocols()
+    return Protocol.availableProtocols()
       .findKey(possibleNames => possibleNames.includes(name))
   }
 
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
-    return this.availableProtocols()
+    return Protocol.availableProtocols()
       .get(this.name, immutable.List())
       .includes(kind)
   }
