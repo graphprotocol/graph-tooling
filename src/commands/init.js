@@ -20,32 +20,7 @@ const Protocol = require('../protocols')
 const ABI = require('../protocols/ethereum/abi')
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
-const networkChoices = [
-  'mainnet',
-  'kovan',
-  'rinkeby',
-  'ropsten',
-  'goerli',
-  'poa-core',
-  'poa-sokol',
-  'xdai',
-  'matic',
-  'mumbai',
-  'fantom',
-  'bsc',
-  'chapel',
-  'clover',
-  'avalanche',
-  'fuji',
-  'celo',
-  'celo-alfajores',
-  'fuse',
-  'mbase',
-  'arbitrum-one',
-  'arbitrum-rinkeby',
-  'optimism',
-  'optimism-kovan'
-]
+const ethereumNetworkChoices = Protocol.availableNetworks().get('ethereum')
 
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
@@ -68,7 +43,7 @@ ${chalk.dim('Choose mode with one of:')}
 ${chalk.dim('Options for --from-contract:')}
 
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --network <${networkChoices.join('|')}>
+      --network <${ethereumNetworkChoices.join('|')}>
                                 Selects the network the contract is deployed to
       --index-events            Index contract events as entities
       --contract-name           Name of the contract (default: Contract)      
@@ -95,6 +70,7 @@ const processInitForm = async (
 
   let abiFromEtherscan = undefined
   let abiFromFile = undefined
+  let protocolInstance
 
   let questions = [
     {
@@ -105,6 +81,7 @@ const processInitForm = async (
       skip: protocolChoices.includes(protocol),
       result: value => {
         protocol = protocol || value
+        protocolInstance = new Protocol(protocol)
         return protocol
       },
     },
@@ -170,8 +147,11 @@ const processInitForm = async (
     {
       type: 'select',
       name: 'network',
-      message: 'Ethereum network',
-      choices: networkChoices,
+      message: () => `${protocolInstance.prettifiedName()} network`,
+      choices: () =>
+        Protocol.availableNetworks() // TODO: this should be a constant in the top of the file.
+          .get(protocol) // Get networks related to the chosen protocol.
+          .toArray(), // Needed because of gluegun. It can't even receive a JS iterable.
       skip: fromExample !== undefined,
       initial: network || 'mainnet',
       result: value => {
