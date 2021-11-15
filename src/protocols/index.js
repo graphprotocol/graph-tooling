@@ -24,9 +24,57 @@ module.exports = class Protocol {
     })
   }
 
+  static availableNetworks() {
+    return immutable.fromJS({
+      ethereum: [
+        'mainnet',
+        'kovan',
+        'rinkeby',
+        'ropsten',
+        'goerli',
+        'poa-core',
+        'poa-sokol',
+        'xdai',
+        'matic',
+        'mumbai',
+        'fantom',
+        'bsc',
+        'chapel',
+        'clover',
+        'avalanche',
+        'fuji',
+        'celo',
+        'celo-alfajores',
+        'fuse',
+        'mbase',
+        'arbitrum-one',
+        'arbitrum-rinkeby',
+        'optimism',
+        'optimism-kovan',
+      ],
+      near: [
+        'near-mainnet',
+      ],
+    })
+  }
+
   normalizeName(name) {
     return Protocol.availableProtocols()
       .findKey(possibleNames => possibleNames.includes(name))
+  }
+
+  prettifiedName() {
+    switch (this.name) {
+      // Doesn't need to check for 'ethereum/contract' because instance's name
+      // is already normalized.
+      case 'ethereum':
+        return 'Ethereum'
+      case 'near':
+        return 'NEAR'
+      // Shouldn't happen
+      default:
+        return ''
+    }
   }
 
   // Receives a data source kind, and checks if it's valid

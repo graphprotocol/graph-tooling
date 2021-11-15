@@ -6,6 +6,7 @@ schema:
 dataSources:
   - kind: near
     name: NearSubgraph
+    network: near-mainnet
     source:
       account: wnear.flux-dev
       startBlock: 1
