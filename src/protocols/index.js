@@ -4,6 +4,8 @@ const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const EthereumABI = require('./ethereum/abi')
 const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
+const EthereumContract = require('./ethereum/contract')
+const NearContract = require('./near/contract')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -140,6 +142,15 @@ module.exports = class Protocol {
         throw new Error(
           `Data sources with kind '${this.name}' are not supported yet`,
         )
+    }
+  }
+
+  getContract() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumContract
+      case 'near':
+        return NearContract
     }
   }
 }

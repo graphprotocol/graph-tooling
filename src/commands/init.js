@@ -37,7 +37,7 @@ ${chalk.dim('Options:')}
 
 ${chalk.dim('Choose mode with one of:')}
 
-      --from-contract <address> Creates a scaffold based on an existing contract
+      --from-contract <contract> Creates a scaffold based on an existing contract
       --from-example            Creates a scaffold based on an example subgraph
 
 ${chalk.dim('Options for --from-contract:')}
@@ -59,18 +59,17 @@ const processInitForm = async (
     abi,
     allowSimpleName,
     directory,
-    address,
+    contract,
     fromExample,
     network,
     subgraphName,
     contractName
   },
 ) => {
-  let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
-
   let abiFromEtherscan = undefined
   let abiFromFile = undefined
   let protocolInstance
+  let ProtocolContract
 
   let questions = [
     {
@@ -161,19 +160,23 @@ const processInitForm = async (
     },
     {
       type: 'input',
-      name: 'address',
-      message: 'Contract address',
+      name: 'contract',
+      message: () => {
+        ProtocolContract = protocolInstance.getContract()
+        return `Contract ${ProtocolContract.name()}`
+      },
       skip: fromExample !== undefined,
-      initial: address,
+      initial: contract,
       validate: async value => {
         if (fromExample !== undefined) {
           return true
         }
 
+        const contract = new ProtocolContract(value)
+
         // Validate whether the address is valid
-        if (!addressPattern.test(value)) {
-          return `Contract address "${value}" is invalid.
-  Must be 40 hexadecimal characters, with an optional '0x' prefix.`
+        if (!contract.validate()) {
+          return `Contract ${ProtocolContract.name()} is invalid: ${value}\n${ProtocolContract.errorMessage()}`
         }
 
         return true
@@ -433,7 +436,7 @@ module.exports = {
           abi,
           allowSimpleName,
           directory,
-          address: fromContract,
+          contract: fromContract,
           indexEvents,
           network,
           subgraphName,
@@ -455,7 +458,7 @@ module.exports = {
       abi,
       allowSimpleName,
       directory,
-      address: fromContract,
+      contract: fromContract,
       fromExample,
       network,
       subgraphName,
@@ -495,7 +498,7 @@ module.exports = {
           directory: inputs.directory,
           abi: inputs.abi,
           network: inputs.network,
-          address: inputs.address,
+          contract: inputs.contract,
           indexEvents,
           contractName: inputs.contractName,
           node,
@@ -724,7 +727,7 @@ const initSubgraphFromContract = async (
     directory,
     abi,
     network,
-    address,
+    contract,
     indexEvents,
     contractName,
     node,
@@ -766,7 +769,7 @@ const initSubgraphFromContract = async (
     return
   }
 
-  // Scaffold subgraph from ABI
+  // Scaffold subgraph
   let scaffold = await withSpinner(
     `Create subgraph scaffold`,
     `Failed to create subgraph scaffold`,
@@ -777,7 +780,7 @@ const initSubgraphFromContract = async (
           subgraphName,
           abi,
           network,
-          address,
+          contract,
           indexEvents,
           contractName,
           node,
