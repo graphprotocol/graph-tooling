@@ -237,7 +237,7 @@ const processInitForm = async (
 
   try {
     let answers = await toolbox.prompt.ask(questions)
-    return { ...answers, abi: abiFromEtherscan || abiFromFile }
+    return { ...answers, abi: abiFromEtherscan || abiFromFile, protocolInstance }
   } catch (e) {
     return undefined
   }
@@ -411,31 +411,42 @@ module.exports = {
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract
-    if (fromContract && subgraphName && directory && network && node) {
-      if (abi) {
-        try {
-          abi = await loadAbiFromFile(abi)
-        } catch (e) {
-          print.error(`Failed to load ABI: ${e.message}`)
-          process.exitCode = 1
-          return
-        }
-      } else {
-        try {
-          if (network === 'poa-core') {
-            abi = await loadAbiFromBlockScout(network, fromContract)
-          } else {
-            abi = await loadAbiFromEtherscan(network, fromContract)
+    if (fromContract && protocol && subgraphName && directory && network && node) {
+      if (!protocolChoices.includes(protocol)) {
+        print.error(`Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(', ')}`)
+        process.exitCode = 1
+        return
+      }
+
+      const protocolInstance = new Protocol(protocol)
+
+      if (protocolInstance.hasABIs()) {
+        if (abi) {
+          try {
+            abi = await loadAbiFromFile(abi)
+          } catch (e) {
+            print.error(`Failed to load ABI: ${e.message}`)
+            process.exitCode = 1
+            return
           }
-        } catch (e) {
-          process.exitCode = 1
-          return
+        } else {
+          try {
+            if (network === 'poa-core') {
+              abi = await loadAbiFromBlockScout(network, fromContract)
+            } else {
+              abi = await loadAbiFromEtherscan(network, fromContract)
+            }
+          } catch (e) {
+            process.exitCode = 1
+            return
+          }
         }
       }
 
       return await initSubgraphFromContract(
         toolbox,
         {
+          protocolInstance,
           abi,
           allowSimpleName,
           directory,
@@ -496,6 +507,7 @@ module.exports = {
       await initSubgraphFromContract(
         toolbox,
         {
+          protocolInstance: inputs.protocolInstance,
           allowSimpleName,
           subgraphName: inputs.subgraphName,
           directory: inputs.directory,
@@ -725,6 +737,7 @@ const initSubgraphFromExample = async (
 const initSubgraphFromContract = async (
   toolbox,
   {
+    protocolInstance,
     allowSimpleName,
     subgraphName,
     directory,
@@ -754,7 +767,7 @@ const initSubgraphFromContract = async (
     return
   }
 
-  if (abiEvents(abi).length === 0) {
+  if (protocolInstance.hasABIs() && abiEvents(abi).length === 0) {
     // Fail if the ABI does not contain any events
     print.error(`ABI does not contain any events`)
     process.exitCode = 1
