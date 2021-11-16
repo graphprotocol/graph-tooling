@@ -187,7 +187,7 @@ const processInitForm = async (
         }
 
         // Try loading the ABI from Etherscan, if none was provided
-        if (!abi) {
+        if (protocolInstance.hasABIs() && !abi) {
           try {
             if (network === 'poa-core') {
               abiFromBlockScout = await loadAbiFromBlockScout(network, value)
@@ -204,9 +204,12 @@ const processInitForm = async (
       name: 'abi',
       message: 'ABI file (path)',
       initial: abi,
-      skip: () => fromExample !== undefined || abiFromEtherscan !== undefined,
+      skip: () =>
+        !protocolInstance.hasABIs() ||
+        fromExample !== undefined ||
+        abiFromEtherscan !== undefined,
       validate: async value => {
-        if (fromExample || abiFromEtherscan) {
+        if (fromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
           return true
         }
 
