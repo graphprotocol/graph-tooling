@@ -17,8 +17,6 @@ const { chooseNodeUrl } = require('../command-helpers/node')
 const { generateScaffold, writeScaffold } = require('../old-scaffold')
 const { abiEvents } = require('../scaffold/schema')
 const Protocol = require('../protocols')
-// TODO: Use Protocol class to getABI
-const ABI = require('../protocols/ethereum/abi')
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
 const ethereumNetworkChoices = Protocol.availableNetworks().get('ethereum')
@@ -71,6 +69,7 @@ const processInitForm = async (
   let abiFromFile = undefined
   let protocolInstance
   let ProtocolContract
+  let ABI
 
   let questions = [
     {
@@ -187,13 +186,15 @@ const processInitForm = async (
           return value
         }
 
+        ABI = protocolInstance.getABI()
+
         // Try loading the ABI from Etherscan, if none was provided
         if (protocolInstance.hasABIs() && !abi) {
           try {
             if (network === 'poa-core') {
-              abiFromBlockScout = await loadAbiFromBlockScout(network, value)
+              abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
             } else {
-              abiFromEtherscan = await loadAbiFromEtherscan(network, value)
+              abiFromEtherscan = await loadAbiFromEtherscan(ABI, network, value)
             }
           } catch (e) {}
         }
@@ -215,7 +216,7 @@ const processInitForm = async (
         }
 
         try {
-          abiFromFile = await loadAbiFromFile(value)
+          abiFromFile = await loadAbiFromFile(ABI, value)
           return true
         } catch (e) {
           return e.message
@@ -244,7 +245,7 @@ const processInitForm = async (
   }
 }
 
-const loadAbiFromBlockScout = async (network, address) =>
+const loadAbiFromBlockScout = async (ABI, network, address) =>
   await withSpinner(
     `Fetching ABI from BlockScout`,
     `Failed to fetch ABI from BlockScout`,
@@ -278,7 +279,7 @@ const getEtherscanLikeAPIUrl = (network) => {
   }
 } 
 
-const loadAbiFromEtherscan = async (network, address) =>
+const loadAbiFromEtherscan = async (ABI, network, address) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
@@ -301,7 +302,7 @@ const loadAbiFromEtherscan = async (network, address) =>
     },
   )
 
-const loadAbiFromFile = async filename => {
+const loadAbiFromFile = async (ABI, filename) => {
   let exists = await toolbox.filesystem.exists(filename)
 
   if (!exists) {
@@ -422,9 +423,10 @@ module.exports = {
       const protocolInstance = new Protocol(protocol)
 
       if (protocolInstance.hasABIs()) {
+        const ABI = protocolInstance.getABI()
         if (abi) {
           try {
-            abi = await loadAbiFromFile(abi)
+            abi = await loadAbiFromFile(ABI, abi)
           } catch (e) {
             print.error(`Failed to load ABI: ${e.message}`)
             process.exitCode = 1
@@ -433,9 +435,9 @@ module.exports = {
         } else {
           try {
             if (network === 'poa-core') {
-              abi = await loadAbiFromBlockScout(network, fromContract)
+              abi = await loadAbiFromBlockScout(ABI, network, fromContract)
             } else {
-              abi = await loadAbiFromEtherscan(network, fromContract)
+              abi = await loadAbiFromEtherscan(ABI, network, fromContract)
             }
           } catch (e) {
             process.exitCode = 1
