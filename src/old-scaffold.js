@@ -5,9 +5,6 @@ const pkginfo = require('pkginfo')(module)
 
 const { getSubgraphBasename } = require('./command-helpers/subgraph')
 const { step } = require('./command-helpers/spinner')
-// TODO: Use Protocol class to getABI
-const ABI = require('./protocols/ethereum/abi')
-const AbiCodeGenerator = require('./protocols/ethereum/codegen/abi')
 const Scaffold = require('./scaffold')
 
 const graphCliVersion = process.env.GRAPH_CLI_TESTS
@@ -92,11 +89,9 @@ const generateScaffold = async (
     'schema.graphql': schema,
     'tsconfig.json': tsConfig,
     src: { 'mapping.ts': mapping },
-    abis: {
-      [`${contractName}.json`]: prettier.format(JSON.stringify(abi.data), {
-        parser: 'json',
-      }),
-    },
+    abis: protocolInstance.hasABIs()
+      ? scaffold.generateABIs()
+      : undefined,
   }
 }
 
