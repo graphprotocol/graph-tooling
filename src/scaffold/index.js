@@ -135,4 +135,15 @@ dataSources:
       }
       : undefined
   }
+
+  generate() {
+    return {
+      'package.json': this.generatePackageJson(),
+      'subgraph.yaml': this.generateManifest(),
+      'schema.graphql': this.generateSchema(),
+      'tsconfig.json': this.generateTsConfig(),
+      src: { 'mapping.ts': this.generateMapping() },
+      abis: this.generateABIs(),
+    }
+  }
 }

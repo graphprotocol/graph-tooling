@@ -20,7 +20,7 @@ const generateScaffold = async (
 ) => {
   step(spinner, 'Generate subgraph')
 
-  let scaffold = new Scaffold({
+  const scaffold = new Scaffold({
     protocol: protocolInstance,
     abi,
     indexEvents,
@@ -31,21 +31,7 @@ const generateScaffold = async (
     node,
   })
 
-  let packageJson = scaffold.generatePackageJson()
-  let manifest = scaffold.generateManifest()
-  let schema = scaffold.generateSchema()
-  let tsConfig = scaffold.generateTsConfig()
-  let mapping = scaffold.generateMapping()
-  let abis = scaffold.generateABIs()
-
-  return {
-    'package.json': packageJson,
-    'subgraph.yaml': manifest,
-    'schema.graphql': schema,
-    'tsconfig.json': tsConfig,
-    src: { 'mapping.ts': mapping },
-    abis,
-  }
+  return scaffold.generate()
 }
 
 const writeScaffoldDirectory = async (scaffold, directory, spinner) => {
