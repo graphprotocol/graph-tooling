@@ -1,10 +1,20 @@
 const prettier = require('prettier')
+const pkginfo = require('pkginfo')(module)
+
+const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
+  // JSON.stringify should remove this key, we will install the local
+  // graph-cli for the tests using `npm link` instead of fetching from npm.
+  ? undefined
+  // For scaffolding real subgraphs
+  : `${module.exports.version}`
+
 const {
   abiEvents,
   generateEventType,
   generateExampleEntityType,
 } = require('./schema')
 const { generateEventIndexingHandlers } = require('./mapping')
+const { getSubgraphBasename } = require('../command-helpers/subgraph')
 
 module.exports = class Scaffold {
   constructor(options = {}) {
@@ -15,6 +25,36 @@ module.exports = class Scaffold {
     this.network = options.network
     this.contractName = options.contractName
     this.subgraphName = options.subgraphName
+    this.node = options.node
+  }
+
+  generatePackageJson() {
+    return prettier.format(
+      JSON.stringify({
+        name: getSubgraphBasename(this.subgraphName),
+        license: 'UNLICENSED',
+        scripts: {
+          codegen: 'graph codegen',
+          build: 'graph build',
+          deploy:
+            `graph deploy ` +
+            `--node ${this.node} ` +
+            this.subgraphName,
+          'create-local': `graph create --node http://localhost:8020/ ${this.subgraphName}`,
+          'remove-local': `graph remove --node http://localhost:8020/ ${this.subgraphName}`,
+          'deploy-local':
+            `graph deploy ` +
+            `--node http://localhost:8020/ ` +
+            `--ipfs http://localhost:5001 ` +
+            this.subgraphName,
+        },
+        dependencies: {
+          '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
+          '@graphprotocol/graph-ts': `0.24.1`,
+        },
+      }),
+      { parser: 'json' },
+    )
   }
 
   generateManifest() {
