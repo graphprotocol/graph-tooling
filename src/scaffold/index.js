@@ -4,6 +4,7 @@ const {
   generateEventType,
   generateExampleEntityType,
 } = require('./schema')
+const { generateEventIndexingHandlers } = require('./mapping')
 
 module.exports = class Scaffold {
   constructor(options = {}) {
@@ -13,6 +14,7 @@ module.exports = class Scaffold {
     this.contract = options.contract
     this.network = options.network
     this.contractName = options.contractName
+    this.subgraphName = options.subgraphName
   }
 
   generateManifest() {
@@ -49,6 +51,28 @@ dataSources:
       {
         parser: 'graphql',
       },
+    )
+  }
+
+  generateMapping() {
+    const hasEvents = this.protocol.hasEvents()
+    const events = hasEvents
+      ? abiEvents(this.abi).toJS()
+      : []
+
+    const protocolMapping = this.protocol.getMappingScaffold()
+
+    return prettier.format(
+      hasEvents && this.indexEvents
+        ? generateEventIndexingHandlers(
+            events,
+            this.contractName,
+          )
+        : protocolMapping.generatePlaceholderHandlers({
+            ...this,
+            events,
+          }),
+      { parser: 'typescript', semi: false },
     )
   }
 }

@@ -8,6 +8,8 @@ const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
 const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
 const NearManifestScaffold = require('./near/scaffold/manifest')
+const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
+const NearMappingScaffold = require('./near/scaffold/mapping')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -171,6 +173,15 @@ module.exports = class Protocol {
         return EthereumManifestScaffold
       case 'near':
         return NearManifestScaffold
+    }
+  }
+
+  getMappingScaffold() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumMappingScaffold
+      case 'near':
+        return NearMappingScaffold
     }
   }
 }

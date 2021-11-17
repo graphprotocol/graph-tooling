@@ -47,7 +47,7 @@ const generateExampleEntityType = (protocol, events) => {
       return `type ExampleEntity @entity {
   id: ID!
   block: Bytes!
-  transaction: Bytes!
+  count: BigInt!
 }`
     }
 }
