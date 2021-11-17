@@ -36,6 +36,8 @@ describe('Init', () => {
     'From example',
     [
       'init', 
+      '--protocol',
+      'ethereum',
       '--studio', 
       '--from-example', 
       'user/example-subgraph', 
@@ -53,6 +55,8 @@ describe('Init', () => {
     'From contract',
     [
       'init',
+      '--protocol',
+      'ethereum',
       '--studio', 
       '--from-contract',
       '0xF87E31492Faf9A91B02Ee0dEAAd50d51d56D5d4d',
@@ -73,6 +77,8 @@ describe('Init', () => {
     'From contract with abi',
     [
       'init',
+      '--protocol',
+      'ethereum',
       '--studio', 
       '--from-contract',
       '0xF87E31492Faf9A91B02Ee0dEAAd50d51d56D5d4d',
@@ -91,6 +97,8 @@ describe('Init', () => {
     'From contract with abi and structs',
     [
       'init',
+      '--protocol',
+      'ethereum',
       '--studio', 
       '--from-contract',
       '0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e',
@@ -109,6 +117,8 @@ describe('Init', () => {
     'From contract with overloaded elements',
     [
       'init',
+      '--protocol',
+      'ethereum',
       '--studio', 
       '--from-contract',
       '0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e',
