@@ -75,4 +75,14 @@ dataSources:
       { parser: 'typescript', semi: false },
     )
   }
+
+  generateABIs() {
+    return this.protocol.hasABIs()
+      ? {
+        [`${this.contractName}.json`]: prettier.format(JSON.stringify(this.abi.data), {
+          parser: 'json',
+        }),
+      }
+      : undefined
+  }
 }
