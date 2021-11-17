@@ -55,45 +55,6 @@ const generatePackageJson = ({ subgraphName, node }) =>
     { parser: 'json' },
   )
 
-// Subgraph manifest
-
-const generateManifest = ({ abi, contract, network, contractName }) =>
-  prettier.format(
-    `
-specVersion: 0.0.1
-schema:
-  file: ./schema.graphql
-dataSources:
-  - kind: ethereum/contract
-    name: ${contractName}
-    network: ${network}
-    source:
-      address: '${contract}'
-      abi: ${contractName}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        ${abiEvents(abi)
-          .map(event => `- ${event.get('_alias')}`)
-          .join('\n        ')}
-      abis:
-        - name: ${contractName}
-          file: ./abis/${contractName}.json
-      eventHandlers:
-        ${abiEvents(abi)
-          .map(
-            event => `
-        - event: ${ABI.eventSignature(event)}
-          handler: handle${event.get('_alias')}`,
-          )
-          .join('')}
-      file: ./src/mapping.ts
-`,
-    { parser: 'yaml' },
-  )
-
 const tsConfig = prettier.format(
   JSON.stringify({
     extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
@@ -262,15 +223,18 @@ const generateScaffold = async (
   step(spinner, 'Generate subgraph')
 
   let packageJson = generatePackageJson({ subgraphName, node })
-  let manifest = generateManifest({ abi, contract, network, contractName })
   let mapping = generateMapping({ abi, subgraphName, indexEvents, contractName })
 
   let scaffold = new Scaffold({
     protocol: protocolInstance,
     abi,
     indexEvents,
+    contract,
+    network,
+    contractName,
   })
 
+  let manifest = scaffold.generateManifest()
   let schema = scaffold.generateSchema()
 
   return {

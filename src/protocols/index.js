@@ -6,6 +6,8 @@ const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
 const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
+const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
+const NearManifestScaffold = require('./near/scaffold/manifest')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -160,6 +162,15 @@ module.exports = class Protocol {
         return EthereumContract
       case 'near':
         return NearContract
+    }
+  }
+
+  getManifestScaffold() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumManifestScaffold
+      case 'near':
+        return NearManifestScaffold
     }
   }
 }
