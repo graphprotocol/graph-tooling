@@ -19,7 +19,6 @@ const { abiEvents } = require('../scaffold/schema')
 const Protocol = require('../protocols')
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
-const ethereumNetworkChoices = Protocol.availableNetworks().get('ethereum')
 
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
@@ -41,11 +40,18 @@ ${chalk.dim('Choose mode with one of:')}
 
 ${chalk.dim('Options for --from-contract:')}
 
-      --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --network <${ethereumNetworkChoices.join('|')}>
-                                Selects the network the contract is deployed to
+      --contract-name           Name of the contract (default: Contract)
       --index-events            Index contract events as entities
-      --contract-name           Name of the contract (default: Contract)      
+
+${chalk.dim.underline('Ethereum:')}
+
+      --abi <path>              Path to the contract ABI (default: download from Etherscan)
+      --network <${Protocol.availableNetworks().get('ethereum').join('|')}>
+                                Selects the network the contract is deployed to
+${chalk.dim.underline('NEAR:')}
+
+      --network <${Protocol.availableNetworks().get('near').join('|')}>
+                                Selects the network the contract is deployed to
 `
 
 const processInitForm = async (
