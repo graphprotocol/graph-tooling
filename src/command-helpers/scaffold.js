@@ -1,9 +1,8 @@
 const fs = require('fs-extra')
 const path = require('path')
-const prettier = require('prettier')
 
-const { step } = require('./command-helpers/spinner')
-const Scaffold = require('./scaffold')
+const { step } = require('./spinner')
+const Scaffold = require('../scaffold')
 
 const generateScaffold = async (
   {
@@ -45,6 +44,8 @@ const writeScaffoldDirectory = async (scaffold, directory, spinner) => {
     // Write file or recurse into subdirectory
     if (typeof content === 'string') {
       await fs.writeFile(filename, content, { encoding: 'utf-8' })
+    } else if (content == null) {
+      return // continue loop
     } else {
       writeScaffoldDirectory(content, path.join(directory, basename), spinner)
     }
