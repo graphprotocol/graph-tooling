@@ -94,6 +94,16 @@ dataSources:
     )
   }
 
+  generateTsConfig() {
+    return prettier.format(
+      JSON.stringify({
+        extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
+        include: ['src'],
+      }),
+      { parser: 'json' },
+    )
+  }
+
   generateMapping() {
     const hasEvents = this.protocol.hasEvents()
     const events = hasEvents

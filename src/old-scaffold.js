@@ -5,14 +5,6 @@ const prettier = require('prettier')
 const { step } = require('./command-helpers/spinner')
 const Scaffold = require('./scaffold')
 
-const tsConfig = prettier.format(
-  JSON.stringify({
-    extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
-    include: ['src'],
-  }),
-  { parser: 'json' },
-)
-
 const generateScaffold = async (
   {
     protocolInstance,
@@ -42,6 +34,7 @@ const generateScaffold = async (
   let packageJson = scaffold.generatePackageJson()
   let manifest = scaffold.generateManifest()
   let schema = scaffold.generateSchema()
+  let tsConfig = scaffold.generateTsConfig()
   let mapping = scaffold.generateMapping()
   let abis = scaffold.generateABIs()
 
