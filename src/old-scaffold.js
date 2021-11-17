@@ -5,11 +5,11 @@ const pkginfo = require('pkginfo')(module)
 
 const { getSubgraphBasename } = require('./command-helpers/subgraph')
 const { step } = require('./command-helpers/spinner')
-const { ascTypeForEthereum, valueTypeForAsc } = require('./codegen/types')
 // TODO: Use Protocol class to getABI
 const ABI = require('./protocols/ethereum/abi')
 const AbiCodeGenerator = require('./protocols/ethereum/codegen/abi')
 const util = require('./codegen/util')
+const Scaffold = require('./scaffold')
 
 const abiEvents = abi =>
   util.disambiguateNames({
@@ -57,7 +57,7 @@ const generatePackageJson = ({ subgraphName, node }) =>
 
 // Subgraph manifest
 
-const generateManifest = ({ abi, address, network, contractName }) =>
+const generateManifest = ({ abi, contract, network, contractName }) =>
   prettier.format(
     `
 specVersion: 0.0.1
@@ -68,7 +68,7 @@ dataSources:
     name: ${contractName}
     network: ${network}
     source:
-      address: '${address}'
+      address: '${contract}'
       abi: ${contractName}
     mapping:
       kind: ethereum/events
@@ -93,64 +93,6 @@ dataSources:
 `,
     { parser: 'yaml' },
   )
-
-// Schema
-
-const ethereumTypeToGraphQL = name => {
-  let ascType = ascTypeForEthereum(name)
-  return valueTypeForAsc(ascType)
-}
-
-const generateField = ({ name, type }) =>
-  `${name}: ${ethereumTypeToGraphQL(type)}! # ${type}`
-
-const generateEventFields = ({ index, input }) =>
-  input.type == 'tuple'
-    ? util
-        .unrollTuple({ value: input, path: [input.name || `param${index}`], index })
-        .map(({ path, type }) => generateField({ name: path.join('_'), type }))
-    : [generateField({ name: input.name || `param${index}`, type: input.type })]
-
-const generateEventType = event => `type ${event._alias} @entity {
-      id: ID!
-      ${event.inputs
-        .reduce(
-          (acc, input, index) => acc.concat(generateEventFields({ input, index })),
-          [],
-        )
-        .join('\n')}
-    }`
-
-const generateExampleEntityType = events => {
-  if (events.length > 0) {
-    return `type ExampleEntity @entity {
-  id: ID!
-  count: BigInt!
-  ${events[0].inputs
-    .reduce((acc, input, index) => acc.concat(generateEventFields({ input, index })), [])
-    .slice(0, 2)
-    .join('\n')}
-}`
-  } else {
-    return `type ExampleEntity @entity {
-  id: ID!
-  block: Bytes!
-  transaction: Bytes!
-}`
-  }
-}
-
-const generateSchema = ({ abi, indexEvents }) => {
-  let events = abiEvents(abi).toJS()
-  return prettier.format(
-    indexEvents
-      ? events.map(generateEventType).join('\n\n')
-      : generateExampleEntityType(events),
-    {
-      parser: 'graphql',
-    },
-  )
-}
 
 const tsConfig = prettier.format(
   JSON.stringify({
@@ -305,14 +247,31 @@ const generateMapping = ({ abi, indexEvents, contractName }) => {
 }
 
 const generateScaffold = async (
-  { abi, address, network, subgraphName, indexEvents, contractName = 'Contract', node },
+  {
+    protocolInstance,
+    abi,
+    contract,
+    network,
+    subgraphName,
+    indexEvents,
+    contractName = 'Contract',
+    node,
+  },
   spinner,
 ) => {
-  step(spinner, 'Generate subgraph from ABI')
+  step(spinner, 'Generate subgraph')
+
   let packageJson = generatePackageJson({ subgraphName, node })
-  let manifest = generateManifest({ abi, address, network, contractName })
-  let schema = generateSchema({ abi, indexEvents, contractName })
+  let manifest = generateManifest({ abi, contract, network, contractName })
   let mapping = generateMapping({ abi, subgraphName, indexEvents, contractName })
+
+  let scaffold = new Scaffold({
+    protocol: protocolInstance,
+    abi,
+    indexEvents,
+  })
+
+  let schema = scaffold.generateSchema()
 
   return {
     'package.json': packageJson,
@@ -359,6 +318,5 @@ module.exports = {
   generateManifest,
   generateMapping,
   generateScaffold,
-  generateSchema,
   writeScaffold,
 }
