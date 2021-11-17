@@ -71,15 +71,10 @@ module.exports = class Protocol {
 
   prettifiedName() {
     switch (this.name) {
-      // Doesn't need to check for 'ethereum/contract' because instance's name
-      // is already normalized.
       case 'ethereum':
         return 'Ethereum'
       case 'near':
         return 'NEAR'
-      // Shouldn't happen
-      default:
-        return ''
     }
   }
 
@@ -94,7 +89,6 @@ module.exports = class Protocol {
   hasABIs() {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return true
       case 'near':
         return false
@@ -113,7 +107,6 @@ module.exports = class Protocol {
   getTypeGenerator(options) {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumTypeGenerator(options)
       case 'near':
         return null
@@ -123,7 +116,6 @@ module.exports = class Protocol {
   getTemplateCodeGen(template) {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumTemplateCodeGen(template)
       default:
         throw new Error(
@@ -135,7 +127,6 @@ module.exports = class Protocol {
   getABI() {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return EthereumABI
       case 'near':
         return null
@@ -147,7 +138,6 @@ module.exports = class Protocol {
 
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumSubgraph(optionsWithProtocol)
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
