@@ -125,4 +125,32 @@ describe('Init', () => {
       },
     )
   })
+
+  describe('NEAR', () => {
+    const nearBaseDir = path.join(baseDir, 'near')
+
+    cliTest(
+      'From contract',
+      [
+        'init',
+        '--protocol',
+        'near',
+        '--product',
+        'hosted-service',
+        '--from-contract',
+        'app.good-morning.near',
+        '--network',
+        'near-mainnet',
+        'user/near-from-contract',
+        path.join(nearBaseDir, 'from-contract'),
+      ],
+      path.join('init', 'near', 'from-contract'),
+      {
+        exitCode: 0,
+        timeout: 100000,
+        cwd: nearBaseDir,
+        deleteDir: true,
+      },
+    )
+  })
 })
