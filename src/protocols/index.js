@@ -97,6 +97,15 @@ module.exports = class Protocol {
     }
   }
 
+  hasEvents() {
+    switch (this.name) {
+      case 'ethereum':
+        return true
+      case 'near':
+        return false
+    }
+  }
+
   getTypeGenerator(options) {
     switch (this.name) {
       case 'ethereum':

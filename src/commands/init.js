@@ -14,7 +14,7 @@ const { validateStudioNetwork } = require('../command-helpers/studio')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
-const { abiEvents, generateScaffold, writeScaffold } = require('../scaffold')
+const { abiEvents, generateScaffold, writeScaffold } = require('../old-scaffold')
 const Protocol = require('../protocols')
 // TODO: Use Protocol class to getABI
 const ABI = require('../protocols/ethereum/abi')
@@ -793,6 +793,7 @@ const initSubgraphFromContract = async (
     async spinner => {
       let scaffold = await generateScaffold(
         {
+          protocolInstance,
           subgraphName,
           abi,
           network,
