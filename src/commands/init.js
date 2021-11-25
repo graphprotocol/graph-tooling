@@ -27,31 +27,32 @@ ${chalk.dim('Options:')}
 
       --protocol <${protocolChoices.join('|')}>
       --product <subgraph-studio|hosted-service>
-                                Selects the product for which to initialize
-      --studio                  Shortcut for --product subgraph-studio
-  -g, --node <node>             Graph node for which to initialize
-      --allow-simple-name       Use a subgraph name without a prefix (default: false)
-  -h, --help                    Show usage information
+                                 Selects the product for which to initialize
+      --studio                   Shortcut for --product subgraph-studio
+  -g, --node <node>              Graph node for which to initialize
+      --allow-simple-name        Use a subgraph name without a prefix (default: false)
+  -h, --help                     Show usage information
 
 ${chalk.dim('Choose mode with one of:')}
 
       --from-contract <contract> Creates a scaffold based on an existing contract
-      --from-example            Creates a scaffold based on an example subgraph
+      --from-example             Creates a scaffold based on an example subgraph
 
 ${chalk.dim('Options for --from-contract:')}
 
-      --contract-name           Name of the contract (default: Contract)
-      --index-events            Index contract events as entities
+      --contract-name            Name of the contract (default: Contract)
+      --index-events             Index contract events as entities
 
 ${chalk.dim.underline('Ethereum:')}
 
-      --abi <path>              Path to the contract ABI (default: download from Etherscan)
+      --abi <path>               Path to the contract ABI (default: download from Etherscan)
       --network <${Protocol.availableNetworks().get('ethereum').join('|')}>
-                                Selects the network the contract is deployed to
+                                 Selects the network the contract is deployed to
+
 ${chalk.dim.underline('NEAR:')}
 
       --network <${Protocol.availableNetworks().get('near').join('|')}>
-                                Selects the network the contract is deployed to
+                                 Selects the network the contract is deployed to
 `
 
 const processInitForm = async (
