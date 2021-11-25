@@ -1,5 +1,5 @@
 module.exports = class EthereumContract {
-  static name() {
+  static identifierName() {
     return 'address'
   }
 

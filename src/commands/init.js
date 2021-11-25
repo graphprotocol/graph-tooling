@@ -170,7 +170,7 @@ const processInitForm = async (
       name: 'contract',
       message: () => {
         ProtocolContract = protocolInstance.getContract()
-        return `Contract ${ProtocolContract.name()}`
+        return `Contract ${ProtocolContract.identifierName()}`
       },
       skip: fromExample !== undefined,
       initial: contract,
@@ -183,7 +183,7 @@ const processInitForm = async (
 
         // Validate whether the address is valid
         if (!contract.validate()) {
-          return `Contract ${ProtocolContract.name()} is invalid: ${value}\n${ProtocolContract.errorMessage()}`
+          return `Contract ${ProtocolContract.identifierName()} is invalid: ${value}\n${ProtocolContract.errorMessage()}`
         }
 
         return true

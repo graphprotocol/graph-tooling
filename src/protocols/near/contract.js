@@ -2,7 +2,7 @@ const MINIMUM_ACCOUNT_ID_LENGTH = 2
 const MAXIMUM_ACCOUNT_ID_LENGTH = 64
 
 module.exports = class NearContract {
-  static name() {
+  static identifierName() {
     return 'account'
   }
 

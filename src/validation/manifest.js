@@ -285,7 +285,7 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
 const validateContractValues = (manifest, protocol) => {
   const ProtocolContract = protocol.getContract()
 
-  const fieldName = ProtocolContract.name()
+  const fieldName = ProtocolContract.identifierName()
   const errorMessage = ProtocolContract.errorMessage()
 
   return manifest
