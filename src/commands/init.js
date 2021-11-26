@@ -16,6 +16,7 @@ const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
 const { generateScaffold, writeScaffold } = require('../command-helpers/scaffold')
 const { abiEvents } = require('../scaffold/schema')
+const { validateContract } = require('../validation')
 const Protocol = require('../protocols')
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
@@ -179,14 +180,12 @@ const processInitForm = async (
           return true
         }
 
-        const contract = new ProtocolContract(value)
+        // Validate whether the contract is valid
+        const { valid, error } = validateContract(value, ProtocolContract)
 
-        // Validate whether the address is valid
-        if (!contract.validate()) {
-          return `Contract ${ProtocolContract.identifierName()} is invalid: ${value}\n${ProtocolContract.errorMessage()}`
-        }
-
-        return true
+        return valid
+          ? true
+          : error
       },
       result: async value => {
         if (fromExample !== undefined) {

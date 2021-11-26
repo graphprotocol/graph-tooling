@@ -1,7 +1,6 @@
 const immutable = require('immutable')
 const ABI = require('./abi')
 const DataSourcesExtractor = require('../../command-helpers/data-sources')
-const { validateContractValues } = require('../../validation')
 
 module.exports = class EthereumSubgraph {
   constructor(options = {}) {

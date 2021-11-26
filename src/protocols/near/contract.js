@@ -1,20 +1,11 @@
 const MINIMUM_ACCOUNT_ID_LENGTH = 2
 const MAXIMUM_ACCOUNT_ID_LENGTH = 64
 
+const RULES_URL = 'https://docs.near.org/docs/concepts/account#account-id-rules'
+
 module.exports = class NearContract {
   static identifierName() {
     return 'account'
-  }
-
-  static pattern() {
-    return /^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$/
-  }
-
-  static errorMessage() {
-    return `Must be between '${MINIMUM_ACCOUNT_ID_LENGTH}' and '${MAXIMUM_ACCOUNT_ID_LENGTH}' characters
-An Account ID consists of Account ID parts separated by '.' (dots)
-Each Account ID part consists of lowercase alphanumeric symbols separated by either a '_' (underscore) or '-' (dash)
-For further information look for: https://docs.near.org/docs/concepts/account#account-id-rules`
   }
 
   constructor(account) {
@@ -26,9 +17,30 @@ For further information look for: https://docs.near.org/docs/concepts/account#ac
       this.account.length <= MAXIMUM_ACCOUNT_ID_LENGTH
   }
 
+  _validateFormat() {
+    const pattern = /^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$/
+
+    return pattern.test(this.account)
+  }
+
   validate() {
-    // Reference: https://docs.near.org/docs/concepts/account#account-id-rules
-    return this._validateLength(this.account) &&
-      NearContract.pattern().test(this.account)
+    if (!this._validateLength(this.account)) {
+      return {
+        valid: false,
+        error: `Account must be between '${MINIMUM_ACCOUNT_ID_LENGTH}' and '${MAXIMUM_ACCOUNT_ID_LENGTH}' characters, see ${RULES_URL}`,
+      }
+    }
+
+    if (!this._validateFormat()) {
+      return {
+        valid: false,
+        error: `Account must conform to the rules on ${RULES_URL}`,
+      }
+    }
+
+    return {
+      valid: true,
+      error: null,
+    }
   }
 }

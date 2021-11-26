@@ -1,5 +1,4 @@
 const immutable = require('immutable')
-const { validateContractValues } = require('../../validation')
 
 module.exports = class NearSubgraph {
   constructor(options = {}) {
