@@ -20,6 +20,7 @@ const { validateContract } = require('../validation')
 const Protocol = require('../protocols')
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
+const availableNetworks = Protocol.availableNetworks()
 
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
@@ -47,12 +48,12 @@ ${chalk.dim('Options for --from-contract:')}
 ${chalk.dim.underline('Ethereum:')}
 
       --abi <path>               Path to the contract ABI (default: download from Etherscan)
-      --network <${Protocol.availableNetworks().get('ethereum').join('|')}>
+      --network <${availableNetworks.get('ethereum').join('|')}>
                                  Selects the network the contract is deployed to
 
 ${chalk.dim.underline('NEAR:')}
 
-      --network <${Protocol.availableNetworks().get('near').join('|')}>
+      --network <${availableNetworks.get('near').join('|')}>
                                  Selects the network the contract is deployed to
 `
 
@@ -156,7 +157,7 @@ const processInitForm = async (
       name: 'network',
       message: () => `${protocolInstance.displayName()} network`,
       choices: () =>
-        Protocol.availableNetworks() // TODO: this should be a constant in the top of the file.
+        availableNetworks
           .get(protocol) // Get networks related to the chosen protocol.
           .toArray(), // Needed because of gluegun. It can't even receive a JS iterable.
       skip: fromExample !== undefined,
