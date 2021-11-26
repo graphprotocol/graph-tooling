@@ -154,7 +154,7 @@ const processInitForm = async (
     {
       type: 'select',
       name: 'network',
-      message: () => `${protocolInstance.prettifiedName()} network`,
+      message: () => `${protocolInstance.displayName()} network`,
       choices: () =>
         Protocol.availableNetworks() // TODO: this should be a constant in the top of the file.
           .get(protocol) // Get networks related to the chosen protocol.

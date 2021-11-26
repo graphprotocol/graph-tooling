@@ -69,7 +69,7 @@ module.exports = class Protocol {
       .findKey(possibleNames => possibleNames.includes(name))
   }
 
-  prettifiedName() {
+  displayName() {
     switch (this.name) {
       case 'ethereum':
         return 'Ethereum'
