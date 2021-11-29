@@ -145,6 +145,13 @@ At least one such handler must be defined.`,
       }, immutable.List())
   }
 
+  static validateContractValues(manifest, protocol) {
+    return validation.validateContractValues(
+      manifest,
+      protocol,
+    )
+  }
+
   // Validate that data source names are unique, so they don't overwrite each other.
   static validateUniqueDataSourceNames(manifest) {
     let names = []
@@ -231,6 +238,7 @@ More than one template named '${name}', template names must be unique.`,
       ? immutable.List()
       : immutable.List.of(
           ...protocolSubgraph.validateManifest(),
+          ...Subgraph.validateContractValues(manifest, protocol),
           ...Subgraph.validateUniqueDataSourceNames(manifest),
           ...Subgraph.validateUniqueTemplateNames(manifest),
           ...Subgraph.validateHandlers(manifest, protocol, protocolSubgraph),

@@ -1,7 +1,5 @@
-- Fetching ABI from Etherscan
-✔ Fetching ABI from Etherscan
 - Create subgraph scaffold
-  Generate subgraph from ABI
+  Generate subgraph
 - Create subgraph scaffold
   Write subgraph to directory
 - Create subgraph scaffold

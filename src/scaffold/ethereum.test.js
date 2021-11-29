@@ -1,11 +1,7 @@
-const ABI = require('./protocols/ethereum/abi')
+const ABI = require('../protocols/ethereum/abi')
 const immutable = require('immutable')
-const {
-  generateEventFieldAssignments,
-  generateManifest,
-  generateMapping,
-  generateSchema,
-} = require('./scaffold')
+const Scaffold = require('./')
+const Protocol = require('../protocols')
 
 const TEST_EVENT = {
   name: 'ExampleEvent',
@@ -73,21 +69,33 @@ const TEST_ABI = new ABI(
   ]),
 )
 
-describe('Subgraph scaffolding', () => {
+const protocol = new Protocol('ethereum')
+
+const scaffoldOptions = {
+  protocol,
+  abi: TEST_ABI,
+  contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
+  network: 'kovan',
+  contractName: 'Contract',
+}
+
+const scaffold = new Scaffold(scaffoldOptions)
+
+const scaffoldWithIndexEvents = new Scaffold({
+  ...scaffoldOptions,
+  indexEvents: true,
+})
+
+describe('Ethereum subgraph scaffolding', () => {
   test('Manifest', () => {
     expect(
-      generateManifest({
-        abi: TEST_ABI,
-        network: 'kovan',
-        address: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
-        contractName: 'Contract'
-      }),
+      scaffold.generateManifest(),
     ).toEqual(`\
 specVersion: 0.0.1
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum/contract
+  - kind: ethereum
     name: Contract
     network: kovan
     source:
@@ -113,7 +121,7 @@ dataSources:
   })
 
   test('Schema (default)', () => {
-    expect(generateSchema({ abi: TEST_ABI })).toEqual(`\
+    expect(scaffold.generateSchema()).toEqual(`\
 type ExampleEntity @entity {
   id: ID!
   count: BigInt!
@@ -124,7 +132,7 @@ type ExampleEntity @entity {
   })
 
   test('Schema (for indexing events)', () => {
-    expect(generateSchema({ abi: TEST_ABI, indexEvents: true })).toEqual(`\
+    expect(scaffoldWithIndexEvents.generateSchema()).toEqual(`\
 type ExampleEvent @entity {
   id: ID!
   a: BigInt! # uint256
@@ -147,7 +155,7 @@ type ExampleEvent1 @entity {
   })
 
   test('Mapping (default)', () => {
-    expect(generateMapping({ abi: TEST_ABI, contractName: 'Contract' })).toEqual(`\
+    expect(scaffold.generateMapping()).toEqual(`\
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
   Contract,
@@ -204,7 +212,7 @@ export function handleExampleEvent1(event: ExampleEvent1): void {}
   })
 
   test('Mapping (for indexing events)', () => {
-    expect(generateMapping({ abi: TEST_ABI, indexEvents: true, contractName: 'Contract' })).toEqual(`\
+    expect(scaffoldWithIndexEvents.generateMapping()).toEqual(`\
 import {
   ExampleEvent as ExampleEventEvent,
   ExampleEvent1 as ExampleEvent1Event

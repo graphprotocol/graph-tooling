@@ -89,8 +89,12 @@ const findInitializationForType = (fromTypeSystem, toTypeSystem, ascType) => {
 
 // High-level type system API
 
+const ascTypeForProtocol = (protocol, protocolType) =>
+  findConversionFromType(protocol, 'AssemblyScript', protocolType).getIn(['to', 'type'])
+
+// TODO: this can be removed/replaced by the function above
 const ascTypeForEthereum = ethereumType =>
-  findConversionFromType('ethereum', 'AssemblyScript', ethereumType).getIn(['to', 'type'])
+  ascTypeForProtocol('ethereum', ethereumType)
 
 const ethereumTypeForAsc = ascType =>
   findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn(['to', 'type'])
@@ -120,6 +124,9 @@ const initializedValueFromAsc = ascType =>
   findInitializationForType('AssemblyScript', 'Value', ascType)
 
 module.exports = {
+  // protocol <-> AssemblyScript
+  ascTypeForProtocol,
+
   // ethereum <-> AssemblyScript
   ascTypeForEthereum,
   ethereumTypeForAsc,

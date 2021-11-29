@@ -4,6 +4,12 @@ const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const EthereumABI = require('./ethereum/abi')
 const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
+const EthereumContract = require('./ethereum/contract')
+const NearContract = require('./near/contract')
+const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
+const NearManifestScaffold = require('./near/scaffold/manifest')
+const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
+const NearMappingScaffold = require('./near/scaffold/mapping')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -15,7 +21,7 @@ module.exports = class Protocol {
     this.name = this.normalizeName(name)
   }
 
-  availableProtocols() {
+  static availableProtocols() {
     return immutable.fromJS({
       // `ethereum/contract` is kept for backwards compatibility.
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
@@ -24,15 +30,58 @@ module.exports = class Protocol {
     })
   }
 
+  static availableNetworks() {
+    return immutable.fromJS({
+      ethereum: [
+        'mainnet',
+        'kovan',
+        'rinkeby',
+        'ropsten',
+        'goerli',
+        'poa-core',
+        'poa-sokol',
+        'xdai',
+        'matic',
+        'mumbai',
+        'fantom',
+        'bsc',
+        'chapel',
+        'clover',
+        'avalanche',
+        'fuji',
+        'celo',
+        'celo-alfajores',
+        'fuse',
+        'mbase',
+        'arbitrum-one',
+        'arbitrum-rinkeby',
+        'optimism',
+        'optimism-kovan',
+      ],
+      near: [
+        'near-mainnet',
+      ],
+    })
+  }
+
   normalizeName(name) {
-    return this.availableProtocols()
+    return Protocol.availableProtocols()
       .findKey(possibleNames => possibleNames.includes(name))
+  }
+
+  displayName() {
+    switch (this.name) {
+      case 'ethereum':
+        return 'Ethereum'
+      case 'near':
+        return 'NEAR'
+    }
   }
 
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
-    return this.availableProtocols()
+    return Protocol.availableProtocols()
       .get(this.name, immutable.List())
       .includes(kind)
   }
@@ -40,7 +89,15 @@ module.exports = class Protocol {
   hasABIs() {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
+        return true
+      case 'near':
+        return false
+    }
+  }
+
+  hasEvents() {
+    switch (this.name) {
+      case 'ethereum':
         return true
       case 'near':
         return false
@@ -50,7 +107,6 @@ module.exports = class Protocol {
   getTypeGenerator(options) {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumTypeGenerator(options)
       case 'near':
         return null
@@ -60,7 +116,6 @@ module.exports = class Protocol {
   getTemplateCodeGen(template) {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumTemplateCodeGen(template)
       default:
         throw new Error(
@@ -72,7 +127,6 @@ module.exports = class Protocol {
   getABI() {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return EthereumABI
       case 'near':
         return null
@@ -84,7 +138,6 @@ module.exports = class Protocol {
 
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumSubgraph(optionsWithProtocol)
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
@@ -92,6 +145,33 @@ module.exports = class Protocol {
         throw new Error(
           `Data sources with kind '${this.name}' are not supported yet`,
         )
+    }
+  }
+
+  getContract() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumContract
+      case 'near':
+        return NearContract
+    }
+  }
+
+  getManifestScaffold() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumManifestScaffold
+      case 'near':
+        return NearManifestScaffold
+    }
+  }
+
+  getMappingScaffold() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumMappingScaffold
+      case 'near':
+        return NearMappingScaffold
     }
   }
 }

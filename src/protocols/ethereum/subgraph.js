@@ -1,7 +1,6 @@
 const immutable = require('immutable')
 const ABI = require('./abi')
 const DataSourcesExtractor = require('../../command-helpers/data-sources')
-const { validateContractValues } = require('../../validation')
 
 module.exports = class EthereumSubgraph {
   constructor(options = {}) {
@@ -12,7 +11,6 @@ module.exports = class EthereumSubgraph {
 
   validateManifest() {
     return this.validateAbis()
-      .concat(this.validateContractAddresses())
       .concat(this.validateEvents())
       .concat(this.validateCallFunctions())
   }
@@ -70,18 +68,6 @@ ${abiNames
       }, immutable.List())
 
     return nameErrors.concat(fileErrors)
-  }
-
-  validateContractAddresses() {
-    const ethereumAddressPattern = /^(0x)?[0-9a-fA-F]{40}$/
-
-    return validateContractValues(
-      this.manifest,
-      this.protocol,
-      'address',
-      address => ethereumAddressPattern.test(address),
-      "Must be 40 hexadecimal characters, with an optional '0x' prefix.",
-    )
   }
 
   validateEvents() {
