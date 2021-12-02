@@ -197,7 +197,7 @@ describe('Version Command Helpers', () => {
         .rejects
         .toThrow(new Error(
           `To use this version of the graph-cli you must upgrade the graph-ts dependency to a version greater than or equal to ${minimumGraphTsVersion}
-Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://gist.github.com/otaviopace/8406cb39644d2e7678570d1e7f50dac4`
+Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://thegraph.com/docs/developer/assemblyscript-migration-guide`
         ))
     })
     test('When the installed graph-ts version is a supported one', async () => {
