@@ -80,17 +80,24 @@ module.exports = class SchemaCodeGenerator {
       .map(field => {
         const name = field.getIn(['name', 'value'])
         const type = this._typeFromGraphQl(field.get('type'))
+
         const isNullable = type instanceof tsCodegen.NullableType
+        const isPrimitive = type.isPrimitive && type.isPrimitive()
 
         const directives = field.get('directives')
         const isDerivedFrom = directives.some(directive => directive.getIn(['name', 'value']) === 'derivedFrom')
 
-        return { name, type, isNullable, isDerivedFrom }
+        return { name, type, isNullable, isPrimitive, isDerivedFrom }
       })
       // We only call the setter with the default value in the constructor for fields that are:
+      // - Not primitive (such as Int/i32)
       // - Not nullable, so that AS doesn't break when subgraph developers try to access them before a `set`
       // - Not tagged as `derivedFrom`, because they only exist in query time
-      .filter(({ isNullable, isDerivedFrom }) => !isNullable && !isDerivedFrom)
+      .filter(({
+        isNullable,
+        isPrimitive,
+        isDerivedFrom,
+      }) => !(isNullable || isPrimitive || isDerivedFrom))
       .map(({ name, type, isNullable }) => {
         const fieldTypeString = isNullable ? type.inner.toString() : type.toString()
 
