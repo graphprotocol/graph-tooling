@@ -279,6 +279,7 @@ const loadAbiFromBlockScout = async (ABI, network, address) =>
 const getEtherscanLikeAPIUrl = (network) => {
   switch(network){
     case "mainnet": return `https://api.etherscan.io/api`;
+    case "arbitrum-one": return `https://api.arbiscan.com/api`;
     case "bsc": return `https://api.bscscan.com/api`;
     case "matic": return `https://api.polygonscan.com/api`;
     case "mumbai": return `https://api-testnet.polygonscan.com/api`;
