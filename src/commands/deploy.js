@@ -191,8 +191,6 @@ module.exports = {
       return
     }
 
-    // TODO: validate that debugFork is a valid IPFS hash
-
     let protocol
     try {
       // Checks to make sure deploy doesn't run against
