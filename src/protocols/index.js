@@ -57,16 +57,17 @@ module.exports = class Protocol {
         'arbitrum-rinkeby',
         'optimism',
         'optimism-kovan',
+        'aurora',
+        'aurora-testnet',
       ],
-      near: [
-        'near-mainnet',
-      ],
+      near: ['near-mainnet'],
     })
   }
 
   normalizeName(name) {
-    return Protocol.availableProtocols()
-      .findKey(possibleNames => possibleNames.includes(name))
+    return Protocol.availableProtocols().findKey(possibleNames =>
+      possibleNames.includes(name),
+    )
   }
 
   displayName() {
@@ -142,9 +143,7 @@ module.exports = class Protocol {
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
       default:
-        throw new Error(
-          `Data sources with kind '${this.name}' are not supported yet`,
-        )
+        throw new Error(`Data sources with kind '${this.name}' are not supported yet`)
     }
   }
 
