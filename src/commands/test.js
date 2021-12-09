@@ -62,25 +62,15 @@ ENV ARGS=""
 RUN apt update
 RUN apt install -y nodejs
 RUN apt install -y npm
-RUN apt install -y cmake
-RUN apt install -y git
 COPY ./ ./
-RUN mkdir ./tests/.tools
-WORKDIR ./tests/.tools
-RUN git clone --recursive https://github.com/WebAssembly/wabt
-WORKDIR wabt
-RUN git submodule update --init
-RUN mkdir build
-WORKDIR build
-RUN cmake ..
-RUN cmake --build .
-WORKDIR /
 RUN npm run codegen
 RUN npm run build
 RUN apt install -y postgresql
 RUN apt install -y curl
-RUN curl -OL ${url}
+RUN apt-get update && apt-get -y install cmake protobuf-compiler
+RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version || "0.2.1a"}/binary-linux-20
 RUN mv binary-linux-20 matchstick
+RUN chmod a+x matchstick
 CMD ./matchstick \${ARGS}`
 
       let dir = 'tests/.docker'
