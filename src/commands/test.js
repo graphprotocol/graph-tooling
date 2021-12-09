@@ -16,6 +16,7 @@ ${chalk.dim('Options:')}
   -l, --logs                    Logs to the console information about the OS, CPU model and download url (debugging purposes)
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
   -d, --docker                  Launches Matchstick in a docker container
+  -c, --coverage                (Docker) Runs in coverage mode
   `
 
 module.exports = {
@@ -25,7 +26,7 @@ module.exports = {
     let { print } = toolbox
 
     // Read CLI parameters
-    let { f, force, h, help, l, logs, v, version, d, docker } = toolbox.parameters.options
+    let { f, force, h, help, l, logs, v, version, c, coverage, d, docker } = toolbox.parameters.options
     let datasource = toolbox.parameters.first
 
     // Support both long and short option variants
@@ -33,6 +34,8 @@ module.exports = {
     help = help || h
     logs = logs || l
     version = version || v
+    coverage = coverage || c
+    docker = docker || d
 
     // Show help text if requested
     if (help) {
