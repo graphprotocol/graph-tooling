@@ -110,7 +110,7 @@ CMD ../binary-linux-20 \${ARGS}
       }
 
       //docker run -it --rm --mount type=bind,source=$PWD,target=/matchstick -e ARGS="-c" matchstick
-      let runCommand = `docker run -it --rm --mount type=bind,source=$PWD,target=/matchstick -e ARGS="${datasource || ''}${coverage ? '-c' : ''}" matchstick`;
+      let runCommand = `docker run --rm --mount type=bind,source=$PWD,target=/matchstick -e ARGS="${datasource || ''}${coverage ? '-c' : ''}" matchstick`;
 
       exec(runCommand, (error, stdout, stderr) => {
         print.info('Running Matchstick image...');
