@@ -109,7 +109,8 @@ CMD ../binary-linux-20 \${ARGS}
         print.info(`stderr: ${stderr}`)
       }
 
-      let runCommand = `docker run -e ARGS="${datasource || ""}${coverage ? "-c" : ""}" --rm matchstick`;
+      // TODO: try flags
+      let runCommand = `docker run --rm matchstick`;
 
       console.log("runCommand output");
       console.log(runCommand);
