@@ -59,7 +59,7 @@ RUN npm run build
 RUN apt install -y postgresql
 RUN apt install -y curl
 RUN apt-get update && apt-get -y install cmake protobuf-compiler
-RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version || "0.2.1a"}/binary-linux-20
+RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version || "0.2.2a"}/binary-linux-20
 RUN mv binary-linux-20 matchstick
 RUN chmod a+x matchstick
 CMD ./matchstick \${ARGS}`
