@@ -112,11 +112,6 @@ CMD ../binary-linux-20 \${ARGS}
       // TODO: try flags
       let runCommand = `docker run --rm matchstick`;
 
-      console.log("runCommand output");
-      console.log(runCommand);
-      print.info("runCommand output");
-      print.info(runCommand);
-
       exec(runCommand, (error, stdout, stderr) => {
         print.info('Running Matchstick image...');
 
