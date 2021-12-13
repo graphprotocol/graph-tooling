@@ -21,7 +21,7 @@ module.exports = {
     let { print } = toolbox
 
     // Read CLI parameters
-    let { h, help, v, version, c, coverage, l, lib } = toolbox.parameters.options
+    let { h, help, v, version, c, coverage } = toolbox.parameters.options
     let datasource = toolbox.parameters.first
 
     // Support both long and short option variants
@@ -64,7 +64,7 @@ RUN apt install -y curl
 RUN npm install -g @graphprotocol/graph-cli
 
 # Download the latest linux binary
-RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/0.2.2a/binary-linux-20
+RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version || "0.2.2a"}/binary-linux-20
 # Make it executable
 RUN chmod a+x binary-linux-20
 
@@ -97,7 +97,7 @@ CMD ../binary-linux-20 \${ARGS}
       }
     })
 
-    exec(`docker build -f tests/.docker/Dockerfile -t matchstick . `, (error, stdout, stderr) => {
+    exec(`docker build -t matchstick .`, (error, stdout, stderr) => {
       print.info('Building Matchstick image...');
 
       if (error) {
@@ -109,8 +109,8 @@ CMD ../binary-linux-20 \${ARGS}
         print.info(`stderr: ${stderr}`)
       }
 
-      // TODO: try flags
-      let runCommand = `docker run --rm matchstick`;
+      //docker run -it --rm --mount type=bind,source=$PWD,target=/matchstick -e ARGS="-c" matchstick
+      let runCommand = `docker run -it --rm --mount type=bind,source=$PWD,target=/matchstick -e ARGS="${datasource || ''}${coverage ? '-c' : ''}" matchstick`;
 
       exec(runCommand, (error, stdout, stderr) => {
         print.info('Running Matchstick image...');
