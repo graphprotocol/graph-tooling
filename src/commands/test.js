@@ -6,14 +6,14 @@ const { spawn, exec } = require('child_process')
 const fs = require('fs')
 
 const HELP = `
-${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
+${chalk.bold('graph test')} ${chalk.bold('<datasource>')} ${chalk.dim('[options]')}
 
 ${chalk.dim('Options:')}
   -h, --help                    Show usage information
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
+  -c, --coverage                Run tests in coverage mode
   -f, --flags <flags>
   `
-  // -r, --root                    The root folder of the subgraph project. Default is the folder where the 'graph test' command is executed from.
 
 module.exports = {
   description: 'Runs rust binary for subgraph testing',
@@ -98,12 +98,14 @@ CMD ../binary-linux-20 \${ARGS}
       }
     })
 
-    // TODO:
-    // 1. Check if image exists - done
-    // 2. Check if ARGS are passed. Add them to the options there are ARGS - done
-    // ?? 3. Add option to pass root/host folder
+    // TODOs:
+    // 1. Fix true/false options with gluegun.
+    // 2. If -v/--version is passed, delete current image and build again.
 
+    // Run a command to check if matchstick image already exists
     exec('docker images -q matchstick', (error, stdout, stderr) => {
+      // Getting the current working folder that will be passed to the
+      // `docker run` command to be bind mounted.
       let current_folder = process.cwd();
       let args = '';
 
@@ -119,12 +121,17 @@ CMD ../binary-linux-20 \${ARGS}
 
       if(args !== '') {
         options.push('-e')
-        options.push(`ARGS=${args}`);
+        options.push(`ARGS=${args.trim()}`);
       }
 
       options.push('matchstick')
 
+      // If a matchstick image does not exists, the command returns an empty string,
+      // else it'll return the image ID. Skip `docker build` if an image already exists
+      // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
       if(stdout === "") {
+        // Build a docker image. If the process has executed successfully
+        // run a container from that image.
         spawn(
           'docker',
           ['build', '-f', 'tests/.docker/Dockerfile', '-t', 'matchstick', '.'],
@@ -135,6 +142,7 @@ CMD ../binary-linux-20 \${ARGS}
           }
         })
       } else {
+        // Run the container from the existing matchstick docker image
         spawn('docker', options, { stdio: 'inherit' });
       }
     })
