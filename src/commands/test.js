@@ -1,12 +1,13 @@
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
+const { fixParameters } = require('../command-helpers/gluegun')
 const semver = require('semver')
 const { spawn, exec } = require('child_process')
 const fs = require('fs')
 
 const HELP = `
-${chalk.bold('graph test')} ${chalk.bold('<datasource>')} ${chalk.dim('[options]')}
+${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
 
 ${chalk.dim('Options:')}
   -h, --help                    Show usage information
@@ -23,26 +24,41 @@ module.exports = {
 
     // Read CLI parameters
     let { h, help, v, version, c, coverage } = toolbox.parameters.options
-    let datasource = toolbox.parameters.first
 
     // Support both long and short option variants
-    help = help || h
-    version = version || v
-    coverage = coverage || c
+    let help_opt = help || h
+    let version_opt = version || v
+    let coverage_opt = coverage || c
+
+    // Fix if a boolean flag (-h, --help, -c, --coverage) has an argument
+    try {
+      fixParameters(toolbox.parameters, {
+        h,
+        help,
+        c,
+        coverage,
+      })
+    } catch (e) {
+      print.error(e.message)
+      process.exitCode = 1
+      return
+    }
+
+    let datasource = toolbox.parameters.first || toolbox.parameters.array[0]
 
     // Show help text if requested
-    if (help) {
+    if (help_opt) {
       print.info(HELP)
       return
     }
 
-    if(version) {
-      let url = `https://github.com/LimeChain/matchstick/releases/download/${version || "0.2.2a"}/binary-linux-20`;
+    if(version_opt) {
+      let url = `https://github.com/LimeChain/matchstick/releases/download/${version_opt || "0.2.2a"}/binary-linux-20`;
 
       await fetch(url)
         .then(response => {
           if (response.status === 404){
-            print.info(`Error: Invalid Matchstick version '${version}'`);
+            print.info(`Error: Invalid Matchstick version '${version_opt}'`);
             process.exit(1);
           }
         })
@@ -65,7 +81,7 @@ RUN apt install -y curl
 RUN npm install -g @graphprotocol/graph-cli
 
 # Download the latest linux binary
-RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version || "0.2.2a"}/binary-linux-20
+RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version_opt || "0.2.2a"}/binary-linux-20
 # Make it executable
 RUN chmod a+x binary-linux-20
 
@@ -106,31 +122,31 @@ CMD ../binary-linux-20 \${ARGS}
       // Getting the current working folder that will be passed to the
       // `docker run` command to be bind mounted.
       let current_folder = process.cwd();
-      let args = '';
+      let test_args = '';
 
       if(datasource) {
-        args = args + datasource
+        test_args = test_args + datasource
       }
 
-      if(coverage) {
-        args = args + ' ' + '-c'
+      if(coverage_opt) {
+        test_args = test_args + ' ' + '-c'
       }
 
-      let options = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`];
+      let docker_run_opts = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`];
 
-      if(args !== '') {
-        options.push('-e')
-        options.push(`ARGS=${args.trim()}`);
+      if(test_args !== '') {
+        docker_run_opts.push('-e')
+        docker_run_opts.push(`ARGS=${test_args.trim()}`);
       }
 
-      options.push('matchstick')
+      docker_run_opts.push('matchstick')
 
       // If a matchstick image does not exists, the command returns an empty string,
       // else it'll return the image ID. Skip `docker build` if an image already exists
       // If `-v/--version` is specified, delete current image(if any) and rebuild.
       // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
-      if(stdout === '' || version) {
-        if (stdout !== '' && version) {
+      if(stdout === '' || version_opt) {
+        if (stdout !== '' && version_opt) {
           exec('docker image rm matchstick', (error, stdout, stderr) => {
             print.info(chalk.bold(`Removing matchstick image\n${stdout}`));
           });
@@ -143,12 +159,12 @@ CMD ../binary-linux-20 \${ARGS}
           { stdio: 'inherit' }
         ).on('close', code => {
           if (code === 0) {
-             spawn('docker', options, { stdio: 'inherit' });
+             spawn('docker', docker_run_opts, { stdio: 'inherit' });
           }
         })
       } else {
         // Run the container from the existing matchstick docker image
-        spawn('docker', options, { stdio: 'inherit' });
+        spawn('docker', docker_run_opts, { stdio: 'inherit' });
       }
     })
   },
