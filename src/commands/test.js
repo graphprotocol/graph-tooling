@@ -11,7 +11,7 @@ ${chalk.bold('graph test')} ${chalk.bold('<datasource>')} ${chalk.dim('[options]
 ${chalk.dim('Options:')}
   -h, --help                    Show usage information
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
-  -c, --coverage                Run tests in coverage mode
+  -c, --coverage                Run tests in coverage mode (works with v0.2.2 and above)
   -f, --flags <flags>
   `
 
@@ -99,8 +99,7 @@ CMD ../binary-linux-20 \${ARGS}
     })
 
     // TODOs:
-    // 1. Fix true/false options with gluegun.
-    // 2. If -v/--version is passed, delete current image and build again.
+    // Fix true/false options with gluegun.
 
     // Run a command to check if matchstick image already exists
     exec('docker images -q matchstick', (error, stdout, stderr) => {
@@ -128,8 +127,14 @@ CMD ../binary-linux-20 \${ARGS}
 
       // If a matchstick image does not exists, the command returns an empty string,
       // else it'll return the image ID. Skip `docker build` if an image already exists
+      // If `-v/--version` is specified, delete current image(if any) and rebuild.
       // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
-      if(stdout === "") {
+      if(stdout === '' || version) {
+        if (stdout !== '' && version) {
+          exec('docker image rm matchstick', (error, stdout, stderr) => {
+            print.info(chalk.bold(`Removing matchstick image\n${stdout}`));
+          });
+        }
         // Build a docker image. If the process has executed successfully
         // run a container from that image.
         spawn(
