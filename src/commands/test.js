@@ -114,9 +114,6 @@ CMD ../binary-linux-20 \${ARGS}
       }
     })
 
-    // TODOs:
-    // Fix true/false options with gluegun.
-
     // Run a command to check if matchstick image already exists
     exec('docker images -q matchstick', (error, stdout, stderr) => {
       // Getting the current working folder that will be passed to the
