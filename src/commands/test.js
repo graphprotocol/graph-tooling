@@ -145,6 +145,8 @@ function getPlatform(logs_opt) {
 }
 
 function runDocker(coverage_opt, datasource, version_opt) {
+  // Remove the binaries before because there are permission issues
+  // with the binaries when building the docker images
   fs.rmSync("node_modules/binary-install-raw/bin", { force: true, recursive: true });
 
   let dir = 'tests/.docker';
