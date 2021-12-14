@@ -2,7 +2,7 @@ const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
 const semver = require('semver')
-const { exec } = require('child_process')
+const { spawn, exec } = require('child_process')
 const fs = require('fs')
 
 const HELP = `
@@ -11,8 +11,9 @@ ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>
 ${chalk.dim('Options:')}
   -h, --help                    Show usage information
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
-  -c, --flags <flags>
+  -f, --flags <flags>
   `
+  // -r, --root                    The root folder of the subgraph project. Default is the folder where the 'graph test' command is executed from.
 
 module.exports = {
   description: 'Runs rust binary for subgraph testing',
@@ -97,38 +98,45 @@ CMD ../binary-linux-20 \${ARGS}
       }
     })
 
-    exec(`docker build -t matchstick .`, (error, stdout, stderr) => {
-      print.info('Building Matchstick image...');
+    // TODO:
+    // 1. Check if image exists - done
+    // 2. Check if ARGS are passed. Add them to the options there are ARGS - done
+    // ?? 3. Add option to pass root/host folder
 
-      if (error) {
-        print.info('A problem occurred while trying to build the Matchstick Docker image. Please attend to the errors below.');
-        print.info(`error: ${error.message}`)
+    exec('docker images -q matchstick', (error, stdout, stderr) => {
+      let current_folder = process.cwd();
+      let args = '';
+
+      if(datasource) {
+        args = args + datasource
       }
-      if (stderr) {
-        print.info('A problem occurred while trying to build the Matchstick Docker image. Please attend to the errors below.');
-        print.info(`stderr: ${stderr}`)
+
+      if(coverage) {
+        args = args + ' ' + '-c'
       }
 
-      //docker run -it --rm --mount type=bind,source=$PWD,target=/matchstick -e ARGS="-c" matchstick
-      let runCommand = `docker run --rm --mount type=bind,source=$PWD,target=/matchstick -e ARGS="${datasource || ''}${coverage ? '-c' : ''}" matchstick`;
+      let options = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`];
 
-      exec(runCommand, (error, stdout, stderr) => {
-        print.info('Running Matchstick image...');
+      if(args !== '') {
+        options.push('-e')
+        options.push(`ARGS=${args}`);
+      }
 
-        if (error) {
-          print.info('A problem occurred while trying to run the Matchstick Docker image. Please attend to the errors below.');
-          print.info(`error: ${error.message}`)
-          process.exit(1);
-        }
-        if (stderr) {
-          print.info('A problem occurred while trying to run the Matchstick Docker image. Please attend to the errors below.');
-          print.info(`stderr: ${stderr}`)
-          process.exit(1);
-        }
-        print.info(stdout)
-        process.exit();
-      })
+      options.push('matchstick')
+
+      if(stdout === "") {
+        spawn(
+          'docker',
+          ['build', '-f', 'tests/.docker/Dockerfile', '-t', 'matchstick', '.'],
+          { stdio: 'inherit' }
+        ).on('close', code => {
+          if (code === 0) {
+             spawn('docker', options, { stdio: 'inherit' });
+          }
+        })
+      } else {
+        spawn('docker', options, { stdio: 'inherit' });
+      }
     })
-
   },
 }
