@@ -78,14 +78,14 @@ module.exports = {
     }
 
     if(docker_opt) {
-      runDocker(coverage_opt, datasource, version_opt)
+      runDocker(coverage_opt, datasource, version_opt, print)
     } else {
-      runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt)
+      runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, print)
     }
   }
 }
 
-async function runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt) {
+async function runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, print) {
   const platform = getPlatform(logs_opt)
 
   if (!version_opt) {
@@ -104,8 +104,8 @@ async function runBinary(coverage_opt, datasource, force_opt, logs_opt, version_
   force_opt ? await binary.install(true) : await binary.install(false)
   let args = ""
 
-  if (datasource) { args = datasource }
-  if (coverage_opt) { args = args + ' -c' }
+  datasource ? args = datasource : args
+  coverage_opt ? args = args + ' -c' : args
   args !== '' ? binary.run(args.trim()) : binary.run()
 }
 
@@ -144,9 +144,9 @@ function getPlatform(logs_opt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-function runDocker(coverage_opt, datasource, version_opt) {
-  // Remove the binaries before because there are permission issues
-  // with the binaries when building the docker images
+function runDocker(coverage_opt, datasource, version_opt, print) {
+  // Remove binary-install-raw binaries, because docker has permission issues
+  // when building the docker images
   fs.rmSync("node_modules/binary-install-raw/bin", { force: true, recursive: true });
 
   let dir = 'tests/.docker';
@@ -155,15 +155,14 @@ function runDocker(coverage_opt, datasource, version_opt) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  fs.writeFileSync('tests/.docker/Dockerfile', dockerfile(version_opt), (err) => {
-    if (err) {
-      print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below.');
-      print.info(err);
-    }
-    else {
-      print.info('Successfully generated Dockerfile.')
-    }
-  })
+  try {
+    fs.writeFileSync(`${dir}/Dockerfile`, dockerfile(version_opt))
+    print.info('Successfully generated Dockerfile.');
+  } catch (error) {
+    print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:');
+    print.info(chalk.red(error));
+    return
+  }
 
   // Run a command to check if matchstick image already exists
   exec('docker images -q matchstick', (error, stdout, stderr) => {
