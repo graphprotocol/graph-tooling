@@ -77,24 +77,22 @@ module.exports = {
       return
     }
 
+    let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
+    let json = await result.json()
+    let latest_version = json.tag_name
+
     if(docker_opt) {
-      runDocker(coverage_opt, datasource, version_opt, print)
+      runDocker(coverage_opt, datasource, version_opt, latest_version, print)
     } else {
-      runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, print)
+      runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, latest_version, print)
     }
   }
 }
 
-async function runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, print) {
+async function runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, latest_version, print) {
   const platform = getPlatform(logs_opt)
 
-  if (!version_opt) {
-    let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
-    let json = await result.json()
-    version_opt = json.tag_name
-  }
-
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${version_opt}/${platform}`
+  const url = `https://github.com/LimeChain/matchstick/releases/download/${version_opt || latest_version}/${platform}`
 
   if (logs_opt) {
     console.log(`Download link: ${url}`)
@@ -144,7 +142,7 @@ function getPlatform(logs_opt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-function runDocker(coverage_opt, datasource, version_opt, print) {
+function runDocker(coverage_opt, datasource, version_opt, latest_version, print) {
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
   fs.rmSync("node_modules/binary-install-raw/bin", { force: true, recursive: true });
@@ -156,7 +154,7 @@ function runDocker(coverage_opt, datasource, version_opt, print) {
   }
 
   try {
-    fs.writeFileSync(`${dir}/Dockerfile`, dockerfile(version_opt))
+    fs.writeFileSync(`${dir}/Dockerfile`, dockerfile(version_opt, latest_version))
     print.info('Successfully generated Dockerfile.');
   } catch (error) {
     print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:');
@@ -217,7 +215,7 @@ function runDocker(coverage_opt, datasource, version_opt, print) {
 }
 
 // TODO: Move these in separate file (in a function maybe)
-function dockerfile(version_opt) {
+function dockerfile(version_opt, latest_version) {
   return `
   FROM ubuntu:20.04
   ENV ARGS=""
@@ -232,7 +230,7 @@ function dockerfile(version_opt) {
   RUN npm install -g @graphprotocol/graph-cli
 
   # Download the latest linux binary
-  RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version_opt || "0.2.2a"}/binary-linux-20
+  RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version_opt || latest_version}/binary-linux-20
 
   # Make it executable
   RUN chmod a+x binary-linux-20
