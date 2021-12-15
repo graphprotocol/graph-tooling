@@ -2,18 +2,18 @@ const { Binary } = require('binary-install-raw')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
+const fs = require('fs')
 const { fixParameters } = require('../command-helpers/gluegun')
 const semver = require('semver')
 const { spawn, exec } = require('child_process')
-const fs = require('fs')
 
 const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
 
 ${chalk.dim('Options:')}
-  -c, --coverage                Run the tests in coverage mode. Works with v0.2.1 and above (0.2.2 and above in docker mode).
-  -d, --docker                  Run the tests in a docker container
-  -f  --force                   Overwrite folder + file when downloading
+  -c, --coverage                Run the tests in coverage mode. Works with v0.2.1 and above (0.2.2 and above in docker mode)
+  -d, --docker                  Run the tests in a docker container(Note: Please execute from the root folder of the subgraph)
+  -f  --force                   Binary - overwrites folder + file when downloading. Docker - rebuilds the docker image
   -h, --help                    Show usage information
   -l, --logs                    Logs to the console information about the OS, CPU model and download url (debugging purposes)
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
@@ -42,12 +42,12 @@ module.exports = {
     } = toolbox.parameters.options
 
     // Support both long and short option variants
-    let coverage_opt = coverage || c
-    let docker_opt = docker || d
-    let force_opt = force || f
-    let help_opt = help || h
-    let logs_opt = logs || l
-    let version_opt = version || v
+    let coverageOpt = coverage || c
+    let dockerOpt = docker || d
+    let forceOpt = force || f
+    let helpOpt = help || h
+    let logsOpt = logs || l
+    let versionOpt = version || v
 
     // Fix if a boolean flag (e.g -c, --coverage) has an argument
     try {
@@ -72,42 +72,42 @@ module.exports = {
     let datasource = toolbox.parameters.first || toolbox.parameters.array[0]
 
     // Show help text if requested
-    if (help_opt) {
+    if (helpOpt) {
       print.info(HELP)
       return
     }
 
     let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
     let json = await result.json()
-    let latest_version = json.tag_name
+    let latestVersion = json.tag_name
 
-    if(docker_opt) {
-      runDocker(coverage_opt, datasource, version_opt, latest_version, print)
+    if(dockerOpt) {
+      runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt, print)
     } else {
-      runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, latest_version, print)
+      runBinary(coverageOpt, datasource, forceOpt, logsOpt, versionOpt, latestVersion, print)
     }
   }
 }
 
-async function runBinary(coverage_opt, datasource, force_opt, logs_opt, version_opt, latest_version, print) {
-  const platform = getPlatform(logs_opt)
+async function runBinary(coverageOpt, datasource, forceOpt, logsOpt, versionOpt, latestVersion, print) {
+  const platform = getPlatform(logsOpt)
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${version_opt || latest_version}/${platform}`
+  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`
 
-  if (logs_opt) {
+  if (logsOpt) {
     console.log(`Download link: ${url}`)
   }
 
-  let binary = new Binary(platform, url, version_opt)
-  force_opt ? await binary.install(true) : await binary.install(false)
+  let binary = new Binary(platform, url, versionOpt)
+  forceOpt ? await binary.install(true) : await binary.install(false)
   let args = ""
 
-  datasource ? args = datasource : args
-  coverage_opt ? args = args + ' -c' : args
+  if (datasource) args = datasource
+  if (coverageOpt) args = args + ' -c'
   args !== '' ? binary.run(args.trim()) : binary.run()
 }
 
-function getPlatform(logs_opt) {
+function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
   const release = os.release()
@@ -115,7 +115,7 @@ function getPlatform(logs_opt) {
   const majorVersion = semver.major(release)
   const isM1 = cpuCore.model.includes("Apple M1")
 
-  if (logs_opt) {
+  if (logsOpt) {
     console.log(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
@@ -142,7 +142,7 @@ function getPlatform(logs_opt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-function runDocker(coverage_opt, datasource, version_opt, latest_version, print) {
+function runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt, print) {
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
   fs.rmSync("node_modules/binary-install-raw/bin", { force: true, recursive: true });
@@ -154,7 +154,7 @@ function runDocker(coverage_opt, datasource, version_opt, latest_version, print)
   }
 
   try {
-    fs.writeFileSync(`${dir}/Dockerfile`, dockerfile(version_opt, latest_version))
+    fs.writeFileSync(`${dir}/Dockerfile`, dockerfile(versionOpt, latestVersion))
     print.info('Successfully generated Dockerfile.');
   } catch (error) {
     print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:');
@@ -167,31 +167,31 @@ function runDocker(coverage_opt, datasource, version_opt, latest_version, print)
     // Getting the current working folder that will be passed to the
     // `docker run` command to be bind mounted.
     let current_folder = process.cwd();
-    let test_args = '';
+    let testArgs = '';
 
     if(datasource) {
-      test_args = test_args + datasource
+      testArgs = testArgs + datasource
     }
 
-    if(coverage_opt) {
-      test_args = test_args + ' ' + '-c'
+    if(coverageOpt) {
+      testArgs = testArgs + ' ' + '-c'
     }
 
-    let docker_run_opts = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`];
+    let dockerRunOpts = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`];
 
-    if(test_args !== '') {
-      docker_run_opts.push('-e')
-      docker_run_opts.push(`ARGS=${test_args.trim()}`);
+    if(testArgs !== '') {
+      dockerRunOpts.push('-e')
+      dockerRunOpts.push(`ARGS=${testArgs.trim()}`);
     }
 
-    docker_run_opts.push('matchstick')
+    dockerRunOpts.push('matchstick')
 
     // If a matchstick image does not exists, the command returns an empty string,
     // else it'll return the image ID. Skip `docker build` if an image already exists
     // If `-v/--version` is specified, delete current image(if any) and rebuild.
     // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
-    if(stdout === '' || version_opt) {
-      if (stdout !== '' && version_opt) {
+    if(stdout === '' || versionOpt || forceOpt) {
+      if ((stdout !== '' && versionOpt) || forceOpt) {
         exec('docker image rm matchstick', (error, stdout, stderr) => {
           print.info(chalk.bold(`Removing matchstick image\n${stdout}`));
         });
@@ -204,18 +204,18 @@ function runDocker(coverage_opt, datasource, version_opt, latest_version, print)
         { stdio: 'inherit' }
       ).on('close', code => {
         if (code === 0) {
-           spawn('docker', docker_run_opts, { stdio: 'inherit' });
+           spawn('docker', dockerRunOpts, { stdio: 'inherit' });
         }
       })
     } else {
       // Run the container from the existing matchstick docker image
-      spawn('docker', docker_run_opts, { stdio: 'inherit' });
+      spawn('docker', dockerRunOpts, { stdio: 'inherit' });
     }
   })
 }
 
 // TODO: Move these in separate file (in a function maybe)
-function dockerfile(version_opt, latest_version) {
+function dockerfile(versionOpt, latestVersion) {
   return `
   FROM ubuntu:20.04
   ENV ARGS=""
@@ -230,7 +230,7 @@ function dockerfile(version_opt, latest_version) {
   RUN npm install -g @graphprotocol/graph-cli
 
   # Download the latest linux binary
-  RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${version_opt || latest_version}/binary-linux-20
+  RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/binary-linux-20
 
   # Make it executable
   RUN chmod a+x binary-linux-20
