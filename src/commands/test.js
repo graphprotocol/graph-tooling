@@ -6,12 +6,13 @@ const fs = require('fs')
 const { fixParameters } = require('../command-helpers/gluegun')
 const semver = require('semver')
 const { spawn, exec } = require('child_process')
+const yaml = require('js-yaml')
 
 const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
 
 ${chalk.dim('Options:')}
-  -c, --coverage                Run the tests in coverage mode. Works with v0.2.1 and above (0.2.2 and above in docker mode)
+  -c, --coverage                Run the tests in coverage mode. Works with v0.2.1 and above
   -d, --docker                  Run the tests in a docker container(Note: Please execute from the root folder of the subgraph)
   -f  --force                   Binary - overwrites folder + file when downloading. Docker - rebuilds the docker image
   -h, --help                    Show usage information
@@ -145,16 +146,25 @@ function getPlatform(logsOpt) {
 function runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt, print) {
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
-  fs.rmSync("node_modules/binary-install-raw/bin", { force: true, recursive: true });
+  fs.rmSync("./node_modules/binary-install-raw/bin", { force: true, recursive: true });
 
-  let dir = 'tests/.docker';
+  let dockerDir = "";
 
-  if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir, { recursive: true });
+  try {
+    let doc = yaml.load(fs.readFileSync('subgraph.yaml', 'utf8'))
+    testsFolder = doc.testsFolder || './tests'
+    dockerDir = testsFolder.endsWith('/') ? testsFolder + '.docker' : testsFolder + '/.docker'
+  } catch (e) {
+    print.error(e);
+    return
+  }
+
+  if (!fs.existsSync(dockerDir)){
+    fs.mkdirSync(dockerDir, { recursive: true });
   }
 
   try {
-    fs.writeFileSync(`${dir}/Dockerfile`, dockerfile(versionOpt, latestVersion))
+    fs.writeFileSync(`${dockerDir}/Dockerfile`, dockerfile(versionOpt, latestVersion))
     print.info('Successfully generated Dockerfile.');
   } catch (error) {
     print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:');
@@ -200,7 +210,7 @@ function runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt,
       // run a container from that image.
       spawn(
         'docker',
-        ['build', '-f', 'tests/.docker/Dockerfile', '-t', 'matchstick', '.'],
+        ['build', '--no-cache', '-f', `${dockerDir}/Dockerfile`, '-t', 'matchstick', '.'],
         { stdio: 'inherit' }
       ).on('close', code => {
         if (code === 0) {
@@ -208,6 +218,7 @@ function runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt,
         }
       })
     } else {
+      print.info("Docker image already exists. Skipping `docker build` command.")
       // Run the container from the existing matchstick docker image
       spawn('docker', dockerRunOpts, { stdio: 'inherit' });
     }
@@ -227,6 +238,7 @@ function dockerfile(versionOpt, latestVersion) {
   RUN apt install -y git
   RUN apt install -y postgresql
   RUN apt install -y curl
+  RUN apt install -y cmake
   RUN npm install -g @graphprotocol/graph-cli
 
   # Download the latest linux binary
