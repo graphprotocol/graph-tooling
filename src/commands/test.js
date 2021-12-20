@@ -17,6 +17,7 @@ ${chalk.dim('Options:')}
   -f  --force                   Binary - overwrites folder + file when downloading. Docker - rebuilds the docker image
   -h, --help                    Show usage information
   -l, --logs                    Logs to the console information about the OS, CPU model and download url (debugging purposes)
+  -r, --recompile               Force-recompile tests (Not available in 0.2.2 and earlier versions)
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
   `
 
@@ -38,17 +39,21 @@ module.exports = {
       help,
       l,
       logs,
+      r,
+      recompile,
       v,
       version,
     } = toolbox.parameters.options
 
+    let opts = new Map()
     // Support both long and short option variants
-    let coverageOpt = coverage || c
-    let dockerOpt = docker || d
-    let forceOpt = force || f
-    let helpOpt = help || h
-    let logsOpt = logs || l
-    let versionOpt = version || v
+    opts.set("coverage", coverage || c)
+    opts.set("docker", docker || d)
+    opts.set("force", force || f)
+    opts.set("help", help || h)
+    opts.set("logs", logs || l)
+    opts.set("recompile", recompile || r)
+    opts.set("version", version || v)
 
     // Fix if a boolean flag (e.g -c, --coverage) has an argument
     try {
@@ -62,7 +67,9 @@ module.exports = {
         f,
         force,
         l,
-        logs
+        logs,
+        r,
+        recompile
       })
     } catch (e) {
       print.error(e.message)
@@ -73,24 +80,31 @@ module.exports = {
     let datasource = toolbox.parameters.first || toolbox.parameters.array[0]
 
     // Show help text if requested
-    if (helpOpt) {
+    if (opts.get("help")) {
       print.info(HELP)
       return
     }
 
     let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
     let json = await result.json()
-    let latestVersion = json.tag_name
+    opts.set("latestVersion", json.tag_name)
 
-    if(dockerOpt) {
-      runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt, print)
+    if(opts.get("docker")) {
+      runDocker(datasource, opts, print)
     } else {
-      runBinary(coverageOpt, datasource, forceOpt, logsOpt, versionOpt, latestVersion, print)
+      runBinary(datasource, opts, print)
     }
   }
 }
 
-async function runBinary(coverageOpt, datasource, forceOpt, logsOpt, versionOpt, latestVersion, print) {
+async function runBinary(datasource, opts, print) {
+  let coverageOpt = opts.get("coverage")
+  let forceOpt = opts.get("force")
+  let logsOpt = opts.get("logs")
+  let versionOpt = opts.get("version")
+  let latestVersion = opts.get("latestVersion")
+  let recompileOpt = opts.get("recompile")
+
   const platform = getPlatform(logsOpt)
 
   const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`
@@ -99,13 +113,14 @@ async function runBinary(coverageOpt, datasource, forceOpt, logsOpt, versionOpt,
     console.log(`Download link: ${url}`)
   }
 
-  let binary = new Binary(platform, url, versionOpt)
+  let binary = new Binary(platform, url, versionOpt || latestVersion)
   forceOpt ? await binary.install(true) : await binary.install(false)
-  let args = ""
+  let args = new Array();
 
-  if (datasource) args = datasource
-  if (coverageOpt) args = args + ' -c'
-  args !== '' ? binary.run(args.trim()) : binary.run()
+  if (coverageOpt) args.push('-c')
+  if (recompileOpt) args.push('-r')
+  if (datasource) args.push(datasource)
+  args.length > 0 ? binary.run(...args) : binary.run()
 }
 
 function getPlatform(logsOpt) {
@@ -143,7 +158,13 @@ function getPlatform(logsOpt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-function runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt, print) {
+function runDocker(datasource, opts, print) {
+  let coverageOpt = opts.get("coverage")
+  let forceOpt = opts.get("force")
+  let versionOpt = opts.get("version")
+  let latestVersion = opts.get("latestVersion")
+  let recompileOpt = opts.get("recompile")
+
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
   fs.rmSync("./node_modules/binary-install-raw/bin", { force: true, recursive: true });
@@ -179,13 +200,9 @@ function runDocker(coverageOpt, datasource, versionOpt, latestVersion, forceOpt,
     let current_folder = process.cwd();
     let testArgs = '';
 
-    if(datasource) {
-      testArgs = testArgs + datasource
-    }
-
-    if(coverageOpt) {
-      testArgs = testArgs + ' ' + '-c'
-    }
+    if (coverageOpt) testArgs = testArgs + ' -c'
+    if (recompileOpt) testArgs = testArgs + ' -r'
+    if (datasource) testArgs = testArgs + ' ' + datasource
 
     let dockerRunOpts = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`];
 
