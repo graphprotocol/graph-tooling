@@ -2,7 +2,7 @@ const { Binary } = require('binary-install-raw')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
-const fs = require('fs')
+const { filesystem } = require('gluegun/filesystem')
 const { fixParameters } = require('../command-helpers/gluegun')
 const semver = require('semver')
 const { spawn, exec } = require('child_process')
@@ -115,7 +115,7 @@ async function runBinary(datasource, opts, print) {
 
   let binary = new Binary(platform, url, versionOpt || latestVersion)
   forceOpt ? await binary.install(true) : await binary.install(false)
-  let args = new Array();
+  let args = new Array()
 
   if (coverageOpt) args.push('-c')
   if (recompileOpt) args.push('-r')
@@ -158,7 +158,7 @@ function getPlatform(logsOpt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-function runDocker(datasource, opts, print) {
+async function runDocker(datasource, opts, print) {
   let coverageOpt = opts.get("coverage")
   let forceOpt = opts.get("force")
   let versionOpt = opts.get("version")
@@ -167,48 +167,48 @@ function runDocker(datasource, opts, print) {
 
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
-  fs.rmSync("./node_modules/binary-install-raw/bin", { force: true, recursive: true });
+  await filesystem.remove("./node_modules/binary-install-raw/bin")
 
-  let dockerDir = "";
+  // Get current working directory
+  let current_folder = await filesystem.cwd()
+
+  // Build the Dockerfile location. Defaults to ./tests/.docker if
+  // a custom testsFolder is not delcared in the subgraph.yaml
+  let dockerDir = ""
 
   try {
-    let doc = yaml.load(fs.readFileSync('subgraph.yaml', 'utf8'))
+    let doc = await yaml.load(filesystem.read('subgraph.yaml', 'utf8'))
     testsFolder = doc.testsFolder || './tests'
     dockerDir = testsFolder.endsWith('/') ? testsFolder + '.docker' : testsFolder + '/.docker'
   } catch (e) {
-    print.error(e);
+    print.error(e)
     return
   }
 
-  if (!fs.existsSync(dockerDir)){
-    fs.mkdirSync(dockerDir, { recursive: true });
-  }
-
+  // Create the Dockerfile
   try {
-    fs.writeFileSync(`${dockerDir}/Dockerfile`, dockerfile(versionOpt, latestVersion))
-    print.info('Successfully generated Dockerfile.');
+    await filesystem.write(`${dockerDir}/Dockerfile`, dockerfile(versionOpt, latestVersion))
+    print.info('Successfully generated Dockerfile.')
   } catch (error) {
-    print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:');
-    print.info(chalk.red(error));
+    print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:')
+    print.info(chalk.red(error))
     return
   }
 
   // Run a command to check if matchstick image already exists
   exec('docker images -q matchstick', (error, stdout, stderr) => {
-    // Getting the current working folder that will be passed to the
-    // `docker run` command to be bind mounted.
-    let current_folder = process.cwd();
-    let testArgs = '';
-
+    // Collect all(if any) flags and options that have to be passed to the matchstick binary
+    let testArgs = ''
     if (coverageOpt) testArgs = testArgs + ' -c'
     if (recompileOpt) testArgs = testArgs + ' -r'
     if (datasource) testArgs = testArgs + ' ' + datasource
 
-    let dockerRunOpts = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`];
+    // Build the `docker run` command options and flags
+    let dockerRunOpts = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`]
 
     if(testArgs !== '') {
       dockerRunOpts.push('-e')
-      dockerRunOpts.push(`ARGS=${testArgs.trim()}`);
+      dockerRunOpts.push(`ARGS=${testArgs.trim()}`)
     }
 
     dockerRunOpts.push('matchstick')
@@ -220,8 +220,8 @@ function runDocker(datasource, opts, print) {
     if(stdout === '' || versionOpt || forceOpt) {
       if ((stdout !== '' && versionOpt) || forceOpt) {
         exec('docker image rm matchstick', (error, stdout, stderr) => {
-          print.info(chalk.bold(`Removing matchstick image\n${stdout}`));
-        });
+          print.info(chalk.bold(`Removing matchstick image\n${stdout}`))
+        })
       }
       // Build a docker image. If the process has executed successfully
       // run a container from that image.
@@ -231,13 +231,13 @@ function runDocker(datasource, opts, print) {
         { stdio: 'inherit' }
       ).on('close', code => {
         if (code === 0) {
-           spawn('docker', dockerRunOpts, { stdio: 'inherit' });
+           spawn('docker', dockerRunOpts, { stdio: 'inherit' })
         }
       })
     } else {
       print.info("Docker image already exists. Skipping `docker build` command.")
       // Run the container from the existing matchstick docker image
-      spawn('docker', dockerRunOpts, { stdio: 'inherit' });
+      spawn('docker', dockerRunOpts, { stdio: 'inherit' })
     }
   })
 }
