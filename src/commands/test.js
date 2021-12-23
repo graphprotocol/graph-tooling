@@ -170,7 +170,7 @@ async function runDocker(datasource, opts) {
   let current_folder = await filesystem.cwd()
 
   // Build the Dockerfile location. Defaults to ./tests/.docker if
-  // a custom testsFolder is not delcared in the subgraph.yaml
+  // a custom testsFolder is not declared in the subgraph.yaml
   let dockerDir = ""
 
   try {
@@ -178,7 +178,7 @@ async function runDocker(datasource, opts) {
     testsFolder = doc.testsFolder || './tests'
     dockerDir = testsFolder.endsWith('/') ? testsFolder + '.docker' : testsFolder + '/.docker'
   } catch (error) {
-    print.error(error)
+    print.error(error.message)
     return
   }
 
@@ -188,7 +188,7 @@ async function runDocker(datasource, opts) {
     print.info('Successfully generated Dockerfile.')
   } catch (error) {
     print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:')
-    print.error(error)
+    print.error(error.message)
     return
   }
 
