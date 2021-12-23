@@ -2,7 +2,7 @@ const { Binary } = require('binary-install-raw')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
-const { filesystem } = require('gluegun/filesystem')
+const { filesystem, print } = require('gluegun')
 const { fixParameters } = require('../command-helpers/gluegun')
 const semver = require('semver')
 const { spawn, exec } = require('child_process')
@@ -24,9 +24,6 @@ ${chalk.dim('Options:')}
 module.exports = {
   description: 'Runs rust binary for subgraph testing',
   run: async toolbox => {
-    // Obtain tools
-    let { print } = toolbox
-
     // Read CLI parameters
     let {
       c,
@@ -90,14 +87,14 @@ module.exports = {
     opts.set("latestVersion", json.tag_name)
 
     if(opts.get("docker")) {
-      runDocker(datasource, opts, print)
+      runDocker(datasource, opts)
     } else {
-      runBinary(datasource, opts, print)
+      runBinary(datasource, opts)
     }
   }
 }
 
-async function runBinary(datasource, opts, print) {
+async function runBinary(datasource, opts) {
   let coverageOpt = opts.get("coverage")
   let forceOpt = opts.get("force")
   let logsOpt = opts.get("logs")
@@ -110,7 +107,7 @@ async function runBinary(datasource, opts, print) {
   const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`
 
   if (logsOpt) {
-    console.log(`Download link: ${url}`)
+    print.info(`Download link: ${url}`)
   }
 
   let binary = new Binary(platform, url, versionOpt || latestVersion)
@@ -132,7 +129,7 @@ function getPlatform(logsOpt) {
   const isM1 = cpuCore.model.includes("Apple M1")
 
   if (logsOpt) {
-    console.log(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
@@ -158,7 +155,7 @@ function getPlatform(logsOpt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-async function runDocker(datasource, opts, print) {
+async function runDocker(datasource, opts) {
   let coverageOpt = opts.get("coverage")
   let forceOpt = opts.get("force")
   let versionOpt = opts.get("version")
