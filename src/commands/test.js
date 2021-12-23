@@ -177,8 +177,8 @@ async function runDocker(datasource, opts) {
     let doc = await yaml.load(filesystem.read('subgraph.yaml', 'utf8'))
     testsFolder = doc.testsFolder || './tests'
     dockerDir = testsFolder.endsWith('/') ? testsFolder + '.docker' : testsFolder + '/.docker'
-  } catch (e) {
-    print.error(e)
+  } catch (error) {
+    print.error(error)
     return
   }
 
@@ -188,7 +188,7 @@ async function runDocker(datasource, opts) {
     print.info('Successfully generated Dockerfile.')
   } catch (error) {
     print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:')
-    print.info(chalk.red(error))
+    print.error(error)
     return
   }
 
