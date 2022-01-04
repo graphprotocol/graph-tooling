@@ -283,9 +283,10 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "bsc": return `https://api.bscscan.com/api`;
     case "matic": return `https://api.polygonscan.com/api`;
     case "mumbai": return `https://api-testnet.polygonscan.com/api`;
+    case "rsc": return `https://www.raisc.io/api`;
     default: return `https://api-${network}.etherscan.io/api`;
   }
-} 
+}
 
 const loadAbiFromEtherscan = async (ABI, network, address) =>
   await withSpinner(
@@ -353,7 +354,7 @@ module.exports = {
 
     node = node || g
     ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
-    
+
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
       process.exitCode = 1

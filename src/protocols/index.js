@@ -59,6 +59,7 @@ module.exports = class Protocol {
         'optimism-kovan',
         'aurora',
         'aurora-testnet',
+        'rsc'
       ],
       near: ['near-mainnet'],
     })
