@@ -1,6 +1,6 @@
 {
-  "name": "@graphprotocol/graph-cli",
-  "version": "0.25.1",
+  "name": "@rsc/graph-cli",
+  "version": "0.25.101",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "0.19.10",
@@ -41,5 +41,8 @@
     "test": "jest --verbose",
     "test:init": "jest tests/cli/init.test.js --verbose",
     "test:validation": "jest tests/cli/validation.test.js --verbose"
-  }
+  },
+  "author": "graphlab",
+  "repository": "git@github.com:tokenchain/graph-cli.git",
+  "homepage": "https://github.com/tokenchain/graph-cli.git"
 }
