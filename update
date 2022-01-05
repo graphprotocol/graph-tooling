@@ -67,8 +67,8 @@ gitpush(){
 taobao(){
   echo "wait a moment then let taobao to sync the package"
   sleep 10
-  cnpm sync graph-cli
-  cnpm info graph-cli
+  cnpm sync @rsc/graph-cli
+  cnpm info @rsc/graph-cli
 }
 
 GIT_LOC=https://github.com/tokenchain/graph-cli.git
