@@ -49,7 +49,7 @@ module.exports = class Scaffold {
             this.subgraphName,
         },
         dependencies: {
-          '@rsc-graph-cli': GRAPH_CLI_VERSION,
+          'rsc-graph-cli': GRAPH_CLI_VERSION,
           '@graphprotocol/graph-ts': `0.24.1`,
         },
       }),
