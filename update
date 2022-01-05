@@ -67,14 +67,14 @@ gitpush(){
 taobao(){
   echo "wait a moment then let taobao to sync the package"
   sleep 10
-  cnpm sync @rsc/graph-cli
-  cnpm info @rsc/graph-cli
+  cnpm sync @rsc-graph-cli
+  cnpm info @rsc-graph-cli
 }
 
 GIT_LOC=https://github.com/tokenchain/graph-cli.git
 AUTO_INSTALL=0
 #tsc -b
-PROJECT_NAME="@rsc/graph-cli"
+PROJECT_NAME="@rsc-graph-cli"
 VERSION=$(cat version)
 increment_version $VERSION > version
 VERSION=$(cat version)

@@ -253,7 +253,7 @@ function dockerfile(versionOpt, latestVersion) {
   RUN apt install -y postgresql
   RUN apt install -y curl
   RUN apt install -y cmake
-  RUN npm install -g @rsc/graph-cli
+  RUN npm install -g @rsc-graph-cli
 
   # Download the latest linux binary
   RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/binary-linux-20

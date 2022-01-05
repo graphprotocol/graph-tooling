@@ -1,6 +1,6 @@
 {
-  "name": "@rsc/graph-cli",
-  "version": "0.25.103",
+  "name": "@rsc-graph-cli",
+  "version": "0.25.104",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "0.19.10",
