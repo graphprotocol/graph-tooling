@@ -188,28 +188,28 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
 const ASSEMBLYSCRIPT_TO_VALUE = [
   // Arrays
 
-  ['Array<Address>', '[Bytes]', code => `Value.fromBytesArray(${code})`, 'new Array(0)'],
-  ['Array<Bytes>', '[Bytes]', code => `Value.fromBytesArray(${code})`, 'new Array(0)'],
-  ['Array<boolean>', '[Boolean]', code => `Value.fromBooleanArray(${code})`, 'new Array(0)'],
-  ['Array<i32>', '[Int]', code => `Value.fromI32Array(${code})`, 'new Array(0)'],
-  ['Array<BigInt>', '[BigInt]', code => `Value.fromBigIntArray(${code})`, 'new Array(0)'],
-  ['Array<string>', '[String]', code => `Value.fromStringArray(${code})`, 'new Array(0)'],
-  ['Array<string>', '[ID]', code => `Value.fromStringArray(${code})`, 'new Array(0)'],
-  ['Array<BigDecimal>', '[BigDecimal]', code => `Value.fromBigDecimalArray(${code})`, 'new Array(0)'],
-  ['Array<string>', /\[.*\]/, code => `Value.fromStringArray(${code})`, 'new Array(0)'],
-  ['Array<string | null>', null, code => `Value.fromStringArray(${code})`, 'new Array(0)'],
+  ['Array<Address>', '[Bytes]', code => `Value.fromBytesArray(${code})`],
+  ['Array<Bytes>', '[Bytes]', code => `Value.fromBytesArray(${code})`],
+  ['Array<boolean>', '[Boolean]', code => `Value.fromBooleanArray(${code})`],
+  ['Array<i32>', '[Int]', code => `Value.fromI32Array(${code})`],
+  ['Array<BigInt>', '[BigInt]', code => `Value.fromBigIntArray(${code})`],
+  ['Array<string>', '[String]', code => `Value.fromStringArray(${code})`],
+  ['Array<string>', '[ID]', code => `Value.fromStringArray(${code})`],
+  ['Array<BigDecimal>', '[BigDecimal]', code => `Value.fromBigDecimalArray(${code})`],
+  ['Array<string>', /\[.*\]/, code => `Value.fromStringArray(${code})`],
+  ['Array<string | null>', null, code => `Value.fromStringArray(${code})`],
 
   // Scalar values
 
-  ['Address', 'Bytes', code => `Value.fromBytes(${code})`, 'Address.zero()'],
-  ['Bytes', 'Bytes', code => `Value.fromBytes(${code})`, 'Bytes.empty()'],
-  ['boolean', 'Boolean', code => `Value.fromBoolean(${code})`, 'false'],
-  ['i32', 'Int', code => `Value.fromI32(${code})`, '0'],
-  ['BigInt', 'BigInt', code => `Value.fromBigInt(${code})`, 'BigInt.zero()'],
-  ['string', 'String', code => `Value.fromString(${code})`, "''"],
-  ['string', 'ID', code => `Value.fromString(${code})`, "''"],
-  ['BigDecimal', 'BigDecimal', code => `Value.fromBigDecimal(${code})`, 'BigDecimal.zero()'],
-  ['string', /.*/, code => `Value.fromString(${code})`, "''"],
+  ['Address', 'Bytes', code => `Value.fromBytes(${code})`],
+  ['Bytes', 'Bytes', code => `Value.fromBytes(${code})`],
+  ['boolean', 'Boolean', code => `Value.fromBoolean(${code})`],
+  ['i32', 'Int', code => `Value.fromI32(${code})`],
+  ['BigInt', 'BigInt', code => `Value.fromBigInt(${code})`],
+  ['string', 'String', code => `Value.fromString(${code})`],
+  ['string', 'ID', code => `Value.fromString(${code})`],
+  ['BigDecimal', 'BigDecimal', code => `Value.fromBigDecimal(${code})`],
+  ['string', /.*/, code => `Value.fromString(${code})`],
 ]
 
 /**

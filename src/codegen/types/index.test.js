@@ -449,26 +449,4 @@ describe('AssemblyScript -> Value', () => {
     expect(codegen.valueFromAsc('x', '[String]')).toBe('Value.fromStringArray(x)')
     expect(codegen.valueTypeForAsc('Array<string>')).toBe('[String]')
   })
-
-  describe('Initialization for zero/empty values', () => {
-    test('Array<string>', () => {
-      expect(codegen.initializedValueFromAsc('Array<string>')).toBe('Value.fromStringArray(new Array(0))')
-    })
-
-    test('Array<string | null>', () => {
-      expect(codegen.initializedValueFromAsc('Array<string | null>')).toBe('Value.fromStringArray(new Array(0))')
-    })
-
-    test('i32', () => {
-      expect(codegen.initializedValueFromAsc('i32')).toBe('Value.fromI32(0)')
-    })
-
-    test('string', () => {
-      expect(codegen.initializedValueFromAsc('string')).toBe("Value.fromString('')")
-    })
-
-    test('BigInt', () => {
-      expect(codegen.initializedValueFromAsc('BigInt')).toBe('Value.fromBigInt(BigInt.zero())')
-    })
-  })
 })
