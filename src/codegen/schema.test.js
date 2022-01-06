@@ -116,6 +116,7 @@ describe('Schema code generator', () => {
               this.set('id', Value.fromString(id))
 
               this.set('name', Value.fromString(''))
+              this.set('count', Value.fromI32(0))
             `,
           },
           {

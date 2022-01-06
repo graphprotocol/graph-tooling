@@ -79,25 +79,23 @@ module.exports = class SchemaCodeGenerator {
     const fieldsSetCalls = fieldsWithoutId
       .map(field => {
         const name = field.getIn(['name', 'value'])
-        const type = this._typeFromGraphQl(field.get('type'))
+        const type = this._typeFromGraphQl(field.get('type'), true, true)
 
         const isNullable = type instanceof tsCodegen.NullableType
-        const isPrimitive = type.isPrimitive && type.isPrimitive()
 
         const directives = field.get('directives')
         const isDerivedFrom = directives.some(directive => directive.getIn(['name', 'value']) === 'derivedFrom')
 
-        return { name, type, isNullable, isPrimitive, isDerivedFrom }
+        return { name, type, isNullable, isDerivedFrom }
       })
       // We only call the setter with the default value in the constructor for fields that are:
-      // - Not primitive (such as Int/i32)
       // - Not nullable, so that AS doesn't break when subgraph developers try to access them before a `set`
+      //   - It doesn't matter if it's primitive or not
       // - Not tagged as `derivedFrom`, because they only exist in query time
       .filter(({
         isNullable,
-        isPrimitive,
         isDerivedFrom,
-      }) => !(isNullable || isPrimitive || isDerivedFrom))
+      }) => !isNullable && !isDerivedFrom)
       .map(({ name, type, isNullable }) => {
         const fieldTypeString = isNullable ? type.inner.toString() : type.toString()
 
@@ -236,7 +234,7 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
       : gqlType.getIn(['name', 'value'])
   }
 
-  _typeFromGraphQl(gqlType, nullable = true) {
+  _typeFromGraphQl(gqlType, nullable = true, nullablePrimitive = false) {
     if (gqlType.get('kind') === 'NonNullType') {
       return this._typeFromGraphQl(gqlType.get('type'), false)
     } else if (gqlType.get('kind') === 'ListType') {
@@ -247,8 +245,13 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
       let type = tsCodegen.namedType(
         typesCodegen.ascTypeForValue(gqlType.getIn(['name', 'value'])),
       )
-      // In AssemblyScript, primitives cannot be nullable.
-      return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type
+
+      // Will not wrap primitives into NullableType by default.
+      if (!nullablePrimitive && type.isPrimitive()) {
+        return type
+      }
+
+      return nullable ? tsCodegen.nullableType(type) : type
     }
   }
 }
