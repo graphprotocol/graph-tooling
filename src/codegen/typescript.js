@@ -12,17 +12,6 @@ class Param {
   }
 }
 
-class ReturnType {
-  constructor(name, type) {
-    this.name = name
-    this.type = type
-  }
-
-  toString() {
-    return `${this.type.toString()}`
-  }
-}
-
 class Method {
   constructor(name, params, returnType, body) {
     this.name = name
