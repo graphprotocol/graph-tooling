@@ -54,7 +54,7 @@ module.exports = class SchemaCodeGenerator {
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
 
     // Generate and add a constructor
-    klass.addMethod(this._generateConstructor(name, def.get('fields')))
+    klass.addMethod(this._generateConstructor(name))
 
     // Generate and add save() and getById() methods
     this._generateStoreMethods(name).forEach(method => klass.addMethod(method))
@@ -71,42 +71,7 @@ module.exports = class SchemaCodeGenerator {
     return klass
   }
 
-  // Fields that are non-nullable get an empty/zero value set in the class constructor.
-  _generateDefaultFieldValues(fields) {
-    const indexOfIdField = fields.findIndex(field => field.getIn(['name', 'value']) === 'id')
-    const fieldsWithoutId = fields.remove(indexOfIdField)
-
-    const fieldsSetCalls = fieldsWithoutId
-      .map(field => {
-        const name = field.getIn(['name', 'value'])
-        const type = this._typeFromGraphQl(field.get('type'), true, true)
-
-        const isNullable = type instanceof tsCodegen.NullableType
-
-        const directives = field.get('directives')
-        const isDerivedFrom = directives.some(directive => directive.getIn(['name', 'value']) === 'derivedFrom')
-
-        return { name, type, isNullable, isDerivedFrom }
-      })
-      // We only call the setter with the default value in the constructor for fields that are:
-      // - Not nullable, so that AS doesn't break when subgraph developers try to access them before a `set`
-      //   - It doesn't matter if it's primitive or not
-      // - Not tagged as `derivedFrom`, because they only exist in query time
-      .filter(({
-        isNullable,
-        isDerivedFrom,
-      }) => !isNullable && !isDerivedFrom)
-      .map(({ name, type, isNullable }) => {
-        const fieldTypeString = isNullable ? type.inner.toString() : type.toString()
-
-        return `
-        this.set('${name}', ${typesCodegen.initializedValueFromAsc(fieldTypeString)})`
-      })
-
-    return fieldsSetCalls.join('')
-  }
-
-  _generateConstructor(entityName, fields) {
+  _generateConstructor(entityName) {
     return tsCodegen.method(
       'constructor',
       [tsCodegen.param('id', tsCodegen.namedType('string'))],
@@ -114,7 +79,6 @@ module.exports = class SchemaCodeGenerator {
       `
       super()
       this.set('id', Value.fromString(id))
-      ${this._generateDefaultFieldValues(fields)}
       `,
     )
   }
@@ -234,7 +198,7 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
       : gqlType.getIn(['name', 'value'])
   }
 
-  _typeFromGraphQl(gqlType, nullable = true, nullablePrimitive = false) {
+  _typeFromGraphQl(gqlType, nullable = true) {
     if (gqlType.get('kind') === 'NonNullType') {
       return this._typeFromGraphQl(gqlType.get('type'), false)
     } else if (gqlType.get('kind') === 'ListType') {
@@ -245,13 +209,8 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
       let type = tsCodegen.namedType(
         typesCodegen.ascTypeForValue(gqlType.getIn(['name', 'value'])),
       )
-
-      // Will not wrap primitives into NullableType by default.
-      if (!nullablePrimitive && type.isPrimitive()) {
-        return type
-      }
-
-      return nullable ? tsCodegen.nullableType(type) : type
+      // In AssemblyScript, primitives cannot be nullable.
+      return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type
     }
   }
 }
