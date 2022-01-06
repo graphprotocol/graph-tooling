@@ -174,8 +174,15 @@ const GENERATED_FILE_NOTE = `
 
 module.exports = {
   // Types
+  Param,
+  Method,
+  StaticMethod,
+  Class,
+  ClassMember,
+  NamedType,
   NullableType,
   ArrayType,
+  ModuleImports,
 
   // Code generators
   namedType,
