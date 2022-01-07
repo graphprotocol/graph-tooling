@@ -60,7 +60,10 @@ module.exports = class Protocol {
         'aurora',
         'aurora-testnet',
       ],
-      near: ['near-mainnet'],
+      near: [
+        'near-mainnet',
+        'near-testnet'
+      ],
     })
   }
 
