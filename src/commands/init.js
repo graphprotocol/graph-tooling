@@ -283,9 +283,10 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "bsc": return `https://api.bscscan.com/api`;
     case "matic": return `https://api.polygonscan.com/api`;
     case "mumbai": return `https://api-testnet.polygonscan.com/api`;
+    case "rsc": return `https://www.raisc.io/api`;
     default: return `https://api-${network}.etherscan.io/api`;
   }
-} 
+}
 
 const loadAbiFromEtherscan = async (ABI, network, address) =>
   await withSpinner(
@@ -353,7 +354,7 @@ module.exports = {
 
     node = node || g
     ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
-    
+
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
       process.exitCode = 1
@@ -581,7 +582,7 @@ const initRepository = async (toolbox, directory) =>
 // https://docs.npmjs.com/cli/v7/commands/npm-link.
 const npmLinkToLocalCli = async (toolbox, directory) => {
   if (process.env.GRAPH_CLI_TESTS) {
-    await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory })
+    await toolbox.system.run('npm link rsc-graph-cli', { cwd: directory })
   }
 }
 
@@ -703,7 +704,7 @@ const initSubgraphFromExample = async (
 
         // Remove example's cli in favor of the local one (added via `npm link`)
         if (process.env.GRAPH_CLI_TESTS) {
-          delete pkgJson['devDependencies']['@graphprotocol/graph-cli']
+          delete pkgJson['devDependencies']['rsc-graph-cli']
         }
 
         // Write package.json

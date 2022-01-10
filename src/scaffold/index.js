@@ -40,16 +40,16 @@ module.exports = class Scaffold {
             `graph deploy ` +
             `--node ${this.node} ` +
             this.subgraphName,
-          'create-local': `graph create --node http://localhost:8020/ ${this.subgraphName}`,
-          'remove-local': `graph remove --node http://localhost:8020/ ${this.subgraphName}`,
+          'create-local': `graph create --node http://0.0.0.0:8020/ ${this.subgraphName}`,
+          'remove-local': `graph remove --node http://0.0.0.0:8020/ ${this.subgraphName}`,
           'deploy-local':
             `graph deploy ` +
-            `--node http://localhost:8020/ ` +
-            `--ipfs http://localhost:5001 ` +
+            `--node http://0.0.0.0:8020/ ` +
+            `--ipfs http://0.0.0.0:5001 ` +
             this.subgraphName,
         },
         dependencies: {
-          '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
+          'rsc-graph-cli': GRAPH_CLI_VERSION,
           '@graphprotocol/graph-ts': `0.24.1`,
         },
       }),
