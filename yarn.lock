@@ -2329,9 +2329,9 @@ globals@^12.1.0:
   dependencies:
     type-fest "^0.8.1"
 
-"gluegun@https://github.com/otaviopace/gluegun#v4.3.1-pin-colors-dep":
+"gluegun@https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep":
   version "4.3.1"
-  resolved "https://github.com/otaviopace/gluegun#b34b9003d7bf556836da41b57ef36eb21570620a"
+  resolved "https://github.com/edgeandnode/gluegun#b34b9003d7bf556836da41b57ef36eb21570620a"
   dependencies:
     apisauce "^1.0.1"
     app-module-path "^2.2.0"
