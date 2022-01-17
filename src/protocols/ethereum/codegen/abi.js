@@ -1,4 +1,9 @@
 const immutable = require('immutable')
+const fs = require('fs')
+const yaml = require('yaml')
+const request = require('sync-request')
+const Web3 = require('web3')
+const web3 = new Web3(null)
 
 const tsCodegen = require('../../../codegen/typescript')
 const typesCodegen = require('../../../codegen/types')
@@ -27,6 +32,12 @@ module.exports = class AbiCodeGenerator {
           'BigInt',
         ],
         '@graphprotocol/graph-ts',
+      ),
+      tsCodegen.moduleImports(
+        [
+          'newMockEvent',
+        ],
+        'matchstick-as/assembly/index',
       ),
     ]
   }
@@ -182,6 +193,7 @@ module.exports = class AbiCodeGenerator {
           setName: (input, name) => input.set('name', name),
         })
 
+        let namesAndTypes = []
         inputs.forEach((input, index) => {
           // Generate getters and classes for event params
           let paramObject = this._generateInputOrOutput(
@@ -192,6 +204,11 @@ module.exports = class AbiCodeGenerator {
             `parameters`,
           )
           paramsClass.addMethod(paramObject.getter)
+          let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
+          if (typeof ethType === typeof {} && (ethType.test("int256") || ethType.test("uint256"))) {
+            ethType = "int32"
+          }
+          namesAndTypes.push({name: paramObject.getter.name.slice(4), type: ethType})
           tupleClasses.push(...paramObject.classes)
         })
 
@@ -208,6 +225,54 @@ module.exports = class AbiCodeGenerator {
             `return new ${paramsClassName}(this)`,
           ),
         )
+
+        // Fixture generation
+        try {
+          const args = yaml.parse(fs.readFileSync('./fixtures.yaml', 'utf8'))
+          const blockNumber = args['blockNumber']
+          const contractAddr = args['contractAddr']
+          const topic0 = args['topic0']
+          const apiKey = args['apiKey']
+          const url = `https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=${blockNumber}&toBlock=${blockNumber}&address=${contractAddr}&${topic0}=topic0&apikey=${apiKey}`;
+
+          let resp = request("GET", url)
+          let body = JSON.parse(resp.getBody("utf8"))
+          if (body.status === '0') {
+            throw new Error(body.result)
+          }
+
+          let res = web3.eth.abi.decodeLog(
+            namesAndTypes,
+            body.result[0].data,
+            []
+          );
+
+          let stmnts = ""
+          for (let i = 0; i < namesAndTypes.length; i++) {
+            let code = '"' + res[i] + '"'
+            if (namesAndTypes[i].type.toString() == "address") {
+              code = `Address.fromString(${code})`
+            }
+            stmnts = stmnts.concat(`event.parameters.push(new ethereum.EventParam(\"${namesAndTypes[i].name}\", ${typesCodegen.ethereumFromAsc(code, namesAndTypes[i].type)}));`, `\n`)
+          }
+
+          klass.addMethod(
+            tsCodegen.staticMethod(
+              `mock${eventClassName}`,
+              [],
+              tsCodegen.namedType(eventClassName),
+              `
+              let event = changetype<${eventClassName}>(newMockEvent());
+              ${stmnts}
+              return event;
+              `,
+            )
+          )
+        } catch (e) {
+            // no fixtures
+            console.log(e)
+        }
+
         return [klass, paramsClass, ...tupleClasses]
       })
 
