@@ -18,7 +18,7 @@
     "ipfs-http-client": "^34.0.0",
     "jayson": "^3.0.2",
     "js-yaml": "^3.13.1",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^3.1.1",
     "pkginfo": "^0.4.1",
     "prettier": "^1.13.5",
     "request": "^2.88.0",
