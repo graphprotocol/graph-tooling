@@ -283,6 +283,7 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "bsc": return `https://api.bscscan.com/api`;
     case "matic": return `https://api.polygonscan.com/api`;
     case "mumbai": return `https://api-testnet.polygonscan.com/api`;
+    case "oasis": return `https://explorer.emerald.oasis.dev/api`;
     default: return `https://api-${network}.etherscan.io/api`;
   }
 } 
