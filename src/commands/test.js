@@ -224,7 +224,7 @@ async function runDocker(datasource, opts) {
       // run a container from that image.
       spawn(
         'docker',
-        ['build', '--no-cache', '-f', `${dockerDir}/Dockerfile`, '-t', 'matchstick', '.'],
+        ['build', '-f', `${dockerDir}/Dockerfile`, '-t', 'matchstick', '.'],
         { stdio: 'inherit' }
       ).on('close', code => {
         if (code === 0) {
@@ -243,6 +243,9 @@ async function runDocker(datasource, opts) {
 function dockerfile(versionOpt, latestVersion) {
   return `
   FROM ubuntu:20.04
+
+  ARG BUILDPLATFORM=linux/x86_64
+
   ENV ARGS=""
 
   # Install necessary packages
@@ -263,7 +266,7 @@ function dockerfile(versionOpt, latestVersion) {
 
   # Create a matchstick dir where the host will be copied
   RUN mkdir matchstick
-  WORKDIR matchstick
+  WORKDIR /matchstick
 
   # Copy host to /matchstick
   COPY ../ .
