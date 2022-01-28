@@ -1,0 +1,51 @@
+scalar String
+scalar File
+scalar BigInt
+
+type SubgraphManifest {
+  specVersion: String!
+  schema: Schema!
+  description: String
+  repository: String
+  graft: Graft
+  dataSources: [DataSource!]!
+}
+
+type Schema {
+  file: File!
+}
+
+type DataSource {
+  kind: String!
+  name: String!
+  network: String
+  source: ContractSource!
+  mapping: ContractMapping!
+}
+
+type ContractSource {
+  account: String
+  startBlock: BigInt
+}
+
+type ContractMapping {
+  apiVersion: String!
+  language: String!
+  file: File!
+  entities: [String!]!
+  blockHandlers: [BlockHandler!]
+  receiptHandlers: [ReceiptHandler!]
+}
+
+type BlockHandler {
+  handler: String!
+}
+
+type ReceiptHandler {
+  handler: String!
+}
+
+type Graft {
+  base: String!
+  block: BigInt!
+}

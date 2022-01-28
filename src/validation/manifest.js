@@ -52,8 +52,7 @@ const validators = immutable.fromJS({
     validators.get(ctx.getIn(['type', 'name', 'value']))(value, ctx),
 
   UnionTypeDefinition: (value, ctx) => {
-    const unionVariants = ctx
-      .getIn(['type', 'types'])
+    const unionVariants = ctx.getIn(['type', 'types'])
 
     let errors = List()
 
@@ -78,7 +77,10 @@ const validators = immutable.fromJS({
 
   NonNullType: (value, ctx) =>
     value !== null && value !== undefined
-      ? validateValue(value, ctx.update('type', type => type.get('type')))
+      ? validateValue(
+          value,
+          ctx.update('type', type => type.get('type')),
+        )
       : immutable.fromJS([
           {
             path: ctx.get('path'),
@@ -126,7 +128,7 @@ const validators = immutable.fromJS({
                     ),
                   )
                 : errors.push(
-                    key == 'templates'
+                    key == 'templates' && ctx.get('protocol').hasTemplates()
                       ? immutable.fromJS({
                           path: ctx.get('path'),
                           message:
@@ -211,7 +213,8 @@ const validateValue = (value, ctx) => {
 }
 
 const validateDataSourceForNetwork = (dataSources, protocol) =>
-  dataSources.filter(dataSource => protocol.isValidKindName(dataSource.kind))
+  dataSources
+    .filter(dataSource => protocol.isValidKindName(dataSource.kind))
     .reduce(
       (networks, dataSource) =>
         networks.update(dataSource.network, dataSources =>
@@ -235,11 +238,11 @@ const validateDataSourceNetworks = (value, protocol) => {
 ${networks
   .map(
     (dataSources, network) =>
-    `  ${
+      `  ${
         network === undefined
           ? 'Data sources and templates having no network set'
-        : `Data sources and templates using '${network}'`
-        }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
+          : `Data sources and templates using '${network}'`
+      }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
   )
   .join('\n')}
 Recommendation: Make all data sources and templates use the same network name.`,
@@ -262,6 +265,7 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
             path: [],
             errors: [],
             resolveFile,
+            protocol,
           }),
         )
       : immutable.fromJS([
