@@ -9,6 +9,7 @@ type SubgraphManifest {
   repository: String
   graft: Graft
   dataSources: [DataSource!]!
+  templates: [DataSourceTemplate!]
 }
 
 type Schema {
@@ -48,4 +49,11 @@ type ReceiptHandler {
 type Graft {
   base: String!
   block: BigInt!
+}
+
+type DataSourceTemplate {
+  kind: String!
+  name: String!
+  network: String
+  mapping: ContractMapping!
 }
