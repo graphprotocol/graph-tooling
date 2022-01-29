@@ -111,7 +111,7 @@ module.exports = class Protocol {
       case 'ethereum':
         return true
       case 'near':
-        return false
+        return true
     }
   }
 
@@ -134,6 +134,8 @@ module.exports = class Protocol {
     switch (this.name) {
       case 'ethereum':
         return new EthereumTemplateCodeGen(template)
+      case 'near':
+        return new NearTemplateCodeGen(template)
       default:
         throw new Error(`Template data sources with kind '${this.name}' is unknown`)
     }
