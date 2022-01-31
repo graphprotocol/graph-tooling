@@ -274,6 +274,7 @@ async function dockerfile(dockerfilePath, versionOpt, latestVersion) {
     process.exit(1)
   }
 
+  // Replaces the version placeholders
   await patching.update(dockerfilePath, data => {
     return data.replace('<MATCHSTICK_VERSION>', versionOpt || latestVersion)
   })
