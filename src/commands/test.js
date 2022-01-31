@@ -187,7 +187,7 @@ async function runDocker(datasource, opts) {
     } catch (error) {
       print.info('A problem occurred while reading matchstick.yaml. Please attend to the errors below:')
       print.error(error.message)
-      return
+      process.exit(1)
     }
   }
 
@@ -252,17 +252,26 @@ async function runDocker(datasource, opts) {
 // Downloads Dockerfile template from the demo-subgraph repo
 // Replaces the placeholders with their respective values
 async function dockerfile(dockerfilePath, versionOpt, latestVersion) {
-  let result = await fetch('https://raw.githubusercontent.com/LimeChain/demo-subgraph/main/Dockerfile')
-  let content = await result.text()
+  let content = await fetch('https://raw.githubusercontent.com/LimeChain/demo-subgraph/main/Dockerfile')
+      .then((response) => {
+        if (response.ok) {
+          return response.text()
+        } else {
+          print.error('A problem occurred while downloading the Dockerfile template:')
+          print.error(`Status Code: ${response.status}, with error: ${response.statusText}`)
+          process.exit(1)
+        }
+      })
+
 
   // Create the Dockerfile
   try {
     await filesystem.write(dockerfilePath, content)
     print.info('Successfully generated Dockerfile.')
   } catch (error) {
-    print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:')
+    print.error('A problem occurred while generating the Dockerfile. Please attend to the errors below:')
     print.error(error.message)
-    return
+    process.exit(1)
   }
 
   await patching.update(dockerfilePath, data => {
