@@ -30,6 +30,7 @@ Options:
   -l  --version-label <label>   Version label used for the deployment
   -h, --help                    Show usage information
   -i, --ipfs <node>             Upload build results to an IPFS node (default: ${DEFAULT_IPFS_URL})
+      --debug-fork              ID of a remote subgraph whose store will be GraphQL queried
   -o, --output-dir <path>       Output directory for build results (default: build/)
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
@@ -96,6 +97,7 @@ module.exports = {
       skipMigrations,
       w,
       watch,
+      debugFork,
     } = toolbox.parameters.options
 
     // Support both long and short option variants
@@ -264,7 +266,7 @@ module.exports = {
       //       `Failed to deploy to Graph node ${requestUrl}`,
       client.request(
         'subgraph_deploy',
-        { name: subgraphName, ipfs_hash: ipfsHash, version_label: versionLabel },
+        { name: subgraphName, ipfs_hash: ipfsHash, version_label: versionLabel, debug_fork: debugFork },
         async (requestError, jsonRpcError, res) => {
           if (jsonRpcError) {
             spinner.fail(
