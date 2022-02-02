@@ -2,8 +2,9 @@ const { Binary } = require('binary-install-raw')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
-const { filesystem, print } = require('gluegun')
+const { filesystem, patching, print } = require('gluegun')
 const { fixParameters } = require('../command-helpers/gluegun')
+const path = require('path')
 const semver = require('semver')
 const { spawn, exec } = require('child_process')
 const yaml = require('js-yaml')
@@ -169,27 +170,34 @@ async function runDocker(datasource, opts) {
   // Get current working directory
   let current_folder = await filesystem.cwd()
 
-  // Build the Dockerfile location. Defaults to ./tests/.docker if
-  // a custom testsFolder is not declared in the subgraph.yaml
-  let dockerDir = ""
+  // Declate dockerfilePath with default location
+  let dockerfilePath = "./tests/.docker/Dockerfile"
 
-  try {
-    let doc = await yaml.load(filesystem.read('subgraph.yaml', 'utf8'))
-    testsFolder = doc.testsFolder || './tests'
-    dockerDir = testsFolder.endsWith('/') ? testsFolder + '.docker' : testsFolder + '/.docker'
-  } catch (error) {
-    print.error(error.message)
-    return
+  // Check if matchstick.yaml config exists
+  if(filesystem.exists('matchstick.yaml')) {
+    try {
+      // Load the config
+      let config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8'))
+
+      // Check if matchstick.yaml is not empty
+      if(config != null) {
+        // If a custom tests folder is declared update dockerfilePath
+        dockerfilePath = path.join(config.testsFolder || 'tests', '.docker/Dockerfile')
+      }
+    } catch (error) {
+      print.info('A problem occurred while reading matchstick.yaml. Please attend to the errors below:')
+      print.error(error.message)
+      process.exit(1)
+    }
   }
 
-  // Create the Dockerfile
-  try {
-    await filesystem.write(`${dockerDir}/Dockerfile`, dockerfile(versionOpt, latestVersion))
-    print.info('Successfully generated Dockerfile.')
-  } catch (error) {
-    print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:')
-    print.error(error.message)
-    return
+  // Check if the Dockerfil already exists
+  let dockerfileExists = filesystem.exists(dockerfilePath)
+
+  // Generate the Dockerfile only if it doesn't exists,
+  // version flag and/or force flag is passed.
+  if(!dockerfileExists || versionOpt || forceOpt) {
+    await dockerfile(dockerfilePath, versionOpt, latestVersion)
   }
 
   // Run a command to check if matchstick image already exists
@@ -212,10 +220,10 @@ async function runDocker(datasource, opts) {
 
     // If a matchstick image does not exists, the command returns an empty string,
     // else it'll return the image ID. Skip `docker build` if an image already exists
-    // If `-v/--version` is specified, delete current image(if any) and rebuild.
+    // Delete current image(if any) and rebuild.
     // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
-    if(stdout === '' || versionOpt || forceOpt) {
-      if ((stdout !== '' && versionOpt) || forceOpt) {
+    if(!dockerfileExists || stdout === '' || versionOpt || forceOpt) {
+      if (stdout !== '') {
         exec('docker image rm matchstick', (error, stdout, stderr) => {
           print.info(chalk.bold(`Removing matchstick image\n${stdout}`))
         })
@@ -224,7 +232,7 @@ async function runDocker(datasource, opts) {
       // run a container from that image.
       spawn(
         'docker',
-        ['build', '--no-cache', '-f', `${dockerDir}/Dockerfile`, '-t', 'matchstick', '.'],
+        ['build', '-f', dockerfilePath, '-t', 'matchstick', '.'],
         { stdio: 'inherit' }
       ).on('close', code => {
         if (code === 0) {
@@ -239,37 +247,32 @@ async function runDocker(datasource, opts) {
   })
 }
 
-// TODO: Move these in separate file (in a function maybe)
-function dockerfile(versionOpt, latestVersion) {
-  return `
-  FROM ubuntu:20.04
-  ENV ARGS=""
+// Downloads Dockerfile template from the demo-subgraph repo
+// Replaces the placeholders with their respective values
+async function dockerfile(dockerfilePath, versionOpt, latestVersion) {
+  let spinner = print.spin("Generating Dockerfile...")
 
-  # Install necessary packages
-  RUN apt update
-  RUN apt install -y nodejs
-  RUN apt install -y npm
-  RUN apt install -y git
-  RUN apt install -y postgresql
-  RUN apt install -y curl
-  RUN apt install -y cmake
-  RUN npm install -g @graphprotocol/graph-cli
+  try {
+    // Fetch the Dockerfile template content from the demo-subgraph repo
+    let content = await fetch('https://raw.githubusercontent.com/LimeChain/demo-subgraph/main/Dockerfile')
+        .then((response) => {
+          if (response.ok) {
+            return response.text()
+          } else {
+            throw new Error(`Status Code: ${response.status}, with error: ${response.statusText}`);
+          }
+        })
 
-  # Download the latest linux binary
-  RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/binary-linux-20
+    // Write the Dockerfile
+    await filesystem.write(dockerfilePath, content)
 
-  # Make it executable
-  RUN chmod a+x binary-linux-20
+    // Replaces the version placeholders
+    await patching.replace(dockerfilePath, '<MATCHSTICK_VERSION>', versionOpt || latestVersion)
 
-  # Create a matchstick dir where the host will be copied
-  RUN mkdir matchstick
-  WORKDIR matchstick
+  } catch (error) {
+    spinner.fail(`A problem occurred while generating the Dockerfile. Please attend to the errors below:\n ${error.message}`)
+    process.exit(1)
+  }
 
-  # Copy host to /matchstick
-  COPY ../ .
-
-  RUN graph codegen
-  RUN graph build
-
-  CMD ../binary-linux-20 \${ARGS}`
+  spinner.succeed('Successfully generated Dockerfile.')
 }
