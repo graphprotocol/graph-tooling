@@ -126,10 +126,10 @@ async function getPlatform(logsOpt) {
   const arch = os.arch()
   const cpuCore = os.cpus()[0]
   const isM1 = cpuCore.model.includes("Apple M1")
-  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : []
-  const linuxDistro = linuxInfo[0] || type
-  const release = linuxInfo[1] || os.release()
-  const majorVersion = parseInt(linuxInfo[1]) || semver.major(release)
+  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : new Map()
+  const linuxDistro = linuxInfo.get('name')
+  const release = linuxInfo.get('version') || os.release()
+  const majorVersion = parseInt(linuxInfo.get('version'), 10) || semver.major(release)
 
   if (logsOpt) {
     print.info(`OS: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
@@ -161,8 +161,15 @@ async function getPlatform(logsOpt) {
 
 async function getLinuxInfo() {
   try {
-    let info = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {trim: true})
-    return info.replace(/[VERSION=]|[NAME=]|['"]+/g, '').split('\n')
+    let result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {trim: true})
+    let infoArray = result.replace(/['"]+/g, '').split('\n').map(p => p.split('='))
+    let infoMap = new Map();
+
+    infoArray.forEach((val) => {
+      infoMap.set(val[0].toLowerCase(), val[1])
+    });
+    print.info(infoMap)
+    return infoMap
   } catch (error) {
     print.error(`Error fetching the Linux version:\n ${error}`)
     process.exit(1)
