@@ -2,7 +2,7 @@ const { Binary } = require('binary-install-raw')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
-const { filesystem, patching, print } = require('gluegun')
+const { filesystem, patching, print, system } = require('gluegun')
 const { fixParameters } = require('../command-helpers/gluegun')
 const path = require('path')
 const semver = require('semver')
@@ -103,7 +103,7 @@ async function runBinary(datasource, opts) {
   let latestVersion = opts.get("latestVersion")
   let recompileOpt = opts.get("recompile")
 
-  const platform = getPlatform(logsOpt)
+  const platform = await getPlatform(logsOpt)
 
   const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`
 
@@ -121,16 +121,18 @@ async function runBinary(datasource, opts) {
   args.length > 0 ? binary.run(...args) : binary.run()
 }
 
-function getPlatform(logsOpt) {
+async function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
   const release = os.release()
   const cpuCore = os.cpus()[0]
-  const majorVersion = semver.major(release)
   const isM1 = cpuCore.model.includes("Apple M1")
+  const majorVersion = semver.major(release)
+  let linuxVersion = ""
+  if (type === 'Linux') linuxVersion = await getLinuxVersion()
 
   if (logsOpt) {
-    print.info(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${type === 'Linux' ? linuxVersion : majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
@@ -144,16 +146,24 @@ function getPlatform(logsOpt) {
       }
       return 'binary-macos-11'
     } else if (type === 'Linux') {
-      if (majorVersion === 18) {
+      if (linuxVersion === '18.04') {
         return 'binary-linux-18'
+      } else if (linuxVersion == '20.04') {
+        return 'binary-linux-20'
+      } else {
+        throw new Error(`Unsupported Linux Version: ${linuxVersion}`)
       }
-      return 'binary-linux-20'
     } else if (type === 'Windows_NT') {
       return 'binary-windows'
     }
   }
 
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
+}
+
+async function getLinuxVersion() {
+  let version = await system.run("grep '^VERSION_ID' /etc/os-release", {trim: true})
+  return version.replace(/[VERSION_ID=]|['"]+/g, '').trim()
 }
 
 async function runDocker(datasource, opts) {
