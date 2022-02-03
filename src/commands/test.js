@@ -127,12 +127,12 @@ async function getPlatform(logsOpt) {
   const cpuCore = os.cpus()[0]
   const isM1 = cpuCore.model.includes("Apple M1")
   const linuxInfo = type === 'Linux' ? await getLinuxInfo() : []
-  const linuxDestro = linuxInfo[0] || type
+  const linuxDistro = linuxInfo[0] || type
   const release = linuxInfo[1] || os.release()
   const majorVersion = parseInt(linuxInfo[1]) || semver.major(release)
 
   if (logsOpt) {
-    print.info(`OS: ${linuxDestro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(`OS: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
@@ -161,7 +161,7 @@ async function getPlatform(logsOpt) {
 
 async function getLinuxInfo() {
   try {
-    let info = await system.run("cat /etc/*-release | egrep -e '(^VERSION|^NAME)='", {trim: true})
+    let info = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {trim: true})
     return info.replace(/[VERSION=]|[NAME=]|['"]+/g, '').split('\n')
   } catch (error) {
     print.error(`Error fetching the Linux version:\n ${error}`)
