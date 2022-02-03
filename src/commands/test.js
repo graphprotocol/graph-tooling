@@ -124,13 +124,15 @@ async function runBinary(datasource, opts) {
 async function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
-  const release = os.release()
   const cpuCore = os.cpus()[0]
   const isM1 = cpuCore.model.includes("Apple M1")
-  const majorVersion = (type === 'Linux') ? await getLinuxVersion() : semver.major(release)
+  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : []
+  const linuxDestro = linuxInfo[0] || type
+  const release = linuxInfo[1] || os.release()
+  const majorVersion = parseInt(linuxInfo[1]) || semver.major(release)
 
   if (logsOpt) {
-    print.info(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(`OS: ${linuxDestro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
@@ -146,10 +148,8 @@ async function getPlatform(logsOpt) {
     } else if (type === 'Linux') {
       if (majorVersion === 18) {
         return 'binary-linux-18'
-      } else if (majorVersion == 20) {
-        return 'binary-linux-20'
       } else {
-        throw new Error(`Unsupported Linux Version: ${majorVersion}`)
+        return 'binary-linux-20'
       }
     } else if (type === 'Windows_NT') {
       return 'binary-windows'
@@ -159,10 +159,14 @@ async function getPlatform(logsOpt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-async function getLinuxVersion() {
-  let version = await system.run("grep '^VERSION_ID' /etc/os-release", {trim: true})
-  version = version.replace(/[VERSION_ID=]|['"]+/g, '')
-  return parseInt(version)
+async function getLinuxInfo() {
+  try {
+    let info = await system.run("cat /etc/*-release | egrep -e '(^VERSION|^NAME)='", {trim: true})
+    return info.replace(/[VERSION=]|[NAME=]|['"]+/g, '').split('\n')
+  } catch (error) {
+    print.error(`Error fetching the Linux version:\n ${error}`)
+    process.exit(1)
+  }
 }
 
 async function runDocker(datasource, opts) {
