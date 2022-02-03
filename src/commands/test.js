@@ -127,12 +127,10 @@ async function getPlatform(logsOpt) {
   const release = os.release()
   const cpuCore = os.cpus()[0]
   const isM1 = cpuCore.model.includes("Apple M1")
-  const majorVersion = semver.major(release)
-  let linuxVersion = ""
-  if (type === 'Linux') linuxVersion = await getLinuxVersion()
+  const majorVersion = (type === 'Linux') ? await getLinuxVersion() : semver.major(release)
 
   if (logsOpt) {
-    print.info(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${type === 'Linux' ? linuxVersion : majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
@@ -146,12 +144,12 @@ async function getPlatform(logsOpt) {
       }
       return 'binary-macos-11'
     } else if (type === 'Linux') {
-      if (linuxVersion === '18.04') {
+      if (majorVersion === 18) {
         return 'binary-linux-18'
-      } else if (linuxVersion == '20.04') {
+      } else if (majorVersion == 20) {
         return 'binary-linux-20'
       } else {
-        throw new Error(`Unsupported Linux Version: ${linuxVersion}`)
+        throw new Error(`Unsupported Linux Version: ${majorVersion}`)
       }
     } else if (type === 'Windows_NT') {
       return 'binary-windows'
@@ -163,7 +161,8 @@ async function getPlatform(logsOpt) {
 
 async function getLinuxVersion() {
   let version = await system.run("grep '^VERSION_ID' /etc/os-release", {trim: true})
-  return version.replace(/[VERSION_ID=]|['"]+/g, '').trim()
+  version = version.replace(/[VERSION_ID=]|['"]+/g, '')
+  return parseInt(version)
 }
 
 async function runDocker(datasource, opts) {
