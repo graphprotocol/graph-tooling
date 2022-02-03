@@ -1,6 +1,7 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.25.1",
+  "version": "0.26.0",
+  "license": "(Apache-2.0 OR MIT)",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "0.19.10",
@@ -12,7 +13,7 @@
     "dockerode": "^2.5.8",
     "fs-extra": "^9.0.0",
     "glob": "^7.1.2",
-    "gluegun": "^4.3.1",
+    "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
     "graphql": "^15.5.0",
     "immutable": "^3.8.2",
     "ipfs-http-client": "^34.0.0",
