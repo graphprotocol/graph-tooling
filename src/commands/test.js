@@ -132,7 +132,7 @@ async function getPlatform(logsOpt) {
   const majorVersion = parseInt(linuxInfo.get('version'), 10) || semver.major(release)
 
   if (logsOpt) {
-    print.info(`OS: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(`OS type: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
   if (arch === 'x64' || (arch === 'arm64' && isM1)) {
