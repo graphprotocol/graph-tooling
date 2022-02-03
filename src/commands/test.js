@@ -168,7 +168,7 @@ async function getLinuxInfo() {
     infoArray.forEach((val) => {
       infoMap.set(val[0].toLowerCase(), val[1])
     });
-    print.info(infoMap)
+    
     return infoMap
   } catch (error) {
     print.error(`Error fetching the Linux version:\n ${error}`)
