@@ -51,7 +51,7 @@ module.exports = class Subgraph {
     // Parse the default subgraph schema
     let schema = graphql.parse(
       await fs.readFile(
-        path.join(__dirname, '..', 'schemas', `${protocol.name}.graphql`),
+        path.join(__dirname, 'protocols', protocol.name, `manifest.graphql`),
         'utf-8',
       ),
     )
