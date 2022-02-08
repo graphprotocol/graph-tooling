@@ -125,7 +125,7 @@ async function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
   const cpuCore = os.cpus()[0]
-  const isM1 = /Apple M1|processor/i.test(cpuCore.model)
+  const isM1 = /Apple (M1|processor)/.test(cpuCore.model)
   const linuxInfo = type === 'Linux' ? await getLinuxInfo() : new Map()
   const linuxDistro = linuxInfo.get('name')
   const release = linuxInfo.get('version') || os.release()
