@@ -1,10 +1,10 @@
 - Load subgraph from subgraph.yaml
 ⚠ Warnings while loading subgraph from subgraph.yaml: Warnings in subgraph.yaml:
-  
+
     Path: repository
     The repository is still set to https://github.com/graphprotocol/example-subgraph.
     Please replace it with a link to your subgraph source code.
-  
+
     Path: description
     The description is still the one from the example subgraph.
     Please update it to tell users more about your subgraph.
