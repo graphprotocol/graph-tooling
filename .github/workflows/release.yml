@@ -14,14 +14,14 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-  deploy:
+  publish:
     runs-on: ubuntu-latest
     needs: cancel-previous
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          token: ${{ secrets.SECRET_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v2-beta
         with:
           node-version: "16.10.0"
@@ -34,4 +34,6 @@ jobs:
         run: |
           npm publish
           npm push --tags
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
