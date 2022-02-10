@@ -1,5 +1,10 @@
 {
   "name": "@graphprotocol/graph-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/energywebfoundation/graph-cli.git"
+  },
+  "homepage": "https://github.com/energywebfoundation/graph-cli.git#readme",
   "version": "0.27.0",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
