@@ -1,0 +1,37 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master, add_energyweb-and-volta-network]
+
+jobs:
+  cancel-previous:
+    name: "Cancel Previous Runs"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: cancel-previous
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.SECRET_NAME }}
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "16.10.0"
+          registry-url: https://registry.npmjs.org/
+
+      - name: Set npm credentials
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc
+
+      - name: Publish package
+        run: |
+          npm publish
+          npm push --tags
+
