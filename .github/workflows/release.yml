@@ -29,9 +29,8 @@ jobs:
 
       - name: Set npm credentials
         run: |
-          npm config set registry http://registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc
           npm whoami
-        # echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc
 
       - name: Publish package
         run: |
