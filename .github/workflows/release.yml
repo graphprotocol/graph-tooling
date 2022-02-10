@@ -1,8 +1,8 @@
-name: Deploy
+name: Publish
 
 on:
   push:
-    branches: [master, add_energyweb-and-volta-network]
+    branches: [master, publish_ewf_npm]
 
 jobs:
   cancel-previous:
