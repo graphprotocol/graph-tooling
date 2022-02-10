@@ -1,5 +1,5 @@
 {
-  "name": "@graphprotocol/graph-cli",
+  "name": "graph-cli",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/energywebfoundation/graph-cli.git"
