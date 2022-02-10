@@ -27,13 +27,10 @@ jobs:
           node-version: "16.10.0"
           registry-url: https://registry.npmjs.org/
 
-      - name: Set npm credentials
+      - name: Set npm credentials & Publish
         run: |
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          npm whoami
-
-      - name: Publish package
-        run: |
+          cat $HOME/.npmrc
           npm publish --access=public
           npm push --tags
         env:
