@@ -30,7 +30,6 @@ jobs:
       - name: Set npm credentials & Publish
         run: |
           npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          cat $HOME/.npmrc
           npm publish --access=public
           npm push --tags
         env:
