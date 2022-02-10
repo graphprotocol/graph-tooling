@@ -125,7 +125,7 @@ async function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
   const cpuCore = os.cpus()[0]
-  const isM1 = cpuCore.model.includes("Apple M1")
+  const isM1 = (arch === 'arm64' && /Apple (M1|processor)/.test(cpuCore.model))
   const linuxInfo = type === 'Linux' ? await getLinuxInfo() : new Map()
   const linuxDistro = linuxInfo.get('name')
   const release = linuxInfo.get('version') || os.release()
@@ -135,7 +135,7 @@ async function getPlatform(logsOpt) {
     print.info(`OS type: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
-  if (arch === 'x64' || (arch === 'arm64' && isM1)) {
+  if (arch === 'x64' || isM1) {
     if (type === 'Darwin') {
       if (majorVersion === 19) {
         return 'binary-macos-10.15'
@@ -168,7 +168,7 @@ async function getLinuxInfo() {
     infoArray.forEach((val) => {
       infoMap.set(val[0].toLowerCase(), val[1])
     });
-    
+
     return infoMap
   } catch (error) {
     print.error(`Error fetching the Linux version:\n ${error}`)
