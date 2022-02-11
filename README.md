@@ -3,7 +3,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-cli.svg)](https://www.npmjs.com/package/@graphprotocol/graph-cli)
 [![Build Status](https://travis-ci.org/graphprotocol/graph-cli.svg?branch=master)](https://travis-ci.org/graphprotocol/graph-cli)
 
-*This is fork from [@graphprotocol/graph-cli](https://github.com/graphprotocol/graph-cli.git) to add `Energyweb` & `Volta` network in the `graph-cli` CLI. This [@energyweb/graph-cli](https://github.com/energywebfoundation/graph-cli) will allow user to choose `energyweb` or `volta` network and download the ABI of the provided smart contract from `Energyweb` & `Volta` network.*
+*This is fork from [@graphprotocol/graph-cli](https://github.com/graphprotocol/graph-cli.git) to add `Energyweb` & `Volta` network in the `graph-cli` CLI. This [@energyweb/graph-cli](https://github.com/energywebfoundation/graph-cli) provides the option to choose `energyweb` or `volta` network and download the ABI of the provided smart contract from `Energyweb` & `Volta` network.*
 
 ## The Graph Command Line Interface
 
