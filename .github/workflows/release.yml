@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [release]
+    branches: [ew_release]
 
 jobs:
   cancel-previous:
