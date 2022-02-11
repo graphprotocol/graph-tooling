@@ -10,6 +10,14 @@ describe('Validation', () => {
     },
   )
   cliTest(
+    'Invalid subgraph manifest (cannot infer protocol)',
+    ['codegen', '--skip-migrations'],
+    'validation/invalid-manifest-cannot-infer-protocol',
+    {
+      exitCode: 1,
+    },
+  )
+  cliTest(
     'ABI not found in data source',
     ['codegen', '--skip-migrations'],
     'validation/abi-not-found',

@@ -60,10 +60,7 @@ module.exports = class Protocol {
         'aurora',
         'aurora-testnet',
       ],
-      near: [
-        'near-mainnet',
-        'near-testnet'
-      ],
+      near: ['near-mainnet', 'near-testnet'],
     })
   }
 
@@ -108,6 +105,15 @@ module.exports = class Protocol {
     }
   }
 
+  hasTemplates() {
+    switch (this.name) {
+      case 'ethereum':
+        return true
+      case 'near':
+        return false
+    }
+  }
+
   getTypeGenerator(options) {
     switch (this.name) {
       case 'ethereum':
@@ -118,13 +124,17 @@ module.exports = class Protocol {
   }
 
   getTemplateCodeGen(template) {
+    if (!this.hasTemplates()) {
+      throw new Error(
+        `Template data sources with kind '${this.name}' are not supported yet`,
+      )
+    }
+
     switch (this.name) {
       case 'ethereum':
         return new EthereumTemplateCodeGen(template)
       default:
-        throw new Error(
-          `Template data sources with kind '${this.name}' are not supported yet`,
-        )
+        throw new Error(`Template data sources with kind '${this.name}' is unknown`)
     }
   }
 
