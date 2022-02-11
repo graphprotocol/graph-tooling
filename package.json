@@ -26,7 +26,7 @@
     "semver": "7.3.5",
     "sync-request": "^6.1.0",
     "tmp-promise": "^3.0.2",
-    "web3": "^1.6.1",
+    "web3-eth-abi": "^1.7.0",
     "which": "2.0.2",
     "yaml": "^1.5.1"
   },

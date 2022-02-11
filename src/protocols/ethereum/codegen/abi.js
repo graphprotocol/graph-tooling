@@ -2,12 +2,13 @@ const immutable = require('immutable')
 const fs = require('fs')
 const yaml = require('yaml')
 const request = require('sync-request')
-const Web3 = require('web3')
-const web3 = new Web3(null)
+const Web3EthAbi = require('web3-eth-abi');
 
 const tsCodegen = require('../../../codegen/typescript')
 const typesCodegen = require('../../../codegen/types')
 const util = require('../../../codegen/util')
+
+const doFixtureCodegen = fs.existsSync('./fixtures.yaml');
 
 module.exports = class AbiCodeGenerator {
   constructor(abi) {
@@ -15,7 +16,7 @@ module.exports = class AbiCodeGenerator {
   }
 
   generateModuleImports() {
-    return [
+    let imports = [
       tsCodegen.moduleImports(
         [
           // Ethereum integration
@@ -32,14 +33,21 @@ module.exports = class AbiCodeGenerator {
           'BigInt',
         ],
         '@graphprotocol/graph-ts',
-      ),
-      tsCodegen.moduleImports(
-        [
-          'newMockEvent',
-        ],
-        'matchstick-as/assembly/index',
-      ),
+      )
     ]
+
+    if (doFixtureCodegen) {
+      imports.push(
+        tsCodegen.moduleImports(
+          [
+            'newMockEvent',
+          ],
+          'matchstick-as/assembly/index',
+        )
+      )
+    }
+
+    return imports
   }
 
   generateTypes() {
@@ -227,7 +235,7 @@ module.exports = class AbiCodeGenerator {
         )
 
         // Fixture generation
-        try {
+        if (doFixtureCodegen) {
           const args = yaml.parse(fs.readFileSync('./fixtures.yaml', 'utf8'))
           const blockNumber = args['blockNumber']
           const contractAddr = args['contractAddr']
@@ -241,7 +249,7 @@ module.exports = class AbiCodeGenerator {
             throw new Error(body.result)
           }
 
-          let res = web3.eth.abi.decodeLog(
+          let res = Web3EthAbi.decodeLog(
             namesAndTypes,
             body.result[0].data,
             []
@@ -268,9 +276,6 @@ module.exports = class AbiCodeGenerator {
               `,
             )
           )
-        } catch (e) {
-            // no fixtures
-            console.log(e)
         }
 
         return [klass, paramsClass, ...tupleClasses]
