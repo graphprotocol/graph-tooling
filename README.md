@@ -35,10 +35,10 @@ The Graph CLI can be installed with `npm` or `yarn`:
 
 ```sh
 # NPM
-npm install -g @graphprotocol/ew-graph-cli
+npm install -g @energyweb/ew-graph-cli
 
 # Yarn
-yarn global add @graphprotocol/ew-graph-cli
+yarn global add @energyweb/ew-graph-cli
 ```
 
 ### On Linux
