@@ -3,6 +3,8 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-cli.svg)](https://www.npmjs.com/package/@graphprotocol/graph-cli)
 [![Build Status](https://travis-ci.org/graphprotocol/graph-cli.svg?branch=master)](https://travis-ci.org/graphprotocol/graph-cli)
 
+*This is fork from [@graphprotocol/graph-cli](https://github.com/graphprotocol/graph-cli.git) to add `Energyweb` & `Volta` network in the `graph-cli` CLI. This [@energyweb/graph-cli](https://github.com/energywebfoundation/graph-cli) will allow user to choose `energyweb` or `volta` network and download the ABI of the provided smart contract from `Energyweb` & `Volta` network.*
+
 ## The Graph Command Line Interface
 
 As of today, the command line interface supports the following commands:
@@ -33,10 +35,10 @@ The Graph CLI can be installed with `npm` or `yarn`:
 
 ```sh
 # NPM
-npm install -g @graphprotocol/graph-cli
+npm install -g @energyweb/graph-cli
 
 # Yarn
-yarn global add @graphprotocol/graph-cli
+yarn global add @energyweb/graph-cli
 ```
 
 ### On Linux
@@ -76,6 +78,7 @@ Current version: `0.34.9`.
 Desired release: `0.35.0`.
 
 To create the PR:
+
 ```
 git checkout -b <BRANCH>
 
@@ -98,6 +101,7 @@ Current version: `0.29.2`.
 Desired release: `0.30.0-alpha.0`.
 
 To create the PR:
+
 ```
 git checkout -b <BRANCH>
 
@@ -120,6 +124,7 @@ Current version: `0.30.0-alpha.0`.
 Desired release: `0.30.0-alpha.1`.
 
 To create the PR:
+
 ```
 git checkout -b <BRANCH>
 
