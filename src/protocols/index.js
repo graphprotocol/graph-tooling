@@ -55,6 +55,7 @@ module.exports = class Protocol {
         'mbase',
         'arbitrum-one',
         'arbitrum-rinkeby',
+        'oasis',
         'optimism',
         'optimism-kovan',
         'aurora',
