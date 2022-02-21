@@ -5,6 +5,49 @@ const typesCodegen = require('./types')
 
 const List = immutable.List
 
+class IdField {
+  static BYTES = Symbol("Bytes")
+  static STRING = Symbol("String")
+
+  constructor(idField) {
+    const typeName = idField.getIn(['type', 'type', 'name', 'value'])
+    this.kind = typeName === "Bytes" ? IdField.BYTES : IdField.STRING
+  }
+
+  typeName() {
+    return this.kind === IdField.BYTES ? "Bytes" : "string"
+  }
+
+  tsNamedType() {
+    return tsCodegen.namedType(this.typeName())
+  }
+
+  tsValueFrom() {
+    return this.kind === IdField.BYTES ? "Value.fromBytes(id)" : "Value.fromString(id)"
+  }
+
+  tsValueKind() {
+    return this.kind === IdField.BYTES ? "ValueKind.BYTES" : "ValueKind.STRING"
+  }
+
+  tsValueToString() {
+    return this.kind == IdField.BYTES ? "id.toBytes().toHexString()" : "id.toString()"
+  }
+
+  tsToString() {
+    return this.kind == IdField.BYTES ? "id.toHexString()" : "id"
+  }
+
+  static fromFields(fields) {
+    const idField = fields.find(field => field.getIn(['name', 'value']) === 'id')
+    return new IdField(idField)
+  }
+
+  static fromTypeDef(def) {
+    return IdField.fromFields(def.get("fields"))
+  }
+}
+
 module.exports = class SchemaCodeGenerator {
   constructor(schema) {
     this.schema = schema
@@ -52,12 +95,14 @@ module.exports = class SchemaCodeGenerator {
   _generateEntityType(def) {
     let name = def.getIn(['name', 'value'])
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
+    const fields = def.get('fields')
+    const idField = IdField.fromFields(fields)
 
     // Generate and add a constructor
-    klass.addMethod(this._generateConstructor(name, def.get('fields')))
+    klass.addMethod(this._generateConstructor(name, fields))
 
     // Generate and add save() and getById() methods
-    this._generateStoreMethods(name).forEach(method => klass.addMethod(method))
+    this._generateStoreMethods(name, idField).forEach(method => klass.addMethod(method))
 
     // Generate and add entity field getters and setters
     def
@@ -107,19 +152,20 @@ module.exports = class SchemaCodeGenerator {
   }
 
   _generateConstructor(entityName, fields) {
+    const idField = IdField.fromFields(fields)
     return tsCodegen.method(
       'constructor',
-      [tsCodegen.param('id', tsCodegen.namedType('string'))],
+      [tsCodegen.param('id', idField.tsNamedType())],
       undefined,
       `
       super()
-      this.set('id', Value.fromString(id))
+      this.set('id', ${idField.tsValueFrom()})
       ${this._generateDefaultFieldValues(fields)}
       `,
     )
   }
 
-  _generateStoreMethods(entityName) {
+  _generateStoreMethods(entityName, idField) {
     return List.of(
       tsCodegen.method(
         'save',
@@ -130,20 +176,20 @@ module.exports = class SchemaCodeGenerator {
         assert(id != null, 'Cannot save ${entityName} entity without an ID')
         if (id) {
           assert(
-            id.kind == ValueKind.STRING,
+            id.kind == ${idField.tsValueKind()},
             'Cannot save ${entityName} entity with non-string ID. ' +
             'Considering using .toHex() to convert the "id" to a string.'
           )
-          store.set('${entityName}', id.toString(), this)
+          store.set('${entityName}', ${idField.tsValueToString()}, this)
         }`,
       ),
 
       tsCodegen.staticMethod(
         'load',
-        [tsCodegen.param('id', tsCodegen.namedType('string'))],
+        [tsCodegen.param('id', tsCodegen.namedType(idField.typeName()))],
         tsCodegen.nullableType(tsCodegen.namedType(entityName)),
         `
-        return changetype<${entityName} | null>(store.get('${entityName}', id))
+        return changetype<${entityName} | null>(store.get('${entityName}', ${idField.tsToString()}))
         `,
       ),
     )
@@ -212,7 +258,7 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
         this.unset('${name}')
       } else {
         this.set('${name}', ${typesCodegen.valueFromAsc(
-        `<${paramTypeString}>value`,
+      `<${paramTypeString}>value`,
       fieldValueType,
     )})
       }
@@ -226,12 +272,28 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
     )
   }
 
+  _resolveFieldType(gqlType) {
+    let typeName = gqlType.getIn(['name', 'value'])
+
+    // If this is a reference to another type, the field has the type of
+    // the referred type's id field
+    const typeDef = this.schema.ast.get("definitions").
+      find(def => this._isEntityTypeDefinition(def) && def.getIn(["name", "value"]) === typeName)
+    if (typeDef) {
+      return IdField.fromTypeDef(typeDef).typeName()
+    } else {
+      return typeName
+    }
+  }
+
   _valueTypeFromGraphQl(gqlType) {
-    return gqlType.get('kind') === 'NonNullType'
-      ? this._valueTypeFromGraphQl(gqlType.get('type'), false)
-      : gqlType.get('kind') === 'ListType'
-      ? '[' + this._valueTypeFromGraphQl(gqlType.get('type')) + ']'
-      : gqlType.getIn(['name', 'value'])
+    if (gqlType.get('kind') === 'NonNullType') {
+      return this._valueTypeFromGraphQl(gqlType.get('type'), false)
+    } else if (gqlType.get('kind') === 'ListType') {
+      return '[' + this._valueTypeFromGraphQl(gqlType.get('type')) + ']'
+    } else {
+      return this._resolveFieldType(gqlType)
+    }
   }
 
   _typeFromGraphQl(gqlType, nullable = true, nullablePrimitive = false) {
@@ -243,7 +305,7 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
     } else {
       // NamedType
       let type = tsCodegen.namedType(
-        typesCodegen.ascTypeForValue(gqlType.getIn(['name', 'value'])),
+        typesCodegen.ascTypeForValue(this._resolveFieldType(gqlType)),
       )
 
       // Will not wrap primitives into NullableType by default.
