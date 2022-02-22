@@ -28,7 +28,7 @@
     "tmp-promise": "3.0.2",
     "web3-eth-abi": "1.7.0",
     "which": "2.0.2",
-    "yaml": "^1.5.1"
+    "yaml": "1.9.2"
   },
   "bin": {
     "graph": "bin/graph"
