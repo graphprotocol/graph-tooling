@@ -3409,7 +3409,7 @@ iterable-ndjson@^1.1.0:
   dependencies:
     string_decoder "^1.2.0"
 
-jayson@^3.0.2:
+jayson@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/jayson/-/jayson-3.2.0.tgz#df6d8139cd9f6ee2f56c8c2deaee448da7eccf1b"
   integrity sha512-DZQnwA57GcStw4soSYB2VntWXFfoWvmSarlaWePDYOWhjxT72PBM4atEBomaTaS1uqk3jFC9UO9AyWjlujo3xw==
