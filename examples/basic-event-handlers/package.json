@@ -13,10 +13,10 @@
     "apollo-fetch": "^0.7.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "babel-register": "^6.26.0",
-    "truffle": "^5.0.4",
-    "truffle-hdwallet-provider": "^1.0.4"
+    "babel-polyfill": "6.26.0",
+    "babel-register": "6.26.0",
+    "truffle": "5.0.12",
+    "truffle-hdwallet-provider": "1.0.6"
   },
   "resolutions": {
     "assemblyscript": "0.19.10"
