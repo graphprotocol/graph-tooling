@@ -11,7 +11,7 @@
     "debug": "4.1.1",
     "docker-compose": "0.23.4",
     "dockerode": "2.5.8",
-    "fs-extra": "^9.0.0",
+    "fs-extra": "9.0.0",
     "glob": "^7.1.2",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
     "graphql": "^15.5.0",
