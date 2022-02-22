@@ -929,9 +929,9 @@ truffle-hdwallet-provider@1.0.6:
     bindings "^1.3.1"
     websocket "^1.0.28"
 
-truffle@^5.0.4:
+truffle@5.0.12:
   version "5.0.12"
-  resolved "https://registry.npmjs.org/truffle/-/truffle-5.0.12.tgz#05ab7d2561a3ee4fd5e026dcc4b91b8f3c6e3795"
+  resolved "https://registry.yarnpkg.com/truffle/-/truffle-5.0.12.tgz#05ab7d2561a3ee4fd5e026dcc4b91b8f3c6e3795"
   integrity sha512-dqnDmtTGNcnL29PHQwPE/CVmFFeGLuTFeb4TS3VY/vbASefu118IKXcadOWzkCPPwktv/njwylHSPhwoS00F2A==
   dependencies:
     app-module-path "^2.2.0"
