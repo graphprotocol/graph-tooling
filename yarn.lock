@@ -1946,7 +1946,7 @@ docker-modem@^1.0.8:
     readable-stream "~1.0.26-4"
     split-ca "^1.0.0"
 
-dockerode@^2.5.8:
+dockerode@2.5.8:
   version "2.5.8"
   resolved "https://registry.yarnpkg.com/dockerode/-/dockerode-2.5.8.tgz#1b661e36e1e4f860e25f56e0deabe9f87f1d0acc"
   integrity sha512-+7iOUYBeDTScmOmQqpUYQaE7F4vvIt6+gIZNHWhqAQEI887tiPFB9OvXI/HzQYqfUNvukMK+9myLW63oTJPZpw==
