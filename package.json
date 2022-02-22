@@ -22,7 +22,7 @@
     "node-fetch": "2.6.0",
     "pkginfo": "0.4.1",
     "prettier": "1.19.1",
-    "request": "^2.88.0",
+    "request": "2.88.2",
     "semver": "7.3.5",
     "sync-request": "^6.1.0",
     "tmp-promise": "^3.0.2",
