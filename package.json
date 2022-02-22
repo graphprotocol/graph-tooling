@@ -20,7 +20,7 @@
     "jayson": "3.2.0",
     "js-yaml": "3.13.1",
     "node-fetch": "2.6.0",
-    "pkginfo": "^0.4.1",
+    "pkginfo": "0.4.1",
     "prettier": "^1.13.5",
     "request": "^2.88.0",
     "semver": "7.3.5",
