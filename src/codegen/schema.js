@@ -18,6 +18,10 @@ class IdField {
     return this.kind === IdField.BYTES ? "Bytes" : "string"
   }
 
+  gqlTypeName() {
+    return this.kind === IdField.BYTES ? "Bytes" : "String"
+  }
+
   tsNamedType() {
     return tsCodegen.namedType(this.typeName())
   }
@@ -173,13 +177,11 @@ module.exports = class SchemaCodeGenerator {
         tsCodegen.namedType('void'),
         `
         let id = this.get('id')
-        assert(id != null, 'Cannot save ${entityName} entity without an ID')
+        assert(id != null,
+               'Cannot save ${entityName} entity without an ID')
         if (id) {
-          assert(
-            id.kind == ${idField.tsValueKind()},
-            'Cannot save ${entityName} entity with non-string ID. ' +
-            'Considering using .toHex() to convert the "id" to a string.'
-          )
+          assert(id.kind == ${idField.tsValueKind()},
+                 \`Entities of type ${entityName} must have an ID of type ${idField.gqlTypeName()} but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
           store.set('${entityName}', ${idField.tsValueToString()}, this)
         }`,
       ),

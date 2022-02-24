@@ -129,9 +129,7 @@ describe('Schema code generator', () => {
               if (id) {
                 assert(
                   id.kind == ValueKind.STRING,
-                  'Cannot save Account entity with non-string ID. ' +
-                  'Considering using .toHex() to convert the "id" to a string.'
-                )
+                  \`Entities of type Account must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
                 store.set('Account', id.toString(), this)
               }
             `,
@@ -279,7 +277,7 @@ describe('Schema code generator', () => {
             body: `
               super()
               this.set('id', Value.fromString(id))
-    
+
               this.set('amount', Value.fromBigInt(BigInt.zero()))
               this.set('account', Value.fromString(''))
             `,
@@ -294,9 +292,7 @@ describe('Schema code generator', () => {
               if (id) {
                 assert(
                   id.kind == ValueKind.STRING,
-                  'Cannot save Wallet entity with non-string ID. ' +
-                  'Considering using .toHex() to convert the "id" to a string.'
-                )
+                  \`Entities of type Wallet must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
                 store.set('Wallet', id.toString(), this)
               }
             `,
