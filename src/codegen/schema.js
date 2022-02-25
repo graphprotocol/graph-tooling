@@ -242,13 +242,12 @@ module.exports = class SchemaCodeGenerator {
       isArray &&
       paramType.inner instanceof tsCodegen.NullableType
     ) {
-      let arrayTypeWithoutClosingBracked = fieldValueType.slice(0, -1)
-      let suggestedType = `${arrayTypeWithoutClosingBracked}!]`
+      let baseType = this._baseType(gqlType)
 
       throw new Error(`
 GraphQL schema can't have List's with Nullable members.
-Error in '${name}' field of type '${fieldValueType}'.
-Suggestion: add an '!' to the member type of the List, change from '${fieldValueType}' to '${suggestedType}'`
+Error in '${name}' field of type '[${baseType}]'.
+Suggestion: add an '!' to the member type of the List, change from '[${baseType}]' to '[${baseType}!]'`
       )
     }
 
@@ -288,6 +287,10 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
     }
   }
 
+  /** Return the type that values for this field must have. For scalar
+   * types, that's the type from the subgraph schema. For references to
+   * other entity types, this is the same as the type of the id of the
+   * referred type, i.e., `string` or `Bytes`*/
   _valueTypeFromGraphQl(gqlType) {
     if (gqlType.get('kind') === 'NonNullType') {
       return this._valueTypeFromGraphQl(gqlType.get('type'), false)
@@ -295,6 +298,18 @@ Suggestion: add an '!' to the member type of the List, change from '${fieldValue
       return '[' + this._valueTypeFromGraphQl(gqlType.get('type')) + ']'
     } else {
       return this._resolveFieldType(gqlType)
+    }
+  }
+
+  /** Determine the base type of `gqlType` by removing any non-null
+   * constraints and using the type of elements of lists */
+  _baseType(gqlType) {
+    if (gqlType.get('kind') === 'NonNullType') {
+      return this._baseType(gqlType.get('type'))
+    } else if (gqlType.get('kind') === 'ListType') {
+      return this._baseType(gqlType.get('type'))
+    } else {
+      return gqlType.getIn(['name', 'value'])
     }
   }
 
