@@ -4,6 +4,7 @@ const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
+const yaml = require('yaml')
 
 const {
   getSubgraphBasename,
@@ -132,7 +133,7 @@ const processInitForm = async (
           return `${e.message}
 
   Examples:
-  
+
     $ graph init ${os.userInfo().username}/${name}
     $ graph init ${name} --allow-simple-name`
         }
@@ -287,7 +288,7 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "aurora-testnet": return `https://api-testnet.aurorascan.dev/api`;
     default: return `https://api-${network}.etherscan.io/api`;
   }
-} 
+}
 
 const loadAbiFromEtherscan = async (ABI, network, address) =>
   await withSpinner(
@@ -355,7 +356,7 @@ module.exports = {
 
     node = node || g
     ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
-    
+
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
       process.exitCode = 1
@@ -497,8 +498,6 @@ module.exports = {
       process.exit(1)
     }
 
-    print.info('———')
-
     if (fromExample) {
       await initSubgraphFromExample(
         toolbox,
@@ -538,6 +537,32 @@ module.exports = {
     }
   },
 }
+
+const initNetworksConfig = async(toolbox, directory) =>
+  await withSpinner(
+    `Initialize networks config`,
+    `Failed to initialize networks config`,
+    `Warnings while initializing networks config`,
+    async spinner => {
+      let subgraphStr = await toolbox.filesystem.read(path.join(directory, 'subgraph.yaml'))
+      let subgraph = yaml.parse(subgraphStr)
+
+      let networks = {}
+
+      subgraph.dataSources.forEach(source => {
+        let sourceNetwork = {[source.name]: {}}
+
+        if (source.source.address) sourceNetwork[source.name]["address"] = source.source.address
+        if (source.source.startBlock) sourceNetwork[source.name]["startBlock"] = source.source.startBlock
+
+        networks[source.network] = sourceNetwork
+      })
+
+      await toolbox.filesystem.write(`${directory}/networks.json`, networks, {jsonIndent: 4})
+
+      return true
+    },
+  )
 
 const revalidateSubgraphName = async (toolbox, subgraphName, { allowSimpleName }) => {
   // Fail if the subgraph name is invalid
@@ -685,6 +710,13 @@ const initSubgraphFromExample = async (
     return
   }
 
+  let networkConf = await initNetworksConfig(toolbox, directory)
+
+  if (networkConf !== true) {
+    process.exitCode = 1
+    return
+  }
+
   // Update package.json to match the subgraph name
   let prepared = await withSpinner(
     `Update subgraph name and commands in package.json`,
@@ -822,6 +854,12 @@ const initSubgraphFromContract = async (
     },
   )
   if (scaffold !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  let networkConf = await initNetworksConfig(toolbox, directory)
+  if (networkConf !== true) {
     process.exitCode = 1
     return
   }
