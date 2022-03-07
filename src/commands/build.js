@@ -1,4 +1,5 @@
 const chalk = require('chalk')
+const yaml = require('yaml');
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -16,13 +17,15 @@ Options:
   -t, --output-format <format>  Output format for mappings (wasm, wast) (default: wasm)
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
+      --network <name>          Network to use from networks.json
+      --networks-file <path>    Networks file (default: "./networks.json")
 `
 
 module.exports = {
   description: 'Builds a subgraph and (optionally) uploads it to IPFS',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { filesystem, patching, print, system } = toolbox
 
     // Parse CLI parameters
     let {
@@ -37,6 +40,8 @@ module.exports = {
       t,
       w,
       watch,
+      network,
+      networksFile
     } = toolbox.parameters.options
 
     // Support both short and long option variants
@@ -75,6 +80,51 @@ module.exports = {
       return
     }
 
+
+    networksFile = networksFile || "./networks.json"
+
+    if (network && !filesystem.exists(networksFile)) {
+      print.error(`Network file '${networksFile}' does not exists!`)
+      process.exitCode = 1
+      return
+    } else if (network) {
+      let networksObj = filesystem.read(networksFile, "json")
+      let networkObj = networksObj[network]
+
+      if(!networkObj) {
+        print.error(`Could not find network with name '${network}' in '${networksFile}'`)
+        process.exitCode = 1
+        return
+      }
+
+      await patching.update(manifest, subgraph => {
+        let doc = yaml.parse(subgraph)
+        let networkSources = Object.keys(networkObj)
+
+        doc["dataSources"].forEach( ds => {
+            if (!networkSources.includes(ds.name)) {
+              print.info(`Skipping ${ds.name} - not in networks config`)
+              return
+            }
+
+            let dsNetwork = networkObj[ds.name]
+            if (hasChanges(network, dsNetwork, ds)) {
+              ds.network = network
+              ds.source = { abi: ds.source.abi }
+              Object.assign(ds.source, dsNetwork)
+            } else {
+              print.info(`Skipping ${ds.name} - no changes`)
+            }
+        })
+
+        let yaml_doc = new yaml.Document();
+        yaml_doc.contents = doc
+        return yaml_doc.toString()
+      })
+    }
+
+    return
+
     let protocol
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
@@ -111,4 +161,20 @@ module.exports = {
       }
     }
   },
+}
+
+function hasChanges(network, networkObj, dataSource) {
+  let networkChanged = dataSource.network !== network
+
+  let addressChanged
+
+  if (network === "near") {
+    addressChanged = networkObj.account !== dataSource.source.account
+  } else {
+    addressChanged = networkObj.address !== dataSource.source.address
+  }
+
+  let startBlockChanged = networkObj.startBlock !== dataSource.source.startBlock
+
+  return networkChanged || addressChanged || startBlockChanged
 }
