@@ -12,7 +12,7 @@ const updateSubgraphNetwork = async (manifest, network, networksFile) => {
 
         try {
           step(spinner, `Reading networks config`)
-          networksObj = filesystem.read(networksFile, "json")
+          networksObj = await filesystem.read(networksFile, "json")
         }  catch (error) {
           print.error(error.message)
           process.exit(1)
