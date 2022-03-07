@@ -85,9 +85,8 @@ module.exports = {
     networksFile = networksFile || "./networks.json"
 
     if (network && !filesystem.exists(networksFile)) {
-    print.error(`Network file '${networksFile}' does not exists!`)
-    process.exitCode = 1
-    return
+      print.error(`Network file '${networksFile}' does not exists!`)
+      process.exit(1)
     }
 
     if (network) {

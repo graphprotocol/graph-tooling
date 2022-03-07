@@ -1,46 +1,60 @@
 const { filesystem, patching, print } = require('gluegun')
 const yaml = require('yaml')
+const { step, withSpinner } = require('../command-helpers/spinner')
 
 const updateSubgraphNetwork = async (manifest, network, networksFile) => {
-    let networksObj = filesystem.read(networksFile, "json")
-    let networkObj = networksObj[network]
+    await withSpinner(
+      `Update sources network`,
+      `Failed to update sources network`,
+      `Warnings while updating sources network`,
+      async spinner => {
+        let networksObj
 
-    if(!networkObj) {
-      print.error(`Could not find network with name '${network}' in '${networksFile}'`)
-      process.exitCode = 1
-      return
-    }
+        try {
+          step(spinner, `Reading networks config`)
+          networksObj = filesystem.read(networksFile, "json")
+        }  catch (error) {
+          print.error(error.message)
+          process.exit(1)
+        }
 
-    await patching.update(manifest, subgraph => {
-      let subgraphObj = yaml.parse(subgraph)
-      let networkSources = Object.keys(networkObj)
+        let networkObj = networksObj[network]
 
-      subgraphObj["dataSources"] = updateSources(network, subgraphObj["dataSources"], networkSources, networkObj)
-      subgraphObj["templates"] = updateSources(network, subgraphObj['templates'], networkSources, networkObj)
+        if(!networkObj) {
+          print.error(`Could not find network with name '${network}' in '${networksFile}'`)
+          process.exit(1)
+        }
 
-      let yaml_doc = new yaml.Document()
-      yaml_doc.contents = subgraphObj
-      return yaml_doc.toString()
+        await patching.update(manifest, subgraph => {
+          let subgraphObj = yaml.parse(subgraph)
+          let networkSources = Object.keys(networkObj)
+
+          subgraphObj["dataSources"] = updateSources(spinner, network, subgraphObj["dataSources"], networkSources, networkObj)
+          subgraphObj["templates"] = updateSources(spinner, network, subgraphObj['templates'], networkSources, networkObj)
+
+          let yaml_doc = new yaml.Document()
+          yaml_doc.contents = subgraphObj
+          return yaml_doc.toString()
+        })
     })
 }
 
-function updateSources(network, sources, networkSources, networkObj) {
-  sources.forEach(ds => {
-      if (!networkSources.includes(ds.name)) {
-        print.info(`Skipping ${ds.name} - not in networks config`)
-        return
-      }
+function updateSources(spinner, network, sources, networkSources, networkObj) {
+      sources.forEach(source => {
+          if (!networkSources.includes(source.name)) {
+            step(spinner, `Skip '${source.name}': Not found in networks config`)
+            return
+          }
 
-      let dsNetwork = networkObj[ds.name]
-
-      if (hasChanges(network, dsNetwork, ds)) {
-        ds.network = network
-        ds.source = { abi: ds.source.abi }
-        Object.assign(ds.source, dsNetwork)
-      } else {
-        print.info(`Skipping ${ds.name} - already on "${network}" network`)
-      }
-  })
+          if (hasChanges(network, networkObj[source.name], source)) {
+            step(spinner, `Update '${source.name}' network configuration`)
+            source.network = network
+            source.source = { abi: source.source.abi }
+            Object.assign(source.source, networkObj[source.name])
+          } else {
+            step(spinner, `Skip '${source.name}': No changes to network configuration`)
+          }
+      })
 
   return sources
 }
