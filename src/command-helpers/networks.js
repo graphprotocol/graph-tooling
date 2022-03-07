@@ -29,8 +29,19 @@ const updateSubgraphNetwork = async (manifest, network, networksFile) => {
           let subgraphObj = yaml.parse(subgraph)
           let networkSources = Object.keys(networkObj)
 
-          subgraphObj["dataSources"] = updateSources(spinner, network, subgraphObj["dataSources"], networkSources, networkObj)
-          subgraphObj["templates"] = updateSources(spinner, network, subgraphObj['templates'], networkSources, networkObj)
+          subgraphObj.dataSources = updateSources(spinner,
+            network,
+            subgraphObj.dataSources,
+            networkSources,
+            networkObj
+          )
+
+          subgraphObj.templates = updateSources(spinner,
+            network,
+            subgraphObj.templates,
+            networkSources,
+            networkObj
+          )
 
           let yaml_doc = new yaml.Document()
           yaml_doc.contents = subgraphObj
@@ -40,21 +51,21 @@ const updateSubgraphNetwork = async (manifest, network, networksFile) => {
 }
 
 function updateSources(spinner, network, sources, networkSources, networkObj) {
-      sources.forEach(source => {
-          if (!networkSources.includes(source.name)) {
-            step(spinner, `Skip '${source.name}': Not found in networks config`)
-            return
-          }
+  sources.forEach(source => {
+      if (!networkSources.includes(source.name)) {
+        step(spinner, `Skip '${source.name}': Not found in networks config`)
+        return
+      }
 
-          if (hasChanges(network, networkObj[source.name], source)) {
-            step(spinner, `Update '${source.name}' network configuration`)
-            source.network = network
-            source.source = { abi: source.source.abi }
-            Object.assign(source.source, networkObj[source.name])
-          } else {
-            step(spinner, `Skip '${source.name}': No changes to network configuration`)
-          }
-      })
+      if (hasChanges(network, networkObj[source.name], source)) {
+        step(spinner, `Update '${source.name}' network configuration`)
+        source.network = network
+        source.source = { abi: source.source.abi }
+        Object.assign(source.source, networkObj[source.name])
+      } else {
+        step(spinner, `Skip '${source.name}': No changes to network configuration`)
+      }
+  })
 
   return sources
 }
@@ -62,13 +73,7 @@ function updateSources(spinner, network, sources, networkSources, networkObj) {
 function hasChanges(network, networkObj, dataSource) {
   let networkChanged = dataSource.network !== network
 
-  let addressChanged
-
-  if (network === "near") {
-    addressChanged = networkObj.account !== dataSource.source.account
-  } else {
-    addressChanged = networkObj.address !== dataSource.source.address
-  }
+  let addressChanged = (network === "near") ? networkObj.account !== dataSource.source.account : networkObj.address !== dataSource.source.address
 
   let startBlockChanged = networkObj.startBlock !== dataSource.source.startBlock
 
