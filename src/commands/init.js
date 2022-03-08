@@ -12,6 +12,7 @@ const {
 } = require('../command-helpers/subgraph')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
+const { initNetworksConfig } = require('../command-helpers/network')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
@@ -537,32 +538,6 @@ module.exports = {
     }
   },
 }
-
-const initNetworksConfig = async(toolbox, directory) =>
-  await withSpinner(
-    `Initialize networks config`,
-    `Failed to initialize networks config`,
-    `Warnings while initializing networks config`,
-    async spinner => {
-      let subgraphStr = await toolbox.filesystem.read(path.join(directory, 'subgraph.yaml'))
-      let subgraph = yaml.parse(subgraphStr)
-
-      let networks = {}
-
-      subgraph.dataSources.forEach(source => {
-        let sourceNetwork = {[source.name]: {}}
-
-        if (source.source.address) sourceNetwork[source.name]["address"] = source.source.address
-        if (source.source.startBlock) sourceNetwork[source.name]["startBlock"] = source.source.startBlock
-
-        networks[source.network] = sourceNetwork
-      })
-
-      await toolbox.filesystem.write(`${directory}/networks.json`, networks, {jsonIndent: 4})
-
-      return true
-    },
-  )
 
 const revalidateSubgraphName = async (toolbox, subgraphName, { allowSimpleName }) => {
   // Fail if the subgraph name is invalid

@@ -2,7 +2,7 @@ const chalk = require('chalk')
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
-const { updateSubgraphNetwork } = require('../command-helpers/networks')
+const { updateSubgraphNetwork } = require('../command-helpers/network')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const Protocol = require('../protocols')
 
@@ -18,7 +18,7 @@ Options:
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
       --network <name>          Network to use from networks.json
-      --networks-file <path>    Networks file (default: "./networks.json")
+      --network-file <path>    Networks file (default: "./networks.json")
 `
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
       w,
       watch,
       network,
-      networksFile
+      networkFile
     } = toolbox.parameters.options
 
     // Support both short and long option variants
@@ -80,17 +80,16 @@ module.exports = {
       return
     }
 
-
 /// NETWORK FILE
-    networksFile = networksFile || "./networks.json"
+    networkFile = networkFile || "./networks.json"
 
-    if (network && !filesystem.exists(networksFile)) {
-      print.error(`Network file '${networksFile}' does not exists!`)
+    if (network && !filesystem.exists(networkFile)) {
+      print.error(`Network file '${networkFile}' does not exists!`)
       process.exit(1)
     }
 
     if (network) {
-      await updateSubgraphNetwork(manifest, network, networksFile)
+      await updateSubgraphNetwork(toolbox, manifest, network, networkFile)
     }
 
     let protocol
