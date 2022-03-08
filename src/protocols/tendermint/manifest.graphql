@@ -46,8 +46,15 @@ type BlockHandler {
   handler: String!
 }
 
+enum EventOrigin {
+  BeginBlock
+  DeliverTx
+  EndBlock
+}
+
 type EventHandler {
   event: String!
+  origin: EventOrigin
   handler: String!
 }
 
