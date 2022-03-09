@@ -50,7 +50,7 @@ module.exports = class Scaffold {
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
-          '@graphprotocol/graph-ts': `0.24.1`,
+          '@graphprotocol/graph-ts': `0.26.0`,
         },
       }),
       { parser: 'json' },
