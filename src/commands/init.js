@@ -686,7 +686,6 @@ const initSubgraphFromExample = async (
   }
 
   let networkConf = await initNetworksConfig(toolbox, directory)
-
   if (networkConf !== true) {
     process.exitCode = 1
     return

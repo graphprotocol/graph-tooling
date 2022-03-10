@@ -73,15 +73,16 @@ module.exports = {
       manifest !== undefined && manifest !== ''
         ? manifest
         : filesystem.resolve('subgraph.yaml')
+    networkFile =
+      networkFile !== undefined && networkFile !== ''
+        ? networkFile
+        : filesystem.resolve("networks.json")
 
     // Show help text if requested
     if (help) {
       print.info(HELP)
       return
     }
-
-/// NETWORK FILE
-    networkFile = networkFile || "./networks.json"
 
     if (network && !filesystem.exists(networkFile)) {
       print.error(`Network file '${networkFile}' does not exists!`)

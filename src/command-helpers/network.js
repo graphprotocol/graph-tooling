@@ -14,34 +14,42 @@ const updateSubgraphNetwork = async (toolbox, manifest, network, networksFile) =
         step(spinner, `Reading networks config`)
         networksObj = await toolbox.filesystem.read(networksFile, "json")
       }  catch (error) {
-        toolbox.print.error(error.message)
-        process.exit(1)
+        throw new Error(error.message)
       }
 
       let networkObj = networksObj[network]
 
+      // Exit if the network passed with --network does not exits in networks.json
       if(!networkObj) {
-        toolbox.print.error(`Could not find network with name '${network}' in '${networksFile}'`)
-        process.exit(1)
+        throw new Error(`Network '${network}' was not found in '${networksFile}'`)
       }
 
       await toolbox.patching.update(manifest, subgraph => {
         let subgraphObj = yaml.parse(subgraph)
         let networkSources = Object.keys(networkObj)
+        let subgraphSources = subgraphObj.dataSources.map(value => value.name);
 
-        subgraphObj.dataSources = updateSources(spinner,
+        // Update the dataSources network config
+        subgraphObj.dataSources = updateSources(
+          toolbox,
+          spinner,
           network,
           subgraphObj.dataSources,
           networkSources,
           networkObj
         )
 
-        subgraphObj.templates = updateSources(spinner,
-          network,
-          subgraphObj.templates,
-          networkSources,
-          networkObj
-        )
+        // All data sources shoud be on the same network,
+        // so we have to update the network of all templates too.
+        if(subgraphObj.templates) {
+          subgraphObj.templates = updateTemplates(network, subgraphObj.templates)
+        }
+
+        let unsusedSources = networkSources.filter(x => !subgraphSources.includes(x))
+
+        unsusedSources.forEach(source => {
+          step(spinner, `Configuration for '${source}' not used`)
+        })
 
         let yaml_doc = new yaml.Document()
         yaml_doc.contents = subgraphObj
@@ -75,11 +83,12 @@ const initNetworksConfig = async(toolbox, directory) =>
     },
   )
 
-function updateSources(spinner, network, sources, networkSources, networkObj) {
+// Iterates through each dataSource and updates the network configuration
+// Will update only if there are changes to the configuration
+function updateSources(toolbox, spinner, network, sources, networkSources, networkObj) {
   sources.forEach(source => {
       if (!networkSources.includes(source.name)) {
-        step(spinner, `Skip '${source.name}': Not found in networks config`)
-        return
+        throw new Error(`'${source.name}' was not found in the '${network}' configuration, please update!`)
       }
 
       if (hasChanges(network, networkObj[source.name], source)) {
@@ -95,10 +104,25 @@ function updateSources(spinner, network, sources, networkSources, networkObj) {
   return sources
 }
 
+// Iterates through each template and updates the network
+function updateTemplates(network, sources) {
+  sources.forEach(source => {
+    if (source.network !== network) source.network = network
+  })
+
+  return sources
+}
+
+// Checks if any network attribute has been changed
 function hasChanges(network, networkObj, dataSource) {
   let networkChanged = dataSource.network !== network
 
-  let addressChanged = (network === "near") ? networkObj.account !== dataSource.source.account : networkObj.address !== dataSource.source.address
+  // Return directly if the network is different
+  if (networkChanged) return networkChanged
+
+  let addressChanged = (network === "near")
+    ? networkObj.account !== dataSource.source.account
+    : networkObj.address !== dataSource.source.address
 
   let startBlockChanged = networkObj.startBlock !== dataSource.source.startBlock
 
