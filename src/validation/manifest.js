@@ -151,6 +151,23 @@ const validators = immutable.fromJS({
         ])
   },
 
+  EnumTypeDefinition: (value, ctx) => {
+    const enumValues = ctx.getIn(['type', 'values']).map((v) => {
+      return v.getIn(['name', 'value'])
+    })
+
+    const allowedValues = enumValues.toArray().join(', ')
+
+    return enumValues.includes(value)
+      ? List()
+      : immutable.fromJS([
+        {
+          path: ctx.get('path'),
+          message: `Unexpected enum value: ${value}, allowed values: ${allowedValues}`,
+        },
+      ])
+  },
+
   String: (value, ctx) =>
     typeof value === 'string'
       ? List()
