@@ -77,7 +77,7 @@ const initNetworksConfig = async(toolbox, directory) =>
         networks[source.network] = sourceConfig
       })
 
-      await toolbox.filesystem.write(`${directory}/networks.json`, networks, {jsonIndent: 4})
+      await toolbox.filesystem.write(`${directory}/networks.json`, networks)
 
       return true
     },
