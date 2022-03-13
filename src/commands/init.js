@@ -499,6 +499,8 @@ module.exports = {
       process.exit(1)
     }
 
+    print.info('———')
+
     if (fromExample) {
       await initSubgraphFromExample(
         toolbox,
