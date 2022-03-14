@@ -104,6 +104,17 @@ module.exports = class Protocol {
     }
   }
 
+  hasContract() {
+    switch (this.name) {
+      case 'ethereum':
+        return true
+      case 'near':
+        return true
+      case 'tendermint':
+        return false
+    }
+  }
+
   hasEvents() {
     switch (this.name) {
       case 'ethereum':
