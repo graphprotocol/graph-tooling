@@ -166,11 +166,7 @@ At least one such handler must be defined.`,
   }
 
   // Validate that data source names are unique, so they don't overwrite each other.
-  static validateUniqueDataSourceNames(manifest, protocol) {
-    if (!protocol.hasContract()){
-      return immutable.List()
-    }
-    
+  static validateUniqueDataSourceNames(manifest) {
     let names = []
     return manifest.get('dataSources').reduce((errors, dataSource, dataSourceIndex) => {
       let path = ['dataSources', dataSourceIndex, 'name']
@@ -189,11 +185,7 @@ More than one data source named '${name}', data source names must be unique.`,
     }, immutable.List())
   }
 
-  static validateUniqueTemplateNames(manifest, protocol) {
-    if (!protocol.hasContract()){
-      return immutable.List()
-    }
-    
+  static validateUniqueTemplateNames(manifest) {
     let names = []
     return manifest
       .get('templates', immutable.List())
@@ -256,8 +248,8 @@ More than one template named '${name}', template names must be unique.`,
       : immutable.List.of(
           ...protocolSubgraph.validateManifest(),
           ...Subgraph.validateContractValues(manifest, protocol),
-          ...Subgraph.validateUniqueDataSourceNames(manifest, protocol),
-          ...Subgraph.validateUniqueTemplateNames(manifest, protocol),
+          ...Subgraph.validateUniqueDataSourceNames(manifest),
+          ...Subgraph.validateUniqueTemplateNames(manifest),
           ...Subgraph.validateHandlers(manifest, protocol, protocolSubgraph),
         )
 

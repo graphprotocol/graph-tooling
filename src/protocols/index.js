@@ -7,7 +7,6 @@ const NearSubgraph = require('./near/subgraph')
 const TendermintSubgraph = require('./tendermint/subgraph')
 const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
-const TendermintContract = require('./tendermint/contract')
 const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
 const NearManifestScaffold = require('./near/scaffold/manifest')
 const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
@@ -196,7 +195,7 @@ module.exports = class Protocol {
       case 'near':
         return NearContract
       case 'tendermint':
-        return TendermintContract
+        return null
     }
   }
 
