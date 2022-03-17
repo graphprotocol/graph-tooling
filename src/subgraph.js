@@ -158,6 +158,10 @@ At least one such handler must be defined.`,
   }
 
   static validateContractValues(manifest, protocol) {
+    if (!protocol.hasContract()){
+      return immutable.List()
+    }
+
     return validation.validateContractValues(manifest, protocol)
   }
 
