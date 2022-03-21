@@ -7,6 +7,7 @@
 scalar String
 scalar File
 scalar BigInt
+scalar Boolean
 
 type SubgraphManifest {
   specVersion: String!
@@ -72,6 +73,7 @@ type ContractEventHandler {
   event: String!
   topic0: String
   handler: String!
+  receipt: Boolean
 }
 
 type Graft {
