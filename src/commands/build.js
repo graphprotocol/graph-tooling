@@ -85,8 +85,9 @@ module.exports = {
     }
 
     if (network && filesystem.exists(networkFile) !== "file") {
-      print.error(`Network file '${networkFile}' does not exists!`)
-      process.exit(1)
+      print.error(`Network file '${networkFile}' does not exists or is not a file!`)
+      process.exitCode = 1
+      return
     }
 
     if (network) {

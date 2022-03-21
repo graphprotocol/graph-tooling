@@ -688,7 +688,7 @@ const initSubgraphFromExample = async (
     return
   }
 
-  let networkConf = await initNetworksConfig(toolbox, directory)
+  let networkConf = await initNetworksConfig(toolbox, directory, "address")
   if (networkConf !== true) {
     process.exitCode = 1
     return
@@ -835,7 +835,8 @@ const initSubgraphFromContract = async (
     return
   }
 
-  let networkConf = await initNetworksConfig(toolbox, directory)
+  let identifierName = protocolInstance.getContract().identifierName()
+  let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
   if (networkConf !== true) {
     process.exitCode = 1
     return
