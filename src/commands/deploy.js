@@ -200,7 +200,7 @@ module.exports = {
       // because that would mean the CLI would try to compile code
       // using the wrong AssemblyScript compiler.
       await assertManifestApiVersion(manifest, '0.0.5')
-      await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
+      await assertGraphTsVersion(path.dirname(manifest), '0.25.0')
 
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
 
