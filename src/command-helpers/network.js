@@ -2,7 +2,7 @@ const path = require('path')
 const yaml = require('yaml')
 const { step, withSpinner } = require('../command-helpers/spinner')
 
-const updateSubgraphNetwork = async (toolbox, manifest, network, networksFile) =>
+const updateSubgraphNetwork = async (toolbox, manifest, protocol, network, networksFile) =>
   await withSpinner(
     `Update sources network`,
     `Failed to update sources network`,
@@ -14,6 +14,7 @@ const updateSubgraphNetwork = async (toolbox, manifest, network, networksFile) =
       allNetworks = await toolbox.filesystem.read(networksFile, "json")
 
       let networkConfig = allNetworks[network]
+      let identifierName = protocol.getContract().identifierName()
 
       // Exit if the network passed with --network does not exits in networks.json
       if(!networkConfig) {
@@ -31,7 +32,7 @@ const updateSubgraphNetwork = async (toolbox, manifest, network, networksFile) =
               throw new Error(`'${source.name}' was not found in the '${network}' configuration, please update!`)
             }
 
-            if (hasChanges(network, networkConfig[source.name], source)) {
+            if (hasChanges(identifierName, network, networkConfig[source.name], source)) {
               step(spinner, `Update '${source.name}' network configuration`)
               source.network = network
               source.source = source.source.abi ? { abi: source.source.abi } : {}
@@ -95,15 +96,13 @@ const initNetworksConfig = async(toolbox, directory, identifierName) =>
   )
 
 // Checks if any network attribute has been changed
-function hasChanges(network, networkConfig, dataSource) {
+function hasChanges(identifierName, network, networkConfig, dataSource) {
   let networkChanged = dataSource.network !== network
 
   // Return directly if the network is different
   if (networkChanged) return networkChanged
 
-  let addressChanged = (network === "near")
-    ? networkConfig.account !== dataSource.source.account
-    : networkConfig.address !== dataSource.source.address
+  let addressChanged = networkConfig[identifierName] !== dataSource.source[identifierName]
 
   let startBlockChanged = networkConfig.startBlock !== dataSource.source.startBlock
 

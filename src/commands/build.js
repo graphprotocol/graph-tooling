@@ -84,16 +84,6 @@ module.exports = {
       return
     }
 
-    if (network && filesystem.exists(networkFile) !== "file") {
-      print.error(`Network file '${networkFile}' does not exists or is not a file!`)
-      process.exitCode = 1
-      return
-    }
-
-    if (network) {
-      await updateSubgraphNetwork(toolbox, manifest, network, networkFile)
-    }
-
     let protocol
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
@@ -103,6 +93,16 @@ module.exports = {
       print.error(e.message)
       process.exitCode = 1
       return
+    }
+
+    if (network && filesystem.exists(networkFile) !== "file") {
+      print.error(`Network file '${networkFile}' does not exists or is not a file!`)
+      process.exitCode = 1
+      return
+    }
+
+    if (network) {
+      await updateSubgraphNetwork(toolbox, manifest, protocol, network, networkFile)
     }
 
     let compiler = createCompiler(manifest, {
