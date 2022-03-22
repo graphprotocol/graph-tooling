@@ -4,6 +4,7 @@ const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
+const yaml = require('yaml')
 
 const {
   getSubgraphBasename,
@@ -11,6 +12,7 @@ const {
 } = require('../command-helpers/subgraph')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
+const { initNetworksConfig } = require('../command-helpers/network')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
@@ -132,7 +134,7 @@ const processInitForm = async (
           return `${e.message}
 
   Examples:
-  
+
     $ graph init ${os.userInfo().username}/${name}
     $ graph init ${name} --allow-simple-name`
         }
@@ -288,7 +290,7 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "optimism-kovan": return `https://api-kovan-optimistic.etherscan.io/api`;
     default: return `https://api-${network}.etherscan.io/api`;
   }
-} 
+}
 
 const loadAbiFromEtherscan = async (ABI, network, address) =>
   await withSpinner(
@@ -356,7 +358,7 @@ module.exports = {
 
     node = node || g
     ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
-    
+
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
       process.exitCode = 1
@@ -686,6 +688,12 @@ const initSubgraphFromExample = async (
     return
   }
 
+  let networkConf = await initNetworksConfig(toolbox, directory, "address")
+  if (networkConf !== true) {
+    process.exitCode = 1
+    return
+  }
+
   // Update package.json to match the subgraph name
   let prepared = await withSpinner(
     `Update subgraph name and commands in package.json`,
@@ -823,6 +831,13 @@ const initSubgraphFromContract = async (
     },
   )
   if (scaffold !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  let identifierName = protocolInstance.getContract().identifierName()
+  let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
+  if (networkConf !== true) {
     process.exitCode = 1
     return
   }

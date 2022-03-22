@@ -2,6 +2,7 @@ const chalk = require('chalk')
 
 const { createCompiler } = require('../command-helpers/compiler')
 const { fixParameters } = require('../command-helpers/gluegun')
+const { updateSubgraphNetwork } = require('../command-helpers/network')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const Protocol = require('../protocols')
 
@@ -16,13 +17,15 @@ Options:
   -t, --output-format <format>  Output format for mappings (wasm, wast) (default: wasm)
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
+      --network <name>          Network to use from networks.json
+      --network-file <path>    Networks file (default: "./networks.json")
 `
 
 module.exports = {
   description: 'Builds a subgraph and (optionally) uploads it to IPFS',
   run: async toolbox => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    let { filesystem, patching, print, system } = toolbox
 
     // Parse CLI parameters
     let {
@@ -37,6 +40,8 @@ module.exports = {
       t,
       w,
       watch,
+      network,
+      networkFile
     } = toolbox.parameters.options
 
     // Support both short and long option variants
@@ -68,6 +73,10 @@ module.exports = {
       manifest !== undefined && manifest !== ''
         ? manifest
         : filesystem.resolve('subgraph.yaml')
+    networkFile =
+      networkFile !== undefined && networkFile !== ''
+        ? networkFile
+        : filesystem.resolve("networks.json")
 
     // Show help text if requested
     if (help) {
@@ -84,6 +93,17 @@ module.exports = {
       print.error(e.message)
       process.exitCode = 1
       return
+    }
+
+    if (network && filesystem.exists(networkFile) !== "file") {
+      print.error(`Network file '${networkFile}' does not exists or is not a file!`)
+      process.exitCode = 1
+      return
+    }
+
+    if (network) {
+      let identifierName = protocol.getContract().identifierName()
+      await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName)
     }
 
     let compiler = createCompiler(manifest, {
