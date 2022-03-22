@@ -2,7 +2,7 @@ const path = require('path')
 const yaml = require('yaml')
 const { step, withSpinner } = require('../command-helpers/spinner')
 
-const updateSubgraphNetwork = async (toolbox, manifest, protocol, network, networksFile) =>
+const updateSubgraphNetwork = async (toolbox, manifest, network, networksFile, identifierName) =>
   await withSpinner(
     `Update sources network`,
     `Failed to update sources network`,
@@ -12,9 +12,7 @@ const updateSubgraphNetwork = async (toolbox, manifest, protocol, network, netwo
 
       step(spinner, `Reading networks config`)
       allNetworks = await toolbox.filesystem.read(networksFile, "json")
-
       let networkConfig = allNetworks[network]
-      let identifierName = protocol.getContract().identifierName()
 
       // Exit if the network passed with --network does not exits in networks.json
       if(!networkConfig) {
