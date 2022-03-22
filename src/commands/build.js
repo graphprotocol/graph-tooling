@@ -103,7 +103,7 @@ module.exports = {
 
     if (network) {
       let identifierName = protocol.getContract().identifierName()
-      await updateSubgraphNetwork(toolbox, manifest, protocol, network, networkFile)
+      await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName)
     }
 
     let compiler = createCompiler(manifest, {
