@@ -4,7 +4,7 @@ const yaml = require('yaml')
 
 describe('initNetworksConfig', () => {
   beforeAll(async () => {
-    await initNetworksConfig(toolbox, './examples/example-subgraph')
+    await initNetworksConfig(toolbox, './examples/example-subgraph', 'address')
   })
   afterAll(async () => {
     await toolbox.filesystem.remove('./examples/example-subgraph/networks.json')
@@ -61,7 +61,8 @@ describe('updateSubgraphNetwork', () => {
       toolbox,
       manifest,
       'optimism',
-      networksFie
+      networksFie,
+      'address'
     )
 
     subgraph = await toolbox.filesystem.read(manifest)
