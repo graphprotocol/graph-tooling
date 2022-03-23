@@ -7,7 +7,7 @@
     "build-wast": "../../bin/graph build -t wast subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-ts": "0.26.0"
+    "@graphprotocol/graph-ts": "0.27.0"
   },
   "resolutions": {
     "assemblyscript": "0.19.10"
