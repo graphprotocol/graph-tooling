@@ -15,6 +15,7 @@ module.exports = class TendermintSubgraph {
     return immutable.List([
       'blockHandlers',
       'eventHandlers',
+      'transactionHandlers',
     ])
   }
 }
