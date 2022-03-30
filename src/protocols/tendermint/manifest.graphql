@@ -44,7 +44,7 @@ type ContractMapping {
 }
 
 type TransactionHandler {
-handler: String!
+  handler: String!
 }
 
 type BlockHandler {
