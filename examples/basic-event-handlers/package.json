@@ -9,7 +9,7 @@
     "deploy-test": "../../bin/graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
   },
   "devDependencies": {
-    "@graphprotocol/graph-ts": "0.27.0",
+    "@graphprotocol/graph-ts": "0.27.0-alpha.0",
     "apollo-fetch": "^0.7.0"
   },
   "dependencies": {
