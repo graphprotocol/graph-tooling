@@ -204,6 +204,18 @@ const validators = immutable.fromJS({
             message: `Expected filename, found ${typeName(value)}:\n${value}`,
           },
         ]),
+
+  Boolean: (value, ctx) =>
+    typeof value === 'boolean'
+      ? List()
+      : immutable.fromJS([
+          {
+            path: ctx.get('path'),
+            message: `Expected true or false, found ${typeName(value)}:\n${toYAML(
+              value,
+            )}`,
+          },
+        ]),
 })
 
 const validateValue = (value, ctx) => {

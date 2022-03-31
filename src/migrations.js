@@ -5,7 +5,9 @@ const MIGRATIONS = [
   require('./migrations/mapping_api_version_0_0_2'),
   require('./migrations/mapping_api_version_0_0_3'),
   require('./migrations/mapping_api_version_0_0_4'),
+  require('./migrations/mapping_api_version_0_0_5'),
   require('./migrations/spec_version_0_0_2'),
+  require('./migrations/spec_version_0_0_4'),
 ]
 
 const applyMigrations = async options =>
