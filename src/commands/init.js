@@ -4,6 +4,7 @@ const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
+const yaml = require('yaml')
 
 const {
   getSubgraphBasename,
@@ -11,6 +12,7 @@ const {
 } = require('../command-helpers/subgraph')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
+const { initNetworksConfig } = require('../command-helpers/network')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
@@ -132,7 +134,7 @@ const processInitForm = async (
           return `${e.message}
 
   Examples:
-  
+
     $ graph init ${os.userInfo().username}/${name}
     $ graph init ${name} --allow-simple-name`
         }
@@ -200,7 +202,7 @@ const processInitForm = async (
           try {
             if (network === 'poa-core') {
               abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
-            } else {
+            }else {
               abiFromEtherscan = await loadAbiFromEtherscan(ABI, network, value)
             }
           } catch (e) {}
@@ -257,6 +259,7 @@ const loadAbiFromBlockScout = async (ABI, network, address) =>
     `Fetching ABI from BlockScout`,
     `Failed to fetch ABI from BlockScout`,
     `Warnings while fetching ABI from BlockScout`,
+
     async spinner => {
       let result = await fetch(
         `https://blockscout.com/${
@@ -283,7 +286,10 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "bsc": return `https://api.bscscan.com/api`;
     case "matic": return `https://api.polygonscan.com/api`;
     case "mumbai": return `https://api-testnet.polygonscan.com/api`;
-    case "rsc": return `https://www.raisc.io/api`;
+    case "aurora": return `https://api.aurorascan.dev/api`;
+    case "aurora-testnet": return `https://api-testnet.aurorascan.dev/api`;
+    case "optimism-kovan": return `https://api-kovan-optimistic.etherscan.io/api`;
+    case "rsc": return `https://explorer.raisc.io//api`;
     default: return `https://api-${network}.etherscan.io/api`;
   }
 }
@@ -582,7 +588,7 @@ const initRepository = async (toolbox, directory) =>
 // https://docs.npmjs.com/cli/v7/commands/npm-link.
 const npmLinkToLocalCli = async (toolbox, directory) => {
   if (process.env.GRAPH_CLI_TESTS) {
-    await toolbox.system.run('npm link rsc-graph-cli', { cwd: directory })
+    await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory })
   }
 }
 
@@ -684,6 +690,12 @@ const initSubgraphFromExample = async (
     return
   }
 
+  let networkConf = await initNetworksConfig(toolbox, directory, "address")
+  if (networkConf !== true) {
+    process.exitCode = 1
+    return
+  }
+
   // Update package.json to match the subgraph name
   let prepared = await withSpinner(
     `Update subgraph name and commands in package.json`,
@@ -704,7 +716,7 @@ const initSubgraphFromExample = async (
 
         // Remove example's cli in favor of the local one (added via `npm link`)
         if (process.env.GRAPH_CLI_TESTS) {
-          delete pkgJson['devDependencies']['rsc-graph-cli']
+          delete pkgJson['devDependencies']['@graphprotocol/graph-cli']
         }
 
         // Write package.json
@@ -821,6 +833,13 @@ const initSubgraphFromContract = async (
     },
   )
   if (scaffold !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  let identifierName = protocolInstance.getContract().identifierName()
+  let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
+  if (networkConf !== true) {
     process.exitCode = 1
     return
   }

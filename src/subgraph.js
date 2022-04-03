@@ -27,7 +27,7 @@ const buildCombinedWarning = (filename, warnings) =>
     ? warnings.reduce(
         (msg, w) =>
           `${msg}
-  
+
     Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
     ${w
       .get('message')
@@ -39,9 +39,21 @@ const buildCombinedWarning = (filename, warnings) =>
 
 module.exports = class Subgraph {
   static async validate(data, protocol, { resolveFile }) {
+    if (protocol.name == null) {
+      return immutable.fromJS([
+        {
+          path: [],
+          message: `Unable to determine for which protocol manifest file is built for. Ensure you have at least one 'dataSources' and/or 'templates' elements defined in your subgraph.`,
+        },
+      ])
+    }
+
     // Parse the default subgraph schema
     let schema = graphql.parse(
-      await fs.readFile(path.join(__dirname, '..', 'manifest-schema.graphql'), 'utf-8'),
+      await fs.readFile(
+        path.join(__dirname, 'protocols', protocol.name, `manifest.graphql`),
+        'utf-8',
+      ),
     )
 
     // Obtain the root `SubgraphManifest` type from the schema
@@ -146,10 +158,11 @@ At least one such handler must be defined.`,
   }
 
   static validateContractValues(manifest, protocol) {
-    return validation.validateContractValues(
-      manifest,
-      protocol,
-    )
+    if (!protocol.hasContract()){
+      return immutable.List()
+    }
+
+    return validation.validateContractValues(manifest, protocol)
   }
 
   // Validate that data source names are unique, so they don't overwrite each other.
@@ -200,17 +213,13 @@ More than one template named '${name}', template names must be unique.`,
     return yaml.stringify(manifest.toJS())
   }
 
-  static async load(
-    filename,
-    { protocol, skipValidation } = { skipValidation: false }
-  ) {
+  static async load(filename, { protocol, skipValidation } = { skipValidation: false }) {
     // Load and validate the manifest
     let data = null
 
-    if(filename.match(/.js$/)) {
+    if (filename.match(/.js$/)) {
       data = require(path.resolve(filename))
-    }
-    else {
+    } else {
       data = yaml.parse(await fs.readFile(filename, 'utf-8'))
     }
 

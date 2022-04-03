@@ -76,12 +76,12 @@ const validateEntityDirective = def =>
   def.directives.find(directive => directive.name.value === 'entity')
     ? List()
     : immutable.fromJS([
-        {
-          loc: def.loc,
-          entity: def.name.value,
-          message: `Defined without @entity directive`,
-        },
-      ])
+      {
+        loc: def.loc,
+        entity: def.name.value,
+        message: `Defined without @entity directive`,
+      },
+    ])
 
 const validateEntityID = def => {
   let idField = def.fields.find(field => field.name.value === 'id')
@@ -99,7 +99,9 @@ const validateEntityID = def => {
   if (
     idField.type.kind === 'NonNullType' &&
     idField.type.type.kind === 'NamedType' &&
-    idField.type.type.name.value === 'ID'
+    (idField.type.type.name.value === 'ID' ||
+      idField.type.type.name.value === 'Bytes' ||
+      idField.type.type.name.value === 'String')
   ) {
     return List()
   } else {
@@ -107,7 +109,7 @@ const validateEntityID = def => {
       {
         loc: idField.loc,
         entity: def.name.value,
-        message: `Field 'id': Entity IDs must be of type ID!`,
+        message: `Field 'id': Entity ids must be of type Bytes! or String!`,
       },
     ])
   }
@@ -115,22 +117,22 @@ const validateEntityID = def => {
 
 const validateListFieldType = (def, field) =>
   field.type.kind === 'NonNullType' &&
-  field.type.kind === 'ListType' &&
-  field.type.type.kind !== 'NonNullType'
+    field.type.kind === 'ListType' &&
+    field.type.type.kind !== 'NonNullType'
     ? immutable.fromJS([
-        {
-          loc: field.loc,
-          entity: def.name.value,
-          message: `\
+      {
+        loc: field.loc,
+        entity: def.name.value,
+        message: `\
 Field '${field.name.value}':
 Field has type [${field.type.type.name.value}]! but
 must have type [${field.type.type.name.value}!]!
 
 Reason: Lists with null elements are not supported.`,
-        },
-      ])
+      },
+    ])
     : field.type.kind === 'ListType' && field.type.type.kind !== 'NonNullType'
-    ? immutable.fromJS([
+      ? immutable.fromJS([
         {
           loc: field.loc,
           entity: def.name.value,
@@ -142,7 +144,7 @@ must have type [${field.type.type.name.value}!]
 Reason: Lists with null elements are not supported.`,
         },
       ])
-    : List()
+      : List()
 
 const unwrapType = type => {
   let innerTypeFromList = listType =>
@@ -159,8 +161,8 @@ const unwrapType = type => {
   return type.kind === 'NonNullType'
     ? innerTypeFromNonNull(type)
     : type.kind === 'ListType'
-    ? innerTypeFromList(type)
-    : type
+      ? innerTypeFromList(type)
+      : type
 }
 
 const gatherLocalTypes = defs =>
@@ -206,8 +208,8 @@ const gatherImportedTypes = defs =>
                 type.fields.find(
                   field => field.name.value == 'as' && field.value.kind == 'StringValue',
                 )
-              ? type.fields.find(field => field.name.value == 'as').value.value
-              : undefined,
+                ? type.fields.find(field => field.name.value == 'as').value.value
+                : undefined,
           ),
         ),
     )
@@ -256,16 +258,15 @@ const validateInnerFieldType = (defs, def, field) => {
   return availableTypes.includes(typeName)
     ? List()
     : immutable.fromJS([
-        {
-          loc: field.loc,
-          entity: def.name.value,
-          message: `\
+      {
+        loc: field.loc,
+        entity: def.name.value,
+        message: `\
 Field '${field.name.value}': \
-Unknown type '${typeName}'.${
-            suggestion !== undefined ? ` Did you mean '${suggestion}'?` : ''
+Unknown type '${typeName}'.${suggestion !== undefined ? ` Did you mean '${suggestion}'?` : ''
           }`,
-        },
-      ])
+      },
+    ])
 }
 
 const validateEntityFieldType = (defs, def, field) =>
@@ -277,14 +278,14 @@ const validateEntityFieldType = (defs, def, field) =>
 const validateEntityFieldArguments = (defs, def, field) =>
   field.arguments.length > 0
     ? immutable.fromJS([
-        {
-          loc: field.loc,
-          entity: def.name.value,
-          message: `\
+      {
+        loc: field.loc,
+        entity: def.name.value,
+        message: `\
 Field '${field.name.value}': \
 Field arguments are not supported.`,
-        },
-      ])
+      },
+    ])
     : List()
 
 const entityFieldExists = (entityDef, name) =>
@@ -390,23 +391,23 @@ const validateEntityFields = (defs, def) =>
 const validateNoImportDirective = def =>
   def.directives.find(directive => directive.name.value == 'import')
     ? List([
-        immutable.fromJS({
-          loc: def.name.loc,
-          entity: def.name.value,
-          message: `@import directive only allowed on '${RESERVED_TYPE}' type`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: def.name.loc,
+        entity: def.name.value,
+        message: `@import directive only allowed on '${RESERVED_TYPE}' type`,
+      }),
+    ])
     : List()
 
 const validateNoFulltext = def =>
   def.directives.find(directive => directive.name.value == 'fulltext')
     ? List([
-        immutable.fromJS({
-          loc: def.name.loc,
-          entity: def.name.value,
-          message: `@fulltext directive only allowed on '${RESERVED_TYPE}' type`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: def.name.loc,
+        entity: def.name.value,
+        message: `@fulltext directive only allowed on '${RESERVED_TYPE}' type`,
+      }),
+    ])
     : List()
 
 const validateFulltextFields = (def, directive) => {
@@ -415,13 +416,13 @@ const validateFulltextFields = (def, directive) => {
       ['name', 'language', 'algorithm', 'include'].includes(argument.name.value)
         ? List([])
         : List([
-            immutable.fromJS({
-              loc: directive.name.loc,
-              entity: def.name.value,
-              directive: fulltextDirectiveName(directive),
-              message: `found invalid argument: '${argument.name.value}', @fulltext directives only allow 'name', 'language', 'algorithm', and 'includes' arguments`,
-            }),
-          ]),
+          immutable.fromJS({
+            loc: directive.name.loc,
+            entity: def.name.value,
+            directive: fulltextDirectiveName(directive),
+            message: `found invalid argument: '${argument.name.value}', @fulltext directives only allow 'name', 'language', 'algorithm', and 'includes' arguments`,
+          }),
+        ]),
     )
   }, List([]))
 }
@@ -431,25 +432,25 @@ const validateFulltextName = (def, directive) => {
   return name
     ? validateFulltextArgumentName(def, directive, name)
     : List([
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          directive: fulltextDirectiveName(directive),
-          message: `@fulltext argument 'name' must be specified`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        directive: fulltextDirectiveName(directive),
+        message: `@fulltext argument 'name' must be specified`,
+      }),
+    ])
 }
 
 const validateFulltextArgumentName = (def, directive, argument) => {
   return argument.value.kind != 'StringValue'
     ? List([
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          directive: fulltextDirectiveName(directive),
-          message: `@fulltext argument 'name' must be a string`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        directive: fulltextDirectiveName(directive),
+        message: `@fulltext argument 'name' must be a string`,
+      }),
+    ])
     : List([])
 }
 
@@ -463,13 +464,13 @@ const validateFulltextLanguage = (def, directive) => {
   return language
     ? validateFulltextArgumentLanguage(def, directive, language)
     : List([
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          directive: fulltextDirectiveName(directive),
-          message: `@fulltext argument 'language' must be specified`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        directive: fulltextDirectiveName(directive),
+        message: `@fulltext argument 'language' must be specified`,
+      }),
+    ])
 }
 
 const validateFulltextArgumentLanguage = (def, directive, argument) => {
@@ -521,13 +522,13 @@ const validateFulltextAlgorithm = (def, directive) => {
   return algorithm
     ? validateFulltextArgumentAlgorithm(def, directive, algorithm)
     : List([
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          directive: fulltextDirectiveName(directive),
-          message: `@fulltext argument 'algorithm' must be specified`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        directive: fulltextDirectiveName(directive),
+        message: `@fulltext argument 'algorithm' must be specified`,
+      }),
+    ])
 }
 
 const validateFulltextArgumentAlgorithm = (def, directive, argument) => {
@@ -740,12 +741,12 @@ const validateImportDirectiveType = (def, directive, type) => {
   return importDirectiveTypeValidators[type.kind]
     ? importDirectiveTypeValidators[type.kind](def, directive, type)
     : List([
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          message: `Import must be one of "Name" or { name: "Name", as: "Alias" }`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `Import must be one of "Name" or { name: "Name", as: "Alias" }`,
+      }),
+    ])
 }
 
 const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
@@ -815,12 +816,12 @@ const validateImportDirectiveFields = (def, directive) => {
       ['types', 'from'].includes(argument.name.value)
         ? List([])
         : List([
-            immutable.fromJS({
-              loc: directive.name.loc,
-              entity: def.name.value,
-              message: `found invalid argument: '${argument.name.value}', @import directives only allow 'types' and 'from' arguments`,
-            }),
-          ]),
+          immutable.fromJS({
+            loc: directive.name.loc,
+            entity: def.name.value,
+            message: `found invalid argument: '${argument.name.value}', @import directives only allow 'types' and 'from' arguments`,
+          }),
+        ]),
     )
   }, List([]))
 }
@@ -830,12 +831,12 @@ const validateImportDirectiveTypes = (def, directive) => {
   return types
     ? validateImportDirectiveArgumentTypes(def, directive, types)
     : List([
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          message: `@import argument 'types' must be specified`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `@import argument 'types' must be specified`,
+      }),
+    ])
 }
 
 const validateImportDirectiveFrom = (def, directive) => {
@@ -843,12 +844,12 @@ const validateImportDirectiveFrom = (def, directive) => {
   return from
     ? validateImportDirectiveArgumentFrom(def, directive, from)
     : List([
-        immutable.fromJS({
-          loc: directive.name.loc,
-          entity: def.name.value,
-          message: `@import argument 'from' must be specified`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: directive.name.loc,
+        entity: def.name.value,
+        message: `@import argument 'from' must be specified`,
+      }),
+    ])
 }
 
 const validateImportDirective = (def, directive) =>
@@ -892,12 +893,12 @@ const validateSubgraphSchemaDirectives = def =>
 const validateTypeHasNoFields = def =>
   def.fields.length
     ? List([
-        immutable.fromJS({
-          loc: def.name.loc,
-          entity: def.name.value,
-          message: `${def.name.value} type is not allowed any fields by convention`,
-        }),
-      ])
+      immutable.fromJS({
+        loc: def.name.loc,
+        entity: def.name.value,
+        message: `${def.name.value} type is not allowed any fields by convention`,
+      }),
+    ])
     : List()
 
 const validateAtLeastOneExtensionField = def => List()
@@ -907,12 +908,12 @@ const typeDefinitionValidators = {
     def.name && def.name.value == RESERVED_TYPE
       ? List.of(...validateSubgraphSchemaDirectives(def), ...validateTypeHasNoFields(def))
       : List.of(
-          ...validateEntityDirective(def),
-          ...validateEntityID(def),
-          ...validateEntityFields(defs, def),
-          ...validateNoImportDirective(def),
-          ...validateNoFulltext(def),
-        ),
+        ...validateEntityDirective(def),
+        ...validateEntityID(def),
+        ...validateEntityFields(defs, def),
+        ...validateNoImportDirective(def),
+        ...validateNoFulltext(def),
+      ),
   ObjectTypeExtension: (_defs, def) => validateAtLeastOneExtensionField(def),
 }
 
