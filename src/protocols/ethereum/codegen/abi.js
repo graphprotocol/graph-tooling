@@ -497,6 +497,18 @@ module.exports = class AbiCodeGenerator {
             ),
           )
           .forEach(member => returnType.addMember(member))
+        
+        // Add getters to the type
+        outputs
+          .map((output, index) =>
+            !!output.get('name') && tsCodegen.method(
+              `get${output.get('name')[0].toUpperCase()}${output.get('name').slice(1)}`,
+              [],
+              this._getTupleParamType(output, index, tupleResultParentType),
+              `return this.value${index};`
+            )
+          )
+          .forEach(method => !!method && returnType.addMethod(method))
 
         // Create types for Tuple outputs
         outputs.forEach((output, index) => {
