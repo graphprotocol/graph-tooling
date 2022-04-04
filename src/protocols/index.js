@@ -9,8 +9,10 @@ const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
 const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
 const NearManifestScaffold = require('./near/scaffold/manifest')
+const TendermintManifestScaffold = require('./tendermint/scaffold/manifest')
 const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
 const NearMappingScaffold = require('./near/scaffold/mapping')
+const TendermintMappingScaffold = require('./tendermint/scaffold/mapping')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -206,7 +208,7 @@ module.exports = class Protocol {
       case 'near':
         return NearManifestScaffold
       case 'tendermint':
-        return null
+        return TendermintManifestScaffold
     }
   }
 
@@ -217,7 +219,7 @@ module.exports = class Protocol {
       case 'near':
         return NearMappingScaffold
       case 'tendermint':
-        return null
+        return TendermintMappingScaffold
     }
   }
 }
