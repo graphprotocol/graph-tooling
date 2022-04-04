@@ -1,5 +1,5 @@
 const source = () => `
-      startBlock: 9200001`
+      startBlock: 0`
 
 const mapping = () => `
       apiVersion: 0.0.5
