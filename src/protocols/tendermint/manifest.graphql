@@ -40,6 +40,11 @@ type ContractMapping {
   entities: [String!]!
   blockHandlers: [BlockHandler!]
   eventHandlers: [EventHandler!]
+  transactionHandlers: [TransactionHandler!]
+}
+
+type TransactionHandler {
+  handler: String!
 }
 
 type BlockHandler {
