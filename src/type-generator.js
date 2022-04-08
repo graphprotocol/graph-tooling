@@ -57,6 +57,8 @@ module.exports = class TypeGenerator {
         await this.protocolTypeGenerator.generateTypesForDataSourceTemplateABIs(templateAbis)
       }
 
+      await this.generateAddressConstants(subgraph)
+
       let schema = await this.loadSchema(subgraph)
       await this.generateTypesForSchema(schema)
 
@@ -169,6 +171,34 @@ module.exports = class TypeGenerator {
           await fs.mkdirs(path.dirname(outputFile))
           await fs.writeFile(outputFile, code)
         }
+      },
+    )
+  }
+
+  async generateAddressConstants(subgraph) {
+    return await withSpinner(
+      `Generate contract addresses for data sources`,
+      `Failed to generate contract addresses for data sources`,
+      `Warnings while generating contract addresses for data sources`,
+      async spinner => {
+        const codeSegments = subgraph.get('dataSources').map(dataSource => {
+          const name = dataSource.get('name')
+          const address = dataSource.getIn(['source', 'address'])
+          return `export const ${name}Address = "${address}"`
+        })
+
+        if (codeSegments.isEmpty()) {
+          return
+        }
+
+        let code = prettier.format([GENERATED_FILE_NOTE, ...codeSegments].join('\n'), {
+          parser: 'typescript',
+        })
+
+        let outputFile = path.join(this.options.outputDir, 'addresses.ts')
+        step(spinner, `Write contract addresses to`, displayPath(outputFile))
+        await fs.mkdirs(path.dirname(outputFile))
+        await fs.writeFile(outputFile, code)
       },
     )
   }
