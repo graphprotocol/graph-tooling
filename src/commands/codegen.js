@@ -6,6 +6,7 @@ const Protocol = require('../protocols')
 const { fixParameters } = require('../command-helpers/gluegun')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
+const { updateSubgraphNetwork } = require('../command-helpers/network')
 
 const HELP = `
 ${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -25,7 +26,17 @@ module.exports = {
     let { filesystem, print, system } = toolbox
 
     // Read CLI parameters
-    let { h, help, o, outputDir, skipMigrations, w, watch } = toolbox.parameters.options
+    let {
+      h,
+      help,
+      o,
+      outputDir,
+      skipMigrations,
+      w,
+      watch,
+      network,
+      networkFile
+    } = toolbox.parameters.options
 
     // Support both long and short option variants
     help = help || h
@@ -55,6 +66,10 @@ module.exports = {
       manifest !== undefined && manifest !== ''
         ? manifest
         : filesystem.resolve('subgraph.yaml')
+    networkFile =
+      networkFile !== undefined && networkFile !== ''
+        ? networkFile
+        : filesystem.resolve("networks.json")
 
     // Show help text if requested
     if (help) {
@@ -80,6 +95,17 @@ module.exports = {
       print.error(e.message)
       process.exitCode = 1
       return
+    }
+
+    if (network && filesystem.exists(networkFile) !== "file") {
+      print.error(`Network file '${networkFile}' does not exists or is not a file!`)
+      process.exitCode = 1
+      return
+    }
+
+    if (network) {
+      let identifierName = protocol.getContract().identifierName()
+      await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName)
     }
 
     let generator = new TypeGenerator({
