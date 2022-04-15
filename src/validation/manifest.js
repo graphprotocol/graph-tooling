@@ -2,6 +2,8 @@ const immutable = require('immutable')
 const yaml = require('js-yaml')
 const path = require('path')
 
+const Protocol = require('../protocols')
+
 const List = immutable.List
 const Map = immutable.Map
 
