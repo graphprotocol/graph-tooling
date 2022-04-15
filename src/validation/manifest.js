@@ -241,23 +241,61 @@ const validateValue = (value, ctx) => {
   }
 }
 
-const validateDataSourceForNetwork = (dataSources, protocol) =>
+// Transforms list of data sources like this:
+// [
+//   { name: 'contract0', kind: 'ethereum', network: 'mainnet' },
+//   { name: 'contract1', kind: 'ethereum', network: 'mainnet' },
+//   { name: 'contract2', kind: 'ethereum', network: 'xdai' },
+//   { name: 'contract3', kind: 'near', network: 'near-mainnet' },
+// ]
+//
+// Into Immutable JS structure like this:
+// {
+//   ethereum: {
+//     mainnet: ['contract0', 'contract1'],
+//     xdai: ['contract2'],
+//   },
+//   near: {
+//     'near-mainnet': ['contract3'],
+//   },
+// }
+const dataSourceListToMap = dataSources =>
   dataSources
-    .filter(dataSource => protocol.isValidKindName(dataSource.kind))
     .reduce(
-      (networks, dataSource) =>
-        networks.update(dataSource.network, dataSources =>
-          (dataSources || immutable.OrderedSet()).add(dataSource.name),
+      (protocolKinds, dataSource) =>
+        protocolKinds.update(dataSource.kind, networks =>
+          (networks || immutable.OrderedMap()).update(dataSource.network, dataSourceNames =>
+            (dataSourceNames || immutable.OrderedSet()).add(dataSource.name)),
         ),
       immutable.OrderedMap(),
     )
 
-const validateDataSourceNetworks = (value, protocol) => {
+const validateDataSourceProtocolAndNetworks = (value, protocol) => {
   const dataSources = [...value.dataSources, ...(value.templates || [])]
 
-  // Networks found valid for a protocol.
-  // By searching through all data sources and templates.
-  const networks = validateDataSourceForNetwork(dataSources, protocol)
+  const protocolNetworkMap = dataSourceListToMap(dataSources)
+
+  if (protocolNetworkMap.size > 1) {
+    return immutable.fromJS([
+      {
+        path: [],
+        message: `Conflicting protocol kinds used in data sources and templates:
+${protocolNetworkMap
+  .map(
+    (dataSourceNames, protocolKind) =>
+      `  ${
+        protocolKind === undefined
+          ? 'Data sources and templates having no protocol kind set'
+          : `Data sources and templates using '${protocolKind}'`
+      }:\n${dataSourceNames.valueSeq().flatten().map(ds => `    - ${ds}`).join('\n')}`,
+  )
+  .join('\n')}
+Recommendation: Make all data sources and templates use the same protocol kind.`,
+      },
+    ])
+  }
+
+  const networks = protocolNetworkMap.first()
 
   if (networks.size > 1) {
     return immutable.fromJS([
@@ -312,7 +350,7 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
 
   // Validate that all data sources are for the same `network` (this includes
   // _no_ network at all)
-  return validateDataSourceNetworks(value, protocol)
+  return validateDataSourceProtocolAndNetworks(value, protocol)
 }
 
 module.exports = {
