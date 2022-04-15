@@ -243,13 +243,13 @@ const validateValue = (value, ctx) => {
 
 // Transforms list of data sources like this:
 // [
-//   { name: 'contract0', kind: 'ethereum', network: 'mainnet' },
+//   { name: 'contract0', kind: 'ethereum/contract', network: 'mainnet' },
 //   { name: 'contract1', kind: 'ethereum', network: 'mainnet' },
-//   { name: 'contract2', kind: 'ethereum', network: 'xdai' },
+//   { name: 'contract2', kind: 'ethereum/contract', network: 'xdai' },
 //   { name: 'contract3', kind: 'near', network: 'near-mainnet' },
 // ]
 //
-// Into Immutable JS structure like this:
+// Into Immutable JS structure like this (protocol kind is normalized):
 // {
 //   ethereum: {
 //     mainnet: ['contract0', 'contract1'],
@@ -263,14 +263,14 @@ const dataSourceListToMap = dataSources =>
   dataSources
     .reduce(
       (protocolKinds, dataSource) =>
-        protocolKinds.update(dataSource.kind, networks =>
+        protocolKinds.update(Protocol.normalizeName(dataSource.kind), networks =>
           (networks || immutable.OrderedMap()).update(dataSource.network, dataSourceNames =>
             (dataSourceNames || immutable.OrderedSet()).add(dataSource.name)),
         ),
       immutable.OrderedMap(),
     )
 
-const validateDataSourceProtocolAndNetworks = (value, protocol) => {
+const validateDataSourceProtocolAndNetworks = value => {
   const dataSources = [...value.dataSources, ...(value.templates || [])]
 
   const protocolNetworkMap = dataSourceListToMap(dataSources)
@@ -348,9 +348,9 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
     return errors
   }
 
-  // Validate that all data sources are for the same `network` (this includes
-  // _no_ network at all)
-  return validateDataSourceProtocolAndNetworks(value, protocol)
+  // Validate that all data sources are for the same `network` and `protocol` (kind)
+  // (this includes _no_ network/protocol at all)
+  return validateDataSourceProtocolAndNetworks(value)
 }
 
 module.exports = {
