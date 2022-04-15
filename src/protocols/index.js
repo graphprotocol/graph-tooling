@@ -19,7 +19,7 @@ module.exports = class Protocol {
   }
 
   constructor(name) {
-    this.name = this.normalizeName(name)
+    this.name = Protocol.normalizeName(name)
   }
 
   static availableProtocols() {
@@ -67,7 +67,7 @@ module.exports = class Protocol {
     })
   }
 
-  normalizeName(name) {
+  static normalizeName(name) {
     return Protocol.availableProtocols().findKey(possibleNames =>
       possibleNames.includes(name),
     )

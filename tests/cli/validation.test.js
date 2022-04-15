@@ -206,6 +206,15 @@ describe('Validation', () => {
   )
 
   cliTest(
+    'Conflicting protocol names',
+    ['codegen', '--skip-migrations'],
+    'validation/conflicting-protocol-names',
+    {
+      exitCode: 1,
+    },
+  )
+
+  cliTest(
     'Invalid @fulltext directive',
     ['codegen', '--skip-migrations'],
     'validation/invalid-fulltext-directive',
