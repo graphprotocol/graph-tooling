@@ -30,7 +30,7 @@ type DataSource {
 }
 
 type ContractSource {
-  account: String
+  owner: String
   startBlock: BigInt
 }
 
@@ -40,9 +40,14 @@ type ContractMapping {
   file: File!
   entities: [String!]!
   blockHandlers: [BlockHandler!]
+  transactionHandlers: [TransactionHandler!]
 }
 
 type BlockHandler {
+  handler: String!
+}
+
+type TransactionHandler {
   handler: String!
 }
 
