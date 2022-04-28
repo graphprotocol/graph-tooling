@@ -14,6 +14,7 @@ module.exports = class ArweaveSubgraph {
   handlerTypes() {
     return immutable.List([
       'blockHandlers',
+      'transactionHandlers',
     ])
   }
 }

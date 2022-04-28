@@ -37,7 +37,7 @@ module.exports = class Protocol {
 
   static availableNetworks() {
     return immutable.fromJS({
-      arweave: ['mainnet'],
+      arweave: ['arweave-mainnet'],
       ethereum: [
         'mainnet',
         'kovan',
