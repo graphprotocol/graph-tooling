@@ -1,6 +1,6 @@
 const immutable = require('immutable')
 
-module.exports = class TendermintSubgraph {
+module.exports = class CosmosSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile

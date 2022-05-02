@@ -1,17 +1,17 @@
 const generatePlaceholderHandlers = () =>
   `
-  import { tendermint, BigInt } from '@graphprotocol/graph-ts'
+  import { cosmos, BigInt } from '@graphprotocol/graph-ts'
   import { ExampleEntity } from '../generated/schema'
 
-  export function handleBlock(el: tendermint.EventList): void {
+  export function handleBlock(block: cosmos.Block): void {
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
-    let entity = ExampleEntity.load(el.newBlock.blockId.hash.toHex())
+    let entity = ExampleEntity.load(block.header.hash.toHex())
 
     // Entities only exist after they have been saved to the store;
     // \`null\` checks allow to create entities on demand
     if (!entity) {
-      entity = new ExampleEntity(el.newBlock.blockId.hash.toHex())
+      entity = new ExampleEntity(block.header.hash.toHex())
 
       // Entity fields can be set using simple assignments
       entity.count = BigInt.fromI32(0)
@@ -21,7 +21,7 @@ const generatePlaceholderHandlers = () =>
     entity.count = entity.count + BigInt.fromI32(1)
 
     // Entity fields can be set based on receipt information
-    entity.block = el.newBlock.blockId.hash
+    entity.height = block.header.height
 
     // Entities can be written to the store with \`.save()\`
     entity.save()

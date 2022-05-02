@@ -58,9 +58,9 @@ ${chalk.dim.underline('NEAR:')}
       --network <${availableNetworks.get('near').join('|')}>
                                  Selects the network the contract is deployed to
 
-${chalk.dim.underline('Tendermint:')}
+${chalk.dim.underline('Cosmos:')}
 
-      --network <${availableNetworks.get('tendermint').join('|')}>
+      --network <${availableNetworks.get('cosmos').join('|')}>
                                  Selects the network the contract is deployed to
 `
 
