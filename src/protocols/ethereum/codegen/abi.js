@@ -212,11 +212,16 @@ module.exports = class AbiCodeGenerator {
             `parameters`,
           )
           paramsClass.addMethod(paramObject.getter)
-          let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
-          if (typeof ethType === typeof {} && (ethType.test("int256") || ethType.test("uint256"))) {
-            ethType = "int32"
+
+          // Fixture generation
+          if (doFixtureCodegen) {
+            let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
+            if (typeof ethType === typeof {} && (ethType.test("int256") || ethType.test("uint256"))) {
+              ethType = "int32"
+            }
+            namesAndTypes.push({name: paramObject.getter.name.slice(4), type: ethType})
           }
-          namesAndTypes.push({name: paramObject.getter.name.slice(4), type: ethType})
+
           tupleClasses.push(...paramObject.classes)
         })
 
