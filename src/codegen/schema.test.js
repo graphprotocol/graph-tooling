@@ -114,9 +114,6 @@ describe('Schema code generator', () => {
             body: `
               super()
               this.set('id', Value.fromString(id))
-
-              this.set('name', Value.fromString(''))
-              this.set('count', Value.fromI32(0))
             `,
           },
           {
@@ -277,9 +274,6 @@ describe('Schema code generator', () => {
             body: `
               super()
               this.set('id', Value.fromString(id))
-
-              this.set('amount', Value.fromBigInt(BigInt.zero()))
-              this.set('account', Value.fromString(''))
             `,
           },
           {
