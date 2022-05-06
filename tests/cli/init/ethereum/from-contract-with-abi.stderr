@@ -7,7 +7,9 @@
 - Initialize networks config
 ✔ Initialize networks config
 - Initialize subgraph repository
-✔ Initialize subgraph repository
+✔ Initialize subgraph 
+- Create .gitignore file
+✔ Create .gitignore file
 - Install dependencies with yarn
 ✔ Install dependencies with yarn
 - Generate ABI and schema types with yarn codegen
