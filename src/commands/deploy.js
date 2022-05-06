@@ -294,7 +294,6 @@ $ graph create --node ${node} ${subgraphName}`)
             const base = requestUrl.protocol + '//' + requestUrl.hostname
             let playground = res.playground
             let queries = res.queries
-            let subscriptions = res.subscriptions
 
             // Add a base URL if graph-node did not return the full URL
             if (playground.charAt(0) === ':') {
@@ -302,9 +301,6 @@ $ graph create --node ${node} ${subgraphName}`)
             }
             if (queries.charAt(0) === ':') {
               queries = base + queries
-            }
-            if (subscriptions.charAt(0) === ':') {
-              subscriptions = base + subscriptions
             }
 
             if (isHostedService) {
@@ -318,7 +314,6 @@ $ graph create --node ${node} ${subgraphName}`)
             }
             print.info('\nSubgraph endpoints:')
             print.info(`Queries (HTTP):     ${queries}`)
-            print.info(`Subscriptions (WS): ${subscriptions}`)
             print.info(``)
           }
         },

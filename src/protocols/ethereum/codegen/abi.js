@@ -212,11 +212,16 @@ module.exports = class AbiCodeGenerator {
             `parameters`,
           )
           paramsClass.addMethod(paramObject.getter)
-          let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
-          if (typeof ethType === typeof {} && (ethType.test("int256") || ethType.test("uint256"))) {
-            ethType = "int32"
+
+          // Fixture generation
+          if (doFixtureCodegen) {
+            let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
+            if (typeof ethType === typeof {} && (ethType.test("int256") || ethType.test("uint256"))) {
+              ethType = "int32"
+            }
+            namesAndTypes.push({name: paramObject.getter.name.slice(4), type: ethType})
           }
-          namesAndTypes.push({name: paramObject.getter.name.slice(4), type: ethType})
+
           tupleClasses.push(...paramObject.classes)
         })
 
@@ -497,6 +502,18 @@ module.exports = class AbiCodeGenerator {
             ),
           )
           .forEach(member => returnType.addMember(member))
+        
+        // Add getters to the type
+        outputs
+          .map((output, index) =>
+            !!output.get('name') && tsCodegen.method(
+              `get${output.get('name')[0].toUpperCase()}${output.get('name').slice(1)}`,
+              [],
+              this._getTupleParamType(output, index, tupleResultParentType),
+              `return this.value${index};`
+            )
+          )
+          .forEach(method => !!method && returnType.addMethod(method))
 
         // Create types for Tuple outputs
         outputs.forEach((output, index) => {

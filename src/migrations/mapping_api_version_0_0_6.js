@@ -5,9 +5,9 @@ const yaml = require('js-yaml')
 const { loadManifest } = require('./util/load-manifest')
 const { getGraphTsVersion } = require('./util/versions')
 
-// If any of the manifest apiVersions are 0.0.5, replace them with 0.0.6
+// If any of the manifest apiVersions are 0.0.6, replace them with 0.0.7
 module.exports = {
-  name: 'Bump mapping apiVersion from 0.0.5 to 0.0.6',
+  name: 'Bump mapping apiVersion from 0.0.6 to 0.0.7',
   predicate: async ({ sourceDir, manifestFile }) => {
     // Obtain the graph-ts version, if possible
     let graphTsVersion
@@ -21,11 +21,11 @@ module.exports = {
 
     let manifest = loadManifest(manifestFile)
     return (
-      // Only migrate if the graph-ts version is >= 0.24.0...
+      // Only migrate if the graph-ts version is >= 0.27.0...
       // Coerce needed because we may be dealing with an alpha version
       // and in the `semver` library this would not return true on equality.
-      semver.gte(semver.coerce(graphTsVersion), '0.24.0') &&
-      // ...and we have a manifest with mapping > apiVersion = 0.0.5
+      semver.gte(semver.coerce(graphTsVersion), '0.27.0') &&
+      // ...and we have a manifest with mapping > apiVersion = 0.0.6
       manifest &&
       typeof manifest === 'object' &&
       Array.isArray(manifest.dataSources) &&
@@ -35,7 +35,7 @@ module.exports = {
           (typeof dataSource === 'object' &&
             dataSource.mapping &&
             typeof dataSource.mapping === 'object' &&
-            dataSource.mapping.apiVersion === '0.0.5'),
+            dataSource.mapping.apiVersion === '0.0.6'),
         false,
       ) ||
         (Array.isArray(manifest.templates) &&
@@ -45,7 +45,7 @@ module.exports = {
               (typeof template === 'object' &&
                 template.mapping &&
                 typeof template.mapping === 'object' &&
-                template.mapping.apiVersion === '0.0.5'),
+                template.mapping.apiVersion === '0.0.6'),
             false,
           )))
     )
@@ -57,18 +57,18 @@ module.exports = {
     // we'd like; that's why for now, we use a simple patching approach
     await toolbox.patching.replace(
       manifestFile,
-      new RegExp('apiVersion: 0.0.5', 'g'),
-      'apiVersion: 0.0.6',
+      new RegExp('apiVersion: 0.0.6', 'g'),
+      'apiVersion: 0.0.7',
     )
     await toolbox.patching.replace(
       manifestFile,
-      new RegExp("apiVersion: '0.0.5'", 'g'),
-      "apiVersion: '0.0.6'",
+      new RegExp("apiVersion: '0.0.6'", 'g'),
+      "apiVersion: '0.0.7'",
     )
     await toolbox.patching.replace(
       manifestFile,
-      new RegExp('apiVersion: "0.0.5"', 'g'),
-      'apiVersion: "0.0.6"',
+      new RegExp('apiVersion: "0.0.6"', 'g'),
+      'apiVersion: "0.0.7"',
     )
   },
 }

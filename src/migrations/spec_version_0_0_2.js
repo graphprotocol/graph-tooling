@@ -6,7 +6,7 @@ const { loadManifest } = require('./util/load-manifest')
 // Spec version to 0.0.2 uses top level templates. graph-cli no longer supports
 // 0.0.1 which used nested templates.
 module.exports = {
-  name: 'Bump mapping specVersion from 0.0.1 to 0.0.2',
+  name: 'Bump manifest specVersion from 0.0.1 to 0.0.2',
   predicate: async ({ sourceDir, manifestFile }) => {
     let manifest = await loadManifest(manifestFile)
     return (
