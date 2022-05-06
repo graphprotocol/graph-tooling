@@ -619,9 +619,9 @@ const initRepository = async (toolbox, directory) =>
 
 const createGitignore = async (toolbox, directory) =>
   await withSpinner(
-    `Initialize subgraph repository`,
-    `Failed to initialize subgraph repository`,
-    `Warnings while initializing subgraph repository`,
+    `Create .gitignore file`,
+    `Failed to create .gitignore file`,
+    `Warnings while creating .gitignore file`,
     async (spinner) => {
       // Remove .gitignore file if exist else create .gitignore
       let gitignoreFilePath = path.join(directory, '.gitignore')
