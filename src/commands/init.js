@@ -623,7 +623,7 @@ const createGitignore = async (toolbox, directory) =>
     `Failed to create .gitignore file`,
     `Warnings while creating .gitignore file`,
     async (spinner) => {
-      // Remove .gitignore file if exist else create .gitignore
+      // Remove .gitignore file if it exists and create a new one
       let gitignoreFilePath = path.join(directory, '.gitignore')
       if (toolbox.filesystem.exists(gitignoreFilePath)) {
         await toolbox.filesystem.remove(gitignoreFilePath)
