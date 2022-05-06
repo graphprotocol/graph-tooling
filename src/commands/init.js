@@ -59,6 +59,23 @@ ${chalk.dim.underline('NEAR:')}
                                  Selects the network the contract is deployed to
 `
 
+const gitignoreFileContent = `
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+# Subgraph generated files
+generated/
+build/
+
+`
+
 const processInitForm = async (
   toolbox,
   {
@@ -73,7 +90,7 @@ const processInitForm = async (
     fromExample,
     network,
     subgraphName,
-    contractName
+    contractName,
   },
 ) => {
   let abiFromEtherscan = undefined
@@ -89,7 +106,7 @@ const processInitForm = async (
       message: 'Protocol',
       choices: protocolChoices,
       skip: protocolChoices.includes(protocol),
-      result: value => {
+      result: (value) => {
         protocol = protocol || value
         protocolInstance = new Protocol(protocol)
         return protocol
@@ -104,8 +121,9 @@ const processInitForm = async (
         protocol === 'near' ||
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
-        studio !== undefined || node !== undefined,
-      result: value => {
+        studio !== undefined ||
+        node !== undefined,
+      result: (value) => {
         // For now we only support NEAR subgraphs in the Hosted Service
         if (protocol === 'near') {
           // Can be overwritten because the question will be skipped (product === undefined)
@@ -124,9 +142,10 @@ const processInitForm = async (
     {
       type: 'input',
       name: 'subgraphName',
-      message: () => product == 'subgraph-studio' || studio ? 'Subgraph slug' : 'Subgraph name',
+      message: () =>
+        product == 'subgraph-studio' || studio ? 'Subgraph slug' : 'Subgraph name',
       initial: subgraphName,
-      validate: name => {
+      validate: (name) => {
         try {
           validateSubgraphName(name, { allowSimpleName })
           return true
@@ -139,7 +158,7 @@ const processInitForm = async (
     $ graph init ${name} --allow-simple-name`
         }
       },
-      result: value => {
+      result: (value) => {
         subgraphName = value
         return value
       },
@@ -149,7 +168,7 @@ const processInitForm = async (
       name: 'directory',
       message: 'Directory to create the subgraph in',
       initial: () => directory || getSubgraphBasename(subgraphName),
-      validate: value =>
+      validate: (value) =>
         toolbox.filesystem.exists(value || directory || getSubgraphBasename(subgraphName))
           ? 'Directory already exists'
           : true,
@@ -164,7 +183,7 @@ const processInitForm = async (
           .toArray(), // Needed because of gluegun. It can't even receive a JS iterable.
       skip: fromExample !== undefined,
       initial: network || 'mainnet',
-      result: value => {
+      result: (value) => {
         network = value
         return value
       },
@@ -178,7 +197,7 @@ const processInitForm = async (
       },
       skip: fromExample !== undefined,
       initial: contract,
-      validate: async value => {
+      validate: async (value) => {
         if (fromExample !== undefined) {
           return true
         }
@@ -186,11 +205,9 @@ const processInitForm = async (
         // Validate whether the contract is valid
         const { valid, error } = validateContract(value, ProtocolContract)
 
-        return valid
-          ? true
-          : error
+        return valid ? true : error
       },
-      result: async value => {
+      result: async (value) => {
         if (fromExample !== undefined) {
           return value
         }
@@ -219,7 +236,7 @@ const processInitForm = async (
         !protocolInstance.hasABIs() ||
         fromExample !== undefined ||
         abiFromEtherscan !== undefined,
-      validate: async value => {
+      validate: async (value) => {
         if (fromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
           return true
         }
@@ -238,11 +255,11 @@ const processInitForm = async (
       message: 'Contract Name',
       initial: contractName || 'Contract',
       skip: () => fromExample !== undefined,
-      validate: value => value && value.length > 0,
-      result: value => {
-        contractName = value;
-        return value;
-      }
+      validate: (value) => value && value.length > 0,
+      result: (value) => {
+        contractName = value
+        return value
+      },
     },
   ]
 
@@ -259,11 +276,12 @@ const loadAbiFromBlockScout = async (ABI, network, address) =>
     `Fetching ABI from BlockScout`,
     `Failed to fetch ABI from BlockScout`,
     `Warnings while fetching ABI from BlockScout`,
-    async spinner => {
+    async (spinner) => {
       let result = await fetch(
-        `https://blockscout.com/${
-          network.replace('-', '/')
-        }/api?module=contract&action=getabi&address=${address}`,
+        `https://blockscout.com/${network.replace(
+          '-',
+          '/',
+        )}/api?module=contract&action=getabi&address=${address}`,
       )
       let json = await result.json()
 
@@ -279,17 +297,27 @@ const loadAbiFromBlockScout = async (ABI, network, address) =>
   )
 
 const getEtherscanLikeAPIUrl = (network) => {
-  switch(network){
-    case "mainnet": return `https://api.etherscan.io/api`;
-    case "arbitrum-one": return `https://api.arbiscan.io/api`;
-    case "bsc": return `https://api.bscscan.com/api`;
-    case "matic": return `https://api.polygonscan.com/api`;
-    case "mumbai": return `https://api-testnet.polygonscan.com/api`;
-    case "aurora": return `https://api.aurorascan.dev/api`;
-    case "aurora-testnet": return `https://api-testnet.aurorascan.dev/api`;
-    case "optimism-kovan": return `https://api-kovan-optimistic.etherscan.io/api`;
-    case "avalanche": return `https://api.snowtrace.io/api`;
-    default: return `https://api-${network}.etherscan.io/api`;
+  switch (network) {
+    case 'mainnet':
+      return `https://api.etherscan.io/api`
+    case 'arbitrum-one':
+      return `https://api.arbiscan.io/api`
+    case 'bsc':
+      return `https://api.bscscan.com/api`
+    case 'matic':
+      return `https://api.polygonscan.com/api`
+    case 'mumbai':
+      return `https://api-testnet.polygonscan.com/api`
+    case 'aurora':
+      return `https://api.aurorascan.dev/api`
+    case 'aurora-testnet':
+      return `https://api-testnet.aurorascan.dev/api`
+    case 'optimism-kovan':
+      return `https://api-kovan-optimistic.etherscan.io/api`
+    case 'avalanche':
+      return `https://api.snowtrace.io/api`
+    default:
+      return `https://api-${network}.etherscan.io/api`
   }
 }
 
@@ -298,8 +326,8 @@ const loadAbiFromEtherscan = async (ABI, network, address) =>
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
     `Warnings while fetching ABI from Etherscan`,
-    async spinner => {
-      const scanApiUrl = getEtherscanLikeAPIUrl(network);
+    async (spinner) => {
+      const scanApiUrl = getEtherscanLikeAPIUrl(network)
       let result = await fetch(
         `${scanApiUrl}?module=contract&action=getabi&address=${address}`,
       )
@@ -335,7 +363,7 @@ module.exports = {
   options: {
     boolean: ['from-example'],
   },
-  run: async toolbox => {
+  run: async (toolbox) => {
     // Obtain tools
     let { print, system } = toolbox
 
@@ -358,7 +386,12 @@ module.exports = {
     } = toolbox.parameters.options
 
     node = node || g
-    ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
+    ;({ node, allowSimpleName } = chooseNodeUrl({
+      product,
+      studio,
+      node,
+      allowSimpleName,
+    }))
 
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
@@ -374,7 +407,7 @@ module.exports = {
         help,
         h,
         indexEvents,
-        studio
+        studio,
       })
     } catch (e) {
       print.error(e.message)
@@ -429,7 +462,11 @@ module.exports = {
     // go straight to creating the subgraph from an existing contract
     if (fromContract && protocol && subgraphName && directory && network && node) {
       if (!protocolChoices.includes(protocol)) {
-        print.error(`Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(', ')}`)
+        print.error(
+          `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
+            ', ',
+          )}`,
+        )
         process.exitCode = 1
         return
       }
@@ -493,7 +530,7 @@ module.exports = {
       fromExample,
       network,
       subgraphName,
-      contractName
+      contractName,
     })
 
     // Exit immediately when the form is cancelled
@@ -519,7 +556,7 @@ module.exports = {
         product: inputs.product,
         studio,
         node,
-        allowSimpleName
+        allowSimpleName,
       }))
       await initSubgraphFromContract(
         toolbox,
@@ -564,7 +601,7 @@ const initRepository = async (toolbox, directory) =>
     `Initialize subgraph repository`,
     `Failed to initialize subgraph repository`,
     `Warnings while initializing subgraph repository`,
-    async spinner => {
+    async (spinner) => {
       // Remove .git dir in --from-example mode; in --from-contract, we're
       // starting from an empty directory
       let gitDir = path.join(directory, '.git')
@@ -576,6 +613,23 @@ const initRepository = async (toolbox, directory) =>
       await toolbox.system.run('git commit -m "Initial commit"', {
         cwd: directory,
       })
+      return true
+    },
+  )
+
+const createGitignore = async (toolbox, directory) =>
+  await withSpinner(
+    `Initialize subgraph repository`,
+    `Failed to initialize subgraph repository`,
+    `Warnings while initializing subgraph repository`,
+    async (spinner) => {
+      // Remove .gitignore file if exist else create .gitignore
+      let gitignoreFilePath = path.join(directory, '.gitignore')
+      if (toolbox.filesystem.exists(gitignoreFilePath)) {
+        await toolbox.filesystem.remove(gitignoreFilePath)
+      }
+      await toolbox.filesystem.write(gitignoreFilePath, gitignoreFileContent)
+
       return true
     },
   )
@@ -596,7 +650,7 @@ const installDependencies = async (toolbox, directory, installCommand) =>
     `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
     `Failed to install dependencies`,
     `Warnings while installing dependencies`,
-    async spinner => {
+    async (spinner) => {
       // Links to local graph-cli if we're running the automated tests
       await npmLinkToLocalCli(toolbox, directory)
 
@@ -610,7 +664,7 @@ const runCodegen = async (toolbox, directory, codegenCommand) =>
     `Generate ABI and schema types with ${toolbox.print.colors.muted(codegenCommand)}`,
     `Failed to generate code from ABI and GraphQL schema`,
     `Warnings while generating code from ABI and GraphQL schema`,
-    async spinner => {
+    async (spinner) => {
       await toolbox.system.run(codegenCommand, { cwd: directory })
       return true
     },
@@ -663,7 +717,7 @@ const initSubgraphFromExample = async (
     `Cloning example subgraph`,
     `Failed to clone example subgraph`,
     `Warnings while cloning example subgraph`,
-    async spinner => {
+    async (spinner) => {
       await system.run(
         `git clone http://github.com/graphprotocol/example-subgraph ${directory}`,
       )
@@ -678,7 +732,9 @@ const initSubgraphFromExample = async (
   try {
     // It doesn't matter if we changed the URL we clone the YAML,
     // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
-    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(path.join(directory, 'subgraph.yaml'))
+    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(
+      path.join(directory, 'subgraph.yaml'),
+    )
 
     for (const { network } of dataSourcesAndTemplates) {
       validateStudioNetwork({ studio, product, network })
@@ -689,7 +745,7 @@ const initSubgraphFromExample = async (
     return
   }
 
-  let networkConf = await initNetworksConfig(toolbox, directory, "address")
+  let networkConf = await initNetworksConfig(toolbox, directory, 'address')
   if (networkConf !== true) {
     process.exitCode = 1
     return
@@ -700,14 +756,14 @@ const initSubgraphFromExample = async (
     `Update subgraph name and commands in package.json`,
     `Failed to update subgraph name and commands in package.json`,
     `Warnings while updating subgraph name and commands in package.json`,
-    async spinner => {
+    async (spinner) => {
       try {
         // Load package.json
         let pkgJsonFilename = filesystem.path(directory, 'package.json')
         let pkgJson = await filesystem.read(pkgJsonFilename, 'json')
 
         pkgJson.name = getSubgraphBasename(subgraphName)
-        Object.keys(pkgJson.scripts).forEach(name => {
+        Object.keys(pkgJson.scripts).forEach((name) => {
           pkgJson.scripts[name] = pkgJson.scripts[name].replace('example', subgraphName)
         })
         delete pkgJson['license']
@@ -736,6 +792,13 @@ const initSubgraphFromExample = async (
   // Initialize a fresh Git repository
   let repo = await initRepository(toolbox, directory)
   if (repo !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  // Create a fresh .gitignore file
+  let gitignoreFile = await createGitignore(toolbox, directory)
+  if (gitignoreFile !== true) {
     process.exitCode = 1
     return
   }
@@ -813,7 +876,7 @@ const initSubgraphFromContract = async (
     `Create subgraph scaffold`,
     `Failed to create subgraph scaffold`,
     `Warnings while creating subgraph scaffold`,
-    async spinner => {
+    async (spinner) => {
       let scaffold = await generateScaffold(
         {
           protocolInstance,
@@ -846,6 +909,13 @@ const initSubgraphFromContract = async (
   // Initialize a fresh Git repository
   let repo = await initRepository(toolbox, directory)
   if (repo !== true) {
+    process.exitCode = 1
+    return
+  }
+
+  // Create a fresh .gitignore file
+  let gitignoreFile = await createGitignore(toolbox, directory)
+  if (gitignoreFile !== true) {
     process.exitCode = 1
     return
   }
