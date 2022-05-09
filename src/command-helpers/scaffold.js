@@ -89,7 +89,6 @@ const writeABI = async (abi, contractName, abiPath) => {
 }
 
 const writeSchema = async (abi, protocol, schemaPath) => {
-  console.log(schemaPath)
   const events = protocol.hasEvents() ? abiEvents(abi).toJS() : []
 
   let data = prettier.format(
