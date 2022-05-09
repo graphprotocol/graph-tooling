@@ -1,4 +1,5 @@
 const { abiEvents } = require('../../../scaffold/schema')
+const { toKebabCase } = require('../../../codegen/util')
 const ABI = require('../abi')
 
 const source = ({ contract, contractName }) => `
@@ -24,7 +25,7 @@ const mapping = ({ abi, contractName }) => `
           handler: handle${event.get('_alias')}`,
           )
           .join('')}
-      file: ./src/mapping.ts`
+      file: ./src/${toKebabCase(contractName)}.ts`
 
 module.exports = {
   source,

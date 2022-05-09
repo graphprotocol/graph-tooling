@@ -240,8 +240,8 @@ const processInitForm = async (
       skip: () => fromExample !== undefined,
       validate: value => value && value.length > 0,
       result: value => {
-        contractName = value;
-        return value;
+        contractName = value
+        return value
       }
     },
   ]
@@ -331,6 +331,8 @@ const loadAbiFromFile = async (ABI, filename) => {
 }
 
 module.exports = {
+  loadAbiFromEtherscan,
+  loadAbiFromBlockScout,
   description: 'Creates a new subgraph with basic scaffolding',
   options: {
     boolean: ['from-example'],
