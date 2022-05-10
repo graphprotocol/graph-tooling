@@ -65,7 +65,12 @@ module.exports = class Protocol {
         'aurora-testnet',
       ],
       near: ['near-mainnet', 'near-testnet'],
-      cosmos: ['cosmoshub-4', 'theta-testnet-001', 'osmosis-1', 'osmo-test-4'],
+      cosmos: [
+        'cosmoshub-4', 
+        'theta-testnet-001', 
+        'osmosis-1', 
+        'osmo-test-4'
+      ],
     })
   }
 
