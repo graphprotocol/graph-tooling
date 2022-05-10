@@ -16,7 +16,6 @@ ${chalk.bold('graph add')} <address> [<subgraph-manifest default: "./subgraph.ya
 ${chalk.dim('Options:')}
 
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --index-events            Index contract events as entities (default: true)
       --contract-name           Name of the contract (default: Contract)
       --merge-entities          Whether to merge entities with the same name (default: false)
   -h, --help                    Show usage information
@@ -34,7 +33,6 @@ module.exports = {
       contractName,
       h,
       help,
-      indexEvents,
       mergeEntities
     } = toolbox.parameters.options
 
@@ -53,7 +51,6 @@ module.exports = {
       fixParameters(toolbox.parameters, {
         h,
         help,
-        indexEvents,
         mergeEntities,
       })
     } catch (e) {
@@ -67,7 +64,6 @@ module.exports = {
       print.info(HELP)
       return
     }
-    indexEvents = true //why not always true?
 
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath)
     let protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
@@ -86,49 +82,36 @@ module.exports = {
     }
 
     let ethabi = null
-    let hasCollisions = null
     if (abi) {
       ethabi = EthereumABI.load(contractName, abi)
-      let result = updateEventNamesOnCollision(ethabi, entities, contractName)
-      hasCollisions = result.hasCollisions
-      if (!mergeEntities) {
-        ethabi.data = result.abiData
-        await writeABI(ethabi, contractName, abi)
-      }
     } else {
       if (network === 'poa-core') {
         ethabi = await loadAbiFromBlockScout(EthereumABI, network, address)
       } else {
         ethabi = await loadAbiFromEtherscan(EthereumABI, network, address)
       }
-
-      let result = updateEventNamesOnCollision(ethabi, entities, contractName)
-      hasCollisions = result.hasCollisions
-      if (!mergeEntities) {
-        ethabi.data = result.abiData
-      }
-      await writeABI(ethabi, contractName, undefined)
     }
 
-    if (indexEvents) {
-      if (!mergeEntities || !hasCollisions) {
-        writeSchema(ethabi, protocol, result.getIn(['schema', 'file']))
-        writeMapping(protocol, ethabi, contractName)
-      }
-    }
+    let updateResult = updateEventNamesOnCollision(ethabi, entities, contractName, mergeEntities)
+    let collisionEntities = updateResult.collisionEntities
+    let onlyCollisions = updateResult.onlyCollisions
+    ethabi.data = updateResult.abiData
+
+    await writeABI(ethabi, contractName, abi)
+    await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
+    await writeMapping(ethabi, protocol, contractName, collisionEntities)
 
     let dataSources = result.get('dataSources')
     let dataSource = await generateDataSource(protocol, 
       contractName, network, address, ethabi)
 
-    if (mergeEntities && hasCollisions) {
+    // Handle the collisions edge case by copying another data source yaml data
+    if (mergeEntities && onlyCollisions) {
       let firstDataSource = dataSources.get(0)
-      let dsMapping = dataSource.get('mapping')
       let source = dataSource.get('source')
       let mapping = firstDataSource.get('mapping').asMutable()
 
-      // Save the entities and address of the new data source
-      mapping.set('entities', dsMapping.entities)
+      // Save the address of the new data source
       source.abi = firstDataSource.get('source').get('abi')
 
       dataSource.set('mapping', mapping)
@@ -156,7 +139,7 @@ module.exports = {
       'Failed to run codegen',
       'Warning during codegen',
       async spinner => {
-        await toolbox.system.run(yarn ? 'yarn codegen' : 'npm run codegen')
+        await system.run(yarn ? 'yarn codegen' : 'npm run codegen')
       }
     )
   }
@@ -188,25 +171,38 @@ const getContractNames = (manifest) => {
   return list
 }
 
-const updateEventNamesOnCollision = (ethabi, entities, contractName) => {
+const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntities) => {
   let abiData = ethabi.data.asMutable()
   let { print } = toolbox
-  let hasCollisions = false
+  let collisionEntities = []
+  let onlyCollisions = true
 
   for (let i = 0; i < abiData.size; i++) {
     let dataRow = abiData.get(i).asMutable()
-    
-    if (dataRow.get('type') === 'event' && entities.indexOf(dataRow.get('name')) !== -1) {
-      if (entities.indexOf(contractName + dataRow.get('name')) !== -1) {
-        print.error(`Contract name ('${contractName}') 
-          + event name ('${dataRow.get('name')}') entity already exists.`)
-        process.exitCode = 1
-        return
+
+    if (dataRow.get('type') === 'event'){
+      if (entities.indexOf(dataRow.get('name')) !== -1) {
+        if (entities.indexOf(contractName + dataRow.get('name')) !== -1) {
+          print.error(`Contract name ('${contractName}') 
+            + event name ('${dataRow.get('name')}') entity already exists.`)
+          process.exitCode = 1
+          return
+        }
+  
+        if (mergeEntities) {
+          collisionEntities.push(dataRow.get('name'))
+          // abiData.delete(i) is not currently possible, see https://github.com/immutable-js/immutable-js/issues/1901
+          abiData.set(i, immutable.Map.of())
+          continue
+        } else {
+          dataRow.set('name', contractName + dataRow.get('name'))
+        }
+      } else {
+        onlyCollisions = false
       }
-      hasCollisions = true
-      dataRow.set('name', contractName + dataRow.get('name'))
     }
     abiData.set(i, dataRow)
   }
-  return { abiData, hasCollisions}
+
+  return { abiData, collisionEntities, onlyCollisions }
 }

@@ -10,6 +10,20 @@ const { generateEventType, abiEvents } = require('../scaffold/schema')
 const { toKebabCase } = require('../codegen/util')
 const { Map } = require('immutable')
 
+const generateDataSource = async (protocol, contractName, network, contractAddress, abi) => {
+  const protocolManifest = protocol.getManifestScaffold()
+
+  return Map.of(
+    'kind', protocol.name,
+    'name', contractName,
+    'network', network,
+    'source', yaml.parse(prettier.format(protocolManifest.source({contract: contractAddress, contractName}),
+      {parser: 'yaml'})),
+    'mapping', yaml.parse(prettier.format(protocolManifest.mapping({abi, contractName}),
+      {parser: 'yaml'}))
+  ).asMutable()
+}
+
 const generateScaffold = async (
   {
     protocolInstance,
@@ -65,20 +79,6 @@ const writeScaffold = async (scaffold, directory, spinner) => {
   await writeScaffoldDirectory(scaffold, directory, spinner)
 }
 
-const generateDataSource = async (protocol, contractName, network, contractAddress, abi) => {
-  const protocolManifest = protocol.getManifestScaffold()
-
-  return Map.of(
-    'kind', protocol.name,
-    'name', contractName,
-    'network', network,
-    'source', yaml.parse(prettier.format(protocolManifest.source({contract: contractAddress, contractName}),
-      {parser: 'yaml'})),
-    'mapping', yaml.parse(prettier.format(protocolManifest.mapping({abi, contractName}),
-      {parser: 'yaml'}))
-  ).asMutable()
-}
-
 const writeABI = async (abi, contractName, abiPath) => {
   let data = prettier.format(JSON.stringify(abi.data), {
     parser: 'json',
@@ -88,8 +88,10 @@ const writeABI = async (abi, contractName, abiPath) => {
   await fs.writeFile(filePath, data, { encoding: 'utf-8' })
 }
 
-const writeSchema = async (abi, protocol, schemaPath) => {
-  const events = protocol.hasEvents() ? abiEvents(abi).toJS() : []
+const writeSchema = async (abi, protocol, schemaPath, entities) => {
+  const events = protocol.hasEvents()
+    ? abiEvents(abi).filter(event => entities.indexOf(event.get('name')) === -1).toJS()
+    : []
 
   let data = prettier.format(
     events.map(
@@ -103,9 +105,9 @@ const writeSchema = async (abi, protocol, schemaPath) => {
   await fs.appendFile(schemaPath, data, { encoding: 'utf-8' })
 }
 
-const writeMapping = async (protocol, abi, contractName) => {
+const writeMapping = async (abi, protocol, contractName, entities) => {
   const events = protocol.hasEvents()
-    ? abiEvents(abi).toJS()
+    ? abiEvents(abi).filter(event => entities.indexOf(event.get('name')) === -1).toJS()
     : []
 
   let mapping = prettier.format(
