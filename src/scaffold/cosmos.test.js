@@ -6,9 +6,8 @@ const protocol = new Protocol('cosmos')
 
 const scaffoldOptions = {
   protocol,
-  contract: '',
   network: 'cosmoshub-4',
-  contractName: '',
+  subgraphName: 'BlockHandler',
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
@@ -23,7 +22,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: cosmos
-    name:
+    name: BlockHandler
     network: cosmoshub-4
     source:
       startBlock: 0
