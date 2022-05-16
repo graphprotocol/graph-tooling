@@ -35,6 +35,8 @@ const TYPE_SUGGESTIONS = [
   ['Float', 'BigDecimal'],
   ['int', 'Int'],
   ['uint', 'BigInt'],
+  ['owner', 'String'],
+  ['Owner', 'String'],
   [/^(u|uint)(8|16|24)$/, 'Int'],
   [/^(i|int)(8|16|24|32)$/, 'Int'],
   [/^(u|uint)32$/, 'BigInt'],

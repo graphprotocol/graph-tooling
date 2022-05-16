@@ -10,7 +10,6 @@ scalar BigInt
 
 type SubgraphManifest {
   specVersion: String!
-  features: [String!]
   schema: Schema!
   description: String
   repository: String
@@ -31,6 +30,7 @@ type DataSource {
 }
 
 type ContractSource {
+  owner: String
   startBlock: BigInt
 }
 
@@ -40,27 +40,14 @@ type ContractMapping {
   file: File!
   entities: [String!]!
   blockHandlers: [BlockHandler!]
-  eventHandlers: [EventHandler!]
   transactionHandlers: [TransactionHandler!]
-}
-
-type TransactionHandler {
-  handler: String!
 }
 
 type BlockHandler {
   handler: String!
 }
 
-enum EventOrigin {
-  BeginBlock
-  DeliverTx
-  EndBlock
-}
-
-type EventHandler {
-  event: String!
-  origin: EventOrigin
+type TransactionHandler {
   handler: String!
 }
 
