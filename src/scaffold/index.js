@@ -67,7 +67,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ${this.protocol.name}
-    name: ${this.subgraphName}
+    name: ${this.dataSourceName}
     network: ${this.network}
     source: ${protocolManifest.source(this)}
     mapping: ${protocolManifest.mapping(this)}

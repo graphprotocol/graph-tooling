@@ -9,8 +9,7 @@ const scaffoldOptions = {
   contract: 'abc.def.near',
   network: 'near-mainnet',
   contractName: 'Contract',
-  dataSourceName: 'Contract',
-  subgraphName: 'Contract'
+  dataSourceName: 'Contract'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)

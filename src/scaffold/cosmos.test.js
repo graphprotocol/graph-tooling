@@ -7,8 +7,7 @@ const protocol = new Protocol('cosmos')
 const scaffoldOptions = {
   protocol,
   network: 'cosmoshub-4',
-  dataSourceName: 'CosmosHub',
-  subgraphName: 'CosmosHub'
+  dataSourceName: 'CosmosHub'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
@@ -26,6 +25,7 @@ dataSources:
     name: CosmosHub
     network: cosmoshub-4
     source:
+      startBlock: 0
     mapping:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
