@@ -77,7 +77,8 @@ const scaffoldOptions = {
   contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
   network: 'kovan',
   contractName: 'Contract',
-  subgraphName: 'ContractEvents'
+  dataSourceName: 'Contract',
+  subgraphName: 'Contract'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
@@ -97,7 +98,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: ContractEvents
+    name: Contract
     network: kovan
     source:
       address: "0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d"

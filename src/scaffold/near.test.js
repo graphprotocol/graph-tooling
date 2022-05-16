@@ -9,7 +9,8 @@ const scaffoldOptions = {
   contract: 'abc.def.near',
   network: 'near-mainnet',
   contractName: 'Contract',
-  subgraphName: 'ContractReceiptHandler'
+  dataSourceName: 'Contract',
+  subgraphName: 'Contract'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
@@ -24,7 +25,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: near
-    name: ContractReceiptHandler
+    name: Contract
     network: near-mainnet
     source:
       account: "abc.def.near"

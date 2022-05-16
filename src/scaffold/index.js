@@ -25,6 +25,7 @@ module.exports = class Scaffold {
     this.network = options.network
     this.contractName = options.contractName
     this.subgraphName = options.subgraphName
+    this.dataSourceName = options.dataSourceName
     this.node = options.node
   }
 

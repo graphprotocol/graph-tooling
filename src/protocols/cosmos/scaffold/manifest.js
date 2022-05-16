@@ -1,5 +1,4 @@
-const source = () => `
-      startBlock: 0`
+const source = () => ``
 
 const mapping = () => `
       apiVersion: 0.0.5
