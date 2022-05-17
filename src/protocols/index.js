@@ -1,4 +1,5 @@
 const immutable = require('immutable')
+const ArweaveSubgraph = require('./arweave/subgraph')
 const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const EthereumABI = require('./ethereum/abi')
@@ -9,6 +10,7 @@ const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
 const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
 const NearManifestScaffold = require('./near/scaffold/manifest')
+const ArweaveMappingScaffold = require('./arweave/scaffold/mapping')
 const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
 const NearMappingScaffold = require('./near/scaffold/mapping')
 
@@ -26,6 +28,7 @@ module.exports = class Protocol {
     return immutable.fromJS({
       // `ethereum/contract` is kept for backwards compatibility.
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
+      arweave: ['arweave'],
       ethereum: ['ethereum', 'ethereum/contract'],
       near: ['near'],
       tendermint: ['tendermint']
@@ -34,6 +37,7 @@ module.exports = class Protocol {
 
   static availableNetworks() {
     return immutable.fromJS({
+      arweave: ['arweave-mainnet'],
       ethereum: [
         'mainnet',
         'kovan',
@@ -75,6 +79,8 @@ module.exports = class Protocol {
 
   displayName() {
     switch (this.name) {
+      case 'arweave':
+        return 'Arweave'
       case 'ethereum':
         return 'Ethereum'
       case 'near':
@@ -94,6 +100,8 @@ module.exports = class Protocol {
 
   hasABIs() {
     switch (this.name) {
+      case 'arweave':
+        return false
       case 'ethereum':
         return true
       case 'near':
@@ -105,6 +113,8 @@ module.exports = class Protocol {
 
   hasContract() {
     switch (this.name) {
+      case 'arweave':
+        return false
       case 'ethereum':
         return true
       case 'near':
@@ -116,6 +126,8 @@ module.exports = class Protocol {
 
   hasEvents() {
     switch (this.name) {
+      case 'arweave':
+        return false
       case 'ethereum':
         return true
       case 'near':
@@ -127,6 +139,8 @@ module.exports = class Protocol {
 
   hasTemplates() {
     switch (this.name) {
+      case 'arweave':
+        return false
       case 'ethereum':
         return true
       case 'near':
@@ -138,6 +152,8 @@ module.exports = class Protocol {
 
   getTypeGenerator(options) {
     switch (this.name) {
+      case 'arweave':
+        return null
       case 'ethereum':
         return new EthereumTypeGenerator(options)
       case 'near':
@@ -164,6 +180,8 @@ module.exports = class Protocol {
 
   getABI() {
     switch (this.name) {
+      case 'arweave':
+        return null
       case 'ethereum':
         return EthereumABI
       case 'near':
@@ -177,6 +195,8 @@ module.exports = class Protocol {
     const optionsWithProtocol = { ...options, protocol: this }
 
     switch (this.name) {
+      case 'arweave':
+        return new ArweaveSubgraph(optionsWithProtocol)
       case 'ethereum':
         return new EthereumSubgraph(optionsWithProtocol)
       case 'near':
@@ -190,6 +210,8 @@ module.exports = class Protocol {
 
   getContract() {
     switch (this.name) {
+      case 'arweave':
+        return null
       case 'ethereum':
         return EthereumContract
       case 'near':
@@ -201,6 +223,8 @@ module.exports = class Protocol {
 
   getManifestScaffold() {
     switch (this.name) {
+      case 'arweave':
+        return ArweaveMappingScaffold
       case 'ethereum':
         return EthereumManifestScaffold
       case 'near':
@@ -212,6 +236,8 @@ module.exports = class Protocol {
 
   getMappingScaffold() {
     switch (this.name) {
+      case 'arweave':
+        return ArweaveMappingScaffold
       case 'ethereum':
         return EthereumMappingScaffold
       case 'near':

@@ -169,6 +169,11 @@ const processInitForm = async (
         return value
       },
     },
+    // TODO:
+    //
+    // protocols that don't support contract
+    // - arweave
+    // - tendermint
     {
       type: 'input',
       name: 'contract',
