@@ -6,7 +6,7 @@ const Subgraph = require('../subgraph')
 const Protocol = require('../protocols')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { generateDataSource, writeABI, writeSchema, writeMapping } = require('../command-helpers/scaffold')
-const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('./init')
+const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
 const EthereumABI = require('../protocols/ethereum/abi')
 const { fixParameters } = require('../command-helpers/gluegun')
 
@@ -37,8 +37,8 @@ module.exports = {
     } = toolbox.parameters.options
 
     let address = toolbox.parameters.first
-    let manifestPath = toolbox.parameters.second ? toolbox.parameters.second : './subgraph.yaml'
-    contractName = contractName ? contractName : 'Contract'
+    let manifestPath = toolbox.parameters.second || './subgraph.yaml'
+    contractName = contractName || 'Contract'
 
     // Validate the address
     if (!address) {
@@ -67,7 +67,7 @@ module.exports = {
 
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath)
     let protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
-    let manifest = await Subgraph.load(manifestPath, {protocol: protocol})
+    let manifest = await Subgraph.load(manifestPath, { protocol })
     let network = manifest.result.get('dataSources').get(0).get('network')
     let result = manifest.result.asMutable()
 
@@ -92,10 +92,8 @@ module.exports = {
       }
     }
 
-    let updateResult = updateEventNamesOnCollision(ethabi, entities, contractName, mergeEntities)
-    let collisionEntities = updateResult.collisionEntities
-    let onlyCollisions = updateResult.onlyCollisions
-    ethabi.data = updateResult.abiData
+    let { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(ethabi, entities, contractName, mergeEntities)
+    ethabi.data = abiData
 
     await writeABI(ethabi, contractName, abi)
     await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
@@ -121,7 +119,6 @@ module.exports = {
     result.set('dataSources', dataSources.push(dataSource))
 
     await Subgraph.write(result, manifestPath)
-    manifest = await Subgraph.load(manifestPath, {protocol: protocol})
 
     // Detect Yarn and/or NPM
     let yarn = await system.which('yarn')
@@ -146,33 +143,26 @@ module.exports = {
 }
 
 const getEntities = (manifest) => {
-  let list = []
-  manifest.result.get('dataSources').map(dataSource => {
-    dataSource.getIn(['mapping', 'entities']).map(entity => {
-      list.push(entity)
-    })
-  })
-  manifest.result.get('templates').map(template => {
-    template.getIn(['mapping', 'entities']).map(entity => {
-      list.push(entity)
-    })
-  })
-  return list
+  let dataSources = manifest.result.get('dataSources', immutable.List())
+  let templates = manifest.result.get('templates', immutable.List())
+
+  return dataSources
+    .concat(templates)
+    .map(dataSource => dataSource.getIn(['mapping', 'entities']))
+    .flatten()
 }
 
 const getContractNames = (manifest) => {
-  let list = []
-  manifest.result.get('dataSources').map(dataSource => {
-    list.push(dataSource.get('name'))
-  })
-  manifest.result.get('templates').map(template => {
-    list.push(template.get('name'))
-  })
-  return list
+  let dataSources = manifest.result.get('dataSources', immutable.List())
+  let templates = manifest.result.get('templates', immutable.List())
+
+  return dataSources
+    .concat(templates)
+    .map(dataSource => dataSource.get('name'))
 }
 
 const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntities) => {
-  let abiData = ethabi.data.asMutable()
+  let abiData = ethabi.data
   let { print } = toolbox
   let collisionEntities = []
   let onlyCollisions = true
@@ -182,26 +172,26 @@ const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntiti
 
     if (dataRow.get('type') === 'event'){
       if (entities.indexOf(dataRow.get('name')) !== -1) {
-        if (entities.indexOf(contractName + dataRow.get('name')) !== -1) {
+        if (entities.indexOf(`${contractName}${dataRow.get('name')}`) !== -1) {
           print.error(`Contract name ('${contractName}') 
             + event name ('${dataRow.get('name')}') entity already exists.`)
           process.exitCode = 1
           return
         }
-  
+        
         if (mergeEntities) {
           collisionEntities.push(dataRow.get('name'))
-          // abiData.delete(i) is not currently possible, see https://github.com/immutable-js/immutable-js/issues/1901
-          abiData.set(i, immutable.Map.of())
+          abiData = abiData.asImmutable().delete(i) // needs to be immutable when deleting, yes you read that right - https://github.com/immutable-js/immutable-js/issues/1901
+          i-- // deletion also shifts values to the left
           continue
         } else {
-          dataRow.set('name', contractName + dataRow.get('name'))
+          dataRow.set('name', `${contractName}${dataRow.get('name')}`)
         }
       } else {
         onlyCollisions = false
       }
     }
-    abiData.set(i, dataRow)
+    abiData = abiData.asMutable().set(i, dataRow)
   }
 
   return { abiData, collisionEntities, onlyCollisions }
