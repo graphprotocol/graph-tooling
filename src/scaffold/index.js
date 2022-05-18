@@ -1,5 +1,6 @@
 const prettier = require('prettier')
 const pkginfo = require('pkginfo')(module)
+const { strings } = require('gluegun')
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   // JSON.stringify should remove this key, we will install the local
@@ -142,7 +143,7 @@ dataSources:
       'subgraph.yaml': this.generateManifest(),
       'schema.graphql': this.generateSchema(),
       'tsconfig.json': this.generateTsConfig(),
-      src: { 'mapping.ts': this.generateMapping() },
+      src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
     }
   }

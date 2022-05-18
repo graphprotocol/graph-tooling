@@ -34,7 +34,7 @@ dataSources:
         - ExampleEntity
       receiptHandlers:
         - handler: handleReceipt
-      file: ./src/mapping.ts
+      file: ./src/contract.ts
 `)
   })
 
