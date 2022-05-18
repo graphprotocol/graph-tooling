@@ -117,7 +117,7 @@ dataSources:
           handler: handleExampleEvent
         - event: ExampleEvent(bytes32)
           handler: handleExampleEvent1
-      file: ./src/mapping.ts
+      file: ./src/contract.ts
 `)
   })
 
