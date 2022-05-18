@@ -26,6 +26,7 @@ module.exports = class Scaffold {
     this.network = options.network
     this.contractName = options.contractName
     this.subgraphName = options.subgraphName
+    this.dataSourceName = options.dataSourceName
     this.node = options.node
   }
 
@@ -67,7 +68,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ${this.protocol.name}
-    name: ${this.contractName}
+    name: ${this.dataSourceName}
     network: ${this.network}
     source: ${protocolManifest.source(this)}
     mapping: ${protocolManifest.mapping(this)}

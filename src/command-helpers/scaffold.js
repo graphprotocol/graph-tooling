@@ -33,6 +33,7 @@ const generateScaffold = async (
     subgraphName,
     indexEvents,
     contractName = 'Contract',
+    dataSourceName,
     node,
   },
   spinner,
@@ -47,6 +48,7 @@ const generateScaffold = async (
     network,
     contractName,
     subgraphName,
+    dataSourceName,
     node,
   })
 

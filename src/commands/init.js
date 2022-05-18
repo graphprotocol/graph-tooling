@@ -58,6 +58,11 @@ ${chalk.dim.underline('NEAR:')}
 
       --network <${availableNetworks.get('near').join('|')}>
                                  Selects the network the contract is deployed to
+
+${chalk.dim.underline('Cosmos:')}
+
+      --network <${availableNetworks.get('cosmos').join('|')}>
+                                 Selects the network the contract is deployed to
 `
 
 const processInitForm = async (
@@ -182,10 +187,10 @@ const processInitForm = async (
         ProtocolContract = protocolInstance.getContract()
         return `Contract ${ProtocolContract.identifierName()}`
       },
-      skip: fromExample !== undefined,
+      skip: () => fromExample !== undefined || !protocolInstance.hasContract(),
       initial: contract,
       validate: async value => {
-        if (fromExample !== undefined) {
+        if (fromExample !== undefined || !protocolInstance.hasContract()) {
           return true
         }
 
@@ -243,7 +248,7 @@ const processInitForm = async (
       name: 'contractName',
       message: 'Contract Name',
       initial: contractName || 'Contract',
-      skip: () => fromExample !== undefined,
+      skip: () => fromExample !== undefined || !protocolInstance.hasContract(),
       validate: value => value && value.length > 0,
       result: value => {
         contractName = value
@@ -713,6 +718,7 @@ const initSubgraphFromContract = async (
     contract,
     indexEvents,
     contractName,
+    dataSourceName,
     node,
     studio,
     product,
@@ -767,6 +773,7 @@ const initSubgraphFromContract = async (
           contract,
           indexEvents,
           contractName,
+          dataSourceName,
           node,
         },
         spinner,
@@ -780,11 +787,13 @@ const initSubgraphFromContract = async (
     return
   }
 
-  let identifierName = protocolInstance.getContract().identifierName()
-  let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
-  if (networkConf !== true) {
-    process.exitCode = 1
-    return
+  if (protocolInstance.hasContract()) {
+    let identifierName = protocolInstance.getContract().identifierName()
+    let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
+    if (networkConf !== true) {
+      process.exitCode = 1
+      return
+    }
   }
 
   // Initialize a fresh Git repository

@@ -5,14 +5,16 @@ const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const EthereumABI = require('./ethereum/abi')
 const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
-const TendermintSubgraph = require('./tendermint/subgraph')
+const CosmosSubgraph = require('./cosmos/subgraph')
 const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
 const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
 const NearManifestScaffold = require('./near/scaffold/manifest')
+const CosmosManifestScaffold = require('./cosmos/scaffold/manifest')
 const ArweaveMappingScaffold = require('./arweave/scaffold/mapping')
 const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
 const NearMappingScaffold = require('./near/scaffold/mapping')
+const CosmosMappingScaffold = require('./cosmos/scaffold/mapping')
 
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -31,7 +33,7 @@ module.exports = class Protocol {
       arweave: ['arweave'],
       ethereum: ['ethereum', 'ethereum/contract'],
       near: ['near'],
-      tendermint: ['tendermint']
+      cosmos: ['cosmos']
     })
   }
 
@@ -67,7 +69,12 @@ module.exports = class Protocol {
         'aurora-testnet',
       ],
       near: ['near-mainnet', 'near-testnet'],
-      tendermint: ['cosmoshub-4']
+      cosmos: [
+        'cosmoshub-4',
+        'theta-testnet-001',
+        'osmosis-1',
+        'osmo-test-4'
+      ],
     })
   }
 
@@ -85,8 +92,8 @@ module.exports = class Protocol {
         return 'Ethereum'
       case 'near':
         return 'NEAR'
-      case 'tendermint':
-        return 'Tendermint'
+      case 'cosmos':
+        return 'Cosmos'
     }
   }
 
@@ -106,7 +113,7 @@ module.exports = class Protocol {
         return true
       case 'near':
         return false
-      case 'tendermint':
+      case 'cosmos':
         return false
     }
   }
@@ -119,7 +126,7 @@ module.exports = class Protocol {
         return true
       case 'near':
         return true
-      case 'tendermint':
+      case 'cosmos':
         return false
     }
   }
@@ -132,7 +139,7 @@ module.exports = class Protocol {
         return true
       case 'near':
         return false
-      case 'tendermint':
+      case 'cosmos':
         return false
     }
   }
@@ -145,7 +152,7 @@ module.exports = class Protocol {
         return true
       case 'near':
         return false
-      case 'tendermint':
+      case 'cosmos':
         return false
     }
   }
@@ -158,7 +165,7 @@ module.exports = class Protocol {
         return new EthereumTypeGenerator(options)
       case 'near':
         return null
-      case 'tendermint':
+      case 'cosmos':
         return null
     }
   }
@@ -186,7 +193,7 @@ module.exports = class Protocol {
         return EthereumABI
       case 'near':
         return null
-      case 'tendermint':
+      case 'cosmos':
         return null
     }
   }
@@ -201,8 +208,8 @@ module.exports = class Protocol {
         return new EthereumSubgraph(optionsWithProtocol)
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
-      case 'tendermint':
-        return new TendermintSubgraph(optionsWithProtocol)
+      case 'cosmos':
+        return new CosmosSubgraph(optionsWithProtocol)
       default:
         throw new Error(`Data sources with kind '${this.name}' are not supported yet`)
     }
@@ -216,7 +223,7 @@ module.exports = class Protocol {
         return EthereumContract
       case 'near':
         return NearContract
-      case 'tendermint':
+      case 'cosmos':
         return null
     }
   }
@@ -229,8 +236,8 @@ module.exports = class Protocol {
         return EthereumManifestScaffold
       case 'near':
         return NearManifestScaffold
-      case 'tendermint':
-        return null
+      case 'cosmos':
+        return CosmosManifestScaffold
     }
   }
 
@@ -242,8 +249,8 @@ module.exports = class Protocol {
         return EthereumMappingScaffold
       case 'near':
         return NearMappingScaffold
-      case 'tendermint':
-        return null
+      case 'cosmos':
+        return CosmosMappingScaffold
     }
   }
 }
