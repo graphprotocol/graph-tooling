@@ -96,6 +96,10 @@ module.exports = class SchemaCodeGenerator {
     )
   }
 
+  _isInterfaceDefinition(def) {
+    return def.get('kind') === 'InterfaceTypeDefinition'
+  }
+
   _generateEntityType(def) {
     let name = def.getIn(['name', 'value'])
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
@@ -243,7 +247,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     // If this is a reference to another type, the field has the type of
     // the referred type's id field
     const typeDef = this.schema.ast.get("definitions").
-      find(def => this._isEntityTypeDefinition(def) && def.getIn(["name", "value"]) === typeName)
+      find(def => (this._isEntityTypeDefinition(def) || this._isInterfaceDefinition(def)) && def.getIn(["name", "value"]) === typeName)
     if (typeDef) {
       return IdField.fromTypeDef(typeDef).typeName()
     } else {
