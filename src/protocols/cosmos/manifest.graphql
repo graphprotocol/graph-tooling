@@ -42,9 +42,15 @@ type ContractMapping {
   blockHandlers: [BlockHandler!]
   eventHandlers: [EventHandler!]
   transactionHandlers: [TransactionHandler!]
+  messageHandlers: [MessageHandler!]
 }
 
 type TransactionHandler {
+  handler: String!
+}
+
+type MessageHandler {
+  message: String!
   handler: String!
 }
 
