@@ -101,9 +101,9 @@ module.exports = {
     }
 
     opts.cachePath = path.join(opts.testsFolder, '.latest.json')
-    setCachedVersion(opts)
+    setVersionFromCache(opts)
 
-    // Do not fetch the latest version tag if version is specified with -v/--version
+    // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
     if (!opts.version && !opts.latestVersion) {
       print.info("Fetching latest version tag")
       let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
@@ -126,11 +126,12 @@ module.exports = {
   }
 }
 
-async function setCachedVersion(opts) {
+async function setVersionFromCache(opts) {
   if(filesystem.exists(opts.cachePath) == 'file') {
     let cached = filesystem.read(opts.cachePath, 'json')
     // Get the cache age in days
     let cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24)
+    // If cache age is less than 1 day, use the cached version
     if (cacheAge < 1) {
       opts.latestVersion = cached.version
     }
