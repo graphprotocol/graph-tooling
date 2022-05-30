@@ -76,8 +76,7 @@ const scaffoldOptions = {
   abi: TEST_ABI,
   contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
   network: 'kovan',
-  contractName: 'Contract',
-  dataSourceName: 'Contract'
+  contractName: 'Contract'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
