@@ -104,13 +104,13 @@ module.exports = {
     setVersionFromCache(opts)
 
     // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
-    if (!opts.version && !opts.latestVersion) {
+    if (opts.force || (!opts.version && !opts.latestVersion)) {
       print.info("Fetching latest version tag")
       let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
       let json = await result.json()
       opts.latestVersion = json.tag_name
 
-      await filesystem.file(opts.cachePath, {
+      filesystem.file(opts.cachePath, {
         content: {
           version: json.tag_name,
           timestamp: Date.now()
