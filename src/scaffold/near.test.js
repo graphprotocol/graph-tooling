@@ -8,8 +8,7 @@ const scaffoldOptions = {
   protocol,
   contract: 'abc.def.near',
   network: 'near-mainnet',
-  contractName: 'Contract',
-  dataSourceName: 'Contract'
+  contractName: 'Contract'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
