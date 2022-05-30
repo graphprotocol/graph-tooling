@@ -7,7 +7,7 @@ const protocol = new Protocol('cosmos')
 const scaffoldOptions = {
   protocol,
   network: 'cosmoshub-4',
-  dataSourceName: 'CosmosHub'
+  contractName: 'CosmosHub'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
