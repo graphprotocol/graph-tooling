@@ -95,7 +95,7 @@ module.exports = {
     let { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(ethabi, entities, contractName, mergeEntities)
     ethabi.data = abiData
 
-    await writeABI(ethabi, contractName, abi)
+    await writeABI(ethabi, contractName)
     await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
 
