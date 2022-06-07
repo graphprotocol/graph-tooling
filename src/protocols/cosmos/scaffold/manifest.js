@@ -8,7 +8,7 @@ const mapping = () => `
         - ExampleEntity
       blockHandlers:
         - handler: handleBlock
-      file: ./src/mapping.ts`
+      file: ./src/contract.ts`
 
 module.exports = {
   source,

@@ -179,7 +179,7 @@ const processInitForm = async (
     //
     // protocols that don't support contract
     // - arweave
-    // - tendermint
+    // - cosmos
     {
       type: 'input',
       name: 'contract',
@@ -718,7 +718,6 @@ const initSubgraphFromContract = async (
     contract,
     indexEvents,
     contractName,
-    dataSourceName,
     node,
     studio,
     product,
@@ -773,7 +772,6 @@ const initSubgraphFromContract = async (
           contract,
           indexEvents,
           contractName,
-          dataSourceName,
           node,
         },
         spinner,

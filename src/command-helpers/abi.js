@@ -59,6 +59,7 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "aurora": return `https://api.aurorascan.dev/api`
     case "aurora-testnet": return `https://api-testnet.aurorascan.dev/api`
     case "optimism-kovan": return `https://api-kovan-optimistic.etherscan.io/api`
+    case "optimism": return `https://api-optimistic.etherscan.io/api`
     default: return `https://api-${network}.etherscan.io/api`
   }
 }

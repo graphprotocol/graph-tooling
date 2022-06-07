@@ -13,12 +13,12 @@ const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
 
 ${chalk.dim('Options:')}
-  -c, --coverage                Run the tests in coverage mode. Works with v0.2.1 and above
+  -c, --coverage                Run the tests in coverage mode
   -d, --docker                  Run the tests in a docker container(Note: Please execute from the root folder of the subgraph)
   -f  --force                   Binary - overwrites folder + file when downloading. Docker - rebuilds the docker image
   -h, --help                    Show usage information
   -l, --logs                    Logs to the console information about the OS, CPU model and download url (debugging purposes)
-  -r, --recompile               Force-recompile tests (Not available in 0.2.2 and earlier versions)
+  -r, --recompile               Force-recompile tests
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
   `
 
@@ -43,16 +43,16 @@ module.exports = {
       version,
     } = toolbox.parameters.options
 
-    let opts = new Map()
+    let opts = {}
     // Support both long and short option variants
-    opts.set("coverage", coverage || c)
-    opts.set("docker", docker || d)
-    opts.set("force", force || f)
-    opts.set("help", help || h)
-    opts.set("logs", logs || l)
-    opts.set("recompile", recompile || r)
-    opts.set("version", version || v)
-
+    opts.coverage = coverage || c
+    opts.docker = docker || d
+    opts.force = force || f
+    opts.help = help || h
+    opts.logs = logs || l
+    opts.recompile = recompile || r
+    opts.version = version || v
+    opts.testsFolder = './tests'
     // Fix if a boolean flag (e.g -c, --coverage) has an argument
     try {
       fixParameters(toolbox.parameters, {
@@ -76,18 +76,49 @@ module.exports = {
     }
 
     let datasource = toolbox.parameters.first || toolbox.parameters.array[0]
-
     // Show help text if requested
-    if (opts.get("help")) {
+    if (opts.help) {
       print.info(HELP)
       return
     }
 
-    let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
-    let json = await result.json()
-    opts.set("latestVersion", json.tag_name)
+    // Check if matchstick.yaml config exists
+    if(filesystem.exists('matchstick.yaml')) {
+      try {
+        // Load the config
+        let config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8'))
 
-    if(opts.get("docker")) {
+        // Check if matchstick.yaml and testsFolder not null
+        if(config && config.testsFolder) {
+          // assign test folder from matchstick.yaml if present
+          opts.testsFolder = config.testsFolder
+        }
+      } catch (error) {
+        print.info('A problem occurred while reading matchstick.yaml. Please attend to the errors below:')
+        print.error(error.message)
+        process.exit(1)
+      }
+    }
+
+    opts.cachePath = path.join(opts.testsFolder, '.latest.json')
+    setVersionFromCache(opts)
+
+    // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
+    if (opts.force || (!opts.version && !opts.latestVersion)) {
+      print.info("Fetching latest version tag")
+      let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
+      let json = await result.json()
+      opts.latestVersion = json.tag_name
+
+      filesystem.file(opts.cachePath, {
+        content: {
+          version: json.tag_name,
+          timestamp: Date.now()
+        }
+      })
+    }
+
+    if(opts.docker) {
       runDocker(datasource, opts)
     } else {
       runBinary(datasource, opts)
@@ -95,13 +126,25 @@ module.exports = {
   }
 }
 
+async function setVersionFromCache(opts) {
+  if(filesystem.exists(opts.cachePath) == 'file') {
+    let cached = filesystem.read(opts.cachePath, 'json')
+    // Get the cache age in days
+    let cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24)
+    // If cache age is less than 1 day, use the cached version
+    if (cacheAge < 1) {
+      opts.latestVersion = cached.version
+    }
+  }
+}
+
 async function runBinary(datasource, opts) {
-  let coverageOpt = opts.get("coverage")
-  let forceOpt = opts.get("force")
-  let logsOpt = opts.get("logs")
-  let versionOpt = opts.get("version")
-  let latestVersion = opts.get("latestVersion")
-  let recompileOpt = opts.get("recompile")
+  let coverageOpt = opts.coverage
+  let forceOpt = opts.force
+  let logsOpt = opts.logs
+  let versionOpt = opts.version
+  let latestVersion = opts.latestVersion
+  let recompileOpt = opts.recompile
 
   const platform = await getPlatform(logsOpt)
 
@@ -126,10 +169,10 @@ async function getPlatform(logsOpt) {
   const arch = os.arch()
   const cpuCore = os.cpus()[0]
   const isM1 = (arch === 'arm64' && /Apple (M1|processor)/.test(cpuCore.model))
-  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : new Map()
-  const linuxDistro = linuxInfo.get('name')
-  const release = linuxInfo.get('version') || os.release()
-  const majorVersion = parseInt(linuxInfo.get('version'), 10) || semver.major(release)
+  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : {}
+  const linuxDistro = linuxInfo.name
+  const release = linuxInfo.version || os.release()
+  const majorVersion = parseInt(linuxInfo.version, 10) || semver.major(release)
 
   if (logsOpt) {
     print.info(`OS type: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
@@ -148,6 +191,8 @@ async function getPlatform(logsOpt) {
     } else if (type === 'Linux') {
       if (majorVersion === 18) {
         return 'binary-linux-18'
+      } if (majorVersion === 22) {
+        return 'binary-linux-22'
       } else {
         return 'binary-linux-20'
       }
@@ -163,13 +208,13 @@ async function getLinuxInfo() {
   try {
     let result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {trim: true})
     let infoArray = result.replace(/['"]+/g, '').split('\n').map(p => p.split('='))
-    let infoMap = new Map();
+    let linuxInfo = {}
 
     infoArray.forEach((val) => {
-      infoMap.set(val[0].toLowerCase(), val[1])
+      linuxInfo[val[0].toLowerCase()] = val[1]
     });
 
-    return infoMap
+    return linuxInfo
   } catch (error) {
     print.error(`Error fetching the Linux version:\n ${error}`)
     process.exit(1)
@@ -177,39 +222,21 @@ async function getLinuxInfo() {
 }
 
 async function runDocker(datasource, opts) {
-  let coverageOpt = opts.get("coverage")
-  let forceOpt = opts.get("force")
-  let versionOpt = opts.get("version")
-  let latestVersion = opts.get("latestVersion")
-  let recompileOpt = opts.get("recompile")
+  let coverageOpt = opts.coverage
+  let forceOpt = opts.force
+  let versionOpt = opts.version
+  let latestVersion = opts.latestVersion
+  let recompileOpt = opts.recompile
 
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
-  await filesystem.remove("./node_modules/binary-install-raw/bin")
+  await filesystem.remove('./node_modules/binary-install-raw/bin')
 
   // Get current working directory
   let current_folder = await filesystem.cwd()
 
   // Declate dockerfilePath with default location
-  let dockerfilePath = "./tests/.docker/Dockerfile"
-
-  // Check if matchstick.yaml config exists
-  if(filesystem.exists('matchstick.yaml')) {
-    try {
-      // Load the config
-      let config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8'))
-
-      // Check if matchstick.yaml is not empty
-      if(config != null) {
-        // If a custom tests folder is declared update dockerfilePath
-        dockerfilePath = path.join(config.testsFolder || 'tests', '.docker/Dockerfile')
-      }
-    } catch (error) {
-      print.info('A problem occurred while reading matchstick.yaml. Please attend to the errors below:')
-      print.error(error.message)
-      process.exit(1)
-    }
-  }
+  let dockerfilePath = path.join(opts.testsFolder || 'tests', '.docker/Dockerfile')
 
   // Check if the Dockerfil already exists
   let dockerfileExists = filesystem.exists(dockerfilePath)

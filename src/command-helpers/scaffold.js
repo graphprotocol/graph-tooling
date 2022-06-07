@@ -33,7 +33,6 @@ const generateScaffold = async (
     subgraphName,
     indexEvents,
     contractName = 'Contract',
-    dataSourceName,
     node,
   },
   spinner,
@@ -48,7 +47,6 @@ const generateScaffold = async (
     network,
     contractName,
     subgraphName,
-    dataSourceName,
     node,
   })
 
@@ -81,12 +79,12 @@ const writeScaffold = async (scaffold, directory, spinner) => {
   await writeScaffoldDirectory(scaffold, directory, spinner)
 }
 
-const writeABI = async (abi, contractName, abiPath = `./abis/${contractName}.json`) => {
+const writeABI = async (abi, contractName) => {
   let data = prettier.format(JSON.stringify(abi.data), {
     parser: 'json',
   })
 
-  await fs.writeFile(abiPath, data, { encoding: 'utf-8' })
+  await fs.writeFile(`./abis/${contractName}.json`, data, { encoding: 'utf-8' })
 }
 
 const writeSchema = async (abi, protocol, schemaPath, entities) => {
