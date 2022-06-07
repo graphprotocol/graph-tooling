@@ -817,5 +817,94 @@ const initSubgraphFromContract = async (
     return
   }
 
+  let addContract = true
+  while (addContract) {
+    addContract = await addAnotherContract(toolbox, { protocolInstance, directory })
+  }
+
   printNextSteps(toolbox, { subgraphName, directory }, { commands })
+}
+
+const addAnotherContract = async (toolbox, { protocolInstance, abi, directory }) => {
+  let addContract
+  let abiFromFile = undefined
+  let ProtocolContract = protocolInstance.getContract()
+
+  let questions = [
+    {
+      type: 'select',
+      name: 'addContract',
+      message: 'Add Contract',
+      choices: ['yes', 'no'],
+      result: (value) => {
+        addContract = value === 'yes' ? true : false
+        return addContract
+      },
+    },
+    {
+      type: 'input',
+      name: 'contract',
+      skip: () => addContract !== true,
+      message: () => `Contract ${ProtocolContract.identifierName()}`,
+      validate: async (value) => {
+        // Validate whether the contract is valid
+        const { valid, error } = validateContract(value, ProtocolContract)
+        return valid ? true : error
+      },
+    },
+    {
+      type: 'select',
+      name: 'localAbi',
+      message: 'Local ABI path',
+      skip: () => addContract !== true,
+      choices: ['yes', 'no'],
+      result: (value) => {
+        abiFromFile = value === 'yes' ? true : false
+        return abiFromFile
+      },
+    },
+    {
+      type: 'input',
+      name: 'abi',
+      message: 'ABI file (path)',
+      initial: abi,
+      skip: () => addContract !== true || abiFromFile === false,
+      result: async (value) => {
+        abiFromFile = value
+      },
+    },
+    {
+      type: 'input',
+      name: 'contractName',
+      message: 'Contract Name',
+      initial: 'Contract',
+      skip: () => addContract !== true,
+      validate: (value) => value && value.length > 0,
+      result: (value) => {
+        contractName = value
+        return value
+      },
+    },
+  ]
+
+  try {
+    let { addContract, contract, contractName } = await toolbox.prompt.ask(questions)
+
+    if (addContract) {
+      let params = ['add', contract, '--contract-name', contractName]
+
+      if (abiFromFile) {
+        params = [...params, '--abi', abiFromFile]
+      }
+
+      await spawnSync('graph', params, {
+        stdio: 'inherit',
+        cwd: directory,
+      })
+    }
+
+    return addContract
+  } catch (e) {
+    return undefined
+  }
 }

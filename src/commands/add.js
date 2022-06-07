@@ -40,13 +40,6 @@ module.exports = {
     let manifestPath = toolbox.parameters.second || './subgraph.yaml'
     contractName = contractName || 'Contract'
 
-    // Validate the address
-    if (!address) {
-      print.error('No contract address provided')
-      process.exitCode = 1
-      return
-    }
-
     try {
       fixParameters(toolbox.parameters, {
         h,
@@ -62,6 +55,13 @@ module.exports = {
     // Show help text if requested
     if (help || h) {
       print.info(HELP)
+      return
+    }
+
+    // Validate the address
+    if (!address) {
+      print.error('No contract address provided')
+      process.exitCode = 1
       return
     }
 
