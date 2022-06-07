@@ -1,10 +1,9 @@
 const chalk = require('chalk')
-const fetch = require('node-fetch')
-const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
-const yaml = require('yaml')
+const fs = require('fs')
+const graphCli = require('../cli')
 
 const {
   getSubgraphBasename,
@@ -832,7 +831,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, abi, directory })
     {
       type: 'select',
       name: 'addContract',
-      message: 'Add Contract',
+      message: 'Add another contract?',
       choices: ['yes', 'no'],
       result: (value) => {
         addContract = value === 'yes' ? true : false
@@ -853,7 +852,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, abi, directory })
     {
       type: 'select',
       name: 'localAbi',
-      message: 'Local ABI path',
+      message: 'Provide local ABI path?',
       skip: () => addContract !== true,
       choices: ['yes', 'no'],
       result: (value) => {
@@ -889,20 +888,26 @@ const addAnotherContract = async (toolbox, { protocolInstance, abi, directory })
     let { addContract, contract, contractName } = await toolbox.prompt.ask(questions)
 
     if (addContract) {
-      let params = ['add', contract, '--contract-name', contractName]
-
-      if (abiFromFile) {
-        params = [...params, '--abi', abiFromFile]
+      if (fs.existsSync(directory)) {
+        process.chdir(directory)
       }
 
-      await spawnSync('graph', params, {
-        stdio: 'inherit',
-        cwd: directory,
-      })
+      let commandLine = ['add', contract, '--contract-name', contractName]
+
+      if (abiFromFile) {
+        if (abiFromFile.includes(directory)) {
+          commandLine.push('--abi', path.normalize(abiFromFile.replace(directory, '')))
+        } else {
+          commandLine.push('--abi', abiFromFile)
+        }  
+      }
+
+      await graphCli.run(commandLine)
     }
 
     return addContract
   } catch (e) {
-    return undefined
+    toolbox.print.error(е)
+    return false
   }
 }
