@@ -815,33 +815,25 @@ const initSubgraphFromContract = async (
   }
 
   let addContract = true
-  while (addContract) {
+  do {
     addContract = await addAnotherContract(toolbox, { protocolInstance, directory })
-  }
+  } while (addContract)
 
   printNextSteps(toolbox, { subgraphName, directory }, { commands })
 }
 
 const addAnotherContract = async (toolbox, { protocolInstance, abi, directory }) => {
-  let addContract
-  let abiFromFile = undefined
+  const addContractConfirmation = await toolbox.prompt.confirm('Add another contract?')
+
+  if (addContractConfirmation === false) return false
+
+  let abiFromFile
   let ProtocolContract = protocolInstance.getContract()
 
   let questions = [
     {
-      type: 'select',
-      name: 'addContract',
-      message: 'Add another contract?',
-      choices: ['yes', 'no'],
-      result: (value) => {
-        addContract = value === 'yes' ? true : false
-        return addContract
-      },
-    },
-    {
       type: 'input',
       name: 'contract',
-      skip: () => addContract !== true,
       message: () => `Contract ${ProtocolContract.identifierName()}`,
       validate: async (value) => {
         // Validate whether the contract is valid
@@ -853,7 +845,6 @@ const addAnotherContract = async (toolbox, { protocolInstance, abi, directory })
       type: 'select',
       name: 'localAbi',
       message: 'Provide local ABI path?',
-      skip: () => addContract !== true,
       choices: ['yes', 'no'],
       result: (value) => {
         abiFromFile = value === 'yes' ? true : false
@@ -865,7 +856,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, abi, directory })
       name: 'abi',
       message: 'ABI file (path)',
       initial: abi,
-      skip: () => addContract !== true || abiFromFile === false,
+      skip: () => abiFromFile === false,
       result: async (value) => {
         abiFromFile = value
       },
@@ -875,7 +866,6 @@ const addAnotherContract = async (toolbox, { protocolInstance, abi, directory })
       name: 'contractName',
       message: 'Contract Name',
       initial: 'Contract',
-      skip: () => addContract !== true,
       validate: (value) => value && value.length > 0,
       result: (value) => {
         contractName = value
@@ -885,29 +875,27 @@ const addAnotherContract = async (toolbox, { protocolInstance, abi, directory })
   ]
 
   try {
-    let { addContract, contract, contractName } = await toolbox.prompt.ask(questions)
+    let { contract, contractName } = await toolbox.prompt.ask(questions)
 
-    if (addContract) {
-      if (fs.existsSync(directory)) {
-        process.chdir(directory)
-      }
-
-      let commandLine = ['add', contract, '--contract-name', contractName]
-
-      if (abiFromFile) {
-        if (abiFromFile.includes(directory)) {
-          commandLine.push('--abi', path.normalize(abiFromFile.replace(directory, '')))
-        } else {
-          commandLine.push('--abi', abiFromFile)
-        }  
-      }
-
-      await graphCli.run(commandLine)
+    if (fs.existsSync(directory)) {
+      process.chdir(directory)
     }
 
-    return addContract
+    let commandLine = ['add', contract, '--contract-name', contractName]
+
+    if (abiFromFile) {
+      if (abiFromFile.includes(directory)) {
+        commandLine.push('--abi', path.normalize(abiFromFile.replace(directory, '')))
+      } else {
+        commandLine.push('--abi', abiFromFile)
+      }
+    }
+
+    await graphCli.run(commandLine)
+
+    return true
   } catch (e) {
-    toolbox.print.error(е)
+    toolbox.print.error(e)
     return false
   }
 }
