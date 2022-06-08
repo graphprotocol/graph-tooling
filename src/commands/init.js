@@ -822,80 +822,78 @@ const initSubgraphFromContract = async (
   printNextSteps(toolbox, { subgraphName, directory }, { commands })
 }
 
-const addAnotherContract = async (toolbox, { protocolInstance, abi, directory }) => {
+const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
   const addContractConfirmation = await toolbox.prompt.confirm('Add another contract?')
 
-  if (addContractConfirmation === false) return false
-
-  let abiFromFile
-  let ProtocolContract = protocolInstance.getContract()
-
-  let questions = [
-    {
-      type: 'input',
-      name: 'contract',
-      message: () => `Contract ${ProtocolContract.identifierName()}`,
-      validate: async (value) => {
-        // Validate whether the contract is valid
-        const { valid, error } = validateContract(value, ProtocolContract)
-        return valid ? true : error
+  if (addContractConfirmation) {
+    let abiFromFile
+    let ProtocolContract = protocolInstance.getContract()
+  
+    let questions = [
+      {
+        type: 'input',
+        name: 'contract',
+        message: () => `Contract ${ProtocolContract.identifierName()}`,
+        validate: async (value) => {
+          // Validate whether the contract is valid
+          const { valid, error } = validateContract(value, ProtocolContract)
+          return valid ? true : error
+        },
       },
-    },
-    {
-      type: 'select',
-      name: 'localAbi',
-      message: 'Provide local ABI path?',
-      choices: ['yes', 'no'],
-      result: (value) => {
-        abiFromFile = value === 'yes' ? true : false
-        return abiFromFile
+      {
+        type: 'select',
+        name: 'localAbi',
+        message: 'Provide local ABI path?',
+        choices: ['yes', 'no'],
+        result: (value) => {
+          abiFromFile = value === 'yes' ? true : false
+          return abiFromFile
+        },
       },
-    },
-    {
-      type: 'input',
-      name: 'abi',
-      message: 'ABI file (path)',
-      initial: abi,
-      skip: () => abiFromFile === false,
-      result: async (value) => {
-        abiFromFile = value
+      {
+        type: 'input',
+        name: 'abi',
+        message: 'ABI file (path)',
+        initial: abi,
+        skip: () => abiFromFile === false
       },
-    },
-    {
-      type: 'input',
-      name: 'contractName',
-      message: 'Contract Name',
-      initial: 'Contract',
-      validate: (value) => value && value.length > 0,
-      result: (value) => {
-        contractName = value
-        return value
+      {
+        type: 'input',
+        name: 'contractName',
+        message: 'Contract Name',
+        initial: 'Contract',
+        validate: (value) => value && value.length > 0,
       },
-    },
-  ]
+    ]
+  
+    try {
+      let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
 
-  try {
-    let { contract, contractName } = await toolbox.prompt.ask(questions)
-
-    if (fs.existsSync(directory)) {
-      process.chdir(directory)
-    }
-
-    let commandLine = ['add', contract, '--contract-name', contractName]
-
-    if (abiFromFile) {
-      if (abiFromFile.includes(directory)) {
-        commandLine.push('--abi', path.normalize(abiFromFile.replace(directory, '')))
-      } else {
-        commandLine.push('--abi', abiFromFile)
+      // Get the cwd before process.chdir in order to switch back in the end of command execution
+      const cwd = process.cwd();
+  
+      if (fs.existsSync(directory)) {
+        process.chdir(directory)
       }
+  
+      let commandLine = ['add', contract, '--contract-name', contractName]
+  
+      if (abiFromFile) {
+        if (abi.includes(directory)) {
+          commandLine.push('--abi', path.normalize(abi.replace(directory, '')))
+        } else {
+          commandLine.push('--abi', abi)
+        }
+      }
+  
+      await graphCli.run(commandLine)
+  
+      process.chdir(cwd)
+    } catch (e) {
+      toolbox.print.error(e)
+      process.exit(1)
     }
-
-    await graphCli.run(commandLine)
-
-    return true
-  } catch (e) {
-    toolbox.print.error(e)
-    return false
   }
+
+  return addContractConfirmation
 }
