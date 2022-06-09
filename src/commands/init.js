@@ -854,7 +854,6 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         type: 'input',
         name: 'abi',
         message: 'ABI file (path)',
-        initial: abi,
         skip: () => abiFromFile === false
       },
       {
