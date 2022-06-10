@@ -22,18 +22,19 @@ ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk
 
 Options:
 
-      --product <subgraph-studio|hosted-service>
+        --product <subgraph-studio|hosted-service>
                                 Selects the product to which to deploy
-      --studio                  Shortcut for --product subgraph-studio
-  -g, --node <node>             Graph node to which to deploy
-      --deploy-key <key>        User deploy key
-  -l  --version-label <label>   Version label used for the deployment
-  -h, --help                    Show usage information
-  -i, --ipfs <node>             Upload build results to an IPFS node (default: ${DEFAULT_IPFS_URL})
-      --debug-fork              ID of a remote subgraph whose store will be GraphQL queried
-  -o, --output-dir <path>       Output directory for build results (default: build/)
-      --skip-migrations         Skip subgraph migrations (default: false)
-  -w, --watch                   Regenerate types when subgraph files change (default: false)
+        --studio                  Shortcut for --product subgraph-studio
+  -g,   --node <node>             Graph node to which to deploy
+        --deploy-key <key>        User deploy key
+  -l    --version-label <label>   Version label used for the deployment
+  -h,   --help                    Show usage information
+  -i,   --ipfs <node>             Upload build results to an IPFS node (default: ${DEFAULT_IPFS_URL})
+  -hdr, --headers <map>           Add custom headers that will be used by the IPFS HTTP client (default: {})
+        --debug-fork              ID of a remote subgraph whose store will be GraphQL queried
+  -o,   --output-dir <path>       Output directory for build results (default: build/)
+        --skip-migrations         Skip subgraph migrations (default: false)
+  -w,   --watch                   Regenerate types when subgraph files change (default: false)
 `
 
 const processForm = async (
@@ -91,6 +92,8 @@ module.exports = {
       i,
       help,
       ipfs,
+      headers,
+      hdr,
       node,
       o,
       outputDir,
@@ -103,10 +106,19 @@ module.exports = {
     // Support both long and short option variants
     help = help || h
     ipfs = ipfs || i || DEFAULT_IPFS_URL
+    headers = headers || hdr || "{}"
     node = node || g
     outputDir = outputDir || o
     watch = watch || w
     versionLabel = versionLabel || l
+
+    try {
+      headers = JSON.parse(headers)
+    } catch (e) {
+      print.error("Please make sure headers is a valid JSON value")
+      process.exitCode = 1
+      return
+    }
 
     let subgraphName, manifest
     try {
@@ -216,6 +228,7 @@ module.exports = {
 
     let compiler = createCompiler(manifest, {
       ipfs,
+      headers,
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
