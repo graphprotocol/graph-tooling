@@ -423,6 +423,7 @@ module.exports = {
           node,
           studio,
           product,
+          addContractPrompt: false
         },
         { commands },
       )
@@ -484,6 +485,7 @@ module.exports = {
           node,
           studio: inputs.studio,
           product: inputs.product,
+          addContractPrompt: true
         },
         { commands },
       )
@@ -720,6 +722,7 @@ const initSubgraphFromContract = async (
     node,
     studio,
     product,
+    addContractPrompt
   },
   { commands },
 ) => {
@@ -814,10 +817,12 @@ const initSubgraphFromContract = async (
     return
   }
 
-  let addContract = true
-  do {
-    addContract = await addAnotherContract(toolbox, { protocolInstance, directory })
-  } while (addContract)
+  if (addContractPrompt) {
+    let addContract = true
+    do {
+      addContract = await addAnotherContract(toolbox, { protocolInstance, directory })
+    } while (addContract)
+  }
 
   printNextSteps(toolbox, { subgraphName, directory }, { commands })
 }
