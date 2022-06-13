@@ -883,12 +883,13 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
           commandLine.push('--abi', abi)
         }
       }
+
+      await graphCli.run(commandLine)
     } catch (e) {
       toolbox.print.error(e)
       process.exit(1)
     }
     finally {
-      await graphCli.run(commandLine)
       process.chdir(cwd)
     }
   }
