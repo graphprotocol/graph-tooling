@@ -107,7 +107,19 @@ function hasChanges(identifierName, network, networkConfig, dataSource) {
   return networkChanged || addressChanged || startBlockChanged
 }
 
+const updateNetworksFile = async (toolbox, network, dataSource, address, directory) => {
+  await toolbox.patching.update(path.join(directory, 'networks.json'), (config) => {
+    if(Object.keys(config).includes(network)) {
+      Object.assign(config[network], { [dataSource]: { "address": address } })
+    } else {
+      Object.assign(config, { [network]: { [dataSource]: { "address": address } }})
+    }
+    return config
+  })
+}
+
 module.exports = {
   updateSubgraphNetwork,
-  initNetworksConfig
+  initNetworksConfig,
+  updateNetworksFile
 }
