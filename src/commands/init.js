@@ -863,12 +863,12 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         validate: (value) => value && value.length > 0,
       },
     ]
+
+    // Get the cwd before process.chdir in order to switch back in the end of command execution
+    const cwd = process.cwd();
   
     try {
       let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
-
-      // Get the cwd before process.chdir in order to switch back in the end of command execution
-      const cwd = process.cwd();
   
       if (fs.existsSync(directory)) {
         process.chdir(directory)
