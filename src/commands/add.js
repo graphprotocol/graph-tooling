@@ -36,16 +36,7 @@ module.exports = {
       mergeEntities
     } = toolbox.parameters.options
 
-    let address = toolbox.parameters.first
-    let manifestPath = toolbox.parameters.second || './subgraph.yaml'
     contractName = contractName || 'Contract'
-
-    // Validate the address
-    if (!address) {
-      print.error('No contract address provided')
-      process.exitCode = 1
-      return
-    }
 
     try {
       fixParameters(toolbox.parameters, {
@@ -59,9 +50,19 @@ module.exports = {
       return
     }
 
+    let address = toolbox.parameters.first || toolbox.parameters.array[0]
+    let manifestPath = toolbox.parameters.second || toolbox.parameters.array[1] || './subgraph.yaml'
+
     // Show help text if requested
     if (help || h) {
       print.info(HELP)
+      return
+    }
+
+    // Validate the address
+    if (!address) {
+      print.error('No contract address provided')
+      process.exitCode = 1
       return
     }
 
