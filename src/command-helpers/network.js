@@ -107,8 +107,8 @@ function hasChanges(identifierName, network, networkConfig, dataSource) {
   return networkChanged || addressChanged || startBlockChanged
 }
 
-const updateNetworksFile = async (toolbox, network, dataSource, address, directory) => {
-  await toolbox.patching.update(path.join(directory, 'networks.json'), (config) => {
+const updateNetworksFile = async (toolbox, network, dataSource, address, networksFile) => {
+  await toolbox.patching.update(networksFile, (config) => {
     if(Object.keys(config).includes(network)) {
       Object.assign(config[network], { [dataSource]: { "address": address } })
     } else {
