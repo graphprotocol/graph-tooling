@@ -1,10 +1,9 @@
 const chalk = require('chalk')
-const fetch = require('node-fetch')
-const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
-const yaml = require('yaml')
+const fs = require('fs')
+const graphCli = require('../cli')
 
 const {
   getSubgraphBasename,
@@ -423,9 +422,9 @@ module.exports = {
           contractName,
           node,
           studio,
-          product,
+          product
         },
-        { commands },
+        { commands, addContract: false },
       )
     }
 
@@ -484,9 +483,9 @@ module.exports = {
           contractName: inputs.contractName,
           node,
           studio: inputs.studio,
-          product: inputs.product,
+          product: inputs.product
         },
-        { commands },
+        { commands, addContract: true },
       )
     }
   },
@@ -720,9 +719,9 @@ const initSubgraphFromContract = async (
     contractName,
     node,
     studio,
-    product,
+    product
   },
-  { commands },
+  { commands, addContract },
 ) => {
   let { print } = toolbox
 
@@ -815,5 +814,85 @@ const initSubgraphFromContract = async (
     return
   }
 
+  while (addContract) {
+    addContract = await addAnotherContract(toolbox, { protocolInstance, directory })
+  }
+
   printNextSteps(toolbox, { subgraphName, directory }, { commands })
+}
+
+const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
+  const addContractConfirmation = await toolbox.prompt.confirm('Add another contract?')
+
+  if (addContractConfirmation) {
+    let abiFromFile
+    let ProtocolContract = protocolInstance.getContract()
+  
+    let questions = [
+      {
+        type: 'input',
+        name: 'contract',
+        message: () => `Contract ${ProtocolContract.identifierName()}`,
+        validate: async (value) => {
+          // Validate whether the contract is valid
+          const { valid, error } = validateContract(value, ProtocolContract)
+          return valid ? true : error
+        },
+      },
+      {
+        type: 'select',
+        name: 'localAbi',
+        message: 'Provide local ABI path?',
+        choices: ['yes', 'no'],
+        result: (value) => {
+          abiFromFile = value === 'yes' ? true : false
+          return abiFromFile
+        },
+      },
+      {
+        type: 'input',
+        name: 'abi',
+        message: 'ABI file (path)',
+        skip: () => abiFromFile === false
+      },
+      {
+        type: 'input',
+        name: 'contractName',
+        message: 'Contract Name',
+        initial: 'Contract',
+        validate: (value) => value && value.length > 0,
+      },
+    ]
+
+    // Get the cwd before process.chdir in order to switch back in the end of command execution
+    const cwd = process.cwd();
+  
+    try {
+      let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
+  
+      if (fs.existsSync(directory)) {
+        process.chdir(directory)
+      }
+  
+      let commandLine = ['add', contract, '--contract-name', contractName]
+  
+      if (abiFromFile) {
+        if (abi.includes(directory)) {
+          commandLine.push('--abi', path.normalize(abi.replace(directory, '')))
+        } else {
+          commandLine.push('--abi', abi)
+        }
+      }
+
+      await graphCli.run(commandLine)
+    } catch (e) {
+      toolbox.print.error(e)
+      process.exit(1)
+    }
+    finally {
+      process.chdir(cwd)
+    }
+  }
+
+  return addContractConfirmation
 }
