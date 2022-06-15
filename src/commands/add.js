@@ -19,6 +19,7 @@ ${chalk.dim('Options:')}
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
       --contract-name           Name of the contract (default: Contract)
       --merge-entities          Whether to merge entities with the same name (default: false)
+      --network-file <path>     Networks file (default: "manifestPath/networks.json")
   -h, --help                    Show usage information
 `
 
@@ -34,7 +35,8 @@ module.exports = {
       contractName,
       h,
       help,
-      mergeEntities
+      mergeEntities,
+      networkFile
     } = toolbox.parameters.options
 
     contractName = contractName || 'Contract'
@@ -123,7 +125,7 @@ module.exports = {
     await Subgraph.write(result, manifestPath)
 
     // Update networks.json
-    const directory = manifestPath.split("/").slice(0, -1).join("/")
+    const directory = networkFile || manifestPath.split("/").slice(0, -1).join("/")
     await updateNetworksFile(toolbox, network, contractName, address, directory)
 
     // Detect Yarn and/or NPM
