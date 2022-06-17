@@ -33,6 +33,12 @@ type DataSource {
 type ContractSource {
   account: String
   startBlock: BigInt
+  accounts: PartialAccount
+}
+
+type PartialAccount {
+  prefixes: [String!]
+  suffixes: [String!]
 }
 
 type ContractMapping {
