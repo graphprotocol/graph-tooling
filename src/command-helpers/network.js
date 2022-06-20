@@ -110,9 +110,9 @@ function hasChanges(identifierName, network, networkConfig, dataSource) {
 const updateNetworksFile = async (toolbox, network, dataSource, address, networksFile) => {
   await toolbox.patching.update(networksFile, (config) => {
     if(Object.keys(config).includes(network)) {
-      Object.assign(config[network], { [dataSource]: { "address": address } })
+      Object.assign(config[network], { [dataSource]: { address } })
     } else {
-      Object.assign(config, { [network]: { [dataSource]: { "address": address } }})
+      Object.assign(config, { [network]: { [dataSource]: { address } }})
     }
     return config
   })
