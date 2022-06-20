@@ -9,6 +9,7 @@ const { generateDataSource, writeABI, writeSchema, writeMapping } = require('../
 const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
 const EthereumABI = require('../protocols/ethereum/abi')
 const { fixParameters } = require('../command-helpers/gluegun')
+const { updateNetworksFile } = require('../command-helpers/network')
 
 const HELP = `
 ${chalk.bold('graph add')} <address> [<subgraph-manifest default: "./subgraph.yaml">]
@@ -18,6 +19,7 @@ ${chalk.dim('Options:')}
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
       --contract-name           Name of the contract (default: Contract)
       --merge-entities          Whether to merge entities with the same name (default: false)
+      --network-file <path>     Networks file (default: "./networks.json")
   -h, --help                    Show usage information
 `
 
@@ -33,7 +35,8 @@ module.exports = {
       contractName,
       h,
       help,
-      mergeEntities
+      mergeEntities,
+      networkFile
     } = toolbox.parameters.options
 
     contractName = contractName || 'Contract'
@@ -120,6 +123,10 @@ module.exports = {
     result.set('dataSources', dataSources.push(dataSource))
 
     await Subgraph.write(result, manifestPath)
+
+    // Update networks.json
+    const networksFile = networkFile || "./networks.json"
+    await updateNetworksFile(toolbox, network, contractName, address, networksFile)
 
     // Detect Yarn and/or NPM
     let yarn = await system.which('yarn')
