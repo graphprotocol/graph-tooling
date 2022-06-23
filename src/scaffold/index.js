@@ -141,8 +141,14 @@ dataSources:
   }
 
   generateTestExamples() {
+    if (!this.protocol.hasEvents()) {
+      throw new Error(`No events for ${this.contractName}`)
+    }
+
+    const [event] = abiEvents(this.abi).toJS()
+
     return prettier.format(
-      generateExampleTest(),
+      generateExampleTest(this.contractName, 'ExampleEntity', event.name),
       { parser: 'typescript', semi: false },
     )
   }
@@ -155,7 +161,9 @@ dataSources:
       'tsconfig.json': this.generateTsConfig(),
       src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
-      tests: { [`${strings.kebabCase(this.contractName)}.test.ts`]: this.generateTestExamples() },
+      tests: {
+        [`${strings.kebabCase(this.contractName)}.test.ts`]: this.generateTestExamples(),
+      },
     }
   }
 }
