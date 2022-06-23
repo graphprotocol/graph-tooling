@@ -14,6 +14,7 @@ const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-h
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
 const Protocol = require('../protocols')
+const { updateSubgraphNetwork } = require('../command-helpers/network')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -35,6 +36,8 @@ Options:
   -o,   --output-dir <path>       Output directory for build results (default: build/)
         --skip-migrations         Skip subgraph migrations (default: false)
   -w,   --watch                   Regenerate types when subgraph files change (default: false)
+        --network <name>          Network configuration to use from the networks config file
+        --network-file <path>     Networks config file path (default: "./networks.json")
 `
 
 const processForm = async (
@@ -52,7 +55,7 @@ const processForm = async (
       name: 'product',
       message: 'Product for which to deploy',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: 
+      skip:
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
         studio !== undefined || node !== undefined,
@@ -101,6 +104,8 @@ module.exports = {
       w,
       watch,
       debugFork,
+      network,
+      networkFile,
     } = toolbox.parameters.options
 
     // Support both long and short option variants
@@ -141,6 +146,10 @@ module.exports = {
       manifest !== undefined && manifest !== ''
         ? manifest
         : filesystem.resolve('subgraph.yaml')
+    networkFile =
+      networkFile !== undefined && networkFile !== ''
+        ? networkFile
+        : filesystem.resolve("networks.json")
 
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
@@ -221,6 +230,11 @@ module.exports = {
       print.error(e.message)
       process.exitCode = 1
       return
+    }
+
+    if (network) {
+      let identifierName = protocol.getContract().identifierName()
+      await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName)
     }
 
     const isStudio = node.match(/studio/)
