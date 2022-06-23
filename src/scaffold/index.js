@@ -15,6 +15,7 @@ const {
   generateExampleEntityType,
 } = require('./schema')
 const { generateEventIndexingHandlers } = require('./mapping')
+const { generateExampleTest } = require('./example-test')
 const { getSubgraphBasename } = require('../command-helpers/subgraph')
 
 module.exports = class Scaffold {
@@ -48,6 +49,7 @@ module.exports = class Scaffold {
             `--node http://localhost:8020/ ` +
             `--ipfs http://localhost:5001 ` +
             this.subgraphName,
+          'test': 'graph test',
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
@@ -138,6 +140,13 @@ dataSources:
       : undefined
   }
 
+  generateTestExamples() {
+    return prettier.format(
+      generateExampleTest(),
+      { parser: 'typescript', semi: false },
+    )
+  }
+
   generate() {
     return {
       'package.json': this.generatePackageJson(),
@@ -146,6 +155,7 @@ dataSources:
       'tsconfig.json': this.generateTsConfig(),
       src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
+      tests: { [`${strings.kebabCase(this.contractName)}.test.ts`]: this.generateTestExamples() },
     }
   }
 }
