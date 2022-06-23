@@ -4,19 +4,8 @@ const imports = [
 
 const testsFlow = `
 /**
-* -- Hooks order --
-* 
-* - beforeAll
-* 
-* - describe
-*  - beforeEach
-*  - test
-*  - afterEach
-*  - beforeEach
-*  - test
-*  - afterEach
-* 
-* - afterAll
+* Tests structure (matchstick-as >=0.5.0)
+* https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 */
 
 beforeAll(() => {
