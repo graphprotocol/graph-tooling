@@ -1,6 +1,6 @@
 # The Graph CLI (subgraph-cli)
 
-[![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-cli.svg)](https://www.npmjs.com/package/@graphprotocol/graph-cli)
+[![npm (scoped)](https://img.shields.io/npm/v/subgraph-cli.svg)](https://www.npmjs.com/package/subgraph-cli)
 [![Build Status](https://travis-ci.org/graphprotocol/graph-cli.svg?branch=main)](https://travis-ci.org/graphprotocol/graph-cli)
 
 ## The Graph Command Line Interface
@@ -33,10 +33,10 @@ The Graph CLI can be installed with `npm` or `yarn`:
 
 ```sh
 # NPM
-npm install -g @graphprotocol/graph-cli
+npm install -g subgraph-cli
 
 # Yarn
-yarn global add @graphprotocol/graph-cli
+yarn global add subgraph-cli
 ```
 
 ### On Linux

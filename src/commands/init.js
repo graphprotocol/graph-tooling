@@ -536,7 +536,7 @@ const initRepository = async (toolbox, directory) =>
 // https://docs.npmjs.com/cli/v7/commands/npm-link.
 const npmLinkToLocalCli = async (toolbox, directory) => {
   if (process.env.GRAPH_CLI_TESTS) {
-    await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory })
+    await toolbox.system.run('npm link subgraph-cli', { cwd: directory })
   }
 }
 
@@ -664,7 +664,7 @@ const initSubgraphFromExample = async (
 
         // Remove example's cli in favor of the local one (added via `npm link`)
         if (process.env.GRAPH_CLI_TESTS) {
-          delete pkgJson['devDependencies']['@graphprotocol/graph-cli']
+          delete pkgJson['devDependencies']['subgraph-cli']
         }
 
         // Write package.json
