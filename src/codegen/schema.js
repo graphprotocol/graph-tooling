@@ -6,20 +6,20 @@ const typesCodegen = require('./types')
 const List = immutable.List
 
 class IdField {
-  static BYTES = Symbol("Bytes")
-  static STRING = Symbol("String")
+  static BYTES = Symbol('Bytes')
+  static STRING = Symbol('String')
 
   constructor(idField) {
     const typeName = idField.getIn(['type', 'type', 'name', 'value'])
-    this.kind = typeName === "Bytes" ? IdField.BYTES : IdField.STRING
+    this.kind = typeName === 'Bytes' ? IdField.BYTES : IdField.STRING
   }
 
   typeName() {
-    return this.kind === IdField.BYTES ? "Bytes" : "string"
+    return this.kind === IdField.BYTES ? 'Bytes' : 'string'
   }
 
   gqlTypeName() {
-    return this.kind === IdField.BYTES ? "Bytes" : "String"
+    return this.kind === IdField.BYTES ? 'Bytes' : 'String'
   }
 
   tsNamedType() {
@@ -27,19 +27,19 @@ class IdField {
   }
 
   tsValueFrom() {
-    return this.kind === IdField.BYTES ? "Value.fromBytes(id)" : "Value.fromString(id)"
+    return this.kind === IdField.BYTES ? 'Value.fromBytes(id)' : 'Value.fromString(id)'
   }
 
   tsValueKind() {
-    return this.kind === IdField.BYTES ? "ValueKind.BYTES" : "ValueKind.STRING"
+    return this.kind === IdField.BYTES ? 'ValueKind.BYTES' : 'ValueKind.STRING'
   }
 
   tsValueToString() {
-    return this.kind == IdField.BYTES ? "id.toBytes().toHexString()" : "id.toString()"
+    return this.kind == IdField.BYTES ? 'id.toBytes().toHexString()' : 'id.toString()'
   }
 
   tsToString() {
-    return this.kind == IdField.BYTES ? "id.toHexString()" : "id"
+    return this.kind == IdField.BYTES ? 'id.toHexString()' : 'id'
   }
 
   static fromFields(fields) {
@@ -48,7 +48,7 @@ class IdField {
   }
 
   static fromTypeDef(def) {
-    return IdField.fromFields(def.get("fields"))
+    return IdField.fromFields(def.get('fields'))
   }
 }
 
@@ -96,6 +96,10 @@ module.exports = class SchemaCodeGenerator {
     )
   }
 
+  _isInterfaceDefinition(def) {
+    return def.get('kind') === 'InterfaceTypeDefinition'
+  }
+
   _generateEntityType(def) {
     let name = def.getIn(['name', 'value'])
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
@@ -120,41 +124,6 @@ module.exports = class SchemaCodeGenerator {
     return klass
   }
 
-  // Fields that are non-nullable get an empty/zero value set in the class constructor.
-  _generateDefaultFieldValues(fields) {
-    const indexOfIdField = fields.findIndex(field => field.getIn(['name', 'value']) === 'id')
-    const fieldsWithoutId = fields.remove(indexOfIdField)
-
-    const fieldsSetCalls = fieldsWithoutId
-      .map(field => {
-        const name = field.getIn(['name', 'value'])
-        const type = this._typeFromGraphQl(field.get('type'), true, true)
-
-        const isNullable = type instanceof tsCodegen.NullableType
-
-        const directives = field.get('directives')
-        const isDerivedFrom = directives.some(directive => directive.getIn(['name', 'value']) === 'derivedFrom')
-
-        return { name, type, isNullable, isDerivedFrom }
-      })
-      // We only call the setter with the default value in the constructor for fields that are:
-      // - Not nullable, so that AS doesn't break when subgraph developers try to access them before a `set`
-      //   - It doesn't matter if it's primitive or not
-      // - Not tagged as `derivedFrom`, because they only exist in query time
-      .filter(({
-        isNullable,
-        isDerivedFrom,
-      }) => !isNullable && !isDerivedFrom)
-      .map(({ name, type, isNullable }) => {
-        const fieldTypeString = isNullable ? type.inner.toString() : type.toString()
-
-        return `
-        this.set('${name}', ${typesCodegen.initializedValueFromAsc(fieldTypeString)})`
-      })
-
-    return fieldsSetCalls.join('')
-  }
-
   _generateConstructor(entityName, fields) {
     const idField = IdField.fromFields(fields)
     return tsCodegen.method(
@@ -164,7 +133,6 @@ module.exports = class SchemaCodeGenerator {
       `
       super()
       this.set('id', ${idField.tsValueFrom()})
-      ${this._generateDefaultFieldValues(fields)}
       `,
     )
   }
@@ -247,7 +215,7 @@ module.exports = class SchemaCodeGenerator {
       throw new Error(`
 GraphQL schema can't have List's with Nullable members.
 Error in '${name}' field of type '[${baseType}]'.
-Suggestion: add an '!' to the member type of the List, change from '[${baseType}]' to '[${baseType}!]'`
+Suggestion: add an '!' to the member type of the List, change from '[${baseType}]' to '[${baseType}!]'`,
       )
     }
 
@@ -278,8 +246,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
 
     // If this is a reference to another type, the field has the type of
     // the referred type's id field
-    const typeDef = this.schema.ast.get("definitions").
-      find(def => this._isEntityTypeDefinition(def) && def.getIn(["name", "value"]) === typeName)
+    const typeDef = this.schema.ast.get('definitions').find(def => (this._isEntityTypeDefinition(def) || this._isInterfaceDefinition(def)) && def.getIn(['name', 'value']) === typeName)
     if (typeDef) {
       return IdField.fromTypeDef(typeDef).typeName()
     } else {
@@ -313,7 +280,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     }
   }
 
-  _typeFromGraphQl(gqlType, nullable = true, nullablePrimitive = false) {
+  _typeFromGraphQl(gqlType, nullable = true) {
     if (gqlType.get('kind') === 'NonNullType') {
       return this._typeFromGraphQl(gqlType.get('type'), false)
     } else if (gqlType.get('kind') === 'ListType') {
@@ -324,13 +291,8 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
       let type = tsCodegen.namedType(
         typesCodegen.ascTypeForValue(this._resolveFieldType(gqlType)),
       )
-
-      // Will not wrap primitives into NullableType by default.
-      if (!nullablePrimitive && type.isPrimitive()) {
-        return type
-      }
-
-      return nullable ? tsCodegen.nullableType(type) : type
+      // In AssemblyScript, primitives cannot be nullable.
+      return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type
     }
   }
 }
