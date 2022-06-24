@@ -1,6 +1,6 @@
 {
   "name": "subgraph-cli",
-  "version": "0.31.111",
+  "version": "0.31.112",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {
     "assemblyscript": "0.19.10",

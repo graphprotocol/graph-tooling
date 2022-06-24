@@ -14,9 +14,9 @@ const throwCombinedError = (filename, errors) => {
 
   Path: ${e.get('path').size === 0 ? '/' : e.get('path').join(' > ')}
   ${e
-    .get('message')
-    .split('\n')
-    .join('\n  ')}`,
+          .get('message')
+          .split('\n')
+          .join('\n  ')}`,
       `Error in ${path.relative(process.cwd(), filename)}:`,
     ),
   )
@@ -25,16 +25,16 @@ const throwCombinedError = (filename, errors) => {
 const buildCombinedWarning = (filename, warnings) =>
   warnings.size > 0
     ? warnings.reduce(
-        (msg, w) =>
-          `${msg}
+    (msg, w) =>
+      `${msg}
 
     Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
     ${w
-      .get('message')
-      .split('\n')
-      .join('\n    ')}`,
-        `Warnings in ${path.relative(process.cwd(), filename)}:`,
-      ) + '\n'
+        .get('message')
+        .split('\n')
+        .join('\n    ')}`,
+    `Warnings in ${path.relative(process.cwd(), filename)}:`,
+  ) + '\n'
     : null
 
 module.exports = class Subgraph {
@@ -81,14 +81,14 @@ module.exports = class Subgraph {
               : ''
           }
   ${errors
-    .map(error =>
-      error
-        .get('message')
-        .split('\n')
-        .join('\n  '),
-    )
-    .map(msg => `${directive ? '  ' : ''}- ${msg}`)
-    .join('\n  ')}`
+            .map(error =>
+              error
+                .get('message')
+                .split('\n')
+                .join('\n  '),
+            )
+            .map(msg => `${directive ? '  ' : ''}- ${msg}`)
+            .join('\n  ')}`
         }, ``)
         return `${msg}
 
@@ -101,29 +101,29 @@ module.exports = class Subgraph {
 
   static validateRepository(manifest, { resolveFile }) {
     return manifest.get('repository') !==
-      'https://github.com/graphprotocol/example-subgraph'
+    'https://github.com/graphprotocol/example-subgraph'
       ? immutable.List()
       : immutable.List().push(
-          immutable.fromJS({
-            path: ['repository'],
-            message: `\
+        immutable.fromJS({
+          path: ['repository'],
+          message: `\
 The repository is still set to https://github.com/graphprotocol/example-subgraph.
 Please replace it with a link to your subgraph source code.`,
-          }),
-        )
+        }),
+      )
   }
 
   static validateDescription(manifest, { resolveFile }) {
     // TODO: Maybe implement this in the future for each protocol example description
     return manifest.get('description', '').startsWith('Gravatar for ')
       ? immutable.List().push(
-          immutable.fromJS({
-            path: ['description'],
-            message: `\
+        immutable.fromJS({
+          path: ['description'],
+          message: `\
 The description is still the one from the example subgraph.
 Please update it to tell users more about your subgraph.`,
-          }),
-        )
+        }),
+      )
       : immutable.List()
   }
 
@@ -146,13 +146,13 @@ Please update it to tell users more about your subgraph.`,
 
         return areAllHandlersEmpty
           ? errors.push(
-              immutable.fromJS({
-                path: path,
-                message: `\
+            immutable.fromJS({
+              path: path,
+              message: `\
 Mapping has no ${handlerNamesWithoutLast} or ${handlerTypes.get(-1)}.
 At least one such handler must be defined.`,
-              }),
-            )
+            }),
+          )
           : errors
       }, immutable.List())
   }
@@ -246,12 +246,12 @@ More than one template named '${name}', template names must be unique.`,
     let errors = skipValidation
       ? immutable.List()
       : immutable.List.of(
-          ...protocolSubgraph.validateManifest(),
-          ...Subgraph.validateContractValues(manifest, protocol),
-          ...Subgraph.validateUniqueDataSourceNames(manifest),
-          ...Subgraph.validateUniqueTemplateNames(manifest),
-          ...Subgraph.validateHandlers(manifest, protocol, protocolSubgraph),
-        )
+        ...protocolSubgraph.validateManifest(),
+        ...Subgraph.validateContractValues(manifest, protocol),
+        ...Subgraph.validateUniqueDataSourceNames(manifest),
+        ...Subgraph.validateUniqueTemplateNames(manifest),
+        ...Subgraph.validateHandlers(manifest, protocol, protocolSubgraph),
+      )
 
     if (errors.size > 0) {
       throwCombinedError(filename, errors)
@@ -261,9 +261,9 @@ More than one template named '${name}', template names must be unique.`,
     let warnings = skipValidation
       ? immutable.List()
       : immutable.List.of(
-          ...Subgraph.validateRepository(manifest, { resolveFile }),
-          ...Subgraph.validateDescription(manifest, { resolveFile }),
-        )
+        ...Subgraph.validateRepository(manifest, { resolveFile }),
+        ...Subgraph.validateDescription(manifest, { resolveFile }),
+      )
 
     return {
       result: manifest,

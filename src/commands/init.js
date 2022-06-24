@@ -15,7 +15,7 @@ const { initNetworksConfig } = require('../command-helpers/network')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
-const { loadAbiFromEtherscan, loadAbiFromBlockScout, useBlockScout } = require('../command-helpers/abi')
+const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
 const { generateScaffold, writeScaffold } = require('../command-helpers/scaffold')
 const { abiEvents } = require('../scaffold/schema')
 const { validateContract } = require('../validation')
@@ -78,7 +78,7 @@ const processInitForm = async (
     fromExample,
     network,
     subgraphName,
-    contractName,
+    contractName
   },
 ) => {
   let abiFromEtherscan = undefined
@@ -210,13 +210,12 @@ const processInitForm = async (
         // Try loading the ABI from Etherscan, if none was provided
         if (protocolInstance.hasABIs() && !abi) {
           try {
-            if (useBlockScout(network)) {
+            if (network === 'poa-core') {
               abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
             } else {
               abiFromEtherscan = await loadAbiFromEtherscan(ABI, network, value)
             }
-          } catch (e) {
-          }
+          } catch (e) {}
         }
         return value
       },
@@ -253,7 +252,7 @@ const processInitForm = async (
       result: value => {
         contractName = value
         return value
-      },
+      }
     },
   ]
 
@@ -323,7 +322,7 @@ module.exports = {
         help,
         h,
         indexEvents,
-        studio,
+        studio
       })
     } catch (e) {
       print.error(e.message)
@@ -397,7 +396,7 @@ module.exports = {
           }
         } else {
           try {
-            if (useBlockScout(network)) {
+            if (network === 'poa-core') {
               abi = await loadAbiFromBlockScout(ABI, network, fromContract)
             } else {
               abi = await loadAbiFromEtherscan(ABI, network, fromContract)
@@ -423,7 +422,7 @@ module.exports = {
           contractName,
           node,
           studio,
-          product,
+          product
         },
         { commands, addContract: false },
       )
@@ -442,7 +441,7 @@ module.exports = {
       fromExample,
       network,
       subgraphName,
-      contractName,
+      contractName
     })
 
     // Exit immediately when the form is cancelled
@@ -468,7 +467,7 @@ module.exports = {
         product: inputs.product,
         studio,
         node,
-        allowSimpleName,
+        allowSimpleName
       }))
       await initSubgraphFromContract(
         toolbox,
@@ -484,7 +483,7 @@ module.exports = {
           contractName: inputs.contractName,
           node,
           studio: inputs.studio,
-          product: inputs.product,
+          product: inputs.product
         },
         { commands, addContract: true },
       )
@@ -536,7 +535,7 @@ const initRepository = async (toolbox, directory) =>
 // https://docs.npmjs.com/cli/v7/commands/npm-link.
 const npmLinkToLocalCli = async (toolbox, directory) => {
   if (process.env.GRAPH_CLI_TESTS) {
-    await toolbox.system.run('npm link subgraph-cli', { cwd: directory })
+    await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory })
   }
 }
 
@@ -638,7 +637,7 @@ const initSubgraphFromExample = async (
     return
   }
 
-  let networkConf = await initNetworksConfig(toolbox, directory, 'address')
+  let networkConf = await initNetworksConfig(toolbox, directory, "address")
   if (networkConf !== true) {
     process.exitCode = 1
     return
@@ -664,7 +663,7 @@ const initSubgraphFromExample = async (
 
         // Remove example's cli in favor of the local one (added via `npm link`)
         if (process.env.GRAPH_CLI_TESTS) {
-          delete pkgJson['devDependencies']['subgraph-cli']
+          delete pkgJson['devDependencies']['@graphprotocol/graph-cli']
         }
 
         // Write package.json
@@ -720,7 +719,7 @@ const initSubgraphFromContract = async (
     contractName,
     node,
     studio,
-    product,
+    product
   },
   { commands, addContract },
 ) => {
@@ -854,7 +853,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         type: 'input',
         name: 'abi',
         message: 'ABI file (path)',
-        skip: () => abiFromFile === false,
+        skip: () => abiFromFile === false
       },
       {
         type: 'input',
@@ -866,7 +865,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
     ]
 
     // Get the cwd before process.chdir in order to switch back in the end of command execution
-    const cwd = process.cwd()
+    const cwd = process.cwd();
 
     try {
       let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
@@ -889,7 +888,8 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
     } catch (e) {
       toolbox.print.error(e)
       process.exit(1)
-    } finally {
+    }
+    finally {
       process.chdir(cwd)
     }
   }
