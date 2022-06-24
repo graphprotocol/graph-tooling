@@ -1,0 +1,10 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: /
+  Conflicting protocol kinds used in data sources and templates:
+    Data sources and templates using 'ethereum':
+      - ExampleSubgraph
+    Data sources and templates using 'near':
+      - ExampleTemplate
+  Recommendation: Make all data sources and templates use the same protocol kind.

@@ -1,7 +1,8 @@
 version: '3'
 services:
   graph-node:
-    image: graphprotocol/graph-node:2e0dc0b # TODO: change to latest once it has 0.0.5
+    # TODO: change to "latest" once it supports apiVersion 0.0.5 and specVersion 0.0.7
+    image: graphprotocol/graph-node:4a8e819
     ports:
       - '18000:8000'
       - '18001:8001'
@@ -20,7 +21,8 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: 'test:http://ethereum:8545'
       GRAPH_LOG: trace
-      GRAPH_MAX_API_VERSION: '0.0.5' # TODO: remove once latest has 0.0.5 by default
+      GRAPH_MAX_API_VERSION: '0.0.7' # TODO: remove once "latest" supports apiVersion 0.0.7 by default
+      GRAPH_MAX_SPEC_VERSION: '0.0.5' # TODO: remove once "latest" supports specVersion 0.0.5 by default
   ethereum:
     image: trufflesuite/ganache-cli:latest
     ports:

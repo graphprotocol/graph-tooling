@@ -7,9 +7,6 @@
   Path: schema > file
   File does not exist: non-existent.grapqhl
 
-  Path: dataSources > 0 > kind
-  No value provided
-
   Path: dataSources > 0 > name
   Expected string, found number:
   5

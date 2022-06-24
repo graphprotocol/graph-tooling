@@ -1,5 +1,6 @@
 const prettier = require('prettier')
 const pkginfo = require('pkginfo')(module)
+const { strings } = require('gluegun')
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   // JSON.stringify should remove this key, we will install the local
@@ -49,8 +50,8 @@ module.exports = class Scaffold {
             this.subgraphName,
         },
         dependencies: {
-          'rsc-graph-cli': GRAPH_CLI_VERSION,
-          '@graphprotocol/graph-ts': `0.24.1`,
+          'subgraph-cli': GRAPH_CLI_VERSION,
+          '@graphprotocol/graph-ts': `0.27.0`,
         },
       }),
       { parser: 'json' },

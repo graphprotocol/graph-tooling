@@ -227,15 +227,15 @@ class Compiler {
           templates === undefined
             ? templates
             : templates.map(template =>
-                template.updateIn(['mapping', 'file'], mappingPath =>
-                  this._compileTemplateMapping(
-                    template,
-                    mappingPath,
-                    compiledFiles,
-                    spinner,
-                  ),
+              template.updateIn(['mapping', 'file'], mappingPath =>
+                this._compileTemplateMapping(
+                  template,
+                  mappingPath,
+                  compiledFiles,
+                  spinner,
                 ),
               ),
+            ),
         )
 
         return subgraph
@@ -378,7 +378,7 @@ class Compiler {
   _validateMappingContent(filePath) {
     const data = fs.readFileSync(filePath)
     if (
-      this.blockIpfsMethods && 
+      this.blockIpfsMethods &&
       (data.includes('ipfs.cat') || data.includes('ipfs.map'))
     ) {
       throw Error(`
