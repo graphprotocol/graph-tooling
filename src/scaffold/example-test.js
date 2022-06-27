@@ -1,7 +1,7 @@
 const generateExampleTest = (contract, entity, event) =>
   [
     [
-      'import { assert, describe, test, beforeAll, beforeEach, afterEach, afterAll} from "matchstick-as/assembly/index"',
+      'import { assert, describe, test, clearStore, beforeAll, beforeEach, afterEach, afterAll} from "matchstick-as/assembly/index"',
       `import { ${entity} } from "../generated/schema"`,
       `import { ${event} } from "../generated/${contract}/${contract}"`,
       `import { handle${event} } from "../src/${contract.toLowerCase()}"`,
@@ -13,28 +13,27 @@ const generateExampleTest = (contract, entity, event) =>
      * https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
      */
     
-    beforeAll(() => {
-    console.log("Before all tests");
+    describe("Describe entity assertions", () => {
+        beforeAll(() => {
+            let ${entity.toLowerCase()} = new ${entity}("enittyId0")
+            ${entity.toLowerCase()}.save()
+        })
+
+        afterAll(() => {
+            clearStore()
+        })
+        
+        test("Enitity created and stored", () => {
+            assert.entityCount('${entity}', 1)
+            assert.fieldEquals(
+                '${entity}',
+                "enittyId0",
+                "id",
+                "enittyId0",
+            )
+        })
     })
-    
-    beforeEach(() => {
-    console.log("Before each test");
-    })
-    
-    describe("Describe info", () => {
-    test("Test case info", () => {
-        const variable = null
-        assert.assertNull(variable)
-    })
-    })
-    
-    afterEach(() => {
-    console.log("After each test");
-    })
-    
-    afterAll(() => {
-    console.log("After all tests");
-    })`,
+    `,
   ].join('\n')
 
 module.exports = {

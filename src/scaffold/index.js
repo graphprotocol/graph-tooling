@@ -142,13 +142,16 @@ dataSources:
 
   generateTestExamples() {
     if (!this.protocol.hasEvents()) {
-      throw new Error(`No events for ${this.contractName}`)
+      return
     }
 
     const [event] = abiEvents(this.abi).toJS()
+    const entity = this.indexEvents ? `${event.name}Enitty` : 'ExampleEntity'
+
+    const eventInputs = event.inputs.map(({name, type}) => ({[name]: type}))
 
     return prettier.format(
-      generateExampleTest(this.contractName, 'ExampleEntity', event.name),
+      generateExampleTest(this.contractName, entity, event.name, eventInputs),
       { parser: 'typescript', semi: false },
     )
   }
