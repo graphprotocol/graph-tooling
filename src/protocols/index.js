@@ -76,7 +76,9 @@ module.exports = class Protocol {
         'cosmoshub-4',
         'theta-testnet-001',
         'osmosis-1',
-        'osmo-test-4'
+        'osmo-test-4',
+        'juno-1',
+        'uni-3'
       ],
     })
   }
