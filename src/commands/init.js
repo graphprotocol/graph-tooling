@@ -16,7 +16,7 @@ const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
 const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
-const { generateScaffold, writeScaffold } = require('../command-helpers/scaffold')
+const { generateScaffold, writeScaffold, writeTestsHelper } = require('../command-helpers/scaffold')
 const { abiEvents } = require('../scaffold/schema')
 const { validateContract } = require('../validation')
 const Protocol = require('../protocols')
@@ -784,6 +784,11 @@ const initSubgraphFromContract = async (
     return
   }
 
+  // Matchstick supports only ethereum subgraphs
+  if (protocolInstance.displayName() === 'Ethereum') {
+    await writeTestsHelper(abi, contractName, directory)
+  }
+
   if (protocolInstance.hasContract()) {
     let identifierName = protocolInstance.getContract().identifierName()
     let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
@@ -827,7 +832,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
   if (addContractConfirmation) {
     let abiFromFile
     let ProtocolContract = protocolInstance.getContract()
-  
+
     let questions = [
       {
         type: 'input',
@@ -866,16 +871,16 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
 
     // Get the cwd before process.chdir in order to switch back in the end of command execution
     const cwd = process.cwd();
-  
+
     try {
       let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
-  
+
       if (fs.existsSync(directory)) {
         process.chdir(directory)
       }
-  
+
       let commandLine = ['add', contract, '--contract-name', contractName]
-  
+
       if (abiFromFile) {
         if (abi.includes(directory)) {
           commandLine.push('--abi', path.normalize(abi.replace(directory, '')))

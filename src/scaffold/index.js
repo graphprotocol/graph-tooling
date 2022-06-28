@@ -145,6 +145,7 @@ dataSources:
       'tsconfig.json': this.generateTsConfig(),
       src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
+      tests: {},
     }
   }
 }

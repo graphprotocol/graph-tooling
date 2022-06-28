@@ -7,6 +7,7 @@ const { step } = require('./spinner')
 const Scaffold = require('../scaffold')
 const { generateEventIndexingHandlers } = require('../scaffold/mapping')
 const { generateEventType, abiEvents } = require('../scaffold/schema')
+const { ascTypeForEthereum, ethereumFromAsc } = require("../codegen/types")
 const { strings } = require('gluegun')
 const { Map } = require('immutable')
 
@@ -120,6 +121,63 @@ const writeMapping = async (abi, protocol, contractName, entities) => {
   await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, { encoding: 'utf-8' })
 }
 
+const writeTestsHelper = async (abi, contractName, directory = "./") => {
+  let utilsFile = prettier.format(
+    generateTestHelperFile(abiEvents(abi).toJS(), contractName),
+    { parser: 'typescript', semi: false },
+  )
+
+  const filePath = path.join(directory, `tests/${strings.kebabCase(contractName)}-utils.ts`)
+  await fs.writeFile(filePath, utilsFile, { encoding: 'utf-8' })
+}
+
+const generateTestHelperFile = (events, contractName) => {
+  const eventsNames = events.map(event => event.name)
+  const eventsTypes = events.flatMap(event => event.inputs.map(input => ascTypeForEthereum(input.type))).filter(type => !isNativeType(type))
+  const importedTypes = [...new Set(eventsTypes)].join(', ');
+
+  let utils = `import { newMockEvent } from 'matchstick-as';
+  import { ethereum, ${importedTypes} } from '@graphprotocol/graph-ts';
+  import { ${eventsNames.join(', ')} } from '../generated/${contractName}/${contractName}';
+  `
+
+  events.forEach(function(event) {
+    utils = utils.concat("\n", generateMockedEvent(event))
+  });
+
+  return utils
+}
+
+const generateMockedEvent = (event) => {
+  const varName = `${strings.camelCase(event.name)}Event`
+  const fnArgs = event.inputs.map(input => `${input.name}: ${ascTypeForEthereum(input.type)}`);
+  const ascToEth = event.inputs.map(input => `${varName}.parameters.push(new ethereum.EventParam("${input.name}", ${ethereumFromAsc(input.name, input.type)}))`);
+
+  return  `
+    export function create${event._alias}Event(${fnArgs.join(', ')}): ${event._alias} {
+      let ${varName} = changetype<${event._alias}>(newMockEvent());
+
+      ${varName}.parameters = new Array();
+
+      ${ascToEth.join('\n')}
+
+      return ${varName};
+    }
+  `
+
+}
+
+const isNativeType = (type) => {
+  let natives = [
+    /Array<([a-zA-Z0-9]+)?>/,
+    /i32/,
+    /string/,
+    /boolean/
+  ]
+
+  return natives.some(rx => rx.test(type));
+}
+
 module.exports = {
   ...module.exports,
   generateScaffold,
@@ -128,4 +186,5 @@ module.exports = {
   writeABI,
   writeSchema,
   writeMapping,
+  writeTestsHelper,
 }

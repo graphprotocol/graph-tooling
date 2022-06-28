@@ -5,7 +5,7 @@ const { withSpinner } = require('../command-helpers/spinner')
 const Subgraph = require('../subgraph')
 const Protocol = require('../protocols')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
-const { generateDataSource, writeABI, writeSchema, writeMapping } = require('../command-helpers/scaffold')
+const { generateDataSource, writeABI, writeSchema, writeMapping, writeTestsHelper } = require('../command-helpers/scaffold')
 const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
 const EthereumABI = require('../protocols/ethereum/abi')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -103,8 +103,13 @@ module.exports = {
     await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
 
+    // Matchstick supports only ethereum subgraphs
+    if (protocol.displayName() === 'Ethereum') {
+      await writeTestsHelper(ethabi, contractName)
+    }
+
     let dataSources = result.get('dataSources')
-    let dataSource = await generateDataSource(protocol, 
+    let dataSource = await generateDataSource(protocol,
       contractName, network, address, ethabi)
 
     // Handle the collisions edge case by copying another data source yaml data
@@ -181,12 +186,12 @@ const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntiti
     if (dataRow.get('type') === 'event'){
       if (entities.indexOf(dataRow.get('name')) !== -1) {
         if (entities.indexOf(`${contractName}${dataRow.get('name')}`) !== -1) {
-          print.error(`Contract name ('${contractName}') 
+          print.error(`Contract name ('${contractName}')
             + event name ('${dataRow.get('name')}') entity already exists.`)
           process.exitCode = 1
           return
         }
-        
+
         if (mergeEntities) {
           collisionEntities.push(dataRow.get('name'))
           abiData = abiData.asImmutable().delete(i) // needs to be immutable when deleting, yes you read that right - https://github.com/immutable-js/immutable-js/issues/1901
