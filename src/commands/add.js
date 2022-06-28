@@ -24,7 +24,7 @@ ${chalk.dim('Options:')}
 `
 
 module.exports = {
-  description: 'Creates a new subgraph with basic scaffolding',
+  description: 'Adds a new datasource to a subgraph',
   run: async toolbox => {
     // Obtain tools
     let { print, system } = toolbox
