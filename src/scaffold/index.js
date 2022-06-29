@@ -15,6 +15,7 @@ const {
   generateExampleEntityType,
 } = require('./schema')
 const { generateEventIndexingHandlers } = require('./mapping')
+const { generateExampleTest } = require('./example-test')
 const { getSubgraphBasename } = require('../command-helpers/subgraph')
 
 module.exports = class Scaffold {
@@ -48,10 +49,12 @@ module.exports = class Scaffold {
             `--node http://localhost:8020/ ` +
             `--ipfs http://localhost:5001 ` +
             this.subgraphName,
+          'test': 'graph test',
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
           '@graphprotocol/graph-ts': `0.27.0`,
+          'matchstick-as': `0.5.0`
         },
       }),
       { parser: 'json' },
@@ -143,8 +146,20 @@ dataSources:
     : undefined
   }
 
+  generateTestExamples() {
+    const [event] = abiEvents(this.abi).toJS()
+    const entity = this.indexEvents ? `${event.name}Enitty` : 'ExampleEntity'
+
+    const eventInputs = event.inputs.map(({name, type}) => ({[name]: type}))
+
+    return prettier.format(
+      generateExampleTest(this.contractName, entity, event.name, eventInputs),
+      { parser: 'typescript', semi: false },
+    )
+  }
+
   generate() {
-    return {
+    const scaffold = {
       'package.json': this.generatePackageJson(),
       'subgraph.yaml': this.generateManifest(),
       'schema.graphql': this.generateSchema(),
@@ -153,5 +168,14 @@ dataSources:
       abis: this.generateABIs(),
       tests: this.initTestsFolder(),
     }
+
+    // Matchsticks supports only Ethereum protocol at this moment
+    if (this.protocol.name === 'ethereum') {
+      scaffold.tests = {
+        [`${strings.kebabCase(this.contractName)}.test.ts`]: this.generateTestExamples(),
+      }
+    }
+
+    return scaffold
   }
 }
