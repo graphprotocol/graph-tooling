@@ -1,9 +1,9 @@
-const generateFieldsAssertions = (entity, fields) => Object.keys(fields).map(fieldName => `
+const generateFieldsAssertions = (entity, eventInputs) => Object.keys(eventInputs).map(fieldName => `
   assert.fieldEquals(
     '${entity}',
     "enittyId0",
     "${fieldName}",
-    "eventInputs.${fieldName}"
+    "eventInputs.${fieldName},"
   )`
 ).join('\n')
 
@@ -34,7 +34,7 @@ const generateExampleTest = (contract, entity, event, eventInputs) =>
         
         test("Enitity created and stored", () => {
             assert.entityCount('${entity}', 1)
-            ${generateFieldsAssertions(event, fields)}
+            ${generateFieldsAssertions(event, eventInputs)}
         })
     })
     `,
