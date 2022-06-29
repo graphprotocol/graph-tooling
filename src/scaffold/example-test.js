@@ -1,4 +1,13 @@
-const generateExampleTest = (contract, entity, event) =>
+const generateFieldsAssertions = (entity, fields) => Object.keys(fields).map(fieldName => `
+  assert.fieldEquals(
+    '${entity}',
+    "enittyId0",
+    "${fieldName}",
+    "eventInputs.${fieldName}"
+  )`
+).join('\n')
+
+const generateExampleTest = (contract, entity, event, eventInputs) =>
   [
     [
       'import { assert, describe, test, clearStore, beforeAll, beforeEach, afterEach, afterAll} from "matchstick-as/assembly/index"',
@@ -15,8 +24,8 @@ const generateExampleTest = (contract, entity, event) =>
     
     describe("Describe entity assertions", () => {
         beforeAll(() => {
-            let ${entity.toLowerCase()} = new ${entity}("enittyId0")
-            ${entity.toLowerCase()}.save()
+            let new${event}Event = create${event}Event(${eventInputs})
+            handle${event}(new${event}Event)
         })
 
         afterAll(() => {
@@ -25,12 +34,7 @@ const generateExampleTest = (contract, entity, event) =>
         
         test("Enitity created and stored", () => {
             assert.entityCount('${entity}', 1)
-            assert.fieldEquals(
-                '${entity}',
-                "enittyId0",
-                "id",
-                "enittyId0",
-            )
+            ${generateFieldsAssertions(event, fields)}
         })
     })
     `,
