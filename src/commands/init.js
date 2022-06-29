@@ -784,7 +784,7 @@ const initSubgraphFromContract = async (
     return
   }
 
-  if (this.protocol.hasEvents()) {
+  if (protocolInstance.hasEvents()) {
     await writeTestsHelper(abi, contractName, directory)
   }
 
