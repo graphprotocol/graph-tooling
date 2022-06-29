@@ -121,7 +121,7 @@ const writeMapping = async (abi, protocol, contractName, entities) => {
   await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, { encoding: 'utf-8' })
 }
 
-const writeTestsHelper = async (abi, contractName, directory = "./") => {
+const writeTestsHelper = async (abi, contractName, directory = "") => {
   let utilsFile = prettier.format(
     generateTestHelperFile(abiEvents(abi).toJS(), contractName),
     { parser: 'typescript', semi: false },

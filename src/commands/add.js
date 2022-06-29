@@ -103,8 +103,7 @@ module.exports = {
     await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
 
-    // Matchstick supports only ethereum subgraphs
-    if (protocol.displayName() === 'Ethereum') {
+    if (this.protocol.hasEvents()) {
       await writeTestsHelper(ethabi, contractName)
     }
 

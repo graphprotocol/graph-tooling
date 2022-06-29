@@ -137,6 +137,12 @@ dataSources:
       : undefined
   }
 
+  initTestsFolder() {
+    return this.protocol.hasEvents()
+    ? {}
+    : undefined
+  }
+
   generate() {
     return {
       'package.json': this.generatePackageJson(),
@@ -145,7 +151,7 @@ dataSources:
       'tsconfig.json': this.generateTsConfig(),
       src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
-      tests: {},
+      tests: this.initTestsFolder(),
     }
   }
 }

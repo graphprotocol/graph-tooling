@@ -784,8 +784,7 @@ const initSubgraphFromContract = async (
     return
   }
 
-  // Matchstick supports only ethereum subgraphs
-  if (protocolInstance.displayName() === 'Ethereum') {
+  if (this.protocol.hasEvents()) {
     await writeTestsHelper(abi, contractName, directory)
   }
 
