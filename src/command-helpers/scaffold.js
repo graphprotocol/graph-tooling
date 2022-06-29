@@ -10,7 +10,13 @@ const { generateEventType, abiEvents } = require('../scaffold/schema')
 const { strings } = require('gluegun')
 const { Map } = require('immutable')
 
-const generateDataSource = async (protocol, contractName, network, contractAddress, abi) => {
+const generateDataSource = async (
+  protocol,
+  contractName,
+  network,
+  contractAddress,
+  abi,
+) => {
   const protocolManifest = protocol.getManifestScaffold()
 
   return Map.of(
@@ -89,13 +95,13 @@ const writeABI = async (abi, contractName) => {
 
 const writeSchema = async (abi, protocol, schemaPath, entities) => {
   const events = protocol.hasEvents()
-    ? abiEvents(abi).filter(event => entities.indexOf(event.get('name')) === -1).toJS()
+    ? abiEvents(abi)
+        .filter(event => entities.indexOf(event.get('name')) === -1)
+        .toJS()
     : []
 
   let data = prettier.format(
-    events.map(
-        event => generateEventType(event, protocol.name)
-      ).join('\n\n'),
+    events.map(event => generateEventType(event, protocol.name)).join('\n\n'),
     {
       parser: 'graphql',
     },
@@ -106,18 +112,35 @@ const writeSchema = async (abi, protocol, schemaPath, entities) => {
 
 const writeMapping = async (abi, protocol, contractName, entities) => {
   const events = protocol.hasEvents()
-    ? abiEvents(abi).filter(event => entities.indexOf(event.get('name')) === -1).toJS()
+    ? abiEvents(abi)
+        .filter(event => entities.indexOf(event.get('name')) === -1)
+        .toJS()
     : []
 
-  let mapping = prettier.format(
-    generateEventIndexingHandlers(
-        events,
-        contractName,
-      ),
+  let mapping = prettier.format(generateEventIndexingHandlers(events, contractName), {
+    parser: 'typescript',
+    semi: false,
+  })
+
+  await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, {
+    encoding: 'utf-8',
+  })
+}
+
+const writeTestExample = async (abi, contractName) => {
+  const [event] = abiEvents(abi).toJS()
+  const entity = this.indexEvents ? `${event.name}Enitty` : 'ExampleEntity'
+
+  const eventInputs = event.inputs.map(({ name, type }) => ({ [name]: type }))
+
+  const testExample = prettier.format(
+    generateExampleTest(this.contractName, entity, event.name, eventInputs),
     { parser: 'typescript', semi: false },
   )
 
-  await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, { encoding: 'utf-8' })
+  await fs.writeFile(`./tests/${strings.kebabCase(contractName)}.test.ts`, testExample, {
+    encoding: 'utf-8',
+  })
 }
 
 module.exports = {
@@ -128,4 +151,5 @@ module.exports = {
   writeABI,
   writeSchema,
   writeMapping,
+  writeTestExample,
 }

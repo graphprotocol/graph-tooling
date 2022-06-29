@@ -141,10 +141,6 @@ dataSources:
   }
 
   generateTestExamples() {
-    if (!this.protocol.hasEvents()) {
-      return
-    }
-
     const [event] = abiEvents(this.abi).toJS()
     const entity = this.indexEvents ? `${event.name}Enitty` : 'ExampleEntity'
 
@@ -157,16 +153,22 @@ dataSources:
   }
 
   generate() {
-    return {
+    const scaffold = {
       'package.json': this.generatePackageJson(),
       'subgraph.yaml': this.generateManifest(),
       'schema.graphql': this.generateSchema(),
       'tsconfig.json': this.generateTsConfig(),
       src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
-      tests: {
-        [`${strings.kebabCase(this.contractName)}.test.ts`]: this.generateTestExamples(),
-      },
     }
+
+    // Matchsticks supports only Ethereum protocol at this moment
+    if (this.protocol.name === 'ethereum') {
+      scaffold.tests = {
+        [`${strings.kebabCase(this.contractName)}.test.ts`]: this.generateTestExamples(),
+      }
+    }
+
+    return scaffold
   }
 }

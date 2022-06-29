@@ -5,7 +5,7 @@ const { withSpinner } = require('../command-helpers/spinner')
 const Subgraph = require('../subgraph')
 const Protocol = require('../protocols')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
-const { generateDataSource, writeABI, writeSchema, writeMapping } = require('../command-helpers/scaffold')
+const { generateDataSource, writeABI, writeSchema, writeMapping, writeTestExample } = require('../command-helpers/scaffold')
 const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
 const EthereumABI = require('../protocols/ethereum/abi')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -102,6 +102,11 @@ module.exports = {
     await writeABI(ethabi, contractName)
     await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
+
+    // Matchsticks supports only Ethereum protocol at this moment
+    if (protocol.name === 'ethereum') {
+      await writeTestExample(ethabi, contractName)
+    }
 
     let dataSources = result.get('dataSources')
     let dataSource = await generateDataSource(protocol, 
