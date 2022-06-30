@@ -5,7 +5,7 @@ const { withSpinner } = require('../command-helpers/spinner')
 const Subgraph = require('../subgraph')
 const Protocol = require('../protocols')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
-const { generateDataSource, writeABI, writeSchema, writeMapping, writeTestExample, writeTestsHelper } = require('../command-helpers/scaffold')
+const { generateDataSource, writeABI, writeSchema, writeMapping, writeTestsFiles } = require('../command-helpers/scaffold')
 const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
 const EthereumABI = require('../protocols/ethereum/abi')
 const { fixParameters } = require('../command-helpers/gluegun')
@@ -103,9 +103,8 @@ module.exports = {
     await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
 
-    if (this.protocol.hasEvents()) {
-      await writeTestsHelper(ethabi, contractName)
-      await writeTestExample(ethabi, contractName)
+    if (protocol.hasEvents()) {
+      await writeTestsFiles(ethabi, contractName)
     }
 
     let dataSources = result.get('dataSources')

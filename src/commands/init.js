@@ -16,7 +16,7 @@ const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
 const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
-const { generateScaffold, writeScaffold, writeTestsHelper } = require('../command-helpers/scaffold')
+const { generateScaffold, writeScaffold } = require('../command-helpers/scaffold')
 const { abiEvents } = require('../scaffold/schema')
 const { validateContract } = require('../validation')
 const Protocol = require('../protocols')
@@ -782,10 +782,6 @@ const initSubgraphFromContract = async (
   if (scaffold !== true) {
     process.exitCode = 1
     return
-  }
-
-  if (protocolInstance.hasEvents()) {
-    await writeTestsHelper(abi, contractName, directory)
   }
 
   if (protocolInstance.hasContract()) {

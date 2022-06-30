@@ -15,7 +15,7 @@ const {
   generateExampleEntityType,
 } = require('./schema')
 const { generateEventIndexingHandlers } = require('./mapping')
-const { generateExampleTest } = require('./example-test')
+const { generateTestsFiles } = require('./tests')
 const { getSubgraphBasename } = require('../command-helpers/subgraph')
 
 module.exports = class Scaffold {
@@ -140,42 +140,25 @@ dataSources:
       : undefined
   }
 
-  initTestsFolder() {
-    return this.protocol.hasEvents()
-    ? {}
-    : undefined
+  generateTests() {
+    return this.protocol.hasEvents() ?  this.generateTestExamples() : undefined
   }
 
   generateTestExamples() {
-    const [event] = abiEvents(this.abi).toJS()
-    const entity = this.indexEvents ? `${event.name}Enitty` : 'ExampleEntity'
+    const events = abiEvents(this.abi).toJS()
 
-    const eventInputs = event.inputs.map(({name, type}) => ({[name]: type}))
-
-    return prettier.format(
-      generateExampleTest(this.contractName, entity, event.name, eventInputs),
-      { parser: 'typescript', semi: false },
-    )
+    return generateTestsFiles(this.contractName, events, this.indexEvents)
   }
 
   generate() {
-    const scaffold = {
+    return {
       'package.json': this.generatePackageJson(),
       'subgraph.yaml': this.generateManifest(),
       'schema.graphql': this.generateSchema(),
       'tsconfig.json': this.generateTsConfig(),
       src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
-      tests: this.initTestsFolder(),
+      tests: this.generateTests(),
     }
-
-    // Matchsticks supports only Ethereum protocol at this moment
-    if (this.protocol.name === 'ethereum') {
-      scaffold.tests = {
-        [`${strings.kebabCase(this.contractName)}.test.ts`]: this.generateTestExamples(),
-      }
-    }
-
-    return scaffold
   }
 }
