@@ -13,7 +13,7 @@ const VARIABLES_VALUES = {
 
 const generateTestsFiles = (contract, events, indexEvents) => {
   const event = events[0]
-  const eventsTypes = events.flatMap(event => event.inputs.map(input => ascTypeForEthereum(input.type))).filter(type => !isNativeType(type))
+  const eventsTypes = events.flatMap(event => event.inputs.map(input => ascTypeForEthereum(input.type))).filter(type => !type.startsWith("ethereum.") && !isNativeType(type))
   const importTypes = [...new Set(eventsTypes)].join(', ')
 
   return {
@@ -22,23 +22,23 @@ const generateTestsFiles = (contract, events, indexEvents) => {
   }
 }
 
-const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInputs.filter(input => input.name != "id").map(input =>
+const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInputs.filter(input => input.name != "id").map((input, index) =>
   `assert.fieldEquals(
     "${entity}",
     "0xa16081f360e3847006db660bae1c6d1b2e17ec2a${indexEvents ? "-1" : ""}",
-    "${input.name}",
-    "${VARIABLES_VALUES[ascTypeForEthereum(input.type)]}"
+    "${input.name || `param${index}`}",
+    "${expectedValue(ascTypeForEthereum(input.type))}"
   )`
 ).join('\n')
 
 const generateArguments = (eventInputs) => {
-  return eventInputs.map(input => {
+  return eventInputs.map((input, index) => {
     let ascType = ascTypeForEthereum(input.type)
-    return `let ${input.name} = ${generateValues(ascType, input.name)}`
+    return `let ${input.name || `param${index}`} = ${assignValue(ascType, input.name)}`
   }).join('\n')
 }
 
-const generateValues = (type, name) => {
+const assignValue = (type) => {
   switch (type) {
     case "string":
       return `"${VARIABLES_VALUES[type]}"`
@@ -50,10 +50,21 @@ const generateValues = (type, name) => {
       return `Bytes.fromI32(${VARIABLES_VALUES[type]})`
     case type.match(/Array<(.*?)>/)?.input:
       innerType = type.match(/Array<(.*?)>/)[1]
-      return `[${generateValues(innerType, name)}]`
+      return `[${assignValue(innerType)}]`
     default:
       let value = VARIABLES_VALUES[type]
       return value ? value : `"${type} Not implemented"`
+  }
+}
+
+const expectedValue = (type) => {
+  switch (type) {
+    case type.match(/Array<(.*?)>/)?.input:
+      innerType = type.match(/Array<(.*?)>/)[1]
+      return `[${expectedValue(innerType)}]`
+    default:
+      let value = VARIABLES_VALUES[type]
+      return value ? value : `${type} Not implemented`
   }
 }
 
@@ -70,15 +81,14 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
   import { handle${eventName} } from "../src/${strings.kebabCase(contract)}"
   import { create${eventName}Event } from "./${strings.kebabCase(contract)}-utils"
 
-  /*
-   * Tests structure (matchstick-as >=0.5.0)
-   * https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
-   */
+
+  // Tests structure (matchstick-as >=0.5.0)
+  // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 
   describe("Describe entity assertions", () => {
     beforeAll(() => {
       ${generateArguments(eventInputs)}
-      let new${eventName}Event = create${eventName}Event(${eventInputs.map(input => input.name).join(', ')});
+      let new${eventName}Event = create${eventName}Event(${eventInputs.map((input, index) => input.name || `param${index}`).join(', ')});
       handle${eventName}(new${eventName}Event)
     })
 
@@ -86,10 +96,8 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
       clearStore()
     })
 
-    /*
-    * For more test scenarios, see:
-    * https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
-    */
+    // For more test scenarios, see:
+    // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
     test("${entity} created and stored", () => {
       assert.entityCount('${entity}', 1)
@@ -97,13 +105,11 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
       // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
       ${generateFieldsAssertions(entity, eventInputs, indexEvents)}
 
-      /*
-      * More assert options:
-      * https://thegraph.com/docs/en/developer/matchstick/#asserts
-      */
+    // More assert options:
+    // https://thegraph.com/docs/en/developer/matchstick/#asserts
     })
   })
-  `
+`
 }
 
 const generateTestHelper = (contract, events, importTypes) => {
@@ -125,8 +131,8 @@ const generateMockedEvents = events =>
 
 const generateMockedEvent = event => {
   const varName = `${strings.camelCase(event._alias)}Event`
-  const fnArgs = event.inputs.map(input => `${input.name}: ${ascTypeForEthereum(input.type)}`);
-  const ascToEth = event.inputs.map(input => `${varName}.parameters.push(new ethereum.EventParam("${input.name}", ${ethereumFromAsc(input.name, input.type)}))`);
+  const fnArgs = event.inputs.map((input, index) => `${input.name || `param${index}`}: ${ascTypeForEthereum(input.type)}`);
+  const ascToEth = event.inputs.map((input, index) => `${varName}.parameters.push(new ethereum.EventParam("${input.name || `param${index}`}", ${ethereumFromAsc(input.name || `param${index}`, input.type)}))`);
 
   return `
     export function create${event._alias}Event(${fnArgs.join(', ')}): ${event._alias} {
