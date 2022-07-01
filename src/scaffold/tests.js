@@ -13,7 +13,7 @@ const VARIABLES_VALUES = {
 
 const generateTestsFiles = (contract, events, indexEvents) => {
   const event = events[0]
-  const eventsTypes = events.flatMap(event => event.inputs.filter(input => input.name != "id").map(input => ascTypeForEthereum(input.type))).filter(type => !isNativeType(type))
+  const eventsTypes = events.flatMap(event => event.inputs.map(input => ascTypeForEthereum(input.type))).filter(type => !isNativeType(type))
   const importTypes = [...new Set(eventsTypes)].join(', ')
 
   return {
@@ -22,7 +22,7 @@ const generateTestsFiles = (contract, events, indexEvents) => {
   }
 }
 
-const generateFieldsAssertions = (entity, eventInputs) => eventInputs.map( input => `
+const generateFieldsAssertions = (entity, eventInputs) => eventInputs.filter(input => input.name != "id").map( input => `
   assert.fieldEquals(
     '${entity}',
     "0xA16081F360e3847006dB660bae1c6d1b2e17eC2A",
