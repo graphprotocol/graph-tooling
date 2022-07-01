@@ -129,6 +129,9 @@ const writeMapping = async (abi, protocol, contractName, entities) => {
 }
 
 const writeTestsFiles = async (abi, contractName) => {
+  // If a contract is added to a subgraph that has no tests folder
+  await fs.ensureDir('./tests/')
+
   const events = abiEvents(abi).toJS()
   const testsFiles = generateTestsFiles(contractName, events, true)
 
