@@ -22,10 +22,10 @@ const generateTestsFiles = (contract, events, indexEvents) => {
   }
 }
 
-const generateFieldsAssertions = (entity, eventInputs) => eventInputs.filter(input => input.name != "id").map(input => `
+const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInputs.filter(input => input.name != "id").map(input => `
   assert.fieldEquals(
-    '${entity}',
-    "0xA16081F360e3847006dB660bae1c6d1b2e17eC2A",
+    "${entity}",
+    "0xa16081f360e3847006db660bae1c6d1b2e17ec2a${indexEvents ? "-1" : ""}",
     "${input.name}",
     "${VARIABLES_VALUES[ascTypeForEthereum(input.type)]}"
   )`
@@ -70,7 +70,7 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
   import { handle${eventName} } from "../src/${strings.kebabCase(contract)}"
   import { create${eventName}Event } from "./${strings.kebabCase(contract)}-utils"
 
-  /**
+  /*
    * Tests structure (matchstick-as >=0.5.0)
    * https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
    */
@@ -86,11 +86,24 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
       clearStore()
     })
 
+    /*
+    * For more test scenarios, see:
+    * https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
+    */
+
     test("${entity} created and stored", () => {
       assert.entityCount('${entity}', 1)
 
-      // 0xA16081F360e3847006dB660bae1c6d1b2e17eC2A is the default address used in newMockEvent() function
-      ${generateFieldsAssertions(entity, eventInputs)}
+      /*
+      * 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
+      */
+
+      ${generateFieldsAssertions(entity, eventInputs, indexEvents)}
+
+      /*
+      * More assert options:
+      * https://thegraph.com/docs/en/developer/matchstick/#asserts
+      */
     })
   })
   `
