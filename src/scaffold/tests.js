@@ -13,12 +13,11 @@ const VARIABLES_VALUES = {
 
 const generateTestsFiles = (contract, events, indexEvents) => {
   const event = events[0]
-  const eventsTypes = events.flatMap(event => event.inputs.map(input => ascTypeForEthereum(input.type))).filter(type => !isNativeType(type))
-  const importTypes = [...new Set(eventsTypes)].join(', ');
-  const entity = indexEvents ? `${event.name}` : 'ExampleEntity'
+  const eventsTypes = events.flatMap(event => event.inputs.filter(input => input.name != "id").map(input => ascTypeForEthereum(input.type))).filter(type => !isNativeType(type))
+  const importTypes = [...new Set(eventsTypes)].join(', ')
 
   return {
-    [`${strings.kebabCase(contract)}.test.ts`]: prettier.format(generateExampleTest(contract, event, entity, importTypes), { parser: 'typescript', semi: false }),
+    [`${strings.kebabCase(contract)}.test.ts`]: prettier.format(generateExampleTest(contract, event, indexEvents, importTypes), { parser: 'typescript', semi: false }),
     [`${strings.kebabCase(contract)}-utils.ts`]: prettier.format(generateTestHelper(contract, events, importTypes), { parser: 'typescript', semi: false }),
   }
 }
@@ -58,7 +57,8 @@ const generateValues = (type, name) => {
   }
 }
 
-const generateExampleTest = (contract, event, entity, importTypes) => {
+const generateExampleTest = (contract, event, indexEvents, importTypes) => {
+    const entity = indexEvents ? `${event.name}` : 'ExampleEntity'
     const eventInputs = event.inputs
     const eventName = event._alias
 
@@ -66,9 +66,9 @@ const generateExampleTest = (contract, event, entity, importTypes) => {
     import { assert, describe, test, clearStore, beforeAll, afterAll} from "matchstick-as/assembly/index"
     import { ${importTypes} } from "@graphprotocol/graph-ts"
     import { ${entity} } from "../generated/schema"
-    import { ${eventName} } from "../generated/${contract}/${contract}"
-    import { handle${eventName} } from "../src/${contract.toLowerCase()}"
-    import { create${eventName}Event } from "./${contract}-utils"
+    import { ${indexEvents ?  `${eventName} as ${eventName}Event` : eventName} } from "../generated/${contract}/${contract}"
+    import { handle${eventName} } from "../src/${strings.kebabCase(contract)}"
+    import { create${eventName}Event } from "./${strings.kebabCase(contract)}-utils"
 
     /**
      * Tests structure (matchstick-as >=0.5.0)

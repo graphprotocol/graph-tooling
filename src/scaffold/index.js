@@ -141,13 +141,9 @@ dataSources:
   }
 
   generateTests() {
-    return this.protocol.hasEvents() ?  this.generateTestExamples() : undefined
-  }
-
-  generateTestExamples() {
-    const events = abiEvents(this.abi).toJS()
-
-    return generateTestsFiles(this.contractName, events, this.indexEvents)
+    return this.protocol.hasEvents()
+      ?  generateTestsFiles(this.contractName, abiEvents(this.abi).toJS(), this.indexEvents)
+      : undefined
   }
 
   generate() {
