@@ -22,7 +22,7 @@ const generateTestsFiles = (contract, events, indexEvents) => {
   }
 }
 
-const generateFieldsAssertions = (entity, eventInputs) => eventInputs.filter(input => input.name != "id").map( input => `
+const generateFieldsAssertions = (entity, eventInputs) => eventInputs.filter(input => input.name != "id").map(input => `
   assert.fieldEquals(
     '${entity}',
     "0xA16081F360e3847006dB660bae1c6d1b2e17eC2A",
@@ -39,7 +39,7 @@ const generateArguments = (eventInputs) => {
 }
 
 const generateValues = (type, name) => {
-  switch(type) {
+  switch (type) {
     case "string":
       return `"${VARIABLES_VALUES[type]}"`
     case "BigInt":
@@ -58,89 +58,90 @@ const generateValues = (type, name) => {
 }
 
 const generateExampleTest = (contract, event, indexEvents, importTypes) => {
-    const entity = indexEvents ? `${event.name}` : 'ExampleEntity'
-    const eventInputs = event.inputs
-    const eventName = event._alias
+  const entity = indexEvents ? `${event.name}` : 'ExampleEntity'
+  const eventInputs = event.inputs
+  const eventName = event._alias
 
-    return `
-    import { assert, describe, test, clearStore, beforeAll, afterAll} from "matchstick-as/assembly/index"
-    import { ${importTypes} } from "@graphprotocol/graph-ts"
-    import { ${entity} } from "../generated/schema"
-    import { ${indexEvents ?  `${eventName} as ${eventName}Event` : eventName} } from "../generated/${contract}/${contract}"
-    import { handle${eventName} } from "../src/${strings.kebabCase(contract)}"
-    import { create${eventName}Event } from "./${strings.kebabCase(contract)}-utils"
+  return `
+  import { assert, describe, test, clearStore, beforeAll, afterAll} from "matchstick-as/assembly/index"
+  import { ${importTypes} } from "@graphprotocol/graph-ts"
+  import { ${entity} } from "../generated/schema"
+  import { ${indexEvents ? `${eventName} as ${eventName}Event` : eventName} } from "../generated/${contract}/${contract}"
+  import { handle${eventName} } from "../src/${strings.kebabCase(contract)}"
+  import { create${eventName}Event } from "./${strings.kebabCase(contract)}-utils"
 
-    /**
-     * Tests structure (matchstick-as >=0.5.0)
-     * https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
-     */
+  /**
+   * Tests structure (matchstick-as >=0.5.0)
+   * https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
+   */
 
-    describe("Describe entity assertions", () => {
-      beforeAll(() => {
-        ${generateArguments(eventInputs)}
-        let new${eventName}Event = create${eventName}Event(${eventInputs.map(input => input.name).join(', ')});
-        handle${eventName}(new${eventName}Event)
-      })
-
-      afterAll(() => {
-        clearStore()
-      })
-
-      test("${entity} created and stored", () => {
-        assert.entityCount('${entity}', 1)
-
-        // 0xA16081F360e3847006dB660bae1c6d1b2e17eC2A is the default address used in newMockEvent() function
-        ${generateFieldsAssertions(entity, eventInputs)}
-      })
+  describe("Describe entity assertions", () => {
+    beforeAll(() => {
+      ${generateArguments(eventInputs)}
+      let new${eventName}Event = create${eventName}Event(${eventInputs.map(input => input.name).join(', ')});
+      handle${eventName}(new${eventName}Event)
     })
-    `
-  }
 
-  const generateTestHelper = (contract, events, importTypes) => {
-    const eventsNames = events.map(event => event.name)
+    afterAll(() => {
+      clearStore()
+    })
 
-    let utils = `
-    import { newMockEvent } from 'matchstick-as';
-    import { ethereum, ${importTypes} } from '@graphprotocol/graph-ts';
-    import { ${eventsNames.join(', ')} } from '../generated/${contract}/${contract}';
-    `
+    test("${entity} created and stored", () => {
+      assert.entityCount('${entity}', 1)
 
-    events.forEach(function(event) {
-      utils = utils.concat("\n", generateMockedEvent(event))
-    });
+      // 0xA16081F360e3847006dB660bae1c6d1b2e17eC2A is the default address used in newMockEvent() function
+      ${generateFieldsAssertions(entity, eventInputs)}
+    })
+  })
+  `
+}
 
-    return utils
-  }
+const generateTestHelper = (contract, events, importTypes) => {
+  const eventsNames = events.map(event => event.name)
 
-  const generateMockedEvent = (event) => {
-    const varName = `${strings.camelCase(event.name)}Event`
-    const fnArgs = event.inputs.map(input => `${input.name}: ${ascTypeForEthereum(input.type)}`);
-    const ascToEth = event.inputs.map(input => `${varName}.parameters.push(new ethereum.EventParam("${input.name}", ${ethereumFromAsc(input.name, input.type)}))`);
+  let utils = `
+  import { newMockEvent } from 'matchstick-as';
+  import { ethereum, ${importTypes} } from '@graphprotocol/graph-ts';
+  import { ${eventsNames.join(', ')} } from '../generated/${contract}/${contract}';
+  `
 
-    return  `
-      export function create${event._alias}Event(${fnArgs.join(', ')}): ${event._alias} {
-        let ${varName} = changetype<${event._alias}>(newMockEvent());
+  events.forEach(function (event) {
+    utils = utils.concat("\n", generateMockedEvent(event))
+  });
 
-        ${varName}.parameters = new Array();
+  return utils
+}
 
-        ${ascToEth.join('\n')}
+const generateMockedEvent = (event) => {
+  const varName = `${strings.camelCase(event.name)}Event`
+  const fnArgs = event.inputs.map(input => `${input.name}: ${ascTypeForEthereum(input.type)}`);
+  const ascToEth = event.inputs.map(input => `${varName}.parameters.push(new ethereum.EventParam("${input.name}", ${ethereumFromAsc(input.name, input.type)}))`);
 
-        return ${varName};
-      }
-    `
+  return `
+    export function create${event._alias}Event(${fnArgs.join(', ')}): ${event._alias} {
+      let ${varName} = changetype<${event._alias}>(newMockEvent());
 
-  }
+      ${varName}.parameters = new Array();
 
-  const isNativeType = (type) => {
-    let natives = [
-      /Array<([a-zA-Z0-9]+)?>/,
-      /i32/,
-      /string/,
-      /boolean/
-    ]
+      ${ascToEth.join('\n')}
 
-    return natives.some(rx => rx.test(type));
-  }
+      return ${varName};
+    }
+  `
+
+}
+
+const isNativeType = (type) => {
+  let natives = [
+    /Array<([a-zA-Z0-9]+)?>/,
+    /i32/,
+    /string/,
+    /boolean/
+  ]
+
+  return natives.some(rx => rx.test(type));
+}
+
 module.exports = {
   generateTestsFiles,
 }
