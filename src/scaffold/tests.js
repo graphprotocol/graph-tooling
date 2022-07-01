@@ -58,7 +58,7 @@ const generateValues = (type, name) => {
 }
 
 const generateExampleTest = (contract, event, indexEvents, importTypes) => {
-  const entity = indexEvents ? `${event.name}` : 'ExampleEntity'
+  const entity = indexEvents ? `${event._alias}` : 'ExampleEntity'
   const eventInputs = event.inputs
   const eventName = event._alias
 
@@ -97,7 +97,7 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
 }
 
 const generateTestHelper = (contract, events, importTypes) => {
-  const eventsNames = events.map(event => event.name)
+  const eventsNames = events.map(event => event._alias)
 
   let utils = `
   import { newMockEvent } from 'matchstick-as';
@@ -113,7 +113,7 @@ const generateTestHelper = (contract, events, importTypes) => {
 }
 
 const generateMockedEvent = (event) => {
-  const varName = `${strings.camelCase(event.name)}Event`
+  const varName = `${strings.camelCase(event._alias)}Event`
   const fnArgs = event.inputs.map(input => `${input.name}: ${ascTypeForEthereum(input.type)}`);
   const ascToEth = event.inputs.map(input => `${varName}.parameters.push(new ethereum.EventParam("${input.name}", ${ethereumFromAsc(input.name, input.type)}))`);
 
