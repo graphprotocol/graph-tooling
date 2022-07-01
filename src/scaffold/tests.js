@@ -22,15 +22,13 @@ const generateTestsFiles = (contract, events, indexEvents) => {
   }
 }
 
-const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInputs.filter(input => input.name != "id").map((input, index) =>
-  `assert.fieldEquals(
-    "${entity}",
-    "0xa16081f360e3847006db660bae1c6d1b2e17ec2a${indexEvents ? "-1" : ""}",
-    "${input.name || `param${index}`}",
-    "${expectedValue(ascTypeForEthereum(input.type))}"
-  )`
-).join('\n')
-
+/*
+  Generates the arguments that will be passed to the mock event function from the event inputs. Example:
+  let id = BigInt.fromI32(234)
+  let owner = Address.fromString("0x0000000000000000000000000000000000000001")
+  let displayName = "Example string value"
+  let imageUrl = "Example string value"
+*/
 const generateArguments = (eventInputs) => {
   return eventInputs.map((input, index) => {
     let ascType = ascTypeForEthereum(input.type)
@@ -38,6 +36,7 @@ const generateArguments = (eventInputs) => {
   }).join('\n')
 }
 
+// Generates the value that will be assigned to a variable in generateArguments()
 const assignValue = (type) => {
   switch (type) {
     case "string":
@@ -57,7 +56,26 @@ const assignValue = (type) => {
   }
 }
 
-const expectedValue = (type) => {
+/*
+  Generates the assert.fieldEquals() for a given entity and event inputs. Example:
+  assert.fieldEquals(
+    "ExampleEntity",
+    "0xa16081f360e3847006db660bae1c6d1b2e17ec2a",
+    "owner",
+    "0x0000000000000000000000000000000000000001"
+  )
+*/
+const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInputs.filter(input => input.name != "id").map((input, index) =>
+  `assert.fieldEquals(
+    "${entity}",
+    "0xa16081f360e3847006db660bae1c6d1b2e17ec2a${indexEvents ? "-1" : ""}",
+    "${input.name || `param${index}`}",
+    "${expectedValue(ascTypeForEthereum(input.type))}"
+  )`
+).join('\n')
+
+// Returns the expected value for a given type in generateFieldsAssertions()
+const expectedValue = type => {
   switch (type) {
     case type.match(/Array<(.*?)>/)?.input:
       innerType = type.match(/Array<(.*?)>/)[1]
@@ -68,6 +86,19 @@ const expectedValue = (type) => {
   }
 }
 
+// Checks if the type is a native AS type or should be imported from graph-ts
+const isNativeType = type => {
+  let natives = [
+    /Array<([a-zA-Z0-9]+)?>/,
+    /i32/,
+    /string/,
+    /boolean/
+  ]
+
+  return natives.some(rx => rx.test(type));
+}
+
+// Generates the example test.ts file
 const generateExampleTest = (contract, event, indexEvents, importTypes) => {
   const entity = indexEvents ? `${event._alias}` : 'ExampleEntity'
   const eventInputs = event.inputs
@@ -112,6 +143,7 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
 `
 }
 
+// Generates the utils helper file
 const generateTestHelper = (contract, events, importTypes) => {
   const eventsNames = events.map(event => event._alias)
 
@@ -146,17 +178,6 @@ const generateMockedEvent = event => {
     }
   `
 
-}
-
-const isNativeType = (type) => {
-  let natives = [
-    /Array<([a-zA-Z0-9]+)?>/,
-    /i32/,
-    /string/,
-    /boolean/
-  ]
-
-  return natives.some(rx => rx.test(type));
 }
 
 module.exports = {
