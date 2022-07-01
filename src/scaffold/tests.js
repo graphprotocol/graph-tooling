@@ -22,8 +22,8 @@ const generateTestsFiles = (contract, events, indexEvents) => {
   }
 }
 
-const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInputs.filter(input => input.name != "id").map(input => `
-  assert.fieldEquals(
+const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInputs.filter(input => input.name != "id").map(input =>
+  `assert.fieldEquals(
     "${entity}",
     "0xa16081f360e3847006db660bae1c6d1b2e17ec2a${indexEvents ? "-1" : ""}",
     "${input.name}",
@@ -94,10 +94,7 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
     test("${entity} created and stored", () => {
       assert.entityCount('${entity}', 1)
 
-      /*
-      * 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
-      */
-
+      // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
       ${generateFieldsAssertions(entity, eventInputs, indexEvents)}
 
       /*
@@ -112,20 +109,21 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
 const generateTestHelper = (contract, events, importTypes) => {
   const eventsNames = events.map(event => event._alias)
 
-  let utils = `
+  return `
   import { newMockEvent } from 'matchstick-as';
   import { ethereum, ${importTypes} } from '@graphprotocol/graph-ts';
-  import { ${eventsNames.join(', ')} } from '../generated/${contract}/${contract}';
-  `
+  import { ${eventsNames.join(", ")} } from '../generated/${contract}/${contract}';
 
-  events.forEach(function (event) {
-    utils = utils.concat("\n", generateMockedEvent(event))
-  });
-
-  return utils
+  ${generateMockedEvents(events).join("\n")}`
 }
 
-const generateMockedEvent = (event) => {
+const generateMockedEvents = events =>
+  events.reduce(
+    (acc, event) => acc.concat(generateMockedEvent(event)),
+    [],
+  )
+
+const generateMockedEvent = event => {
   const varName = `${strings.camelCase(event._alias)}Event`
   const fnArgs = event.inputs.map(input => `${input.name}: ${ascTypeForEthereum(input.type)}`);
   const ascToEth = event.inputs.map(input => `${varName}.parameters.push(new ethereum.EventParam("${input.name}", ${ethereumFromAsc(input.name, input.type)}))`);
