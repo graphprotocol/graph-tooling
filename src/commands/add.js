@@ -19,7 +19,7 @@ ${chalk.dim('Options:')}
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
       --contract-name           Name of the contract (default: Contract)
       --merge-entities          Whether to merge entities with the same name (default: false)
-      --network-file <path>     Networks file (default: "./networks.json")
+      --network-file <path>     Networks config file path (default: "./networks.json")
   -h, --help                    Show usage information
 `
 
