@@ -19,7 +19,7 @@ module.exports = {
       return 'graph-ts dependency not installed yet'
     }
 
-    let manifest = loadManifest(manifestFile)
+    let manifest = await loadManifest(manifestFile)
     return (
       // Only migrate if the graph-ts version is >= 0.22.0...
       // Coerce needed because we may be dealing with an alpha version
