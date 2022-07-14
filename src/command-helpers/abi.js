@@ -60,6 +60,9 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "aurora-testnet": return `https://api-testnet.aurorascan.dev/api`
     case "optimism-kovan": return `https://api-kovan-optimistic.etherscan.io/api`
     case "optimism": return `https://api-optimistic.etherscan.io/api`
+    case "moonbeam": return `https://api-moonbeam.moonscan.io/api`
+    case "moonriver": return `https://api-moonriver.moonscan.io/api`
+    case "mbase": return `https://api-moonbase.moonscan.io/api`
     case "avalanche": return `https://api.snowtrace.io/api`;
     case "fuji": return `https://api-testnet.snowtrace.io/api`;
     default: return `https://api-${network}.etherscan.io/api`
