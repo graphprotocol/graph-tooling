@@ -12,12 +12,22 @@ const VARIABLES_VALUES = {
 }
 
 const generateTestsFiles = (contract, events, indexEvents) => {
-  const event = events[0]
-  const eventsTypes = events.flatMap(event => event.inputs.map(input => ascTypeForEthereum(input.type))).filter(type => !type.startsWith("ethereum.") && !isNativeType(type))
+  const eventsTypes = events
+    .flatMap(event =>
+      event
+        .inputs
+        .map(input => {
+          // If the asc type is Array<T> we need to check if T is a native type or a custom graph-ts type
+          // If we don't do that we may miss a type that should be imported from graph-ts
+          const ascType = ascTypeForEthereum(input.type)
+          const inner = fetchArrayInnerType(ascType)
+          return inner ? inner[1] : ascType
+        })
+    ).filter(type => !type.startsWith("ethereum.") && !isNativeType(type))
   const importTypes = [...new Set(eventsTypes)].join(', ')
 
   return {
-    [`${strings.kebabCase(contract)}.test.ts`]: prettier.format(generateExampleTest(contract, event, indexEvents, importTypes), { parser: 'typescript', semi: false }),
+    [`${strings.kebabCase(contract)}.test.ts`]: prettier.format(generateExampleTest(contract, events[0], indexEvents, importTypes), { parser: 'typescript', semi: false }),
     [`${strings.kebabCase(contract)}-utils.ts`]: prettier.format(generateTestHelper(contract, events, importTypes), { parser: 'typescript', semi: false }),
   }
 }
@@ -47,8 +57,8 @@ const assignValue = (type) => {
       return `Address.fromString("${VARIABLES_VALUES[type]}")`
     case "Bytes":
       return `Bytes.fromI32(${VARIABLES_VALUES[type]})`
-    case type.match(/Array<(.*?)>/)?.input:
-      innerType = type.match(/Array<(.*?)>/)[1]
+    case fetchArrayInnerType(type)?.input:
+      innerType = fetchArrayInnerType(type)[1]
       return `[${assignValue(innerType)}]`
     default:
       let value = VARIABLES_VALUES[type]
@@ -77,8 +87,8 @@ const generateFieldsAssertions = (entity, eventInputs, indexEvents) => eventInpu
 // Returns the expected value for a given type in generateFieldsAssertions()
 const expectedValue = type => {
   switch (type) {
-    case type.match(/Array<(.*?)>/)?.input:
-      innerType = type.match(/Array<(.*?)>/)[1]
+    case fetchArrayInnerType(type)?.input:
+      innerType = fetchArrayInnerType(type)[1]
       return `[${expectedValue(innerType)}]`
     default:
       let value = VARIABLES_VALUES[type]
@@ -89,7 +99,6 @@ const expectedValue = type => {
 // Checks if the type is a native AS type or should be imported from graph-ts
 const isNativeType = type => {
   let natives = [
-    /Array<([a-zA-Z0-9]+)?>/,
     /i32/,
     /string/,
     /boolean/
@@ -98,6 +107,8 @@ const isNativeType = type => {
   return natives.some(rx => rx.test(type));
 }
 
+const fetchArrayInnerType = type => type.match(/Array<(.*?)>/)
+
 // Generates the example test.ts file
 const generateExampleTest = (contract, event, indexEvents, importTypes) => {
   const entity = indexEvents ? `${event._alias}` : 'ExampleEntity'
@@ -105,7 +116,7 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
   const eventName = event._alias
 
   return `
-  import { assert, describe, test, clearStore, beforeAll, afterAll} from "matchstick-as/assembly/index"
+  import { assert, describe, test, clearStore, beforeAll, afterAll } from "matchstick-as/assembly/index"
   import { ${importTypes} } from "@graphprotocol/graph-ts"
   import { ${entity} } from "../generated/schema"
   import { ${indexEvents ? `${eventName} as ${eventName}Event` : eventName} } from "../generated/${contract}/${contract}"
@@ -136,8 +147,8 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
       // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
       ${generateFieldsAssertions(entity, eventInputs, indexEvents)}
 
-    // More assert options:
-    // https://thegraph.com/docs/en/developer/matchstick/#asserts
+      // More assert options:
+      // https://thegraph.com/docs/en/developer/matchstick/#asserts
     })
   })
 `
