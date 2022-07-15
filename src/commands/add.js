@@ -19,7 +19,7 @@ ${chalk.dim('Options:')}
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
       --contract-name           Name of the contract (default: Contract)
       --merge-entities          Whether to merge entities with the same name (default: false)
-      --network-file <path>     Networks file (default: "./networks.json")
+      --network-file <path>     Networks config file path (default: "./networks.json")
   -h, --help                    Show usage information
 `
 
@@ -104,7 +104,7 @@ module.exports = {
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
 
     let dataSources = result.get('dataSources')
-    let dataSource = await generateDataSource(protocol, 
+    let dataSource = await generateDataSource(protocol,
       contractName, network, address, ethabi)
 
     // Handle the collisions edge case by copying another data source yaml data
@@ -181,12 +181,12 @@ const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntiti
     if (dataRow.get('type') === 'event'){
       if (entities.indexOf(dataRow.get('name')) !== -1) {
         if (entities.indexOf(`${contractName}${dataRow.get('name')}`) !== -1) {
-          print.error(`Contract name ('${contractName}') 
+          print.error(`Contract name ('${contractName}')
             + event name ('${dataRow.get('name')}') entity already exists.`)
           process.exitCode = 1
           return
         }
-        
+
         if (mergeEntities) {
           collisionEntities.push(dataRow.get('name'))
           abiData = abiData.asImmutable().delete(i) // needs to be immutable when deleting, yes you read that right - https://github.com/immutable-js/immutable-js/issues/1901

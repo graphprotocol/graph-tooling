@@ -17,8 +17,8 @@ Options:
   -t, --output-format <format>  Output format for mappings (wasm, wast) (default: wasm)
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
-      --network <name>          Network to use from networks.json
-      --network-file <path>    Networks file (default: "./networks.json")
+      --network <name>          Network configuration to use from the networks config file
+      --network-file <path>     Networks config file path (default: "./networks.json")
 `
 
 module.exports = {

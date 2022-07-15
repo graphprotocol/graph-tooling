@@ -50,9 +50,9 @@ yarn global add @graphprotocol/graph-cli
 
 ## Getting Started
 
-The Graph CLI can be used with a local or self-hosted [Graph Node](https://github.com/graphprotocol/graph-node) or with the [Hosted Service](https://thegraph.com/explorer/). To help you get going, there are [quick start guides](https://thegraph.com/docs/quick-start) available for both.
+The Graph CLI can be used with a local or self-hosted [Graph Node](https://github.com/graphprotocol/graph-node) or with the [Hosted Service](https://thegraph.com/explorer/). To help you get going, there are [quick start guides](https://thegraph.com/docs/en/developer/quick-start/) available for both.
 
-If you are ready to dive into the details of building a subgraph from scratch, there is a [detailed walkthrough](https://thegraph.com/docs/define-a-subgraph) for that as well, along with API documentation for the [AssemblyScript API](https://thegraph.com/docs/assemblyscript-api).
+If you are ready to dive into the details of building a subgraph from scratch, there is a [detailed walkthrough](https://thegraph.com/docs/en/developer/create-subgraph-hosted/) for that as well, along with API documentation for the [AssemblyScript API](https://thegraph.com/docs/en/developer/assemblyscript-api/).
 
 ## Release process
 
