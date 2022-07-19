@@ -180,10 +180,8 @@ async function getPlatform(logsOpt) {
 
   if (arch === 'x64' || isM1) {
     if (type === 'Darwin') {
-      if (majorVersion === 19) {
-        return 'binary-macos-10.15'
-      } else if (majorVersion === 18) {
-        return 'binary-macos-10.14'
+      if (majorVersion === 18 || majorVersion === 19) {
+        return 'binary-macos-10.15' // GitHub dropped support for macOS 10.14 in Actions, but it seems 10.15 binary works on 10.14 too
       } else if (isM1) {
         return 'binary-macos-11-m1'
       }
@@ -196,8 +194,6 @@ async function getPlatform(logsOpt) {
       } else {
         return 'binary-linux-20'
       }
-    } else if (type === 'Windows_NT') {
-      return 'binary-windows'
     }
   }
 
