@@ -7,10 +7,17 @@ const { step } = require('./spinner')
 const Scaffold = require('../scaffold')
 const { generateEventIndexingHandlers } = require('../scaffold/mapping')
 const { generateEventType, abiEvents } = require('../scaffold/schema')
+const { generateTestsFiles } = require('../scaffold/tests')
 const { strings } = require('gluegun')
 const { Map } = require('immutable')
 
-const generateDataSource = async (protocol, contractName, network, contractAddress, abi) => {
+const generateDataSource = async (
+  protocol,
+  contractName,
+  network,
+  contractAddress,
+  abi,
+) => {
   const protocolManifest = protocol.getManifestScaffold()
 
   return Map.of(
@@ -89,13 +96,13 @@ const writeABI = async (abi, contractName) => {
 
 const writeSchema = async (abi, protocol, schemaPath, entities) => {
   const events = protocol.hasEvents()
-    ? abiEvents(abi).filter(event => entities.indexOf(event.get('name')) === -1).toJS()
+    ? abiEvents(abi)
+        .filter(event => entities.indexOf(event.get('name')) === -1)
+        .toJS()
     : []
 
   let data = prettier.format(
-    events.map(
-        event => generateEventType(event, protocol.name)
-      ).join('\n\n'),
+    events.map(event => generateEventType(event, protocol.name)).join('\n\n'),
     {
       parser: 'graphql',
     },
@@ -106,18 +113,33 @@ const writeSchema = async (abi, protocol, schemaPath, entities) => {
 
 const writeMapping = async (abi, protocol, contractName, entities) => {
   const events = protocol.hasEvents()
-    ? abiEvents(abi).filter(event => entities.indexOf(event.get('name')) === -1).toJS()
+    ? abiEvents(abi)
+        .filter(event => entities.indexOf(event.get('name')) === -1)
+        .toJS()
     : []
 
-  let mapping = prettier.format(
-    generateEventIndexingHandlers(
-        events,
-        contractName,
-      ),
-    { parser: 'typescript', semi: false },
-  )
+  let mapping = prettier.format(generateEventIndexingHandlers(events, contractName), {
+    parser: 'typescript',
+    semi: false,
+  })
 
-  await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, { encoding: 'utf-8' })
+  await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, {
+    encoding: 'utf-8',
+  })
+}
+
+const writeTestsFiles = async (abi, contractName) => {
+  // If a contract is added to a subgraph that has no tests folder
+  await fs.ensureDir('./tests/')
+
+  const events = abiEvents(abi).toJS()
+  const testsFiles = generateTestsFiles(contractName, events, true)
+
+  for (const [fileName, content] of Object.entries(testsFiles)) {
+    await fs.writeFile(`./tests/${fileName}`, content, {
+      encoding: 'utf-8',
+    })
+  }
 }
 
 module.exports = {
@@ -128,4 +150,5 @@ module.exports = {
   writeABI,
   writeSchema,
   writeMapping,
+  writeTestsFiles,
 }
