@@ -54,7 +54,9 @@ module.exports = class Scaffold {
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
           '@graphprotocol/graph-ts': `0.27.0`,
-          'matchstick-as': `0.5.0`
+        },
+        devDependencies: {
+          'matchstick-as': `0.5.0`,
         },
       }),
       { parser: 'json' },
