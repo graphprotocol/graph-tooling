@@ -102,10 +102,7 @@ module.exports = {
     await writeABI(ethabi, contractName)
     await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
-
-    if (protocol.hasEvents()) {
-      await writeTestsFiles(ethabi, contractName)
-    }
+    await writeTestsFiles(ethabi, protocol, contractName)
 
     let dataSources = result.get('dataSources')
     let dataSource = await generateDataSource(protocol,
