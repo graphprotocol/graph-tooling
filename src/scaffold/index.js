@@ -55,9 +55,7 @@ module.exports = class Scaffold {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
           '@graphprotocol/graph-ts': `0.27.0`,
         },
-        devDependencies: {
-          'matchstick-as': `0.5.0`,
-        },
+        devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0`} : undefined,
       }),
       { parser: 'json' },
     )
@@ -143,8 +141,13 @@ dataSources:
   }
 
   generateTests() {
-    return this.protocol.hasEvents()
-      ?  generateTestsFiles(this.contractName, abiEvents(this.abi).toJS(), this.indexEvents)
+    const hasEvents = this.protocol.hasEvents()
+    const events = hasEvents
+      ? abiEvents(this.abi).toJS()
+      : []
+
+    return events.length > 0
+      ?  generateTestsFiles(this.contractName, events, this.indexEvents)
       : undefined
   }
 

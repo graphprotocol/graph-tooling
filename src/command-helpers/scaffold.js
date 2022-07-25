@@ -128,17 +128,23 @@ const writeMapping = async (abi, protocol, contractName, entities) => {
   })
 }
 
-const writeTestsFiles = async (abi, contractName) => {
-  // If a contract is added to a subgraph that has no tests folder
-  await fs.ensureDir('./tests/')
+const writeTestsFiles = async (abi, protocol, contractName) => {
+  const hasEvents = protocol.hasEvents()
+  const events = hasEvents
+    ? abiEvents(abi).toJS()
+    : []
 
-  const events = abiEvents(abi).toJS()
-  const testsFiles = generateTestsFiles(contractName, events, true)
+  if(events.length > 0) {
+    // If a contract is added to a subgraph that has no tests folder
+    await fs.ensureDir('./tests/')
 
-  for (const [fileName, content] of Object.entries(testsFiles)) {
-    await fs.writeFile(`./tests/${fileName}`, content, {
-      encoding: 'utf-8',
-    })
+    const testsFiles = generateTestsFiles(contractName, events, true)
+
+    for (const [fileName, content] of Object.entries(testsFiles)) {
+      await fs.writeFile(`./tests/${fileName}`, content, {
+        encoding: 'utf-8',
+      })
+    }
   }
 }
 
