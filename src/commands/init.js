@@ -827,7 +827,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
   if (addContractConfirmation) {
     let abiFromFile
     let ProtocolContract = protocolInstance.getContract()
-  
+
     let questions = [
       {
         type: 'input',
@@ -866,16 +866,16 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
 
     // Get the cwd before process.chdir in order to switch back in the end of command execution
     const cwd = process.cwd();
-  
+
     try {
       let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
-  
+
       if (fs.existsSync(directory)) {
         process.chdir(directory)
       }
-  
+
       let commandLine = ['add', contract, '--contract-name', contractName]
-  
+
       if (abiFromFile) {
         if (abi.includes(directory)) {
           commandLine.push('--abi', path.normalize(abi.replace(directory, '')))

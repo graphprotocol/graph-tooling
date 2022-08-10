@@ -3,10 +3,14 @@ const toolbox = require('gluegun/toolbox')
 
 const createJsonRpcClient = url => {
   let params = {
-    auth: url.auth,
     host: url.hostname,
     port: url.port,
     path: url.pathname,
+  }
+
+  // username may be empty
+  if (url.password) {
+    params.auth = `${url.username}:${url.password}`
   }
 
   if (url.protocol === 'https:') {

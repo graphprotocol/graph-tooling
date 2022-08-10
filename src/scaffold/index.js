@@ -15,6 +15,7 @@ const {
   generateExampleEntityType,
 } = require('./schema')
 const { generateEventIndexingHandlers } = require('./mapping')
+const { generateTestsFiles } = require('./tests')
 const { getSubgraphBasename } = require('../command-helpers/subgraph')
 
 module.exports = class Scaffold {
@@ -48,11 +49,13 @@ module.exports = class Scaffold {
             `--node http://localhost:8020/ ` +
             `--ipfs http://localhost:5001 ` +
             this.subgraphName,
+          'test': 'graph test',
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
           '@graphprotocol/graph-ts': `0.27.0`,
         },
+        devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0`} : undefined,
       }),
       { parser: 'json' },
     )
@@ -137,6 +140,17 @@ dataSources:
       : undefined
   }
 
+  generateTests() {
+    const hasEvents = this.protocol.hasEvents()
+    const events = hasEvents
+      ? abiEvents(this.abi).toJS()
+      : []
+
+    return events.length > 0
+      ?  generateTestsFiles(this.contractName, events, this.indexEvents)
+      : undefined
+  }
+
   generate() {
     return {
       'package.json': this.generatePackageJson(),
@@ -145,6 +159,7 @@ dataSources:
       'tsconfig.json': this.generateTsConfig(),
       src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
       abis: this.generateABIs(),
+      tests: this.generateTests(),
     }
   }
 }

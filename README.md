@@ -16,6 +16,7 @@ As of today, the command line interface supports the following commands:
 - `graph auth` — Stores a [Graph Node](https://github.com/graphprotocol/graph-node) access token in the system's keychain.
 - `graph local` — Runs tests against a [Graph Node](https://github.com/graphprotocol/graph-node) test environment (using Ganache by default).
 - `graph test` — Downloads and runs the [Matchstick](https://github.com/LimeChain/matchstick) rust binary in order to test a subgraph.
+- `graph add` - Adds a new datasource to the yaml file and writes the necessary changes to other files - schema.graphql, abi and mapping.
 
 ## How It Works
 
@@ -49,9 +50,9 @@ yarn global add @graphprotocol/graph-cli
 
 ## Getting Started
 
-The Graph CLI can be used with a local or self-hosted [Graph Node](https://github.com/graphprotocol/graph-node) or with the [Hosted Service](https://thegraph.com/explorer/). To help you get going, there are [quick start guides](https://thegraph.com/docs/quick-start) available for both.
+The Graph CLI can be used with a local or self-hosted [Graph Node](https://github.com/graphprotocol/graph-node) or with the [Hosted Service](https://thegraph.com/explorer/). To help you get going, there are [quick start guides](https://thegraph.com/docs/en/developer/quick-start/) available for both.
 
-If you are ready to dive into the details of building a subgraph from scratch, there is a [detailed walkthrough](https://thegraph.com/docs/define-a-subgraph) for that as well, along with API documentation for the [AssemblyScript API](https://thegraph.com/docs/assemblyscript-api).
+If you are ready to dive into the details of building a subgraph from scratch, there is a [detailed walkthrough](https://thegraph.com/docs/en/developer/create-subgraph-hosted/) for that as well, along with API documentation for the [AssemblyScript API](https://thegraph.com/docs/en/developer/assemblyscript-api/).
 
 ## Release process
 

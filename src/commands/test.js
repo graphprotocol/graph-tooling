@@ -168,7 +168,7 @@ async function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
   const cpuCore = os.cpus()[0]
-  const isM1 = (arch === 'arm64' && /Apple (M1|processor)/.test(cpuCore.model))
+  const isAppleSilicon = (arch === 'arm64' && /Apple (M1|M2|processor)/.test(cpuCore.model))
   const linuxInfo = type === 'Linux' ? await getLinuxInfo() : {}
   const linuxDistro = linuxInfo.name
   const release = linuxInfo.version || os.release()
@@ -178,13 +178,11 @@ async function getPlatform(logsOpt) {
     print.info(`OS type: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
-  if (arch === 'x64' || isM1) {
+  if (arch === 'x64' || isAppleSilicon) {
     if (type === 'Darwin') {
-      if (majorVersion === 19) {
-        return 'binary-macos-10.15'
-      } else if (majorVersion === 18) {
-        return 'binary-macos-10.14'
-      } else if (isM1) {
+      if (majorVersion === 18 || majorVersion === 19) {
+        return 'binary-macos-10.15' // GitHub dropped support for macOS 10.14 in Actions, but it seems 10.15 binary works on 10.14 too
+      } else if (isAppleSilicon) {
         return 'binary-macos-11-m1'
       }
       return 'binary-macos-11'
@@ -196,8 +194,6 @@ async function getPlatform(logsOpt) {
       } else {
         return 'binary-linux-20'
       }
-    } else if (type === 'Windows_NT') {
-      return 'binary-windows'
     }
   }
 
