@@ -216,20 +216,26 @@ More than one template named '${name}', template names must be unique.`,
   static async load(filename, { protocol, skipValidation } = { skipValidation: false }) {
     // Load and validate the manifest
     let data = null
+    let has_file_data_sources = false
 
     if (filename.match(/.js$/)) {
       data = require(path.resolve(filename))
     } else {
-      data = yaml.parse(await fs.readFile(filename, 'utf-8'))
+      let raw_data = await fs.readFile(filename, 'utf-8')
+      has_file_data_sources = raw_data.includes('kind: file')
+      data = yaml.parse(raw_data)
     }
 
     // Helper to resolve files relative to the subgraph manifest
     let resolveFile = maybeRelativeFile =>
       path.resolve(path.dirname(filename), maybeRelativeFile)
 
-    let manifestErrors = await Subgraph.validate(data, protocol, { resolveFile })
-    if (manifestErrors.size > 0) {
-      throwCombinedError(filename, manifestErrors)
+    // TODO: Validation for file data sources
+    if (!has_file_data_sources) {
+      let manifestErrors = await Subgraph.validate(data, protocol, { resolveFile })
+      if (manifestErrors.size > 0) {
+        throwCombinedError(filename, manifestErrors)
+      }
     }
 
     let manifest = immutable.fromJS(data)
