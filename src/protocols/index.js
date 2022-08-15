@@ -74,9 +74,11 @@ module.exports = class Protocol {
       near: ['near-mainnet', 'near-testnet'],
       cosmos: [
         'cosmoshub-4',
-        'theta-testnet-001',
+        'theta-testnet-001', // CosmosHub testnet
         'osmosis-1',
-        'osmo-test-4'
+        'osmo-test-4',       // Osmosis testnet
+        'juno-1', 
+        'uni-3'              // Juno testnet
       ],
     })
   }
