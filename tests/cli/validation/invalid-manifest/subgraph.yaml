@@ -1,7 +1,8 @@
 schema:
   file: ./non-existent.grapqhl
 dataSources:
-  - name: 5
+  - kind: ethereum/contract
+    name: 5
     abis:
       name: Foo
     mapping:

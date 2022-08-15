@@ -14,6 +14,7 @@ const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-h
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
 const Protocol = require('../protocols')
+const { updateSubgraphNetwork } = require('../command-helpers/network')
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -22,17 +23,21 @@ ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk
 
 Options:
 
-      --product <subgraph-studio|hosted-service>
+        --product <subgraph-studio|hosted-service>
                                 Selects the product to which to deploy
-      --studio                  Shortcut for --product subgraph-studio
-  -g, --node <node>             Graph node to which to deploy
-      --deploy-key <key>        User deploy key
-  -l  --version-label <label>   Version label used for the deployment
-  -h, --help                    Show usage information
-  -i, --ipfs <node>             Upload build results to an IPFS node (default: ${DEFAULT_IPFS_URL})
-  -o, --output-dir <path>       Output directory for build results (default: build/)
-      --skip-migrations         Skip subgraph migrations (default: false)
-  -w, --watch                   Regenerate types when subgraph files change (default: false)
+        --studio                  Shortcut for --product subgraph-studio
+  -g,   --node <node>             Graph node to which to deploy
+        --deploy-key <key>        User deploy key
+  -l    --version-label <label>   Version label used for the deployment
+  -h,   --help                    Show usage information
+  -i,   --ipfs <node>             Upload build results to an IPFS node (default: ${DEFAULT_IPFS_URL})
+  -hdr, --headers <map>           Add custom headers that will be used by the IPFS HTTP client (default: {})
+        --debug-fork              ID of a remote subgraph whose store will be GraphQL queried
+  -o,   --output-dir <path>       Output directory for build results (default: build/)
+        --skip-migrations         Skip subgraph migrations (default: false)
+  -w,   --watch                   Regenerate types when subgraph files change (default: false)
+        --network <name>          Network configuration to use from the networks config file
+        --network-file <path>     Networks config file path (default: "./networks.json")
 `
 
 const processForm = async (
@@ -50,7 +55,7 @@ const processForm = async (
       name: 'product',
       message: 'Product for which to deploy',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: 
+      skip:
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
         studio !== undefined || node !== undefined,
@@ -90,21 +95,35 @@ module.exports = {
       i,
       help,
       ipfs,
+      headers,
+      hdr,
       node,
       o,
       outputDir,
       skipMigrations,
       w,
       watch,
+      debugFork,
+      network,
+      networkFile,
     } = toolbox.parameters.options
 
     // Support both long and short option variants
     help = help || h
     ipfs = ipfs || i || DEFAULT_IPFS_URL
+    headers = headers || hdr || "{}"
     node = node || g
     outputDir = outputDir || o
     watch = watch || w
     versionLabel = versionLabel || l
+
+    try {
+      headers = JSON.parse(headers)
+    } catch (e) {
+      print.error("Please make sure headers is a valid JSON value")
+      process.exitCode = 1
+      return
+    }
 
     let subgraphName, manifest
     try {
@@ -127,6 +146,10 @@ module.exports = {
       manifest !== undefined && manifest !== ''
         ? manifest
         : filesystem.resolve('subgraph.yaml')
+    networkFile =
+      networkFile !== undefined && networkFile !== ''
+        ? networkFile
+        : filesystem.resolve("networks.json")
 
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
@@ -198,7 +221,7 @@ module.exports = {
       // because that would mean the CLI would try to compile code
       // using the wrong AssemblyScript compiler.
       await assertManifestApiVersion(manifest, '0.0.5')
-      await assertGraphTsVersion(path.dirname(manifest), '0.22.0')
+      await assertGraphTsVersion(path.dirname(manifest), '0.25.0')
 
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
 
@@ -209,11 +232,17 @@ module.exports = {
       return
     }
 
+    if (network) {
+      let identifierName = protocol.getContract().identifierName()
+      await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName)
+    }
+
     const isStudio = node.match(/studio/)
     const isHostedService = node.match(/thegraph.com/) && !isStudio
 
     let compiler = createCompiler(manifest, {
       ipfs,
+      headers,
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
@@ -264,7 +293,7 @@ module.exports = {
       //       `Failed to deploy to Graph node ${requestUrl}`,
       client.request(
         'subgraph_deploy',
-        { name: subgraphName, ipfs_hash: ipfsHash, version_label: versionLabel },
+        { name: subgraphName, ipfs_hash: ipfsHash, version_label: versionLabel, debug_fork: debugFork },
         async (requestError, jsonRpcError, res) => {
           if (jsonRpcError) {
             spinner.fail(
@@ -292,7 +321,6 @@ $ graph create --node ${node} ${subgraphName}`)
             const base = requestUrl.protocol + '//' + requestUrl.hostname
             let playground = res.playground
             let queries = res.queries
-            let subscriptions = res.subscriptions
 
             // Add a base URL if graph-node did not return the full URL
             if (playground.charAt(0) === ':') {
@@ -300,9 +328,6 @@ $ graph create --node ${node} ${subgraphName}`)
             }
             if (queries.charAt(0) === ':') {
               queries = base + queries
-            }
-            if (subscriptions.charAt(0) === ':') {
-              subscriptions = base + subscriptions
             }
 
             if (isHostedService) {
@@ -316,7 +341,6 @@ $ graph create --node ${node} ${subgraphName}`)
             }
             print.info('\nSubgraph endpoints:')
             print.info(`Queries (HTTP):     ${queries}`)
-            print.info(`Subscriptions (WS): ${subscriptions}`)
             print.info(``)
           }
         },

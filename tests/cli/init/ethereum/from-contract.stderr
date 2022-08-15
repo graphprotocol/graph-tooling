@@ -6,6 +6,8 @@
   Write subgraph to directory
 - Create subgraph scaffold
 ✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
 - Initialize subgraph repository
 ✔ Initialize subgraph repository
 - Install dependencies with yarn

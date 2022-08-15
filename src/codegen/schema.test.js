@@ -114,9 +114,6 @@ describe('Schema code generator', () => {
             body: `
               super()
               this.set('id', Value.fromString(id))
-
-              this.set('name', Value.fromString(''))
-              this.set('count', Value.fromI32(0))
             `,
           },
           {
@@ -129,9 +126,7 @@ describe('Schema code generator', () => {
               if (id) {
                 assert(
                   id.kind == ValueKind.STRING,
-                  'Cannot save Account entity with non-string ID. ' +
-                  'Considering using .toHex() to convert the "id" to a string.'
-                )
+                  \`Entities of type Account must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
                 store.set('Account', id.toString(), this)
               }
             `,
@@ -279,9 +274,6 @@ describe('Schema code generator', () => {
             body: `
               super()
               this.set('id', Value.fromString(id))
-    
-              this.set('amount', Value.fromBigInt(BigInt.zero()))
-              this.set('account', Value.fromString(''))
             `,
           },
           {
@@ -294,9 +286,7 @@ describe('Schema code generator', () => {
               if (id) {
                 assert(
                   id.kind == ValueKind.STRING,
-                  'Cannot save Wallet entity with non-string ID. ' +
-                  'Considering using .toHex() to convert the "id" to a string.'
-                )
+                  \`Entities of type Wallet must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
                 store.set('Wallet', id.toString(), this)
               }
             `,
@@ -363,6 +353,108 @@ describe('Schema code generator', () => {
           },
         ],
       })
+    })
+  })
+
+  test('Should handle references with Bytes id types', () => {
+    const codegen = createSchemaCodeGen(`
+    interface Employee {
+      id: Bytes!
+      name: String!
+     }
+
+    type Worker implements Employee @entity {
+      id: Bytes!
+      name: String!
+   }
+
+    type Task @entity {
+      id: Bytes!
+      employee: Employee!
+      worker: Worker!
+   }
+`)
+
+    const generatedTypes = codegen.generateTypes()
+    testEntity(generatedTypes, {
+      name: "Task",
+      members: [],
+      methods: [
+        {
+          name: 'constructor',
+          params: [new Param('id', new NamedType('Bytes'))],
+          returnType: undefined,
+          body: "\n      super()\n      this.set('id', Value.fromBytes(id))\n      "
+        },
+        {
+          name: 'save',
+          params: [],
+          returnType: new NamedType('void'),
+          body: '\n' +
+            "        let id = this.get('id')\n" +
+            '        assert(id != null,\n' +
+            "               'Cannot save Task entity without an ID')\n" +
+            '        if (id) {\n' +
+            '          assert(id.kind == ValueKind.BYTES,\n' +
+            "                 `Entities of type Task must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`)\n" +
+            "          store.set('Task', id.toBytes().toHexString(), this)\n" +
+            '        }'
+        },
+        {
+          name: 'load',
+          static: true,
+          params: [new Param('id', new NamedType('Bytes'))],
+          returnType: new NullableType(new NamedType('Task')),
+          body: '\n' +
+            "        return changetype<Task | null>(store.get('Task', id.toHexString()))\n" +
+            '        '
+        },
+        {
+          name: 'get id',
+          params: [],
+          returnType: new NamedType('Bytes'),
+          body: '\n' +
+            "       let value = this.get('id')\n" +
+            '       return value!.toBytes()\n' +
+            '      '
+        },
+        {
+          name: 'set id',
+          params: [new Param('value', new NamedType('Bytes'))],
+          returnType: undefined,
+          body: "\n      this.set('id', Value.fromBytes(value))\n    "
+        },
+        {
+          name: 'get employee',
+          params: [],
+          returnType: new NamedType('Bytes'),
+          body: '\n' +
+            "       let value = this.get('employee')\n" +
+            '       return value!.toBytes()\n' +
+            '      '
+        },
+        {
+          name: 'set employee',
+          params: [new Param('value', new NamedType('Bytes'))],
+          returnType: undefined,
+          body: "\n      this.set('employee', Value.fromBytes(value))\n    "
+        },
+        {
+          name: 'get worker',
+          params: [],
+          returnType: new NamedType('Bytes'),
+          body: '\n' +
+            "       let value = this.get('worker')\n" +
+            '       return value!.toBytes()\n' +
+            '      '
+        },
+        {
+          name: 'set worker',
+          params: [new Param('value', new NamedType('Bytes'))],
+          returnType: undefined,
+          body: "\n      this.set('worker', Value.fromBytes(value))\n    "
+        }
+      ]
     })
   })
 })

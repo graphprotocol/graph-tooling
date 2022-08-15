@@ -1,8 +1,14 @@
 const immutable = require('immutable')
+const fs = require('fs')
+const yaml = require('yaml')
+const request = require('sync-request')
+const Web3EthAbi = require('web3-eth-abi');
 
 const tsCodegen = require('../../../codegen/typescript')
 const typesCodegen = require('../../../codegen/types')
 const util = require('../../../codegen/util')
+
+const doFixtureCodegen = fs.existsSync('./fixtures.yaml');
 
 module.exports = class AbiCodeGenerator {
   constructor(abi) {
@@ -10,7 +16,7 @@ module.exports = class AbiCodeGenerator {
   }
 
   generateModuleImports() {
-    return [
+    let imports = [
       tsCodegen.moduleImports(
         [
           // Ethereum integration
@@ -27,8 +33,21 @@ module.exports = class AbiCodeGenerator {
           'BigInt',
         ],
         '@graphprotocol/graph-ts',
-      ),
+      )
     ]
+
+    if (doFixtureCodegen) {
+      imports.push(
+        tsCodegen.moduleImports(
+          [
+            'newMockEvent',
+          ],
+          'matchstick-as/assembly/index',
+        )
+      )
+    }
+
+    return imports
   }
 
   generateTypes() {
@@ -182,6 +201,7 @@ module.exports = class AbiCodeGenerator {
           setName: (input, name) => input.set('name', name),
         })
 
+        let namesAndTypes = []
         inputs.forEach((input, index) => {
           // Generate getters and classes for event params
           let paramObject = this._generateInputOrOutput(
@@ -192,6 +212,16 @@ module.exports = class AbiCodeGenerator {
             `parameters`,
           )
           paramsClass.addMethod(paramObject.getter)
+
+          // Fixture generation
+          if (doFixtureCodegen) {
+            let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
+            if (typeof ethType === typeof {} && (ethType.test("int256") || ethType.test("uint256"))) {
+              ethType = "int32"
+            }
+            namesAndTypes.push({name: paramObject.getter.name.slice(4), type: ethType})
+          }
+
           tupleClasses.push(...paramObject.classes)
         })
 
@@ -208,6 +238,51 @@ module.exports = class AbiCodeGenerator {
             `return new ${paramsClassName}(this)`,
           ),
         )
+
+        // Fixture generation
+        if (doFixtureCodegen) {
+          const args = yaml.parse(fs.readFileSync('./fixtures.yaml', 'utf8'))
+          const blockNumber = args['blockNumber']
+          const contractAddr = args['contractAddr']
+          const topic0 = args['topic0']
+          const apiKey = args['apiKey']
+          const url = `https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=${blockNumber}&toBlock=${blockNumber}&address=${contractAddr}&${topic0}=topic0&apikey=${apiKey}`;
+
+          let resp = request("GET", url)
+          let body = JSON.parse(resp.getBody("utf8"))
+          if (body.status === '0') {
+            throw new Error(body.result)
+          }
+
+          let res = Web3EthAbi.decodeLog(
+            namesAndTypes,
+            body.result[0].data,
+            []
+          );
+
+          let stmnts = ""
+          for (let i = 0; i < namesAndTypes.length; i++) {
+            let code = '"' + res[i] + '"'
+            if (namesAndTypes[i].type.toString() == "address") {
+              code = `Address.fromString(${code})`
+            }
+            stmnts = stmnts.concat(`event.parameters.push(new ethereum.EventParam(\"${namesAndTypes[i].name}\", ${typesCodegen.ethereumFromAsc(code, namesAndTypes[i].type)}));`, `\n`)
+          }
+
+          klass.addMethod(
+            tsCodegen.staticMethod(
+              `mock${eventClassName}`,
+              [],
+              tsCodegen.namedType(eventClassName),
+              `
+              let event = changetype<${eventClassName}>(newMockEvent());
+              ${stmnts}
+              return event;
+              `,
+            )
+          )
+        }
+
         return [klass, paramsClass, ...tupleClasses]
       })
 
@@ -427,6 +502,18 @@ module.exports = class AbiCodeGenerator {
             ),
           )
           .forEach(member => returnType.addMember(member))
+        
+        // Add getters to the type
+        outputs
+          .map((output, index) =>
+            !!output.get('name') && tsCodegen.method(
+              `get${output.get('name')[0].toUpperCase()}${output.get('name').slice(1)}`,
+              [],
+              this._getTupleParamType(output, index, tupleResultParentType),
+              `return this.value${index};`
+            )
+          )
+          .forEach(method => !!method && returnType.addMethod(method))
 
         // Create types for Tuple outputs
         outputs.forEach((output, index) => {

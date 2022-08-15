@@ -2,8 +2,9 @@ const { Binary } = require('binary-install-raw')
 const os = require('os')
 const chalk = require('chalk')
 const fetch = require('node-fetch')
-const { filesystem, print } = require('gluegun')
+const { filesystem, patching, print, system } = require('gluegun')
 const { fixParameters } = require('../command-helpers/gluegun')
+const path = require('path')
 const semver = require('semver')
 const { spawn, exec } = require('child_process')
 const yaml = require('js-yaml')
@@ -12,12 +13,12 @@ const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
 
 ${chalk.dim('Options:')}
-  -c, --coverage                Run the tests in coverage mode. Works with v0.2.1 and above
+  -c, --coverage                Run the tests in coverage mode
   -d, --docker                  Run the tests in a docker container(Note: Please execute from the root folder of the subgraph)
   -f  --force                   Binary - overwrites folder + file when downloading. Docker - rebuilds the docker image
   -h, --help                    Show usage information
   -l, --logs                    Logs to the console information about the OS, CPU model and download url (debugging purposes)
-  -r, --recompile               Force-recompile tests (Not available in 0.2.2 and earlier versions)
+  -r, --recompile               Force-recompile tests
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
   `
 
@@ -42,16 +43,16 @@ module.exports = {
       version,
     } = toolbox.parameters.options
 
-    let opts = new Map()
+    let opts = {}
     // Support both long and short option variants
-    opts.set("coverage", coverage || c)
-    opts.set("docker", docker || d)
-    opts.set("force", force || f)
-    opts.set("help", help || h)
-    opts.set("logs", logs || l)
-    opts.set("recompile", recompile || r)
-    opts.set("version", version || v)
-
+    opts.coverage = coverage || c
+    opts.docker = docker || d
+    opts.force = force || f
+    opts.help = help || h
+    opts.logs = logs || l
+    opts.recompile = recompile || r
+    opts.version = version || v
+    opts.testsFolder = './tests'
     // Fix if a boolean flag (e.g -c, --coverage) has an argument
     try {
       fixParameters(toolbox.parameters, {
@@ -75,18 +76,49 @@ module.exports = {
     }
 
     let datasource = toolbox.parameters.first || toolbox.parameters.array[0]
-
     // Show help text if requested
-    if (opts.get("help")) {
+    if (opts.help) {
       print.info(HELP)
       return
     }
 
-    let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
-    let json = await result.json()
-    opts.set("latestVersion", json.tag_name)
+    // Check if matchstick.yaml config exists
+    if(filesystem.exists('matchstick.yaml')) {
+      try {
+        // Load the config
+        let config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8'))
 
-    if(opts.get("docker")) {
+        // Check if matchstick.yaml and testsFolder not null
+        if(config && config.testsFolder) {
+          // assign test folder from matchstick.yaml if present
+          opts.testsFolder = config.testsFolder
+        }
+      } catch (error) {
+        print.info('A problem occurred while reading matchstick.yaml. Please attend to the errors below:')
+        print.error(error.message)
+        process.exit(1)
+      }
+    }
+
+    opts.cachePath = path.join(opts.testsFolder, '.latest.json')
+    setVersionFromCache(opts)
+
+    // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
+    if (opts.force || (!opts.version && !opts.latestVersion)) {
+      print.info("Fetching latest version tag")
+      let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
+      let json = await result.json()
+      opts.latestVersion = json.tag_name
+
+      filesystem.file(opts.cachePath, {
+        content: {
+          version: json.tag_name,
+          timestamp: Date.now()
+        }
+      })
+    }
+
+    if(opts.docker) {
       runDocker(datasource, opts)
     } else {
       runBinary(datasource, opts)
@@ -94,15 +126,27 @@ module.exports = {
   }
 }
 
-async function runBinary(datasource, opts) {
-  let coverageOpt = opts.get("coverage")
-  let forceOpt = opts.get("force")
-  let logsOpt = opts.get("logs")
-  let versionOpt = opts.get("version")
-  let latestVersion = opts.get("latestVersion")
-  let recompileOpt = opts.get("recompile")
+async function setVersionFromCache(opts) {
+  if(filesystem.exists(opts.cachePath) == 'file') {
+    let cached = filesystem.read(opts.cachePath, 'json')
+    // Get the cache age in days
+    let cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24)
+    // If cache age is less than 1 day, use the cached version
+    if (cacheAge < 1) {
+      opts.latestVersion = cached.version
+    }
+  }
+}
 
-  const platform = getPlatform(logsOpt)
+async function runBinary(datasource, opts) {
+  let coverageOpt = opts.coverage
+  let forceOpt = opts.force
+  let logsOpt = opts.logs
+  let versionOpt = opts.version
+  let latestVersion = opts.latestVersion
+  let recompileOpt = opts.recompile
+
+  const platform = await getPlatform(logsOpt)
 
   const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`
 
@@ -120,76 +164,83 @@ async function runBinary(datasource, opts) {
   args.length > 0 ? binary.run(...args) : binary.run()
 }
 
-function getPlatform(logsOpt) {
+async function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
-  const release = os.release()
   const cpuCore = os.cpus()[0]
-  const majorVersion = semver.major(release)
-  const isM1 = cpuCore.model.includes("Apple M1")
+  const isAppleSilicon = (arch === 'arm64' && /Apple (M1|M2|processor)/.test(cpuCore.model))
+  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : {}
+  const linuxDistro = linuxInfo.name
+  const release = linuxInfo.version || os.release()
+  const majorVersion = parseInt(linuxInfo.version, 10) || semver.major(release)
 
   if (logsOpt) {
-    print.info(`OS type: ${type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(`OS type: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
   }
 
-  if (arch === 'x64' || (arch === 'arm64' && isM1)) {
+  if (arch === 'x64' || isAppleSilicon) {
     if (type === 'Darwin') {
-      if (majorVersion === 19) {
-        return 'binary-macos-10.15'
-      } else if (majorVersion === 18) {
-        return 'binary-macos-10.14'
-      } else if (isM1) {
+      if (majorVersion === 18 || majorVersion === 19) {
+        return 'binary-macos-10.15' // GitHub dropped support for macOS 10.14 in Actions, but it seems 10.15 binary works on 10.14 too
+      } else if (isAppleSilicon) {
         return 'binary-macos-11-m1'
       }
       return 'binary-macos-11'
     } else if (type === 'Linux') {
       if (majorVersion === 18) {
         return 'binary-linux-18'
+      } if (majorVersion === 22) {
+        return 'binary-linux-22'
+      } else {
+        return 'binary-linux-20'
       }
-      return 'binary-linux-20'
-    } else if (type === 'Windows_NT') {
-      return 'binary-windows'
     }
   }
 
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
+async function getLinuxInfo() {
+  try {
+    let result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {trim: true})
+    let infoArray = result.replace(/['"]+/g, '').split('\n').map(p => p.split('='))
+    let linuxInfo = {}
+
+    infoArray.forEach((val) => {
+      linuxInfo[val[0].toLowerCase()] = val[1]
+    });
+
+    return linuxInfo
+  } catch (error) {
+    print.error(`Error fetching the Linux version:\n ${error}`)
+    process.exit(1)
+  }
+}
+
 async function runDocker(datasource, opts) {
-  let coverageOpt = opts.get("coverage")
-  let forceOpt = opts.get("force")
-  let versionOpt = opts.get("version")
-  let latestVersion = opts.get("latestVersion")
-  let recompileOpt = opts.get("recompile")
+  let coverageOpt = opts.coverage
+  let forceOpt = opts.force
+  let versionOpt = opts.version
+  let latestVersion = opts.latestVersion
+  let recompileOpt = opts.recompile
 
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
-  await filesystem.remove("./node_modules/binary-install-raw/bin")
+  await filesystem.remove('./node_modules/binary-install-raw/bin')
 
   // Get current working directory
   let current_folder = await filesystem.cwd()
 
-  // Build the Dockerfile location. Defaults to ./tests/.docker if
-  // a custom testsFolder is not declared in the subgraph.yaml
-  let dockerDir = ""
+  // Declate dockerfilePath with default location
+  let dockerfilePath = path.join(opts.testsFolder || 'tests', '.docker/Dockerfile')
 
-  try {
-    let doc = await yaml.load(filesystem.read('subgraph.yaml', 'utf8'))
-    testsFolder = doc.testsFolder || './tests'
-    dockerDir = testsFolder.endsWith('/') ? testsFolder + '.docker' : testsFolder + '/.docker'
-  } catch (error) {
-    print.error(error.message)
-    return
-  }
+  // Check if the Dockerfil already exists
+  let dockerfileExists = filesystem.exists(dockerfilePath)
 
-  // Create the Dockerfile
-  try {
-    await filesystem.write(`${dockerDir}/Dockerfile`, dockerfile(versionOpt, latestVersion))
-    print.info('Successfully generated Dockerfile.')
-  } catch (error) {
-    print.info('A problem occurred while generating the Dockerfile. Please attend to the errors below:')
-    print.error(error.message)
-    return
+  // Generate the Dockerfile only if it doesn't exists,
+  // version flag and/or force flag is passed.
+  if(!dockerfileExists || versionOpt || forceOpt) {
+    await dockerfile(dockerfilePath, versionOpt, latestVersion)
   }
 
   // Run a command to check if matchstick image already exists
@@ -212,10 +263,10 @@ async function runDocker(datasource, opts) {
 
     // If a matchstick image does not exists, the command returns an empty string,
     // else it'll return the image ID. Skip `docker build` if an image already exists
-    // If `-v/--version` is specified, delete current image(if any) and rebuild.
+    // Delete current image(if any) and rebuild.
     // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
-    if(stdout === '' || versionOpt || forceOpt) {
-      if ((stdout !== '' && versionOpt) || forceOpt) {
+    if(!dockerfileExists || stdout === '' || versionOpt || forceOpt) {
+      if (stdout !== '') {
         exec('docker image rm matchstick', (error, stdout, stderr) => {
           print.info(chalk.bold(`Removing matchstick image\n${stdout}`))
         })
@@ -224,7 +275,7 @@ async function runDocker(datasource, opts) {
       // run a container from that image.
       spawn(
         'docker',
-        ['build', '--no-cache', '-f', `${dockerDir}/Dockerfile`, '-t', 'matchstick', '.'],
+        ['build', '-f', dockerfilePath, '-t', 'matchstick', '.'],
         { stdio: 'inherit' }
       ).on('close', code => {
         if (code === 0) {
@@ -239,37 +290,32 @@ async function runDocker(datasource, opts) {
   })
 }
 
-// TODO: Move these in separate file (in a function maybe)
-function dockerfile(versionOpt, latestVersion) {
-  return `
-  FROM ubuntu:20.04
-  ENV ARGS=""
+// Downloads Dockerfile template from the demo-subgraph repo
+// Replaces the placeholders with their respective values
+async function dockerfile(dockerfilePath, versionOpt, latestVersion) {
+  let spinner = print.spin("Generating Dockerfile...")
 
-  # Install necessary packages
-  RUN apt update
-  RUN apt install -y nodejs
-  RUN apt install -y npm
-  RUN apt install -y git
-  RUN apt install -y postgresql
-  RUN apt install -y curl
-  RUN apt install -y cmake
-  RUN npm install -g @graphprotocol/graph-cli
+  try {
+    // Fetch the Dockerfile template content from the demo-subgraph repo
+    let content = await fetch('https://raw.githubusercontent.com/LimeChain/demo-subgraph/main/Dockerfile')
+        .then((response) => {
+          if (response.ok) {
+            return response.text()
+          } else {
+            throw new Error(`Status Code: ${response.status}, with error: ${response.statusText}`);
+          }
+        })
 
-  # Download the latest linux binary
-  RUN curl -OL https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/binary-linux-20
+    // Write the Dockerfile
+    await filesystem.write(dockerfilePath, content)
 
-  # Make it executable
-  RUN chmod a+x binary-linux-20
+    // Replaces the version placeholders
+    await patching.replace(dockerfilePath, '<MATCHSTICK_VERSION>', versionOpt || latestVersion)
 
-  # Create a matchstick dir where the host will be copied
-  RUN mkdir matchstick
-  WORKDIR matchstick
+  } catch (error) {
+    spinner.fail(`A problem occurred while generating the Dockerfile. Please attend to the errors below:\n ${error.message}`)
+    process.exit(1)
+  }
 
-  # Copy host to /matchstick
-  COPY ../ .
-
-  RUN graph codegen
-  RUN graph build
-
-  CMD ../binary-linux-20 \${ARGS}`
+  spinner.succeed('Successfully generated Dockerfile.')
 }

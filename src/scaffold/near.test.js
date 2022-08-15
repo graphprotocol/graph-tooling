@@ -8,7 +8,7 @@ const scaffoldOptions = {
   protocol,
   contract: 'abc.def.near',
   network: 'near-mainnet',
-  contractName: 'Contract',
+  contractName: 'Contract'
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
@@ -34,7 +34,7 @@ dataSources:
         - ExampleEntity
       receiptHandlers:
         - handler: handleReceipt
-      file: ./src/mapping.ts
+      file: ./src/contract.ts
 `)
   })
 

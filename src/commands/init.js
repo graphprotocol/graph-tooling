@@ -1,9 +1,9 @@
 const chalk = require('chalk')
-const fetch = require('node-fetch')
-const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
+const fs = require('fs')
+const graphCli = require('../cli')
 
 const {
   getSubgraphBasename,
@@ -11,9 +11,11 @@ const {
 } = require('../command-helpers/subgraph')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const { validateStudioNetwork } = require('../command-helpers/studio')
+const { initNetworksConfig } = require('../command-helpers/network')
 const { withSpinner, step } = require('../command-helpers/spinner')
 const { fixParameters } = require('../command-helpers/gluegun')
 const { chooseNodeUrl } = require('../command-helpers/node')
+const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
 const { generateScaffold, writeScaffold } = require('../command-helpers/scaffold')
 const { abiEvents } = require('../scaffold/schema')
 const { validateContract } = require('../validation')
@@ -54,6 +56,11 @@ ${chalk.dim.underline('Ethereum:')}
 ${chalk.dim.underline('NEAR:')}
 
       --network <${availableNetworks.get('near').join('|')}>
+                                 Selects the network the contract is deployed to
+
+${chalk.dim.underline('Cosmos:')}
+
+      --network <${availableNetworks.get('cosmos').join('|')}>
                                  Selects the network the contract is deployed to
 `
 
@@ -167,6 +174,11 @@ const processInitForm = async (
         return value
       },
     },
+    // TODO:
+    //
+    // protocols that don't support contract
+    // - arweave
+    // - cosmos
     {
       type: 'input',
       name: 'contract',
@@ -174,10 +186,10 @@ const processInitForm = async (
         ProtocolContract = protocolInstance.getContract()
         return `Contract ${ProtocolContract.identifierName()}`
       },
-      skip: fromExample !== undefined,
+      skip: () => fromExample !== undefined || !protocolInstance.hasContract(),
       initial: contract,
       validate: async value => {
-        if (fromExample !== undefined) {
+        if (fromExample !== undefined || !protocolInstance.hasContract()) {
           return true
         }
 
@@ -235,11 +247,11 @@ const processInitForm = async (
       name: 'contractName',
       message: 'Contract Name',
       initial: contractName || 'Contract',
-      skip: () => fromExample !== undefined,
+      skip: () => fromExample !== undefined || !protocolInstance.hasContract(),
       validate: value => value && value.length > 0,
       result: value => {
-        contractName = value;
-        return value;
+        contractName = value
+        return value
       }
     },
   ]
@@ -251,66 +263,6 @@ const processInitForm = async (
     return undefined
   }
 }
-
-const loadAbiFromBlockScout = async (ABI, network, address) =>
-  await withSpinner(
-    `Fetching ABI from BlockScout`,
-    `Failed to fetch ABI from BlockScout`,
-    `Warnings while fetching ABI from BlockScout`,
-    async spinner => {
-      let result = await fetch(
-        `https://blockscout.com/${
-          network.replace('-', '/')
-        }/api?module=contract&action=getabi&address=${address}`,
-      )
-      let json = await result.json()
-
-      // BlockScout returns a JSON object that has a `status`, a `message` and
-      // a `result` field. The `status` is '0' in case of errors and '1' in
-      // case of success
-      if (json.status === '1') {
-        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
-      } else {
-        throw new Error('ABI not found, try loading it from a local file')
-      }
-    },
-  )
-
-const getEtherscanLikeAPIUrl = (network) => {
-  switch(network){
-    case "mainnet": return `https://api.etherscan.io/api`;
-    case "arbitrum-one": return `https://api.arbiscan.io/api`;
-    case "bsc": return `https://api.bscscan.com/api`;
-    case "matic": return `https://api.polygonscan.com/api`;
-    case "mumbai": return `https://api-testnet.polygonscan.com/api`;
-    case "energyweb": return `https://explorer.energyweb.org/api`;
-    case "volta": return `https://volta-explorer.energyweb.org/api`;
-    default: return `https://api-${network}.etherscan.io/api`;
-  }
-}
-
-const loadAbiFromEtherscan = async (ABI, network, address) =>
-  await withSpinner(
-    `Fetching ABI from Etherscan`,
-    `Failed to fetch ABI from Etherscan`,
-    `Warnings while fetching ABI from Etherscan`,
-    async spinner => {
-      const scanApiUrl = getEtherscanLikeAPIUrl(network);
-      let result = await fetch(
-        `${scanApiUrl}?module=contract&action=getabi&address=${address}`,
-      )
-      let json = await result.json()
-
-      // Etherscan returns a JSON object that has a `status`, a `message` and
-      // a `result` field. The `status` is '0' in case of errors and '1' in
-      // case of success
-      if (json.status === '1') {
-        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
-      } else {
-        throw new Error('ABI not found, try loading it from a local file')
-      }
-    },
-  )
 
 const loadAbiFromFile = async (ABI, filename) => {
   let exists = await toolbox.filesystem.exists(filename)
@@ -470,9 +422,9 @@ module.exports = {
           contractName,
           node,
           studio,
-          product,
+          product
         },
-        { commands },
+        { commands, addContract: false },
       )
     }
 
@@ -531,9 +483,9 @@ module.exports = {
           contractName: inputs.contractName,
           node,
           studio: inputs.studio,
-          product: inputs.product,
+          product: inputs.product
         },
-        { commands },
+        { commands, addContract: true },
       )
     }
   },
@@ -685,6 +637,12 @@ const initSubgraphFromExample = async (
     return
   }
 
+  let networkConf = await initNetworksConfig(toolbox, directory, "address")
+  if (networkConf !== true) {
+    process.exitCode = 1
+    return
+  }
+
   // Update package.json to match the subgraph name
   let prepared = await withSpinner(
     `Update subgraph name and commands in package.json`,
@@ -761,9 +719,9 @@ const initSubgraphFromContract = async (
     contractName,
     node,
     studio,
-    product,
+    product
   },
-  { commands },
+  { commands, addContract },
 ) => {
   let { print } = toolbox
 
@@ -826,6 +784,15 @@ const initSubgraphFromContract = async (
     return
   }
 
+  if (protocolInstance.hasContract()) {
+    let identifierName = protocolInstance.getContract().identifierName()
+    let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
+    if (networkConf !== true) {
+      process.exitCode = 1
+      return
+    }
+  }
+
   // Initialize a fresh Git repository
   let repo = await initRepository(toolbox, directory)
   if (repo !== true) {
@@ -847,5 +814,85 @@ const initSubgraphFromContract = async (
     return
   }
 
+  while (addContract) {
+    addContract = await addAnotherContract(toolbox, { protocolInstance, directory })
+  }
+
   printNextSteps(toolbox, { subgraphName, directory }, { commands })
+}
+
+const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
+  const addContractConfirmation = await toolbox.prompt.confirm('Add another contract?')
+
+  if (addContractConfirmation) {
+    let abiFromFile
+    let ProtocolContract = protocolInstance.getContract()
+
+    let questions = [
+      {
+        type: 'input',
+        name: 'contract',
+        message: () => `Contract ${ProtocolContract.identifierName()}`,
+        validate: async (value) => {
+          // Validate whether the contract is valid
+          const { valid, error } = validateContract(value, ProtocolContract)
+          return valid ? true : error
+        },
+      },
+      {
+        type: 'select',
+        name: 'localAbi',
+        message: 'Provide local ABI path?',
+        choices: ['yes', 'no'],
+        result: (value) => {
+          abiFromFile = value === 'yes' ? true : false
+          return abiFromFile
+        },
+      },
+      {
+        type: 'input',
+        name: 'abi',
+        message: 'ABI file (path)',
+        skip: () => abiFromFile === false
+      },
+      {
+        type: 'input',
+        name: 'contractName',
+        message: 'Contract Name',
+        initial: 'Contract',
+        validate: (value) => value && value.length > 0,
+      },
+    ]
+
+    // Get the cwd before process.chdir in order to switch back in the end of command execution
+    const cwd = process.cwd();
+
+    try {
+      let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
+
+      if (fs.existsSync(directory)) {
+        process.chdir(directory)
+      }
+
+      let commandLine = ['add', contract, '--contract-name', contractName]
+
+      if (abiFromFile) {
+        if (abi.includes(directory)) {
+          commandLine.push('--abi', path.normalize(abi.replace(directory, '')))
+        } else {
+          commandLine.push('--abi', abi)
+        }
+      }
+
+      await graphCli.run(commandLine)
+    } catch (e) {
+      toolbox.print.error(e)
+      process.exit(1)
+    }
+    finally {
+      process.chdir(cwd)
+    }
+  }
+
+  return addContractConfirmation
 }
