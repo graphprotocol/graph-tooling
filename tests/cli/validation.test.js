@@ -10,6 +10,14 @@ describe('Validation', () => {
     },
   )
   cliTest(
+    'Invalid subgraph manifest (cannot infer protocol)',
+    ['codegen', '--skip-migrations'],
+    'validation/invalid-manifest-cannot-infer-protocol',
+    {
+      exitCode: 1,
+    },
+  )
+  cliTest(
     'ABI not found in data source',
     ['codegen', '--skip-migrations'],
     'validation/abi-not-found',
@@ -192,6 +200,15 @@ describe('Validation', () => {
     'Conflicting network names',
     ['codegen', '--skip-migrations'],
     'validation/conflicting-network-names',
+    {
+      exitCode: 1,
+    },
+  )
+
+  cliTest(
+    'Conflicting protocol names',
+    ['codegen', '--skip-migrations'],
+    'validation/conflicting-protocol-names',
     {
       exitCode: 1,
     },

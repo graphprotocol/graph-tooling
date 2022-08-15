@@ -2,6 +2,8 @@ const immutable = require('immutable')
 const yaml = require('js-yaml')
 const path = require('path')
 
+const Protocol = require('../protocols')
+
 const List = immutable.List
 const Map = immutable.Map
 
@@ -52,8 +54,7 @@ const validators = immutable.fromJS({
     validators.get(ctx.getIn(['type', 'name', 'value']))(value, ctx),
 
   UnionTypeDefinition: (value, ctx) => {
-    const unionVariants = ctx
-      .getIn(['type', 'types'])
+    const unionVariants = ctx.getIn(['type', 'types'])
 
     let errors = List()
 
@@ -78,7 +79,10 @@ const validators = immutable.fromJS({
 
   NonNullType: (value, ctx) =>
     value !== null && value !== undefined
-      ? validateValue(value, ctx.update('type', type => type.get('type')))
+      ? validateValue(
+          value,
+          ctx.update('type', type => type.get('type')),
+        )
       : immutable.fromJS([
           {
             path: ctx.get('path'),
@@ -126,7 +130,7 @@ const validators = immutable.fromJS({
                     ),
                   )
                 : errors.push(
-                    key == 'templates'
+                    key == 'templates' && ctx.get('protocol').hasTemplates()
                       ? immutable.fromJS({
                           path: ctx.get('path'),
                           message:
@@ -147,6 +151,23 @@ const validators = immutable.fromJS({
             message: `Expected map, found ${typeName(value)}:\n${toYAML(value)}`,
           },
         ])
+  },
+
+  EnumTypeDefinition: (value, ctx) => {
+    const enumValues = ctx.getIn(['type', 'values']).map((v) => {
+      return v.getIn(['name', 'value'])
+    })
+
+    const allowedValues = enumValues.toArray().join(', ')
+
+    return enumValues.includes(value)
+      ? List()
+      : immutable.fromJS([
+        {
+          path: ctx.get('path'),
+          message: `Unexpected enum value: ${value}, allowed values: ${allowedValues}`,
+        },
+      ])
   },
 
   String: (value, ctx) =>
@@ -185,6 +206,18 @@ const validators = immutable.fromJS({
             message: `Expected filename, found ${typeName(value)}:\n${value}`,
           },
         ]),
+
+  Boolean: (value, ctx) =>
+    typeof value === 'boolean'
+      ? List()
+      : immutable.fromJS([
+          {
+            path: ctx.get('path'),
+            message: `Expected true or false, found ${typeName(value)}:\n${toYAML(
+              value,
+            )}`,
+          },
+        ]),
 })
 
 const validateValue = (value, ctx) => {
@@ -210,22 +243,61 @@ const validateValue = (value, ctx) => {
   }
 }
 
-const validateDataSourceForNetwork = (dataSources, protocol) =>
-  dataSources.filter(dataSource => protocol.isValidKindName(dataSource.kind))
+// Transforms list of data sources like this:
+// [
+//   { name: 'contract0', kind: 'ethereum/contract', network: 'mainnet' },
+//   { name: 'contract1', kind: 'ethereum', network: 'mainnet' },
+//   { name: 'contract2', kind: 'ethereum/contract', network: 'xdai' },
+//   { name: 'contract3', kind: 'near', network: 'near-mainnet' },
+// ]
+//
+// Into Immutable JS structure like this (protocol kind is normalized):
+// {
+//   ethereum: {
+//     mainnet: ['contract0', 'contract1'],
+//     xdai: ['contract2'],
+//   },
+//   near: {
+//     'near-mainnet': ['contract3'],
+//   },
+// }
+const dataSourceListToMap = dataSources =>
+  dataSources
     .reduce(
-      (networks, dataSource) =>
-        networks.update(dataSource.network, dataSources =>
-          (dataSources || immutable.OrderedSet()).add(dataSource.name),
+      (protocolKinds, dataSource) =>
+        protocolKinds.update(Protocol.normalizeName(dataSource.kind), networks =>
+          (networks || immutable.OrderedMap()).update(dataSource.network, dataSourceNames =>
+            (dataSourceNames || immutable.OrderedSet()).add(dataSource.name)),
         ),
       immutable.OrderedMap(),
     )
 
-const validateDataSourceNetworks = (value, protocol) => {
+const validateDataSourceProtocolAndNetworks = value => {
   const dataSources = [...value.dataSources, ...(value.templates || [])]
 
-  // Networks found valid for a protocol.
-  // By searching through all data sources and templates.
-  const networks = validateDataSourceForNetwork(dataSources, protocol)
+  const protocolNetworkMap = dataSourceListToMap(dataSources)
+
+  if (protocolNetworkMap.size > 1) {
+    return immutable.fromJS([
+      {
+        path: [],
+        message: `Conflicting protocol kinds used in data sources and templates:
+${protocolNetworkMap
+  .map(
+    (dataSourceNames, protocolKind) =>
+      `  ${
+        protocolKind === undefined
+          ? 'Data sources and templates having no protocol kind set'
+          : `Data sources and templates using '${protocolKind}'`
+      }:\n${dataSourceNames.valueSeq().flatten().map(ds => `    - ${ds}`).join('\n')}`,
+  )
+  .join('\n')}
+Recommendation: Make all data sources and templates use the same protocol kind.`,
+      },
+    ])
+  }
+
+  const networks = protocolNetworkMap.first()
 
   if (networks.size > 1) {
     return immutable.fromJS([
@@ -235,11 +307,11 @@ const validateDataSourceNetworks = (value, protocol) => {
 ${networks
   .map(
     (dataSources, network) =>
-    `  ${
+      `  ${
         network === undefined
           ? 'Data sources and templates having no network set'
-        : `Data sources and templates using '${network}'`
-        }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
+          : `Data sources and templates using '${network}'`
+      }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
   )
   .join('\n')}
 Recommendation: Make all data sources and templates use the same network name.`,
@@ -262,6 +334,7 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
             path: [],
             errors: [],
             resolveFile,
+            protocol,
           }),
         )
       : immutable.fromJS([
@@ -277,9 +350,9 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
     return errors
   }
 
-  // Validate that all data sources are for the same `network` (this includes
-  // _no_ network at all)
-  return validateDataSourceNetworks(value, protocol)
+  // Validate that all data sources are for the same `network` and `protocol` (kind)
+  // (this includes _no_ network/protocol at all)
+  return validateDataSourceProtocolAndNetworks(value)
 }
 
 module.exports = {

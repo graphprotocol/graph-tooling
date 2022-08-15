@@ -1,0 +1,94 @@
+# Each referenced type's in any of the types below must be listed
+# here either as `scalar` or `type` for the validation code to work
+# properly.
+#
+# That's why `String` is listed as a scalar even though it's built-in
+# GraphQL basic types.
+scalar String
+scalar File
+scalar BigInt
+scalar Boolean
+
+type SubgraphManifest {
+  specVersion: String!
+  features: [String!]
+  schema: Schema!
+  description: String
+  repository: String
+  graft: Graft
+  dataSources: [DataSource!]!
+  templates: [DataSourceTemplate!]
+}
+
+type Schema {
+  file: File!
+}
+
+type DataSource {
+  kind: String!
+  name: String!
+  network: String
+  source: ContractSource!
+  mapping: ContractMapping!
+}
+
+type ContractSource {
+  address: String
+  abi: String!
+  startBlock: BigInt
+}
+
+type ContractMapping {
+  kind: String
+  apiVersion: String!
+  language: String!
+  file: File!
+  entities: [String!]!
+  abis: [ContractAbi!]!
+  blockHandlers: [BlockHandler!]
+  callHandlers: [CallHandler!]
+  eventHandlers: [ContractEventHandler!]
+}
+
+type ContractAbi {
+  name: String!
+  file: File!
+}
+
+type BlockHandler {
+  handler: String!
+  filter: BlockFilter
+}
+
+type BlockFilter {
+  kind: String!
+}
+
+type CallHandler {
+  function: String!
+  handler: String!
+}
+
+type ContractEventHandler {
+  event: String!
+  topic0: String
+  handler: String!
+  receipt: Boolean
+}
+
+type Graft {
+  base: String!
+  block: BigInt!
+}
+
+type DataSourceTemplate {
+  kind: String!
+  name: String!
+  network: String
+  source: ContractSourceTemplate!
+  mapping: ContractMapping!
+}
+
+type ContractSourceTemplate {
+  abi: String!
+}
