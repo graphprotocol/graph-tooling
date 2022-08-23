@@ -42,9 +42,7 @@ module.exports = class Protocol {
       arweave: ['arweave-mainnet'],
       ethereum: [
         'mainnet',
-        'kovan',
         'rinkeby',
-        'ropsten',
         'goerli',
         'poa-core',
         'poa-sokol',
