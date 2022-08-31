@@ -164,6 +164,9 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     /^string\[([0-9]+)?\]$/,
     code => `ethereum.Value.fromStringArray(${code})`,
   ],
+
+  // Tuples
+
   ['ethereum.Tuple', 'tuple', code => `ethereum.Value.fromTuple(${code})`],
   [
     'Array<ethereum.Tuple>',
