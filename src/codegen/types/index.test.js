@@ -574,6 +574,188 @@ describe('AssemblyScript -> ethereum.Value', () => {
       'ethereum.Value.fromStringArray(x)',
     )
   })
+
+  // Multidimensional arrays
+
+  test('Array<Array<Address>> -> address[*][*]', () => {
+    expect(codegen.ethereumFromAsc('x', 'address[][]')).toBe(
+      'ethereum.Value.fromAddressMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'address[1][]')).toBe(
+      'ethereum.Value.fromAddressMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'address[][2]')).toBe(
+      'ethereum.Value.fromAddressMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'address[123][321]')).toBe(
+      'ethereum.Value.fromAddressMatrix(x)',
+    )
+  })
+
+  test('Array<Array<boolean>> -> bool[*][*]', () => {
+    expect(codegen.ethereumFromAsc('x', 'bool[][]')).toBe(
+      'ethereum.Value.fromBooleanMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'bool[5][]')).toBe(
+      'ethereum.Value.fromBooleanMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'bool[][5]')).toBe(
+      'ethereum.Value.fromBooleanMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'bool[275][572]')).toBe(
+      'ethereum.Value.fromBooleanMatrix(x)',
+    )
+  })
+
+  test('Array<Array<Bytes>> -> byte[*][*]', () => {
+    expect(codegen.ethereumFromAsc('x', 'byte[][]')).toBe(
+      'ethereum.Value.fromFixedBytesMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'byte[7][]')).toBe(
+      'ethereum.Value.fromFixedBytesMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'byte[][6]')).toBe(
+      'ethereum.Value.fromFixedBytesMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'byte[553][355]')).toBe(
+      'ethereum.Value.fromFixedBytesMatrix(x)',
+    )
+  })
+
+  test('Array<Array<Bytes>> -> bytes[*][*]', () => {
+    expect(codegen.ethereumFromAsc('x', 'bytes[][]')).toBe(
+      'ethereum.Value.fromBytesMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'bytes[14][]')).toBe(
+      'ethereum.Value.fromBytesMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'bytes[][41]')).toBe(
+      'ethereum.Value.fromBytesMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'bytes[444][333]')).toBe(
+      'ethereum.Value.fromBytesMatrix(x)',
+    )
+  })
+
+  test('bytes0[*][*] (invalid)', () => {
+    expect(() => codegen.ethereumFromAsc('x', 'bytes0[][]')).toThrow()
+    expect(() => codegen.ethereumFromAsc('x', 'bytes0[83][]')).toThrow()
+    expect(() => codegen.ethereumFromAsc('x', 'bytes0[][38]')).toThrow()
+    expect(() => codegen.ethereumFromAsc('x', 'bytes0[123][321]')).toThrow()
+  })
+
+  test('Array<Array<Bytes>> -> bytes1..32[*][*]', () => {
+    for (let i = 1; i <= 32; i++) {
+      expect(codegen.ethereumFromAsc('x', `bytes${i}[][]`)).toBe(
+        'ethereum.Value.fromFixedBytesMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `bytes${i}[7][]`)).toBe(
+        'ethereum.Value.fromFixedBytesMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `bytes${i}[][7]`)).toBe(
+        'ethereum.Value.fromFixedBytesMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `bytes${i}[432][234]`)).toBe(
+        'ethereum.Value.fromFixedBytesMatrix(x)',
+      )
+    }
+  })
+
+  test('bytes33[*][*] (invalid)', () => {
+    expect(() => codegen.ethereumFromAsc('x', 'bytes33[][]')).toThrow()
+    expect(() => codegen.ethereumFromAsc('x', 'bytes33[58][]')).toThrow()
+    expect(() => codegen.ethereumFromAsc('x', 'bytes33[][85]')).toThrow()
+    expect(() => codegen.ethereumFromAsc('x', 'bytes33[394][493]')).toThrow()
+  })
+
+  test('Array<Array<i32>> -> int8..32[*][*], uint8..24[*][*]', () => {
+    for (let i = 8; i <= 32; i += 8) {
+      expect(codegen.ethereumFromAsc('x', `int${i}[][]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `int${i}[6][]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `int${i}[][5]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `int${i}[4638][8364]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+    }
+
+    for (let i = 8; i <= 24; i += 8) {
+      expect(codegen.ethereumFromAsc('x', `uint${i}[][]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `uint${i}[6][]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `uint${i}[][5]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `uint${i}[593][395]`)).toBe(
+        'ethereum.Value.fromI32Matrix(x)',
+      )
+    }
+  })
+
+  test('Array<Array<BigInt>> -> uint32[*][*]', () => {
+    expect(codegen.ethereumFromAsc('x', `uint32[][]`)).toBe(
+      'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', `uint32[6][]`)).toBe(
+      'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', `uint32[][5]`)).toBe(
+      'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', `uint32[593][395]`)).toBe(
+      'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+    )
+  })
+
+  test('Array<Array<BigInt>> -> (u)int40..256[*][*]', () => {
+    for (let i = 40; i <= 256; i += 8) {
+      expect(codegen.ethereumFromAsc('x', `int${i}[][]`)).toBe(
+        'ethereum.Value.fromSignedBigIntMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `int${i}[8][]`)).toBe(
+        'ethereum.Value.fromSignedBigIntMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `int${i}[][7]`)).toBe(
+        'ethereum.Value.fromSignedBigIntMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `int${i}[6833][3386]`)).toBe(
+        'ethereum.Value.fromSignedBigIntMatrix(x)',
+      )
+
+      expect(codegen.ethereumFromAsc('x', `uint${i}[][]`)).toBe(
+        'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `uint${i}[23][]`)).toBe(
+        'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `uint${i}[][32]`)).toBe(
+        'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+      )
+      expect(codegen.ethereumFromAsc('x', `uint${i}[467][764]`)).toBe(
+        'ethereum.Value.fromUnsignedBigIntMatrix(x)',
+      )
+    }
+  })
+
+  test('Array<Array<String>> -> string[*][*]', () => {
+    expect(codegen.ethereumFromAsc('x', 'string[]')).toBe(
+      'ethereum.Value.fromStringArray(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'string[4]')).toBe(
+      'ethereum.Value.fromStringArray(x)',
+    )
+    expect(codegen.ethereumFromAsc('x', 'string[754]')).toBe(
+      'ethereum.Value.fromStringArray(x)',
+    )
+  })
 })
 
 describe('Value -> AssemblyScript', () => {
