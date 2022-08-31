@@ -173,6 +173,60 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     /^tuple\[([0-9]+)?\]$/,
     code => `ethereum.Value.fromTupleArray(${code})`,
   ],
+  
+  // ethereumToAsc
+  // Multi dimentional arrays
+
+  [
+    'Array<Array<Address>>',
+    /^address\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromAddressMatrix(${code})`,
+  ],
+  [
+    'Array<Array<boolean>>',
+    /^bool\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromBooleanMatrix(${code})`,
+  ],
+  [
+    'Array<Array<Bytes>>',
+    /^byte\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromFixedBytesMatrix(${code})`,
+  ],
+  [
+    'Array<Array<Bytes>>',
+    /bytes\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromBytesMatrix(${code})`,
+  ],
+  [
+    'Array<Array<Bytes>>',
+    /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromFixedBytesMatrix(${code})`,
+  ],
+  [
+    'Array<Array<i32>>',
+    /^int(8|16|24|32)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromI32Matrix(${code})`,
+  ],
+  [
+    'Array<Array<i32>>',
+    /^uint(8|16|24)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromI32Matrix(${code})`,
+  ],
+  [
+    'Array<Array<BigInt>>',
+    /^int(40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromSignedBigIntMatrix(${code})`,
+  ],
+  [
+    'Array<Array<BigInt>>',
+    /^uint(32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromUnsignedBigIntMatrix(${code})`,
+  ],
+  [
+    'Array<Array<string>>',
+    /^string\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromStringMatrix(${code})`,
+  ],
 ]
 
 /**
