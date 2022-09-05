@@ -72,6 +72,11 @@ const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
     code => `${code}.toBigIntMatrix()`,
   ],
   [/^string\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<string>>', code => `${code}.toStringMatrix()`],
+  [
+    /^tuple\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    'Array<Array<ethereum.Tuple>>',
+    (code, type) => `${code}.toTupleMatrix<${type}>()`,
+  ],
 
 ]
 
@@ -226,6 +231,11 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     'Array<Array<string>>',
     /^string\[([0-9]+)?\]\[([0-9]+)?\]$/,
     code => `ethereum.Value.fromStringMatrix(${code})`,
+  ],
+  [
+    'Array<Array<ethereum.Tuple>>',
+    /^tuple\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromTupleMatrix(${code})`,
   ],
 ]
 
