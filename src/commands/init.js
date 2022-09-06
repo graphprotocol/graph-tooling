@@ -108,7 +108,7 @@ const processInitForm = async (
       message: 'Product for which to initialize',
       choices: ['subgraph-studio', 'hosted-service'],
       skip: () =>
-        protocol === 'near' ||
+        protocol === 'arweave' || protocol === 'cosmos' || protocol === 'near' ||
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
         studio !== undefined || node !== undefined,
