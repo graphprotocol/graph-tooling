@@ -100,17 +100,18 @@ module.exports = class Subgraph {
   }
 
   static validateRepository(manifest, { resolveFile }) {
-    return manifest.get('repository') !==
-      'https://github.com/graphprotocol/example-subgraph'
-      ? immutable.List()
-      : immutable.List().push(
+    const repository = manifest.get('repository')
+
+    return /^https:\/\/github\.com\/graphprotocol\/example-subgraphs?$/.test(repository)
+      ? immutable.List().push(
           immutable.fromJS({
             path: ['repository'],
             message: `\
-The repository is still set to https://github.com/graphprotocol/example-subgraph.
+The repository is still set to ${repository}.
 Please replace it with a link to your subgraph source code.`,
           }),
         )
+      : immutable.List()
   }
 
   static validateDescription(manifest, { resolveFile }) {
