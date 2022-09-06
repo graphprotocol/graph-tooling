@@ -28,8 +28,14 @@ const withSpinner = async (text, errorText, warningText, f) => {
   try {
     let result = await f(spinner)
     if (typeof result === 'object') {
+      let hasError = Object.keys(result).indexOf('error') >= 0
       let hasWarning = Object.keys(result).indexOf('warning') >= 0
       let hasResult = Object.keys(result).indexOf('result') >= 0
+
+      if (hasError) {
+        spinner.fail(`${errorText}: ${result.error}`)
+        return hasResult ? result.result : result
+      }
       if (hasWarning && hasResult) {
         if (result.warning !== null) {
           spinner.warn(`${warningText}: ${result.warning}`)

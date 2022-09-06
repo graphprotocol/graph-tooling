@@ -15,6 +15,7 @@ describe('Init', () => {
         'ethereum',
         '--studio',
         '--from-example',
+        'ethereum/gravatar',
         'user/example-subgraph',
         path.join(ethereumBaseDir, 'from-example'),
       ],

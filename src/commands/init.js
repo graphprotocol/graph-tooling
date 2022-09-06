@@ -24,6 +24,8 @@ const Protocol = require('../protocols')
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
 const availableNetworks = Protocol.availableNetworks()
 
+const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum/gravatar'
+
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
 
@@ -40,7 +42,7 @@ ${chalk.dim('Options:')}
 ${chalk.dim('Choose mode with one of:')}
 
       --from-contract <contract> Creates a scaffold based on an existing contract
-      --from-example             Creates a scaffold based on an example subgraph
+      --from-example [example]   Creates a scaffold based on an example subgraph
 
 ${chalk.dim('Options for --from-contract:')}
 
@@ -280,9 +282,6 @@ const loadAbiFromFile = async (ABI, filename) => {
 
 module.exports = {
   description: 'Creates a new subgraph with basic scaffolding',
-  options: {
-    boolean: ['from-example'],
-  },
   run: async toolbox => {
     // Obtain tools
     let { print, system } = toolbox
@@ -317,7 +316,6 @@ module.exports = {
     let subgraphName, directory
     try {
       ;[subgraphName, directory] = fixParameters(toolbox.parameters, {
-        fromExample,
         allowSimpleName,
         help,
         h,
@@ -368,7 +366,7 @@ module.exports = {
     if (fromExample && subgraphName && directory) {
       return await initSubgraphFromExample(
         toolbox,
-        { allowSimpleName, directory, subgraphName, studio, product },
+        { fromExample, allowSimpleName, directory, subgraphName, studio, product },
         { commands },
       )
     }
@@ -455,6 +453,7 @@ module.exports = {
       await initSubgraphFromExample(
         toolbox,
         {
+          fromExample: fromExample,
           subgraphName: inputs.subgraphName,
           directory: inputs.directory,
           studio: inputs.studio,
@@ -588,7 +587,7 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 
 const initSubgraphFromExample = async (
   toolbox,
-  { allowSimpleName, subgraphName, directory, studio, product },
+  { fromExample, allowSimpleName, subgraphName, directory, studio, product },
   { commands },
 ) => {
   let { filesystem, print, system } = toolbox
@@ -612,10 +611,32 @@ const initSubgraphFromExample = async (
     `Failed to clone example subgraph`,
     `Warnings while cloning example subgraph`,
     async spinner => {
-      await system.run(
-        `git clone http://github.com/graphprotocol/example-subgraph ${directory}`,
-      )
-      return true
+      // Create a temporary directory
+      const prefix = path.join(os.tmpdir(), 'example-subgraph-')
+      const tmpDir = fs.mkdtempSync(prefix)
+
+      try {
+        await system.run(
+          `git clone http://github.com/graphprotocol/example-subgraphs ${tmpDir}`
+        )
+
+        // If an example is not specified, use the default one
+        if (fromExample === undefined || fromExample === true) {
+          fromExample = DEFAULT_EXAMPLE_SUBGRAPH
+        }
+
+        const exampleSubgraphPath = path.join(tmpDir, fromExample);
+
+        if (!filesystem.exists(exampleSubgraphPath)) {
+          return { result: false, error: `Example not found: ${fromExample}` }
+        }
+
+        filesystem.copy(exampleSubgraphPath, directory)
+        return true
+      }
+      finally {
+        filesystem.remove(tmpDir)
+      }
     },
   )
   if (!cloned) {
