@@ -274,6 +274,19 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
  * for them.
  */
 const ASSEMBLYSCRIPT_TO_VALUE = [
+  // Matrices
+
+  ['Array<Array<Address>>', '[[Bytes]]', code => `Value.fromBytesMatrix(${code})`],
+  ['Array<Array<Bytes>>', '[[Bytes]]', code => `Value.fromBytesMatrix(${code})`],
+  ['Array<Array<boolean>>', '[[Boolean]]', code => `Value.fromBooleanMatrix(${code})`],
+  ['Array<Array<i32>>', '[[Int]]', code => `Value.fromI32Matrix(${code})`],
+  ['Array<Array<BigInt>>', '[[BigInt]]', code => `Value.fromBigIntMatrix(${code})`],
+  ['Array<Array<string>>', '[[String]]', code => `Value.fromStringMatrix(${code})`],
+  ['Array<Array<string>>', '[[ID]]', code => `Value.fromStringMatrix(${code})`],
+  ['Array<Array<BigDecimal>>', '[[BigDecimal]]', code => `Value.fromBigDecimalMatrix(${code})`],
+  ['Array<Array<string>>', /\[\[.*\]\]/, code => `Value.fromStringMatrix(${code})`],
+  ['Array<Array<string | null>>', null, code => `Value.fromStringMatrix(${code})`],// is this overwriting the Array null below?
+
   // Arrays
 
   ['Array<Address>', '[Bytes]', code => `Value.fromBytesArray(${code})`],
