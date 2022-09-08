@@ -68,6 +68,8 @@ module.exports = class Protocol {
         'optimism-kovan',
         'aurora',
         'aurora-testnet',
+        'energyweb',
+        'volta',
       ],
       near: ['near-mainnet', 'near-testnet'],
       cosmos: [

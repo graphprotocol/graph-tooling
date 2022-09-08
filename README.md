@@ -77,6 +77,7 @@ Current version: `0.34.9`.
 Desired release: `0.35.0`.
 
 To create the PR:
+
 ```
 git checkout -b <BRANCH>
 
@@ -99,6 +100,7 @@ Current version: `0.29.2`.
 Desired release: `0.30.0-alpha.0`.
 
 To create the PR:
+
 ```
 git checkout -b <BRANCH>
 
@@ -121,6 +123,7 @@ Current version: `0.30.0-alpha.0`.
 Desired release: `0.30.0-alpha.1`.
 
 To create the PR:
+
 ```
 git checkout -b <BRANCH>
 

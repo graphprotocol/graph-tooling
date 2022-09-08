@@ -65,6 +65,8 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "mbase": return `https://api-moonbase.moonscan.io/api`
     case "avalanche": return `https://api.snowtrace.io/api`;
     case "fuji": return `https://api-testnet.snowtrace.io/api`;
+    case "energyweb": return `https://explorer.energyweb.org/api`;
+    case "volta": return `https://volta-explorer.energyweb.org/api`;
     default: return `https://api-${network}.etherscan.io/api`
   }
 }
