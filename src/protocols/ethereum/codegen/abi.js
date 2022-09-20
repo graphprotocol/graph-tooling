@@ -362,7 +362,11 @@ module.exports = class AbiCodeGenerator {
     let tupleGetter = tsCodegen.method(
       `get ${name}`,
       [],
-      util.isTupleArrayType(type) ? `Array<${tupleClassName}>` : tupleClassName,
+      util.isTupleMatrixType(type)
+      ? `Array<Array<${tupleClassName}>>`
+      : util.isTupleArrayType(type)
+      ? `Array<${tupleClassName}>`
+      : tupleClassName,
       `
       return ${
         isTupleType ? `changetype<${tupleClassName}>(${returnValue})` : `${returnValue}`
@@ -686,6 +690,13 @@ module.exports = class AbiCodeGenerator {
     const type = inputOrOutput.get('type')
     return util.isTupleType(type)
       ? this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)
+      : util.isTupleMatrixType(type)
+      ? `Array<Array<${this._tupleTypeName(
+          inputOrOutput,
+          index,
+          tupleParentType,
+          this.abi.name,
+        )}>>`
       : util.isTupleArrayType(type)
       ? `Array<${this._tupleTypeName(
           inputOrOutput,
