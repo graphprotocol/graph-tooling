@@ -1,4 +1,4 @@
-const allowedStudioNetworks = ['mainnet', 'rinkeby', 'goerli']
+const allowedStudioNetworks = ['mainnet', 'rinkeby', 'goerli', 'gnosis']
 
 const validateStudioNetwork = ({ studio, product, network }) => {
   let isStudio = studio || product === 'subgraph-studio'

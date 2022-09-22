@@ -46,7 +46,7 @@ module.exports = class Protocol {
         'goerli',
         'poa-core',
         'poa-sokol',
-        'xdai',
+        'gnosis',
         'matic',
         'mumbai',
         'fantom',
