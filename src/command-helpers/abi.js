@@ -1,72 +1,61 @@
-import immutable from 'immutable';
-import fetch from 'node-fetch';
-import ABI from '../protocols/ethereum/abi';
-import { withSpinner } from './spinner';
+const { withSpinner } = require('./spinner');
+const fetch = require('node-fetch');
+const immutable = require('immutable');
 
-export const loadAbiFromEtherscan = async (
-  ABICtor: typeof ABI,
-  network: string,
-  address: string,
-): Promise<ABI> =>
+const loadAbiFromEtherscan = async (ABI, network, address) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
     `Warnings while fetching ABI from Etherscan`,
-    async () => {
+    async spinner => {
       const scanApiUrl = getEtherscanLikeAPIUrl(network);
-      const result = await fetch(`${scanApiUrl}?module=contract&action=getabi&address=${address}`);
-      const json = await result.json();
+      let result = await fetch(`${scanApiUrl}?module=contract&action=getabi&address=${address}`);
+      let json = await result.json();
 
       // Etherscan returns a JSON object that has a `status`, a `message` and
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
-        return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
+        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
+      } else {
+        throw new Error('ABI not found, try loading it from a local file');
       }
-      throw new Error('ABI not found, try loading it from a local file');
     },
   );
 
-export const loadAbiFromBlockScout = async (
-  ABICtor: typeof ABI,
-  network: string,
-  address: string,
-) =>
+const loadAbiFromBlockScout = async (ABI, network, address) =>
   await withSpinner(
     `Fetching ABI from BlockScout`,
     `Failed to fetch ABI from BlockScout`,
     `Warnings while fetching ABI from BlockScout`,
-    async () => {
-      const result = await fetch(
+    async spinner => {
+      let result = await fetch(
         `https://blockscout.com/${network.replace(
           '-',
           '/',
         )}/api?module=contract&action=getabi&address=${address}`,
       );
-      const json = await result.json();
+      let json = await result.json();
 
       // BlockScout returns a JSON object that has a `status`, a `message` and
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
-        return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
+        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
+      } else {
+        throw new Error('ABI not found, try loading it from a local file');
       }
-      throw new Error('ABI not found, try loading it from a local file');
     },
   );
 
-const getEtherscanLikeAPIUrl = (network: string) => {
+const getEtherscanLikeAPIUrl = network => {
   switch (network) {
     case 'mainnet':
       return `https://api.etherscan.io/api`;
     case 'arbitrum-one':
       return `https://api.arbiscan.io/api`;
-    case 'arbitrum-goerli':
-      return `https://api-goerli.arbiscan.io/api`;
     case 'bsc':
       return `https://api.bscscan.com/api`;
-    case 'chapel':
-      return `https://api-testnet.bscscan.com/api`;
     case 'matic':
       return `https://api.polygonscan.com/api`;
     case 'mumbai':
@@ -93,13 +82,12 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.celoscan.io/api`;
     case 'celo-alfajores':
       return `https://alfajores.celoscan.io/api`;
-    case 'gnosis':
-      return `https://api.gnosisscan.io/api`;
-    case 'fantom':
-      return `https://api.ftmscan.com/api`;
-    case 'fantom-testnet':
-      return `https://api-testnet.ftmscan.com/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
+};
+
+module.exports = {
+  loadAbiFromEtherscan,
+  loadAbiFromBlockScout,
 };
