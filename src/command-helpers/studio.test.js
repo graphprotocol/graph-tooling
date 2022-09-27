@@ -12,19 +12,10 @@ describe('Version Command Helpers', () => {
           .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
       })
 
-      test("And it's Gnosis chain", () => {
-        expect(() => validateStudioNetwork({
-          studio: true,
-          network: 'gnosis',
-        }))
-          .not
-          .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
-      })
-
-      test("And it's NOT an allowed network", () => {
+      test("And it's NOT Ethereum mainnet", () => {
         expect(() => validateStudioNetwork({
           product: 'subgraph-studio',
-          network: 'celo',
+          network: 'xdai',
         }))
           .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
       })
@@ -40,10 +31,10 @@ describe('Version Command Helpers', () => {
           .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))
       })
 
-      test("And it's NOT an allowed network", () => {
+      test("And it's NOT Ethereum mainnet", () => {
         expect(() => validateStudioNetwork({
           product: 'hosted-service',
-          network: 'celo',
+          network: 'xdai',
         }))
           .not
           .toThrow(new Error(`The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(', ')}`))

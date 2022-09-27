@@ -247,7 +247,7 @@ const validateValue = (value, ctx) => {
 // [
 //   { name: 'contract0', kind: 'ethereum/contract', network: 'mainnet' },
 //   { name: 'contract1', kind: 'ethereum', network: 'mainnet' },
-//   { name: 'contract2', kind: 'ethereum/contract', network: 'gnosis' },
+//   { name: 'contract2', kind: 'ethereum/contract', network: 'xdai' },
 //   { name: 'contract3', kind: 'near', network: 'near-mainnet' },
 // ]
 //
@@ -255,7 +255,7 @@ const validateValue = (value, ctx) => {
 // {
 //   ethereum: {
 //     mainnet: ['contract0', 'contract1'],
-//     gnosis: ['contract2'],
+//     xdai: ['contract2'],
 //   },
 //   near: {
 //     'near-mainnet': ['contract3'],
