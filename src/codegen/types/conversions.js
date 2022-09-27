@@ -52,6 +52,32 @@ const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
     'Array<ethereum.Tuple>',
     (code, type) => `${code}.toTupleArray<${type}>()`,
   ],
+
+  // Multi dimensional arrays
+
+  [/^address\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<Address>>', code => `${code}.toAddressMatrix()`],
+  [/^bool\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<boolean>>', code => `${code}.toBooleanMatrix()`],
+  [/^byte\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<Bytes>>', code => `${code}.toBytesMatrix()`],
+  [
+    /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)?\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    'Array<Array<Bytes>>',
+    code => `${code}.toBytesMatrix()`,
+  ],
+  [/^int(8|16|24|32)\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<i32>>', code => `${code}.toI32Matrix()`],
+  [/^uint(8|16|24)\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<i32>>', code => `${code}.toI32Matrix()`],
+  [/^uint32\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<BigInt>>', code => `${code}.toBigIntMatrix()`],
+  [
+    /^u?int(40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    'Array<Array<BigInt>>',
+    code => `${code}.toBigIntMatrix()`,
+  ],
+  [/^string\[([0-9]+)?\]\[([0-9]+)?\]$/, 'Array<Array<string>>', code => `${code}.toStringMatrix()`],
+  [
+    /^tuple\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    'Array<Array<ethereum.Tuple>>',
+    (code, type) => `${code}.toTupleMatrix<${type}>()`,
+  ],
+
 ]
 
 /**
@@ -143,11 +169,72 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     /^string\[([0-9]+)?\]$/,
     code => `ethereum.Value.fromStringArray(${code})`,
   ],
+
+  // Tuples
+
   ['ethereum.Tuple', 'tuple', code => `ethereum.Value.fromTuple(${code})`],
   [
     'Array<ethereum.Tuple>',
     /^tuple\[([0-9]+)?\]$/,
     code => `ethereum.Value.fromTupleArray(${code})`,
+  ],
+  
+  // Multi dimentional arrays
+
+  [
+    'Array<Array<Address>>',
+    /^address\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromAddressMatrix(${code})`,
+  ],
+  [
+    'Array<Array<boolean>>',
+    /^bool\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromBooleanMatrix(${code})`,
+  ],
+  [
+    'Array<Array<Bytes>>',
+    /^byte\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromFixedBytesMatrix(${code})`,
+  ],
+  [
+    'Array<Array<Bytes>>',
+    /bytes\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromBytesMatrix(${code})`,
+  ],
+  [
+    'Array<Array<Bytes>>',
+    /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromFixedBytesMatrix(${code})`,
+  ],
+  [
+    'Array<Array<i32>>',
+    /^int(8|16|24|32)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromI32Matrix(${code})`,
+  ],
+  [
+    'Array<Array<i32>>',
+    /^uint(8|16|24)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromI32Matrix(${code})`,
+  ],
+  [
+    'Array<Array<BigInt>>',
+    /^int(40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromSignedBigIntMatrix(${code})`,
+  ],
+  [
+    'Array<Array<BigInt>>',
+    /^uint(32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromUnsignedBigIntMatrix(${code})`,
+  ],
+  [
+    'Array<Array<string>>',
+    /^string\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromStringMatrix(${code})`,
+  ],
+  [
+    'Array<Array<ethereum.Tuple>>',
+    /^tuple\[([0-9]+)?\]\[([0-9]+)?\]$/,
+    code => `ethereum.Value.fromTupleMatrix(${code})`,
   ],
 ]
 
@@ -186,6 +273,19 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
  * for them.
  */
 const ASSEMBLYSCRIPT_TO_VALUE = [
+  // Matrices
+
+  ['Array<Array<Address>>', '[[Bytes]]', code => `Value.fromBytesMatrix(${code})`],
+  ['Array<Array<Bytes>>', '[[Bytes]]', code => `Value.fromBytesMatrix(${code})`],
+  ['Array<Array<boolean>>', '[[Boolean]]', code => `Value.fromBooleanMatrix(${code})`],
+  ['Array<Array<i32>>', '[[Int]]', code => `Value.fromI32Matrix(${code})`],
+  ['Array<Array<BigInt>>', '[[BigInt]]', code => `Value.fromBigIntMatrix(${code})`],
+  ['Array<Array<string>>', '[[String]]', code => `Value.fromStringMatrix(${code})`],
+  ['Array<Array<string>>', '[[ID]]', code => `Value.fromStringMatrix(${code})`],
+  ['Array<Array<BigDecimal>>', '[[BigDecimal]]', code => `Value.fromBigDecimalMatrix(${code})`],
+  ['Array<Array<string>>', /\[\[.*\]\]/, code => `Value.fromStringMatrix(${code})`],
+  ['Array<Array<string | null>>', null, code => `Value.fromStringMatrix(${code})`],// is this overwriting the Array null below?
+
   // Arrays
 
   ['Array<Address>', '[Bytes]', code => `Value.fromBytesArray(${code})`],
