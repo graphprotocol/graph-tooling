@@ -179,7 +179,6 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     code => `ethereum.Value.fromTupleArray(${code})`,
   ],
   
-  // ethereumToAsc
   // Multi dimentional arrays
 
   [
