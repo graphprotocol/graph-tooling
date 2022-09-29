@@ -42,10 +42,7 @@ type ContractMapping {
   blockHandlers: [BlockHandler!]
   eventHandlers: [EventHandler!]
   transactionHandlers: [TransactionHandler!]
-}
-
-type TransactionHandler {
-  handler: String!
+  messageHandlers: [MessageHandler!]
 }
 
 type BlockHandler {
@@ -61,6 +58,15 @@ enum EventOrigin {
 type EventHandler {
   event: String!
   origin: EventOrigin
+  handler: String!
+}
+
+type TransactionHandler {
+  handler: String!
+}
+
+type MessageHandler {
+  message: String!
   handler: String!
 }
 
