@@ -1,12 +1,11 @@
 const URL = require('url').URL
-const ipfsHttpClient = require('ipfs-http-client')
 const toolbox = require('gluegun/toolbox')
 const Compiler = require('../compiler')
 
 // Helper function to construct a subgraph compiler
-const createCompiler = (
+const createCompiler = async (
   manifest,
-  { ipfs, headers, outputDir, outputFormat, skipMigrations, blockIpfsMethods, protocol }
+  { ipfs, headers, outputDir, outputFormat, skipMigrations, blockIpfsMethods, protocol },
 ) => {
   // Parse the IPFS URL
   let url
@@ -19,12 +18,13 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`)
   }
 
   // Connect to the IPFS node (if a node address was provided)
+  const { create } = await import('ipfs-http-client')
   ipfs = ipfs
-    ? ipfsHttpClient({
+    ? create({
         protocol: url.protocol.replace(/[:]+$/, ''),
         host: url.hostname,
         port: url.port,
-        'api-path': url.pathname.replace(/\/$/, '') + '/api/v0/',
+        path: url.pathname.replace(/\/$/, '') + '/api/v0/',
         headers,
       })
     : undefined
