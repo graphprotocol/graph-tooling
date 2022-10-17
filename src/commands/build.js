@@ -41,7 +41,7 @@ module.exports = {
       w,
       watch,
       network,
-      networkFile
+      networkFile,
     } = toolbox.parameters.options
 
     // Support both short and long option variants
@@ -76,7 +76,7 @@ module.exports = {
     networkFile =
       networkFile !== undefined && networkFile !== ''
         ? networkFile
-        : filesystem.resolve("networks.json")
+        : filesystem.resolve('networks.json')
 
     // Show help text if requested
     if (help) {
@@ -95,7 +95,7 @@ module.exports = {
       return
     }
 
-    if (network && filesystem.exists(networkFile) !== "file") {
+    if (network && filesystem.exists(networkFile) !== 'file') {
       print.error(`Network file '${networkFile}' does not exists or is not a file!`)
       process.exitCode = 1
       return
@@ -106,7 +106,7 @@ module.exports = {
       await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName)
     }
 
-    let compiler = createCompiler(manifest, {
+    let compiler = await createCompiler(manifest, {
       ipfs,
       outputDir,
       outputFormat,

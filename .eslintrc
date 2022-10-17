@@ -1,8 +1,7 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2017,
-    "ecmaFeatures": {
-    }
+    "ecmaVersion": 2020,
+    "ecmaFeatures": {}
   },
   "env": {
     "node": true
