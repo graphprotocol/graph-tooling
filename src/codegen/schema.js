@@ -2,6 +2,7 @@ const immutable = require('immutable')
 
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
+const { ThrowStatement } = require('assemblyscript')
 
 const List = immutable.List
 
@@ -78,6 +79,32 @@ module.exports = class SchemaCodeGenerator {
         '@graphprotocol/graph-ts',
       ),
     ]
+  }
+
+
+  generateDerivedLoader() {
+    let fields = this.schema.ast.get("definitions")
+      .filter(def => this._isEntityTypeDefinition(def))
+      .map(def => def.get('fields')
+      ).flatten(1);
+    return fields
+      .filter((field) => this._isDerivedField(field))
+      .map((derivedField) => this._generateDerivedLoader(derivedField))
+  }
+
+  _generateDerivedLoader(field) {
+    let typeName = field.getIn(['type', 'name', 'value'])
+    let klass = tsCodegen.klass(`${typeName}Loader`, { export: true, extends: 'Entity' })
+    let loadMethod = tsCodegen.method("load", [], typeName, `
+       return this.todo_store_interface()
+    `)
+    klass.addMethod(loadMethod)
+    return klass
+  }
+
+  _isDerivedField(field) {
+    field.getIn(['name', 'value'])
+    return field.get('directives').find(directive => directive.getIn(['name', 'value']) === 'derivedFrom') !== undefined
   }
 
   generateTypes() {
