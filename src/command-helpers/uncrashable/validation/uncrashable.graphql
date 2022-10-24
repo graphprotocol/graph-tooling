@@ -1,0 +1,38 @@
+type UncrashableConfig {
+  networkConfig: NetworkConfigs!
+  entitySettings: EntitySettings!
+}
+
+type EntitySettings {
+  useDefault: [String]
+  setters: [EntitySetters]
+  entityId: [EntityId]
+}
+type NetworkConfigs {
+  entityIdPrefixes: [Networks!]!
+}
+type Networks {
+  networks: [String!]
+  prefix: String!
+}
+
+type EntitySetters {
+  name: String!
+  fields: [String!]!
+}
+
+enum Type {
+  BigDecimal
+  bigInt
+  String
+  Boolean
+  Bytes
+  Address
+  constant
+}
+
+type EntityId {
+  name: String
+  type: Type!
+  value: String
+}

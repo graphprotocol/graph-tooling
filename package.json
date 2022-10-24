@@ -28,7 +28,9 @@
     "tmp-promise": "3.0.2",
     "web3-eth-abi": "1.7.0",
     "which": "2.0.2",
-    "yaml": "1.9.2"
+    "yaml": "1.9.2",
+    "rescript": "^9.1.4",
+    "graphql-import-node": "^0.0.5"
   },
   "bin": {
     "graph": "bin/graph"
@@ -38,11 +40,15 @@
     "jest": "26.0.0",
     "spawn-command": "0.0.2-1",
     "strip-ansi": "6.0.0",
-    "tern": "0.24.3"
+    "tern": "0.24.3",
+    "rescript": "^9.1.4"
   },
   "scripts": {
     "test": "jest --verbose",
     "test:init": "jest tests/cli/init.test.js --verbose",
-    "test:validation": "jest tests/cli/validation.test.js --verbose"
+    "test:validation": "jest tests/cli/validation.test.js --verbose",
+    "res:build": "rescript build",
+    "res:start": "rescript build -w",
+    "res:clean": "rescript clean"
   }
 }

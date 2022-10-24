@@ -8,12 +8,17 @@ const toolbox = require('gluegun/toolbox')
 
 const Schema = require('./schema')
 const Subgraph = require('./subgraph')
+const Uncrashable = require('./uncrashable')
+
 const DataSourceTemplateCodeGenerator = require('./codegen/template')
 const Watcher = require('./watcher')
 const { step, withSpinner } = require('./command-helpers/spinner')
 const { applyMigrations } = require('./migrations')
 const { GENERATED_FILE_NOTE } = require('./codegen/typescript')
 const { displayPath } = require('./command-helpers/fs')
+const {
+  generateUncrashableEntities,
+} = require('./command-helpers/uncrashable/Index.bs.js')
 
 module.exports = class TypeGenerator {
   constructor(options) {
@@ -53,18 +58,72 @@ module.exports = class TypeGenerator {
 
       // Not all protocols support/have ABIs.
       if (this.protocol.hasABIs()) {
-        const templateAbis = await this.protocolTypeGenerator.loadDataSourceTemplateABIs(subgraph)
-        await this.protocolTypeGenerator.generateTypesForDataSourceTemplateABIs(templateAbis)
+        const templateAbis = await this.protocolTypeGenerator.loadDataSourceTemplateABIs(
+          subgraph,
+        )
+        await this.protocolTypeGenerator.generateTypesForDataSourceTemplateABIs(
+          templateAbis,
+        )
       }
 
       let schema = await this.loadSchema(subgraph)
       await this.generateTypesForSchema(schema)
 
       toolbox.print.success('\nTypes generated successfully\n')
+
+      if (this.options.uncrashable && this.options.uncrashableConfig) {
+        let safeMode = this.options.safeMode !== undefined ? this.options.safeMode : false
+        let uncrashableEntities = await this.loadUncrashableConfig(schema)
+        await this.generateUncrashableEntities(uncrashableEntities, schema, safeMode)
+        toolbox.print.success('\nUncrashable Helpers generated successfully\n')
+      }
       return true
     } catch (e) {
       return false
     }
+  }
+
+  async loadUncrashableConfig(schema, { quiet } = { quiet: false }) {
+    const uncrashableLoadOptions = { graphSchema: schema, skipValidation: false }
+    if (quiet) {
+      return this.options.uncrashableEntities
+        ? this.options.uncrashableEntities
+        : Uncrashable.load(this.options.uncrashableConfig, uncrashableLoadOptions).result
+    } else {
+      const uncrashableConfigPath = displayPath(this.options.uncrashableConfig)
+
+      return await withSpinner(
+        `Load uncrashable config from ${uncrashableConfigPath}`,
+        `Failed to load uncrashable config from ${uncrashableConfigPath}`,
+        `Warnings while loading uncrashable config from ${uncrashableConfigPath}`,
+        async spinner => {
+          return this.options.uncrashableEntities
+            ? this.options.uncrashableEntities
+            : Uncrashable.load(this.options.uncrashableConfig, uncrashableLoadOptions)
+        },
+      )
+    }
+  }
+
+  async generateUncrashableEntities(uncrashableEntities, graphSchema, safeMode) {
+    let ast = graphql.parse(graphSchema.document)
+    let entityDefinitions = ast['definitions']
+    return await withSpinner(
+      `Generate Uncrashable Entity Helpers`,
+      `Failed to generate Uncrashable Entity Helpers`,
+      `Warnings while generating Uncrashable Entity Helpers`,
+      async spinner => {
+        let code = generateUncrashableEntities(
+          entityDefinitions,
+          uncrashableEntities,
+          safeMode,
+        )
+        let outputFile = path.join(this.options.outputDir, 'UncrashableEntityHelpers.ts')
+        step(spinner, 'Write types to', displayPath(outputFile))
+        await fs.mkdirs(path.dirname(outputFile))
+        await fs.writeFile(outputFile, code)
+      },
+    )
   }
 
   async loadSubgraph({ quiet } = { quiet: false }) {
@@ -148,7 +207,10 @@ module.exports = class TypeGenerator {
               `${template.get('name')}`,
             )
 
-            let codeGenerator = new DataSourceTemplateCodeGenerator(template, this.protocol)
+            let codeGenerator = new DataSourceTemplateCodeGenerator(
+              template,
+              this.protocol,
+            )
 
             // Only generate module imports once, because they are identical for
             // all types generated for data source templates.

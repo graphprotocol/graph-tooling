@@ -5,7 +5,10 @@ const TypeGenerator = require('../type-generator')
 const Protocol = require('../protocols')
 const { fixParameters } = require('../command-helpers/gluegun')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
-const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
+const {
+  assertManifestApiVersion,
+  assertGraphTsVersion,
+} = require('../command-helpers/version')
 
 const HELP = `
 ${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -16,6 +19,9 @@ Options:
   -o, --output-dir <path>       Output directory for generated types (default: generated/)
       --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
+  -u, —-uncrashable             Generate Float Subgraph Uncrashable helper file
+  -s, --safe-mode               Safe Mode for Graph Uncrashable - allows for safe loading of entity that have yet 
+                                to be defined (default: false)
 `
 
 module.exports = {
@@ -25,20 +31,37 @@ module.exports = {
     let { filesystem, print, system } = toolbox
 
     // Read CLI parameters
-    let { h, help, o, outputDir, skipMigrations, w, watch } = toolbox.parameters.options
+    let {
+      h,
+      help,
+      o,
+      outputDir,
+      skipMigrations,
+      w,
+      watch,
+      u,
+      uncrashable,
+      s,
+      safeMode,
+    } = toolbox.parameters.options
 
     // Support both long and short option variants
     help = help || h
     outputDir = outputDir || o
     watch = watch || w
+    uncrashable = uncrashable || u
+    safeMode = safeMode || s
 
     let manifest
+    let uncrashable_config
     try {
-      ;[manifest] = fixParameters(toolbox.parameters, {
+      ;[manifest, uncrashable_config] = fixParameters(toolbox.parameters, {
         h,
         help,
         w,
         watch,
+        u,
+        uncrashable,
       })
     } catch (e) {
       print.error(e.message)
@@ -55,6 +78,11 @@ module.exports = {
       manifest !== undefined && manifest !== ''
         ? manifest
         : filesystem.resolve('subgraph.yaml')
+
+    uncrashable_config =
+      uncrashable_config !== undefined && uncrashable_config !== ''
+        ? uncrashable_config
+        : filesystem.resolve('uncrashable-config.yaml')
 
     // Show help text if requested
     if (help) {
@@ -87,6 +115,9 @@ module.exports = {
       outputDir: outputDir,
       skipMigrations,
       protocol,
+      uncrashable,
+      uncrashableConfig: uncrashable_config,
+      safeMode,
     })
 
     // Watch working directory for file updates or additions, trigger
