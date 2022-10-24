@@ -1,7 +1,4 @@
-//%%raw(`require('graphql-import-node/register')`)
-
 open GraphEntityGenTemplates
-// open UncrashableValidation
 
 exception UncrashableFileNotFound(string)
 

@@ -19,7 +19,7 @@ let setFieldNameToFieldType = (~fieldName, ~fieldType) =>
 
 let getDefaultValues = typeString =>
   switch typeString {
-  | "Bytes" => `Bytes.fromHexString("0x00") as Bytes` // needs to be even length for some reason
+  | "Bytes" => `Bytes.fromHexString("0x00") as Bytes`
   | "Address" => `Address.fromString("0x0000000000000000000000000000000000000000")`
   | "Int" => "0"
   | "String" => `""`
