@@ -16,6 +16,7 @@ module.exports = class CosmosSubgraph {
       'blockHandlers',
       'eventHandlers',
       'transactionHandlers',
+      'messageHandlers',
     ])
   }
 }

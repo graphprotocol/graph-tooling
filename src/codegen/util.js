@@ -18,11 +18,15 @@ const isTupleType = t => {
 }
 
 const containsTupleType = t => {
-  return isTupleType(t) || isTupleArrayType(t)
+  return isTupleType(t) || isTupleArrayType(t) || isTupleMatrixType(t)
 }
 
 const isTupleArrayType = t => {
   return t.match(/^tuple\[([0-9]+)?\]$/)
+}
+
+const isTupleMatrixType = t => {
+  return t.match(/^tuple\[([0-9]+)?\]\[([0-9]+)?\]$/)
 }
 
 const unrollTuple = ({ path, index, value }) =>
@@ -44,5 +48,6 @@ module.exports = {
   disambiguateNames,
   isTupleType,
   isTupleArrayType,
+  isTupleMatrixType,
   unrollTuple,
 }

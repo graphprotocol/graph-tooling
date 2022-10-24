@@ -53,7 +53,7 @@ module.exports = class Scaffold {
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
-          '@graphprotocol/graph-ts': `0.27.0`,
+          '@graphprotocol/graph-ts': `0.28.1`,
         },
         devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0`} : undefined,
       }),
