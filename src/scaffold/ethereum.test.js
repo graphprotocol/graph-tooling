@@ -121,7 +121,7 @@ dataSources:
   test('Schema (default)', () => {
     expect(scaffold.generateSchema()).toEqual(`\
 type ExampleEntity @entity {
-  id: ID!
+  id: Bytes!
   count: BigInt!
   a: BigInt! # uint256
   b: [Bytes]! # bytes[4]
@@ -131,8 +131,10 @@ type ExampleEntity @entity {
 
   test('Schema (for indexing events)', () => {
     expect(scaffoldWithIndexEvents.generateSchema()).toEqual(`\
-type ExampleEvent @entity {
-  id: ID!
+type ExampleEvent @entity(immutable: true) {
+  id: Bytes!
+
+  # Event params
   a: BigInt! # uint256
   b: [Bytes]! # bytes[4]
   param2: String! # string
@@ -143,11 +145,27 @@ type ExampleEvent @entity {
   c_c3_value1: String! # string
   c_c3_value2: Bytes! # bytes32
   d: String! # string
+
+  # Block & transaction info
+  blockNumber: BigInt!
+  blockHash: Bytes!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  logIndex: BigInt!
 }
 
-type ExampleEvent1 @entity {
-  id: ID!
+type ExampleEvent1 @entity(immutable: true) {
+  id: Bytes!
+
+  # Event params
   a: Bytes! # bytes32
+
+  # Block & transaction info
+  blockNumber: BigInt!
+  blockHash: Bytes!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  logIndex: BigInt!
 }
 `)
   })
@@ -165,12 +183,12 @@ import { ExampleEntity } from "../generated/schema"
 export function handleExampleEvent(event: ExampleEvent): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+  let entity = ExampleEntity.load(event.transaction.from)
 
   // Entities only exist after they have been saved to the store;
   // \`null\` checks allow to create entities on demand
   if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+    entity = new ExampleEntity(event.transaction.from)
 
     // Entity fields can be set using simple assignments
     entity.count = BigInt.fromI32(0)
@@ -219,7 +237,7 @@ import { ExampleEvent, ExampleEvent1 } from "../generated/schema"
 
 export function handleExampleEvent(event: ExampleEventEvent): void {
   let entity = new ExampleEvent(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.a = event.params.a
   entity.b = event.params.b
@@ -231,14 +249,28 @@ export function handleExampleEvent(event: ExampleEventEvent): void {
   entity.c_c3_value1 = event.params.c.c3.value1
   entity.c_c3_value2 = event.params.c.c3.value2
   entity.d = event.params.d
+
+  entity.blockNumber = event.block.number
+  entity.blockHash = event.block.hash
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+  entity.logIndex = event.logIndex
+
   entity.save()
 }
 
 export function handleExampleEvent1(event: ExampleEvent1Event): void {
   let entity = new ExampleEvent1(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.a = event.params.a
+
+  entity.blockNumber = event.block.number
+  entity.blockHash = event.block.hash
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+  entity.logIndex = event.logIndex
+
   entity.save()
 }
 `)
