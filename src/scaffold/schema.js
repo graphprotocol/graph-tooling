@@ -20,36 +20,59 @@ const generateEventFields = ({ index, input, protocolName }) =>
   input.type == 'tuple'
     ? util
         .unrollTuple({ value: input, path: [input.name || `param${index}`], index })
-        .map(({ path, type }) => generateField({ name: path.join('_'), type, protocolName }))
-    : [generateField({ name: input.name || `param${index}`, type: input.type, protocolName })]
+        .map(({ path, type }) =>
+          generateField({ name: path.join('_'), type, protocolName }),
+        )
+    : [
+        generateField({
+          name: input.name || `param${index}`,
+          type: input.type,
+          protocolName,
+        }),
+      ]
 
-const generateEventType = (event, protocolName) => `type ${event._alias} @entity {
-      id: ID!
+const generateEventType = (event, protocolName) => `type ${
+  event._alias
+} @entity(immutable: true) {
+      id: Bytes!
+
+      # Event params
       ${event.inputs
         .reduce(
-          (acc, input, index) => acc.concat(generateEventFields({ input, index, protocolName })),
+          (acc, input, index) =>
+            acc.concat(generateEventFields({ input, index, protocolName })),
           [],
         )
-        .join('\n')}
+        .join('\n')}  
+      # Block & transaction info
+      blockNumber: BigInt!
+      blockHash: Bytes!
+      blockTimestamp: BigInt!
+      transactionHash: Bytes!
+      logIndex: BigInt!
     }`
 
 const generateExampleEntityType = (protocol, events) => {
-    if (protocol.hasABIs() && events.length > 0) {
-      return `type ExampleEntity @entity {
-  id: ID!
+  if (protocol.hasABIs() && events.length > 0) {
+    return `type ExampleEntity @entity {
+  id: Bytes!
   count: BigInt!
   ${events[0].inputs
-    .reduce((acc, input, index) => acc.concat(generateEventFields({ input, index, protocolName: protocol.name })), [])
+    .reduce(
+      (acc, input, index) =>
+        acc.concat(generateEventFields({ input, index, protocolName: protocol.name })),
+      [],
+    )
     .slice(0, 2)
     .join('\n')}
 }`
-    } else {
-      return `type ExampleEntity @entity {
+  } else {
+    return `type ExampleEntity @entity {
   id: ID!
   block: Bytes!
   count: BigInt!
 }`
-    }
+  }
 }
 
 module.exports = {

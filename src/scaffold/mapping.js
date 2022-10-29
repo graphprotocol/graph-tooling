@@ -32,8 +32,15 @@ const generateEventIndexingHandlers = (events, contractName) =>
   export function handle${event._alias}(event: ${event._alias}Event): void {
     let entity = new ${
       event._alias
-    }(event.transaction.hash.toHex() + '-' + event.logIndex.toString())
+    }(event.transaction.hash.concatI32(event.logIndex.toI32()))
     ${generateEventFieldAssignments(event).join('\n')}
+
+    entity.blockNumber = event.block.number
+    entity.blockHash = event.block.hash
+    entity.blockTimestamp = event.block.timestamp
+    entity.transactionHash = event.transaction.hash
+    entity.logIndex = event.logIndex
+
     entity.save()
   }
     `,

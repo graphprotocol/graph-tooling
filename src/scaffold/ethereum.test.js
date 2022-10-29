@@ -145,7 +145,6 @@ type ExampleEvent @entity(immutable: true) {
   c_c3_value1: String! # string
   c_c3_value2: Bytes! # bytes32
   d: String! # string
-
   # Block & transaction info
   blockNumber: BigInt!
   blockHash: Bytes!
@@ -159,7 +158,6 @@ type ExampleEvent1 @entity(immutable: true) {
 
   # Event params
   a: Bytes! # bytes32
-
   # Block & transaction info
   blockNumber: BigInt!
   blockHash: Bytes!
@@ -237,7 +235,7 @@ import { ExampleEvent, ExampleEvent1 } from "../generated/schema"
 
 export function handleExampleEvent(event: ExampleEventEvent): void {
   let entity = new ExampleEvent(
-    event.transaction.hash.concatI32(event.logIndex.toI32()),
+    event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.a = event.params.a
   entity.b = event.params.b
@@ -261,7 +259,7 @@ export function handleExampleEvent(event: ExampleEventEvent): void {
 
 export function handleExampleEvent1(event: ExampleEvent1Event): void {
   let entity = new ExampleEvent1(
-    event.transaction.hash.concatI32(event.logIndex.toI32()),
+    event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.a = event.params.a
 
