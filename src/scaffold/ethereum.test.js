@@ -76,7 +76,7 @@ const scaffoldOptions = {
   abi: TEST_ABI,
   contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
   network: 'kovan',
-  contractName: 'Contract'
+  contractName: 'Contract',
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
@@ -88,10 +88,8 @@ const scaffoldWithIndexEvents = new Scaffold({
 
 describe('Ethereum subgraph scaffolding', () => {
   test('Manifest', () => {
-    expect(
-      scaffold.generateManifest(),
-    ).toEqual(`\
-specVersion: 0.0.1
+    expect(scaffold.generateManifest()).toEqual(`\
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
@@ -103,7 +101,7 @@ dataSources:
       abi: Contract
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - ExampleEvent
