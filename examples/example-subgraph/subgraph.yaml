@@ -1,5 +1,5 @@
-specVersion: 0.0.2
-description: "example of a subgraph"
+specVersion: 0.0.5
+description: 'example of a subgraph'
 repository: https://github.com/graphprotocol/graph-cli.git
 schema:
   file: ./schema.graphql
@@ -12,7 +12,7 @@ dataSources:
       abi: ExampleContract
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mapping.ts
       entities:

@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.5
 description: Gravatar for Ethereum
 repository: https://github.com/graphprotocol/example-subgraph
 schema:
@@ -8,11 +8,11 @@ dataSources:
     name: Gravity
     network: test
     source:
-      address: "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
+      address: '0xCfEB869F69431e42cdB54A4F4f105C19C080A601'
       abi: Gravity
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Gravatar

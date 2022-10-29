@@ -8,7 +8,7 @@ const source = ({ contract, contractName }) => `
 
 const mapping = ({ abi, contractName }) => `
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         ${abiEvents(abi)

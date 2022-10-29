@@ -8,17 +8,15 @@ const scaffoldOptions = {
   protocol,
   contract: 'abc.def.near',
   network: 'near-mainnet',
-  contractName: 'Contract'
+  contractName: 'Contract',
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
 
 describe('NEAR subgraph scaffolding', () => {
   test('Manifest', () => {
-    expect(
-      scaffold.generateManifest(),
-    ).toEqual(`\
-specVersion: 0.0.1
+    expect(scaffold.generateManifest()).toEqual(`\
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
