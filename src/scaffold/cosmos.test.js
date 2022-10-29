@@ -7,17 +7,15 @@ const protocol = new Protocol('cosmos')
 const scaffoldOptions = {
   protocol,
   network: 'cosmoshub-4',
-  contractName: 'CosmosHub'
+  contractName: 'CosmosHub',
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
 
 describe('Cosmos subgraph scaffolding', () => {
   test('Manifest', () => {
-    expect(
-      scaffold.generateManifest(),
-    ).toEqual(`\
-specVersion: 0.0.1
+    expect(scaffold.generateManifest()).toEqual(`\
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
