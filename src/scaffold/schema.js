@@ -45,7 +45,6 @@ const generateEventType = (event, protocolName) => `type ${
       blockNumber: BigInt!
       blockTimestamp: BigInt!
       transactionHash: Bytes!
-      logIndex: BigInt!
     }`
 
 const generateExampleEntityType = (protocol, events) => {

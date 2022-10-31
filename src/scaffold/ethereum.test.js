@@ -146,7 +146,6 @@ type ExampleEvent @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
-  logIndex: BigInt!
 }
 
 type ExampleEvent1 @entity(immutable: true) {
@@ -155,7 +154,6 @@ type ExampleEvent1 @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
-  logIndex: BigInt!
 }
 `)
   })
@@ -243,7 +241,6 @@ export function handleExampleEvent(event: ExampleEventEvent): void {
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-  entity.logIndex = event.logIndex
 
   entity.save()
 }
@@ -257,7 +254,6 @@ export function handleExampleEvent1(event: ExampleEvent1Event): void {
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-  entity.logIndex = event.logIndex
 
   entity.save()
 }

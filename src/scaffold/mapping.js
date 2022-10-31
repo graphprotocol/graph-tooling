@@ -38,7 +38,6 @@ const generateEventIndexingHandlers = (events, contractName) =>
     entity.blockNumber = event.block.number
     entity.blockTimestamp = event.block.timestamp
     entity.transactionHash = event.transaction.hash
-    entity.logIndex = event.logIndex
 
     entity.save()
   }
