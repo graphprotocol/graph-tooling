@@ -133,8 +133,6 @@ type ExampleEntity @entity {
     expect(scaffoldWithIndexEvents.generateSchema()).toEqual(`\
 type ExampleEvent @entity(immutable: true) {
   id: Bytes!
-
-  # Event params
   a: BigInt! # uint256
   b: [Bytes]! # bytes[4]
   param2: String! # string
@@ -145,9 +143,7 @@ type ExampleEvent @entity(immutable: true) {
   c_c3_value1: String! # string
   c_c3_value2: Bytes! # bytes32
   d: String! # string
-  # Block & transaction info
   blockNumber: BigInt!
-  blockHash: Bytes!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
   logIndex: BigInt!
@@ -155,12 +151,8 @@ type ExampleEvent @entity(immutable: true) {
 
 type ExampleEvent1 @entity(immutable: true) {
   id: Bytes!
-
-  # Event params
   a: Bytes! # bytes32
-  # Block & transaction info
   blockNumber: BigInt!
-  blockHash: Bytes!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
   logIndex: BigInt!
@@ -249,7 +241,6 @@ export function handleExampleEvent(event: ExampleEventEvent): void {
   entity.d = event.params.d
 
   entity.blockNumber = event.block.number
-  entity.blockHash = event.block.hash
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
   entity.logIndex = event.logIndex
@@ -264,7 +255,6 @@ export function handleExampleEvent1(event: ExampleEvent1Event): void {
   entity.a = event.params.a
 
   entity.blockNumber = event.block.number
-  entity.blockHash = event.block.hash
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
   entity.logIndex = event.logIndex

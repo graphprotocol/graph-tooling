@@ -35,8 +35,6 @@ const generateEventType = (event, protocolName) => `type ${
   event._alias
 } @entity(immutable: true) {
       id: Bytes!
-
-      # Event params
       ${event.inputs
         .reduce(
           (acc, input, index) =>
@@ -44,9 +42,7 @@ const generateEventType = (event, protocolName) => `type ${
           [],
         )
         .join('\n')}  
-      # Block & transaction info
       blockNumber: BigInt!
-      blockHash: Bytes!
       blockTimestamp: BigInt!
       transactionHash: Bytes!
       logIndex: BigInt!
