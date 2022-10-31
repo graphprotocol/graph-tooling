@@ -36,7 +36,6 @@ const generateEventIndexingHandlers = (events, contractName) =>
     ${generateEventFieldAssignments(event).join('\n')}
 
     entity.blockNumber = event.block.number
-    entity.blockHash = event.block.hash
     entity.blockTimestamp = event.block.timestamp
     entity.transactionHash = event.transaction.hash
     entity.logIndex = event.logIndex
