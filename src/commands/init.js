@@ -77,10 +77,11 @@ const processInitForm = async (
     allowSimpleName,
     directory,
     contract,
+    indexEvents,
     fromExample,
     network,
     subgraphName,
-    contractName
+    contractName,
   },
 ) => {
   let abiFromEtherscan = undefined
@@ -108,10 +109,13 @@ const processInitForm = async (
       message: 'Product for which to initialize',
       choices: ['subgraph-studio', 'hosted-service'],
       skip: () =>
-        protocol === 'arweave' || protocol === 'cosmos' || protocol === 'near' ||
+        protocol === 'arweave' ||
+        protocol === 'cosmos' ||
+        protocol === 'near' ||
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
-        studio !== undefined || node !== undefined,
+        studio !== undefined ||
+        node !== undefined,
       result: value => {
         // For now we only support NEAR subgraphs in the Hosted Service
         if (protocol === 'near') {
@@ -131,7 +135,8 @@ const processInitForm = async (
     {
       type: 'input',
       name: 'subgraphName',
-      message: () => product == 'subgraph-studio' || studio ? 'Subgraph slug' : 'Subgraph name',
+      message: () =>
+        product == 'subgraph-studio' || studio ? 'Subgraph slug' : 'Subgraph name',
       initial: subgraphName,
       validate: name => {
         try {
@@ -198,9 +203,7 @@ const processInitForm = async (
         // Validate whether the contract is valid
         const { valid, error } = validateContract(value, ProtocolContract)
 
-        return valid
-          ? true
-          : error
+        return valid ? true : error
       },
       result: async value => {
         if (fromExample !== undefined) {
@@ -254,7 +257,18 @@ const processInitForm = async (
       result: value => {
         contractName = value
         return value
-      }
+      },
+    },
+    {
+      type: 'confirm',
+      name: 'indexEvents',
+      message: 'Index contract events as entities',
+      initial: true,
+      skip: () => !!indexEvents,
+      result: value => {
+        indexEvents = value
+        return value
+      },
     },
   ]
 
@@ -305,7 +319,12 @@ module.exports = {
     } = toolbox.parameters.options
 
     node = node || g
-    ;({ node, allowSimpleName } = chooseNodeUrl({ product, studio, node, allowSimpleName }))
+    ;({ node, allowSimpleName } = chooseNodeUrl({
+      product,
+      studio,
+      node,
+      allowSimpleName,
+    }))
 
     if (fromContract && fromExample) {
       print.error(`Only one of --from-example and --from-contract can be used at a time.`)
@@ -320,7 +339,7 @@ module.exports = {
         help,
         h,
         indexEvents,
-        studio
+        studio,
       })
     } catch (e) {
       print.error(e.message)
@@ -375,7 +394,11 @@ module.exports = {
     // go straight to creating the subgraph from an existing contract
     if (fromContract && protocol && subgraphName && directory && network && node) {
       if (!protocolChoices.includes(protocol)) {
-        print.error(`Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(', ')}`)
+        print.error(
+          `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
+            ', ',
+          )}`,
+        )
         process.exitCode = 1
         return
       }
@@ -420,7 +443,7 @@ module.exports = {
           contractName,
           node,
           studio,
-          product
+          product,
         },
         { commands, addContract: false },
       )
@@ -436,10 +459,11 @@ module.exports = {
       allowSimpleName,
       directory,
       contract: fromContract,
+      indexEvents,
       fromExample,
       network,
       subgraphName,
-      contractName
+      contractName,
     })
 
     // Exit immediately when the form is cancelled
@@ -466,7 +490,7 @@ module.exports = {
         product: inputs.product,
         studio,
         node,
-        allowSimpleName
+        allowSimpleName,
       }))
       await initSubgraphFromContract(
         toolbox,
@@ -478,11 +502,11 @@ module.exports = {
           abi: inputs.abi,
           network: inputs.network,
           contract: inputs.contract,
-          indexEvents,
+          indexEvents: inputs.indexEvents,
           contractName: inputs.contractName,
           node,
           studio: inputs.studio,
-          product: inputs.product
+          product: inputs.product,
         },
         { commands, addContract: true },
       )
@@ -617,7 +641,7 @@ const initSubgraphFromExample = async (
 
       try {
         await system.run(
-          `git clone http://github.com/graphprotocol/example-subgraphs ${tmpDir}`
+          `git clone http://github.com/graphprotocol/example-subgraphs ${tmpDir}`,
         )
 
         // If an example is not specified, use the default one
@@ -625,7 +649,7 @@ const initSubgraphFromExample = async (
           fromExample = DEFAULT_EXAMPLE_SUBGRAPH
         }
 
-        const exampleSubgraphPath = path.join(tmpDir, fromExample);
+        const exampleSubgraphPath = path.join(tmpDir, fromExample)
 
         if (!filesystem.exists(exampleSubgraphPath)) {
           return { result: false, error: `Example not found: ${fromExample}` }
@@ -633,8 +657,7 @@ const initSubgraphFromExample = async (
 
         filesystem.copy(exampleSubgraphPath, directory)
         return true
-      }
-      finally {
+      } finally {
         filesystem.remove(tmpDir)
       }
     },
@@ -647,7 +670,9 @@ const initSubgraphFromExample = async (
   try {
     // It doesn't matter if we changed the URL we clone the YAML,
     // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
-    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(path.join(directory, 'subgraph.yaml'))
+    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(
+      path.join(directory, 'subgraph.yaml'),
+    )
 
     for (const { network } of dataSourcesAndTemplates) {
       validateStudioNetwork({ studio, product, network })
@@ -658,7 +683,7 @@ const initSubgraphFromExample = async (
     return
   }
 
-  let networkConf = await initNetworksConfig(toolbox, directory, "address")
+  let networkConf = await initNetworksConfig(toolbox, directory, 'address')
   if (networkConf !== true) {
     process.exitCode = 1
     return
@@ -740,7 +765,7 @@ const initSubgraphFromContract = async (
     contractName,
     node,
     studio,
-    product
+    product,
   },
   { commands, addContract },
 ) => {
@@ -854,7 +879,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         type: 'input',
         name: 'contract',
         message: () => `Contract ${ProtocolContract.identifierName()}`,
-        validate: async (value) => {
+        validate: async value => {
           // Validate whether the contract is valid
           const { valid, error } = validateContract(value, ProtocolContract)
           return valid ? true : error
@@ -865,7 +890,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         name: 'localAbi',
         message: 'Provide local ABI path?',
         choices: ['yes', 'no'],
-        result: (value) => {
+        result: value => {
           abiFromFile = value === 'yes' ? true : false
           return abiFromFile
         },
@@ -874,19 +899,19 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         type: 'input',
         name: 'abi',
         message: 'ABI file (path)',
-        skip: () => abiFromFile === false
+        skip: () => abiFromFile === false,
       },
       {
         type: 'input',
         name: 'contractName',
         message: 'Contract Name',
         initial: 'Contract',
-        validate: (value) => value && value.length > 0,
+        validate: value => value && value.length > 0,
       },
     ]
 
     // Get the cwd before process.chdir in order to switch back in the end of command execution
-    const cwd = process.cwd();
+    const cwd = process.cwd()
 
     try {
       let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
@@ -909,8 +934,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
     } catch (e) {
       toolbox.print.error(e)
       process.exit(1)
-    }
-    finally {
+    } finally {
       process.chdir(cwd)
     }
   }
