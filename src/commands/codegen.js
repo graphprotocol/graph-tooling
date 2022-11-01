@@ -17,8 +17,8 @@ Options:
   -o, --output-dir <path>       Output directory for generated types (default: generated/)
   --skip-migrations         Skip subgraph migrations (default: false)
   -w, --watch                   Regenerate types when subgraph files change (default: false)
-  -u, —-uncrashable             Generate Float Subgraph Uncrashable helper file
-  -o, --uncrashable-config <path>  Directory for uncrashable config (default: ./uncrashable-config.yaml)
+  -u, --uncrashable            Generate Float Subgraph Uncrashable helper file
+  -uc, --uncrashable-config <path>  Directory for uncrashable config (default: ./uncrashable-config.yaml)
   `
 
 module.exports = {
