@@ -14,6 +14,7 @@ const { step, withSpinner } = require('./command-helpers/spinner')
 const { applyMigrations } = require('./migrations')
 const { GENERATED_FILE_NOTE } = require('./codegen/typescript')
 const { displayPath } = require('./command-helpers/fs')
+const uncrashable = require('../node_modules/@float-capital/float-subgraph-uncrashable/src/Index.bs.js')
 
 module.exports = class TypeGenerator {
   constructor(options) {
@@ -53,18 +54,46 @@ module.exports = class TypeGenerator {
 
       // Not all protocols support/have ABIs.
       if (this.protocol.hasABIs()) {
-        const templateAbis = await this.protocolTypeGenerator.loadDataSourceTemplateABIs(subgraph)
-        await this.protocolTypeGenerator.generateTypesForDataSourceTemplateABIs(templateAbis)
+        const templateAbis = await this.protocolTypeGenerator.loadDataSourceTemplateABIs(
+          subgraph,
+        )
+        await this.protocolTypeGenerator.generateTypesForDataSourceTemplateABIs(
+          templateAbis,
+        )
       }
 
       let schema = await this.loadSchema(subgraph)
       await this.generateTypesForSchema(schema)
 
       toolbox.print.success('\nTypes generated successfully\n')
+
+      if (this.options.uncrashable && this.options.uncrashableConfig) {
+        await this.generateUncrashableEntities(schema)
+        toolbox.print.success('\nUncrashable Helpers generated successfully\n')
+      }
       return true
     } catch (e) {
       return false
     }
+  }
+
+  async generateUncrashableEntities(graphSchema) {
+    let ast = graphql.parse(graphSchema.document)
+    let entityDefinitions = ast['definitions']
+    return await withSpinner(
+      `Generate Uncrashable Entity Helpers`,
+      `Failed to generate Uncrashable Entity Helpers`,
+      `Warnings while generating Uncrashable Entity Helpers`,
+      async spinner => {
+        uncrashable.run(
+          entityDefinitions,
+          this.options.uncrashableConfig,
+          this.options.outputDir,
+        )
+        let outputFile = path.join(this.options.outputDir, 'UncrashableEntityHelpers.ts')
+        step(spinner, 'Save uncrashable entities to', displayPath(outputFile))
+      },
+    )
   }
 
   async loadSubgraph({ quiet } = { quiet: false }) {
@@ -148,7 +177,10 @@ module.exports = class TypeGenerator {
               `${template.get('name')}`,
             )
 
-            let codeGenerator = new DataSourceTemplateCodeGenerator(template, this.protocol)
+            let codeGenerator = new DataSourceTemplateCodeGenerator(
+              template,
+              this.protocol,
+            )
 
             // Only generate module imports once, because they are identical for
             // all types generated for data source templates.

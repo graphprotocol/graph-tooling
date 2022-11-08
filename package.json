@@ -11,6 +11,7 @@
     "debug": "4.3.1",
     "docker-compose": "0.23.4",
     "dockerode": "2.5.8",
+    "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
     "fs-extra": "9.0.0",
     "glob": "7.1.6",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
