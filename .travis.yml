@@ -4,8 +4,6 @@
 dist: bionic
 language: node_js
 node_js:
-  - '12'
-  - '14'
   - '16'
 cache:
   yarn: false
