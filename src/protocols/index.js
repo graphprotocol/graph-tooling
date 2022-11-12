@@ -6,17 +6,22 @@ const EthereumABI = require('./ethereum/abi')
 const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
 const CosmosSubgraph = require('./cosmos/subgraph')
+const SubstreamsSubgraph = require('./substreams/subgraph')
 const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
+const ArweaveManifestScaffold = require('./arweave/scaffold/manifest')
 const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
 const NearManifestScaffold = require('./near/scaffold/manifest')
 const CosmosManifestScaffold = require('./cosmos/scaffold/manifest')
+const SubstreamsManifestScaffold = require('./substreams/scaffold/manifest')
 const ArweaveMappingScaffold = require('./arweave/scaffold/mapping')
 const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
 const NearMappingScaffold = require('./near/scaffold/mapping')
 const CosmosMappingScaffold = require('./cosmos/scaffold/mapping')
 
-module.exports = class Protocol {
+let protocolDebug = require('../debug')('graph-cli:protocol')
+
+class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
     const firstDataSourceKind = dataSourcesAndTemplates[0].kind
     return new Protocol(firstDataSourceKind)
@@ -24,6 +29,22 @@ module.exports = class Protocol {
 
   constructor(name) {
     this.name = Protocol.normalizeName(name)
+    switch (this.name) {
+      case 'arweave':
+        this.config = arweaveProtocol
+        break
+      case 'cosmos':
+        this.config = cosmosProtocol
+        break
+      case 'ethereum':
+        this.config = ethereumProtocol
+        break
+      case 'near':
+        this.config = nearProtocol
+        break
+      default:
+        throw new Error(`invalid protocol ${name}`)
+    }
   }
 
   static availableProtocols() {
@@ -33,12 +54,12 @@ module.exports = class Protocol {
       arweave: ['arweave'],
       ethereum: ['ethereum', 'ethereum/contract'],
       near: ['near'],
-      cosmos: ['cosmos']
+      cosmos: ['cosmos'],
     })
   }
 
   static availableNetworks() {
-    return immutable.fromJS({
+    let networks = immutable.fromJS({
       arweave: ['arweave-mainnet'],
       ethereum: [
         'mainnet',
@@ -74,30 +95,23 @@ module.exports = class Protocol {
         'cosmoshub-4',
         'theta-testnet-001', // CosmosHub testnet
         'osmosis-1',
-        'osmo-test-4',       // Osmosis testnet
-        'juno-1', 
-        'uni-3'              // Juno testnet
+        'osmo-test-4', // Osmosis testnet
+        'juno-1',
+        'uni-3', // Juno testnet
       ],
     })
+
+    return networks
   }
 
   static normalizeName(name) {
-    return Protocol.availableProtocols().findKey(possibleNames =>
-      possibleNames.includes(name),
-    )
+    return Protocol.availableProtocols().findKey(possibleNames => {
+      return possibleNames.includes(name)
+    })
   }
 
   displayName() {
-    switch (this.name) {
-      case 'arweave':
-        return 'Arweave'
-      case 'ethereum':
-        return 'Ethereum'
-      case 'near':
-        return 'NEAR'
-      case 'cosmos':
-        return 'Cosmos'
-    }
+    return this.config.displayName
   }
 
   // Receives a data source kind, and checks if it's valid
@@ -109,68 +123,34 @@ module.exports = class Protocol {
   }
 
   hasABIs() {
-    switch (this.name) {
-      case 'arweave':
-        return false
-      case 'ethereum':
-        return true
-      case 'near':
-        return false
-      case 'cosmos':
-        return false
-    }
+    return this.config.abi != null
   }
 
   hasContract() {
-    switch (this.name) {
-      case 'arweave':
-        return false
-      case 'ethereum':
-        return true
-      case 'near':
-        return true
-      case 'cosmos':
-        return false
-    }
+    return this.config.contract != null
   }
 
   hasEvents() {
-    switch (this.name) {
-      case 'arweave':
-        return false
-      case 'ethereum':
-        return true
-      case 'near':
-        return false
-      case 'cosmos':
-        return false
-    }
+    // A problem with hasEvents usage in the codebase is that it's almost every where
+    // where used, the ABI data is actually use after the conditional, so it seems
+    // both concept are related. So internally, we map to this condition.
+    return this.hasABIs()
   }
 
   hasTemplates() {
-    switch (this.name) {
-      case 'arweave':
-        return false
-      case 'ethereum':
-        return true
-      case 'near':
-        return false
-      case 'cosmos':
-        return false
-    }
+    return this.config.getTemplateCodeGen != null
+  }
+
+  hasDataSourceMappingFile() {
+    return this.config.getMappingScaffold != null
   }
 
   getTypeGenerator(options) {
-    switch (this.name) {
-      case 'arweave':
-        return null
-      case 'ethereum':
-        return new EthereumTypeGenerator(options)
-      case 'near':
-        return null
-      case 'cosmos':
-        return null
+    if (this.config.getTypeGenerator == null) {
+      return null
     }
+
+    return this.config.getTypeGenerator(options)
   }
 
   getTemplateCodeGen(template) {
@@ -180,80 +160,85 @@ module.exports = class Protocol {
       )
     }
 
-    switch (this.name) {
-      case 'ethereum':
-        return new EthereumTemplateCodeGen(template)
-      default:
-        throw new Error(`Template data sources with kind '${this.name}' is unknown`)
-    }
+    return this.config.getTemplateCodeGen(template)
   }
 
   getABI() {
-    switch (this.name) {
-      case 'arweave':
-        return null
-      case 'ethereum':
-        return EthereumABI
-      case 'near':
-        return null
-      case 'cosmos':
-        return null
-    }
+    return this.config.abi
   }
 
   getSubgraph(options = {}) {
-    const optionsWithProtocol = { ...options, protocol: this }
-
-    switch (this.name) {
-      case 'arweave':
-        return new ArweaveSubgraph(optionsWithProtocol)
-      case 'ethereum':
-        return new EthereumSubgraph(optionsWithProtocol)
-      case 'near':
-        return new NearSubgraph(optionsWithProtocol)
-      case 'cosmos':
-        return new CosmosSubgraph(optionsWithProtocol)
-      default:
-        throw new Error(`Data sources with kind '${this.name}' are not supported yet`)
-    }
+    return this.config.getSubgraph({ ...options, protocol: this })
   }
 
   getContract() {
-    switch (this.name) {
-      case 'arweave':
-        return null
-      case 'ethereum':
-        return EthereumContract
-      case 'near':
-        return NearContract
-      case 'cosmos':
-        return null
-    }
+    return this.config.contract
   }
 
   getManifestScaffold() {
-    switch (this.name) {
-      case 'arweave':
-        return ArweaveMappingScaffold
-      case 'ethereum':
-        return EthereumManifestScaffold
-      case 'near':
-        return NearManifestScaffold
-      case 'cosmos':
-        return CosmosManifestScaffold
-    }
+    return this.config.manifestScaffold
   }
 
   getMappingScaffold() {
-    switch (this.name) {
-      case 'arweave':
-        return ArweaveMappingScaffold
-      case 'ethereum':
-        return EthereumMappingScaffold
-      case 'near':
-        return NearMappingScaffold
-      case 'cosmos':
-        return CosmosMappingScaffold
-    }
+    return this.config.mappingScaffold
   }
 }
+
+const arweaveProtocol = {
+  displayName: 'Arweave',
+  abi: undefined,
+  contract: undefined,
+  getTemplateCodeGen: undefined,
+  getTypeGenerator: undefined,
+  getSubgraph(options) {
+    return new ArweaveSubgraph(options)
+  },
+  manifestScaffold: ArweaveManifestScaffold,
+  mappingScaffold: ArweaveMappingScaffold,
+}
+
+const cosmosProtocol = {
+  displayName: 'Cosmos',
+  abi: undefined,
+  contract: undefined,
+  getTemplateCodeGen: undefined,
+  getTypeGenerator: undefined,
+  getSubgraph(options) {
+    return new CosmosSubgraph(options)
+  },
+  manifestScaffold: CosmosManifestScaffold,
+  mappingScaffold: CosmosMappingScaffold,
+}
+
+const ethereumProtocol = {
+  displayName: 'Ethereum',
+  abi: EthereumABI,
+  contract: EthereumContract,
+  getTemplateCodeGen(template) {
+    return new EthereumTemplateCodeGen(template)
+  },
+  getTypeGenerator(options) {
+    return new EthereumTypeGenerator(options)
+  },
+  getSubgraph(options) {
+    return new EthereumSubgraph(options)
+  },
+  manifestScaffold: EthereumManifestScaffold,
+  mappingScaffold: EthereumMappingScaffold,
+}
+
+const nearProtocol = {
+  displayName: 'NEAR',
+  abi: undefined,
+  contract: NearContract,
+  getTypeGenerator: undefined,
+  getTemplateCodeGen: undefined,
+  getSubgraph(options) {
+    return new NearSubgraph(options)
+  },
+  manifestScaffold: NearManifestScaffold,
+  mappingScaffold: NearMappingScaffold,
+}
+
+protocolDebug('Available networks %M', Protocol.availableNetworks())
+module.exports = Protocol
