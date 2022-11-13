@@ -30,6 +30,7 @@ class Protocol {
 
   constructor(name) {
     this.name = Protocol.normalizeName(name)
+
     switch (this.name) {
       case 'arweave':
         this.config = arweaveProtocol
@@ -47,7 +48,8 @@ class Protocol {
         this.config = substreamsProtocol
         break
       default:
-        throw new Error(`invalid protocol ${name}`)
+      // Do not throw when undefined, a better error message is printed after the constructor
+      // when validating the Subgraph itself
     }
   }
 
@@ -158,7 +160,7 @@ class Protocol {
   }
 
   getTypeGenerator(options) {
-    if (this.config.getTypeGenerator == null) {
+    if (this.config == null || this.config.getTypeGenerator == null) {
       return null
     }
 

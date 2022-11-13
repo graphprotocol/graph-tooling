@@ -41,6 +41,7 @@ const buildCombinedWarning = (filename, warnings) =>
 
 module.exports = class Subgraph {
   static async validate(data, protocol, { resolveFile }) {
+    subgraphDebug(`Validating Subgraph with protocol "%s"`, protocol)
     if (protocol.name == null) {
       return immutable.fromJS([
         {
