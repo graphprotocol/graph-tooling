@@ -111,8 +111,8 @@ module.exports = class SchemaCodeGenerator {
         this._mapping = '${mappingName}';
         this._id = id;
       `))
-    klass.addMethod(tsCodegen.staticMethod("load", [], typeName, `
-    return this.todo_store_interface()
+    klass.addMethod(tsCodegen.method("load", [], `${typeName} | null`, `
+    return changetype<${typeName} | null>(store.get_derived_entity('${typeName}', '${mappingName}', this._id))
     `))
 
     let arrayKlass = tsCodegen.klass(`Array${typeName}Loader`, { export: true, extends: 'Entity' })
@@ -128,10 +128,10 @@ module.exports = class SchemaCodeGenerator {
       this._id = id;
     `))
 
-    arrayKlass.addMethod(tsCodegen.staticMethod("load",
+    arrayKlass.addMethod(tsCodegen.method("load",
       [],
-      `Array<${typeName}>`, `
-    return this.todo_store_interface()
+      `${typeName} | null`, `
+      return changetype<${typeName} | null>(store.get_derived_entity('${typeName}', '${mappingName}', this._id))
     `))
 
     return List([klass, arrayKlass])
