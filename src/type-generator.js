@@ -14,7 +14,7 @@ const { step, withSpinner } = require('./command-helpers/spinner')
 const { applyMigrations } = require('./migrations')
 const { GENERATED_FILE_NOTE } = require('./codegen/typescript')
 const { displayPath } = require('./command-helpers/fs')
-const uncrashable = require('../node_modules/@float-capital/float-subgraph-uncrashable/src/Index.bs.js')
+const uncrashable = require('@float-capital/float-subgraph-uncrashable/src/Index.bs.js')
 
 module.exports = class TypeGenerator {
   constructor(options) {
