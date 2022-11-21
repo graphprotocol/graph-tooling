@@ -2,6 +2,7 @@ const immutable = require('immutable')
 
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
+const { ThrowStatement } = require('assemblyscript')
 
 const List = immutable.List
 
@@ -78,6 +79,74 @@ module.exports = class SchemaCodeGenerator {
         '@graphprotocol/graph-ts',
       ),
     ]
+  }
+
+
+  generateDerivedLoader() {
+    // retrive all the derived fields
+    let fields = this.schema.ast.get("definitions")
+      .filter(def => this._isEntityTypeDefinition(def))
+      .map(def => def.get('fields')
+      ).flatten(1);
+
+    // generate loaders for derived fields
+    return fields
+      .filter((field) => this._isDerivedField(field))
+      .map((derivedField) => this._generateDerivedLoaders(derivedField))
+      .flatten(1)
+  }
+
+  _generateDerivedLoaders(field) {
+    let typeName = this._concreteValueTypeFromGraphQl(field.get('type'))
+    let mappingName = this._getDerviedFieldMapping(field);
+
+    let klass = tsCodegen.klass(`${typeName}Loader`, { export: true, extends: 'Entity' })
+    klass.addMember(tsCodegen.klassMember("_entity", "string"))
+    klass.addMember(tsCodegen.klassMember("_mapping", "string"))
+    klass.addMember(tsCodegen.klassMember("_id", "string"))
+    klass.addMethod(tsCodegen.method('constructor', [tsCodegen.param('id', 'string')],
+      undefined, `
+        super()
+        this._entity = '${typeName}';
+        this._mapping = '${mappingName}';
+        this._id = id;
+      `))
+    klass.addMethod(tsCodegen.method("load", [], `${typeName} | null`, `
+    return changetype<${typeName} | null>(store.get_derived_entity('${typeName}', '${mappingName}', this._id))
+    `))
+
+    let arrayKlass = tsCodegen.klass(`Array${typeName}Loader`, { export: true, extends: 'Entity' })
+    arrayKlass.addMember(tsCodegen.klassMember("_entity", "string"))
+    arrayKlass.addMember(tsCodegen.klassMember("_mapping", "string"))
+    arrayKlass.addMember(tsCodegen.klassMember("_id", "string"))
+    arrayKlass.addMethod(tsCodegen.method('constructor',
+      [tsCodegen.param('id', 'string')],
+      undefined, `
+      super()
+      this._entity = '${typeName}';
+      this._mapping = '${mappingName}';
+      this._id = id;
+    `))
+
+    arrayKlass.addMethod(tsCodegen.method("load",
+      [],
+      `${typeName} | null`, `
+      return changetype<${typeName} | null>(store.get_derived_entity('${typeName}', '${mappingName}', this._id))
+    `))
+
+    return List([klass, arrayKlass])
+  }
+
+  _getDerviedFieldMapping(field) {
+    let derivedFrom = field
+      .get('directives')
+      .find(directive => directive.getIn(['name', 'value']) === 'derivedFrom')
+    return derivedFrom.get('arguments').get(0).getIn(['value', 'value'])
+  }
+
+  _isDerivedField(field) {
+    field.getIn(['name', 'value'])
+    return field.get('directives').find(directive => directive.getIn(['name', 'value']) === 'derivedFrom') !== undefined
   }
 
   generateTypes() {
@@ -173,6 +242,9 @@ module.exports = class SchemaCodeGenerator {
   }
 
   _generateEntityFieldGetter(entityDef, fieldDef) {
+    if (this._isDerivedField(fieldDef)) {
+      return this._generateDerviedFieldGetter(fieldDef)
+    }
     let name = fieldDef.getIn(['name', 'value'])
     let gqlType = fieldDef.get('type')
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
@@ -193,6 +265,20 @@ module.exports = class SchemaCodeGenerator {
       `
        let value = this.get('${name}')
        ${isNullable ? getNullable : getNonNullable}
+      `,
+    )
+  }
+
+  _generateDerviedFieldGetter(fieldDef) {
+    let name = fieldDef.getIn(['name', 'value'])
+    let gqlType = fieldDef.get('type')
+    let returnType = this._returnTypeForDervied(gqlType)
+    return tsCodegen.method(
+      `get ${name}`,
+      [],
+      returnType,
+      `
+        return new ${returnType}(this.get('id')!.toString())
       `,
     )
   }
@@ -266,6 +352,26 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
       return '[' + this._valueTypeFromGraphQl(gqlType.get('type')) + ']'
     } else {
       return this._resolveFieldType(gqlType)
+    }
+  }
+
+  _concreteValueTypeFromGraphQl(gqlType) {
+    if (gqlType.get('kind') === 'NonNullType') {
+      return this._concreteValueTypeFromGraphQl(gqlType.get('type'))
+    } else if (gqlType.get('kind') === 'ListType') {
+      return this._concreteValueTypeFromGraphQl(gqlType.get('type'))
+    } else {
+      return gqlType.getIn(['name', 'value'])
+    }
+  }
+
+  _returnTypeForDervied(gqlType) {
+    if (gqlType.get('kind') === 'NonNullType') {
+      return this._returnTypeForDervied(gqlType.get('type'))
+    } else if (gqlType.get('kind') === 'ListType') {
+      return 'Array' + this._returnTypeForDervied(gqlType.get('type'))
+    } else {
+      return gqlType.getIn(['name', 'value']) + 'Loader'
     }
   }
 

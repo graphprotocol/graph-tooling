@@ -146,6 +146,7 @@ module.exports = class TypeGenerator {
           [
             GENERATED_FILE_NOTE,
             ...codeGenerator.generateModuleImports(),
+            ...codeGenerator.generateDerivedLoader(),
             ...codeGenerator.generateTypes(),
           ].join('\n'),
           {
