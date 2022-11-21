@@ -281,7 +281,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     }
   }
 
-  _typeFromGraphQl(gqlType, nullable = true) {
+  _typeFromGraphQl(gqlType, nullable = false) {
     if (gqlType.get('kind') === 'NonNullType') {
       return this._typeFromGraphQl(gqlType.get('type'), false)
     } else if (gqlType.get('kind') === 'ListType') {
