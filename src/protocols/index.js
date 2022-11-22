@@ -18,6 +18,7 @@ const ArweaveMappingScaffold = require('./arweave/scaffold/mapping')
 const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
 const NearMappingScaffold = require('./near/scaffold/mapping')
 const CosmosMappingScaffold = require('./cosmos/scaffold/mapping')
+const { ThrowStatement } = require('assemblyscript')
 
 let protocolDebug = require('../debug')('graph-cli:protocol')
 
@@ -42,6 +43,9 @@ class Protocol {
       case 'near':
         this.config = nearProtocol
         break
+      case 'substreams':
+        this.config = substreamsProtocol
+        break
       default:
         throw new Error(`invalid protocol ${name}`)
     }
@@ -55,6 +59,7 @@ class Protocol {
       ethereum: ['ethereum', 'ethereum/contract'],
       near: ['near'],
       cosmos: ['cosmos'],
+      substreams: ['substreams'],
     })
   }
 
@@ -100,6 +105,13 @@ class Protocol {
         'uni-3', // Juno testnet
       ],
     })
+
+    let allNetworks = []
+    networks.forEach(value => {
+      allNetworks.push(...value)
+    })
+
+    networks = networks.set('substreams', immutable.fromJS(allNetworks))
 
     return networks
   }
@@ -238,6 +250,19 @@ const nearProtocol = {
   },
   manifestScaffold: NearManifestScaffold,
   mappingScaffold: NearMappingScaffold,
+}
+
+const substreamsProtocol = {
+  displayName: 'Substreams',
+  abi: undefined,
+  contract: undefined,
+  getTypeGenerator: undefined,
+  getTemplateCodeGen: undefined,
+  getSubgraph(options) {
+    return new SubstreamsSubgraph(options)
+  },
+  manifestScaffold: SubstreamsManifestScaffold,
+  mappingScaffold: undefined,
 }
 
 protocolDebug('Available networks %M', Protocol.availableNetworks())

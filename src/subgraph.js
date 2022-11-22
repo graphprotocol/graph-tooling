@@ -6,6 +6,8 @@ let { strOptions } = require('yaml/types')
 let graphql = require('graphql/language')
 let validation = require('./validation')
 
+let subgraphDebug = require('./debug')('graph-cli:subgraph')
+
 const throwCombinedError = (filename, errors) => {
   throw new Error(
     errors.reduce(
@@ -134,10 +136,18 @@ Please update it to tell users more about your subgraph.`,
       .filter(dataSource => protocol.isValidKindName(dataSource.get('kind')))
       .reduce((errors, dataSource, dataSourceIndex) => {
         let path = ['dataSources', dataSourceIndex, 'mapping']
-
         let mapping = dataSource.get('mapping')
-
         const handlerTypes = protocolSubgraph.handlerTypes()
+
+        subgraphDebug(
+          'Validating dataSource "%s" handlers with %d handlers types defined for protocol',
+          dataSource.get('name'),
+          handlerTypes.size,
+        )
+
+        if (handlerTypes.size == 0) {
+          return errors
+        }
 
         const areAllHandlersEmpty = handlerTypes
           .map(handlerType => mapping.get(handlerType, immutable.List()))
@@ -159,7 +169,7 @@ At least one such handler must be defined.`,
   }
 
   static validateContractValues(manifest, protocol) {
-    if (!protocol.hasContract()){
+    if (!protocol.hasContract()) {
       return immutable.List()
     }
 

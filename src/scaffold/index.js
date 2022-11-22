@@ -99,10 +99,15 @@ dataSources:
     )
   }
 
+  generateMappings() {
+    return this.protocol.getMappingScaffold()
+      ? { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() }
+      : undefined
+  }
+
   generateMapping() {
     const hasEvents = this.protocol.hasEvents()
     const events = hasEvents ? abiEvents(this.abi).toJS() : []
-
     const protocolMapping = this.protocol.getMappingScaffold()
 
     return prettier.format(
@@ -141,7 +146,7 @@ dataSources:
       'subgraph.yaml': this.generateManifest(),
       'schema.graphql': this.generateSchema(),
       'tsconfig.json': this.generateTsConfig(),
-      src: { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() },
+      src: this.generateMappings(),
       abis: this.generateABIs(),
       tests: this.generateTests(),
     }
