@@ -6,7 +6,7 @@ const Compiler = require('../compiler')
 // Helper function to construct a subgraph compiler
 const createCompiler = (
   manifest,
-  { ipfs, headers, outputDir, outputFormat, skipMigrations, blockIpfsMethods, protocol }
+  { ipfs, headers, outputDir, outputFormat, skipMigrations, blockIpfsMethods, protocol },
 ) => {
   // Parse the IPFS URL
   let url

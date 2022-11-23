@@ -21,6 +21,8 @@ Options:
   -uc, --uncrashable-config <path>  Directory for uncrashable config (default: ./uncrashable-config.yaml)
   `
 
+let codegenDebug = require('../debug')('graph-cli:codegen')
+
 module.exports = {
   description: 'Generates AssemblyScript types for a subgraph',
   run: async toolbox => {
@@ -54,6 +56,7 @@ module.exports = {
       ;[manifest] = fixParameters(toolbox.parameters, {
         h,
         help,
+        skipMigrations,
         w,
         watch,
         u,
@@ -64,6 +67,8 @@ module.exports = {
       process.exitCode = 1
       return
     }
+
+    codegenDebug('Initialized codegen manifest: %o', manifest)
 
     // Fall back to default values for options / parameters
     outputDir =

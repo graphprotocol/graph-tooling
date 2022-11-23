@@ -11,6 +11,9 @@ const Subgraph = require('../subgraph')
 const Watcher = require('../watcher')
 const { applyMigrations } = require('../migrations')
 const asc = require('./asc')
+const SubstreamsSubgraph = require('../protocols/substreams/subgraph')
+
+let compilerDebug = require('../debug')('graph-cli:compiler')
 
 class Compiler {
   constructor(options) {
@@ -20,36 +23,38 @@ class Compiler {
     this.blockIpfsMethods = options.blockIpfsMethods
     this.libsDirs = []
 
-    for (
-      let dir = path.resolve(this.sourceDir);
-      // Terminate after the root dir or when we have found node_modules
-      dir !== undefined;
-      // Continue with the parent directory, terminate after the root dir
-      dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
-    ) {
-      if (fs.existsSync(path.join(dir, 'node_modules'))) {
-        this.libsDirs.push(path.join(dir, 'node_modules'))
+    if (options.protocol.name !== 'substreams') {
+      for (
+        let dir = path.resolve(this.sourceDir);
+        // Terminate after the root dir or when we have found node_modules
+        dir !== undefined;
+        // Continue with the parent directory, terminate after the root dir
+        dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
+      ) {
+        if (fs.existsSync(path.join(dir, 'node_modules'))) {
+          this.libsDirs.push(path.join(dir, 'node_modules'))
+        }
       }
+
+      if (this.libsDirs.length === 0) {
+        throw Error(
+          `could not locate \`node_modules\` in parent directories of subgraph manifest`,
+        )
+      }
+
+      const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts')
+      const globalsLib = this.libsDirs.find(item => {
+        return fs.existsSync(path.join(item, globalsFile))
+      })
+
+      if (!globalsLib) {
+        throw Error(
+          'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
+        )
+      }
+
+      this.globalsFile = path.join(globalsLib, globalsFile)
     }
-
-    if (this.libsDirs.length === 0) {
-      throw Error(
-        `could not locate \`node_modules\` in parent directories of subgraph manifest`,
-      )
-    }
-
-    const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts')
-    const globalsLib = this.libsDirs.find(item => {
-      return fs.existsSync(path.join(item, globalsFile))
-    })
-
-    if (!globalsLib) {
-      throw Error(
-        'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
-      )
-    }
-
-    this.globalsFile = path.join(globalsLib, globalsFile)
 
     this.protocol = this.options.protocol
     this.ABI = this.protocol.getABI()
@@ -83,7 +88,10 @@ class Compiler {
       }
       let subgraph = await this.loadSubgraph()
       let compiledSubgraph = await this.compileSubgraph(subgraph)
-      let localSubgraph = await this.writeSubgraphToOutputDirectory(compiledSubgraph)
+      let localSubgraph = await this.writeSubgraphToOutputDirectory(
+        this.options.protocol,
+        compiledSubgraph,
+      )
 
       if (this.ipfs !== undefined) {
         let ipfsHash = await this.uploadSubgraphToIPFS(localSubgraph)
@@ -214,6 +222,7 @@ class Compiler {
           dataSources.map(dataSource =>
             dataSource.updateIn(['mapping', 'file'], mappingPath =>
               this._compileDataSourceMapping(
+                this.protocol,
                 dataSource,
                 mappingPath,
                 compiledFiles,
@@ -243,7 +252,11 @@ class Compiler {
     )
   }
 
-  _compileDataSourceMapping(dataSource, mappingPath, compiledFiles, spinner) {
+  _compileDataSourceMapping(protocol, dataSource, mappingPath, compiledFiles, spinner) {
+    if (protocol.name == 'substreams') {
+      return
+    }
+
     try {
       let dataSourceName = dataSource.getIn(['name'])
 
@@ -378,7 +391,7 @@ class Compiler {
   _validateMappingContent(filePath) {
     const data = fs.readFileSync(filePath)
     if (
-      this.blockIpfsMethods && 
+      this.blockIpfsMethods &&
       (data.includes('ipfs.cat') || data.includes('ipfs.map'))
     ) {
       throw Error(`
@@ -389,7 +402,7 @@ class Compiler {
     }
   }
 
-  async writeSubgraphToOutputDirectory(subgraph) {
+  async writeSubgraphToOutputDirectory(protocol, subgraph) {
     const displayDir = `${this.displayPath(this.options.outputDir)}${
       toolbox.filesystem.separator
     }`
@@ -437,6 +450,30 @@ class Compiler {
                 )
             }
 
+            if (protocol.name == 'substreams') {
+              updatedDataSource = updatedDataSource
+                // Write data source ABIs to the output directory
+                .updateIn(['source', 'package'], substreamsPackage =>
+                  substreamsPackage.update('file', packageFile => {
+                    packageFile = path.resolve(this.sourceDir, packageFile)
+                    let packageContent = fs.readFileSync(packageFile)
+
+                    return path.relative(
+                      this.options.outputDir,
+                      this._writeSubgraphFile(
+                        packageFile,
+                        packageContent,
+                        this.sourceDir,
+                        this.subgraphDir(this.options.outputDir, dataSource),
+                        spinner,
+                      ),
+                    )
+                  }),
+                )
+
+              return updatedDataSource
+            }
+
             // The mapping file is already being written to the output
             // directory by the AssemblyScript compiler
             return updatedDataSource.updateIn(['mapping', 'file'], mappingFile =>
@@ -445,7 +482,7 @@ class Compiler {
                 path.resolve(this.sourceDir, mappingFile),
               ),
             )
-          })
+          }),
         )
 
         // Copy template files and update their paths
@@ -453,40 +490,40 @@ class Compiler {
           templates === undefined
             ? templates
             : templates.map(template => {
-              let updatedTemplate = template
+                let updatedTemplate = template
 
-              if (this.protocol.hasABIs()) {
-                updatedTemplate = updatedTemplate
-                  // Write template ABIs to the output directory
-                  .updateIn(['mapping', 'abis'], abis =>
-                    abis.map(abi =>
-                      abi.update('file', abiFile => {
-                        abiFile = path.resolve(this.sourceDir, abiFile)
-                        let abiData = this.ABI.load(abi.get('name'), abiFile)
-                        return path.relative(
-                          this.options.outputDir,
-                          this._writeSubgraphFile(
-                            abiFile,
-                            JSON.stringify(abiData.data.toJS(), null, 2),
-                            this.sourceDir,
-                            this.subgraphDir(this.options.outputDir, template),
-                            spinner,
-                          ),
-                        )
-                      }),
-                    ),
-                  )
-              }
+                if (this.protocol.hasABIs()) {
+                  updatedTemplate = updatedTemplate
+                    // Write template ABIs to the output directory
+                    .updateIn(['mapping', 'abis'], abis =>
+                      abis.map(abi =>
+                        abi.update('file', abiFile => {
+                          abiFile = path.resolve(this.sourceDir, abiFile)
+                          let abiData = this.ABI.load(abi.get('name'), abiFile)
+                          return path.relative(
+                            this.options.outputDir,
+                            this._writeSubgraphFile(
+                              abiFile,
+                              JSON.stringify(abiData.data.toJS(), null, 2),
+                              this.sourceDir,
+                              this.subgraphDir(this.options.outputDir, template),
+                              spinner,
+                            ),
+                          )
+                        }),
+                      ),
+                    )
+                }
 
-              // The mapping file is already being written to the output
-              // directory by the AssemblyScript compiler
-              return updatedTemplate.updateIn(['mapping', 'file'], mappingFile =>
-                path.relative(
-                  this.options.outputDir,
-                  path.resolve(this.sourceDir, mappingFile),
-                ),
-              )
-            })
+                // The mapping file is already being written to the output
+                // directory by the AssemblyScript compiler
+                return updatedTemplate.updateIn(['mapping', 'file'], mappingFile =>
+                  path.relative(
+                    this.options.outputDir,
+                    path.resolve(this.sourceDir, mappingFile),
+                  ),
+                )
+              }),
         )
 
         // Write the subgraph manifest itself
@@ -537,15 +574,28 @@ class Compiler {
         }
 
         // Upload all mappings
-        for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-          updates.push({
-            keyPath: ['dataSources', i, 'mapping', 'file'],
-            value: await this._uploadFileToIPFS(
-              dataSource.getIn(['mapping', 'file']),
-              uploadedFiles,
-              spinner,
-            ),
-          })
+        if (this.protocol.name !== 'substreams') {
+          for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+            updates.push({
+              keyPath: ['dataSources', i, 'mapping', 'file'],
+              value: await this._uploadFileToIPFS(
+                dataSource.getIn(['mapping', 'file']),
+                uploadedFiles,
+                spinner,
+              ),
+            })
+          }
+        } else {
+          for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+            updates.push({
+              keyPath: ['dataSources', i, 'source', 'package', 'file'],
+              value: await this._uploadFileToIPFS(
+                dataSource.getIn(['source', 'package', 'file']),
+                uploadedFiles,
+                spinner,
+              ),
+            })
+          }
         }
 
         for (let [i, template] of subgraph.get('templates', immutable.List()).entries()) {
@@ -584,6 +634,11 @@ class Compiler {
   }
 
   async _uploadFileToIPFS(maybeRelativeFile, uploadedFiles, spinner) {
+    compilerDebug(
+      'Resolving IPFS file "%s" from output dir "%s"',
+      maybeRelativeFile,
+      this.options.outputDir,
+    )
     let absoluteFile = path.resolve(this.options.outputDir, maybeRelativeFile)
     step(spinner, 'Add file to IPFS', this.displayPath(absoluteFile))
 

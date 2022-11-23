@@ -6,6 +6,8 @@ const { updateSubgraphNetwork } = require('../command-helpers/network')
 const DataSourcesExtractor = require('../command-helpers/data-sources')
 const Protocol = require('../protocols')
 
+let buildDebug = require('../debug')('graph-cli:build')
+
 const HELP = `
 ${chalk.bold('graph build')} [options] ${chalk.bold('[<subgraph-manifest>]')}
 
@@ -41,7 +43,7 @@ module.exports = {
       w,
       watch,
       network,
-      networkFile
+      networkFile,
     } = toolbox.parameters.options
 
     // Support both short and long option variants
@@ -76,7 +78,7 @@ module.exports = {
     networkFile =
       networkFile !== undefined && networkFile !== ''
         ? networkFile
-        : filesystem.resolve("networks.json")
+        : filesystem.resolve('networks.json')
 
     // Show help text if requested
     if (help) {
@@ -95,7 +97,9 @@ module.exports = {
       return
     }
 
-    if (network && filesystem.exists(networkFile) !== "file") {
+    buildDebug('Detected protocol "%s" (%o)', protocol.name, protocol)
+
+    if (network && filesystem.exists(networkFile) !== 'file') {
       print.error(`Network file '${networkFile}' does not exists or is not a file!`)
       process.exitCode = 1
       return

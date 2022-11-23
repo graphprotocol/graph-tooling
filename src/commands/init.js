@@ -26,6 +26,8 @@ const availableNetworks = Protocol.availableNetworks()
 
 const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum/gravatar'
 
+let initDebug = require('../debug')('graph-cli:init')
+
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
 
@@ -170,10 +172,17 @@ const processInitForm = async (
       type: 'select',
       name: 'network',
       message: () => `${protocolInstance.displayName()} network`,
-      choices: () =>
-        availableNetworks
+      choices: () => {
+        initDebug(
+          'Generating list of available networks for protocol "%s" (%M)',
+          protocol,
+          availableNetworks.get(protocol),
+        )
+        return availableNetworks
           .get(protocol) // Get networks related to the chosen protocol.
-          .toArray(), // Needed because of gluegun. It can't even receive a JS iterable.
+          .toArray() // Needed because of gluegun. It can't even receive a JS iterable.
+      },
+
       skip: fromExample !== undefined,
       initial: network || 'mainnet',
       result: value => {
