@@ -70,6 +70,7 @@ class Protocol {
       arweave: ['arweave-mainnet'],
       ethereum: [
         'mainnet',
+        'sepolia',
         'rinkeby',
         'goerli',
         'poa-core',
