@@ -72,7 +72,7 @@ jobs:
           POSTGRES_PASSWORD: let-me-in
           POSTGRES_DB: graph
         options: >-
-          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
       ipfs:
           image: ipfs/go-ipfs:v0.4.23
