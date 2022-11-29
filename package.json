@@ -16,5 +16,10 @@
   },
   "engines": {
     "pnpm": ">=7.14.2"
+  },
+  "scripts": {
+    "build":"exit 0",
+    "test:cli": "pnpm --filter @graphprotocol/graph-cli test"
+    
   }
 }

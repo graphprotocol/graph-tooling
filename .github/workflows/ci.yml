@@ -1,0 +1,55 @@
+name: Tests
+env:
+  NODE_NO_WARNINGS: true
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+jobs:
+  cli:
+    name: CLI / nodejs v${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14, 16, 18]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Get pnpm store path
+        id: pnpm-store
+        run: echo "PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-store.outputs.PATH }}
+          key: ${{ runner.os }}-pnpm-store-graphql-v${{ matrix.graphql-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-graphql-v${{ matrix.graphql-version }}-
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Build Packages
+        run: pnpm build
+
+      - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: pnpm run test:cli
