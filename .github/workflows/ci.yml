@@ -31,8 +31,8 @@ jobs:
 
       - name: Setup git user information
         run: |
-          git config user.name "$(git log -n 1 --pretty=format:%an)"
-          git config user.email "$(git log -n 1 --pretty=format:%ae)"
+          git config --global user.name "$(git log -n 1 --pretty=format:%an)"
+          git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
 
       - name: Get pnpm store path
         id: pnpm-store
