@@ -31,7 +31,6 @@ jobs:
 
       - name: Setup git user information
         run: |
-          rm -rf .git
           git config user.name "$(git log -n 1 --pretty=format:%an)"
           git config user.email "$(git log -n 1 --pretty=format:%ae)"
 
