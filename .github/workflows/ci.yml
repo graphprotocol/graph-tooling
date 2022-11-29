@@ -58,3 +58,88 @@ jobs:
           timeout_minutes: 10
           max_attempts: 3
           command: pnpm run test:cli
+
+  event-handler:
+    name: Basic Event Handlers
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        ports:
+         - '15432:5432'
+        env:
+          POSTGRES_USER: graph
+          POSTGRES_PASSWORD: let-me-in
+          POSTGRES_DB: graph
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 
+
+      ipfs:
+          image: ipfs/go-ipfs:v0.4.23
+          ports:
+          - '15001:5001'
+
+      ethereum:
+        image: trufflesuite/ganache-cli:latest
+        ports:
+          - '18545:8545'
+          - '18546:8546'
+        options: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
+
+      graph-node:
+       # TODO: change to "latest" once it supports apiVersion 0.0.5 and specVersion 0.0.7
+        image: graphprotocol/graph-node:4a8e819
+        ports:
+          - '18000:8000'
+          - '18001:8001'
+          - '18020:8020'
+          - '18030:8030'
+          - '18040:8040'
+        env:
+          postgres_host: postgres
+          postgres_user: graph
+          postgres_pass: let-me-in
+          postgres_db: graph
+          ipfs: 'ipfs:5001'
+          ethereum: 'test:http://ethereum:8545'
+          GRAPH_LOG: trace
+          GRAPH_MAX_API_VERSION: '0.0.7' # TODO: remove once "latest" supports apiVersion 0.0.7 by default
+          GRAPH_MAX_SPEC_VERSION: '0.0.5' # TODO: remove once "latest" supports specVersion 0.0.5 by default
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Get pnpm store path
+        id: pnpm-store
+        run: echo "PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-store.outputs.PATH }}
+          key: ${{ runner.os }}-pnpm-store-graphql-v${{ matrix.graphql-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-graphql-v${{ matrix.graphql-version }}-
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Build Packages
+        run: pnpm build
+
+      - name: Run Tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: pnpm run --filter="basic-event-handlers" test
