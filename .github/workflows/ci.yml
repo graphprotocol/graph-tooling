@@ -29,6 +29,11 @@ jobs:
         with:
           version: 7
 
+      - name: Setup git user information
+        run: |
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
+
       - name: Get pnpm store path
         id: pnpm-store
         run: echo "PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
