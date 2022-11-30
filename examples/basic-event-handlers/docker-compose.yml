@@ -1,0 +1,43 @@
+version: '3'
+services:
+  graph-node:
+    # TODO: change to "latest" once it supports apiVersion 0.0.5 and specVersion 0.0.7
+    image: graphprotocol/graph-node:4a8e819
+    ports:
+      - '18000:8000'
+      - '18001:8001'
+      - '18020:8020'
+      - '18030:8030'
+      - '18040:8040'
+    depends_on:
+      - ipfs
+      - ethereum
+      - postgres
+    environment:
+      postgres_host: postgres
+      postgres_user: graph
+      postgres_pass: let-me-in
+      postgres_db: graph
+      ipfs: 'ipfs:5001'
+      ethereum: 'test:http://ethereum:8545'
+      GRAPH_LOG: trace
+      GRAPH_MAX_API_VERSION: '0.0.7' # TODO: remove once "latest" supports apiVersion 0.0.7 by default
+      GRAPH_MAX_SPEC_VERSION: '0.0.5' # TODO: remove once "latest" supports specVersion 0.0.5 by default
+  ethereum:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - '18545:8545'
+      - '18546:8546'
+    command: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.23
+    ports:
+      - '15001:5001'
+  postgres:
+    image: postgres
+    ports:
+      - '15432:5432'
+    environment:
+      POSTGRES_USER: graph
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph
