@@ -57,7 +57,7 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: pnpm run test:cli
+          command: pnpm run test:cli -- --forceExit
 
   event-handler:
     name: Basic Event Handlers
