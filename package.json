@@ -20,7 +20,7 @@
     "ipfs-http-client": "34.0.0",
     "jayson": "3.6.6",
     "js-yaml": "3.13.1",
-    "node-fetch": "2.6.0",
+    "node-fetch": "2.6.7",
     "pkginfo": "0.4.1",
     "prettier": "1.19.1",
     "request": "2.88.2",
