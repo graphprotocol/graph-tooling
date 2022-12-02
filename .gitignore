@@ -66,7 +66,7 @@ examples/example-subgraph/generated
 examples/example-subgraph/node_modules
 
 # validation tests output
-tests/cli/validation/*/generated
+*/tests/cli/validation/*/generated
 
 # Ignore Mac DS_Store files
 .DS_Store

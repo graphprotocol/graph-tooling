@@ -1,21 +1,24 @@
 const { initNetworksConfig, updateSubgraphNetwork } = require('../command-helpers/network')
 const toolbox = require('gluegun/toolbox')
 const yaml = require('yaml')
+const path = require('path')
+
+const SUBGRAPH_PATH_BASE = path.join(__dirname,'..','..','..','..','examples','example-subgraph')
 
 describe('initNetworksConfig', () => {
   beforeAll(async () => {
-    await initNetworksConfig(toolbox, './examples/example-subgraph', 'address')
+    await initNetworksConfig(toolbox, SUBGRAPH_PATH_BASE, 'address')
   })
   afterAll(async () => {
-    await toolbox.filesystem.remove('./examples/example-subgraph/networks.json')
+    await toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/networks.json`)
   })
 
   test('generates networks.json from subgraph.yaml', () => {
-    expect(toolbox.filesystem.exists('./examples/example-subgraph/networks.json')).toBe('file')
+    expect(toolbox.filesystem.exists(`${SUBGRAPH_PATH_BASE}/networks.json`)).toBe('file')
   })
 
   test('Populates the networks.json file with the data from subgraph.yaml', async () => {
-    let networksStr = await toolbox.filesystem.read('./examples/example-subgraph/networks.json')
+    let networksStr = await toolbox.filesystem.read(`${SUBGRAPH_PATH_BASE}/networks.json`)
     let networks = JSON.parse(networksStr)
 
     let expected = {
@@ -36,18 +39,18 @@ describe('updateSubgraphNetwork', () => {
       }
     }
 
-    await toolbox.filesystem.write('./examples/example-subgraph/networks.json', content)
-    await toolbox.filesystem.copy('./examples/example-subgraph/subgraph.yaml', './examples/example-subgraph/subgraph_copy.yaml')
+    await toolbox.filesystem.write(`${SUBGRAPH_PATH_BASE}/networks.json`, content)
+    await toolbox.filesystem.copy(`${SUBGRAPH_PATH_BASE}/subgraph.yaml`, `${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`)
   })
 
   afterAll(async () => {
-    await toolbox.filesystem.remove('./examples/example-subgraph/networks.json')
-    await toolbox.filesystem.remove('./examples/example-subgraph/subgraph_copy.yaml')
+    await toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/networks.json`)
+    await toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`)
   })
 
   test('Updates subgraph.yaml', async () => {
-    let manifest = './examples/example-subgraph/subgraph_copy.yaml'
-    let networksFie = './examples/example-subgraph/networks.json'
+    let manifest = `${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`
+    let networksFie = `${SUBGRAPH_PATH_BASE}/networks.json`
     let subgraph = await toolbox.filesystem.read(manifest)
     let subgraphObj = yaml.parse(subgraph)
 

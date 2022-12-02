@@ -2,11 +2,11 @@
   "name": "basic-event-handlers",
   "version": "0.1.0",
   "scripts": {
-    "codegen": "../../bin/graph codegen",
-    "build": "../../bin/graph build",
-    "test": "truffle test --network test",
-    "create-test": "../../bin/graph create test/basic-event-handlers --node http://127.0.0.1:18020",
-    "deploy-test": "../../bin/graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
+    "codegen": "../../packages/cli/bin/graph codegen",
+    "build": "../../packages/cli/bin/graph build",
+    "test": "docker compose up -d && sleep 30 && truffle test --network test && docker compose down",
+    "create-test": "../../packages/cli/bin/graph create test/basic-event-handlers --node http://127.0.0.1:18020",
+    "deploy-test": "../../packages/cli/bin/graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
   },
   "devDependencies": {
     "@graphprotocol/graph-ts": "0.28.1",
