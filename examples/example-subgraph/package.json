@@ -1,5 +1,6 @@
 {
   "name": "example-event-handler",
+  "private": true,
   "scripts": {
     "codegen": "../../packages/cli/bin/graph codegen --output-dir src/types/ subgraph.yaml",
     "build": "../../packages/cli/bin/graph build subgraph.yaml",

@@ -2,6 +2,8 @@
   "name": "graphprotocol-tools-monorepo",
   "private": true,
   "devDependencies": {
+    "@changesets/changelog-github": "^0.4.7",
+    "@changesets/cli": "^2.25.2",
     "eslint": "6.8.0",
     "jest": "26.0.0"
   },
@@ -19,6 +21,7 @@
   },
   "scripts": {
     "build": "exit 0",
+    "release": "changeset publish",
     "test:cli": "pnpm --filter @graphprotocol/graph-cli test"
   }
 }
