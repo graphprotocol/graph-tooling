@@ -66,6 +66,8 @@ const getEtherscanLikeAPIUrl = (network) => {
     case "avalanche": return `https://api.snowtrace.io/api`;
     case "fuji": return `https://api-testnet.snowtrace.io/api`;
     case "gnosis": return `https://api.gnosisscan.io/api`;
+    case "fantom": return `https://api.ftmscan.com/api`;
+    case "fantom-testnet": return `https://api-testnet.ftmscan.com/api`;
     default: return `https://api-${network}.etherscan.io/api`
   }
 }
