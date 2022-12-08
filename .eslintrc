@@ -1,8 +1,7 @@
 {
   "parserOptions": {
     "ecmaVersion": 2017,
-    "ecmaFeatures": {
-    }
+    "sourceType": "module"
   },
   "env": {
     "node": true
