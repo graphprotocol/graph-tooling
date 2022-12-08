@@ -36,6 +36,7 @@
     "yaml": "1.9.2"
   },
   "devDependencies": {
+    "copyfiles": "^2.4.1",
     "jest": "26.0.0",
     "spawn-command": "0.0.2-1",
     "strip-ansi": "6.0.0",
@@ -47,8 +48,7 @@
     "test:init": "jest tests/cli/init.test.js --verbose",
     "test:validation": "jest tests/cli/validation.test.js --verbose",
     "type-check": "tsc --noEmit",
-    "build": "tsc --build",
-    "postbuild": "chmod +x ./dist/bin.js"
+    "build": "tsc --build && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js"
   },
   "publishConfig": {
     "access": "public"
