@@ -8,10 +8,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "useUnknownInCatchVariables": false,
-    "declaration": true,
+    "declaration": false,
     "allowJs": true
   },
   "include": ["./src"]
