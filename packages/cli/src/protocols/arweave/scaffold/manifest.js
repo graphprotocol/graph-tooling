@@ -13,7 +13,4 @@ const mapping = () => `
         - handler: handleTx
       file: ./src/mapping.ts`
 
-module.exports = {
-  source,
-  mapping,
-}
+export { source, mapping }

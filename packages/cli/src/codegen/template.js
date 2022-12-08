@@ -1,16 +1,16 @@
-const immutable = require('immutable')
-const IpfsFileTemplateCodeGen = require('../protocols/ipfs/codegen/file_template')
+import immutable from 'immutable'
+import IpfsFileTemplateCodeGen from '../protocols/ipfs/codegen/file_template'
 
-const tsCodegen = require('./typescript')
+import tsCodegen from './typescript'
 
-module.exports = class DataSourceTemplateCodeGenerator {
+export default class DataSourceTemplateCodeGenerator {
   constructor(template, protocol) {
     this.template = template
     let kind = template.get('kind')
 
     if (kind.split('/')[0] == protocol.name) {
       this.protocolTemplateCodeGen = protocol.getTemplateCodeGen(template)
-    } else if (kind == "file/ipfs") {
+    } else if (kind == 'file/ipfs') {
       this.protocolTemplateCodeGen = new IpfsFileTemplateCodeGen(template)
     }
   }

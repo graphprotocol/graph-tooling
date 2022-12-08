@@ -1,4 +1,4 @@
-const { typeSuggestion } = require('./schema')
+import { typeSuggestion } from './schema'
 
 describe('Schema validation', () => {
   test('Type suggestions', () => {

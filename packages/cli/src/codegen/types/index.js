@@ -1,6 +1,6 @@
-const immutable = require('immutable')
+import immutable from 'immutable'
 
-const TYPE_CONVERSIONS = require('./conversions')
+import TYPE_CONVERSIONS from './conversions'
 
 // Conversion utilities
 
@@ -72,8 +72,7 @@ const ascTypeForProtocol = (protocol, protocolType) =>
   findConversionFromType(protocol, 'AssemblyScript', protocolType).getIn(['to', 'type'])
 
 // TODO: this can be removed/replaced by the function above
-const ascTypeForEthereum = ethereumType =>
-  ascTypeForProtocol('ethereum', ethereumType)
+const ascTypeForEthereum = ethereumType => ascTypeForProtocol('ethereum', ethereumType)
 
 const ethereumTypeForAsc = ascType =>
   findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn(['to', 'type'])
@@ -99,16 +98,14 @@ const valueToAsc = (code, valueType) =>
 const valueFromAsc = (code, valueType) =>
   findConversionToType('AssemblyScript', 'Value', valueType).get('convert')(code)
 
-module.exports = {
+export {
   // protocol <-> AssemblyScript
   ascTypeForProtocol,
-
   // ethereum <-> AssemblyScript
   ascTypeForEthereum,
   ethereumTypeForAsc,
   ethereumToAsc,
   ethereumFromAsc,
-
   // Value <-> AssemblyScript
   ascTypeForValue,
   valueTypeForAsc,

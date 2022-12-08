@@ -1,6 +1,6 @@
-const immutable = require('immutable')
+import immutable from 'immutable'
 
-module.exports = class NearSubgraph {
+export default class NearSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
@@ -12,9 +12,6 @@ module.exports = class NearSubgraph {
   }
 
   handlerTypes() {
-    return immutable.List([
-      'blockHandlers',
-      'receiptHandlers',
-    ])
+    return immutable.List(['blockHandlers', 'receiptHandlers'])
   }
 }

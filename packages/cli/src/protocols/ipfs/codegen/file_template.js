@@ -1,6 +1,6 @@
-const tsCodegen = require('../../../codegen/typescript')
+import tsCodegen from '../../../codegen/typescript'
 
-module.exports = class IpfsFileTemplateCodeGen {
+export default class IpfsFileTemplateCodeGen {
   constructor(template) {
     this.template = template
   }

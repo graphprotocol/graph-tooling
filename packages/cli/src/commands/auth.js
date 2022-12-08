@@ -1,11 +1,11 @@
-const chalk = require('chalk')
-const { saveDeployKey } = require('../command-helpers/auth')
-const { chooseNodeUrl } = require('../command-helpers/node')
-const { fixParameters } = require('../command-helpers/gluegun')
+import chalk from 'chalk'
+import { saveDeployKey } from '../command-helpers/auth'
+import { chooseNodeUrl } from '../command-helpers/node'
+import { fixParameters } from '../command-helpers/gluegun'
 
 const HELP = `
 ${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
-  '<deploy-key>'
+  '<deploy-key>',
 )}
 
 ${chalk.dim('Options:')}
@@ -16,25 +16,18 @@ ${chalk.dim('Options:')}
   -h, --help                    Show usage information
 `
 
-const processForm = async (
-  toolbox,
-  {
-    product,
-    studio,
-    node,
-    deployKey,
-  },
-) => {
+const processForm = async (toolbox, { product, studio, node, deployKey }) => {
   const questions = [
     {
       type: 'select',
       name: 'product',
       message: 'Product for which to initialize',
       choices: ['subgraph-studio', 'hosted-service'],
-      skip: 
+      skip:
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
-        studio !== undefined || node !== undefined,
+        studio !== undefined ||
+        node !== undefined,
     },
     {
       type: 'password',
@@ -52,19 +45,14 @@ const processForm = async (
   }
 }
 
-module.exports = {
+export default {
   description: 'Sets the deploy key to use when deploying to a Graph node',
   run: async toolbox => {
     // Obtain tools
     let { filesystem, print, system } = toolbox
 
     // Read CLI parameters
-    let {
-      product,
-      studio,
-      h,
-      help,
-    } = toolbox.parameters.options
+    let { product, studio, h, help } = toolbox.parameters.options
 
     // Show help text if requested
     if (help || h) {
@@ -77,7 +65,7 @@ module.exports = {
       ;[firstParam, secondParam] = fixParameters(toolbox.parameters, {
         h,
         help,
-        studio
+        studio,
       })
     } catch (e) {
       print.error(e.message)
@@ -101,7 +89,7 @@ module.exports = {
         product,
         studio,
         node,
-        deployKey
+        deployKey,
       })
       if (inputs === undefined) {
         process.exit(1)

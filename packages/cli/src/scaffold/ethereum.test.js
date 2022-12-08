@@ -1,7 +1,7 @@
-const ABI = require('../protocols/ethereum/abi')
-const immutable = require('immutable')
-const Scaffold = require('./')
-const Protocol = require('../protocols')
+import ABI from '../protocols/ethereum/abi'
+import immutable from 'immutable'
+import Scaffold from './'
+import Protocol from '../protocols'
 
 const TEST_EVENT = {
   name: 'ExampleEvent',

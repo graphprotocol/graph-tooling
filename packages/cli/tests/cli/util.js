@@ -1,7 +1,7 @@
-const fs = require('fs-extra')
-const path = require('path')
-const spawn = require('spawn-command')
-const stripAnsi = require('strip-ansi')
+import fs from 'fs-extra'
+import path from 'path'
+import spawn from 'spawn-command'
+import stripAnsi from 'strip-ansi'
 
 // Deletes folder if:
 // - flag is true
@@ -22,8 +22,7 @@ const cliTest = (title, args, testPath, options = {}) => {
         deleteDir(resolvePath(`./${testPath}`), options.deleteDir)
 
         // Use the provided cwd if desired
-        let cwd =
-          options.cwd ? options.cwd : resolvePath(`./${testPath}`)
+        let cwd = options.cwd ? options.cwd : resolvePath(`./${testPath}`)
 
         let [exitCode, stdout, stderr] = await runGraphCli(args, cwd)
 
@@ -108,9 +107,4 @@ const npmLinkCli = () => runCommand('npm', ['link'])
 
 const npmUnlinkCli = () => runCommand('npm', ['unlink'])
 
-module.exports = {
-  cliTest,
-  npmLinkCli,
-  npmUnlinkCli,
-  runGraphCli,
-}
+export { cliTest, npmLinkCli, npmUnlinkCli, runGraphCli }

@@ -1,10 +1,10 @@
-const chalk = require('chalk')
-const path = require('path')
+import chalk from 'chalk'
+import path from 'path'
 
-const TypeGenerator = require('../type-generator')
-const Protocol = require('../protocols')
-const { fixParameters } = require('../command-helpers/gluegun')
-const DataSourcesExtractor = require('../command-helpers/data-sources')
+import TypeGenerator from '../type-generator'
+import Protocol from '../protocols'
+import { fixParameters } from '../command-helpers/gluegun'
+import DataSourcesExtractor from '../command-helpers/data-sources'
 const {
   assertManifestApiVersion,
   assertGraphTsVersion,
@@ -23,7 +23,7 @@ Options:
 
 let codegenDebug = require('../debug')('graph-cli:codegen')
 
-module.exports = {
+export default {
   description: 'Generates AssemblyScript types for a subgraph',
   run: async toolbox => {
     // Obtain tools

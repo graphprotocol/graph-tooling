@@ -1,4 +1,4 @@
-const { strings } = require('gluegun')
+import { strings } from 'gluegun'
 
 const source = ({ contract }) => `
       account: '${contract}'`
@@ -12,7 +12,4 @@ const mapping = ({ contractName }) => `
         - handler: handleReceipt
       file: ./src/${strings.kebabCase(contractName)}.ts`
 
-module.exports = {
-  source,
-  mapping,
-}
+export { source, mapping }

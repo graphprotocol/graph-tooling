@@ -1,6 +1,6 @@
 const GravatarRegistry = artifacts.require('./GravatarRegistry.sol')
 
-module.exports = async function(deployer) {
+export default async function (deployer) {
   let accounts = await web3.eth.getAccounts()
 
   const registry = await GravatarRegistry.deployed()

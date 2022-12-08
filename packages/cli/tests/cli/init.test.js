@@ -1,5 +1,5 @@
-const path = require('path')
-const { cliTest } = require('./util')
+import path from 'path'
+import { cliTest } from './util'
 
 describe('Init', () => {
   const baseDir = path.join(__dirname, 'init')

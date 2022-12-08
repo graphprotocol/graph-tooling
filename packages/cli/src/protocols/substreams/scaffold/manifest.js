@@ -7,7 +7,4 @@ const mapping = () => `
       apiVersion: 0.0.5
       kind: substreams/graph-entities`
 
-module.exports = {
-  source,
-  mapping,
-}
+export { source, mapping }

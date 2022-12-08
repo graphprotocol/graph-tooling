@@ -39,7 +39,7 @@ const buildCombinedWarning = (filename, warnings) =>
       ) + '\n'
     : null
 
-module.exports = class Subgraph {
+export default class Subgraph {
   static async validate(data, protocol, { resolveFile }) {
     subgraphDebug(`Validating Subgraph with protocol "%s"`, protocol)
     if (protocol.name == null) {

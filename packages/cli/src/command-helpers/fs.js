@@ -1,8 +1,5 @@
-const path = require('path')
+import path from 'path'
 
-const displayPath = p =>
-  path.relative(process.cwd(), p)
+const displayPath = p => path.relative(process.cwd(), p)
 
-module.exports = {
-  displayPath,
-}
+export { displayPath }

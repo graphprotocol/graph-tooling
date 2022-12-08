@@ -1,8 +1,8 @@
-const toolbox = require('gluegun/toolbox')
-const { normalizeNodeUrl } = require('./node')
+import toolbox from 'gluegun/toolbox'
+import { normalizeNodeUrl } from './node'
 
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 const homedir = require('os').homedir()
 
 const CONFIG_PATH = path.join(homedir, '/.graph-cli.json')
@@ -14,7 +14,7 @@ const getConfig = () => {
     config = {}
   }
   return config
- }
+}
 
 const identifyDeployKey = async (node, deployKey) => {
   // Determine the deploy key to use, if any:
@@ -45,7 +45,4 @@ const saveDeployKey = async (node, deployKey) => {
   }
 }
 
-module.exports = {
-  identifyDeployKey,
-  saveDeployKey,
-}
+export { identifyDeployKey, saveDeployKey }

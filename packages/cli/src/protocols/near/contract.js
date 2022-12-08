@@ -3,7 +3,7 @@ const MAXIMUM_ACCOUNT_ID_LENGTH = 64
 
 const RULES_URL = 'https://docs.near.org/docs/concepts/account#account-id-rules'
 
-module.exports = class NearContract {
+export default class NearContract {
   static identifierName() {
     return 'account'
   }
@@ -13,8 +13,10 @@ module.exports = class NearContract {
   }
 
   _validateLength() {
-    return this.account.length >= MINIMUM_ACCOUNT_ID_LENGTH &&
+    return (
+      this.account.length >= MINIMUM_ACCOUNT_ID_LENGTH &&
       this.account.length <= MAXIMUM_ACCOUNT_ID_LENGTH
+    )
   }
 
   _validateFormat() {

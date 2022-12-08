@@ -43,7 +43,7 @@ const unrollTuple = ({ path, index, value }) =>
     )
   }, [])
 
-module.exports = {
+export {
   containsTupleType,
   disambiguateNames,
   isTupleType,

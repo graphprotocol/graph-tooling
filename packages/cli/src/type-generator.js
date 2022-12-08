@@ -1,22 +1,22 @@
-const fs = require('fs-extra')
-const immutable = require('immutable')
-const path = require('path')
-const prettier = require('prettier')
-const graphql = require('graphql/language')
-const chalk = require('chalk')
-const toolbox = require('gluegun/toolbox')
+import fs from 'fs-extra'
+import immutable from 'immutable'
+import path from 'path'
+import prettier from 'prettier'
+import graphql from 'graphql/language'
+import chalk from 'chalk'
+import toolbox from 'gluegun/toolbox'
 
-const Schema = require('./schema')
-const Subgraph = require('./subgraph')
-const DataSourceTemplateCodeGenerator = require('./codegen/template')
-const Watcher = require('./watcher')
-const { step, withSpinner } = require('./command-helpers/spinner')
-const { applyMigrations } = require('./migrations')
-const { GENERATED_FILE_NOTE } = require('./codegen/typescript')
-const { displayPath } = require('./command-helpers/fs')
-const uncrashable = require('@float-capital/float-subgraph-uncrashable/src/Index.bs.js')
+import Schema from './schema'
+import Subgraph from './subgraph'
+import DataSourceTemplateCodeGenerator from './codegen/template'
+import Watcher from './watcher'
+import { step, withSpinner } from './command-helpers/spinner'
+import { applyMigrations } from './migrations'
+import { GENERATED_FILE_NOTE } from './codegen/typescript'
+import { displayPath } from './command-helpers/fs'
+import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js'
 
-module.exports = class TypeGenerator {
+export default class TypeGenerator {
   constructor(options) {
     this.options = options || {}
     this.sourceDir =

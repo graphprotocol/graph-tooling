@@ -1,13 +1,13 @@
-const { Binary } = require('binary-install-raw')
-const os = require('os')
-const chalk = require('chalk')
-const fetch = require('node-fetch')
-const { filesystem, patching, print, system } = require('gluegun')
-const { fixParameters } = require('../command-helpers/gluegun')
-const path = require('path')
-const semver = require('semver')
-const { spawn, exec } = require('child_process')
-const yaml = require('js-yaml')
+import { Binary } from 'binary-install-raw'
+import os from 'os'
+import chalk from 'chalk'
+import fetch from 'node-fetch'
+import { filesystem, patching, print, system } from 'gluegun'
+import { fixParameters } from '../command-helpers/gluegun'
+import path from 'path'
+import semver from 'semver'
+import { spawn, exec } from 'child_process'
+import yaml from 'js-yaml'
 
 const HELP = `
 ${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
@@ -22,7 +22,7 @@ ${chalk.dim('Options:')}
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
   `
 
-module.exports = {
+export default {
   description: 'Runs rust binary for subgraph testing',
   run: async toolbox => {
     // Read CLI parameters
@@ -67,7 +67,7 @@ module.exports = {
         l,
         logs,
         r,
-        recompile
+        recompile,
       })
     } catch (e) {
       print.error(e.message)
@@ -83,18 +83,20 @@ module.exports = {
     }
 
     // Check if matchstick.yaml config exists
-    if(filesystem.exists('matchstick.yaml')) {
+    if (filesystem.exists('matchstick.yaml')) {
       try {
         // Load the config
         let config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8'))
 
         // Check if matchstick.yaml and testsFolder not null
-        if(config && config.testsFolder) {
+        if (config && config.testsFolder) {
           // assign test folder from matchstick.yaml if present
           opts.testsFolder = config.testsFolder
         }
       } catch (error) {
-        print.info('A problem occurred while reading matchstick.yaml. Please attend to the errors below:')
+        print.info(
+          'A problem occurred while reading matchstick.yaml. Please attend to the errors below:',
+        )
         print.error(error.message)
         process.exit(1)
       }
@@ -105,29 +107,31 @@ module.exports = {
 
     // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
     if (opts.force || (!opts.version && !opts.latestVersion)) {
-      print.info("Fetching latest version tag")
-      let result = await fetch('https://api.github.com/repos/LimeChain/matchstick/releases/latest')
+      print.info('Fetching latest version tag')
+      let result = await fetch(
+        'https://api.github.com/repos/LimeChain/matchstick/releases/latest',
+      )
       let json = await result.json()
       opts.latestVersion = json.tag_name
 
       filesystem.file(opts.cachePath, {
         content: {
           version: json.tag_name,
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       })
     }
 
-    if(opts.docker) {
+    if (opts.docker) {
       runDocker(datasource, opts)
     } else {
       runBinary(datasource, opts)
     }
-  }
+  },
 }
 
 async function setVersionFromCache(opts) {
-  if(filesystem.exists(opts.cachePath) == 'file') {
+  if (filesystem.exists(opts.cachePath) == 'file') {
     let cached = filesystem.read(opts.cachePath, 'json')
     // Get the cache age in days
     let cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24)
@@ -148,7 +152,8 @@ async function runBinary(datasource, opts) {
 
   const platform = await getPlatform(logsOpt)
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`
+  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt ||
+    latestVersion}/${platform}`
 
   if (logsOpt) {
     print.info(`Download link: ${url}`)
@@ -168,14 +173,19 @@ async function getPlatform(logsOpt) {
   const type = os.type()
   const arch = os.arch()
   const cpuCore = os.cpus()[0]
-  const isAppleSilicon = (arch === 'arm64' && /Apple (M1|M2|processor)/.test(cpuCore.model))
+  const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|processor)/.test(cpuCore.model)
   const linuxInfo = type === 'Linux' ? await getLinuxInfo() : {}
   const linuxDistro = linuxInfo.name
   const release = linuxInfo.version || os.release()
   const majorVersion = parseInt(linuxInfo.version, 10) || semver.major(release)
 
   if (logsOpt) {
-    print.info(`OS type: ${linuxDistro || type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${cpuCore.model}`)
+    print.info(
+      `OS type: ${linuxDistro ||
+        type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
+        cpuCore.model
+      }`,
+    )
   }
 
   if (arch === 'x64' || isAppleSilicon) {
@@ -189,7 +199,8 @@ async function getPlatform(logsOpt) {
     } else if (type === 'Linux') {
       if (majorVersion === 18) {
         return 'binary-linux-18'
-      } if (majorVersion === 22) {
+      }
+      if (majorVersion === 22) {
         return 'binary-linux-22'
       } else {
         return 'binary-linux-20'
@@ -202,13 +213,18 @@ async function getPlatform(logsOpt) {
 
 async function getLinuxInfo() {
   try {
-    let result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {trim: true})
-    let infoArray = result.replace(/['"]+/g, '').split('\n').map(p => p.split('='))
+    let result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {
+      trim: true,
+    })
+    let infoArray = result
+      .replace(/['"]+/g, '')
+      .split('\n')
+      .map(p => p.split('='))
     let linuxInfo = {}
 
-    infoArray.forEach((val) => {
+    infoArray.forEach(val => {
       linuxInfo[val[0].toLowerCase()] = val[1]
-    });
+    })
 
     return linuxInfo
   } catch (error) {
@@ -239,7 +255,7 @@ async function runDocker(datasource, opts) {
 
   // Generate the Dockerfile only if it doesn't exists,
   // version flag and/or force flag is passed.
-  if(!dockerfileExists || versionOpt || forceOpt) {
+  if (!dockerfileExists || versionOpt || forceOpt) {
     await dockerfile(dockerfilePath, versionOpt, latestVersion)
   }
 
@@ -252,9 +268,15 @@ async function runDocker(datasource, opts) {
     if (datasource) testArgs = testArgs + ' ' + datasource
 
     // Build the `docker run` command options and flags
-    let dockerRunOpts = ['run', '-it', '--rm', '--mount', `type=bind,source=${current_folder},target=/matchstick`]
+    let dockerRunOpts = [
+      'run',
+      '-it',
+      '--rm',
+      '--mount',
+      `type=bind,source=${current_folder},target=/matchstick`,
+    ]
 
-    if(testArgs !== '') {
+    if (testArgs !== '') {
       dockerRunOpts.push('-e')
       dockerRunOpts.push(`ARGS=${testArgs.trim()}`)
     }
@@ -265,7 +287,7 @@ async function runDocker(datasource, opts) {
     // else it'll return the image ID. Skip `docker build` if an image already exists
     // Delete current image(if any) and rebuild.
     // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
-    if(!dockerfileExists || stdout === '' || versionOpt || forceOpt) {
+    if (!dockerfileExists || stdout === '' || versionOpt || forceOpt) {
       if (stdout !== '') {
         exec('docker image rm matchstick', (error, stdout, stderr) => {
           print.info(chalk.bold(`Removing matchstick image\n${stdout}`))
@@ -273,17 +295,15 @@ async function runDocker(datasource, opts) {
       }
       // Build a docker image. If the process has executed successfully
       // run a container from that image.
-      spawn(
-        'docker',
-        ['build', '-f', dockerfilePath, '-t', 'matchstick', '.'],
-        { stdio: 'inherit' }
-      ).on('close', code => {
+      spawn('docker', ['build', '-f', dockerfilePath, '-t', 'matchstick', '.'], {
+        stdio: 'inherit',
+      }).on('close', code => {
         if (code === 0) {
-           spawn('docker', dockerRunOpts, { stdio: 'inherit' })
+          spawn('docker', dockerRunOpts, { stdio: 'inherit' })
         }
       })
     } else {
-      print.info("Docker image already exists. Skipping `docker build` command.")
+      print.info('Docker image already exists. Skipping `docker build` command.')
       // Run the container from the existing matchstick docker image
       spawn('docker', dockerRunOpts, { stdio: 'inherit' })
     }
@@ -293,27 +313,35 @@ async function runDocker(datasource, opts) {
 // Downloads Dockerfile template from the demo-subgraph repo
 // Replaces the placeholders with their respective values
 async function dockerfile(dockerfilePath, versionOpt, latestVersion) {
-  let spinner = print.spin("Generating Dockerfile...")
+  let spinner = print.spin('Generating Dockerfile...')
 
   try {
     // Fetch the Dockerfile template content from the demo-subgraph repo
-    let content = await fetch('https://raw.githubusercontent.com/LimeChain/demo-subgraph/main/Dockerfile')
-        .then((response) => {
-          if (response.ok) {
-            return response.text()
-          } else {
-            throw new Error(`Status Code: ${response.status}, with error: ${response.statusText}`);
-          }
-        })
+    let content = await fetch(
+      'https://raw.githubusercontent.com/LimeChain/demo-subgraph/main/Dockerfile',
+    ).then(response => {
+      if (response.ok) {
+        return response.text()
+      } else {
+        throw new Error(
+          `Status Code: ${response.status}, with error: ${response.statusText}`,
+        )
+      }
+    })
 
     // Write the Dockerfile
     await filesystem.write(dockerfilePath, content)
 
     // Replaces the version placeholders
-    await patching.replace(dockerfilePath, '<MATCHSTICK_VERSION>', versionOpt || latestVersion)
-
+    await patching.replace(
+      dockerfilePath,
+      '<MATCHSTICK_VERSION>',
+      versionOpt || latestVersion,
+    )
   } catch (error) {
-    spinner.fail(`A problem occurred while generating the Dockerfile. Please attend to the errors below:\n ${error.message}`)
+    spinner.fail(
+      `A problem occurred while generating the Dockerfile. Please attend to the errors below:\n ${error.message}`,
+    )
     process.exit(1)
   }
 

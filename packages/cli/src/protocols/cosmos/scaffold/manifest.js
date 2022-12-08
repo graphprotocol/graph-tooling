@@ -10,7 +10,4 @@ const mapping = () => `
         - handler: handleBlock
       file: ./src/contract.ts`
 
-module.exports = {
-  source,
-  mapping,
-}
+export { source, mapping }

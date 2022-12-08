@@ -1,15 +1,21 @@
-const chalk = require('chalk')
-const toolbox = require('gluegun/toolbox')
-const immutable = require('immutable')
-const { withSpinner } = require('../command-helpers/spinner')
-const Subgraph = require('../subgraph')
-const Protocol = require('../protocols')
-const DataSourcesExtractor = require('../command-helpers/data-sources')
-const { generateDataSource, writeABI, writeSchema, writeMapping, writeTestsFiles } = require('../command-helpers/scaffold')
-const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
-const EthereumABI = require('../protocols/ethereum/abi')
-const { fixParameters } = require('../command-helpers/gluegun')
-const { updateNetworksFile } = require('../command-helpers/network')
+import chalk from 'chalk'
+import toolbox from 'gluegun/toolbox'
+import immutable from 'immutable'
+import { withSpinner } from '../command-helpers/spinner'
+import Subgraph from '../subgraph'
+import Protocol from '../protocols'
+import DataSourcesExtractor from '../command-helpers/data-sources'
+import {
+  generateDataSource,
+  writeABI,
+  writeSchema,
+  writeMapping,
+  writeTestsFiles,
+} from '../command-helpers/scaffold'
+import { loadAbiFromEtherscan, loadAbiFromBlockScout } from '../command-helpers/abi'
+import EthereumABI from '../protocols/ethereum/abi'
+import { fixParameters } from '../command-helpers/gluegun'
+import { updateNetworksFile } from '../command-helpers/network'
 
 const HELP = `
 ${chalk.bold('graph add')} <address> [<subgraph-manifest default: "./subgraph.yaml">]
@@ -23,7 +29,7 @@ ${chalk.dim('Options:')}
   -h, --help                    Show usage information
 `
 
-module.exports = {
+export default {
   description: 'Adds a new datasource to a subgraph',
   run: async toolbox => {
     // Obtain tools
@@ -36,7 +42,7 @@ module.exports = {
       h,
       help,
       mergeEntities,
-      networkFile
+      networkFile,
     } = toolbox.parameters.options
 
     contractName = contractName || 'Contract'
@@ -54,7 +60,8 @@ module.exports = {
     }
 
     let address = toolbox.parameters.first || toolbox.parameters.array[0]
-    let manifestPath = toolbox.parameters.second || toolbox.parameters.array[1] || './subgraph.yaml'
+    let manifestPath =
+      toolbox.parameters.second || toolbox.parameters.array[1] || './subgraph.yaml'
 
     // Show help text if requested
     if (help || h) {
@@ -72,7 +79,10 @@ module.exports = {
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath)
     let protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     let manifest = await Subgraph.load(manifestPath, { protocol })
-    let network = manifest.result.get('dataSources').get(0).get('network')
+    let network = manifest.result
+      .get('dataSources')
+      .get(0)
+      .get('network')
     let result = manifest.result.asMutable()
 
     let entities = getEntities(manifest)
@@ -96,17 +106,32 @@ module.exports = {
       }
     }
 
-    let { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(ethabi, entities, contractName, mergeEntities)
+    let { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(
+      ethabi,
+      entities,
+      contractName,
+      mergeEntities,
+    )
     ethabi.data = abiData
 
     await writeABI(ethabi, contractName)
-    await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']), collisionEntities)
+    await writeSchema(
+      ethabi,
+      protocol,
+      result.getIn(['schema', 'file']),
+      collisionEntities,
+    )
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
     await writeTestsFiles(ethabi, protocol, contractName)
 
     let dataSources = result.get('dataSources')
-    let dataSource = await generateDataSource(protocol,
-      contractName, network, address, ethabi)
+    let dataSource = await generateDataSource(
+      protocol,
+      contractName,
+      network,
+      address,
+      ethabi,
+    )
 
     // Handle the collisions edge case by copying another data source yaml data
     if (mergeEntities && onlyCollisions) {
@@ -126,7 +151,7 @@ module.exports = {
     await Subgraph.write(result, manifestPath)
 
     // Update networks.json
-    const networksFile = networkFile || "./networks.json"
+    const networksFile = networkFile || './networks.json'
     await updateNetworksFile(toolbox, network, contractName, address, networksFile)
 
     // Detect Yarn and/or NPM
@@ -146,12 +171,12 @@ module.exports = {
       'Warning during codegen',
       async spinner => {
         await system.run(yarn ? 'yarn codegen' : 'npm run codegen')
-      }
+      },
     )
-  }
+  },
 }
 
-const getEntities = (manifest) => {
+const getEntities = manifest => {
   let dataSources = manifest.result.get('dataSources', immutable.List())
   let templates = manifest.result.get('templates', immutable.List())
 
@@ -161,13 +186,11 @@ const getEntities = (manifest) => {
     .flatten()
 }
 
-const getContractNames = (manifest) => {
+const getContractNames = manifest => {
   let dataSources = manifest.result.get('dataSources', immutable.List())
   let templates = manifest.result.get('templates', immutable.List())
 
-  return dataSources
-    .concat(templates)
-    .map(dataSource => dataSource.get('name'))
+  return dataSources.concat(templates).map(dataSource => dataSource.get('name'))
 }
 
 const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntities) => {
@@ -179,7 +202,7 @@ const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntiti
   for (let i = 0; i < abiData.size; i++) {
     let dataRow = abiData.get(i).asMutable()
 
-    if (dataRow.get('type') === 'event'){
+    if (dataRow.get('type') === 'event') {
       if (entities.indexOf(dataRow.get('name')) !== -1) {
         if (entities.indexOf(`${contractName}${dataRow.get('name')}`) !== -1) {
           print.error(`Contract name ('${contractName}')

@@ -1,4 +1,4 @@
-const asc = require('assemblyscript/cli/asc')
+import asc from 'assemblyscript/cli/asc'
 
 const createExitHandler = inputFile => () => {
   throw new Error(`The AssemblyScript compiler crashed when compiling this file: '${inputFile}'
@@ -10,15 +10,16 @@ Also, please contact us so we can make the CLI better by handling errors like th
 
 const setupExitHandler = exitHandler => process.addListener('exit', exitHandler)
 
-const removeExitHandler = exitHandler =>  process.removeListener('exit', exitHandler)
+const removeExitHandler = exitHandler => process.removeListener('exit', exitHandler)
 
 // Important note, the `asc.main` callback function parameter is synchronous,
 // that's why this function doesn't need to be `async` and the throw works properly.
-const assemblyScriptCompiler = (...args) => asc.main(...args, err => {
-  if (err) {
-    throw err
-  }
-})
+const assemblyScriptCompiler = (...args) =>
+  asc.main(...args, err => {
+    if (err) {
+      throw err
+    }
+  })
 
 const compilerDefaults = {
   stdout: process.stdout,
@@ -64,7 +65,4 @@ const compile = ({ inputFile, global, baseDir, libs, outputFile }) => {
   removeExitHandler(exitHandler)
 }
 
-module.exports = {
-  ready,
-  compile,
-}
+export { ready, compile }

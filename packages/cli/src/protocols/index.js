@@ -1,24 +1,24 @@
-const immutable = require('immutable')
-const ArweaveSubgraph = require('./arweave/subgraph')
-const EthereumTypeGenerator = require('./ethereum/type-generator')
-const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
-const EthereumABI = require('./ethereum/abi')
-const EthereumSubgraph = require('./ethereum/subgraph')
-const NearSubgraph = require('./near/subgraph')
-const CosmosSubgraph = require('./cosmos/subgraph')
-const SubstreamsSubgraph = require('./substreams/subgraph')
-const EthereumContract = require('./ethereum/contract')
-const NearContract = require('./near/contract')
-const ArweaveManifestScaffold = require('./arweave/scaffold/manifest')
-const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
-const NearManifestScaffold = require('./near/scaffold/manifest')
-const CosmosManifestScaffold = require('./cosmos/scaffold/manifest')
-const SubstreamsManifestScaffold = require('./substreams/scaffold/manifest')
-const ArweaveMappingScaffold = require('./arweave/scaffold/mapping')
-const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
-const NearMappingScaffold = require('./near/scaffold/mapping')
-const CosmosMappingScaffold = require('./cosmos/scaffold/mapping')
-const { ThrowStatement } = require('assemblyscript')
+import immutable from 'immutable'
+import ArweaveSubgraph from './arweave/subgraph'
+import EthereumTypeGenerator from './ethereum/type-generator'
+import EthereumTemplateCodeGen from './ethereum/codegen/template'
+import EthereumABI from './ethereum/abi'
+import EthereumSubgraph from './ethereum/subgraph'
+import NearSubgraph from './near/subgraph'
+import CosmosSubgraph from './cosmos/subgraph'
+import SubstreamsSubgraph from './substreams/subgraph'
+import EthereumContract from './ethereum/contract'
+import NearContract from './near/contract'
+import ArweaveManifestScaffold from './arweave/scaffold/manifest'
+import EthereumManifestScaffold from './ethereum/scaffold/manifest'
+import NearManifestScaffold from './near/scaffold/manifest'
+import CosmosManifestScaffold from './cosmos/scaffold/manifest'
+import SubstreamsManifestScaffold from './substreams/scaffold/manifest'
+import ArweaveMappingScaffold from './arweave/scaffold/mapping'
+import EthereumMappingScaffold from './ethereum/scaffold/mapping'
+import NearMappingScaffold from './near/scaffold/mapping'
+import CosmosMappingScaffold from './cosmos/scaffold/mapping'
+import { ThrowStatement } from 'assemblyscript'
 
 let protocolDebug = require('../debug')('graph-cli:protocol')
 
@@ -268,4 +268,4 @@ const substreamsProtocol = {
 }
 
 protocolDebug('Available networks %M', Protocol.availableNetworks())
-module.exports = Protocol
+export default Protocol

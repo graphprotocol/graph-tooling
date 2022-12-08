@@ -1,25 +1,25 @@
-const chalk = require('chalk')
-const os = require('os')
-const path = require('path')
-const toolbox = require('gluegun/toolbox')
-const fs = require('fs')
-const graphCli = require('../cli')
+import chalk from 'chalk'
+import os from 'os'
+import path from 'path'
+import toolbox from 'gluegun/toolbox'
+import fs from 'fs'
+import graphCli from '../cli'
 
 const {
   getSubgraphBasename,
   validateSubgraphName,
 } = require('../command-helpers/subgraph')
-const DataSourcesExtractor = require('../command-helpers/data-sources')
-const { validateStudioNetwork } = require('../command-helpers/studio')
-const { initNetworksConfig } = require('../command-helpers/network')
-const { withSpinner, step } = require('../command-helpers/spinner')
-const { fixParameters } = require('../command-helpers/gluegun')
-const { chooseNodeUrl } = require('../command-helpers/node')
-const { loadAbiFromEtherscan, loadAbiFromBlockScout } = require('../command-helpers/abi')
-const { generateScaffold, writeScaffold } = require('../command-helpers/scaffold')
-const { abiEvents } = require('../scaffold/schema')
-const { validateContract } = require('../validation')
-const Protocol = require('../protocols')
+import DataSourcesExtractor from '../command-helpers/data-sources'
+import { validateStudioNetwork } from '../command-helpers/studio'
+import { initNetworksConfig } from '../command-helpers/network'
+import { withSpinner, step } from '../command-helpers/spinner'
+import { fixParameters } from '../command-helpers/gluegun'
+import { chooseNodeUrl } from '../command-helpers/node'
+import { loadAbiFromEtherscan, loadAbiFromBlockScout } from '../command-helpers/abi'
+import { generateScaffold, writeScaffold } from '../command-helpers/scaffold'
+import { abiEvents } from '../scaffold/schema'
+import { validateContract } from '../validation'
+import Protocol from '../protocols'
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
 const availableNetworks = Protocol.availableNetworks()
@@ -303,7 +303,7 @@ const loadAbiFromFile = async (ABI, filename) => {
   }
 }
 
-module.exports = {
+export default {
   description: 'Creates a new subgraph with basic scaffolding',
   run: async toolbox => {
     // Obtain tools

@@ -1,7 +1,7 @@
-const fs = require('fs-extra')
-const toolbox = require('gluegun/toolbox')
-const yaml = require('js-yaml')
-const { loadManifest } = require('./util/load-manifest')
+import fs from 'fs-extra'
+import toolbox from 'gluegun/toolbox'
+import yaml from 'js-yaml'
+import { loadManifest } from './util/load-manifest'
 
 // Spec version 0.0.4 uses feature management, but features are
 // detected and validated by the graph-node instance during subgraph
@@ -9,7 +9,7 @@ const { loadManifest } = require('./util/load-manifest')
 //
 // Also, we skip spec version 0.0.3, which is considered invalid and
 // non-canonical.
-module.exports = {
+export default {
   name: 'Bump manifest specVersion from 0.0.2 to 0.0.4',
   predicate: async ({ sourceDir, manifestFile }) => {
     let manifest = await loadManifest(manifestFile)

@@ -1,16 +1,16 @@
-const immutable = require('immutable')
-const fs = require('fs')
-const yaml = require('yaml')
-const request = require('sync-request')
-const Web3EthAbi = require('web3-eth-abi');
+import immutable from 'immutable'
+import fs from 'fs'
+import yaml from 'yaml'
+import request from 'sync-request'
+const Web3EthAbi = require('web3-eth-abi')
 
-const tsCodegen = require('../../../codegen/typescript')
-const typesCodegen = require('../../../codegen/types')
-const util = require('../../../codegen/util')
+import tsCodegen from '../../../codegen/typescript'
+import typesCodegen from '../../../codegen/types'
+import util from '../../../codegen/util'
 
-const doFixtureCodegen = fs.existsSync('./fixtures.yaml');
+const doFixtureCodegen = fs.existsSync('./fixtures.yaml')
 
-module.exports = class AbiCodeGenerator {
+export default class AbiCodeGenerator {
   constructor(abi) {
     this.abi = abi
   }
@@ -33,17 +33,12 @@ module.exports = class AbiCodeGenerator {
           'BigInt',
         ],
         '@graphprotocol/graph-ts',
-      )
+      ),
     ]
 
     if (doFixtureCodegen) {
       imports.push(
-        tsCodegen.moduleImports(
-          [
-            'newMockEvent',
-          ],
-          'matchstick-as/assembly/index',
-        )
+        tsCodegen.moduleImports(['newMockEvent'], 'matchstick-as/assembly/index'),
       )
     }
 
@@ -66,106 +61,104 @@ module.exports = class AbiCodeGenerator {
       setName: (fn, name) => fn.set('_alias', name),
     })
 
-    callFunctions = callFunctions
-      .map(fn => {
-        let fnAlias = fn.get('_alias')
-        let fnClassName = `${fnAlias.charAt(0).toUpperCase()}${fnAlias.slice(1)}Call`
-        let tupleClasses = []
+    callFunctions = callFunctions.map(fn => {
+      let fnAlias = fn.get('_alias')
+      let fnClassName = `${fnAlias.charAt(0).toUpperCase()}${fnAlias.slice(1)}Call`
+      let tupleClasses = []
 
-        // First, generate a class with the input getters
-        let inputsClassName = fnClassName + '__Inputs'
-        let inputsClass = tsCodegen.klass(inputsClassName, { export: true })
-        inputsClass.addMember(tsCodegen.klassMember('_call', fnClassName))
-        inputsClass.addMethod(
-          tsCodegen.method(
-            `constructor`,
-            [tsCodegen.param(`call`, fnClassName)],
-            null,
-            `this._call = call`,
-          ),
-        )
-
-        // Generate getters and classes for function inputs
-        util
-          .disambiguateNames({
-            values: fn.get('inputs', immutable.List()),
-            getName: (input, index) => input.get('name') || `value${index}`,
-            setName: (input, name) => input.set('name', name),
-          })
-          .forEach((input, index) => {
-            let callInput = this._generateInputOrOutput(
-              input,
-              index,
-              fnClassName,
-              `call`,
-              `inputValues`,
-            )
-            inputsClass.addMethod(callInput.getter)
-            tupleClasses.push(...callInput.classes)
-          })
-
-        // Second, generate a class with the output getters
-        let outputsClassName = fnClassName + '__Outputs'
-        let outputsClass = tsCodegen.klass(outputsClassName, { export: true })
-        outputsClass.addMember(tsCodegen.klassMember('_call', fnClassName))
-        outputsClass.addMethod(
-          tsCodegen.method(
-            `constructor`,
-            [tsCodegen.param(`call`, fnClassName)],
-            null,
-            `this._call = call`,
-          ),
-        )
-
-        // Generate getters and classes for function outputs
-        util
-          .disambiguateNames({
-            values: fn.get('outputs', immutable.List()),
-            getName: (output, index) => output.get('name') || `value${index}`,
-            setName: (output, name) => output.set('name', name),
-          })
-          .forEach((output, index) => {
-            let callInput = this._generateInputOrOutput(
-              output,
-              index,
-              fnClassName,
-              `call`,
-              `outputValues`,
-            )
-            outputsClass.addMethod(callInput.getter)
-            tupleClasses.push(...callInput.classes)
-          })
-
-        // Then, generate the event class itself
-        let klass = tsCodegen.klass(fnClassName, {
-          export: true,
-          extends: 'ethereum.Call',
-        })
-        klass.addMethod(
-          tsCodegen.method(
-            `get inputs`,
-            [],
-            tsCodegen.namedType(inputsClassName),
-            `return new ${inputsClassName}(this)`,
-          ),
-        )
-        klass.addMethod(
-          tsCodegen.method(
-            `get outputs`,
-            [],
-            tsCodegen.namedType(outputsClassName),
-            `return new ${outputsClassName}(this)`,
-          ),
-        )
-        return [klass, inputsClass, outputsClass, ...tupleClasses]
-      })
-
-    return callFunctions
-      .reduce(
-        // flatten the array
-        (array, classes) => array.concat(classes),
-        [],
+      // First, generate a class with the input getters
+      let inputsClassName = fnClassName + '__Inputs'
+      let inputsClass = tsCodegen.klass(inputsClassName, { export: true })
+      inputsClass.addMember(tsCodegen.klassMember('_call', fnClassName))
+      inputsClass.addMethod(
+        tsCodegen.method(
+          `constructor`,
+          [tsCodegen.param(`call`, fnClassName)],
+          null,
+          `this._call = call`,
+        ),
       )
+
+      // Generate getters and classes for function inputs
+      util
+        .disambiguateNames({
+          values: fn.get('inputs', immutable.List()),
+          getName: (input, index) => input.get('name') || `value${index}`,
+          setName: (input, name) => input.set('name', name),
+        })
+        .forEach((input, index) => {
+          let callInput = this._generateInputOrOutput(
+            input,
+            index,
+            fnClassName,
+            `call`,
+            `inputValues`,
+          )
+          inputsClass.addMethod(callInput.getter)
+          tupleClasses.push(...callInput.classes)
+        })
+
+      // Second, generate a class with the output getters
+      let outputsClassName = fnClassName + '__Outputs'
+      let outputsClass = tsCodegen.klass(outputsClassName, { export: true })
+      outputsClass.addMember(tsCodegen.klassMember('_call', fnClassName))
+      outputsClass.addMethod(
+        tsCodegen.method(
+          `constructor`,
+          [tsCodegen.param(`call`, fnClassName)],
+          null,
+          `this._call = call`,
+        ),
+      )
+
+      // Generate getters and classes for function outputs
+      util
+        .disambiguateNames({
+          values: fn.get('outputs', immutable.List()),
+          getName: (output, index) => output.get('name') || `value${index}`,
+          setName: (output, name) => output.set('name', name),
+        })
+        .forEach((output, index) => {
+          let callInput = this._generateInputOrOutput(
+            output,
+            index,
+            fnClassName,
+            `call`,
+            `outputValues`,
+          )
+          outputsClass.addMethod(callInput.getter)
+          tupleClasses.push(...callInput.classes)
+        })
+
+      // Then, generate the event class itself
+      let klass = tsCodegen.klass(fnClassName, {
+        export: true,
+        extends: 'ethereum.Call',
+      })
+      klass.addMethod(
+        tsCodegen.method(
+          `get inputs`,
+          [],
+          tsCodegen.namedType(inputsClassName),
+          `return new ${inputsClassName}(this)`,
+        ),
+      )
+      klass.addMethod(
+        tsCodegen.method(
+          `get outputs`,
+          [],
+          tsCodegen.namedType(outputsClassName),
+          `return new ${outputsClassName}(this)`,
+        ),
+      )
+      return [klass, inputsClass, outputsClass, ...tupleClasses]
+    })
+
+    return callFunctions.reduce(
+      // flatten the array
+      (array, classes) => array.concat(classes),
+      [],
+    )
   }
 
   _generateEventTypes() {
@@ -176,122 +169,124 @@ module.exports = class AbiCodeGenerator {
       setName: (event, name) => event.set('_alias', name),
     })
 
-    events = events
-      .map(event => {
-        let eventClassName = event.get('_alias')
-        let tupleClasses = []
+    events = events.map(event => {
+      let eventClassName = event.get('_alias')
+      let tupleClasses = []
 
-        // First, generate a class with the param getters
-        let paramsClassName = eventClassName + '__Params'
-        let paramsClass = tsCodegen.klass(paramsClassName, { export: true })
-        paramsClass.addMember(tsCodegen.klassMember('_event', eventClassName))
-        paramsClass.addMethod(
-          tsCodegen.method(
-            `constructor`,
-            [tsCodegen.param(`event`, eventClassName)],
-            null,
-            `this._event = event`,
-          ),
+      // First, generate a class with the param getters
+      let paramsClassName = eventClassName + '__Params'
+      let paramsClass = tsCodegen.klass(paramsClassName, { export: true })
+      paramsClass.addMember(tsCodegen.klassMember('_event', eventClassName))
+      paramsClass.addMethod(
+        tsCodegen.method(
+          `constructor`,
+          [tsCodegen.param(`event`, eventClassName)],
+          null,
+          `this._event = event`,
+        ),
+      )
+
+      // Enumerate inputs with duplicate names
+      let inputs = util.disambiguateNames({
+        values: event.get('inputs'),
+        getName: (input, index) => input.get('name') || `param${index}`,
+        setName: (input, name) => input.set('name', name),
+      })
+
+      let namesAndTypes = []
+      inputs.forEach((input, index) => {
+        // Generate getters and classes for event params
+        let paramObject = this._generateInputOrOutput(
+          input,
+          index,
+          eventClassName,
+          `event`,
+          `parameters`,
         )
-
-        // Enumerate inputs with duplicate names
-        let inputs = util.disambiguateNames({
-          values: event.get('inputs'),
-          getName: (input, index) => input.get('name') || `param${index}`,
-          setName: (input, name) => input.set('name', name),
-        })
-
-        let namesAndTypes = []
-        inputs.forEach((input, index) => {
-          // Generate getters and classes for event params
-          let paramObject = this._generateInputOrOutput(
-            input,
-            index,
-            eventClassName,
-            `event`,
-            `parameters`,
-          )
-          paramsClass.addMethod(paramObject.getter)
-
-          // Fixture generation
-          if (doFixtureCodegen) {
-            let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
-            if (typeof ethType === typeof {} && (ethType.test("int256") || ethType.test("uint256"))) {
-              ethType = "int32"
-            }
-            namesAndTypes.push({name: paramObject.getter.name.slice(4), type: ethType})
-          }
-
-          tupleClasses.push(...paramObject.classes)
-        })
-
-        // Then, generate the event class itself
-        let klass = tsCodegen.klass(eventClassName, {
-          export: true,
-          extends: 'ethereum.Event',
-        })
-        klass.addMethod(
-          tsCodegen.method(
-            `get params`,
-            [],
-            tsCodegen.namedType(paramsClassName),
-            `return new ${paramsClassName}(this)`,
-          ),
-        )
+        paramsClass.addMethod(paramObject.getter)
 
         // Fixture generation
         if (doFixtureCodegen) {
-          const args = yaml.parse(fs.readFileSync('./fixtures.yaml', 'utf8'))
-          const blockNumber = args['blockNumber']
-          const contractAddr = args['contractAddr']
-          const topic0 = args['topic0']
-          const apiKey = args['apiKey']
-          const url = `https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=${blockNumber}&toBlock=${blockNumber}&address=${contractAddr}&${topic0}=topic0&apikey=${apiKey}`;
-
-          let resp = request("GET", url)
-          let body = JSON.parse(resp.getBody("utf8"))
-          if (body.status === '0') {
-            throw new Error(body.result)
+          let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
+          if (
+            typeof ethType === typeof {} &&
+            (ethType.test('int256') || ethType.test('uint256'))
+          ) {
+            ethType = 'int32'
           }
+          namesAndTypes.push({ name: paramObject.getter.name.slice(4), type: ethType })
+        }
 
-          let res = Web3EthAbi.decodeLog(
-            namesAndTypes,
-            body.result[0].data,
-            []
-          );
+        tupleClasses.push(...paramObject.classes)
+      })
 
-          let stmnts = ""
-          for (let i = 0; i < namesAndTypes.length; i++) {
-            let code = '"' + res[i] + '"'
-            if (namesAndTypes[i].type.toString() == "address") {
-              code = `Address.fromString(${code})`
-            }
-            stmnts = stmnts.concat(`event.parameters.push(new ethereum.EventParam(\"${namesAndTypes[i].name}\", ${typesCodegen.ethereumFromAsc(code, namesAndTypes[i].type)}));`, `\n`)
+      // Then, generate the event class itself
+      let klass = tsCodegen.klass(eventClassName, {
+        export: true,
+        extends: 'ethereum.Event',
+      })
+      klass.addMethod(
+        tsCodegen.method(
+          `get params`,
+          [],
+          tsCodegen.namedType(paramsClassName),
+          `return new ${paramsClassName}(this)`,
+        ),
+      )
+
+      // Fixture generation
+      if (doFixtureCodegen) {
+        const args = yaml.parse(fs.readFileSync('./fixtures.yaml', 'utf8'))
+        const blockNumber = args['blockNumber']
+        const contractAddr = args['contractAddr']
+        const topic0 = args['topic0']
+        const apiKey = args['apiKey']
+        const url = `https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=${blockNumber}&toBlock=${blockNumber}&address=${contractAddr}&${topic0}=topic0&apikey=${apiKey}`
+
+        let resp = request('GET', url)
+        let body = JSON.parse(resp.getBody('utf8'))
+        if (body.status === '0') {
+          throw new Error(body.result)
+        }
+
+        let res = Web3EthAbi.decodeLog(namesAndTypes, body.result[0].data, [])
+
+        let stmnts = ''
+        for (let i = 0; i < namesAndTypes.length; i++) {
+          let code = '"' + res[i] + '"'
+          if (namesAndTypes[i].type.toString() == 'address') {
+            code = `Address.fromString(${code})`
           }
+          stmnts = stmnts.concat(
+            `event.parameters.push(new ethereum.EventParam(\"${
+              namesAndTypes[i].name
+            }\", ${typesCodegen.ethereumFromAsc(code, namesAndTypes[i].type)}));`,
+            `\n`,
+          )
+        }
 
-          klass.addMethod(
-            tsCodegen.staticMethod(
-              `mock${eventClassName}`,
-              [],
-              tsCodegen.namedType(eventClassName),
-              `
+        klass.addMethod(
+          tsCodegen.staticMethod(
+            `mock${eventClassName}`,
+            [],
+            tsCodegen.namedType(eventClassName),
+            `
               let event = changetype<${eventClassName}>(newMockEvent());
               ${stmnts}
               return event;
               `,
-            )
-          )
-        }
+          ),
+        )
+      }
 
-        return [klass, paramsClass, ...tupleClasses]
-      })
+      return [klass, paramsClass, ...tupleClasses]
+    })
 
-    return events
-      .reduce(
-        // flatten the array
-        (array, classes) => array.concat(classes),
-        [],
-      )
+    return events.reduce(
+      // flatten the array
+      (array, classes) => array.concat(classes),
+      [],
+    )
   }
 
   _generateInputOrOutput(inputOrOutput, index, parentClass, parentType, parentField) {
@@ -363,10 +358,10 @@ module.exports = class AbiCodeGenerator {
       `get ${name}`,
       [],
       util.isTupleMatrixType(type)
-      ? `Array<Array<${tupleClassName}>>`
-      : util.isTupleArrayType(type)
-      ? `Array<${tupleClassName}>`
-      : tupleClassName,
+        ? `Array<Array<${tupleClassName}>>`
+        : util.isTupleArrayType(type)
+        ? `Array<${tupleClassName}>`
+        : tupleClassName,
       `
       return ${
         isTupleType ? `changetype<${tupleClassName}>(${returnValue})` : `${returnValue}`
@@ -506,16 +501,18 @@ module.exports = class AbiCodeGenerator {
             ),
           )
           .forEach(member => returnType.addMember(member))
-        
+
         // Add getters to the type
         outputs
-          .map((output, index) =>
-            !!output.get('name') && tsCodegen.method(
-              `get${output.get('name')[0].toUpperCase()}${output.get('name').slice(1)}`,
-              [],
-              this._getTupleParamType(output, index, tupleResultParentType),
-              `return this.value${index};`
-            )
+          .map(
+            (output, index) =>
+              !!output.get('name') &&
+              tsCodegen.method(
+                `get${output.get('name')[0].toUpperCase()}${output.get('name').slice(1)}`,
+                [],
+                this._getTupleParamType(output, index, tupleResultParentType),
+                `return this.value${index};`,
+              ),
           )
           .forEach(method => !!method && returnType.addMethod(method))
 

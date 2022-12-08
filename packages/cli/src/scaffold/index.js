@@ -1,6 +1,6 @@
-const prettier = require('prettier')
+import prettier from 'prettier'
 const pkginfo = require('pkginfo')(module)
-const { strings } = require('gluegun')
+import { strings } from 'gluegun'
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   ? // JSON.stringify should remove this key, we will install the local
@@ -9,12 +9,12 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   : // For scaffolding real subgraphs
     `${module.exports.version}`
 
-const { abiEvents, generateEventType, generateExampleEntityType } = require('./schema')
-const { generateEventIndexingHandlers } = require('./mapping')
-const { generateTestsFiles } = require('./tests')
-const { getSubgraphBasename } = require('../command-helpers/subgraph')
+import { abiEvents, generateEventType, generateExampleEntityType } from './schema'
+import { generateEventIndexingHandlers } from './mapping'
+import { generateTestsFiles } from './tests'
+import { getSubgraphBasename } from '../command-helpers/subgraph'
 
-module.exports = class Scaffold {
+export default class Scaffold {
   constructor(options = {}) {
     this.protocol = options.protocol
     this.abi = options.abi

@@ -1,7 +1,7 @@
-const path = require('path')
-const { exec } = require('child_process')
-const which = require('which')
-const { build, system } = require('gluegun')
+import path from 'path'
+import { exec } from 'child_process'
+import which from 'which'
+import { build, system } from 'gluegun'
 
 const run = async argv => {
   let cli = build()
@@ -35,4 +35,4 @@ const run = async argv => {
   return await cli.run(argv)
 }
 
-module.exports = { run }
+export { run }

@@ -4,7 +4,7 @@ let immutable = require('immutable')
 
 let SchemaCodeGenerator = require('./codegen/schema')
 
-module.exports = class Schema {
+export default class Schema {
   constructor(filename, document, ast) {
     this.filename = filename
     this.document = document

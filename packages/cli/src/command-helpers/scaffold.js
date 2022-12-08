@@ -1,15 +1,15 @@
-const fs = require('fs-extra')
-const path = require('path')
-const prettier = require('prettier')
-const yaml = require('yaml')
+import fs from 'fs-extra'
+import path from 'path'
+import prettier from 'prettier'
+import yaml from 'yaml'
 
-const { step } = require('./spinner')
-const Scaffold = require('../scaffold')
-const { generateEventIndexingHandlers } = require('../scaffold/mapping')
-const { generateEventType, abiEvents } = require('../scaffold/schema')
-const { generateTestsFiles } = require('../scaffold/tests')
-const { strings } = require('gluegun')
-const { Map } = require('immutable')
+import { step } from './spinner'
+import Scaffold from '../scaffold'
+import { generateEventIndexingHandlers } from '../scaffold/mapping'
+import { generateEventType, abiEvents } from '../scaffold/schema'
+import { generateTestsFiles } from '../scaffold/tests'
+import { strings } from 'gluegun'
+import { Map } from 'immutable'
 
 const generateDataSource = async (
   protocol,
@@ -21,13 +21,25 @@ const generateDataSource = async (
   const protocolManifest = protocol.getManifestScaffold()
 
   return Map.of(
-    'kind', protocol.name,
-    'name', contractName,
-    'network', network,
-    'source', yaml.parse(prettier.format(protocolManifest.source({contract: contractAddress, contractName}),
-      {parser: 'yaml'})),
-    'mapping', yaml.parse(prettier.format(protocolManifest.mapping({abi, contractName}),
-      {parser: 'yaml'}))
+    'kind',
+    protocol.name,
+    'name',
+    contractName,
+    'network',
+    network,
+    'source',
+    yaml.parse(
+      prettier.format(
+        protocolManifest.source({ contract: contractAddress, contractName }),
+        { parser: 'yaml' },
+      ),
+    ),
+    'mapping',
+    yaml.parse(
+      prettier.format(protocolManifest.mapping({ abi, contractName }), {
+        parser: 'yaml',
+      }),
+    ),
   ).asMutable()
 }
 
@@ -130,11 +142,9 @@ const writeMapping = async (abi, protocol, contractName, entities) => {
 
 const writeTestsFiles = async (abi, protocol, contractName) => {
   const hasEvents = protocol.hasEvents()
-  const events = hasEvents
-    ? abiEvents(abi).toJS()
-    : []
+  const events = hasEvents ? abiEvents(abi).toJS() : []
 
-  if(events.length > 0) {
+  if (events.length > 0) {
     // If a contract is added to a subgraph that has no tests folder
     await fs.ensureDir('./tests/')
 
@@ -148,8 +158,7 @@ const writeTestsFiles = async (abi, protocol, contractName) => {
   }
 }
 
-module.exports = {
-  ...module.exports,
+export {
   generateScaffold,
   writeScaffold,
   generateDataSource,

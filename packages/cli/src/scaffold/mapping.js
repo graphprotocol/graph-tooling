@@ -1,6 +1,6 @@
-const path = require('path')
+import path from 'path'
 
-const util = require('../codegen/util')
+import util from '../codegen/util'
 
 const generateFieldAssignment = path =>
   `entity.${path.join('_')} = event.params.${path.join('.')}`
@@ -46,7 +46,7 @@ const generateEventIndexingHandlers = (events, contractName) =>
     .join('\n')}
 `
 
-module.exports = {
+export {
   generateFieldAssignment,
   generateFieldAssignments,
   generateEventFieldAssignments,

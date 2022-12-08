@@ -1,4 +1,4 @@
-const { disambiguateNames, unrollTuple } = require('./util')
+import { disambiguateNames, unrollTuple } from './util'
 
 describe('Codegen utilities', () => {
   test('Name disambiguation', () => {
@@ -64,7 +64,10 @@ describe('Codegen utilities', () => {
         value: {
           type: 'tuple',
           name: 'value',
-          components: [{ name: 'a', type: 'string' }, { name: 'b', type: 'uint256' }],
+          components: [
+            { name: 'a', type: 'string' },
+            { name: 'b', type: 'uint256' },
+          ],
         },
         path: ['value'],
         index: 0,

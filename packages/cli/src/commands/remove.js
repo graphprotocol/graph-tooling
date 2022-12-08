@@ -1,8 +1,8 @@
-const URL = require('url').URL
-const chalk = require('chalk')
-const { validateNodeUrl } = require('../command-helpers/node')
-const { identifyDeployKey: identifyAccessToken } = require('../command-helpers/auth')
-const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
+import { URL } from 'url'
+import chalk from 'chalk'
+import { validateNodeUrl } from '../command-helpers/node'
+import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth'
+import { createJsonRpcClient } from '../command-helpers/jsonrpc'
 
 const HELP = `
 ${chalk.bold('graph remove')} ${chalk.dim('[options]')} ${chalk.bold('<subgraph-name>')}
@@ -14,7 +14,7 @@ ${chalk.dim('Options:')}
   -g, --node <url>              Graph node to create the subgraph in
 `
 
-module.exports = {
+export default {
   description: 'Unregisters a subgraph name',
   run: async toolbox => {
     // Obtain tools
@@ -76,7 +76,7 @@ module.exports = {
     client.request('subgraph_remove', { name: subgraphName }, function(
       requestError,
       jsonRpcError,
-      res
+      res,
     ) {
       if (jsonRpcError) {
         spinner.fail(`Error removing the subgraph: ${jsonRpcError.message}`)

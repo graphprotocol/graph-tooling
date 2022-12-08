@@ -1,8 +1,8 @@
-const immutable = require('immutable')
-const ABI = require('./abi')
-const DataSourcesExtractor = require('../../command-helpers/data-sources')
+import immutable from 'immutable'
+import ABI from './abi'
+import DataSourcesExtractor from '../../command-helpers/data-sources'
 
-module.exports = class EthereumSubgraph {
+export default class EthereumSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
@@ -16,7 +16,10 @@ module.exports = class EthereumSubgraph {
   }
 
   validateAbis() {
-    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol)
+    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(
+      this.manifest,
+      this.protocol,
+    )
 
     return dataSourcesAndTemplates.reduce(
       (errors, dataSourceOrTemplate) =>
@@ -71,17 +74,19 @@ ${abiNames
   }
 
   validateEvents() {
-    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol)
+    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(
+      this.manifest,
+      this.protocol,
+    )
 
-    return dataSourcesAndTemplates
-      .reduce((errors, dataSourceOrTemplate) => {
-        return errors.concat(
-          this.validateDataSourceEvents(
-            dataSourceOrTemplate.get('dataSource'),
-            dataSourceOrTemplate.get('path'),
-          ),
-        )
-      }, immutable.List())
+    return dataSourcesAndTemplates.reduce((errors, dataSourceOrTemplate) => {
+      return errors.concat(
+        this.validateDataSourceEvents(
+          dataSourceOrTemplate.get('dataSource'),
+          dataSourceOrTemplate.get('path'),
+        ),
+      )
+    }, immutable.List())
   }
 
   validateDataSourceEvents(dataSource, path) {
@@ -182,10 +187,6 @@ ${abiFunctions
   }
 
   handlerTypes() {
-    return immutable.List([
-      'blockHandlers',
-      'callHandlers',
-      'eventHandlers',
-    ])
+    return immutable.List(['blockHandlers', 'callHandlers', 'eventHandlers'])
   }
 }

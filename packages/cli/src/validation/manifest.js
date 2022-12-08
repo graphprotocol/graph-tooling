@@ -1,8 +1,8 @@
-const immutable = require('immutable')
-const yaml = require('js-yaml')
-const path = require('path')
+import immutable from 'immutable'
+import yaml from 'js-yaml'
+import path from 'path'
 
-const Protocol = require('../protocols')
+import Protocol from '../protocols'
 
 const List = immutable.List
 const Map = immutable.Map
@@ -154,7 +154,7 @@ const validators = immutable.fromJS({
   },
 
   EnumTypeDefinition: (value, ctx) => {
-    const enumValues = ctx.getIn(['type', 'values']).map((v) => {
+    const enumValues = ctx.getIn(['type', 'values']).map(v => {
       return v.getIn(['name', 'value'])
     })
 
@@ -163,11 +163,11 @@ const validators = immutable.fromJS({
     return enumValues.includes(value)
       ? List()
       : immutable.fromJS([
-        {
-          path: ctx.get('path'),
-          message: `Unexpected enum value: ${value}, allowed values: ${allowedValues}`,
-        },
-      ])
+          {
+            path: ctx.get('path'),
+            message: `Unexpected enum value: ${value}, allowed values: ${allowedValues}`,
+          },
+        ])
   },
 
   String: (value, ctx) =>
@@ -262,15 +262,15 @@ const validateValue = (value, ctx) => {
 //   },
 // }
 const dataSourceListToMap = dataSources =>
-  dataSources
-    .reduce(
-      (protocolKinds, dataSource) =>
-        protocolKinds.update(Protocol.normalizeName(dataSource.kind), networks =>
-          (networks || immutable.OrderedMap()).update(dataSource.network, dataSourceNames =>
-            (dataSourceNames || immutable.OrderedSet()).add(dataSource.name)),
+  dataSources.reduce(
+    (protocolKinds, dataSource) =>
+      protocolKinds.update(Protocol.normalizeName(dataSource.kind), networks =>
+        (networks || immutable.OrderedMap()).update(dataSource.network, dataSourceNames =>
+          (dataSourceNames || immutable.OrderedSet()).add(dataSource.name),
         ),
-      immutable.OrderedMap(),
-    )
+      ),
+    immutable.OrderedMap(),
+  )
 
 const validateDataSourceProtocolAndNetworks = value => {
   const dataSources = [...value.dataSources, ...(value.templates || [])]
@@ -289,7 +289,11 @@ ${protocolNetworkMap
         protocolKind === undefined
           ? 'Data sources and templates having no protocol kind set'
           : `Data sources and templates using '${protocolKind}'`
-      }:\n${dataSourceNames.valueSeq().flatten().map(ds => `    - ${ds}`).join('\n')}`,
+      }:\n${dataSourceNames
+        .valueSeq()
+        .flatten()
+        .map(ds => `    - ${ds}`)
+        .join('\n')}`,
   )
   .join('\n')}
 Recommendation: Make all data sources and templates use the same protocol kind.`,
@@ -355,6 +359,4 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
   return validateDataSourceProtocolAndNetworks(value)
 }
 
-module.exports = {
-  validateManifest,
-}
+export { validateManifest }

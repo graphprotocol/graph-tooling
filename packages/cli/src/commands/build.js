@@ -1,10 +1,10 @@
-const chalk = require('chalk')
+import chalk from 'chalk'
 
-const { createCompiler } = require('../command-helpers/compiler')
-const { fixParameters } = require('../command-helpers/gluegun')
-const { updateSubgraphNetwork } = require('../command-helpers/network')
-const DataSourcesExtractor = require('../command-helpers/data-sources')
-const Protocol = require('../protocols')
+import { createCompiler } from '../command-helpers/compiler'
+import { fixParameters } from '../command-helpers/gluegun'
+import { updateSubgraphNetwork } from '../command-helpers/network'
+import DataSourcesExtractor from '../command-helpers/data-sources'
+import Protocol from '../protocols'
 
 let buildDebug = require('../debug')('graph-cli:build')
 
@@ -23,7 +23,7 @@ Options:
       --network-file <path>     Networks config file path (default: "./networks.json")
 `
 
-module.exports = {
+export default {
   description: 'Builds a subgraph and (optionally) uploads it to IPFS',
   run: async toolbox => {
     // Obtain tools

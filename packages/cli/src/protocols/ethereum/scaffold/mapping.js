@@ -1,4 +1,4 @@
-const { generateEventFieldAssignments } = require('../../../scaffold/mapping')
+import { generateEventFieldAssignments } from '../../../scaffold/mapping'
 
 const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
   `
@@ -71,6 +71,4 @@ export function handle${event._alias}(event: ${event._alias}): void {}
     )
     .join('\n')}`
 
-module.exports = {
-  generatePlaceholderHandlers,
-}
+export { generatePlaceholderHandlers }
