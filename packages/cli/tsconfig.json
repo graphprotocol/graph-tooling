@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "moduleResolution": "node",
+    "module": "commonjs",
     "target": "es2017",
     "strict": true,
     "noUnusedLocals": true,
@@ -12,5 +14,5 @@
     "declaration": true,
     "allowJs": true
   },
-  "include": ["packages/**/src"]
+  "include": ["./src"]
 }
