@@ -3,6 +3,33 @@
   "version": "0.37.1",
   "license": "(Apache-2.0 OR MIT)",
   "description": "CLI for building for and deploying to The Graph",
+  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "bin": {
+    "graph": "dist/cjs/bin.js"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
@@ -31,9 +58,6 @@
     "which": "2.0.2",
     "yaml": "1.9.2"
   },
-  "bin": {
-    "graph": "bin/graph"
-  },
   "devDependencies": {
     "eslint": "6.8.0",
     "jest": "26.0.0",
@@ -44,7 +68,8 @@
   "scripts": {
     "test": "jest --verbose",
     "test:init": "jest tests/cli/init.test.js --verbose",
-    "test:validation": "jest tests/cli/validation.test.js --verbose"
+    "test:validation": "jest tests/cli/validation.test.js --verbose",
+    "build": "bob build"
   },
   "publishConfig": {
     "access": "public"
