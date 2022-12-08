@@ -4,11 +4,7 @@ import path from 'path'
 import toolbox from 'gluegun/toolbox'
 import fs from 'fs'
 import graphCli from '../cli'
-
-const {
-  getSubgraphBasename,
-  validateSubgraphName,
-} = require('../command-helpers/subgraph')
+import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph'
 import DataSourcesExtractor from '../command-helpers/data-sources'
 import { validateStudioNetwork } from '../command-helpers/studio'
 import { initNetworksConfig } from '../command-helpers/network'
@@ -20,13 +16,14 @@ import { generateScaffold, writeScaffold } from '../command-helpers/scaffold'
 import { abiEvents } from '../scaffold/schema'
 import { validateContract } from '../validation'
 import Protocol from '../protocols'
+import debug from '../debug'
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
 const availableNetworks = Protocol.availableNetworks()
 
 const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum/gravatar'
 
-let initDebug = require('../debug')('graph-cli:init')
+let initDebug = debug('graph-cli:init')
 
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]

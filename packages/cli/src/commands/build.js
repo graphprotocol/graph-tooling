@@ -1,12 +1,12 @@
 import chalk from 'chalk'
-
 import { createCompiler } from '../command-helpers/compiler'
 import { fixParameters } from '../command-helpers/gluegun'
 import { updateSubgraphNetwork } from '../command-helpers/network'
 import DataSourcesExtractor from '../command-helpers/data-sources'
 import Protocol from '../protocols'
+import debug from '../debug'
 
-let buildDebug = require('../debug')('graph-cli:build')
+let buildDebug = debug('graph-cli:build')
 
 const HELP = `
 ${chalk.bold('graph build')} [options] ${chalk.bold('[<subgraph-manifest>]')}

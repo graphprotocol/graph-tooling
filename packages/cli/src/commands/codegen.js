@@ -1,14 +1,14 @@
 import chalk from 'chalk'
 import path from 'path'
-
 import TypeGenerator from '../type-generator'
 import Protocol from '../protocols'
 import { fixParameters } from '../command-helpers/gluegun'
 import DataSourcesExtractor from '../command-helpers/data-sources'
-const {
+import debug from '../debug'
+import {
   assertManifestApiVersion,
   assertGraphTsVersion,
-} = require('../command-helpers/version')
+} from '../command-helpers/version'
 
 const HELP = `
 ${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -21,7 +21,7 @@ Options:
   -uc, --uncrashable-config <path>  Directory for uncrashable config (default: ./uncrashable-config.yaml)
   `
 
-let codegenDebug = require('../debug')('graph-cli:codegen')
+let codegenDebug = debug('graph-cli:codegen')
 
 export default {
   description: 'Generates AssemblyScript types for a subgraph',

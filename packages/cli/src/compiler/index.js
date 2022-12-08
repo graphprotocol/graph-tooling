@@ -5,15 +5,15 @@ import immutable from 'immutable'
 import path from 'path'
 import yaml from 'js-yaml'
 import toolbox from 'gluegun/toolbox'
-
 import { step, withSpinner } from '../command-helpers/spinner'
 import Subgraph from '../subgraph'
 import Watcher from '../watcher'
 import { applyMigrations } from '../migrations'
 import asc from './asc'
 import SubstreamsSubgraph from '../protocols/substreams/subgraph'
+import debug from '../debug'
 
-let compilerDebug = require('../debug')('graph-cli:compiler')
+let compilerDebug = debug('graph-cli:compiler')
 
 class Compiler {
   constructor(options) {

@@ -1,12 +1,13 @@
-let fs = require('fs-extra')
-let immutable = require('immutable')
-let path = require('path')
-let yaml = require('yaml')
-let { strOptions } = require('yaml/types')
-let graphql = require('graphql/language')
-let validation = require('./validation')
+import fs from 'fs-extra'
+import immutable from 'immutable'
+import path from 'path'
+import yaml from 'yaml'
+import { strOptions } from 'yaml/types'
+import graphql from 'graphql/language'
+import validation from './validation'
+import debug from './debug'
 
-let subgraphDebug = require('./debug')('graph-cli:subgraph')
+let subgraphDebug = debug('graph-cli:subgraph')
 
 const throwCombinedError = (filename, errors) => {
   throw new Error(

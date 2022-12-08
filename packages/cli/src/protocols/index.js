@@ -19,8 +19,9 @@ import EthereumMappingScaffold from './ethereum/scaffold/mapping'
 import NearMappingScaffold from './near/scaffold/mapping'
 import CosmosMappingScaffold from './cosmos/scaffold/mapping'
 import { ThrowStatement } from 'assemblyscript'
+import debug from '../debug'
 
-let protocolDebug = require('../debug')('graph-cli:protocol')
+let protocolDebug = debug('graph-cli:protocol')
 
 class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
