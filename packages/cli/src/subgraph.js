@@ -15,10 +15,7 @@ const throwCombinedError = (filename, errors) => {
         `${msg}
 
   Path: ${e.get('path').size === 0 ? '/' : e.get('path').join(' > ')}
-  ${e
-    .get('message')
-    .split('\n')
-    .join('\n  ')}`,
+  ${e.get('message').split('\n').join('\n  ')}`,
       `Error in ${path.relative(process.cwd(), filename)}:`,
     ),
   )
@@ -31,10 +28,7 @@ const buildCombinedWarning = (filename, warnings) =>
           `${msg}
 
     Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
-    ${w
-      .get('message')
-      .split('\n')
-      .join('\n    ')}`,
+    ${w.get('message').split('\n').join('\n    ')}`,
         `Warnings in ${path.relative(process.cwd(), filename)}:`,
       ) + '\n'
     : null
@@ -84,12 +78,7 @@ export default class Subgraph {
               : ''
           }
   ${errors
-    .map(error =>
-      error
-        .get('message')
-        .split('\n')
-        .join('\n  '),
-    )
+    .map(error => error.get('message').split('\n').join('\n  '))
     .map(msg => `${directive ? '  ' : ''}- ${msg}`)
     .join('\n  ')}`
         }, ``)

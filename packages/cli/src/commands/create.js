@@ -73,21 +73,21 @@ export default {
     }
 
     let spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`)
-    client.request('subgraph_create', { name: subgraphName }, function(
-      requestError,
-      jsonRpcError,
-      res,
-    ) {
-      if (jsonRpcError) {
-        spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
-        process.exitCode = 1
-      } else if (requestError) {
-        spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
-        process.exitCode = 1
-      } else {
-        spinner.stop()
-        print.success(`Created subgraph: ${subgraphName}`)
-      }
-    })
+    client.request(
+      'subgraph_create',
+      { name: subgraphName },
+      function (requestError, jsonRpcError, res) {
+        if (jsonRpcError) {
+          spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
+          process.exitCode = 1
+        } else if (requestError) {
+          spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
+          process.exitCode = 1
+        } else {
+          spinner.stop()
+          print.success(`Created subgraph: ${subgraphName}`)
+        }
+      },
+    )
   },
 }

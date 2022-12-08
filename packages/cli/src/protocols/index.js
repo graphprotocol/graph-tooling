@@ -131,9 +131,7 @@ class Protocol {
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
-    return Protocol.availableProtocols()
-      .get(this.name, immutable.List())
-      .includes(kind)
+    return Protocol.availableProtocols().get(this.name, immutable.List()).includes(kind)
   }
 
   hasABIs() {

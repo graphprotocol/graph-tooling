@@ -4,8 +4,10 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.7",
     "@changesets/cli": "^2.25.2",
-    "eslint": "6.8.0",
-    "jest": "26.0.0"
+    "eslint": "^8.29.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "26.0.0",
+    "prettier": "^2.8.1"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,7 @@
     "pnpm": ">=7.14.2"
   },
   "scripts": {
+    "lint": "eslint packages/**/src",
     "type-check": "pnpm --filter=@graphprotocol/graph-cli run type-check",
     "build": "pnpm --filter=@graphprotocol/graph-cli run build",
     "release": "changeset publish",

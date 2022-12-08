@@ -3,7 +3,7 @@
     "outDir": "./dist",
     "moduleResolution": "node",
     "module": "commonjs",
-    "target": "es2017",
+    "target": "es2022",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
