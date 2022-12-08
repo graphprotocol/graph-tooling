@@ -1,5 +1,5 @@
 import prettier from 'prettier'
-import graphql from 'graphql/language'
+import * as graphql from 'graphql/language'
 import immutable from 'immutable'
 import SchemaCodeGenerator from './schema'
 const {

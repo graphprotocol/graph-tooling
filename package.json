@@ -27,8 +27,8 @@
   },
   "scripts": {
     "lint": "eslint packages/**/src",
-    "type-check": "pnpm --filter=@graphprotocol/graph-cli run type-check",
-    "build": "pnpm --filter=@graphprotocol/graph-cli run build",
+    "type-check": "pnpm --filter=@graphprotocol/graph-cli type-check",
+    "build": "pnpm --filter=@graphprotocol/graph-cli build",
     "release": "changeset publish",
     "test:cli": "pnpm --filter @graphprotocol/graph-cli test"
   }

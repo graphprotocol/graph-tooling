@@ -1,4 +1,4 @@
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import { normalizeNodeUrl } from './node'
 
 import fs from 'fs'

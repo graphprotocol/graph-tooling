@@ -3,7 +3,7 @@ import path from 'path'
 import immutable from 'immutable'
 
 import ABI from '../abi'
-import ts from '../../../codegen/typescript'
+import * as ts from '../../../codegen/typescript'
 import AbiCodeGenerator from './abi'
 
 let tempdir

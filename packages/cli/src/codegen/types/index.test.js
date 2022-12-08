@@ -1,4 +1,4 @@
-import codegen from '.'
+import * as codegen from '.'
 
 describe('ethereum.Value -> AssemblyScript', () => {
   // Scalar values

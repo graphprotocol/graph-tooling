@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import os from 'os'
 import path from 'path'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import fs from 'fs'
 import graphCli from '../cli'
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph'

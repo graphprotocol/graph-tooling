@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import immutable from 'immutable'
 import { withSpinner } from '../command-helpers/spinner'
 import Subgraph from '../subgraph'
@@ -36,8 +36,14 @@ export default {
     let { print, system } = toolbox
 
     // Read CLI parameters
-    let { abi, contractName, h, help, mergeEntities, networkFile } =
-      toolbox.parameters.options
+    let {
+      abi,
+      contractName,
+      h,
+      help,
+      mergeEntities,
+      networkFile,
+    } = toolbox.parameters.options
 
     contractName = contractName || 'Contract'
 
@@ -73,7 +79,10 @@ export default {
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath)
     let protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     let manifest = await Subgraph.load(manifestPath, { protocol })
-    let network = manifest.result.get('dataSources').get(0).get('network')
+    let network = manifest.result
+      .get('dataSources')
+      .get(0)
+      .get('network')
     let result = manifest.result.asMutable()
 
     let entities = getEntities(manifest)

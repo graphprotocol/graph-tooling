@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import yaml from 'js-yaml'
 import { loadManifest } from './util/load-manifest'
 

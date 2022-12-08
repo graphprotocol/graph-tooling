@@ -1,5 +1,5 @@
 import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types'
-import util from '../codegen/util'
+import * as util from '../codegen/util'
 
 const abiEvents = abi =>
   util.disambiguateNames({

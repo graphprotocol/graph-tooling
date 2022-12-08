@@ -1,6 +1,6 @@
 import prettier from 'prettier'
 import { strings } from 'gluegun'
-const { ascTypeForEthereum, ethereumFromAsc } = require('../codegen/types')
+import { ascTypeForEthereum, ethereumFromAsc } from '../codegen/types'
 
 const VARIABLES_VALUES = {
   i32: 123,
@@ -65,7 +65,7 @@ const assignValue = type => {
     case 'Bytes':
       return `Bytes.fromI32(${VARIABLES_VALUES[type]})`
     case fetchArrayInnerType(type)?.input:
-      innerType = fetchArrayInnerType(type)[1]
+      const innerType = fetchArrayInnerType(type)[1]
       return `[${assignValue(innerType)}]`
     default:
       let value = VARIABLES_VALUES[type]
@@ -100,7 +100,7 @@ const generateFieldsAssertions = (entity, eventInputs, indexEvents) =>
 const expectedValue = type => {
   switch (type) {
     case fetchArrayInnerType(type)?.input:
-      innerType = fetchArrayInnerType(type)[1]
+      const innerType = fetchArrayInnerType(type)[1]
       return `[${expectedValue(innerType)}]`
     default:
       let value = VARIABLES_VALUES[type]
@@ -189,9 +189,11 @@ const generateMockedEvent = event => {
   )
   const ascToEth = event.inputs.map(
     (input, index) =>
-      `${varName}.parameters.push(new ethereum.EventParam("${
-        input.name || `param${index}`
-      }", ${ethereumFromAsc(input.name || `param${index}`, input.type)}))`,
+      `${varName}.parameters.push(new ethereum.EventParam("${input.name ||
+        `param${index}`}", ${ethereumFromAsc(
+        input.name || `param${index}`,
+        input.type,
+      )}))`,
   )
 
   return `

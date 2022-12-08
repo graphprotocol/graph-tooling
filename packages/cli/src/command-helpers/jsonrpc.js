@@ -1,5 +1,5 @@
 import jayson from 'jayson'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 
 const createJsonRpcClient = url => {
   let params = {

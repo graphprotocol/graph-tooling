@@ -47,7 +47,8 @@
     "test:init": "jest tests/cli/init.test.js --verbose",
     "test:validation": "jest tests/cli/validation.test.js --verbose",
     "type-check": "tsc --noEmit",
-    "build": "tsc --build && chmod +x ./dist/bin.js"
+    "build": "tsc --build",
+    "postbuild": "chmod +x ./dist/bin.js"
   },
   "publishConfig": {
     "access": "public"

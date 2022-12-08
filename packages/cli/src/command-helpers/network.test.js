@@ -1,5 +1,5 @@
 import { initNetworksConfig, updateSubgraphNetwork } from '../command-helpers/network'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import yaml from 'yaml'
 import path from 'path'
 

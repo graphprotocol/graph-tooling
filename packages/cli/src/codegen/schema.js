@@ -1,7 +1,7 @@
 import immutable from 'immutable'
 
-import tsCodegen from './typescript'
-import typesCodegen from './types'
+import * as tsCodegen from './typescript'
+import * as typesCodegen from './types'
 
 const List = immutable.List
 

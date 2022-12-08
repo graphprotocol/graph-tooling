@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import immutable from 'immutable'
 import path from 'path'
 import yaml from 'js-yaml'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import { step, withSpinner } from '../command-helpers/spinner'
 import Subgraph from '../subgraph'
 import Watcher from '../watcher'
@@ -59,7 +59,7 @@ class Compiler {
     this.protocol = this.options.protocol
     this.ABI = this.protocol.getABI()
 
-    process.on('uncaughtException', function (e) {
+    process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }

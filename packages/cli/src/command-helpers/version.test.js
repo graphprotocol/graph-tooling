@@ -1,6 +1,6 @@
 import { assertManifestApiVersion, assertGraphTsVersion } from './version'
-import loadManifestUtil from '../migrations/util/load-manifest'
-import graphTsUtil from '../migrations/util/versions'
+import * as loadManifestUtil from '../migrations/util/load-manifest'
+import * as graphTsUtil from '../migrations/util/versions'
 
 describe('Version Command Helpers', () => {
   describe('assertManifestApiVersion', () => {

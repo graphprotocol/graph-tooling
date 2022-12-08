@@ -4,9 +4,9 @@ import yaml from 'yaml'
 import request from 'sync-request'
 const Web3EthAbi = require('web3-eth-abi')
 
-import tsCodegen from '../../../codegen/typescript'
-import typesCodegen from '../../../codegen/types'
-import util from '../../../codegen/util'
+import * as tsCodegen from '../../../codegen/typescript'
+import * as typesCodegen from '../../../codegen/types'
+import * as util from '../../../codegen/util'
 
 const doFixtureCodegen = fs.existsSync('./fixtures.yaml')
 

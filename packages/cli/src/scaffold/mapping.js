@@ -1,6 +1,6 @@
 import path from 'path'
 
-import util from '../codegen/util'
+import * as util from '../codegen/util'
 
 const generateFieldAssignment = path =>
   `entity.${path.join('_')} = event.params.${path.join('.')}`

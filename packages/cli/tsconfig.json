@@ -10,7 +10,6 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "useUnknownInCatchVariables": false,
-    "allowSyntheticDefaultImports": true,
     "declaration": false,
     "skipLibCheck": true,
     "allowJs": true

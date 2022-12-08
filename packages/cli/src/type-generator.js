@@ -4,7 +4,7 @@ import path from 'path'
 import prettier from 'prettier'
 import graphql from 'graphql/language'
 import chalk from 'chalk'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 
 import Schema from './schema'
 import Subgraph from './subgraph'
@@ -29,7 +29,7 @@ export default class TypeGenerator {
       outputDir: this.options.outputDir,
     })
 
-    process.on('uncaughtException', function (e) {
+    process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }

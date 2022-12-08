@@ -1,6 +1,6 @@
 const URL = require('url').URL
 import ipfsHttpClient from 'ipfs-http-client'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import Compiler from '../compiler'
 
 // Helper function to construct a subgraph compiler

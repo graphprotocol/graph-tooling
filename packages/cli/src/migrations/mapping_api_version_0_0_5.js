@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import semver from 'semver'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import yaml from 'js-yaml'
 import { loadManifest } from './util/load-manifest'
 import { getGraphTsVersion } from './util/versions'

@@ -9,15 +9,15 @@ import CosmosSubgraph from './cosmos/subgraph'
 import SubstreamsSubgraph from './substreams/subgraph'
 import EthereumContract from './ethereum/contract'
 import NearContract from './near/contract'
-import ArweaveManifestScaffold from './arweave/scaffold/manifest'
-import EthereumManifestScaffold from './ethereum/scaffold/manifest'
-import NearManifestScaffold from './near/scaffold/manifest'
-import CosmosManifestScaffold from './cosmos/scaffold/manifest'
-import SubstreamsManifestScaffold from './substreams/scaffold/manifest'
-import ArweaveMappingScaffold from './arweave/scaffold/mapping'
-import EthereumMappingScaffold from './ethereum/scaffold/mapping'
-import NearMappingScaffold from './near/scaffold/mapping'
-import CosmosMappingScaffold from './cosmos/scaffold/mapping'
+import * as ArweaveManifestScaffold from './arweave/scaffold/manifest'
+import * as EthereumManifestScaffold from './ethereum/scaffold/manifest'
+import * as NearManifestScaffold from './near/scaffold/manifest'
+import * as CosmosManifestScaffold from './cosmos/scaffold/manifest'
+import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest'
+import * as ArweaveMappingScaffold from './arweave/scaffold/mapping'
+import * as EthereumMappingScaffold from './ethereum/scaffold/mapping'
+import * as NearMappingScaffold from './near/scaffold/mapping'
+import * as CosmosMappingScaffold from './cosmos/scaffold/mapping'
 import { ThrowStatement } from 'assemblyscript'
 import debug from '../debug'
 
@@ -132,7 +132,9 @@ class Protocol {
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
-    return Protocol.availableProtocols().get(this.name, immutable.List()).includes(kind)
+    return Protocol.availableProtocols()
+      .get(this.name, immutable.List())
+      .includes(kind)
   }
 
   hasABIs() {

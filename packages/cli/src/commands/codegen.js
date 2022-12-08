@@ -49,7 +49,7 @@ export default {
     outputDir = outputDir || o
     watch = watch || w
     uncrashable = uncrashable || u
-    uncrashable_config = uncrashableConfig || uc
+    let uncrashable_config = uncrashableConfig || uc
 
     let manifest
     try {

@@ -1,5 +1,5 @@
 import semver from 'semver'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 import { loadManifest } from './util/load-manifest'
 import { getGraphTsVersion } from './util/versions'
 
