@@ -29,7 +29,7 @@ export default class TypeGenerator {
       outputDir: this.options.outputDir,
     })
 
-    process.on('uncaughtException', function(e) {
+    process.on('uncaughtException', function (e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }

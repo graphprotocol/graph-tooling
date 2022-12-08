@@ -189,11 +189,9 @@ const generateMockedEvent = event => {
   )
   const ascToEth = event.inputs.map(
     (input, index) =>
-      `${varName}.parameters.push(new ethereum.EventParam("${input.name ||
-        `param${index}`}", ${ethereumFromAsc(
-        input.name || `param${index}`,
-        input.type,
-      )}))`,
+      `${varName}.parameters.push(new ethereum.EventParam("${
+        input.name || `param${index}`
+      }", ${ethereumFromAsc(input.name || `param${index}`, input.type)}))`,
   )
 
   return `
