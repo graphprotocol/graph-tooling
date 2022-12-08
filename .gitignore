@@ -73,3 +73,6 @@ examples/example-subgraph/node_modules
 
 # TSC build outputs
 dist
+
+# Generated
+**/tests/**/generated
