@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "useUnknownInCatchVariables": false,
+    "declaration": true,
     "allowJs": true
   },
   "include": ["packages/**/src"]
