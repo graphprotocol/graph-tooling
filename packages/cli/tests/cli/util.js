@@ -98,7 +98,7 @@ const runCommand = async (command, args = [], cwd = process.cwd()) => {
 
 const runGraphCli = async (args, cwd) => {
   // Resolve the path to graph.js
-  let graphCli = path.join(__dirname, '..', '..', 'bin', 'graph')
+  let graphCli = path.join(__dirname, '..', '..', 'dist', 'bin.js')
 
   return await runCommand(graphCli, args, cwd)
 }
