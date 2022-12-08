@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import immutable from 'immutable'
-import toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun/toolbox'
 
 const step = (spinner, subject, text) => {
   if (text) {
