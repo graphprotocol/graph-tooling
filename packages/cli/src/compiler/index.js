@@ -9,7 +9,7 @@ import { step, withSpinner } from '../command-helpers/spinner'
 import Subgraph from '../subgraph'
 import Watcher from '../watcher'
 import { applyMigrations } from '../migrations'
-import asc from './asc'
+import * as asc from './asc'
 import SubstreamsSubgraph from '../protocols/substreams/subgraph'
 import debug from '../debug'
 
@@ -59,7 +59,7 @@ class Compiler {
     this.protocol = this.options.protocol
     this.ABI = this.protocol.getABI()
 
-    process.on('uncaughtException', function (e) {
+    process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }

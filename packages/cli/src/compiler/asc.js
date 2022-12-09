@@ -1,4 +1,4 @@
-import asc from 'assemblyscript/cli/asc'
+import * as asc from 'assemblyscript/cli/asc'
 
 const createExitHandler = inputFile => () => {
   throw new Error(`The AssemblyScript compiler crashed when compiling this file: '${inputFile}'
