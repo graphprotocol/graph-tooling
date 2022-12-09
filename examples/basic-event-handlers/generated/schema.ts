@@ -6,7 +6,6 @@ import {
   Value,
   ValueKind,
   store,
-  Address,
   Bytes,
   BigInt,
   BigDecimal
@@ -24,8 +23,7 @@ export class NewGravatar extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save NewGravatar entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type NewGravatar must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("NewGravatar", id.toString(), this);
     }
@@ -84,8 +82,7 @@ export class UpdatedGravatar extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save UpdatedGravatar entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type UpdatedGravatar must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("UpdatedGravatar", id.toString(), this);
     }

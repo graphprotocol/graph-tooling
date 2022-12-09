@@ -85,6 +85,14 @@ export class Gravity__getGravatarResult {
     map.set("value1", ethereum.Value.fromString(this.value1));
     return map;
   }
+
+  getValue0(): string {
+    return this.value0;
+  }
+
+  getValue1(): string {
+    return this.value1;
+  }
 }
 
 export class Gravity__gravatarsResult {
@@ -104,6 +112,18 @@ export class Gravity__gravatarsResult {
     map.set("value1", ethereum.Value.fromString(this.value1));
     map.set("value2", ethereum.Value.fromString(this.value2));
     return map;
+  }
+
+  getOwner(): Address {
+    return this.value0;
+  }
+
+  getDisplayName(): string {
+    return this.value1;
+  }
+
+  getImageUrl(): string {
+    return this.value2;
   }
 }
 
