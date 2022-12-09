@@ -1,6 +1,6 @@
-import path from 'path'
-import { system, patching } from 'gluegun'
-import { createApolloFetch } from 'apollo-fetch'
+const path = require('path')
+const { system, patching } = require('gluegun')
+const { createApolloFetch } = require('apollo-fetch')
 
 const GravatarRegistry = artifacts.require('./GravatarRegistry.sol')
 
@@ -46,7 +46,7 @@ const waitForSubgraphToBeSynced = async () =>
     setTimeout(checkSubgraphSynced, 0)
   })
 
-contract('Basic event handlers', (accounts) => {
+contract('Basic event handlers', accounts => {
   // Deploy the subgraph once before all tests
   before(async () => {
     // Deploy the contract

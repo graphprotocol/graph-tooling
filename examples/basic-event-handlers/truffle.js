@@ -1,8 +1,8 @@
 require('babel-register')
 require('babel-polyfill')
-import HDWalletProvider from 'truffle-hdwallet-provider'
+const HDWalletProvider = require('truffle-hdwallet-provider')
 
-export {
+module.exports = {
   networks: {
     development: {
       host: '127.0.0.1',
