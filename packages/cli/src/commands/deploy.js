@@ -14,7 +14,7 @@ import {
   assertManifestApiVersion,
   assertGraphTsVersion,
 } from '../command-helpers/version'
-import DataSourcesExtractor from '../command-helpers/data-sources'
+import * as DataSourcesExtractor from '../command-helpers/data-sources'
 import { validateStudioNetwork } from '../command-helpers/studio'
 import Protocol from '../protocols'
 import { updateSubgraphNetwork } from '../command-helpers/network'

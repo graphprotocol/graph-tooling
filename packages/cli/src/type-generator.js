@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import immutable from 'immutable'
 import path from 'path'
 import prettier from 'prettier'
-import graphql from 'graphql/language'
+import * as graphql from 'graphql/language'
 import chalk from 'chalk'
 import * as toolbox from 'gluegun/toolbox'
 

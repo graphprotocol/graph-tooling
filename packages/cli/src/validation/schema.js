@@ -1,5 +1,5 @@
 import fs from 'fs'
-import graphql from 'graphql/language'
+import * as graphql from 'graphql/language'
 import immutable from 'immutable'
 
 const List = immutable.List

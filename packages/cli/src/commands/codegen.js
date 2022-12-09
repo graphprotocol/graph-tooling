@@ -3,7 +3,7 @@ import path from 'path'
 import TypeGenerator from '../type-generator'
 import Protocol from '../protocols'
 import { fixParameters } from '../command-helpers/gluegun'
-import DataSourcesExtractor from '../command-helpers/data-sources'
+import * as DataSourcesExtractor from '../command-helpers/data-sources'
 import debug from '../debug'
 import {
   assertManifestApiVersion,

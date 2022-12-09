@@ -1,7 +1,7 @@
 import immutable from 'immutable'
 import IpfsFileTemplateCodeGen from '../protocols/ipfs/codegen/file_template'
 
-import tsCodegen from './typescript'
+import * as tsCodegen from './typescript'
 
 export default class DataSourceTemplateCodeGenerator {
   constructor(template, protocol) {

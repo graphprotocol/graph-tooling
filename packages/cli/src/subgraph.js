@@ -3,7 +3,7 @@ import immutable from 'immutable'
 import path from 'path'
 import yaml from 'yaml'
 import { strOptions } from 'yaml/types'
-import graphql from 'graphql/language'
+import * as graphql from 'graphql/language'
 import validation from './validation'
 import debug from './debug'
 

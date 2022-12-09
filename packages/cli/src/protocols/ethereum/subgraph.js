@@ -1,6 +1,6 @@
 import immutable from 'immutable'
 import ABI from './abi'
-import DataSourcesExtractor from '../../command-helpers/data-sources'
+import * as DataSourcesExtractor from '../../command-helpers/data-sources'
 
 export default class EthereumSubgraph {
   constructor(options = {}) {

@@ -4,7 +4,7 @@ import immutable from 'immutable'
 import { withSpinner } from '../command-helpers/spinner'
 import Subgraph from '../subgraph'
 import Protocol from '../protocols'
-import DataSourcesExtractor from '../command-helpers/data-sources'
+import * as DataSourcesExtractor from '../command-helpers/data-sources'
 import {
   generateDataSource,
   writeABI,

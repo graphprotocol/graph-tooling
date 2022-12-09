@@ -1,4 +1,4 @@
-import tsCodegen from '../../../codegen/typescript'
+import * as tsCodegen from '../../../codegen/typescript'
 
 export default class EthereumTemplateCodeGen {
   constructor(template) {

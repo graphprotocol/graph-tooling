@@ -1,8 +1,7 @@
-let fs = require('fs-extra')
-let graphql = require('graphql/language')
-let immutable = require('immutable')
-
-let SchemaCodeGenerator = require('./codegen/schema')
+import fs from 'fs-extra'
+import * as graphql from 'graphql/language'
+import immutable from 'immutable'
+import SchemaCodeGenerator from './codegen/schema'
 
 export default class Schema {
   constructor(filename, document, ast) {
