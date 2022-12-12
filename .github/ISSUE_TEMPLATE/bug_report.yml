@@ -1,0 +1,105 @@
+name: '🐛 Bug report'
+description: Create a report to help us improve
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue :pray:.
+  - type: dropdown
+    id: packages
+    attributes:
+      label: Which packages are impacted by your issue?
+      multiple: true
+      # TODO: All all other packages once we move them into that monorepo
+      options:
+        - '@graphprotocol/graph-cli'
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        The issues on this repo are being tracked and monitored according to our [Contributor Workflow](https://github.com/graphprotocol/graph-cli/blob/main/CONTRIBUTING.md).
+
+        After reading the [Contributor Workflow](https://github.com/graphprotocol/graph-cli/blob/main/CONTRIBUTING.md), Check out and update the current state of this issue:
+
+        - [ ] 1. The issue provides a [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example), as a GitHub repository, or as a code sample.
+        - [ ] 2. A failing test has been provided
+        - [ ] 3. A local solution has been provided
+        - [ ] 4. A pull request is pending review
+
+        The more information you fill in, the better the community can help you.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the issue
+      description: Provide a clear and concise description of the challenge you are running into.
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Reproduction
+      description: |
+        Which website or app were you using when the bug happened?
+        Note:
+        - Please read these tips for providing a minimal example: https://stackoverflow.com/help/minimal-reproducible-example.
+      placeholder: |
+        e.g. https://codesandbox.io/...... OR Github Repo
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce the Bug or Issue
+      description: Describe the steps we have to take to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Provide a clear and concise description of what you expected to happen.
+      placeholder: |
+        As a user, I expected ___ behavior but i am seeing ___
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots_or_videos
+    attributes:
+      label: Screenshots or Videos
+      description: |
+        If applicable, add screenshots or a video to help explain your problem.
+        For more information on the supported file image/file types and the file size limits, please refer
+        to the following link: https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files
+      placeholder: |
+        You can drag your video or image files inside of this editor ↓
+  - type: textarea
+    id: platform
+    attributes:
+      label: Platform
+      value: |
+        - OS: [e.g. macOS, Windows, Linux]
+        - NodeJS: [e.g. 18.5.0]
+        - `@graphprotocol/*` version(s): [e.g. 2.6.2]
+    validations:
+      required: true
+  - type: textarea
+    id: subgraph
+    attributes:
+      label: Subgraph Manifest
+      description: Your `subgraph.yaml` file or the relevant part of it.
+  - type: textarea
+    id: graphql
+    attributes:
+      label: Subgraph GraphQL Schema
+      description: Your `schema.graphql` file or the relevant part of it.
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
