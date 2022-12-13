@@ -1,39 +1,41 @@
-const MINIMUM_ACCOUNT_ID_LENGTH = 2
-const MAXIMUM_ACCOUNT_ID_LENGTH = 64
+const MINIMUM_ACCOUNT_ID_LENGTH = 2 as const
+const MAXIMUM_ACCOUNT_ID_LENGTH = 64 as const
 
-const RULES_URL = 'https://docs.near.org/docs/concepts/account#account-id-rules'
+const RULES_URL = 'https://docs.near.org/docs/concepts/account#account-id-rules' as const
 
 export default class NearContract {
+  private account: string
+
   static identifierName() {
     return 'account'
   }
 
-  constructor(account) {
+  constructor(account: string) {
     this.account = account
   }
 
-  _validateLength() {
+  private validateLength(value: string) {
     return (
-      this.account.length >= MINIMUM_ACCOUNT_ID_LENGTH &&
-      this.account.length <= MAXIMUM_ACCOUNT_ID_LENGTH
+      value.length >= MINIMUM_ACCOUNT_ID_LENGTH &&
+      value.length <= MAXIMUM_ACCOUNT_ID_LENGTH
     )
   }
 
-  _validateFormat() {
+  private validateFormat(value: string) {
     const pattern = /^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$/
 
-    return pattern.test(this.account)
+    return pattern.test(value)
   }
 
   validate() {
-    if (!this._validateLength(this.account)) {
+    if (!this.validateLength(this.account)) {
       return {
         valid: false,
         error: `Account must be between '${MINIMUM_ACCOUNT_ID_LENGTH}' and '${MAXIMUM_ACCOUNT_ID_LENGTH}' characters, see ${RULES_URL}`,
       }
     }
 
-    if (!this._validateFormat()) {
+    if (!this.validateFormat(this.account)) {
       return {
         valid: false,
         error: `Account must conform to the rules on ${RULES_URL}`,
