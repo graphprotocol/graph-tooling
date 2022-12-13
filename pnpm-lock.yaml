@@ -52,6 +52,7 @@ importers:
   packages/cli:
     specifiers:
       '@float-capital/float-subgraph-uncrashable': ^0.0.0-alpha.4
+      '@types/debug': ^4.1.7
       assemblyscript: 0.19.23
       binary-install-raw: 0.0.13
       chalk: 3.0.0
@@ -111,6 +112,7 @@ importers:
       which: 2.0.2
       yaml: 1.9.2
     devDependencies:
+      '@types/debug': 4.1.7
       copyfiles: 2.4.1
       jest: 26.0.0
       spawn-command: 0.0.2-1
@@ -2136,6 +2138,12 @@ packages:
       '@types/node': 18.11.9
     dev: false
 
+  /@types/debug/4.1.7:
+    resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
+    dependencies:
+      '@types/ms': 0.7.31
+    dev: true
+
   /@types/express-serve-static-core/4.17.31:
     resolution: {integrity: sha512-DxMhY+NAsTwMMFHBTtJFNp5qiHKJ7TeqOo23zVEM9alT1Ml27Q3xcTH0xwxn7Q0BbMcVEJOs/7aQtUWupUQN3Q==}
     dependencies:
@@ -2184,6 +2192,10 @@ packages:
 
   /@types/minimist/1.2.2:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
+    dev: true
+
+  /@types/ms/0.7.31:
+    resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: true
 
   /@types/node/10.17.60:
