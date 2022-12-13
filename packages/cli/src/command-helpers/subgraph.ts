@@ -1,4 +1,7 @@
-const validateSubgraphName = (name, { allowSimpleName }) => {
+const validateSubgraphName = (
+  name: string,
+  { allowSimpleName }: { allowSimpleName: string },
+) => {
   if (allowSimpleName) {
     return name
   } else {
@@ -13,7 +16,7 @@ You can bypass this check with --allow-simple-name.`)
   }
 }
 
-const getSubgraphBasename = name => {
+const getSubgraphBasename = (name: string) => {
   let segments = name.split('/', 2)
   return segments[segments.length - 1]
 }

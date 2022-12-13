@@ -1,6 +1,10 @@
-const allowedStudioNetworks = ['mainnet', 'rinkeby', 'goerli', 'gnosis']
+const allowedStudioNetworks = ['mainnet', 'rinkeby', 'goerli', 'gnosis'] as const
 
-const validateStudioNetwork = ({ studio, product, network }) => {
+const validateStudioNetwork = ({ studio, product, network }:{
+  studio?: boolean
+  product?: 'subgraph-studio'
+  network: typeof allowedStudioNetworks[number]
+}) => {
   let isStudio = studio || product === 'subgraph-studio'
   let isAllowedNetwork = allowedStudioNetworks.includes(network)
 

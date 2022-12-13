@@ -1,7 +1,7 @@
 import * as tsCodegen from '../../../codegen/typescript'
 
 export default class IpfsFileTemplateCodeGen {
-  constructor(template) {
+  constructor(template:string) {
     this.template = template
   }
 

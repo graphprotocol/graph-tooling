@@ -4,7 +4,9 @@ import IpfsFileTemplateCodeGen from '../protocols/ipfs/codegen/file_template'
 import * as tsCodegen from './typescript'
 
 export default class DataSourceTemplateCodeGenerator {
-  constructor(template, protocol) {
+  template: any
+  protocolTemplateCodeGen: any
+  constructor(template: any, protocol: any) {
     this.template = template
     let kind = template.get('kind')
 

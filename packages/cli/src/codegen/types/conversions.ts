@@ -304,17 +304,33 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
 
   ['Array<Array<Address>>', '[[Bytes]]', (code: any) => `Value.fromBytesMatrix(${code})`],
   ['Array<Array<Bytes>>', '[[Bytes]]', (code: any) => `Value.fromBytesMatrix(${code})`],
-  ['Array<Array<boolean>>', '[[Boolean]]', (code: any) => `Value.fromBooleanMatrix(${code})`],
+  [
+    'Array<Array<boolean>>',
+    '[[Boolean]]',
+    (code: any) => `Value.fromBooleanMatrix(${code})`,
+  ],
   ['Array<Array<i32>>', '[[Int]]', (code: any) => `Value.fromI32Matrix(${code})`],
-  ['Array<Array<BigInt>>', '[[BigInt]]', (code: any) => `Value.fromBigIntMatrix(${code})`],
-  ['Array<Array<string>>', '[[String]]', (code: any) => `Value.fromStringMatrix(${code})`],
+  [
+    'Array<Array<BigInt>>',
+    '[[BigInt]]',
+    (code: any) => `Value.fromBigIntMatrix(${code})`,
+  ],
+  [
+    'Array<Array<string>>',
+    '[[String]]',
+    (code: any) => `Value.fromStringMatrix(${code})`,
+  ],
   ['Array<Array<string>>', '[[ID]]', (code: any) => `Value.fromStringMatrix(${code})`],
   [
     'Array<Array<BigDecimal>>',
     '[[BigDecimal]]',
     (code: any) => `Value.fromBigDecimalMatrix(${code})`,
   ],
-  ['Array<Array<string>>', /\[\[.*\]\]/, (code: any) => `Value.fromStringMatrix(${code})`],
+  [
+    'Array<Array<string>>',
+    /\[\[.*\]\]/,
+    (code: any) => `Value.fromStringMatrix(${code})`,
+  ],
   ['Array<Array<string | null>>', null, (code: any) => `Value.fromStringMatrix(${code})`], // is this overwriting the Array null below?
 
   // Arrays
@@ -326,7 +342,11 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
   ['Array<BigInt>', '[BigInt]', (code: any) => `Value.fromBigIntArray(${code})`],
   ['Array<string>', '[String]', (code: any) => `Value.fromStringArray(${code})`],
   ['Array<string>', '[ID]', (code: any) => `Value.fromStringArray(${code})`],
-  ['Array<BigDecimal>', '[BigDecimal]', (code: any) => `Value.fromBigDecimalArray(${code})`],
+  [
+    'Array<BigDecimal>',
+    '[BigDecimal]',
+    (code: any) => `Value.fromBigDecimalArray(${code})`,
+  ],
   ['Array<string>', /\[.*\]/, (code: any) => `Value.fromStringArray(${code})`],
   ['Array<string | null>', null, (code: any) => `Value.fromStringArray(${code})`],
 
@@ -343,10 +363,7 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
   ['string', /.*/, (code: any) => `Value.fromString(${code})`],
 ]
 
-/**
- * Type conversions
- */
-export default immutable.fromJS({
+const CONVERSIONS = {
   ethereum: {
     AssemblyScript: ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT,
   },
@@ -357,4 +374,9 @@ export default immutable.fromJS({
   Value: {
     AssemblyScript: VALUE_TO_ASSEMBLYSCRIPT,
   },
-})
+} as const
+
+/**
+ * Type conversions
+ */
+export default immutable.fromJS(CONVERSIONS) as typeof CONVERSIONS
