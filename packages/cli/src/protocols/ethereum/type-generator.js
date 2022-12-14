@@ -1,6 +1,5 @@
 const fs = require('fs-extra')
 const path = require('path')
-const immutable = require('immutable')
 const prettier = require('prettier')
 const ABI = require('./abi')
 const { step, withSpinner } = require('../../command-helpers/spinner')
@@ -38,7 +37,7 @@ module.exports = class EthereumTypeGenerator {
                 ),
                 abis,
               ),
-              immutable.List(),
+              [],
             )
         } catch (e) {
           throw Error(`Failed to load contract ABIs: ${e.message}`)
@@ -68,7 +67,7 @@ module.exports = class EthereumTypeGenerator {
       `Warnings while loading data source template ABIs`,
       async spinner => {
         let abis = []
-        for (let template of subgraph.get('templates', immutable.List())) {
+        for (let template of subgraph.get('templates', [])) {
           for (let abi of template.getIn(['mapping', 'abis'])) {
             abis.push(
               this._loadDataSourceTemplateABI(

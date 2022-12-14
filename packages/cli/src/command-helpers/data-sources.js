@@ -1,4 +1,3 @@
-const immutable = require('immutable')
 const { loadManifest } = require('../migrations/util/load-manifest')
 
 // Loads manifest from file path and returns all:
@@ -13,15 +12,15 @@ const fromFilePath = async manifestPath => {
 
 const extractDataSourceByType = (manifest, dataSourceType, protocol) =>
   manifest
-    .get(dataSourceType, immutable.List())
+    .get(dataSourceType, [])
     .reduce(
       (dataSources, dataSource, dataSourceIndex) =>
       protocol.isValidKindName(dataSource.get('kind'))
       ? dataSources.push(
-        immutable.Map({ path: [dataSourceType, dataSourceIndex], dataSource }),
+        { path: [dataSourceType, dataSourceIndex], dataSource },
       )
       : dataSources,
-      immutable.List(),
+      []
     )
 
 // Extracts data sources and templates from a immutable manifest data structure

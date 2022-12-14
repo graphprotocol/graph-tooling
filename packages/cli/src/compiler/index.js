@@ -1,7 +1,6 @@
 const chalk = require('chalk')
 const crypto = require('crypto')
 const fs = require('fs-extra')
-const immutable = require('immutable')
 const path = require('path')
 const yaml = require('js-yaml')
 const toolbox = require('gluegun/toolbox')
@@ -598,7 +597,7 @@ class Compiler {
           }
         }
 
-        for (let [i, template] of subgraph.get('templates', immutable.List()).entries()) {
+        for (let [i, template] of subgraph.get('templates', []).entries()) {
           if (this.protocol.hasABIs()) {
             for (let [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
               updates.push({
@@ -661,7 +660,7 @@ class Compiler {
       '              ..',
       `${hash}${alreadyUploaded ? ' (already uploaded)' : ''}`,
     )
-    return immutable.fromJS({ '/': `/ipfs/${hash}` })
+    return { '/': `/ipfs/${hash}` }
   }
 
   async _uploadSubgraphDefinitionToIPFS(subgraph) {

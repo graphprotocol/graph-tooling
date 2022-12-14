@@ -1,25 +1,22 @@
-const immutable = require('immutable')
-
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
 
-const List = immutable.List
 
 class IdField {
-  static BYTES = Symbol("Bytes")
-  static STRING = Symbol("String")
+  static BYTES = Symbol('Bytes')
+  static STRING = Symbol('String')
 
   constructor(idField) {
     const typeName = idField.getIn(['type', 'type', 'name', 'value'])
-    this.kind = typeName === "Bytes" ? IdField.BYTES : IdField.STRING
+    this.kind = typeName === 'Bytes' ? IdField.BYTES : IdField.STRING
   }
 
   typeName() {
-    return this.kind === IdField.BYTES ? "Bytes" : "string"
+    return this.kind === IdField.BYTES ? 'Bytes' : 'string'
   }
 
   gqlTypeName() {
-    return this.kind === IdField.BYTES ? "Bytes" : "String"
+    return this.kind === IdField.BYTES ? 'Bytes' : 'String'
   }
 
   tsNamedType() {
@@ -27,19 +24,19 @@ class IdField {
   }
 
   tsValueFrom() {
-    return this.kind === IdField.BYTES ? "Value.fromBytes(id)" : "Value.fromString(id)"
+    return this.kind === IdField.BYTES ? 'Value.fromBytes(id)' : 'Value.fromString(id)'
   }
 
   tsValueKind() {
-    return this.kind === IdField.BYTES ? "ValueKind.BYTES" : "ValueKind.STRING"
+    return this.kind === IdField.BYTES ? 'ValueKind.BYTES' : 'ValueKind.STRING'
   }
 
   tsValueToString() {
-    return this.kind == IdField.BYTES ? "id.toBytes().toHexString()" : "id.toString()"
+    return this.kind == IdField.BYTES ? 'id.toBytes().toHexString()' : 'id.toString()'
   }
 
   tsToString() {
-    return this.kind == IdField.BYTES ? "id.toHexString()" : "id"
+    return this.kind == IdField.BYTES ? 'id.toHexString()' : 'id'
   }
 
   static fromFields(fields) {
@@ -48,7 +45,7 @@ class IdField {
   }
 
   static fromTypeDef(def) {
-    return IdField.fromFields(def.get("fields"))
+    return IdField.fromFields(def.get('fields'))
   }
 }
 
@@ -117,7 +114,7 @@ module.exports = class SchemaCodeGenerator {
       .get('fields')
       .reduce(
         (methods, field) => methods.concat(this._generateEntityFieldMethods(def, field)),
-        List(),
+        [],
       )
       .forEach(method => klass.addMethod(method))
 
@@ -138,7 +135,7 @@ module.exports = class SchemaCodeGenerator {
   }
 
   _generateStoreMethods(entityName, idField) {
-    return List.of(
+    return [
       tsCodegen.method(
         'save',
         [],
@@ -162,14 +159,14 @@ module.exports = class SchemaCodeGenerator {
         return changetype<${entityName} | null>(store.get('${entityName}', ${idField.tsToString()}))
         `,
       ),
-    )
+    ]
   }
 
   _generateEntityFieldMethods(entityDef, fieldDef) {
-    return List([
+    return [
       this._generateEntityFieldGetter(entityDef, fieldDef),
       this._generateEntityFieldSetter(entityDef, fieldDef),
-    ])
+    ]
   }
 
   _generateEntityFieldGetter(entityDef, fieldDef) {
@@ -206,17 +203,13 @@ module.exports = class SchemaCodeGenerator {
     let paramTypeString = isNullable ? paramType.inner.toString() : paramType.toString()
     let isArray = paramType instanceof tsCodegen.ArrayType
 
-    if (
-      isArray &&
-      paramType.inner instanceof tsCodegen.NullableType
-    ) {
+    if (isArray && paramType.inner instanceof tsCodegen.NullableType) {
       let baseType = this._baseType(gqlType)
 
       throw new Error(`
 GraphQL schema can't have List's with Nullable members.
 Error in '${name}' field of type '[${baseType}]'.
-Suggestion: add an '!' to the member type of the List, change from '[${baseType}]' to '[${baseType}!]'`
-      )
+Suggestion: add an '!' to the member type of the List, change from '[${baseType}]' to '[${baseType}!]'`)
     }
 
     let setNonNullable = `
@@ -246,8 +239,13 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
 
     // If this is a reference to another type, the field has the type of
     // the referred type's id field
-    const typeDef = this.schema.ast.get("definitions").
-      find(def => (this._isEntityTypeDefinition(def) || this._isInterfaceDefinition(def)) && def.getIn(["name", "value"]) === typeName)
+    const typeDef = this.schema.ast
+      .get('definitions')
+      .find(
+        def =>
+          (this._isEntityTypeDefinition(def) || this._isInterfaceDefinition(def)) &&
+          def.getIn(['name', 'value']) === typeName,
+      )
     if (typeDef) {
       return IdField.fromTypeDef(typeDef).typeName()
     } else {

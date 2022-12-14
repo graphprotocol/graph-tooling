@@ -1,4 +1,3 @@
-const immutable = require('immutable')
 const ArweaveSubgraph = require('./arweave/subgraph')
 const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
@@ -54,7 +53,7 @@ class Protocol {
   }
 
   static availableProtocols() {
-    return immutable.fromJS({
+    return Object.freeze({
       // `ethereum/contract` is kept for backwards compatibility.
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
       arweave: ['arweave'],
@@ -66,7 +65,7 @@ class Protocol {
   }
 
   static availableNetworks() {
-    let networks = immutable.fromJS({
+    let networks = {
       arweave: ['arweave-mainnet'],
       ethereum: [
         'mainnet',
@@ -106,14 +105,14 @@ class Protocol {
         'juno-1',
         'uni-3', // Juno testnet
       ],
-    })
+    }
 
     let allNetworks = []
     networks.forEach(value => {
       allNetworks.push(...value)
     })
 
-    networks = networks.set('substreams', immutable.fromJS(allNetworks))
+    networks['substreams'] = allNetworks
 
     return networks
   }
@@ -132,7 +131,7 @@ class Protocol {
   // for the given protocol instance (this).
   isValidKindName(kind) {
     return Protocol.availableProtocols()
-      .get(this.name, immutable.List())
+      .get(this.name, [])
       .includes(kind)
   }
 

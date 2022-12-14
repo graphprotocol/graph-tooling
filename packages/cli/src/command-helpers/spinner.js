@@ -1,5 +1,4 @@
 const chalk = require('chalk')
-const immutable = require('immutable')
 const toolbox = require('gluegun/toolbox')
 
 const step = (spinner, subject, text) => {

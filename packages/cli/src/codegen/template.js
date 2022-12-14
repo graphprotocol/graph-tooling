@@ -1,4 +1,3 @@
-const immutable = require('immutable')
 const IpfsFileTemplateCodeGen = require('../protocols/ipfs/codegen/file_template')
 
 const tsCodegen = require('./typescript')
@@ -29,7 +28,7 @@ module.exports = class DataSourceTemplateCodeGenerator {
   }
 
   generateTypes() {
-    return immutable.List([this._generateTemplateType()])
+    return [this._generateTemplateType()]
   }
 
   _generateTemplateType() {

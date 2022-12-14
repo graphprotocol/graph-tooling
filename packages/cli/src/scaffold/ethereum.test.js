@@ -1,5 +1,4 @@
 const ABI = require('../protocols/ethereum/abi')
-const immutable = require('immutable')
 const Scaffold = require('./')
 const Protocol = require('../protocols')
 
@@ -61,12 +60,12 @@ const TEST_CALLABLE_FUNCTIONS = [
 const TEST_ABI = new ABI(
   'Contract',
   undefined,
-  immutable.fromJS([
+  [
     TEST_EVENT,
     OVERLOADED_EVENT,
     TEST_CONTRACT,
     ...TEST_CALLABLE_FUNCTIONS,
-  ]),
+  ],
 )
 
 const protocol = new Protocol('ethereum')

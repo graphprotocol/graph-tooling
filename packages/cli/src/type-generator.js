@@ -1,5 +1,4 @@
 const fs = require('fs-extra')
-const immutable = require('immutable')
 const path = require('path')
 const prettier = require('prettier')
 const graphql = require('graphql/language')
@@ -169,7 +168,7 @@ module.exports = class TypeGenerator {
       async spinner => {
         // Combine the generated code for all templates
         let codeSegments = subgraph
-          .get('templates', immutable.List())
+          .get('templates', [])
           .reduce((codeSegments, template) => {
             step(
               spinner,
@@ -189,7 +188,7 @@ module.exports = class TypeGenerator {
             }
 
             return codeSegments.concat(codeGenerator.generateTypes())
-          }, immutable.List())
+          }, [])
 
         if (!codeSegments.isEmpty()) {
           let code = prettier.format([GENERATED_FILE_NOTE, ...codeSegments].join('\n'), {

@@ -1,5 +1,4 @@
 const fs = require('fs-extra')
-const immutable = require('immutable')
 const path = require('path')
 
 const AbiCodeGenerator = require('./codegen/abi')
@@ -104,17 +103,17 @@ module.exports = class ABI {
   callFunctions() {
     // An entry is a function if its type is not set or if it is one of
     // 'constructor', 'function' or 'fallback'
-    let functionTypes = immutable.Set(['constructor', 'function', 'fallback'])
+    let functionTypes = new Set(['constructor', 'function', 'fallback'])
     let functions = this.data.filter(
-      entry => !entry.has('type') || functionTypes.includes(entry.get('type')),
+      entry => !entry.has('type') || functionTypes.has(entry.get('type')),
     )
 
     // A function is a call function if it is nonpayable, payable or
     // not constant
-    let mutabilityTypes = immutable.Set(['nonpayable', 'payable'])
+    let mutabilityTypes =new Set(['nonpayable', 'payable'])
     return functions.filter(
       entry =>
-        mutabilityTypes.includes(entry.get('stateMutability')) ||
+        mutabilityTypes.has(entry.get('stateMutability')) ||
         entry.get('constant') === false,
     )
   }
@@ -125,7 +124,7 @@ module.exports = class ABI {
       .map(entry => {
         const name = entry.get('name', '<default>')
         const inputs = entry
-          .get('inputs', immutable.List())
+          .get('inputs', [])
           .map(input => buildSignatureParameter(input))
 
         return `${name}(${inputs.join(',')})`
@@ -155,6 +154,6 @@ module.exports = class ABI {
       throw Error(`No valid ABI in file: ${path.relative(process.cwd(), file)}`)
     }
 
-    return new ABI(name, file, immutable.fromJS(abi))
+    return new ABI(name, file, abi)
   }
 }

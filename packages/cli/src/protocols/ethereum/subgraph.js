@@ -1,4 +1,3 @@
-const immutable = require('immutable')
 const ABI = require('./abi')
 const DataSourcesExtractor = require('../../command-helpers/data-sources')
 
@@ -16,7 +15,10 @@ module.exports = class EthereumSubgraph {
   }
 
   validateAbis() {
-    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol)
+    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(
+      this.manifest,
+      this.protocol,
+    )
 
     return dataSourcesAndTemplates.reduce(
       (errors, dataSourceOrTemplate) =>
@@ -26,7 +28,7 @@ module.exports = class EthereumSubgraph {
             dataSourceOrTemplate.get('path'),
           ),
         ),
-      immutable.List(),
+      [],
     )
   }
 
@@ -36,8 +38,8 @@ module.exports = class EthereumSubgraph {
     let abiName = dataSource.getIn(['source', 'abi'])
     let abiNames = dataSource.getIn(['mapping', 'abis']).map(abi => abi.get('name'))
     let nameErrors = abiNames.includes(abiName)
-      ? immutable.List()
-      : immutable.fromJS([
+      ? []
+      : [
           {
             path: [...path, 'source', 'abi'],
             message: `\
@@ -48,7 +50,7 @@ ${abiNames
   .map(name => `- ${name}`)
   .join('\n')}`,
           },
-        ])
+        ]
 
     // Validate that all ABI files are valid
     let fileErrors = dataSource
@@ -58,30 +60,30 @@ ${abiNames
           ABI.load(abi.get('name'), this.resolveFile(abi.get('file')))
           return errors
         } catch (e) {
-          return errors.push(
-            immutable.fromJS({
-              path: [...path, 'mapping', 'abis', abiIndex, 'file'],
-              message: e.message,
-            }),
-          )
+          return errors.push({
+            path: [...path, 'mapping', 'abis', abiIndex, 'file'],
+            message: e.message,
+          })
         }
-      }, immutable.List())
+      }, [])
 
     return nameErrors.concat(fileErrors)
   }
 
   validateEvents() {
-    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol)
+    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(
+      this.manifest,
+      this.protocol,
+    )
 
-    return dataSourcesAndTemplates
-      .reduce((errors, dataSourceOrTemplate) => {
-        return errors.concat(
-          this.validateDataSourceEvents(
-            dataSourceOrTemplate.get('dataSource'),
-            dataSourceOrTemplate.get('path'),
-          ),
-        )
-      }, immutable.List())
+    return dataSourcesAndTemplates.reduce((errors, dataSourceOrTemplate) => {
+      return errors.concat(
+        this.validateDataSourceEvents(
+          dataSourceOrTemplate.get('dataSource'),
+          dataSourceOrTemplate.get('path'),
+        ),
+      )
+    }, [])
   }
 
   validateDataSourceEvents(dataSource, path) {
@@ -96,12 +98,12 @@ ${abiNames
     } catch (_) {
       // Ignore errors silently; we can't really say anything about
       // the events if the ABI can't even be loaded
-      return immutable.List()
+      return []
     }
 
     // Obtain event signatures from the mapping
     let manifestEvents = dataSource
-      .getIn(['mapping', 'eventHandlers'], immutable.List())
+      .getIn(['mapping', 'eventHandlers'], [])
       .map(handler => handler.get('event'))
 
     // Obtain event signatures from the ABI
@@ -113,19 +115,17 @@ ${abiNames
       (errors, manifestEvent, index) =>
         abiEvents.includes(manifestEvent)
           ? errors
-          : errors.push(
-              immutable.fromJS({
-                path: [...path, 'eventHandlers', index],
-                message: `\
+          : errors.push({
+              path: [...path, 'eventHandlers', index],
+              message: `\
 Event with signature '${manifestEvent}' not present in ABI '${abi.name}'.
 Available events:
 ${abiEvents
   .sort()
   .map(event => `- ${event}`)
   .join('\n')}`,
-              }),
-            ),
-      immutable.List(),
+            }),
+      [],
     )
   }
 
@@ -152,7 +152,7 @@ ${abiEvents
 
         // Obtain event signatures from the mapping
         let manifestFunctions = dataSource
-          .getIn(['mapping', 'callHandlers'], immutable.List())
+          .getIn(['mapping', 'callHandlers'], [])
           .map(handler => handler.get('function'))
 
         // Obtain event signatures from the ABI
@@ -164,28 +164,22 @@ ${abiEvents
           (errors, manifestFunction, index) =>
             abiFunctions.includes(manifestFunction)
               ? errors
-              : errors.push(
-                  immutable.fromJS({
-                    path: [...path, index],
-                    message: `\
+              : errors.push({
+                  path: [...path, index],
+                  message: `\
 Call function with signature '${manifestFunction}' not present in ABI '${abi.name}'.
 Available call functions:
 ${abiFunctions
   .sort()
   .map(tx => `- ${tx}`)
   .join('\n')}`,
-                  }),
-                ),
+                }),
           errors,
         )
-      }, immutable.List())
+      }, [])
   }
 
   handlerTypes() {
-    return immutable.List([
-      'blockHandlers',
-      'callHandlers',
-      'eventHandlers',
-    ])
+    return ['blockHandlers', 'callHandlers', 'eventHandlers']
   }
 }

@@ -1,5 +1,3 @@
-const immutable = require('immutable')
-
 module.exports = class ArweaveSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
@@ -8,13 +6,10 @@ module.exports = class ArweaveSubgraph {
   }
 
   validateManifest() {
-    return immutable.List()
+    return []
   }
 
   handlerTypes() {
-    return immutable.List([
-      'blockHandlers',
-      'transactionHandlers',
-    ])
+    return ['blockHandlers', 'transactionHandlers']
   }
 }

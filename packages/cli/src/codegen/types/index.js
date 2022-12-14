@@ -1,5 +1,3 @@
-const immutable = require('immutable')
-
 const TYPE_CONVERSIONS = require('./conversions')
 
 // Conversion utilities
@@ -15,7 +13,7 @@ const conversionsForTypeSystems = (fromTypeSystem, toTypeSystem) => {
 }
 
 const objectifyConversion = (fromTypeSystem, toTypeSystem, conversion) => {
-  return immutable.fromJS({
+  return Object.freeze({
     from: {
       typeSystem: fromTypeSystem,
       type: conversion.get(0),
@@ -72,8 +70,7 @@ const ascTypeForProtocol = (protocol, protocolType) =>
   findConversionFromType(protocol, 'AssemblyScript', protocolType).getIn(['to', 'type'])
 
 // TODO: this can be removed/replaced by the function above
-const ascTypeForEthereum = ethereumType =>
-  ascTypeForProtocol('ethereum', ethereumType)
+const ascTypeForEthereum = ethereumType => ascTypeForProtocol('ethereum', ethereumType)
 
 const ethereumTypeForAsc = ascType =>
   findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn(['to', 'type'])

@@ -1,5 +1,3 @@
-const immutable = require('immutable')
-
 const validateContract = (value, ProtocolContract) => {
   const contract = new ProtocolContract(value)
 
@@ -33,21 +31,18 @@ const validateContractValues = (manifest, protocol) => {
 
       let contractValue = dataSource.getIn(['source', fieldName])
 
-
       const { valid, error } = validateContract(contractValue, ProtocolContract)
 
       // Validate whether the contract is valid for the protocol
       if (valid) {
         return errors
       } else {
-        return errors.push(
-          immutable.fromJS({
-            path,
-            message: error,
-          }),
-        )
+        return errors.push({
+          path,
+          message: error,
+        })
       }
-    }, immutable.List())
+    }, [])
 }
 
 module.exports = {

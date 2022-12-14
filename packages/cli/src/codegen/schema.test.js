@@ -1,6 +1,5 @@
 const prettier = require('prettier')
 const graphql = require('graphql/language')
-const immutable = require('immutable')
 const SchemaCodeGenerator = require('./schema')
 const {
   Class,
@@ -20,7 +19,7 @@ const formatTS = code =>
 
 const createSchemaCodeGen = schema =>
   new SchemaCodeGenerator({
-    ast: immutable.fromJS(graphql.parse(schema)),
+    ast: graphql.parse(schema),
   })
 
 const testEntity = (generatedTypes, expectedEntity) => {

@@ -152,8 +152,8 @@ module.exports = {
 }
 
 const getEntities = (manifest) => {
-  let dataSources = manifest.result.get('dataSources', immutable.List())
-  let templates = manifest.result.get('templates', immutable.List())
+  let dataSources = manifest.result.get('dataSources', [])
+  let templates = manifest.result.get('templates', [])
 
   return dataSources
     .concat(templates)
@@ -162,8 +162,8 @@ const getEntities = (manifest) => {
 }
 
 const getContractNames = (manifest) => {
-  let dataSources = manifest.result.get('dataSources', immutable.List())
-  let templates = manifest.result.get('templates', immutable.List())
+  let dataSources = manifest.result.get('dataSources', [])
+  let templates = manifest.result.get('templates', [])
 
   return dataSources
     .concat(templates)
@@ -190,7 +190,7 @@ const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntiti
 
         if (mergeEntities) {
           collisionEntities.push(dataRow.get('name'))
-          abiData = abiData.asImmutable().delete(i) // needs to be immutable when deleting, yes you read that right - https://github.com/immutable-js/immutable-js/issues/1901
+          abiData = abiData.delete(i) 
           i-- // deletion also shifts values to the left
           continue
         } else {
@@ -200,7 +200,7 @@ const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntiti
         onlyCollisions = false
       }
     }
-    abiData = abiData.asMutable().set(i, dataRow)
+    abiData = abiData.set(i, dataRow)
   }
 
   return { abiData, collisionEntities, onlyCollisions }
