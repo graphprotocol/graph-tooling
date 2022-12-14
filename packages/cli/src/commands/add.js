@@ -1,6 +1,5 @@
 const chalk = require('chalk')
 const toolbox = require('gluegun/toolbox')
-const immutable = require('immutable')
 const { withSpinner } = require('../command-helpers/spinner')
 const Subgraph = require('../subgraph')
 const Protocol = require('../protocols')
