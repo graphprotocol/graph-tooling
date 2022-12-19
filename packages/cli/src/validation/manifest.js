@@ -23,9 +23,7 @@ const toYAML = x =>
  * Looks up the type of a field in a GraphQL object type.
  */
 const getFieldType = (type, fieldName) => {
-  let fieldDef = type
-    .get('fields')
-    .find(field => field.getIn(['name', 'value']) === fieldName)
+  let fieldDef = type.get('fields').find(field => field.name?.value === fieldName)
 
   return fieldDef !== undefined ? fieldDef.get('type') : undefined
 }
@@ -37,20 +35,17 @@ const resolveType = (schema, type) =>
   type.has('type')
     ? resolveType(schema, type.get('type'))
     : type.get('kind') === 'NamedType'
-    ? schema
-        .get('definitions')
-        .find(def => def.getIn(['name', 'value']) === type.getIn(['name', 'value']))
+    ? schema.get('definitions').find(def => def.name?.value === type.name?.value)
     : 'resolveType: unimplemented'
 
 /**
  * A map of supported validators.
  */
 const validators = Object.freeze({
-  ScalarTypeDefinition: (value, ctx) =>
-    validators.get(ctx.getIn(['type', 'name', 'value']))(value, ctx),
+  ScalarTypeDefinition: (value, ctx) => validators.get(ctx.type?.name?.value)(value, ctx),
 
   UnionTypeDefinition: (value, ctx) => {
-    const unionVariants = ctx.getIn(['type', 'types'])
+    const unionVariants = ctx.type?.types
 
     let errors = List()
 
@@ -109,9 +104,8 @@ const validators = Object.freeze({
 
   ObjectTypeDefinition: (value, ctx) => {
     return Map.isMap(value)
-      ? ctx
-          .getIn(['type', 'fields'])
-          .map(fieldDef => fieldDef.getIn(['name', 'value']))
+      ? ctx.type?.fields
+          .map(fieldDef => fieldDef.name?.value)
           .concat(value.keySeq())
           .toSet()
           .reduce(
@@ -150,8 +144,8 @@ const validators = Object.freeze({
   },
 
   EnumTypeDefinition: (value, ctx) => {
-    const enumValues = ctx.getIn(['type', 'values']).map(v => {
-      return v.getIn(['name', 'value'])
+    const enumValues = ctx.type?.values.map(v => {
+      return v.name?.value
     })
 
     const allowedValues = enumValues.toArray().join(', ')
@@ -217,7 +211,7 @@ const validators = Object.freeze({
 })
 
 const validateValue = (value, ctx) => {
-  let kind = ctx.getIn(['type', 'kind'])
+  let kind = ctx.type?.kind
   let validator = validators.get(kind)
 
   if (validator !== undefined) {

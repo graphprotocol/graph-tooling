@@ -35,8 +35,8 @@ module.exports = class EthereumSubgraph {
   validateDataSourceAbis(dataSource, path) {
     // Validate that the the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
-    let abiName = dataSource.getIn(['source', 'abi'])
-    let abiNames = dataSource.getIn(['mapping', 'abis']).map(abi => abi.get('name'))
+    let abiName = dataSource.source?.abi
+    let abiNames = dataSource.mapping?.abis.map(abi => abi.get('name'))
     let nameErrors = abiNames.includes(abiName)
       ? []
       : [
@@ -53,19 +53,17 @@ ${abiNames
         ]
 
     // Validate that all ABI files are valid
-    let fileErrors = dataSource
-      .getIn(['mapping', 'abis'])
-      .reduce((errors, abi, abiIndex) => {
-        try {
-          ABI.load(abi.get('name'), this.resolveFile(abi.get('file')))
-          return errors
-        } catch (e) {
-          return errors.push({
-            path: [...path, 'mapping', 'abis', abiIndex, 'file'],
-            message: e.message,
-          })
-        }
-      }, [])
+    let fileErrors = dataSource.mapping?.abis.reduce((errors, abi, abiIndex) => {
+      try {
+        ABI.load(abi.get('name'), this.resolveFile(abi.get('file')))
+        return errors
+      } catch (e) {
+        return errors.push({
+          path: [...path, 'mapping', 'abis', abiIndex, 'file'],
+          message: e.message,
+        })
+      }
+    }, [])
 
     return nameErrors.concat(fileErrors)
   }
@@ -90,10 +88,8 @@ ${abiNames
     let abi
     try {
       // Resolve the source ABI name into a real ABI object
-      let abiName = dataSource.getIn(['source', 'abi'])
-      let abiEntry = dataSource
-        .getIn(['mapping', 'abis'])
-        .find(abi => abi.get('name') === abiName)
+      let abiName = dataSource.source?.abi
+      let abiEntry = dataSource.mapping?.abis.find(abi => abi.get('name') === abiName)
       abi = ABI.load(abiEntry.get('name'), this.resolveFile(abiEntry.get('file')))
     } catch (_) {
       // Ignore errors silently; we can't really say anything about
@@ -102,9 +98,9 @@ ${abiNames
     }
 
     // Obtain event signatures from the mapping
-    let manifestEvents = dataSource
-      .getIn(['mapping', 'eventHandlers'], [])
-      .map(handler => handler.get('event'))
+    let manifestEvents = (dataSource.mapping?.eventHandlers || []).map(handler =>
+      handler.get('event'),
+    )
 
     // Obtain event signatures from the ABI
     let abiEvents = abi.eventSignatures()
@@ -139,10 +135,8 @@ ${abiEvents
         let abi
         try {
           // Resolve the source ABI name into a real ABI object
-          let abiName = dataSource.getIn(['source', 'abi'])
-          let abiEntry = dataSource
-            .getIn(['mapping', 'abis'])
-            .find(abi => abi.get('name') === abiName)
+          let abiName = dataSource.source?.abi
+          let abiEntry = dataSource.mapping?.abis.find(abi => abi.get('name') === abiName)
           abi = ABI.load(abiEntry.get('name'), this.resolveFile(abiEntry.get('file')))
         } catch (e) {
           // Ignore errors silently; we can't really say anything about
@@ -151,9 +145,9 @@ ${abiEvents
         }
 
         // Obtain event signatures from the mapping
-        let manifestFunctions = dataSource
-          .getIn(['mapping', 'callHandlers'], [])
-          .map(handler => handler.get('function'))
+        let manifestFunctions = (dataSource.mapping?.callHandlers || []).map(handler =>
+          handler.get('function'),
+        )
 
         // Obtain event signatures from the ABI
         let abiFunctions = abi.callFunctionSignatures()

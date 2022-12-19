@@ -1,13 +1,12 @@
 const tsCodegen = require('./typescript')
 const typesCodegen = require('./types')
 
-
 class IdField {
   static BYTES = Symbol('Bytes')
   static STRING = Symbol('String')
 
   constructor(idField) {
-    const typeName = idField.getIn(['type', 'type', 'name', 'value'])
+    const typeName = idField.type?.type?.name?.value
     this.kind = typeName === 'Bytes' ? IdField.BYTES : IdField.STRING
   }
 
@@ -40,12 +39,12 @@ class IdField {
   }
 
   static fromFields(fields) {
-    const idField = fields.find(field => field.getIn(['name', 'value']) === 'id')
+    const idField = fields.find(field => field.name?.value === 'id')
     return new IdField(idField)
   }
 
   static fromTypeDef(def) {
-    return IdField.fromFields(def.get('fields'))
+    return IdField.fromFields(def.fields)
   }
 }
 
@@ -78,29 +77,26 @@ module.exports = class SchemaCodeGenerator {
   }
 
   generateTypes() {
-    return this.schema.ast
-      .get('definitions')
+    return this.schema.ast.definitions
       .filter(def => this._isEntityTypeDefinition(def))
       .map(def => this._generateEntityType(def))
   }
 
   _isEntityTypeDefinition(def) {
     return (
-      def.get('kind') === 'ObjectTypeDefinition' &&
-      def
-        .get('directives')
-        .find(directive => directive.getIn(['name', 'value']) === 'entity') !== undefined
+      def.kind === 'ObjectTypeDefinition' &&
+      def.directives.find(directive => directive.name?.value === 'entity') !== undefined
     )
   }
 
   _isInterfaceDefinition(def) {
-    return def.get('kind') === 'InterfaceTypeDefinition'
+    return def.kind === 'InterfaceTypeDefinition'
   }
 
   _generateEntityType(def) {
-    let name = def.getIn(['name', 'value'])
+    let name = def.name?.value
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
-    const fields = def.get('fields')
+    const fields = def.fields
     const idField = IdField.fromFields(fields)
 
     // Generate and add a constructor
@@ -110,8 +106,7 @@ module.exports = class SchemaCodeGenerator {
     this._generateStoreMethods(name, idField).forEach(method => klass.addMethod(method))
 
     // Generate and add entity field getters and setters
-    def
-      .get('fields')
+    def.fields
       .reduce(
         (methods, field) => methods.concat(this._generateEntityFieldMethods(def, field)),
         [],
@@ -170,8 +165,8 @@ module.exports = class SchemaCodeGenerator {
   }
 
   _generateEntityFieldGetter(entityDef, fieldDef) {
-    let name = fieldDef.getIn(['name', 'value'])
-    let gqlType = fieldDef.get('type')
+    let name = fieldDef.name?.value
+    let gqlType = fieldDef.type
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
     let returnType = this._typeFromGraphQl(gqlType)
     let isNullable = returnType instanceof tsCodegen.NullableType
@@ -195,8 +190,8 @@ module.exports = class SchemaCodeGenerator {
   }
 
   _generateEntityFieldSetter(entityDef, fieldDef) {
-    let name = fieldDef.getIn(['name', 'value'])
-    let gqlType = fieldDef.get('type')
+    let name = fieldDef.name?.value
+    let gqlType = fieldDef.type
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
     let paramType = this._typeFromGraphQl(gqlType)
     let isNullable = paramType instanceof tsCodegen.NullableType
@@ -235,17 +230,15 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
   }
 
   _resolveFieldType(gqlType) {
-    let typeName = gqlType.getIn(['name', 'value'])
+    let typeName = gqlType.name?.value
 
     // If this is a reference to another type, the field has the type of
     // the referred type's id field
-    const typeDef = this.schema.ast
-      .get('definitions')
-      .find(
-        def =>
-          (this._isEntityTypeDefinition(def) || this._isInterfaceDefinition(def)) &&
-          def.getIn(['name', 'value']) === typeName,
-      )
+    const typeDef = this.schema.ast.definitions.find(
+      def =>
+        (this._isEntityTypeDefinition(def) || this._isInterfaceDefinition(def)) &&
+        def.name?.value === typeName,
+    )
     if (typeDef) {
       return IdField.fromTypeDef(typeDef).typeName()
     } else {
@@ -258,10 +251,10 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
    * other entity types, this is the same as the type of the id of the
    * referred type, i.e., `string` or `Bytes`*/
   _valueTypeFromGraphQl(gqlType) {
-    if (gqlType.get('kind') === 'NonNullType') {
-      return this._valueTypeFromGraphQl(gqlType.get('type'), false)
-    } else if (gqlType.get('kind') === 'ListType') {
-      return '[' + this._valueTypeFromGraphQl(gqlType.get('type')) + ']'
+    if (gqlType.kind === 'NonNullType') {
+      return this._valueTypeFromGraphQl(gqlType.type, false)
+    } else if (gqlType.kind === 'ListType') {
+      return '[' + this._valueTypeFromGraphQl(gqlType.type) + ']'
     } else {
       return this._resolveFieldType(gqlType)
     }
@@ -270,20 +263,20 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
   /** Determine the base type of `gqlType` by removing any non-null
    * constraints and using the type of elements of lists */
   _baseType(gqlType) {
-    if (gqlType.get('kind') === 'NonNullType') {
-      return this._baseType(gqlType.get('type'))
-    } else if (gqlType.get('kind') === 'ListType') {
-      return this._baseType(gqlType.get('type'))
+    if (gqlType.kind === 'NonNullType') {
+      return this._baseType(gqlType.type)
+    } else if (gqlType.kind === 'ListType') {
+      return this._baseType(gqlType.type)
     } else {
-      return gqlType.getIn(['name', 'value'])
+      return gqlType.name?.value
     }
   }
 
   _typeFromGraphQl(gqlType, nullable = true) {
-    if (gqlType.get('kind') === 'NonNullType') {
-      return this._typeFromGraphQl(gqlType.get('type'), false)
-    } else if (gqlType.get('kind') === 'ListType') {
-      let type = tsCodegen.arrayType(this._typeFromGraphQl(gqlType.get('type')))
+    if (gqlType.kind === 'NonNullType') {
+      return this._typeFromGraphQl(gqlType.type, false)
+    } else if (gqlType.kind === 'ListType') {
+      let type = tsCodegen.arrayType(this._typeFromGraphQl(gqlType.type))
       return nullable ? tsCodegen.nullableType(type) : type
     } else {
       // NamedType

@@ -29,7 +29,7 @@ const validateContractValues = (manifest, protocol) => {
         return errors
       }
 
-      let contractValue = dataSource.getIn(['source', fieldName])
+      let contractValue = dataSource.source[fieldName]
 
       const { valid, error } = validateContract(contractValue, ProtocolContract)
 

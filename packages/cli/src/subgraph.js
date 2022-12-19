@@ -68,7 +68,7 @@ module.exports = class Subgraph {
   }
 
   static validateSchema(manifest, { resolveFile }) {
-    let filename = resolveFile(manifest.getIn(['schema', 'file']))
+    let filename = resolveFile(manifest.schema?.file)
     let errors = validation.validateSchema(filename)
 
     if (errors.size > 0) {

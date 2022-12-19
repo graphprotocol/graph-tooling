@@ -140,12 +140,12 @@ class Compiler {
       files.push(this.options.subgraphManifest)
 
       // Add all file paths specified in manifest
-      files.push(path.resolve(subgraph.getIn(['schema', 'file'])))
+      files.push(path.resolve(subgraph.schema?.file))
       subgraph.get('dataSources').map(dataSource => {
-        files.push(dataSource.getIn(['mapping', 'file']))
+        files.push(dataSource.mapping?.file)
         // Only watch ABI related files if the target protocol has support/need for them.
         if (this.protocol.hasABIs()) {
-          dataSource.getIn(['mapping', 'abis']).map(abi => {
+          dataSource.mapping?.abis.map(abi => {
             files.push(abi.get('file'))
           })
         }
@@ -257,7 +257,7 @@ class Compiler {
     }
 
     try {
-      let dataSourceName = dataSource.getIn(['name'])
+      let dataSourceName = dataSource.name
 
       let baseDir = this.sourceDir
       let absoluteMappingPath = path.resolve(baseDir, mappingPath)
@@ -551,7 +551,7 @@ class Compiler {
         updates.push({
           keyPath: ['schema', 'file'],
           value: await this._uploadFileToIPFS(
-            subgraph.getIn(['schema', 'file']),
+            subgraph.schema?.file,
             uploadedFiles,
             spinner,
           ),
@@ -559,7 +559,7 @@ class Compiler {
 
         if (this.protocol.hasABIs()) {
           for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-            for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
+            for (let [j, abi] of dataSource.mapping?.abis.entries()) {
               updates.push({
                 keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
                 value: await this._uploadFileToIPFS(
@@ -578,7 +578,7 @@ class Compiler {
             updates.push({
               keyPath: ['dataSources', i, 'mapping', 'file'],
               value: await this._uploadFileToIPFS(
-                dataSource.getIn(['mapping', 'file']),
+                dataSource.mapping?.file,
                 uploadedFiles,
                 spinner,
               ),
@@ -589,7 +589,7 @@ class Compiler {
             updates.push({
               keyPath: ['dataSources', i, 'source', 'package', 'file'],
               value: await this._uploadFileToIPFS(
-                dataSource.getIn(['source', 'package', 'file']),
+                dataSource.source', 'package?.file,
                 uploadedFiles,
                 spinner,
               ),
@@ -599,7 +599,7 @@ class Compiler {
 
         for (let [i, template] of subgraph.get('templates', []).entries()) {
           if (this.protocol.hasABIs()) {
-            for (let [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
+            for (let [j, abi] of template.mapping?.abis.entries()) {
               updates.push({
                 keyPath: ['templates', i, 'mapping', 'abis', j, 'file'],
                 value: await this._uploadFileToIPFS(
@@ -614,7 +614,7 @@ class Compiler {
           updates.push({
             keyPath: ['templates', i, 'mapping', 'file'],
             value: await this._uploadFileToIPFS(
-              template.getIn(['mapping', 'file']),
+              template.mapping?.file,
               uploadedFiles,
               spinner,
             ),
