@@ -4,7 +4,11 @@ import immutable from 'immutable'
 import SchemaCodeGenerator from './codegen/schema'
 
 export default class Schema {
-  constructor(filename, document, ast) {
+  constructor(
+    public filename: string,
+    public document: string,
+    public ast: immutable.Collection<unknown, unknown>,
+  ) {
     this.filename = filename
     this.document = document
     this.ast = ast
@@ -14,7 +18,7 @@ export default class Schema {
     return new SchemaCodeGenerator(this)
   }
 
-  static async load(filename) {
+  static async load(filename: string) {
     let document = await fs.readFile(filename, 'utf-8')
     let ast = graphql.parse(document)
     return new Schema(filename, document, immutable.fromJS(ast))

@@ -71,11 +71,11 @@ class Class {
     this.export = options.export || false
   }
 
-  addMember(member) {
+  addMember(member: any) {
     this.members.push(member)
   }
 
-  addMethod(method) {
+  addMethod(method: any) {
     this.methods.push(method)
   }
 

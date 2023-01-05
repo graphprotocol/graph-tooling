@@ -24,13 +24,12 @@ import debug from '../debug'
 let protocolDebug = debug('graph-cli:protocol')
 
 class Protocol {
-  private name: string
   static fromDataSources(dataSourcesAndTemplates) {
     const firstDataSourceKind = dataSourcesAndTemplates[0].kind
     return new Protocol(firstDataSourceKind)
   }
 
-  constructor(name:string) {
+  constructor(name) {
     this.name = Protocol.normalizeName(name)
 
     switch (this.name) {
@@ -133,7 +132,9 @@ class Protocol {
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
-    return Protocol.availableProtocols().get(this.name, immutable.List()).includes(kind)
+    return Protocol.availableProtocols()
+      .get(this.name, immutable.List())
+      .includes(kind)
   }
 
   hasABIs() {
@@ -209,7 +210,7 @@ const arweaveProtocol = {
   },
   manifestScaffold: ArweaveManifestScaffold,
   mappingScaffold: ArweaveMappingScaffold,
-} as const
+}
 
 const cosmosProtocol = {
   displayName: 'Cosmos',
@@ -222,7 +223,7 @@ const cosmosProtocol = {
   },
   manifestScaffold: CosmosManifestScaffold,
   mappingScaffold: CosmosMappingScaffold,
-} as const
+}
 
 const ethereumProtocol = {
   displayName: 'Ethereum',
@@ -239,7 +240,7 @@ const ethereumProtocol = {
   },
   manifestScaffold: EthereumManifestScaffold,
   mappingScaffold: EthereumMappingScaffold,
-} as const
+}
 
 const nearProtocol = {
   displayName: 'NEAR',
@@ -252,7 +253,7 @@ const nearProtocol = {
   },
   manifestScaffold: NearManifestScaffold,
   mappingScaffold: NearMappingScaffold,
-} as const
+}
 
 const substreamsProtocol = {
   displayName: 'Substreams',

@@ -379,4 +379,4 @@ const CONVERSIONS = {
 /**
  * Type conversions
  */
-export default immutable.fromJS(CONVERSIONS) as typeof CONVERSIONS
+export default immutable.fromJS(CONVERSIONS)

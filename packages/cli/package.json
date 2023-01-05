@@ -20,7 +20,7 @@
     "glob": "7.1.6",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
     "graphql": "15.5.0",
-    "immutable": "3.8.2",
+    "immutable": "4.2.1",
     "ipfs-http-client": "34.0.0",
     "jayson": "3.6.6",
     "js-yaml": "3.13.1",
@@ -37,6 +37,8 @@
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^9.0.13",
+    "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
     "jest": "26.0.0",
     "spawn-command": "0.0.2-1",
