@@ -1,4 +1,3 @@
-const immutable = require('immutable')
 const Scaffold = require('./')
 const Protocol = require('../protocols')
 

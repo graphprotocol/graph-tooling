@@ -1,5 +1,3 @@
-const immutable = require('immutable')
-
 module.exports = class SubstreamsSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
@@ -8,10 +6,10 @@ module.exports = class SubstreamsSubgraph {
   }
 
   validateManifest() {
-    return immutable.List()
+    return []
   }
 
   handlerTypes() {
-    return immutable.List([])
+    return []
   }
 }

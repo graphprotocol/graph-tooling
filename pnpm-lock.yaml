@@ -52,7 +52,6 @@ importers:
       glob: 7.1.6
       gluegun: https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep
       graphql: 15.5.0
-      immutable: 3.8.2
       ipfs-http-client: 34.0.0
       jayson: 3.6.6
       jest: 26.0.0
@@ -83,7 +82,6 @@ importers:
       glob: 7.1.6
       gluegun: github.com/edgeandnode/gluegun/b34b9003d7bf556836da41b57ef36eb21570620a_debug@4.3.1
       graphql: 15.5.0
-      immutable: 3.8.2
       ipfs-http-client: 34.0.0
       jayson: 3.6.6
       js-yaml: 3.13.1
@@ -3938,11 +3936,6 @@ packages:
     resolution: {integrity: sha512-d2qQLzTJ9WxQftPAuEQpSPmKqzxePjzVbpAVv62AQ64NTL+wR4JkrVqR/LqFsFEUsHDAiId52mJteHDFuDkElA==}
     engines: {node: '>= 4'}
     dev: true
-
-  /immutable/3.8.2:
-    resolution: {integrity: sha512-15gZoQ38eYjEjxkorfbcgBKBL6R7T459OuK+CpcWt7O3KF4uPCx2tD0uFETlUDIyo+1789crbMhTvQBSR5yBMg==}
-    engines: {node: '>=0.10.0'}
-    dev: false
 
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}

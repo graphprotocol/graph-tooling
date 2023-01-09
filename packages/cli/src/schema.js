@@ -1,6 +1,5 @@
 let fs = require('fs-extra')
 let graphql = require('graphql/language')
-let immutable = require('immutable')
 
 let SchemaCodeGenerator = require('./codegen/schema')
 
@@ -18,6 +17,6 @@ module.exports = class Schema {
   static async load(filename) {
     let document = await fs.readFile(filename, 'utf-8')
     let ast = graphql.parse(document)
-    return new Schema(filename, document, immutable.fromJS(ast))
+    return new Schema(filename, document, ast)
   }
 }

@@ -1,6 +1,5 @@
 const fs = require('fs-extra')
 const path = require('path')
-const immutable = require('immutable')
 
 const ABI = require('../abi')
 const ts = require('../../../codegen/typescript')
@@ -216,31 +215,31 @@ describe('ABI code generation', () => {
     test('Have correct parameters', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
       expect(contract.methods.map(method => [method.name, method.params])).toEqual([
-        ['bind', immutable.List([ts.param('address', 'Address')])],
-        ['read', immutable.List()],
-        ['try_read', immutable.List()],
+        ['bind', [ts.param('address', 'Address')]],
+        ['read', []],
+        ['try_read', []],
         [
           'getProposal',
-          immutable.List([
+          [
             ts.param('proposalId', 'BigInt'),
             ts.param('param1', 'Contract__getProposalInputParam1Struct'),
-          ]),
+          ],
         ],
         [
           'try_getProposal',
-          immutable.List([
+          [
             ts.param('proposalId', 'BigInt'),
             ts.param('param1', 'Contract__getProposalInputParam1Struct'),
-          ]),
+          ],
         ],
-        ['getProposals', immutable.List()],
-        ['try_getProposals', immutable.List()],
-        ['overloaded', immutable.List([ts.param('param0', 'string')])],
-        ['try_overloaded', immutable.List([ts.param('param0', 'string')])],
-        ['overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
-        ['try_overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
-        ['overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
-        ['try_overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
+        ['getProposals', []],
+        ['try_getProposals', []],
+        ['overloaded', [ts.param('param0', 'string')]],
+        ['try_overloaded', [ts.param('param0', 'string')]],
+        ['overloaded1', [ts.param('param0', 'BigInt')]],
+        ['try_overloaded1', [ts.param('param0', 'BigInt')]],
+        ['overloaded2', [ts.param('param0', 'Bytes')]],
+        ['try_overloaded2', [ts.param('param0', 'Bytes')]],
       ])
     })
 

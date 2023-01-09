@@ -1,6 +1,5 @@
 const { withSpinner } = require('./spinner')
 const fetch = require('node-fetch')
-const immutable = require('immutable')
 
 const loadAbiFromEtherscan = async (ABI, network, address) =>
   await withSpinner(
@@ -18,7 +17,7 @@ const loadAbiFromEtherscan = async (ABI, network, address) =>
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
-        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
+        return new ABI('Contract', undefined, JSON.parse(json.result))
       } else {
         throw new Error('ABI not found, try loading it from a local file')
       }
@@ -42,7 +41,7 @@ const loadAbiFromBlockScout = async (ABI, network, address) =>
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
-        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
+        return new ABI('Contract', undefined, JSON.parse(json.result))
       } else {
         throw new Error('ABI not found, try loading it from a local file')
       }

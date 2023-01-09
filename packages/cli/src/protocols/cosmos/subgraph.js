@@ -1,5 +1,3 @@
-const immutable = require('immutable')
-
 module.exports = class CosmosSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
@@ -8,15 +6,10 @@ module.exports = class CosmosSubgraph {
   }
 
   validateManifest() {
-    return immutable.List()
+    return []
   }
 
   handlerTypes() {
-    return immutable.List([
-      'blockHandlers',
-      'eventHandlers',
-      'transactionHandlers',
-      'messageHandlers',
-    ])
+    return ['blockHandlers', 'eventHandlers', 'transactionHandlers', 'messageHandlers']
   }
 }

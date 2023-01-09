@@ -1,5 +1,4 @@
 const fs = require('fs-extra')
-const immutable = require('immutable')
 const path = require('path')
 const prettier = require('prettier')
 const graphql = require('graphql/language')
@@ -120,14 +119,14 @@ module.exports = class TypeGenerator {
   }
 
   async loadSchema(subgraph) {
-    let maybeRelativePath = subgraph.getIn(['schema', 'file'])
+    let maybeRelativePath = subgraph.schema?.file
     let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
     return await withSpinner(
       `Load GraphQL schema from ${displayPath(absolutePath)}`,
       `Failed to load GraphQL schema from ${displayPath(absolutePath)}`,
       `Warnings while loading GraphQL schema from ${displayPath(absolutePath)}`,
       async spinner => {
-        let maybeRelativePath = subgraph.getIn(['schema', 'file'])
+        let maybeRelativePath = subgraph.schema?.file
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
         return Schema.load(absolutePath)
       },
@@ -169,7 +168,7 @@ module.exports = class TypeGenerator {
       async spinner => {
         // Combine the generated code for all templates
         let codeSegments = subgraph
-          .get('templates', immutable.List())
+          .get('templates', [])
           .reduce((codeSegments, template) => {
             step(
               spinner,
@@ -189,7 +188,7 @@ module.exports = class TypeGenerator {
             }
 
             return codeSegments.concat(codeGenerator.generateTypes())
-          }, immutable.List())
+          }, [])
 
         if (!codeSegments.isEmpty()) {
           let code = prettier.format([GENERATED_FILE_NOTE, ...codeSegments].join('\n'), {
@@ -214,11 +213,11 @@ module.exports = class TypeGenerator {
       files.push(this.options.subgraphManifest)
 
       // Add the GraphQL schema to the watched files
-      files.push(subgraph.getIn(['schema', 'file']))
+      files.push(subgraph.schema?.file)
 
       // Add all file paths specified in manifest
       subgraph.get('dataSources').map(dataSource => {
-        dataSource.getIn(['mapping', 'abis']).map(abi => {
+        dataSource.mapping?.abis.map(abi => {
           files.push(abi.get('file'))
         })
       })

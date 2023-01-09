@@ -1,5 +1,3 @@
-const immutable = require('immutable')
-
 module.exports = class NearSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
@@ -8,13 +6,13 @@ module.exports = class NearSubgraph {
   }
 
   validateManifest() {
-    return immutable.List()
+    return []
   }
 
   handlerTypes() {
-    return immutable.List([
+    return [
       'blockHandlers',
       'receiptHandlers',
-    ])
+    ]
   }
 }

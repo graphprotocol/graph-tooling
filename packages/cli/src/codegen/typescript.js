@@ -1,6 +1,3 @@
-let immutable = require('immutable')
-let Map = immutable.Map
-
 class Param {
   constructor(name, type) {
     this.name = name

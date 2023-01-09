@@ -9,7 +9,6 @@ const { generateEventIndexingHandlers } = require('../scaffold/mapping')
 const { generateEventType, abiEvents } = require('../scaffold/schema')
 const { generateTestsFiles } = require('../scaffold/tests')
 const { strings } = require('gluegun')
-const { Map } = require('immutable')
 
 const generateDataSource = async (
   protocol,
@@ -20,15 +19,22 @@ const generateDataSource = async (
 ) => {
   const protocolManifest = protocol.getManifestScaffold()
 
-  return Map.of(
-    'kind', protocol.name,
-    'name', contractName,
-    'network', network,
-    'source', yaml.parse(prettier.format(protocolManifest.source({contract: contractAddress, contractName}),
-      {parser: 'yaml'})),
-    'mapping', yaml.parse(prettier.format(protocolManifest.mapping({abi, contractName}),
-      {parser: 'yaml'}))
-  ).asMutable()
+  return {
+    kind: protocol.name,
+    name: contractName,
+    network: network,
+    source: yaml.parse(
+      prettier.format(
+        protocolManifest.source({ contract: contractAddress, contractName }),
+        { parser: 'yaml' },
+      ),
+    ),
+    mapping: yaml.parse(
+      prettier.format(protocolManifest.mapping({ abi, contractName }), {
+        parser: 'yaml',
+      }),
+    ),
+  }
 }
 
 const generateScaffold = async (
@@ -130,11 +136,9 @@ const writeMapping = async (abi, protocol, contractName, entities) => {
 
 const writeTestsFiles = async (abi, protocol, contractName) => {
   const hasEvents = protocol.hasEvents()
-  const events = hasEvents
-    ? abiEvents(abi).toJS()
-    : []
+  const events = hasEvents ? abiEvents(abi).toJS() : []
 
-  if(events.length > 0) {
+  if (events.length > 0) {
     // If a contract is added to a subgraph that has no tests folder
     await fs.ensureDir('./tests/')
 
