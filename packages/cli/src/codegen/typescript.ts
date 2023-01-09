@@ -1,7 +1,5 @@
 class Param {
-  private name: string
-  private type: string
-  constructor(name: string, type: string) {
+  constructor(public name: string, public type: string) {
     this.name = name
     this.type = type
   }
@@ -12,11 +10,12 @@ class Param {
 }
 
 class Method {
-  private name: string
-  private params: string[]
-  private returnType: string
-  private body: string
-  constructor(name: string, params: string[], returnType: string, body: string) {
+  constructor(
+    public name: string,
+    public params: string[],
+    public returnType: string,
+    public body: string,
+  ) {
     this.name = name
     this.params = params || []
     this.returnType = returnType
@@ -34,11 +33,12 @@ class Method {
 }
 
 class StaticMethod {
-  private name: string
-  private params: string[]
-  private returnType: string
-  private body: string
-  constructor(name: string, params: string[], returnType: string, body: string) {
+  constructor(
+    public name: string,
+    public params: string[],
+    public returnType: string,
+    public body: string,
+  ) {
     this.name = name
     this.params = params || []
     this.returnType = returnType || 'void'
@@ -55,15 +55,18 @@ class StaticMethod {
   }
 }
 
-type ClassOptions = { extends?: string; export?: boolean }
+interface ClassOptions {
+  extends?: string
+  export?: boolean
+}
 
 class Class {
-  private name: string
-  private extends: string | undefined
-  private methods: string[]
-  private members: any[]
-  private export: boolean
-  constructor(name: string, options: ClassOptions) {
+  public extends: string | undefined
+  public methods: string[]
+  public members: any[]
+  public export: boolean
+
+  constructor(public name: string, options: ClassOptions) {
     this.name = name
     this.extends = options.extends
     this.methods = []
@@ -92,10 +95,7 @@ ${this.methods.map(method => method.toString()).join('')}
 }
 
 class ClassMember {
-  name: string
-  type: string
-
-  constructor(name: string, type: string) {
+  constructor(public name: string, public type: string) {
     this.name = name
     this.type = type
   }
@@ -106,8 +106,7 @@ class ClassMember {
 }
 
 class NamedType {
-  private name: string
-  constructor(name: string) {
+  constructor(public name: string) {
     this.name = name
   }
 
@@ -141,9 +140,10 @@ class NamedType {
 }
 
 class ArrayType {
-  private name: string
+  public name: string
 
-  constructor(inner: string) {
+  constructor(public inner: string) {
+    this.inner = inner
     this.name = `Array<${inner.toString()}>`
   }
 
@@ -153,8 +153,7 @@ class ArrayType {
 }
 
 class NullableType {
-  inner: string
-  constructor(inner: string) {
+  constructor(public inner: string) {
     this.inner = inner
   }
 
@@ -164,10 +163,7 @@ class NullableType {
 }
 
 class ModuleImports {
-  private nameOrNames: string | string[]
-  private module: string
-
-  constructor(nameOrNames: string | string[], module: string) {
+  constructor(public nameOrNames: string | string[], public module: string) {
     this.nameOrNames = nameOrNames
     this.module = module
   }
