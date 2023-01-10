@@ -6,36 +6,49 @@ import { strOptions } from 'yaml/types'
 import * as graphql from 'graphql/language'
 import validation from './validation'
 import debug from './debug'
+import { Subgraph as ISubgraph } from './protocols/subgraph'
 
 let subgraphDebug = debug('graph-cli:subgraph')
 
-const throwCombinedError = (filename, errors) => {
+const throwCombinedError = (filename: string, errors: immutable.List<any>) => {
   throw new Error(
     errors.reduce(
       (msg, e) =>
         `${msg}
 
   Path: ${e.get('path').size === 0 ? '/' : e.get('path').join(' > ')}
-  ${e.get('message').split('\n').join('\n  ')}`,
+  ${e
+    .get('message')
+    .split('\n')
+    .join('\n  ')}`,
       `Error in ${path.relative(process.cwd(), filename)}:`,
     ),
   )
 }
 
-const buildCombinedWarning = (filename, warnings) =>
+const buildCombinedWarning = (filename: string, warnings: immutable.List<any>) =>
   warnings.size > 0
     ? warnings.reduce(
         (msg, w) =>
           `${msg}
 
     Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
-    ${w.get('message').split('\n').join('\n    ')}`,
+    ${w
+      .get('message')
+      .split('\n')
+      .join('\n    ')}`,
         `Warnings in ${path.relative(process.cwd(), filename)}:`,
       ) + '\n'
     : null
 
+type ResolveFile = (path: string) => string
+
 export default class Subgraph {
-  static async validate(data, protocol, { resolveFile }) {
+  static async validate(
+    data: any,
+    protocol: any,
+    { resolveFile }: { resolveFile: ResolveFile },
+  ) {
     subgraphDebug(`Validating Subgraph with protocol "%s"`, protocol)
     if (protocol.name == null) {
       return immutable.fromJS([
@@ -56,6 +69,7 @@ export default class Subgraph {
 
     // Obtain the root `SubgraphManifest` type from the schema
     let rootType = schema.definitions.find(definition => {
+      // @ts-expect-error TODO: name field does not exist on definition, really?
       return definition.name.value === 'SubgraphManifest'
     })
 
@@ -63,23 +77,28 @@ export default class Subgraph {
     return validation.validateManifest(data, rootType, schema, protocol, { resolveFile })
   }
 
-  static validateSchema(manifest, { resolveFile }) {
+  static validateSchema(manifest: any, { resolveFile }: { resolveFile: ResolveFile }) {
     let filename = resolveFile(manifest.getIn(['schema', 'file']))
     let errors = validation.validateSchema(filename)
 
     if (errors.size > 0) {
-      errors = errors.groupBy(error => error.get('entity')).sort()
-      let msg = errors.reduce((msg, errors, entity) => {
-        errors = errors.groupBy(error => error.get('directive'))
-        let inner_msgs = errors.reduce((msg, errors, directive) => {
+      const groupedErrors = errors.groupBy(error => error.get('entity')).sort()
+      let msg = groupedErrors.reduce((msg, groupedErrors, entity) => {
+        groupedErrors = groupedErrors.groupBy(error => error.get('directive'))
+        let inner_msgs = groupedErrors.reduce((msg, _errors, directive) => {
           return `${msg}${
             directive
               ? `
     ${directive}:`
               : ''
           }
-  ${errors
-    .map(error => error.get('message').split('\n').join('\n  '))
+  ${groupedErrors
+    .map(error =>
+      error
+        .get('message')
+        .split('\n')
+        .join('\n  '),
+    )
     .map(msg => `${directive ? '  ' : ''}- ${msg}`)
     .join('\n  ')}`
         }, ``)
@@ -92,7 +111,7 @@ export default class Subgraph {
     }
   }
 
-  static validateRepository(manifest, { resolveFile }) {
+  static validateRepository(manifest: immutable.Collection<any, any>) {
     const repository = manifest.get('repository')
 
     return /^https:\/\/github\.com\/graphprotocol\/example-subgraphs?$/.test(repository)
@@ -107,7 +126,7 @@ Please replace it with a link to your subgraph source code.`,
       : immutable.List()
   }
 
-  static validateDescription(manifest, { resolveFile }) {
+  static validateDescription(manifest: immutable.Collection<any, any>) {
     // TODO: Maybe implement this in the future for each protocol example description
     return manifest.get('description', '').startsWith('Gravatar for ')
       ? immutable.List().push(
@@ -121,11 +140,15 @@ Please update it to tell users more about your subgraph.`,
       : immutable.List()
   }
 
-  static validateHandlers(manifest, protocol, protocolSubgraph) {
+  static validateHandlers(
+    manifest: immutable.Collection<any, any>,
+    protocol: any,
+    protocolSubgraph: ISubgraph,
+  ) {
     return manifest
       .get('dataSources')
-      .filter(dataSource => protocol.isValidKindName(dataSource.get('kind')))
-      .reduce((errors, dataSource, dataSourceIndex) => {
+      .filter((dataSource: any) => protocol.isValidKindName(dataSource.get('kind')))
+      .reduce((errors: any, dataSource: any, dataSourceIndex: any) => {
         let path = ['dataSources', dataSourceIndex, 'mapping']
         let mapping = dataSource.get('mapping')
         const handlerTypes = protocolSubgraph.handlerTypes()
@@ -141,8 +164,8 @@ Please update it to tell users more about your subgraph.`,
         }
 
         const areAllHandlersEmpty = handlerTypes
-          .map(handlerType => mapping.get(handlerType, immutable.List()))
-          .every(handlers => handlers.isEmpty())
+          .map((handlerType: any) => mapping.get(handlerType, immutable.List()))
+          .every((handlers: immutable.List<any>) => handlers.isEmpty())
 
         const handlerNamesWithoutLast = handlerTypes.pop().join(', ')
 
@@ -159,7 +182,7 @@ At least one such handler must be defined.`,
       }, immutable.List())
   }
 
-  static validateContractValues(manifest, protocol) {
+  static validateContractValues(manifest: any, protocol: any) {
     if (!protocol.hasContract()) {
       return immutable.List()
     }
@@ -168,30 +191,32 @@ At least one such handler must be defined.`,
   }
 
   // Validate that data source names are unique, so they don't overwrite each other.
-  static validateUniqueDataSourceNames(manifest) {
-    let names = []
-    return manifest.get('dataSources').reduce((errors, dataSource, dataSourceIndex) => {
-      let path = ['dataSources', dataSourceIndex, 'name']
-      let name = dataSource.get('name')
-      if (names.includes(name)) {
-        errors = errors.push(
-          immutable.fromJS({
-            path,
-            message: `\
+  static validateUniqueDataSourceNames(manifest: any) {
+    let names: any[] = []
+    return manifest
+      .get('dataSources')
+      .reduce((errors: immutable.List<any>, dataSource: any, dataSourceIndex: number) => {
+        let path = ['dataSources', dataSourceIndex, 'name']
+        let name = dataSource.get('name')
+        if (names.includes(name)) {
+          errors = errors.push(
+            immutable.fromJS({
+              path,
+              message: `\
 More than one data source named '${name}', data source names must be unique.`,
-          }),
-        )
-      }
-      names.push(name)
-      return errors
-    }, immutable.List())
+            }),
+          )
+        }
+        names.push(name)
+        return errors
+      }, immutable.List())
   }
 
-  static validateUniqueTemplateNames(manifest) {
-    let names = []
+  static validateUniqueTemplateNames(manifest: any) {
+    let names: any[] = []
     return manifest
       .get('templates', immutable.List())
-      .reduce((errors, template, templateIndex) => {
+      .reduce((errors: immutable.List<any>, template: any, templateIndex: number) => {
         let path = ['templates', templateIndex, 'name']
         let name = template.get('name')
         if (names.includes(name)) {
@@ -208,14 +233,20 @@ More than one template named '${name}', template names must be unique.`,
       }, immutable.List())
   }
 
-  static dump(manifest) {
+  static dump(manifest: any) {
     strOptions.fold.lineWidth = 90
+    // @ts-expect-error TODO: plain is the value behind the TS constant
     strOptions.defaultType = 'PLAIN'
 
     return yaml.stringify(manifest.toJS())
   }
 
-  static async load(filename, { protocol, skipValidation } = { skipValidation: false }) {
+  static async load(
+    filename: string,
+    { protocol, skipValidation }: { protocol?: any; skipValidation?: boolean } = {
+      skipValidation: false,
+    },
+  ) {
     // Load and validate the manifest
     let data = null
     let has_file_data_sources = false
@@ -229,7 +260,7 @@ More than one template named '${name}', template names must be unique.`,
     }
 
     // Helper to resolve files relative to the subgraph manifest
-    let resolveFile = maybeRelativeFile =>
+    let resolveFile: ResolveFile = maybeRelativeFile =>
       path.resolve(path.dirname(filename), maybeRelativeFile)
 
     // TODO: Validation for file data sources
@@ -269,8 +300,8 @@ More than one template named '${name}', template names must be unique.`,
     let warnings = skipValidation
       ? immutable.List()
       : immutable.List.of(
-          ...Subgraph.validateRepository(manifest, { resolveFile }),
-          ...Subgraph.validateDescription(manifest, { resolveFile }),
+          ...Subgraph.validateRepository(manifest),
+          ...Subgraph.validateDescription(manifest),
         )
 
     return {
@@ -279,7 +310,7 @@ More than one template named '${name}', template names must be unique.`,
     }
   }
 
-  static async write(manifest, filename) {
+  static async write(manifest: any, filename: string) {
     await fs.writeFile(filename, Subgraph.dump(manifest))
   }
 }

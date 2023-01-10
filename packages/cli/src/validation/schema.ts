@@ -53,12 +53,12 @@ const RESERVED_TYPE = '_Schema_'
  * Returns a GraphQL type suggestion for a given input type.
  * Returns `undefined` if no suggestion is available for the type.
  */
-const typeSuggestion = typeName =>
+export const typeSuggestion = (typeName: string) =>
   TYPE_SUGGESTIONS.filter(([pattern, _]) => {
     return typeof pattern === 'string' ? pattern === typeName : typeName.match(pattern)
   }).map(([_, suggestion]) => suggestion)[0]
 
-const loadSchema = filename => {
+const loadSchema = (filename: string) => {
   try {
     return fs.readFileSync(filename, 'utf-8')
   } catch (e) {
@@ -66,7 +66,7 @@ const loadSchema = filename => {
   }
 }
 
-const parseSchema = doc => {
+const parseSchema = (doc: string) => {
   try {
     return graphql.parse(doc)
   } catch (e) {
@@ -74,8 +74,8 @@ const parseSchema = doc => {
   }
 }
 
-const validateEntityDirective = def =>
-  def.directives.find(directive => directive.name.value === 'entity')
+const validateEntityDirective = (def: any) =>
+  def.directives.find((directive: any) => directive.name.value === 'entity')
     ? List()
     : immutable.fromJS([
         {
@@ -85,8 +85,8 @@ const validateEntityDirective = def =>
         },
       ])
 
-const validateEntityID = def => {
-  let idField = def.fields.find(field => field.name.value === 'id')
+const validateEntityID = (def: any) => {
+  let idField = def.fields.find((field: any) => field.name.value === 'id')
 
   if (idField === undefined) {
     return immutable.fromJS([
@@ -117,7 +117,7 @@ const validateEntityID = def => {
   }
 }
 
-const validateListFieldType = (def, field) =>
+const validateListFieldType = (def: any, field: any) =>
   field.type.kind === 'NonNullType' &&
   field.type.kind === 'ListType' &&
   field.type.type.kind !== 'NonNullType'
@@ -148,13 +148,13 @@ Reason: Lists with null elements are not supported.`,
       ])
     : List()
 
-const unwrapType = type => {
-  let innerTypeFromList = listType =>
+const unwrapType = (type: any) => {
+  let innerTypeFromList = (listType: any): any =>
     listType.type.kind === 'NonNullType'
       ? innerTypeFromNonNull(listType.type)
       : listType.type
 
-  let innerTypeFromNonNull = nonNullType =>
+  let innerTypeFromNonNull = (nonNullType: any): any =>
     nonNullType.type.kind === 'ListType'
       ? innerTypeFromList(nonNullType.type)
       : nonNullType.type
@@ -167,7 +167,7 @@ const unwrapType = type => {
     : type
 }
 
-const gatherLocalTypes = defs =>
+const gatherLocalTypes = (defs: readonly graphql.DefinitionNode[]) =>
   defs
     .filter(
       def =>
@@ -175,42 +175,48 @@ const gatherLocalTypes = defs =>
         def.kind === 'EnumTypeDefinition' ||
         def.kind === 'InterfaceTypeDefinition',
     )
-    .map(def => def.name.value)
+    .map(
+      def =>
+        // @ts-expect-error TODO: name field does not exist on definition, really?
+        def.name.value,
+    )
 
-const gatherImportedTypes = defs =>
+const gatherImportedTypes = (defs: readonly graphql.DefinitionNode[]) =>
   defs
     .filter(
       def =>
         def.kind === 'ObjectTypeDefinition' &&
         def.name.value == RESERVED_TYPE &&
-        def.directives.find(
-          directive =>
+        def.directives?.find(
+          (directive: any) =>
             directive.name.value == 'import' &&
-            directive.arguments.find(argument => argument.name.value == 'types'),
+            directive.arguments.find((argument: any) => argument.name.value == 'types'),
         ),
     )
     .map(def =>
+      // @ts-expect-error TODO: directives field does not exist on definition, really?
       def.directives
         .filter(
-          directive =>
+          (directive: any) =>
             directive.name.value == 'import' &&
-            directive.arguments.find(argument => argument.name.value == 'types'),
+            directive.arguments.find((argument: any) => argument.name.value == 'types'),
         )
-        .map(imp =>
+        .map((imp: any) =>
           imp.arguments.find(
-            argument =>
+            (argument: any) =>
               argument.name.value == 'types' && argument.value.kind == 'ListValue',
           ),
         )
-        .map(arg =>
-          arg.value.values.map(type =>
+        .map((arg: any) =>
+          arg.value.values.map((type: any) =>
             type.kind == 'StringValue'
               ? type.value
               : type.kind == 'ObjectValue' &&
                 type.fields.find(
-                  field => field.name.value == 'as' && field.value.kind == 'StringValue',
+                  (field: any) =>
+                    field.name.value == 'as' && field.value.kind == 'StringValue',
                 )
-              ? type.fields.find(field => field.name.value == 'as').value.value
+              ? type.fields.find((field: any) => field.name.value == 'as').value.value
               : undefined,
           ),
         ),
@@ -218,7 +224,7 @@ const gatherImportedTypes = defs =>
     .reduce(
       (flattened, types_args) =>
         flattened.concat(
-          types_args.reduce((flattened, types_arg) => {
+          types_args.reduce((flattened: any, types_arg: any[]) => {
             types_arg.forEach(type => (type ? flattened.push(type) : undefined))
             return flattened
           }, []),
@@ -226,22 +232,22 @@ const gatherImportedTypes = defs =>
       [],
     )
 
-const entityTypeByName = (defs, name) =>
+const entityTypeByName = (defs: any[], name: string) =>
   defs
     .filter(
       def =>
         def.kind === 'InterfaceTypeDefinition' ||
         (def.kind === 'ObjectTypeDefinition' &&
-          def.directives.find(directive => directive.name.value === 'entity')),
+          def.directives.find((directive: any) => directive.name.value === 'entity')),
     )
     .find(def => def.name.value === name)
 
-const fieldTargetEntityName = field => unwrapType(field.type).name.value
+const fieldTargetEntityName = (field: any) => unwrapType(field.type).name.value
 
-const fieldTargetEntity = (defs, field) =>
+const fieldTargetEntity = (defs: any[], field: any) =>
   entityTypeByName(defs, fieldTargetEntityName(field))
 
-const validateInnerFieldType = (defs, def, field) => {
+const validateInnerFieldType = (defs: any[], def: any, field: any) => {
   let innerType = unwrapType(field.type)
 
   // Get the name of the type
@@ -273,13 +279,13 @@ Unknown type '${typeName}'.${
       ])
 }
 
-const validateEntityFieldType = (defs, def, field) =>
+const validateEntityFieldType = (defs: any[], def: any, field: any) =>
   List.of(
     ...validateListFieldType(def, field),
     ...validateInnerFieldType(defs, def, field),
   )
 
-const validateEntityFieldArguments = (defs, def, field) =>
+const validateEntityFieldArguments = (_defs: any[], def: any, field: any) =>
   field.arguments.length > 0
     ? immutable.fromJS([
         {
@@ -292,10 +298,12 @@ Field arguments are not supported.`,
       ])
     : List()
 
-const entityFieldExists = (entityDef, name) =>
-  entityDef.fields.find(field => field.name.value === name) !== undefined
-
-const validateDerivedFromDirective = (defs, def, field, directive) => {
+const validateDerivedFromDirective = (
+  defs: any[],
+  def: any,
+  field: any,
+  directive: any,
+) => {
   // Validate that there is a `field` argument and nothing else
   if (directive.arguments.length !== 1 || directive.arguments[0].name.value !== 'field') {
     return immutable.fromJS([
@@ -331,7 +339,7 @@ Value of the @derivedFrom 'field' argument must be a string`,
   }
 
   let derivedFromField = targetEntity.fields.find(
-    field => field.name.value === directive.arguments[0].value.value,
+    (field: any) => field.name.value === directive.arguments[0].value.value,
   )
 
   if (derivedFromField === undefined) {
@@ -355,7 +363,7 @@ does not exist on type '${targetEntity.name.value}'`,
   if (
     !backRefEntity ||
     (backRefEntity.name.value !== def.name.value &&
-      !def.interfaces.find(intf => intf.name.value === backRefEntity.name.value))
+      !def.interfaces.find((intf: any) => intf.name.value === backRefEntity.name.value))
   ) {
     return immutable.fromJS([
       {
@@ -374,21 +382,26 @@ or one of the interface types that '${def.name.value}' implements`,
   return List()
 }
 
-const validateEntityFieldDirective = (defs, def, field, directive) =>
+const validateEntityFieldDirective = (
+  defs: any[],
+  def: any,
+  field: any,
+  directive: any,
+) =>
   directive.name.value === 'derivedFrom'
     ? validateDerivedFromDirective(defs, def, field, directive)
     : List()
 
-const validateEntityFieldDirectives = (defs, def, field) =>
+const validateEntityFieldDirectives = (defs: any[], def: any, field: any) =>
   field.directives.reduce(
-    (errors, directive) =>
+    (errors: any[], directive: any) =>
       errors.concat(validateEntityFieldDirective(defs, def, field, directive)),
     List(),
   )
 
-const validateEntityFields = (defs, def) =>
+const validateEntityFields = (defs: any, def: any) =>
   def.fields.reduce(
-    (errors, field) =>
+    (errors: any[], field: any) =>
       errors
         .concat(validateEntityFieldType(defs, def, field))
         .concat(validateEntityFieldArguments(defs, def, field))
@@ -396,8 +409,8 @@ const validateEntityFields = (defs, def) =>
     List(),
   )
 
-const validateNoImportDirective = def =>
-  def.directives.find(directive => directive.name.value == 'import')
+const validateNoImportDirective = (def: any) =>
+  def.directives.find((directive: any) => directive.name.value == 'import')
     ? List([
         immutable.fromJS({
           loc: def.name.loc,
@@ -407,8 +420,8 @@ const validateNoImportDirective = def =>
       ])
     : List()
 
-const validateNoFulltext = def =>
-  def.directives.find(directive => directive.name.value == 'fulltext')
+const validateNoFulltext = (def: any) =>
+  def.directives.find((directive: any) => directive.name.value == 'fulltext')
     ? List([
         immutable.fromJS({
           loc: def.name.loc,
@@ -418,8 +431,8 @@ const validateNoFulltext = def =>
       ])
     : List()
 
-const validateFulltextFields = (def, directive) => {
-  return directive.arguments.reduce((errors, argument) => {
+const validateFulltextFields = (def: any, directive: any) => {
+  return directive.arguments.reduce((errors: any[], argument: any) => {
     return errors.concat(
       ['name', 'language', 'algorithm', 'include'].includes(argument.name.value)
         ? List([])
@@ -435,8 +448,8 @@ const validateFulltextFields = (def, directive) => {
   }, List([]))
 }
 
-const validateFulltextName = (def, directive) => {
-  let name = directive.arguments.find(argument => argument.name.value == 'name')
+const validateFulltextName = (def: any, directive: any) => {
+  let name = directive.arguments.find((argument: any) => argument.name.value == 'name')
   return name
     ? validateFulltextArgumentName(def, directive, name)
     : List([
@@ -449,7 +462,7 @@ const validateFulltextName = (def, directive) => {
       ])
 }
 
-const validateFulltextArgumentName = (def, directive, argument) => {
+const validateFulltextArgumentName = (def: any, directive: any, argument: any) => {
   return argument.value.kind != 'StringValue'
     ? List([
         immutable.fromJS({
@@ -462,13 +475,15 @@ const validateFulltextArgumentName = (def, directive, argument) => {
     : List([])
 }
 
-const fulltextDirectiveName = directive => {
-  let arg = directive.arguments.find(argument => argument.name.value == 'name')
+const fulltextDirectiveName = (directive: any) => {
+  let arg = directive.arguments.find((argument: any) => argument.name.value == 'name')
   return arg ? arg.value.value : 'Other'
 }
 
-const validateFulltextLanguage = (def, directive) => {
-  let language = directive.arguments.find(argument => argument.name.value == 'language')
+const validateFulltextLanguage = (def: any, directive: any) => {
+  let language = directive.arguments.find(
+    (argument: any) => argument.name.value == 'language',
+  )
   return language
     ? validateFulltextArgumentLanguage(def, directive, language)
     : List([
@@ -481,7 +496,7 @@ const validateFulltextLanguage = (def, directive) => {
       ])
 }
 
-const validateFulltextArgumentLanguage = (def, directive, argument) => {
+const validateFulltextArgumentLanguage = (def: any, directive: any, argument: any) => {
   let languages = [
     'simple',
     'da',
@@ -525,8 +540,10 @@ const validateFulltextArgumentLanguage = (def, directive, argument) => {
   }
 }
 
-const validateFulltextAlgorithm = (def, directive) => {
-  let algorithm = directive.arguments.find(argument => argument.name.value == 'algorithm')
+const validateFulltextAlgorithm = (def: any, directive: any) => {
+  let algorithm = directive.arguments.find(
+    (argument: any) => argument.name.value == 'algorithm',
+  )
   return algorithm
     ? validateFulltextArgumentAlgorithm(def, directive, algorithm)
     : List([
@@ -539,7 +556,7 @@ const validateFulltextAlgorithm = (def, directive) => {
       ])
 }
 
-const validateFulltextArgumentAlgorithm = (def, directive, argument) => {
+const validateFulltextArgumentAlgorithm = (def: any, directive: any, argument: any) => {
   if (argument.value.kind != 'EnumValue') {
     return List([
       immutable.fromJS({
@@ -563,8 +580,10 @@ const validateFulltextArgumentAlgorithm = (def, directive, argument) => {
   }
 }
 
-const validateFulltextInclude = (def, directive) => {
-  let include = directive.arguments.find(argument => argument.name.value == 'include')
+const validateFulltextInclude = (def: any, directive: any) => {
+  let include = directive.arguments.find(
+    (argument: any) => argument.name.value == 'include',
+  )
   if (include) {
     if (include.value.kind != 'ListValue') {
       return List([
@@ -577,7 +596,7 @@ const validateFulltextInclude = (def, directive) => {
       ])
     }
     return include.value.values.reduce(
-      (errors, type) =>
+      (errors: any, type: any) =>
         errors.concat(validateFulltextArgumentInclude(def, directive, type)),
       List(),
     )
@@ -593,7 +612,7 @@ const validateFulltextInclude = (def, directive) => {
   }
 }
 
-const validateFulltextArgumentInclude = (def, directive, argument) => {
+const validateFulltextArgumentInclude = (def: any, directive: any, argument: any) => {
   if (argument.kind != 'ObjectValue') {
     return List([
       immutable.fromJS({
@@ -615,13 +634,13 @@ const validateFulltextArgumentInclude = (def, directive, argument) => {
     ])
   }
   return argument.fields.reduce(
-    (errors, field) =>
+    (errors: any[], field: any) =>
       errors.concat(validateFulltextArgumentIncludeFields(def, directive, field)),
     List([]),
   )
 }
 
-const validateFulltextArgumentIncludeFields = (def, directive, field) => {
+const validateFulltextArgumentIncludeFields = (def: any, directive: any, field: any) => {
   if (!['entity', 'fields'].includes(field.name.value)) {
     return List([
       immutable.fromJS({
@@ -652,7 +671,7 @@ const validateFulltextArgumentIncludeFields = (def, directive, field) => {
     ])
   } else if (field.name.value == 'fields' && field.value.kind == 'ListValue') {
     return field.value.values.reduce(
-      (errors, field) =>
+      (errors: any[], field: any) =>
         errors.concat(
           validateFulltextArgumentIncludeFieldsObjects(def, directive, field),
         ),
@@ -663,7 +682,11 @@ const validateFulltextArgumentIncludeFields = (def, directive, field) => {
   }
 }
 
-const validateFulltextArgumentIncludeFieldsObjects = (def, directive, argument) => {
+const validateFulltextArgumentIncludeFieldsObjects = (
+  def: any,
+  directive: any,
+  argument: any,
+) => {
   if (argument.kind != 'ObjectValue') {
     return List([
       immutable.fromJS({
@@ -675,7 +698,7 @@ const validateFulltextArgumentIncludeFieldsObjects = (def, directive, argument) 
     ])
   } else {
     return argument.fields.reduce(
-      (errors, field) =>
+      (errors: any[], field: any) =>
         errors.concat(
           validateFulltextArgumentIncludeArgumentFieldsObject(def, directive, field),
         ),
@@ -684,7 +707,11 @@ const validateFulltextArgumentIncludeFieldsObjects = (def, directive, argument) 
   }
 }
 
-const validateFulltextArgumentIncludeArgumentFieldsObject = (def, directive, field) => {
+const validateFulltextArgumentIncludeArgumentFieldsObject = (
+  def: any,
+  directive: any,
+  field: any,
+) => {
   if (!['name'].includes(field.name.value)) {
     return List([
       immutable.fromJS({
@@ -709,8 +736,8 @@ const validateFulltextArgumentIncludeArgumentFieldsObject = (def, directive, fie
 }
 
 const importDirectiveTypeValidators = {
-  StringValue: (_def, _directive, _type) => List(),
-  ObjectValue: (def, directive, type) => {
+  StringValue: (_def: any, _directive: any, _type: any) => List(),
+  ObjectValue: (def: any, directive: any, type: any) => {
     let errors = List()
     if (type.fields.length != 2) {
       return errors.push(
@@ -721,7 +748,7 @@ const importDirectiveTypeValidators = {
         }),
       )
     }
-    return type.fields.reduce((errors, field) => {
+    return type.fields.reduce((errors: any[], field: any) => {
       if (!['name', 'as'].includes(field.name.value)) {
         return errors.push(
           immutable.fromJS({
@@ -745,7 +772,11 @@ const importDirectiveTypeValidators = {
   },
 }
 
-const validateImportDirectiveType = (def, directive, type) => {
+const validateImportDirectiveType = (
+  def: any,
+  directive: any,
+  type: { kind: keyof typeof importDirectiveTypeValidators },
+) => {
   return importDirectiveTypeValidators[type.kind]
     ? importDirectiveTypeValidators[type.kind](def, directive, type)
     : List([
@@ -757,7 +788,11 @@ const validateImportDirectiveType = (def, directive, type) => {
       ])
 }
 
-const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
+const validateImportDirectiveArgumentTypes = (
+  def: any,
+  directive: any,
+  argument: any,
+) => {
   if (argument.value.kind != 'ListValue') {
     return List([
       immutable.fromJS({
@@ -769,12 +804,13 @@ const validateImportDirectiveArgumentTypes = (def, directive, argument) => {
   }
 
   return argument.value.values.reduce(
-    (errors, type) => errors.concat(validateImportDirectiveType(def, directive, type)),
+    (errors: any[], type: any) =>
+      errors.concat(validateImportDirectiveType(def, directive, type)),
     List(),
   )
 }
 
-const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
+const validateImportDirectiveArgumentFrom = (def: any, directive: any, argument: any) => {
   if (argument.value.kind != 'ObjectValue') {
     return List([
       immutable.fromJS({
@@ -795,7 +831,7 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
     ])
   }
 
-  return argument.value.fields.reduce((errors, field) => {
+  return argument.value.fields.reduce((errors: any[], field: any) => {
     if (!['name', 'id'].includes(field.name.value)) {
       return errors.push(
         immutable.fromJS({
@@ -818,8 +854,8 @@ const validateImportDirectiveArgumentFrom = (def, directive, argument) => {
   }, List())
 }
 
-const validateImportDirectiveFields = (def, directive) => {
-  return directive.arguments.reduce((errors, argument) => {
+const validateImportDirectiveFields = (def: any, directive: any) => {
+  return directive.arguments.reduce((errors: any[], argument: any) => {
     return errors.concat(
       ['types', 'from'].includes(argument.name.value)
         ? List([])
@@ -834,8 +870,8 @@ const validateImportDirectiveFields = (def, directive) => {
   }, List([]))
 }
 
-const validateImportDirectiveTypes = (def, directive) => {
-  let types = directive.arguments.find(argument => argument.name.value == 'types')
+const validateImportDirectiveTypes = (def: any, directive: any) => {
+  let types = directive.arguments.find((argument: any) => argument.name.value == 'types')
   return types
     ? validateImportDirectiveArgumentTypes(def, directive, types)
     : List([
@@ -847,8 +883,8 @@ const validateImportDirectiveTypes = (def, directive) => {
       ])
 }
 
-const validateImportDirectiveFrom = (def, directive) => {
-  let from = directive.arguments.find(argument => argument.name.value == 'from')
+const validateImportDirectiveFrom = (def: any, directive: any) => {
+  let from = directive.arguments.find((argument: any) => argument.name.value == 'from')
   return from
     ? validateImportDirectiveArgumentFrom(def, directive, from)
     : List([
@@ -860,14 +896,14 @@ const validateImportDirectiveFrom = (def, directive) => {
       ])
 }
 
-const validateImportDirective = (def, directive) =>
+const validateImportDirective = (def: any, directive: any) =>
   List.of(
     ...validateImportDirectiveFields(def, directive),
     ...validateImportDirectiveTypes(def, directive),
     ...validateImportDirectiveFrom(def, directive),
   )
 
-const validateFulltext = (def, directive) =>
+const validateFulltext = (def: any, directive: any) =>
   List.of(
     ...validateFulltextFields(def, directive),
     ...validateFulltextName(def, directive),
@@ -876,7 +912,7 @@ const validateFulltext = (def, directive) =>
     ...validateFulltextInclude(def, directive),
   )
 
-const validateSubgraphSchemaDirective = (def, directive) => {
+const validateSubgraphSchemaDirective = (def: any, directive: any) => {
   if (directive.name.value == 'import') {
     return validateImportDirective(def, directive)
   } else if (directive.name.value == 'fulltext') {
@@ -892,13 +928,14 @@ const validateSubgraphSchemaDirective = (def, directive) => {
   }
 }
 
-const validateSubgraphSchemaDirectives = def =>
+const validateSubgraphSchemaDirectives = (def: any) =>
   def.directives.reduce(
-    (errors, directive) => errors.concat(validateSubgraphSchemaDirective(def, directive)),
+    (errors: any[], directive: any) =>
+      errors.concat(validateSubgraphSchemaDirective(def, directive)),
     List(),
   )
 
-const validateTypeHasNoFields = def =>
+const validateTypeHasNoFields = (def: any) =>
   def.fields.length
     ? List([
         immutable.fromJS({
@@ -909,10 +946,10 @@ const validateTypeHasNoFields = def =>
       ])
     : List()
 
-const validateAtLeastOneExtensionField = def => List()
+const validateAtLeastOneExtensionField = (_def: any) => List()
 
 const typeDefinitionValidators = {
-  ObjectTypeDefinition: (defs, def) =>
+  ObjectTypeDefinition: (defs: any[], def: any) =>
     def.name && def.name.value == RESERVED_TYPE
       ? List.of(...validateSubgraphSchemaDirectives(def), ...validateTypeHasNoFields(def))
       : List.of(
@@ -922,21 +959,27 @@ const typeDefinitionValidators = {
           ...validateNoImportDirective(def),
           ...validateNoFulltext(def),
         ),
-  ObjectTypeExtension: (_defs, def) => validateAtLeastOneExtensionField(def),
+  ObjectTypeExtension: (_defs: any[], def: any) => validateAtLeastOneExtensionField(def),
 }
 
-const validateTypeDefinition = (defs, def) =>
+const validateTypeDefinition = (
+  defs: any,
+  def: { kind: keyof typeof typeDefinitionValidators },
+) =>
   typeDefinitionValidators[def.kind] !== undefined
     ? typeDefinitionValidators[def.kind](defs, def)
     : List()
 
-const validateTypeDefinitions = defs =>
-  defs.reduce((errors, def) => errors.concat(validateTypeDefinition(defs, def)), List())
+const validateTypeDefinitions = (defs: any) =>
+  defs.reduce(
+    (errors: any[], def: any) => errors.concat(validateTypeDefinition(defs, def)),
+    List(),
+  )
 
-const validateNamingCollisionsInTypes = types => {
+const validateNamingCollisionsInTypes = (types: any) => {
   let seen = Set()
   let conflicting = Set()
-  return types.reduce((errors, type) => {
+  return types.reduce((errors: immutable.List<any>, type: any) => {
     if (seen.has(type) && !conflicting.has(type)) {
       errors = errors.push(
         immutable.fromJS({
@@ -953,10 +996,10 @@ const validateNamingCollisionsInTypes = types => {
   }, List())
 }
 
-const validateNamingCollisions = (local, imported) =>
+const validateNamingCollisions = (local: any[], imported: any) =>
   validateNamingCollisionsInTypes(local.concat(imported))
 
-const validateSchema = filename => {
+export const validateSchema = (filename: string) => {
   let doc = loadSchema(filename)
   let schema = parseSchema(doc)
   return List.of(
@@ -967,5 +1010,3 @@ const validateSchema = filename => {
     ),
   )
 }
-
-export { typeSuggestion, validateSchema }
