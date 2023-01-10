@@ -18,19 +18,25 @@ import * as ArweaveMappingScaffold from './arweave/scaffold/mapping'
 import * as EthereumMappingScaffold from './ethereum/scaffold/mapping'
 import * as NearMappingScaffold from './near/scaffold/mapping'
 import * as CosmosMappingScaffold from './cosmos/scaffold/mapping'
-import { ThrowStatement } from 'assemblyscript'
 import debug from '../debug'
+import Subgraph from '../subgraph'
+import { SubgraphOptions } from './subgraph'
 
 let protocolDebug = debug('graph-cli:protocol')
 
-class Protocol {
-  static fromDataSources(dataSourcesAndTemplates) {
+export default class Protocol {
+  static fromDataSources(dataSourcesAndTemplates: any) {
     const firstDataSourceKind = dataSourcesAndTemplates[0].kind
     return new Protocol(firstDataSourceKind)
   }
 
-  constructor(name) {
-    this.name = Protocol.normalizeName(name)
+  name: ProtocolName
+
+  // TODO: should assert non null? see the constructor switch default case comment
+  config!: ProtocolConfig
+
+  constructor(name: ProtocolName) {
+    this.name = Protocol.normalizeName(name)!
 
     switch (this.name) {
       case 'arweave':
@@ -63,7 +69,7 @@ class Protocol {
       near: ['near'],
       cosmos: ['cosmos'],
       substreams: ['substreams'],
-    })
+    }) as immutable.Collection<ProtocolName, string[]>
   }
 
   static availableNetworks() {
@@ -107,32 +113,34 @@ class Protocol {
         'juno-1',
         'uni-3', // Juno testnet
       ],
-    })
+    }) as immutable.Map<string, string[]>
 
-    let allNetworks = []
+    let allNetworks: string[] = []
     networks.forEach(value => {
       allNetworks.push(...value)
     })
 
-    networks = networks.set('substreams', immutable.fromJS(allNetworks))
+    networks = networks.set('substreams', allNetworks)
 
     return networks
   }
 
-  static normalizeName(name) {
+  static normalizeName(name: ProtocolName) {
     return Protocol.availableProtocols().findKey(possibleNames => {
       return possibleNames.includes(name)
-    })
+    })!
   }
 
   displayName() {
-    return this.config.displayName
+    return this.config?.displayName
   }
 
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
-  isValidKindName(kind) {
-    return Protocol.availableProtocols().get(this.name, immutable.List()).includes(kind)
+  isValidKindName(kind: string) {
+    return Protocol.availableProtocols()
+      .get(this.name, immutable.List())
+      .includes(kind)
   }
 
   hasABIs() {
@@ -155,10 +163,10 @@ class Protocol {
   }
 
   hasDataSourceMappingFile() {
-    return this.config.getMappingScaffold != null
+    return this.getMappingScaffold() != null
   }
 
-  getTypeGenerator(options) {
+  getTypeGenerator(options: any) {
     if (this.config == null || this.config.getTypeGenerator == null) {
       return null
     }
@@ -166,14 +174,14 @@ class Protocol {
     return this.config.getTypeGenerator(options)
   }
 
-  getTemplateCodeGen(template) {
+  getTemplateCodeGen(template: any) {
     if (!this.hasTemplates()) {
       throw new Error(
         `Template data sources with kind '${this.name}' are not supported yet`,
       )
     }
 
-    return this.config.getTemplateCodeGen(template)
+    return this.config.getTemplateCodeGen?.(template)
   }
 
   getABI() {
@@ -197,7 +205,20 @@ class Protocol {
   }
 }
 
-const arweaveProtocol = {
+type ProtocolName = 'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams'
+
+interface ProtocolConfig {
+  displayName: string
+  abi?: any
+  contract?: any
+  getTemplateCodeGen?: (template: any) => any
+  getTypeGenerator?: (options: any) => any
+  getSubgraph(options: SubgraphOptions): Subgraph
+  manifestScaffold: any
+  mappingScaffold: any
+}
+
+const arweaveProtocol: ProtocolConfig = {
   displayName: 'Arweave',
   abi: undefined,
   contract: undefined,
@@ -210,7 +231,7 @@ const arweaveProtocol = {
   mappingScaffold: ArweaveMappingScaffold,
 }
 
-const cosmosProtocol = {
+const cosmosProtocol: ProtocolConfig = {
   displayName: 'Cosmos',
   abi: undefined,
   contract: undefined,
@@ -223,7 +244,7 @@ const cosmosProtocol = {
   mappingScaffold: CosmosMappingScaffold,
 }
 
-const ethereumProtocol = {
+const ethereumProtocol: ProtocolConfig = {
   displayName: 'Ethereum',
   abi: EthereumABI,
   contract: EthereumContract,
@@ -240,7 +261,7 @@ const ethereumProtocol = {
   mappingScaffold: EthereumMappingScaffold,
 }
 
-const nearProtocol = {
+const nearProtocol: ProtocolConfig = {
   displayName: 'NEAR',
   abi: undefined,
   contract: NearContract,
@@ -253,7 +274,7 @@ const nearProtocol = {
   mappingScaffold: NearMappingScaffold,
 }
 
-const substreamsProtocol = {
+const substreamsProtocol: ProtocolConfig = {
   displayName: 'Substreams',
   abi: undefined,
   contract: undefined,
@@ -267,4 +288,3 @@ const substreamsProtocol = {
 }
 
 protocolDebug('Available networks %M', Protocol.availableNetworks())
-export default Protocol
