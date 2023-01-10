@@ -10,7 +10,10 @@ const MIGRATIONS = [
   import('./migrations/spec_version_0_0_3'),
 ]
 
-const applyMigrations = async options =>
+export const applyMigrations = async (options: {
+  sourceDir: string
+  manifestFile: string
+}) =>
   await withSpinner(
     `Apply migrations`,
     `Failed to apply migrations`,
@@ -33,5 +36,3 @@ const applyMigrations = async options =>
       }, Promise.resolve())
     },
   )
-
-export { applyMigrations }

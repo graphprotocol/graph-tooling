@@ -1,8 +1,8 @@
-import chalk from 'chalk'
-import immutable from 'immutable'
-import * as toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun'
 
-const step = (spinner, subject, text) => {
+export type Spinner = ReturnType<toolbox.GluegunPrint['spin']>
+
+export const step = (spinner: Spinner, subject: string, text: string) => {
   if (text) {
     spinner.stopAndPersist({
       text: toolbox.print.colors.muted(`${subject} ${text}`),
@@ -23,7 +23,12 @@ const step = (spinner, subject, text) => {
 //   spinner stops with the warning message and returns the `result` value.
 // Otherwise the spinner prints the in-progress message with a check mark
 //   and simply returns the value returned by `f`.
-const withSpinner = async (text, errorText, warningText, f) => {
+export const withSpinner = async (
+  text: string,
+  errorText: string,
+  warningText: string,
+  f: (spinner: Spinner) => Promise<any> | any, // TODO: type result
+) => {
   let spinner = toolbox.print.spin(text)
   try {
     let result = await f(spinner)
@@ -55,5 +60,3 @@ const withSpinner = async (text, errorText, warningText, f) => {
     throw e
   }
 }
-
-export { step, withSpinner }
