@@ -79,20 +79,17 @@ export default class Subgraph {
 
   static validateSchema(manifest: any, { resolveFile }: { resolveFile: ResolveFile }) {
     let filename = resolveFile(manifest.getIn(['schema', 'file']))
-    let errors = validation.validateSchema(filename)
+    const validationErrors = validation.validateSchema(filename)
+    let errors: immutable.Collection<any, any>
 
-    if (errors.size > 0) {
-      const groupedErrors = errors.groupBy(error => error.get('entity')).sort()
-      let msg = groupedErrors.reduce((msg, groupedErrors, entity) => {
-        groupedErrors = groupedErrors.groupBy(error => error.get('directive'))
-        let inner_msgs = groupedErrors.reduce((msg, _errors, directive) => {
-          return `${msg}${
-            directive
-              ? `
-    ${directive}:`
-              : ''
-          }
-  ${groupedErrors
+    if (validationErrors.size > 0) {
+      errors = validationErrors.groupBy(error => error.get('entity')).sort()
+      let msg = errors.reduce((msg, errors, entity) => {
+        errors = errors.groupBy((error: any) => error.get('directive'))
+        let inner_msgs = errors.reduce(
+          (msg: string, errors: any[], directive: string) => {
+            return `${msg}${directive ? `${directive}:` : ''}
+  ${errors
     .map(error =>
       error
         .get('message')
@@ -101,7 +98,9 @@ export default class Subgraph {
     )
     .map(msg => `${directive ? '  ' : ''}- ${msg}`)
     .join('\n  ')}`
-        }, ``)
+          },
+          ``,
+        )
         return `${msg}
 
   ${entity}:${inner_msgs}`
