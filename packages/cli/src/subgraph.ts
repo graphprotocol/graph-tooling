@@ -88,7 +88,12 @@ export default class Subgraph {
         errors = errors.groupBy((error: any) => error.get('directive'))
         let inner_msgs = errors.reduce(
           (msg: string, errors: any[], directive: string) => {
-            return `${msg}${directive ? `${directive}:` : ''}
+            return `${msg}${
+              directive
+                ? `
+    ${directive}:`
+                : ''
+            }
   ${errors
     .map(error =>
       error
