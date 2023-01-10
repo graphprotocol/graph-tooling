@@ -28,7 +28,7 @@ importers:
 
   examples/basic-event-handlers:
     specifiers:
-      '@graphprotocol/graph-ts': 0.28.1
+      '@graphprotocol/graph-ts': 0.29.1
       apollo-fetch: ^0.7.0
       babel-polyfill: 6.26.0
       babel-register: 6.26.0
@@ -40,14 +40,14 @@ importers:
       truffle: 5.0.12
       truffle-hdwallet-provider: 1.0.6
     devDependencies:
-      '@graphprotocol/graph-ts': 0.28.1
+      '@graphprotocol/graph-ts': 0.29.1
       apollo-fetch: 0.7.0
 
   examples/example-subgraph:
     specifiers:
-      '@graphprotocol/graph-ts': 0.28.1
+      '@graphprotocol/graph-ts': 0.29.1
     devDependencies:
-      '@graphprotocol/graph-ts': 0.28.1
+      '@graphprotocol/graph-ts': 0.29.1
 
   packages/cli:
     specifiers:
@@ -1720,8 +1720,8 @@ packages:
       js-yaml: 4.1.0
     dev: false
 
-  /@graphprotocol/graph-ts/0.28.1:
-    resolution: {integrity: sha512-1wMLQ0cu84/6Ml3zcz9ya1zFzrDAzCj0dIGZ7Rz9upnRSXg5jjqU4DefO/OYrl2K2/OPso9hSAr6I4aue2pL1Q==}
+  /@graphprotocol/graph-ts/0.29.1:
+    resolution: {integrity: sha512-GhAP2ijk3cTM0xBjoAFxEmdZbYl1BueCYqAGw5G7UyBX3EV8FWkvD5DMam6IkLGqXasBmelCFrROK3B5t6zVdg==}
     dependencies:
       assemblyscript: 0.19.10
     dev: true
