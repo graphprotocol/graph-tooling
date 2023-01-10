@@ -1,12 +1,10 @@
-const path = require('path')
-const { exec } = require('child_process')
-const which = require('which')
-const { build, system } = require('gluegun')
+import path from 'path'
+import { exec } from 'child_process'
+import which from 'which'
+import { build, system } from 'gluegun'
 
 const run = async argv => {
-  let cli = build()
-    .brand('graph')
-    .src(__dirname)
+  let cli = build().brand('graph').src(__dirname)
 
   const pluginDirs = (
     await Promise.all(
@@ -26,13 +24,9 @@ const run = async argv => {
     cli,
   )
 
-  cli = cli
-    .help()
-    .version()
-    .defaultCommand()
-    .create()
+  cli = cli.help().version().defaultCommand().create()
 
   return await cli.run(argv)
 }
 
-module.exports = { run }
+export { run }

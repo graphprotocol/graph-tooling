@@ -1,6 +1,6 @@
-const { npmUnlinkCli } = require('./util')
+import { npmUnlinkCli } from './util'
 
-module.exports = async () => {
+export default async () => {
   delete process.env.GRAPH_CLI_TESTS
   await npmUnlinkCli()
 }

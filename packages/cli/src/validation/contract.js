@@ -1,4 +1,4 @@
-const immutable = require('immutable')
+import immutable from 'immutable'
 
 const validateContract = (value, ProtocolContract) => {
   const contract = new ProtocolContract(value)
@@ -33,7 +33,6 @@ const validateContractValues = (manifest, protocol) => {
 
       let contractValue = dataSource.getIn(['source', fieldName])
 
-
       const { valid, error } = validateContract(contractValue, ProtocolContract)
 
       // Validate whether the contract is valid for the protocol
@@ -50,7 +49,4 @@ const validateContractValues = (manifest, protocol) => {
     }, immutable.List())
 }
 
-module.exports = {
-  validateContract,
-  validateContractValues,
-}
+export { validateContract, validateContractValues }

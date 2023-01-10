@@ -1,8 +1,8 @@
-const URL = require('url').URL
-const chalk = require('chalk')
-const { validateNodeUrl } = require('../command-helpers/node')
-const { identifyDeployKey: identifyAccessToken } = require('../command-helpers/auth')
-const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
+import { URL } from 'url'
+import chalk from 'chalk'
+import { validateNodeUrl } from '../command-helpers/node'
+import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth'
+import { createJsonRpcClient } from '../command-helpers/jsonrpc'
 
 const HELP = `
 ${chalk.bold('graph create')} ${chalk.dim('[options]')} ${chalk.bold('<subgraph-name>')}
@@ -14,7 +14,7 @@ ${chalk.dim('Options:')}
   -g, --node <url>              Graph node to create the subgraph in
 `
 
-module.exports = {
+export default {
   description: 'Registers a subgraph name',
   run: async toolbox => {
     // Obtain tools
@@ -73,21 +73,21 @@ module.exports = {
     }
 
     let spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`)
-    client.request('subgraph_create', { name: subgraphName }, function(
-      requestError,
-      jsonRpcError,
-      res
-    ) {
-      if (jsonRpcError) {
-        spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
-        process.exitCode = 1
-      } else if (requestError) {
-        spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
-        process.exitCode = 1
-      } else {
-        spinner.stop()
-        print.success(`Created subgraph: ${subgraphName}`)
-      }
-    })
+    client.request(
+      'subgraph_create',
+      { name: subgraphName },
+      function (requestError, jsonRpcError, res) {
+        if (jsonRpcError) {
+          spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
+          process.exitCode = 1
+        } else if (requestError) {
+          spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
+          process.exitCode = 1
+        } else {
+          spinner.stop()
+          print.success(`Created subgraph: ${subgraphName}`)
+        }
+      },
+    )
   },
 }

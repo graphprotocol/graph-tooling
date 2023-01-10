@@ -1,4 +1,4 @@
-const debugFactory = require('debug')
+import debugFactory from 'debug'
 
 debugFactory.formatters.L = immutableList => {
   return JSON.stringify(immutableList)
@@ -12,4 +12,4 @@ debugFactory.formatters.M = immutableMap => {
   return immutableMap
 }
 
-module.exports = debugFactory
+export default debugFactory

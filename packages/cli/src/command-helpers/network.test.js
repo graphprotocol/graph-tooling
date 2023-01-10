@@ -1,9 +1,17 @@
-const { initNetworksConfig, updateSubgraphNetwork } = require('../command-helpers/network')
-const toolbox = require('gluegun/toolbox')
-const yaml = require('yaml')
-const path = require('path')
+import { initNetworksConfig, updateSubgraphNetwork } from '../command-helpers/network'
+import * as toolbox from 'gluegun/toolbox'
+import yaml from 'yaml'
+import path from 'path'
 
-const SUBGRAPH_PATH_BASE = path.join(__dirname,'..','..','..','..','examples','example-subgraph')
+const SUBGRAPH_PATH_BASE = path.join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  '..',
+  'examples',
+  'example-subgraph',
+)
 
 describe('initNetworksConfig', () => {
   beforeAll(async () => {
@@ -23,8 +31,8 @@ describe('initNetworksConfig', () => {
 
     let expected = {
       mainnet: {
-        ExampleSubgraph: { address: '0x22843e74c59580b3eaf6c233fa67d8b7c561a835' }
-      }
+        ExampleSubgraph: { address: '0x22843e74c59580b3eaf6c233fa67d8b7c561a835' },
+      },
     }
 
     expect(networks).toStrictEqual(expected)
@@ -35,12 +43,15 @@ describe('updateSubgraphNetwork', () => {
   beforeAll(async () => {
     let content = {
       optimism: {
-        ExampleSubgraph: { address: '0x12345...' }
-      }
+        ExampleSubgraph: { address: '0x12345...' },
+      },
     }
 
     await toolbox.filesystem.write(`${SUBGRAPH_PATH_BASE}/networks.json`, content)
-    await toolbox.filesystem.copy(`${SUBGRAPH_PATH_BASE}/subgraph.yaml`, `${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`)
+    await toolbox.filesystem.copy(
+      `${SUBGRAPH_PATH_BASE}/subgraph.yaml`,
+      `${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`,
+    )
   })
 
   afterAll(async () => {
@@ -60,13 +71,7 @@ describe('updateSubgraphNetwork', () => {
     expect(network).toBe('mainnet')
     expect(address).toBe('0x22843e74c59580b3eaf6c233fa67d8b7c561a835')
 
-    await updateSubgraphNetwork(
-      toolbox,
-      manifest,
-      'optimism',
-      networksFie,
-      'address'
-    )
+    await updateSubgraphNetwork(toolbox, manifest, 'optimism', networksFie, 'address')
 
     subgraph = await toolbox.filesystem.read(manifest)
     subgraphObj = yaml.parse(subgraph)
@@ -77,5 +82,4 @@ describe('updateSubgraphNetwork', () => {
     expect(network).toBe('optimism')
     expect(address).toBe('0x12345...')
   })
-
 })

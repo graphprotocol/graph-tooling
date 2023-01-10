@@ -3,11 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "codegen": "../../packages/cli/bin/graph codegen",
-    "build": "../../packages/cli/bin/graph build",
+    "codegen": "../../packages/cli/dist/bin.js codegen",
+    "build": "../../packages/cli/dist/bin.js build",
     "test": "docker compose up -d && sleep 30 && truffle test --network test && docker compose down",
-    "create-test": "../../packages/cli/bin/graph create test/basic-event-handlers --node http://127.0.0.1:18020",
-    "deploy-test": "../../packages/cli/bin/graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
+    "create-test": "../../packages/cli/dist/bin.js create test/basic-event-handlers --node http://127.0.0.1:18020",
+    "deploy-test": "../../packages/cli/dist/bin.js deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
   },
   "devDependencies": {
     "@graphprotocol/graph-ts": "0.29.1",

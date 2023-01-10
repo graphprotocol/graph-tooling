@@ -1,20 +1,23 @@
 const URL = require('url').URL
-const chalk = require('chalk')
-const path = require('path')
+import chalk from 'chalk'
+import path from 'path'
 
-const { identifyDeployKey } = require('../command-helpers/auth')
-const { createCompiler } = require('../command-helpers/compiler')
-const { fixParameters } = require('../command-helpers/gluegun')
-const { createJsonRpcClient } = require('../command-helpers/jsonrpc')
-const { chooseNodeUrl } = require('../command-helpers/node')
-const { withSpinner } = require('../command-helpers/spinner')
-const { validateSubgraphName } = require('../command-helpers/subgraph')
-const { DEFAULT_IPFS_URL } = require('../command-helpers/ipfs')
-const { assertManifestApiVersion, assertGraphTsVersion } = require('../command-helpers/version')
-const DataSourcesExtractor = require('../command-helpers/data-sources')
-const { validateStudioNetwork } = require('../command-helpers/studio')
-const Protocol = require('../protocols')
-const { updateSubgraphNetwork } = require('../command-helpers/network')
+import { identifyDeployKey } from '../command-helpers/auth'
+import { createCompiler } from '../command-helpers/compiler'
+import { fixParameters } from '../command-helpers/gluegun'
+import { createJsonRpcClient } from '../command-helpers/jsonrpc'
+import { chooseNodeUrl } from '../command-helpers/node'
+import { withSpinner } from '../command-helpers/spinner'
+import { validateSubgraphName } from '../command-helpers/subgraph'
+import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs'
+import {
+  assertManifestApiVersion,
+  assertGraphTsVersion,
+} from '../command-helpers/version'
+import * as DataSourcesExtractor from '../command-helpers/data-sources'
+import { validateStudioNetwork } from '../command-helpers/studio'
+import Protocol from '../protocols'
+import { updateSubgraphNetwork } from '../command-helpers/network'
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
@@ -40,15 +43,7 @@ Options:
         --network-file <path>     Networks config file path (default: "./networks.json")
 `
 
-const processForm = async (
-  toolbox,
-  {
-    product,
-    studio,
-    node,
-    versionLabel,
-  },
-) => {
+const processForm = async (toolbox, { product, studio, node, versionLabel }) => {
   const questions = [
     {
       type: 'select',
@@ -58,7 +53,8 @@ const processForm = async (
       skip:
         product === 'subgraph-studio' ||
         product === 'hosted-service' ||
-        studio !== undefined || node !== undefined,
+        studio !== undefined ||
+        node !== undefined,
     },
     {
       type: 'input',
@@ -76,7 +72,7 @@ const processForm = async (
   }
 }
 
-module.exports = {
+export default {
   description: 'Deploys the subgraph to a Graph node',
   run: async toolbox => {
     // Obtain tools
@@ -111,7 +107,7 @@ module.exports = {
     // Support both long and short option variants
     help = help || h
     ipfs = ipfs || i || DEFAULT_IPFS_URL
-    headers = headers || hdr || "{}"
+    headers = headers || hdr || '{}'
     node = node || g
     outputDir = outputDir || o
     watch = watch || w
@@ -120,7 +116,7 @@ module.exports = {
     try {
       headers = JSON.parse(headers)
     } catch (e) {
-      print.error("Please make sure headers is a valid JSON value")
+      print.error('Please make sure headers is a valid JSON value')
       process.exitCode = 1
       return
     }
@@ -132,7 +128,7 @@ module.exports = {
         help,
         w,
         watch,
-        studio
+        studio,
       })
     } catch (e) {
       print.error(e.message)
@@ -149,7 +145,7 @@ module.exports = {
     networkFile =
       networkFile !== undefined && networkFile !== ''
         ? networkFile
-        : filesystem.resolve("networks.json")
+        : filesystem.resolve('networks.json')
 
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest)
@@ -190,7 +186,11 @@ module.exports = {
 
     // Validate the subgraph name
     if (!subgraphName) {
-      print.error(`No subgraph ${product == 'subgraph-studio' || studio ? 'slug' : 'name'} provided`)
+      print.error(
+        `No subgraph ${
+          product == 'subgraph-studio' || studio ? 'slug' : 'name'
+        } provided`,
+      )
       print.info(HELP)
       process.exitCode = 1
       return
@@ -246,7 +246,7 @@ module.exports = {
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
-      blockIpfsMethods: isStudio,  // Network does not support publishing subgraphs with IPFS methods
+      blockIpfsMethods: isStudio, // Network does not support publishing subgraphs with IPFS methods
       protocol,
     })
 
@@ -293,7 +293,12 @@ module.exports = {
       //       `Failed to deploy to Graph node ${requestUrl}`,
       client.request(
         'subgraph_deploy',
-        { name: subgraphName, ipfs_hash: ipfsHash, version_label: versionLabel, debug_fork: debugFork },
+        {
+          name: subgraphName,
+          ipfs_hash: ipfsHash,
+          version_label: versionLabel,
+          debug_fork: debugFork,
+        },
         async (requestError, jsonRpcError, res) => {
           if (jsonRpcError) {
             spinner.fail(

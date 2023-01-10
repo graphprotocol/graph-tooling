@@ -1,15 +1,15 @@
-const chalk = require('chalk')
-const compose = require('docker-compose')
-const http = require('http')
-const net = require('net')
-const tmp = require('tmp-promise')
-const Docker = require('dockerode')
-const path = require('path')
-const stripAnsi = require('strip-ansi')
+import chalk from 'chalk'
+import compose from 'docker-compose'
+import http from 'http'
+import net from 'net'
+import tmp from 'tmp-promise'
+import Docker from 'dockerode'
+import path from 'path'
+import stripAnsi from 'strip-ansi'
 const spawn = require('child_process').spawn
 
-const { fixParameters } = require('../command-helpers/gluegun')
-const { step, withSpinner } = require('../command-helpers/spinner')
+import { fixParameters } from '../command-helpers/gluegun'
+import { step, withSpinner } from '../command-helpers/spinner'
 
 // Clean up temporary files even when an uncaught exception occurs
 tmp.setGracefulCleanup()
@@ -32,8 +32,9 @@ Options:
       --timeout                 Time to wait for service containers. (optional, defaults to 120000 milliseconds)
 `
 
-module.exports = {
-  description: 'Runs local tests against a Graph Node environment (using Ganache by default)',
+export default {
+  description:
+    'Runs local tests against a Graph Node environment (using Ganache by default)',
   run: async toolbox => {
     // Obtain tools
     let { filesystem, print } = toolbox
@@ -130,7 +131,7 @@ module.exports = {
         skipWaitForEthereum,
         skipWaitForIpfs,
         skipWaitForPostgres,
-	timeout,
+        timeout,
       })
     } catch (e) {
       await stopTestEnvironment(tempdir)
@@ -454,7 +455,7 @@ const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChun
     },
   )
 
-const waitForGraphNode = async ( timeout ) =>
+const waitForGraphNode = async timeout =>
   await withSpinner(
     `Wait for Graph node`,
     `Failed to wait for Graph node`,

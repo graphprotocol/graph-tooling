@@ -18,7 +18,4 @@ const getSubgraphBasename = name => {
   return segments[segments.length - 1]
 }
 
-module.exports = {
-  validateSubgraphName,
-  getSubgraphBasename,
-}
+export { validateSubgraphName, getSubgraphBasename }

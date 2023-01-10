@@ -1,7 +1,7 @@
-const chokidar = require('chokidar')
-const path = require('path')
+import chokidar from 'chokidar'
+import path from 'path'
 
-module.exports = class Watcher {
+export default class Watcher {
   constructor(options) {
     const { onReady, onTrigger, onCollectFiles, onError } = options
     this.onReady = onReady
@@ -55,7 +55,7 @@ module.exports = class Watcher {
               files.push(path.resolve(path.join(dirname, filename)))
               return files
             }, files),
-          []
+          [],
         )
 
         let diff = (xs, ys) => ({

@@ -1,4 +1,4 @@
-const codegen = require('.')
+import * as codegen from '.'
 
 describe('ethereum.Value -> AssemblyScript', () => {
   // Scalar values
@@ -268,7 +268,9 @@ describe('ethereum.Value -> AssemblyScript', () => {
       expect(codegen.ascTypeForEthereum(`bytes${i}[][]`)).toBe('Array<Array<Bytes>>')
       expect(codegen.ascTypeForEthereum(`bytes${i}[6][]`)).toBe('Array<Array<Bytes>>')
       expect(codegen.ascTypeForEthereum(`bytes${i}[][7]`)).toBe('Array<Array<Bytes>>')
-      expect(codegen.ascTypeForEthereum(`bytes${i}[432][234]`)).toBe('Array<Array<Bytes>>')
+      expect(codegen.ascTypeForEthereum(`bytes${i}[432][234]`)).toBe(
+        'Array<Array<Bytes>>',
+      )
     }
   })
 
@@ -331,7 +333,9 @@ describe('ethereum.Value -> AssemblyScript', () => {
       expect(codegen.ascTypeForEthereum(`int${i}[][]`)).toBe('Array<Array<BigInt>>')
       expect(codegen.ascTypeForEthereum(`int${i}[7][]`)).toBe('Array<Array<BigInt>>')
       expect(codegen.ascTypeForEthereum(`int${i}[][7]`)).toBe('Array<Array<BigInt>>')
-      expect(codegen.ascTypeForEthereum(`int${i}[6833][3386]`)).toBe('Array<Array<BigInt>>')
+      expect(codegen.ascTypeForEthereum(`int${i}[6833][3386]`)).toBe(
+        'Array<Array<BigInt>>',
+      )
 
       expect(codegen.ethereumToAsc('x', `uint${i}[][]`)).toBe('x.toBigIntMatrix()')
       expect(codegen.ethereumToAsc('x', `uint${i}[23][]`)).toBe('x.toBigIntMatrix()')
@@ -341,7 +345,9 @@ describe('ethereum.Value -> AssemblyScript', () => {
       expect(codegen.ascTypeForEthereum(`uint${i}[][]`)).toBe('Array<Array<BigInt>>')
       expect(codegen.ascTypeForEthereum(`uint${i}[23][]`)).toBe('Array<Array<BigInt>>')
       expect(codegen.ascTypeForEthereum(`uint${i}[][32]`)).toBe('Array<Array<BigInt>>')
-      expect(codegen.ascTypeForEthereum(`uint${i}[467][764]`)).toBe('Array<Array<BigInt>>')
+      expect(codegen.ascTypeForEthereum(`uint${i}[467][764]`)).toBe(
+        'Array<Array<BigInt>>',
+      )
     }
   })
 

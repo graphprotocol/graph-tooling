@@ -1,6 +1,6 @@
-const { abiEvents } = require('../../../scaffold/schema')
-const { strings } = require('gluegun')
-const ABI = require('../abi')
+import { abiEvents } from '../../../scaffold/schema'
+import { strings } from 'gluegun'
+import ABI from '../abi'
 
 const source = ({ contract, contractName }) => `
       address: '${contract}'
@@ -27,7 +27,4 @@ const mapping = ({ abi, contractName }) => `
           .join('')}
       file: ./src/${strings.kebabCase(contractName)}.ts`
 
-module.exports = {
-  source,
-  mapping,
-}
+export { source, mapping }

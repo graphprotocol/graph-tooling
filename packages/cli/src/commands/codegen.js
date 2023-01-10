@@ -1,14 +1,14 @@
-const chalk = require('chalk')
-const path = require('path')
-
-const TypeGenerator = require('../type-generator')
-const Protocol = require('../protocols')
-const { fixParameters } = require('../command-helpers/gluegun')
-const DataSourcesExtractor = require('../command-helpers/data-sources')
-const {
+import chalk from 'chalk'
+import path from 'path'
+import TypeGenerator from '../type-generator'
+import Protocol from '../protocols'
+import { fixParameters } from '../command-helpers/gluegun'
+import * as DataSourcesExtractor from '../command-helpers/data-sources'
+import debug from '../debug'
+import {
   assertManifestApiVersion,
   assertGraphTsVersion,
-} = require('../command-helpers/version')
+} from '../command-helpers/version'
 
 const HELP = `
 ${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
@@ -21,9 +21,9 @@ Options:
   -uc, --uncrashable-config <path>  Directory for uncrashable config (default: ./uncrashable-config.yaml)
   `
 
-let codegenDebug = require('../debug')('graph-cli:codegen')
+let codegenDebug = debug('graph-cli:codegen')
 
-module.exports = {
+export default {
   description: 'Generates AssemblyScript types for a subgraph',
   run: async toolbox => {
     // Obtain tools
@@ -49,7 +49,7 @@ module.exports = {
     outputDir = outputDir || o
     watch = watch || w
     uncrashable = uncrashable || u
-    uncrashable_config = uncrashableConfig || uc
+    let uncrashable_config = uncrashableConfig || uc
 
     let manifest
     try {

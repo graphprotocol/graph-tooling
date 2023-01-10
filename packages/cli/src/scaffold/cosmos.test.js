@@ -1,6 +1,6 @@
-const immutable = require('immutable')
-const Scaffold = require('./')
-const Protocol = require('../protocols')
+import immutable from 'immutable'
+import Scaffold from './'
+import Protocol from '../protocols'
 
 const protocol = new Protocol('cosmos')
 

@@ -1,5 +1,5 @@
-const immutable = require('immutable')
-const { loadManifest } = require('../migrations/util/load-manifest')
+import immutable from 'immutable'
+import { loadManifest } from '../migrations/util/load-manifest'
 
 // Loads manifest from file path and returns all:
 // - data sources
@@ -16,11 +16,11 @@ const extractDataSourceByType = (manifest, dataSourceType, protocol) =>
     .get(dataSourceType, immutable.List())
     .reduce(
       (dataSources, dataSource, dataSourceIndex) =>
-      protocol.isValidKindName(dataSource.get('kind'))
-      ? dataSources.push(
-        immutable.Map({ path: [dataSourceType, dataSourceIndex], dataSource }),
-      )
-      : dataSources,
+        protocol.isValidKindName(dataSource.get('kind'))
+          ? dataSources.push(
+              immutable.Map({ path: [dataSourceType, dataSourceIndex], dataSource }),
+            )
+          : dataSources,
       immutable.List(),
     )
 
@@ -32,7 +32,4 @@ const fromManifest = (manifest, protocol) => {
   return dataSources.concat(templates)
 }
 
-module.exports = {
-  fromFilePath,
-  fromManifest,
-}
+export { fromFilePath, fromManifest }

@@ -1,13 +1,13 @@
-const { withSpinner, step } = require('./command-helpers/spinner')
+import { withSpinner, step } from './command-helpers/spinner'
 
 const MIGRATIONS = [
-  require('./migrations/mapping_api_version_0_0_1'),
-  require('./migrations/mapping_api_version_0_0_2'),
-  require('./migrations/mapping_api_version_0_0_3'),
-  require('./migrations/mapping_api_version_0_0_4'),
-  require('./migrations/mapping_api_version_0_0_5'),
-  require('./migrations/spec_version_0_0_2'),
-  require('./migrations/spec_version_0_0_3'),
+  import('./migrations/mapping_api_version_0_0_1'),
+  import('./migrations/mapping_api_version_0_0_2'),
+  import('./migrations/mapping_api_version_0_0_3'),
+  import('./migrations/mapping_api_version_0_0_4'),
+  import('./migrations/mapping_api_version_0_0_5'),
+  import('./migrations/spec_version_0_0_2'),
+  import('./migrations/spec_version_0_0_3'),
 ]
 
 const applyMigrations = async options =>
@@ -16,9 +16,9 @@ const applyMigrations = async options =>
     `Failed to apply migrations`,
     `Warnings while applying migraitons`,
     async spinner => {
-      await MIGRATIONS.reduce(async (previousPromise, migration) => {
+      await MIGRATIONS.reduce(async (previousPromise, migrationImport) => {
         await previousPromise
-
+        const { default: migration } = await migrationImport
         let skipHint = await migration.predicate(options)
         if (typeof skipHint !== 'string' && skipHint) {
           step(spinner, 'Apply migration:', migration.name)
@@ -34,6 +34,4 @@ const applyMigrations = async options =>
     },
   )
 
-module.exports = {
-  applyMigrations,
-}
+export { applyMigrations }

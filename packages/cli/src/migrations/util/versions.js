@@ -1,6 +1,6 @@
-const path = require('path')
-const fs = require('fs-extra')
-const yaml = require('js-yaml')
+import path from 'path'
+import fs from 'fs-extra'
+import yaml from 'js-yaml'
 
 const getGraphTsVersion = async sourceDir => {
   let graphTsPath
@@ -26,15 +26,10 @@ const getGraphTsVersion = async sourceDir => {
     }
   }
 
-  let pkgJsonFile = path.join(
-    graphTsPath,
-    'package.json',
-  )
+  let pkgJsonFile = path.join(graphTsPath, 'package.json')
   let data = await fs.readFile(pkgJsonFile)
   let jsonData = JSON.parse(data)
   return jsonData.version
 }
 
-module.exports = {
-  getGraphTsVersion,
-}
+export { getGraphTsVersion }

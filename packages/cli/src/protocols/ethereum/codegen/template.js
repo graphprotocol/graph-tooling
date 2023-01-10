@@ -1,14 +1,12 @@
-const tsCodegen = require('../../../codegen/typescript')
+import * as tsCodegen from '../../../codegen/typescript'
 
-module.exports = class EthereumTemplateCodeGen {
+export default class EthereumTemplateCodeGen {
   constructor(template) {
     this.template = template
   }
 
   generateModuleImports() {
-    return [
-      'Address',
-    ]
+    return ['Address']
   }
 
   generateCreateMethod() {

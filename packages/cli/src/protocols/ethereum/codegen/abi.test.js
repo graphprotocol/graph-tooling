@@ -1,10 +1,10 @@
-const fs = require('fs-extra')
-const path = require('path')
-const immutable = require('immutable')
+import fs from 'fs-extra'
+import path from 'path'
+import immutable from 'immutable'
 
-const ABI = require('../abi')
-const ts = require('../../../codegen/typescript')
-const AbiCodeGenerator = require('./abi')
+import ABI from '../abi'
+import * as ts from '../../../codegen/typescript'
+import AbiCodeGenerator from './abi'
 
 let tempdir
 let abi

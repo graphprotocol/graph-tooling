@@ -1,19 +1,19 @@
-const chalk = require('chalk')
-const crypto = require('crypto')
-const fs = require('fs-extra')
-const immutable = require('immutable')
-const path = require('path')
-const yaml = require('js-yaml')
-const toolbox = require('gluegun/toolbox')
+import chalk from 'chalk'
+import crypto from 'crypto'
+import fs from 'fs-extra'
+import immutable from 'immutable'
+import path from 'path'
+import yaml from 'js-yaml'
+import * as toolbox from 'gluegun/toolbox'
+import { step, withSpinner } from '../command-helpers/spinner'
+import Subgraph from '../subgraph'
+import Watcher from '../watcher'
+import { applyMigrations } from '../migrations'
+import * as asc from './asc'
+import SubstreamsSubgraph from '../protocols/substreams/subgraph'
+import debug from '../debug'
 
-const { step, withSpinner } = require('../command-helpers/spinner')
-const Subgraph = require('../subgraph')
-const Watcher = require('../watcher')
-const { applyMigrations } = require('../migrations')
-const asc = require('./asc')
-const SubstreamsSubgraph = require('../protocols/substreams/subgraph')
-
-let compilerDebug = require('../debug')('graph-cli:compiler')
+let compilerDebug = debug('graph-cli:compiler')
 
 class Compiler {
   constructor(options) {
@@ -59,7 +59,7 @@ class Compiler {
     this.protocol = this.options.protocol
     this.ABI = this.protocol.getABI()
 
-    process.on('uncaughtException', function(e) {
+    process.on('uncaughtException', function (e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }
@@ -681,4 +681,4 @@ class Compiler {
   }
 }
 
-module.exports = Compiler
+export default Compiler

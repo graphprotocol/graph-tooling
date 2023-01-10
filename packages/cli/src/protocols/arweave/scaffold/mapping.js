@@ -48,6 +48,4 @@ const generatePlaceholderHandlers = () =>
   }
 `
 
-module.exports = {
-  generatePlaceholderHandlers,
-}
+export { generatePlaceholderHandlers }

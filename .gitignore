@@ -70,3 +70,9 @@ examples/example-subgraph/node_modules
 
 # Ignore Mac DS_Store files
 .DS_Store
+
+# TSC build outputs
+dist
+
+# Generated
+**/tests/**/generated

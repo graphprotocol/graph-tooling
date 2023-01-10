@@ -1,6 +1,6 @@
-const immutable = require('immutable')
+import immutable from 'immutable'
 
-module.exports = class ArweaveSubgraph {
+export default class ArweaveSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
@@ -12,9 +12,6 @@ module.exports = class ArweaveSubgraph {
   }
 
   handlerTypes() {
-    return immutable.List([
-      'blockHandlers',
-      'transactionHandlers',
-    ])
+    return immutable.List(['blockHandlers', 'transactionHandlers'])
   }
 }

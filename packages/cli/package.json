@@ -3,7 +3,12 @@
   "version": "0.37.2",
   "license": "(Apache-2.0 OR MIT)",
   "description": "CLI for building for and deploying to The Graph",
+  "main": "dist/cli.js",
+  "bin": {
+    "graph": "dist/bin.js"
+  },
   "dependencies": {
+    "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
     "chalk": "3.0.0",
@@ -11,7 +16,6 @@
     "debug": "4.3.1",
     "docker-compose": "0.23.4",
     "dockerode": "2.5.8",
-    "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
     "fs-extra": "9.0.0",
     "glob": "7.1.6",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
@@ -31,20 +35,20 @@
     "which": "2.0.2",
     "yaml": "1.9.2"
   },
-  "bin": {
-    "graph": "bin/graph"
-  },
   "devDependencies": {
-    "eslint": "6.8.0",
+    "copyfiles": "^2.4.1",
     "jest": "26.0.0",
     "spawn-command": "0.0.2-1",
     "strip-ansi": "6.0.0",
-    "tern": "0.24.3"
+    "tern": "0.24.3",
+    "typescript": "^4.9.4"
   },
   "scripts": {
     "test": "jest --verbose",
     "test:init": "jest tests/cli/init.test.js --verbose",
-    "test:validation": "jest tests/cli/validation.test.js --verbose"
+    "test:validation": "jest tests/cli/validation.test.js --verbose",
+    "type-check": "tsc --noEmit",
+    "build": "tsc --build && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js"
   },
   "publishConfig": {
     "access": "public"

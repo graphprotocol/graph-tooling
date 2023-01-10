@@ -1,5 +1,5 @@
 const URL = require('url').URL
-const { print } = require('gluegun/toolbox')
+import { print } from 'gluegun/toolbox'
 
 const SUBGRAPH_STUDIO_URL = 'https://api.studio.thegraph.com/deploy/'
 const HOSTED_SERVICE_URL = 'https://api.thegraph.com/deploy/'
@@ -8,7 +8,7 @@ const validateNodeUrl = node => new URL(node)
 
 const normalizeNodeUrl = node => new URL(node).toString()
 
-function chooseNodeUrl ({ product, studio, node, allowSimpleName }) {
+function chooseNodeUrl({ product, studio, node, allowSimpleName }) {
   if (node) {
     try {
       validateNodeUrl(node)
@@ -35,8 +35,4 @@ function chooseNodeUrl ({ product, studio, node, allowSimpleName }) {
   return { node, allowSimpleName }
 }
 
-module.exports = {
-  validateNodeUrl,
-  normalizeNodeUrl,
-  chooseNodeUrl
-}
+export { validateNodeUrl, normalizeNodeUrl, chooseNodeUrl }

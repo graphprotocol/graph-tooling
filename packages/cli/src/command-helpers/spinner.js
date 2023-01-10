@@ -1,6 +1,6 @@
-const chalk = require('chalk')
-const immutable = require('immutable')
-const toolbox = require('gluegun/toolbox')
+import chalk from 'chalk'
+import immutable from 'immutable'
+import * as toolbox from 'gluegun/toolbox'
 
 const step = (spinner, subject, text) => {
   if (text) {
@@ -56,7 +56,4 @@ const withSpinner = async (text, errorText, warningText, f) => {
   }
 }
 
-module.exports = {
-  step,
-  withSpinner,
-}
+export { step, withSpinner }

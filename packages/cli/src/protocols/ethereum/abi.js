@@ -1,8 +1,8 @@
-const fs = require('fs-extra')
-const immutable = require('immutable')
-const path = require('path')
+import fs from 'fs-extra'
+import immutable from 'immutable'
+import path from 'path'
 
-const AbiCodeGenerator = require('./codegen/abi')
+import AbiCodeGenerator from './codegen/abi'
 
 const TUPLE_ARRAY_PATTERN = /^tuple\[([0-9]*)\]$/
 const TUPLE_MATRIX_PATTERN = /^tuple\[([0-9]*)\]\[([0-9]*)\]$/
@@ -40,7 +40,7 @@ const buildSignatureParameter = input => {
   }
 }
 
-module.exports = class ABI {
+export default class ABI {
   constructor(name, file, data) {
     this.name = name
     this.file = file
@@ -78,14 +78,8 @@ module.exports = class ABI {
    * - Multiple inputs and outputs: `example(uint256,(string,bytes32)):(bool,uint256)`
    */
   functionSignature(fn) {
-    let inputs = fn
-      .get('inputs', [])
-      .map(buildSignatureParameter)
-      .join(',')
-    let outputs = fn
-      .get('outputs', [])
-      .map(buildSignatureParameter)
-      .join(',')
+    let inputs = fn.get('inputs', []).map(buildSignatureParameter).join(',')
+    let outputs = fn.get('outputs', []).map(buildSignatureParameter).join(',')
     return `${fn.get('name')}(${inputs})${outputs.length > 0 ? `:(${outputs})` : ''}`
   }
 

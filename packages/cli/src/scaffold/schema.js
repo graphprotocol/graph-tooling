@@ -1,5 +1,5 @@
-const { ascTypeForProtocol, valueTypeForAsc } = require('../codegen/types')
-const util = require('../codegen/util')
+import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types'
+import * as util from '../codegen/util'
 
 const abiEvents = abi =>
   util.disambiguateNames({
@@ -41,7 +41,7 @@ const generateEventType = (event, protocolName) => `type ${
             acc.concat(generateEventFields({ input, index, protocolName })),
           [],
         )
-        .join('\n')}  
+        .join('\n')}
       blockNumber: BigInt!
       blockTimestamp: BigInt!
       transactionHash: Bytes!
@@ -70,7 +70,7 @@ const generateExampleEntityType = (protocol, events) => {
   }
 }
 
-module.exports = {
+export {
   abiEvents,
   protocolTypeToGraphQL,
   generateField,

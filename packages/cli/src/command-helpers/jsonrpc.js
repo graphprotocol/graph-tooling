@@ -1,5 +1,5 @@
-const jayson = require('jayson')
-const toolbox = require('gluegun/toolbox')
+import jayson from 'jayson'
+import * as toolbox from 'gluegun/toolbox'
 
 const createJsonRpcClient = url => {
   let params = {
@@ -19,15 +19,13 @@ const createJsonRpcClient = url => {
     return jayson.Client.http(params)
   } else {
     toolbox.print.error(
-      `Unsupported protocol: ${url.protocol.substring(0, url.protocol.length - 1)}`
+      `Unsupported protocol: ${url.protocol.substring(0, url.protocol.length - 1)}`,
     )
     toolbox.print.error(
-      'The Graph Node URL must be of the following format: http(s)://host[:port]/[path]'
+      'The Graph Node URL must be of the following format: http(s)://host[:port]/[path]',
     )
     return null
   }
 }
 
-module.exports = {
-  createJsonRpcClient,
-}
+export { createJsonRpcClient }

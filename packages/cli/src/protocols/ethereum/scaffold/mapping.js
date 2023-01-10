@@ -1,4 +1,4 @@
-const { generateEventFieldAssignments } = require('../../../scaffold/mapping')
+import { generateEventFieldAssignments } from '../../../scaffold/mapping'
 
 const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
   `
@@ -29,9 +29,7 @@ const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
       entity.count = entity.count + BigInt.fromI32(1)
 
       // Entity fields can be set based on event parameters
-      ${generateEventFieldAssignments(event)
-        .slice(0, 2)
-        .join('\n')}
+      ${generateEventFieldAssignments(event).slice(0, 2).join('\n')}
 
       // Entities can be written to the store with \`.save()\`
       entity.save()
@@ -52,10 +50,7 @@ const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
       // state variables and other data:
       //
       // ${
-        abi
-          .codeGenerator()
-          .callableFunctions()
-          .isEmpty()
+        abi.codeGenerator().callableFunctions().isEmpty()
           ? 'None'
           : abi
               .codeGenerator()
@@ -71,6 +66,4 @@ export function handle${event._alias}(event: ${event._alias}): void {}
     )
     .join('\n')}`
 
-module.exports = {
-  generatePlaceholderHandlers,
-}
+export { generatePlaceholderHandlers }

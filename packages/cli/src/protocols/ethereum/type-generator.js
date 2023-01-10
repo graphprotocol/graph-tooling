@@ -1,13 +1,13 @@
-const fs = require('fs-extra')
-const path = require('path')
-const immutable = require('immutable')
-const prettier = require('prettier')
-const ABI = require('./abi')
-const { step, withSpinner } = require('../../command-helpers/spinner')
-const { GENERATED_FILE_NOTE } = require('../../codegen/typescript')
-const { displayPath } = require('../../command-helpers/fs')
+import fs from 'fs-extra'
+import path from 'path'
+import immutable from 'immutable'
+import prettier from 'prettier'
+import ABI from './abi'
+import { step, withSpinner } from '../../command-helpers/spinner'
+import { GENERATED_FILE_NOTE } from '../../codegen/typescript'
+import { displayPath } from '../../command-helpers/fs'
 
-module.exports = class EthereumTypeGenerator {
+export default class EthereumTypeGenerator {
   constructor(options = {}) {
     this.sourceDir = options.sourceDir
     this.outputDir = options.outputDir
@@ -24,20 +24,20 @@ module.exports = class EthereumTypeGenerator {
             .get('dataSources')
             .reduce(
               (abis, dataSource) =>
-              dataSource
-              .getIn(['mapping', 'abis'])
-              .reduce(
-                (abis, abi) =>
-                abis.push(
-                  this._loadABI(
-                    dataSource,
-                    abi.get('name'),
-                    abi.get('file'),
-                    spinner,
+                dataSource
+                  .getIn(['mapping', 'abis'])
+                  .reduce(
+                    (abis, abi) =>
+                      abis.push(
+                        this._loadABI(
+                          dataSource,
+                          abi.get('name'),
+                          abi.get('file'),
+                          spinner,
+                        ),
+                      ),
+                    abis,
                   ),
-                ),
-                abis,
-              ),
               immutable.List(),
             )
         } catch (e) {
@@ -89,11 +89,7 @@ module.exports = class EthereumTypeGenerator {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
-        step(
-          spinner,
-          `Load data source template ABI from`,
-          displayPath(absolutePath),
-        )
+        step(spinner, `Load data source template ABI from`, displayPath(absolutePath))
         return { template, abi: ABI.load(name, absolutePath) }
       } else {
         return { template, abi: ABI.load(name, maybeRelativePath) }
@@ -170,9 +166,7 @@ module.exports = class EthereumTypeGenerator {
       step(
         spinner,
         `Generate types for data source template ABI:`,
-        `${abi.template.get('name')} > ${abi.abi.name} (${displayPath(
-          abi.abi.file,
-        )})`,
+        `${abi.template.get('name')} > ${abi.abi.name} (${displayPath(abi.abi.file)})`,
       )
 
       let codeGenerator = abi.abi.codeGenerator()
