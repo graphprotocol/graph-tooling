@@ -74,7 +74,7 @@ export default class Compiler {
       this.globalsFile = path.join(globalsLib, globalsFile)
     }
 
-    // @ts-expect-error might be assigned, might not
+    // @ts-expect-error assigned or not, we dont care
     if (!this.globalsFile) {
       throw new Error('Globals file is missing.')
     }
@@ -696,7 +696,8 @@ export default class Compiler {
     let alreadyUploaded = uploadedFiles.has(uploadCacheKey)
 
     if (!alreadyUploaded) {
-      let content = Buffer.from(await fs.readFile(absoluteFile, { encoding: 'utf-8' }))
+      // @ts-expect-error Buffer.from with Buffer data can indeed accept utf-8
+      let content = Buffer.from(await fs.readFile(absoluteFile), 'utf-8')
       let hash = await this._uploadToIPFS({
         path: path.relative(this.options.outputDir, absoluteFile),
         content: content,
