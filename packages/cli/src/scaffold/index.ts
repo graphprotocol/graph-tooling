@@ -19,7 +19,7 @@ export interface ScaffoldOptions {
   protocol: Protocol
   abi?: ABI
   indexEvents?: boolean
-  contract: string
+  contract?: string
   network: string
   contractName: string
   subgraphName?: string
@@ -30,7 +30,7 @@ export default class Scaffold {
   protocol: Protocol
   abi?: ABI
   indexEvents?: boolean
-  contract: string
+  contract?: string
   network: string
   contractName: string
   subgraphName?: string

@@ -1,36 +1,36 @@
-import immutable from 'immutable'
-import Scaffold from './'
+import Scaffold from './index'
 import Protocol from '../protocols'
 
-const protocol = new Protocol('cosmos')
+const protocol = new Protocol('near')
 
 const scaffoldOptions = {
   protocol,
-  network: 'cosmoshub-4',
-  contractName: 'CosmosHub',
+  contract: 'abc.def.near',
+  network: 'near-mainnet',
+  contractName: 'Contract',
 }
 
 const scaffold = new Scaffold(scaffoldOptions)
 
-describe('Cosmos subgraph scaffolding', () => {
+describe('NEAR subgraph scaffolding', () => {
   test('Manifest', () => {
     expect(scaffold.generateManifest()).toEqual(`\
 specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: cosmos
-    name: CosmosHub
-    network: cosmoshub-4
+  - kind: near
+    name: Contract
+    network: near-mainnet
     source:
-      startBlock: 0
+      account: "abc.def.near"
     mapping:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - ExampleEntity
-      blockHandlers:
-        - handler: handleBlock
+      receiptHandlers:
+        - handler: handleReceipt
       file: ./src/contract.ts
 `)
   })
@@ -47,18 +47,20 @@ type ExampleEntity @entity {
 
   test('Mapping (default)', () => {
     expect(scaffold.generateMapping()).toEqual(`\
-import { cosmos, BigInt } from "@graphprotocol/graph-ts"
+import { near, BigInt } from "@graphprotocol/graph-ts"
 import { ExampleEntity } from "../generated/schema"
 
-export function handleBlock(block: cosmos.Block): void {
+export function handleReceipt(
+  receiptWithOutcome: near.ReceiptWithOutcome
+): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(block.header.hash.toHex())
+  let entity = ExampleEntity.load(receiptWithOutcome.receipt.id.toHex())
 
   // Entities only exist after they have been saved to the store;
   // \`null\` checks allow to create entities on demand
   if (!entity) {
-    entity = new ExampleEntity(block.header.hash.toHex())
+    entity = new ExampleEntity(receiptWithOutcome.receipt.id.toHex())
 
     // Entity fields can be set using simple assignments
     entity.count = BigInt.fromI32(0)
@@ -68,7 +70,7 @@ export function handleBlock(block: cosmos.Block): void {
   entity.count = entity.count + BigInt.fromI32(1)
 
   // Entity fields can be set based on receipt information
-  entity.height = block.header.height
+  entity.block = receiptWithOutcome.block.header.hash
 
   // Entities can be written to the store with \`.save()\`
   entity.save()

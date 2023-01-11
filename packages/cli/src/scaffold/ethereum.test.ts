@@ -1,6 +1,6 @@
 import ABI from '../protocols/ethereum/abi'
 import immutable from 'immutable'
-import Scaffold from './'
+import Scaffold from './index'
 import Protocol from '../protocols'
 
 const TEST_EVENT = {
@@ -262,8 +262,8 @@ export function handleExampleEvent1(event: ExampleEvent1Event): void {
 
   test('Test Files (default)', () => {
     const files = scaffoldWithIndexEvents.generateTests()
-    const testFile = files['contract.test.ts']
-    const utilsFile = files['contract-utils.ts']
+    const testFile = files?.['contract.test.ts']
+    const utilsFile = files?.['contract-utils.ts']
     expect(testFile).toEqual(`\
 import {
   assert,
@@ -391,8 +391,8 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
 
   test('Test Files (for indexing events)', () => {
     const files = scaffoldWithIndexEvents.generateTests()
-    const testFile = files['contract.test.ts']
-    const utilsFile = files['contract-utils.ts']
+    const testFile = files?.['contract.test.ts']
+    const utilsFile = files?.['contract-utils.ts']
 
     expect(testFile).toEqual(`\
 import {
