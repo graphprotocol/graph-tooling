@@ -54,6 +54,7 @@ importers:
       '@float-capital/float-subgraph-uncrashable': ^0.0.0-alpha.4
       '@types/debug': ^4.1.7
       '@types/fs-extra': ^9.0.13
+      '@types/jest': ^26.0.24
       '@types/js-yaml': ^3.12.7
       '@types/which': ^2.0.1
       assemblyscript: 0.19.23
@@ -117,6 +118,7 @@ importers:
     devDependencies:
       '@types/debug': 4.1.7
       '@types/fs-extra': 9.0.13
+      '@types/jest': 26.0.24
       '@types/js-yaml': 3.12.7
       '@types/which': 2.0.1
       copyfiles: 2.4.1
@@ -2196,6 +2198,13 @@ packages:
     resolution: {integrity: sha512-c3mAZEuK0lvBp8tmuL74XRKn1+y2dcwOUpH7x4WrF6gk1GIgiluDRgMYQtw2OFcBvAJWlt6ASU3tSqxp0Uu0Aw==}
     dependencies:
       '@types/istanbul-lib-report': 3.0.0
+    dev: true
+
+  /@types/jest/26.0.24:
+    resolution: {integrity: sha512-E/X5Vib8BWqZNRlDxj9vYXhsDwPYbPINqKF9BsnSoon4RQ0D9moEuLD8txgyypFLH7J4+Lho9Nr/c8H0Fi+17w==}
+    dependencies:
+      jest-diff: 26.6.2
+      pretty-format: 26.6.2
     dev: true
 
   /@types/js-yaml/3.12.7:
