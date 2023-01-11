@@ -56,6 +56,7 @@ importers:
       '@types/fs-extra': ^9.0.13
       '@types/jest': ^26.0.24
       '@types/js-yaml': ^3.12.7
+      '@types/semver': ^7.3.13
       '@types/which': ^2.0.1
       assemblyscript: 0.19.23
       binary-install-raw: 0.0.13
@@ -120,6 +121,7 @@ importers:
       '@types/fs-extra': 9.0.13
       '@types/jest': 26.0.24
       '@types/js-yaml': 3.12.7
+      '@types/semver': 7.3.13
       '@types/which': 2.0.1
       copyfiles: 2.4.1
       jest: 26.0.0
@@ -2271,6 +2273,10 @@ packages:
 
   /@types/semver/6.2.3:
     resolution: {integrity: sha512-KQf+QAMWKMrtBMsB8/24w53tEsxllMj6TuA80TT/5igJalLI/zm0L3oXRbIAl4Ohfc85gyHX/jhMwsVkmhLU4A==}
+    dev: true
+
+  /@types/semver/7.3.13:
+    resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}
     dev: true
 
   /@types/stack-utils/2.0.1:

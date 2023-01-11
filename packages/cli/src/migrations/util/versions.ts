@@ -1,12 +1,11 @@
 import path from 'path'
 import fs from 'fs-extra'
-import yaml from 'js-yaml'
 
-const getGraphTsVersion = async sourceDir => {
-  let graphTsPath
+export async function getGraphTsVersion(sourceDir: string) {
+  let graphTsPath!: string
 
   for (
-    let dir = path.resolve(sourceDir);
+    let dir: string | undefined = path.resolve(sourceDir);
     // Terminate after the root dir or when we have found node_modules
     dir !== undefined;
     // Continue with the parent directory, terminate after the root dir
@@ -28,8 +27,6 @@ const getGraphTsVersion = async sourceDir => {
 
   let pkgJsonFile = path.join(graphTsPath, 'package.json')
   let data = await fs.readFile(pkgJsonFile)
-  let jsonData = JSON.parse(data)
+  let jsonData = JSON.parse(data.toString())
   return jsonData.version
 }
-
-export { getGraphTsVersion }

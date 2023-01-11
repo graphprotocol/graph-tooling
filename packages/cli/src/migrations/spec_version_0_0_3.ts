@@ -1,6 +1,4 @@
-import fs from 'fs-extra'
-import * as toolbox from 'gluegun/toolbox'
-import yaml from 'js-yaml'
+import * as toolbox from 'gluegun'
 import { loadManifest } from './util/load-manifest'
 
 // Spec version 0.0.4 uses feature management, but features are
@@ -11,7 +9,7 @@ import { loadManifest } from './util/load-manifest'
 // non-canonical.
 export default {
   name: 'Bump manifest specVersion from 0.0.2 to 0.0.4',
-  predicate: async ({ sourceDir, manifestFile }) => {
+  predicate: async ({ manifestFile }: { manifestFile: string }) => {
     let manifest = await loadManifest(manifestFile)
     return (
       manifest &&
@@ -20,7 +18,7 @@ export default {
       (manifest.specVersion === '0.0.2' || manifest.specVersion === '0.0.3')
     )
   },
-  apply: async ({ manifestFile }) => {
+  apply: async ({ manifestFile }: { manifestFile: string }) => {
     await toolbox.patching.patch(manifestFile, {
       insert: 'specVersion: 0.0.4',
       replace: new RegExp(`specVersion: ['"]?0.0.[23]['"]?`),

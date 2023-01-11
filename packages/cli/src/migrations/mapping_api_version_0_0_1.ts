@@ -1,12 +1,18 @@
 import semver from 'semver'
-import * as toolbox from 'gluegun/toolbox'
-import { loadManifest } from './util/load-manifest'
+import * as toolbox from 'gluegun'
 import { getGraphTsVersion } from './util/versions'
+import { loadManifest } from './util/load-manifest'
 
-// If any of the manifest apiVersions are 0.0.2, replace them with 0.0.3
+// If any of the manifest apiVersions are 0.0.1, replace them with 0.0.2
 export default {
-  name: 'Bump mapping apiVersion from 0.0.2 to 0.0.3',
-  predicate: async ({ sourceDir, manifestFile }) => {
+  name: 'Bump mapping apiVersion from 0.0.1 to 0.0.2',
+  predicate: async ({
+    sourceDir,
+    manifestFile,
+  }: {
+    sourceDir: string
+    manifestFile: string
+  }) => {
     // Obtain the graph-ts version, if possible
     let graphTsVersion
     try {
@@ -19,52 +25,55 @@ export default {
 
     let manifest = await loadManifest(manifestFile)
     return (
-      // Only migrate if the graph-ts version is > 0.12.0...
-      semver.gt(graphTsVersion, '0.12.0') &&
-      // ...and we have a manifest with mapping > apiVersion = 0.0.2
+      // Only migrate if the graph-ts version is > 0.5.1...
+      semver.gt(graphTsVersion, '0.5.1') &&
+      // ...and we have a manifest with mapping > apiVersion = 0.0.1
       manifest &&
       typeof manifest === 'object' &&
       Array.isArray(manifest.dataSources) &&
       (manifest.dataSources.reduce(
-        (hasOldMappings, dataSource) =>
+        (hasOldMappings: boolean, dataSource: any) =>
           hasOldMappings ||
           (typeof dataSource === 'object' &&
             dataSource.mapping &&
             typeof dataSource.mapping === 'object' &&
-            dataSource.mapping.apiVersion === '0.0.2'),
+            dataSource.mapping.apiVersion === '0.0.1'),
         false,
       ) ||
         (Array.isArray(manifest.templates) &&
           manifest.templates.reduce(
-            (hasOldMappings, template) =>
+            (hasOldMappings: boolean, template: any) =>
               hasOldMappings ||
               (typeof template === 'object' &&
                 template.mapping &&
                 typeof template.mapping === 'object' &&
-                template.mapping.apiVersion === '0.0.2'),
+                template.mapping.apiVersion === '0.0.1'),
             false,
           )))
     )
   },
-  apply: async ({ manifestFile }) => {
+  apply: async ({ manifestFile }: { manifestFile: string }) => {
     // Make sure we catch all variants; we could load the manifest
     // and replace the values in the data structures here; unfortunately
     // writing that back to the file messes with the formatting more than
     // we'd like; that's why for now, we use a simple patching approach
     await toolbox.patching.replace(
       manifestFile,
-      new RegExp('apiVersion: 0.0.2', 'g'),
-      'apiVersion: 0.0.3',
+      // @ts-expect-error toolbox patching seems to accept RegExp
+      new RegExp('apiVersion: 0.0.1', 'g'),
+      'apiVersion: 0.0.2',
     )
     await toolbox.patching.replace(
       manifestFile,
-      new RegExp("apiVersion: '0.0.2'", 'g'),
-      "apiVersion: '0.0.3'",
+      // @ts-expect-error toolbox patching seems to accept RegExp
+      new RegExp("apiVersion: '0.0.1'", 'g'),
+      "apiVersion: '0.0.2'",
     )
     await toolbox.patching.replace(
       manifestFile,
-      new RegExp('apiVersion: "0.0.2"', 'g'),
-      'apiVersion: "0.0.3"',
+      // @ts-expect-error toolbox patching seems to accept RegExp
+      new RegExp('apiVersion: "0.0.1"', 'g'),
+      'apiVersion: "0.0.2"',
     )
   },
 }
