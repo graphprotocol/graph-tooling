@@ -1,6 +1,7 @@
 import immutable from 'immutable'
+import Protocol from '../protocols'
 
-const validateContract = (value, ProtocolContract) => {
+export const validateContract = (value: any, ProtocolContract: any) => {
   const contract = new ProtocolContract(value)
 
   const { valid, error } = contract.validate()
@@ -15,15 +16,18 @@ const validateContract = (value, ProtocolContract) => {
   return { valid, error }
 }
 
-const validateContractValues = (manifest, protocol) => {
+export const validateContractValues = (
+  manifest: immutable.Map<any, any>,
+  protocol: Protocol,
+) => {
   const ProtocolContract = protocol.getContract()
 
   const fieldName = ProtocolContract.identifierName()
 
   return manifest
     .get('dataSources')
-    .filter(dataSource => protocol.isValidKindName(dataSource.get('kind')))
-    .reduce((errors, dataSource, dataSourceIndex) => {
+    .filter((dataSource: any) => protocol.isValidKindName(dataSource.get('kind')))
+    .reduce((errors: any[], dataSource: any, dataSourceIndex: number) => {
       let path = ['dataSources', dataSourceIndex, 'source', fieldName]
 
       // No need to validate if the source has no contract field
@@ -48,5 +52,3 @@ const validateContractValues = (manifest, protocol) => {
       }
     }, immutable.List())
 }
-
-export { validateContract, validateContractValues }

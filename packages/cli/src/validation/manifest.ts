@@ -10,13 +10,13 @@ const Map = immutable.Map
 /**
  * Returns a user-friendly type name for a value.
  */
-const typeName = value =>
+const typeName = (value: immutable.Collection<unknown, unknown>) =>
   List.isList(value) ? 'list' : Map.isMap(value) ? 'map' : typeof value
 
 /**
  * Converts an immutable or plain JavaScript value to a YAML string.
  */
-const toYAML = x =>
+const toYAML = (x: immutable.Collection<unknown, unknown>) =>
   yaml
     .safeDump(typeName(x) === 'list' || typeName(x) === 'map' ? x.toJS() : x, {
       indent: 2,
@@ -26,10 +26,10 @@ const toYAML = x =>
 /**
  * Looks up the type of a field in a GraphQL object type.
  */
-const getFieldType = (type, fieldName) => {
+const getFieldType = (type: immutable.Map<any, any>, fieldName: string) => {
   let fieldDef = type
     .get('fields')
-    .find(field => field.getIn(['name', 'value']) === fieldName)
+    .find((field: any) => field.getIn(['name', 'value']) === fieldName)
 
   return fieldDef !== undefined ? fieldDef.get('type') : undefined
 }
@@ -37,24 +37,29 @@ const getFieldType = (type, fieldName) => {
 /**
  * Resolves a type in the GraphQL schema.
  */
-const resolveType = (schema, type) =>
+const resolveType = (
+  schema: immutable.Map<any, any>,
+  type: immutable.Map<any, any>,
+): any =>
   type.has('type')
     ? resolveType(schema, type.get('type'))
     : type.get('kind') === 'NamedType'
     ? schema
         .get('definitions')
-        .find(def => def.getIn(['name', 'value']) === type.getIn(['name', 'value']))
+        .find(
+          (def: any) => def.getIn(['name', 'value']) === type.getIn(['name', 'value']),
+        )
     : 'resolveType: unimplemented'
 
 /**
  * A map of supported validators.
  */
 const validators = immutable.fromJS({
-  ScalarTypeDefinition: (value, ctx) =>
-    validators.get(ctx.getIn(['type', 'name', 'value']))(value, ctx),
+  ScalarTypeDefinition: (value: any, ctx: immutable.Map<any, any>) =>
+    (validators.get(ctx.getIn(['type', 'name', 'value'])) as any)(value, ctx),
 
-  UnionTypeDefinition: (value, ctx) => {
-    const unionVariants = ctx.getIn(['type', 'types'])
+  UnionTypeDefinition: (value: any, ctx: immutable.Map<any, any>) => {
+    const unionVariants = ctx.getIn(['type', 'types']) as any[]
 
     let errors = List()
 
@@ -68,16 +73,16 @@ const validators = immutable.fromJS({
     }
 
     // Return errors from variant that matched the most
-    return List(errors.minBy(variantErrors => variantErrors.count()))
+    return List(errors.minBy((variantErrors: any) => variantErrors.count()) as any)
   },
 
-  NamedType: (value, ctx) =>
+  NamedType: (value: any, ctx: immutable.Map<any, any>) =>
     validateValue(
       value,
       ctx.update('type', type => resolveType(ctx.get('schema'), type)),
     ),
 
-  NonNullType: (value, ctx) =>
+  NonNullType: (value: any, ctx: immutable.Map<any, any>) =>
     value !== null && value !== undefined
       ? validateValue(
           value,
@@ -90,7 +95,7 @@ const validators = immutable.fromJS({
           },
         ]),
 
-  ListType: (value, ctx) =>
+  ListType: (value: any, ctx: immutable.Map<any, any>) =>
     List.isList(value)
       ? value.reduce(
           (errors, value, i) =>
@@ -111,21 +116,21 @@ const validators = immutable.fromJS({
           },
         ]),
 
-  ObjectTypeDefinition: (value, ctx) => {
+  ObjectTypeDefinition: (value: any, ctx: any) => {
     return Map.isMap(value)
       ? ctx
           .getIn(['type', 'fields'])
-          .map(fieldDef => fieldDef.getIn(['name', 'value']))
+          .map((fieldDef: any) => fieldDef.getIn(['name', 'value']))
           .concat(value.keySeq())
           .toSet()
           .reduce(
-            (errors, key) =>
+            (errors: any[], key: string) =>
               getFieldType(ctx.get('type'), key)
                 ? errors.concat(
                     validateValue(
                       value.get(key),
                       ctx
-                        .update('path', path => path.push(key))
+                        .update('path', (path: string[]) => path.push(key))
                         .set('type', getFieldType(ctx.get('type'), key)),
                     ),
                   )
@@ -153,8 +158,8 @@ const validators = immutable.fromJS({
         ])
   },
 
-  EnumTypeDefinition: (value, ctx) => {
-    const enumValues = ctx.getIn(['type', 'values']).map(v => {
+  EnumTypeDefinition: (value: any, ctx: immutable.Map<any, any>) => {
+    const enumValues = (ctx.getIn(['type', 'values']) as any).map((v: any) => {
       return v.getIn(['name', 'value'])
     })
 
@@ -170,7 +175,7 @@ const validators = immutable.fromJS({
         ])
   },
 
-  String: (value, ctx) =>
+  String: (value: any, ctx: immutable.Map<any, any>) =>
     typeof value === 'string'
       ? List()
       : immutable.fromJS([
@@ -180,7 +185,7 @@ const validators = immutable.fromJS({
           },
         ]),
 
-  BigInt: (value, ctx) =>
+  BigInt: (value: any, ctx: immutable.Map<any, any>) =>
     typeof value === 'number'
       ? List()
       : immutable.fromJS([
@@ -190,7 +195,7 @@ const validators = immutable.fromJS({
           },
         ]),
 
-  File: (value, ctx) =>
+  File: (value: any, ctx: immutable.Map<any, any>) =>
     typeof value === 'string'
       ? require('fs').existsSync(ctx.get('resolveFile')(value))
         ? List()
@@ -207,7 +212,7 @@ const validators = immutable.fromJS({
           },
         ]),
 
-  Boolean: (value, ctx) =>
+  Boolean: (value: any, ctx: immutable.Map<any, any>) =>
     typeof value === 'boolean'
       ? List()
       : immutable.fromJS([
@@ -220,9 +225,9 @@ const validators = immutable.fromJS({
         ]),
 })
 
-const validateValue = (value, ctx) => {
+const validateValue = (value: any, ctx: immutable.Collection<any, any>) => {
   let kind = ctx.getIn(['type', 'kind'])
-  let validator = validators.get(kind)
+  let validator = validators.get(kind) as any
 
   if (validator !== undefined) {
     // If the type is nullable, accept undefined and null; if the nullable
@@ -261,18 +266,20 @@ const validateValue = (value, ctx) => {
 //     'near-mainnet': ['contract3'],
 //   },
 // }
-const dataSourceListToMap = dataSources =>
+const dataSourceListToMap = (dataSources: any[]) =>
   dataSources.reduce(
     (protocolKinds, dataSource) =>
-      protocolKinds.update(Protocol.normalizeName(dataSource.kind), networks =>
-        (networks || immutable.OrderedMap()).update(dataSource.network, dataSourceNames =>
-          (dataSourceNames || immutable.OrderedSet()).add(dataSource.name),
+      protocolKinds.update(Protocol.normalizeName(dataSource.kind), (networks: any) =>
+        (networks || immutable.OrderedMap()).update(
+          dataSource.network,
+          (dataSourceNames: any) =>
+            (dataSourceNames || immutable.OrderedSet()).add(dataSource.name),
         ),
       ),
     immutable.OrderedMap(),
   )
 
-const validateDataSourceProtocolAndNetworks = value => {
+const validateDataSourceProtocolAndNetworks = (value: any) => {
   const dataSources = [...value.dataSources, ...(value.templates || [])]
 
   const protocolNetworkMap = dataSourceListToMap(dataSources)
@@ -284,7 +291,7 @@ const validateDataSourceProtocolAndNetworks = value => {
         message: `Conflicting protocol kinds used in data sources and templates:
 ${protocolNetworkMap
   .map(
-    (dataSourceNames, protocolKind) =>
+    (dataSourceNames: any, protocolKind: string | undefined) =>
       `  ${
         protocolKind === undefined
           ? 'Data sources and templates having no protocol kind set'
@@ -292,7 +299,7 @@ ${protocolNetworkMap
       }:\n${dataSourceNames
         .valueSeq()
         .flatten()
-        .map(ds => `    - ${ds}`)
+        .map((ds: string) => `    - ${ds}`)
         .join('\n')}`,
   )
   .join('\n')}
@@ -310,12 +317,12 @@ Recommendation: Make all data sources and templates use the same protocol kind.`
         message: `Conflicting networks used in data sources and templates:
 ${networks
   .map(
-    (dataSources, network) =>
+    (dataSources: any, network: string | undefined) =>
       `  ${
         network === undefined
           ? 'Data sources and templates having no network set'
           : `Data sources and templates using '${network}'`
-      }:\n${dataSources.map(ds => `    - ${ds}`).join('\n')}`,
+      }:\n${dataSources.map((ds: string) => `    - ${ds}`).join('\n')}`,
   )
   .join('\n')}
 Recommendation: Make all data sources and templates use the same network name.`,
@@ -326,7 +333,13 @@ Recommendation: Make all data sources and templates use the same network name.`,
   return List()
 }
 
-const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
+export const validateManifest = (
+  value: any,
+  type: any,
+  schema: any,
+  protocol: Protocol,
+  { resolveFile }: { resolveFile: (path: string) => string },
+) => {
   // Validate manifest using the GraphQL schema that defines its structure
   let errors =
     value !== null && value !== undefined
@@ -358,5 +371,3 @@ const validateManifest = (value, type, schema, protocol, { resolveFile }) => {
   // (this includes _no_ network/protocol at all)
   return validateDataSourceProtocolAndNetworks(value)
 }
-
-export { validateManifest }
