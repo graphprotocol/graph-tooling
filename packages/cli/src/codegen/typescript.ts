@@ -1,5 +1,5 @@
 class Param {
-  constructor(public name: string, public type: NamedType) {
+  constructor(public name: string, public type: NamedType | NullableType) {
     this.name = name
     this.type = type
   }
@@ -142,7 +142,7 @@ class NamedType {
 class ArrayType {
   public name: string
 
-  constructor(public inner: string) {
+  constructor(public inner: NamedType) {
     this.inner = inner
     this.name = `Array<${inner.toString()}>`
   }
@@ -176,7 +176,7 @@ class ModuleImports {
 }
 
 const namedType = (name: string) => new NamedType(name)
-const arrayType = (name: string) => new ArrayType(name)
+const arrayType = (name: NamedType) => new ArrayType(name)
 const param = (name: string, type: NamedType) => new Param(name, type)
 const method = (
   name: string,

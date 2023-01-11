@@ -1,8 +1,9 @@
 import prettier from 'prettier'
 import * as graphql from 'graphql/language'
 import immutable from 'immutable'
+import Schema from '../schema'
 import SchemaCodeGenerator from './schema'
-const {
+import {
   Class,
   Method,
   StaticMethod,
@@ -10,16 +11,15 @@ const {
   NamedType,
   NullableType,
   ArrayType,
-} = require('./typescript')
+} from './typescript'
 
-const formatTS = code => prettier.format(code, { parser: 'typescript', semi: false })
+const formatTS = (code: string) =>
+  prettier.format(code, { parser: 'typescript', semi: false })
 
-const createSchemaCodeGen = schema =>
-  new SchemaCodeGenerator({
-    ast: immutable.fromJS(graphql.parse(schema)),
-  })
+const createSchemaCodeGen = (schema: string) =>
+  new SchemaCodeGenerator(new Schema('', schema, immutable.fromJS(graphql.parse(schema))))
 
-const testEntity = (generatedTypes, expectedEntity) => {
+const testEntity = (generatedTypes: any[], expectedEntity: any) => {
   const entity = generatedTypes.find(type => type.name === expectedEntity.name)
 
   expect(entity instanceof Class).toBe(true)
@@ -31,7 +31,7 @@ const testEntity = (generatedTypes, expectedEntity) => {
   expect(members).toStrictEqual(expectedEntity.members)
 
   for (const expectedMethod of expectedEntity.methods) {
-    const method = methods.find(method => method.name === expectedMethod.name)
+    const method = methods.find((method: any) => method.name === expectedMethod.name)
 
     expectedMethod.static
       ? expect(method instanceof StaticMethod).toBe(true)
@@ -92,7 +92,7 @@ describe('Schema code generator', () => {
     const generatedTypes = codegen.generateTypes()
 
     test('Foo is NOT an entity', () => {
-      const foo = generatedTypes.find(type => type.name === 'Foo')
+      const foo = generatedTypes.find((type: any) => type.name === 'Foo')
       expect(foo).toBe(undefined)
       // Account and Wallet
       expect(generatedTypes.size).toBe(2)

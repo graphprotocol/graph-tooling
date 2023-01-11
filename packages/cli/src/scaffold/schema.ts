@@ -1,13 +1,18 @@
+import immutable from 'immutable'
 import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types'
 import * as util from '../codegen/util'
 import Protocol from '../protocols'
 
-export const abiEvents = (abi: any) =>
-  util.disambiguateNames({
-    values: abi.data.filter((item: any) => item.get('type') === 'event'),
-    getName: (event: any) => event.get('name'),
-    setName: (event: any, name: string) => event.set('_alias', name),
-  })
+export function abiEvents(abi: { data: immutable.Map<any, any> }) {
+  return (util.disambiguateNames({
+    // @ts-expect-error improve typings of disambiguateNames to handle iterables
+    values: abi.data.filter(item => item.get('type') === 'event'),
+    // @ts-expect-error improve typings of disambiguateNames to handle iterables
+    getName: event => event.get('name'),
+    // @ts-expect-error improve typings of disambiguateNames to handle iterables
+    setName: (event, name) => event.set('_alias', name),
+  }) as unknown) as immutable.List<any>
+}
 
 export const protocolTypeToGraphQL = (protocol: string, name: string) => {
   let ascType = ascTypeForProtocol(protocol, name)

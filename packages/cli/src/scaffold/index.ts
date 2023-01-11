@@ -98,7 +98,7 @@ dataSources:
 
   generateSchema() {
     const hasEvents = this.protocol.hasEvents()
-    const events = hasEvents ? abiEvents(this.abi).toJS() : []
+    const events = hasEvents ? abiEvents(this.abi!).toJS() : []
 
     return prettier.format(
       hasEvents && this.indexEvents
@@ -130,7 +130,7 @@ dataSources:
 
   generateMapping() {
     const hasEvents = this.protocol.hasEvents()
-    const events = hasEvents ? abiEvents(this.abi).toJS() : []
+    const events = hasEvents ? abiEvents(this.abi!).toJS() : []
     const protocolMapping = this.protocol.getMappingScaffold()
 
     return prettier.format(
@@ -156,7 +156,7 @@ dataSources:
 
   generateTests() {
     const hasEvents = this.protocol.hasEvents()
-    const events = hasEvents ? abiEvents(this.abi).toJS() : []
+    const events = hasEvents ? abiEvents(this.abi!).toJS() : []
 
     return events.length > 0
       ? generateTestsFiles(this.contractName, events, this.indexEvents)
