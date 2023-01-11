@@ -1,5 +1,5 @@
 class Param {
-  constructor(public name: string, public type: string) {
+  constructor(public name: string, public type: NamedType) {
     this.name = name
     this.type = type
   }
@@ -12,8 +12,8 @@ class Param {
 class Method {
   constructor(
     public name: string,
-    public params: string[],
-    public returnType: string,
+    public params: Param[],
+    public returnType: NamedType | undefined,
     public body: string,
   ) {
     this.name = name
@@ -35,8 +35,8 @@ class Method {
 class StaticMethod {
   constructor(
     public name: string,
-    public params: string[],
-    public returnType: string,
+    public params: Param[],
+    public returnType: NamedType | NullableType,
     public body: string,
   ) {
     this.name = name
@@ -153,7 +153,7 @@ class ArrayType {
 }
 
 class NullableType {
-  constructor(public inner: string) {
+  constructor(public inner: NamedType | ArrayType) {
     this.inner = inner
   }
 
@@ -177,14 +177,22 @@ class ModuleImports {
 
 const namedType = (name: string) => new NamedType(name)
 const arrayType = (name: string) => new ArrayType(name)
-const param = (name: string, type: string) => new Param(name, type)
-const method = (name: string, params: string[], returnType: string, body: string) =>
-  new Method(name, params, returnType, body)
-const staticMethod = (name: string, params: string[], returnType: string, body: string) =>
-  new StaticMethod(name, params, returnType, body)
+const param = (name: string, type: NamedType) => new Param(name, type)
+const method = (
+  name: string,
+  params: Param[],
+  returnType: NamedType | undefined,
+  body: string,
+) => new Method(name, params, returnType, body)
+const staticMethod = (
+  name: string,
+  params: Param[],
+  returnType: NamedType | NullableType,
+  body: string,
+) => new StaticMethod(name, params, returnType, body)
 const klass = (name: string, options: ClassOptions) => new Class(name, options)
 const klassMember = (name: string, type: string) => new ClassMember(name, type)
-const nullableType = (type: string) => new NullableType(type)
+const nullableType = (type: NamedType | ArrayType) => new NullableType(type)
 const moduleImports = (nameOrNames: string | string[], module: string) =>
   new ModuleImports(nameOrNames, module)
 

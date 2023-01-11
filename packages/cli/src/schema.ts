@@ -7,7 +7,7 @@ export default class Schema {
   constructor(
     public filename: string,
     public document: string,
-    public ast: immutable.Collection<unknown, unknown>,
+    public ast: immutable.Collection<any, any>,
   ) {
     this.filename = filename
     this.document = document

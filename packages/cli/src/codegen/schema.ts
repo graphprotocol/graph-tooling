@@ -1,15 +1,15 @@
 import immutable from 'immutable'
-
 import * as tsCodegen from './typescript'
 import * as typesCodegen from './types'
-
-const List = immutable.List
+import Schema from '../schema'
 
 class IdField {
   static BYTES = Symbol('Bytes')
   static STRING = Symbol('String')
 
-  constructor(idField) {
+  private kind: typeof IdField.BYTES | typeof IdField.STRING
+
+  constructor(idField: immutable.Map<any, any>) {
     const typeName = idField.getIn(['type', 'type', 'name', 'value'])
     this.kind = typeName === 'Bytes' ? IdField.BYTES : IdField.STRING
   }
@@ -42,18 +42,18 @@ class IdField {
     return this.kind == IdField.BYTES ? 'id.toHexString()' : 'id'
   }
 
-  static fromFields(fields) {
+  static fromFields(fields: immutable.List<any>) {
     const idField = fields.find(field => field.getIn(['name', 'value']) === 'id')
     return new IdField(idField)
   }
 
-  static fromTypeDef(def) {
+  static fromTypeDef(def: immutable.Map<any, any>) {
     return IdField.fromFields(def.get('fields'))
   }
 }
 
 export default class SchemaCodeGenerator {
-  constructor(schema) {
+  constructor(private schema: Schema) {
     this.schema = schema
   }
 
@@ -83,25 +83,26 @@ export default class SchemaCodeGenerator {
   generateTypes() {
     return this.schema.ast
       .get('definitions')
-      .filter(def => this._isEntityTypeDefinition(def))
-      .map(def => this._generateEntityType(def))
+      .filter((def: any) => this._isEntityTypeDefinition(def))
+      .map((def: any) => this._generateEntityType(def))
   }
 
-  _isEntityTypeDefinition(def) {
+  _isEntityTypeDefinition(def: immutable.Map<any, any>) {
     return (
       def.get('kind') === 'ObjectTypeDefinition' &&
       def
         .get('directives')
-        .find(directive => directive.getIn(['name', 'value']) === 'entity') !== undefined
+        .find((directive: any) => directive.getIn(['name', 'value']) === 'entity') !==
+        undefined
     )
   }
 
-  _isInterfaceDefinition(def) {
+  _isInterfaceDefinition(def: immutable.Map<any, any>) {
     return def.get('kind') === 'InterfaceTypeDefinition'
   }
 
-  _generateEntityType(def) {
-    let name = def.getIn(['name', 'value'])
+  _generateEntityType(def: immutable.Map<any, any>) {
+    let name = def.getIn(['name', 'value']) as string
     let klass = tsCodegen.klass(name, { export: true, extends: 'Entity' })
     const fields = def.get('fields')
     const idField = IdField.fromFields(fields)
@@ -116,15 +117,16 @@ export default class SchemaCodeGenerator {
     def
       .get('fields')
       .reduce(
-        (methods, field) => methods.concat(this._generateEntityFieldMethods(def, field)),
-        List(),
+        (methods: any, field: any) =>
+          methods.concat(this._generateEntityFieldMethods(def, field)),
+        immutable.List(),
       )
-      .forEach(method => klass.addMethod(method))
+      .forEach((method: any) => klass.addMethod(method))
 
     return klass
   }
 
-  _generateConstructor(entityName, fields) {
+  _generateConstructor(_entityName: string, fields: immutable.List<any>) {
     const idField = IdField.fromFields(fields)
     return tsCodegen.method(
       'constructor',
@@ -137,8 +139,8 @@ export default class SchemaCodeGenerator {
     )
   }
 
-  _generateStoreMethods(entityName, idField) {
-    return List.of(
+  _generateStoreMethods(entityName: any, idField: any) {
+    return immutable.List.of<tsCodegen.Method | tsCodegen.StaticMethod>(
       tsCodegen.method(
         'save',
         [],
@@ -165,14 +167,14 @@ export default class SchemaCodeGenerator {
     )
   }
 
-  _generateEntityFieldMethods(entityDef, fieldDef) {
-    return List([
+  _generateEntityFieldMethods(entityDef: any, fieldDef: immutable.Map<any, any>) {
+    return immutable.List([
       this._generateEntityFieldGetter(entityDef, fieldDef),
       this._generateEntityFieldSetter(entityDef, fieldDef),
     ])
   }
 
-  _generateEntityFieldGetter(entityDef, fieldDef) {
+  _generateEntityFieldGetter(_entityDef: any, fieldDef: immutable.Map<any, any>) {
     let name = fieldDef.getIn(['name', 'value'])
     let gqlType = fieldDef.get('type')
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
@@ -197,7 +199,7 @@ export default class SchemaCodeGenerator {
     )
   }
 
-  _generateEntityFieldSetter(entityDef, fieldDef) {
+  _generateEntityFieldSetter(_entityDef: any, fieldDef: immutable.Map<any, any>) {
     let name = fieldDef.getIn(['name', 'value'])
     let gqlType = fieldDef.get('type')
     let fieldValueType = this._valueTypeFromGraphQl(gqlType)
@@ -237,7 +239,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     )
   }
 
-  _resolveFieldType(gqlType) {
+  _resolveFieldType(gqlType: immutable.Map<any, any>) {
     let typeName = gqlType.getIn(['name', 'value'])
 
     // If this is a reference to another type, the field has the type of
@@ -245,14 +247,14 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     const typeDef = this.schema.ast
       .get('definitions')
       .find(
-        def =>
+        (def: any) =>
           (this._isEntityTypeDefinition(def) || this._isInterfaceDefinition(def)) &&
           def.getIn(['name', 'value']) === typeName,
       )
     if (typeDef) {
       return IdField.fromTypeDef(typeDef).typeName()
     } else {
-      return typeName
+      return typeName as string
     }
   }
 
@@ -260,9 +262,9 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
    * types, that's the type from the subgraph schema. For references to
    * other entity types, this is the same as the type of the id of the
    * referred type, i.e., `string` or `Bytes`*/
-  _valueTypeFromGraphQl(gqlType) {
+  _valueTypeFromGraphQl(gqlType: immutable.Map<any, any>): any {
     if (gqlType.get('kind') === 'NonNullType') {
-      return this._valueTypeFromGraphQl(gqlType.get('type'), false)
+      return this._valueTypeFromGraphQl(gqlType.get('type'))
     } else if (gqlType.get('kind') === 'ListType') {
       return '[' + this._valueTypeFromGraphQl(gqlType.get('type')) + ']'
     } else {
@@ -272,7 +274,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
 
   /** Determine the base type of `gqlType` by removing any non-null
    * constraints and using the type of elements of lists */
-  _baseType(gqlType) {
+  _baseType(gqlType: immutable.Map<any, any>): any {
     if (gqlType.get('kind') === 'NonNullType') {
       return this._baseType(gqlType.get('type'))
     } else if (gqlType.get('kind') === 'ListType') {
@@ -282,7 +284,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     }
   }
 
-  _typeFromGraphQl(gqlType, nullable = true) {
+  _typeFromGraphQl(gqlType: immutable.Map<any, any>, nullable = true): any {
     if (gqlType.get('kind') === 'NonNullType') {
       return this._typeFromGraphQl(gqlType.get('type'), false)
     } else if (gqlType.get('kind') === 'ListType') {
@@ -291,7 +293,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     } else {
       // NamedType
       let type = tsCodegen.namedType(
-        typesCodegen.ascTypeForValue(this._resolveFieldType(gqlType)),
+        typesCodegen.ascTypeForValue(this._resolveFieldType(gqlType)) as any,
       )
       // In AssemblyScript, primitives cannot be nullable.
       return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type
