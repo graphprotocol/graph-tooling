@@ -3,33 +3,51 @@ import immutable from 'immutable'
 import path from 'path'
 import prettier from 'prettier'
 import * as graphql from 'graphql/language'
-import chalk from 'chalk'
-import * as toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun'
 
 import Schema from './schema'
 import Subgraph from './subgraph'
 import DataSourceTemplateCodeGenerator from './codegen/template'
 import Watcher from './watcher'
-import { step, withSpinner } from './command-helpers/spinner'
+import { Spinner, step, withSpinner } from './command-helpers/spinner'
 import { applyMigrations } from './migrations'
 import { GENERATED_FILE_NOTE } from './codegen/typescript'
 import { displayPath } from './command-helpers/fs'
+import Protocol from './protocols'
+
+// @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js'
 
+interface TypeGeneratorOptions {
+  sourceDir?: string
+  subgraphManifest: string
+  subgraph?: string
+  protocol: Protocol
+  outputDir: string
+  skipMigrations?: boolean
+  uncrashable: any
+  uncrashableConfig: boolean
+}
+
 export default class TypeGenerator {
-  constructor(options) {
-    this.options = options || {}
+  private sourceDir: string
+  private options: TypeGeneratorOptions
+  private protocol: Protocol
+  private protocolTypeGenerator: any
+
+  constructor(options: TypeGeneratorOptions) {
+    this.options = options
     this.sourceDir =
       this.options.sourceDir ||
       (this.options.subgraphManifest && path.dirname(this.options.subgraphManifest))
 
     this.protocol = this.options.protocol
-    this.protocolTypeGenerator = this.protocol.getTypeGenerator({
+    this.protocolTypeGenerator = this.protocol?.getTypeGenerator?.({
       sourceDir: this.sourceDir,
       outputDir: this.options.outputDir,
     })
 
-    process.on('uncaughtException', function (e) {
+    process.on('uncaughtException', function(e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }
@@ -77,7 +95,7 @@ export default class TypeGenerator {
     }
   }
 
-  async generateUncrashableEntities(graphSchema) {
+  async generateUncrashableEntities(graphSchema: any) {
     let ast = graphql.parse(graphSchema.document)
     let entityDefinitions = ast['definitions']
     return await withSpinner(
@@ -102,7 +120,7 @@ export default class TypeGenerator {
     if (quiet) {
       return this.options.subgraph
         ? this.options.subgraph
-        : Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions).result
+        : (await Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)).result
     } else {
       const manifestPath = displayPath(this.options.subgraphManifest)
 
@@ -110,7 +128,7 @@ export default class TypeGenerator {
         `Load subgraph from ${manifestPath}`,
         `Failed to load subgraph from ${manifestPath}`,
         `Warnings while loading subgraph from ${manifestPath}`,
-        async spinner => {
+        async _spinner => {
           return this.options.subgraph
             ? this.options.subgraph
             : Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)
@@ -119,22 +137,21 @@ export default class TypeGenerator {
     }
   }
 
-  async loadSchema(subgraph) {
-    let maybeRelativePath = subgraph.getIn(['schema', 'file'])
+  async loadSchema(subgraph: immutable.Map<any, any>) {
+    let maybeRelativePath = subgraph.getIn(['schema', 'file']) as string
     let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
     return await withSpinner(
       `Load GraphQL schema from ${displayPath(absolutePath)}`,
       `Failed to load GraphQL schema from ${displayPath(absolutePath)}`,
       `Warnings while loading GraphQL schema from ${displayPath(absolutePath)}`,
-      async spinner => {
-        let maybeRelativePath = subgraph.getIn(['schema', 'file'])
+      async _spinner => {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
         return Schema.load(absolutePath)
       },
     )
   }
 
-  async generateTypesForSchema(schema) {
+  async generateTypesForSchema(schema: any) {
     return await withSpinner(
       `Generate types for GraphQL schema`,
       `Failed to generate types for GraphQL schema`,
@@ -161,7 +178,7 @@ export default class TypeGenerator {
     )
   }
 
-  async generateTypesForDataSourceTemplates(subgraph) {
+  async generateTypesForDataSourceTemplates(subgraph: immutable.Map<any, any>) {
     return await withSpinner(
       `Generate types for data source templates`,
       `Failed to generate types for data source templates`,
@@ -170,7 +187,7 @@ export default class TypeGenerator {
         // Combine the generated code for all templates
         let codeSegments = subgraph
           .get('templates', immutable.List())
-          .reduce((codeSegments, template) => {
+          .reduce((codeSegments: any, template: any) => {
             step(
               spinner,
               'Generate types for data source template',
@@ -217,8 +234,8 @@ export default class TypeGenerator {
       files.push(subgraph.getIn(['schema', 'file']))
 
       // Add all file paths specified in manifest
-      subgraph.get('dataSources').map(dataSource => {
-        dataSource.getIn(['mapping', 'abis']).map(abi => {
+      subgraph.get('dataSources').map((dataSource: any) => {
+        dataSource.getIn(['mapping', 'abis']).map((abi: any) => {
           files.push(abi.get('file'))
         })
       })
@@ -232,7 +249,7 @@ export default class TypeGenerator {
 
   async watchAndGenerateTypes() {
     let generator = this
-    let spinner
+    let spinner: Spinner
 
     // Create watcher and generate types once and then on every change to a watched file
     let watcher = new Watcher({

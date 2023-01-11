@@ -205,9 +205,9 @@ export default class Protocol {
   }
 }
 
-type ProtocolName = 'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams'
+export type ProtocolName = 'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams'
 
-interface ProtocolConfig {
+export interface ProtocolConfig {
   displayName: string
   abi?: any
   contract?: any
