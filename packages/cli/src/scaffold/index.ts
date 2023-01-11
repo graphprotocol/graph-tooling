@@ -1,5 +1,4 @@
 import prettier from 'prettier'
-const pkginfo = require('pkginfo')(module)
 import { strings } from 'gluegun'
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
@@ -12,10 +11,32 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
 import { abiEvents, generateEventType, generateExampleEntityType } from './schema'
 import { generateEventIndexingHandlers } from './mapping'
 import { generateTestsFiles } from './tests'
+import Protocol from '../protocols'
 import { getSubgraphBasename } from '../command-helpers/subgraph'
+import ABI from '../protocols/ethereum/abi'
+
+export interface ScaffoldOptions {
+  protocol: Protocol
+  abi?: ABI
+  indexEvents?: boolean
+  contract: string
+  network: string
+  contractName: string
+  subgraphName?: string
+  node?: string
+}
 
 export default class Scaffold {
-  constructor(options = {}) {
+  protocol: Protocol
+  abi?: ABI
+  indexEvents?: boolean
+  contract: string
+  network: string
+  contractName: string
+  subgraphName?: string
+  node?: string
+
+  constructor(options: ScaffoldOptions) {
     this.protocol = options.protocol
     this.abi = options.abi
     this.indexEvents = options.indexEvents
@@ -29,7 +50,7 @@ export default class Scaffold {
   generatePackageJson() {
     return prettier.format(
       JSON.stringify({
-        name: getSubgraphBasename(this.subgraphName),
+        name: getSubgraphBasename(String(this.subgraphName)),
         license: 'UNLICENSED',
         scripts: {
           codegen: 'graph codegen',
@@ -81,7 +102,9 @@ dataSources:
 
     return prettier.format(
       hasEvents && this.indexEvents
-        ? events.map(event => generateEventType(event, this.protocol.name)).join('\n\n')
+        ? events
+            .map((event: any) => generateEventType(event, this.protocol.name))
+            .join('\n\n')
         : generateExampleEntityType(this.protocol, events),
       {
         parser: 'graphql',
@@ -124,7 +147,7 @@ dataSources:
   generateABIs() {
     return this.protocol.hasABIs()
       ? {
-          [`${this.contractName}.json`]: prettier.format(JSON.stringify(this.abi.data), {
+          [`${this.contractName}.json`]: prettier.format(JSON.stringify(this.abi?.data), {
             parser: 'json',
           }),
         }

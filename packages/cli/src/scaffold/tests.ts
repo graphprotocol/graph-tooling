@@ -14,7 +14,7 @@ const VARIABLES_VALUES = {
 export const generateTestsFiles = (
   contract: any,
   events: any[],
-  indexEvents: boolean,
+  indexEvents?: boolean,
 ) => {
   const eventsTypes = events
     .flatMap(event =>
@@ -89,7 +89,7 @@ const assignValue = (type: string): string | number | boolean => {
 const generateFieldsAssertions = (
   entity: string,
   eventInputs: any[],
-  indexEvents: boolean,
+  indexEvents?: boolean,
 ) =>
   eventInputs
     .filter(input => input.name != 'id')
@@ -129,8 +129,8 @@ const fetchArrayInnerType = (type: string) => type.match(/Array<(.*?)>/)
 const generateExampleTest = (
   contract: string,
   event: any,
-  indexEvents: boolean,
-  importTypes: string,
+  indexEvents?: boolean,
+  importTypes?: string,
 ) => {
   const entity = indexEvents ? `${event._alias}` : 'ExampleEntity'
   const eventInputs = event.inputs
