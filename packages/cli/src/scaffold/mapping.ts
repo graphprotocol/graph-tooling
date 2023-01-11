@@ -1,24 +1,29 @@
-import path from 'path'
-
 import * as util from '../codegen/util'
 
-const generateFieldAssignment = path =>
+export const generateFieldAssignment = (path: string[]) =>
   `entity.${path.join('_')} = event.params.${path.join('.')}`
 
-const generateFieldAssignments = ({ index, input }) =>
+export const generateFieldAssignments = ({
+  index,
+  input,
+}: {
+  index: number
+  input: any
+}) =>
   input.type === 'tuple'
     ? util
         .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
-        .map(({ path }) => generateFieldAssignment(path))
+        .map(({ path }: any) => generateFieldAssignment(path))
     : generateFieldAssignment([input.name || `param${index}`])
 
-const generateEventFieldAssignments = event =>
+export const generateEventFieldAssignments = (event: any) =>
   event.inputs.reduce(
-    (acc, input, index) => acc.concat(generateFieldAssignments({ input, index })),
+    (acc: any[], input: any, index: number) =>
+      acc.concat(generateFieldAssignments({ input, index })),
     [],
   )
 
-const generateEventIndexingHandlers = (events, contractName) =>
+export const generateEventIndexingHandlers = (events: any[], contractName: string) =>
   `
   import { ${events.map(
     event => `${event._alias} as ${event._alias}Event`,
@@ -45,10 +50,3 @@ const generateEventIndexingHandlers = (events, contractName) =>
     )
     .join('\n')}
 `
-
-export {
-  generateFieldAssignment,
-  generateFieldAssignments,
-  generateEventFieldAssignments,
-  generateEventIndexingHandlers,
-}

@@ -1,26 +1,42 @@
 import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types'
 import * as util from '../codegen/util'
+import Protocol from '../protocols'
 
-const abiEvents = abi =>
+export const abiEvents = (abi: any) =>
   util.disambiguateNames({
-    values: abi.data.filter(item => item.get('type') === 'event'),
-    getName: event => event.get('name'),
-    setName: (event, name) => event.set('_alias', name),
+    values: abi.data.filter((item: any) => item.get('type') === 'event'),
+    getName: (event: any) => event.get('name'),
+    setName: (event: any, name: string) => event.set('_alias', name),
   })
 
-const protocolTypeToGraphQL = (protocol, name) => {
+export const protocolTypeToGraphQL = (protocol: string, name: string) => {
   let ascType = ascTypeForProtocol(protocol, name)
   return valueTypeForAsc(ascType)
 }
 
-const generateField = ({ name, type, protocolName }) =>
-  `${name}: ${protocolTypeToGraphQL(protocolName, type)}! # ${type}`
+export const generateField = ({
+  name,
+  type,
+  protocolName,
+}: {
+  name: string
+  type: string
+  protocolName: string
+}) => `${name}: ${protocolTypeToGraphQL(protocolName, type)}! # ${type}`
 
-const generateEventFields = ({ index, input, protocolName }) =>
+export const generateEventFields = ({
+  index,
+  input,
+  protocolName,
+}: {
+  index: number
+  input: any
+  protocolName: string
+}) =>
   input.type == 'tuple'
     ? util
         .unrollTuple({ value: input, path: [input.name || `param${index}`], index })
-        .map(({ path, type }) =>
+        .map(({ path, type }: any) =>
           generateField({ name: path.join('_'), type, protocolName }),
         )
     : [
@@ -31,13 +47,13 @@ const generateEventFields = ({ index, input, protocolName }) =>
         }),
       ]
 
-const generateEventType = (event, protocolName) => `type ${
+export const generateEventType = (event: any, protocolName: string) => `type ${
   event._alias
 } @entity(immutable: true) {
       id: Bytes!
       ${event.inputs
         .reduce(
-          (acc, input, index) =>
+          (acc: any[], input: any, index: number) =>
             acc.concat(generateEventFields({ input, index, protocolName })),
           [],
         )
@@ -47,14 +63,14 @@ const generateEventType = (event, protocolName) => `type ${
       transactionHash: Bytes!
     }`
 
-const generateExampleEntityType = (protocol, events) => {
+export const generateExampleEntityType = (protocol: Protocol, events: any[]) => {
   if (protocol.hasABIs() && events.length > 0) {
     return `type ExampleEntity @entity {
   id: Bytes!
   count: BigInt!
   ${events[0].inputs
     .reduce(
-      (acc, input, index) =>
+      (acc: any[], input: any, index: number) =>
         acc.concat(generateEventFields({ input, index, protocolName: protocol.name })),
       [],
     )
@@ -68,13 +84,4 @@ const generateExampleEntityType = (protocol, events) => {
   count: BigInt!
 }`
   }
-}
-
-export {
-  abiEvents,
-  protocolTypeToGraphQL,
-  generateField,
-  generateEventFields,
-  generateEventType,
-  generateExampleEntityType,
 }

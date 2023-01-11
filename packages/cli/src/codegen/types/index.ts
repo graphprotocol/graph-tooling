@@ -80,7 +80,7 @@ const findConversionToType = (
 
 // High-level type system API
 
-export const ascTypeForProtocol = (protocol: any, protocolType: string) =>
+export const ascTypeForProtocol = (protocol: string, protocolType: string) =>
   findConversionFromType(protocol, 'AssemblyScript', protocolType).getIn([
     'to',
     'type',
