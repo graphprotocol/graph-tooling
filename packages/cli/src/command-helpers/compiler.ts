@@ -1,13 +1,32 @@
 const URL = require('url').URL
 import ipfsHttpClient from 'ipfs-http-client'
-import * as toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun'
 import Compiler from '../compiler'
+import Protocol from '../protocols'
+
+interface CreateCompilerOptions {
+  ipfs: any
+  headers: any
+  outputDir: string
+  outputFormat: string
+  skipMigrations: boolean
+  blockIpfsMethods: boolean
+  protocol: Protocol
+}
 
 // Helper function to construct a subgraph compiler
-const createCompiler = (
-  manifest,
-  { ipfs, headers, outputDir, outputFormat, skipMigrations, blockIpfsMethods, protocol },
-) => {
+export function createCompiler(
+  manifest: string,
+  {
+    ipfs,
+    headers,
+    outputDir,
+    outputFormat,
+    skipMigrations,
+    blockIpfsMethods,
+    protocol,
+  }: CreateCompilerOptions,
+) {
   // Parse the IPFS URL
   let url
   try {
@@ -39,5 +58,3 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`)
     protocol,
   })
 }
-
-export { createCompiler }
