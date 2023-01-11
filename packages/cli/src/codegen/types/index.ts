@@ -4,17 +4,21 @@ import TYPE_CONVERSIONS from './conversions'
 
 // Conversion utilities
 
-const conversionsForTypeSystems = (fromTypeSystem, toTypeSystem) => {
+const conversionsForTypeSystems = (fromTypeSystem: string, toTypeSystem: string) => {
   let conversions = TYPE_CONVERSIONS.getIn([fromTypeSystem, toTypeSystem])
-  if (conversions === undefined) {
+  if (conversions == undefined) {
     throw new Error(
       `Conversions from '${fromTypeSystem}' to '${toTypeSystem}' are not supported`,
     )
   }
-  return conversions
+  return conversions as immutable.Collection<any, any>
 }
 
-const objectifyConversion = (fromTypeSystem, toTypeSystem, conversion) => {
+const objectifyConversion = (
+  fromTypeSystem: string,
+  toTypeSystem: string,
+  conversion: immutable.Collection<any, any>,
+) => {
   return immutable.fromJS({
     from: {
       typeSystem: fromTypeSystem,
@@ -28,13 +32,17 @@ const objectifyConversion = (fromTypeSystem, toTypeSystem, conversion) => {
   })
 }
 
-const findConversionFromType = (fromTypeSystem, toTypeSystem, fromType) => {
+const findConversionFromType = (
+  fromTypeSystem: string,
+  toTypeSystem: string,
+  fromType: string,
+): immutable.Collection<any, any> => {
   let conversions = conversionsForTypeSystems(fromTypeSystem, toTypeSystem)
 
   let conversion = conversions.find(conversion =>
     typeof conversion.get(0) === 'string'
       ? conversion.get(0) === fromType
-      : fromType.match(conversion.get(0)),
+      : Boolean(fromType.match(conversion.get(0))),
   )
 
   if (conversion === undefined) {
@@ -47,13 +55,17 @@ const findConversionFromType = (fromTypeSystem, toTypeSystem, fromType) => {
   return objectifyConversion(fromTypeSystem, toTypeSystem, conversion)
 }
 
-const findConversionToType = (fromTypeSystem, toTypeSystem, toType) => {
+const findConversionToType = (
+  fromTypeSystem: string,
+  toTypeSystem: string,
+  toType: string,
+): immutable.Collection<any, any> => {
   let conversions = conversionsForTypeSystems(fromTypeSystem, toTypeSystem)
 
   let conversion = conversions.find(conversion =>
     typeof conversion.get(1) === 'string'
       ? conversion.get(1) === toType
-      : toType.match(conversion.get(1)),
+      : Boolean(toType.match(conversion.get(1))),
   )
 
   if (conversion === undefined) {
@@ -68,47 +80,43 @@ const findConversionToType = (fromTypeSystem, toTypeSystem, toType) => {
 
 // High-level type system API
 
-const ascTypeForProtocol = (protocol, protocolType) =>
-  findConversionFromType(protocol, 'AssemblyScript', protocolType).getIn(['to', 'type'])
+export const ascTypeForProtocol = (protocol: any, protocolType: string) =>
+  findConversionFromType(protocol, 'AssemblyScript', protocolType).getIn([
+    'to',
+    'type',
+  ]) as string
 
 // TODO: this can be removed/replaced by the function above
-const ascTypeForEthereum = ethereumType => ascTypeForProtocol('ethereum', ethereumType)
+export const ascTypeForEthereum = (ethereumType: string) =>
+  ascTypeForProtocol('ethereum', ethereumType)
 
-const ethereumTypeForAsc = ascType =>
-  findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn(['to', 'type'])
+export const ethereumTypeForAsc = (ascType: string) =>
+  findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn([
+    'to',
+    'type',
+  ]) as string
 
-const ethereumToAsc = (code, ethereumType, internalType) =>
+export const ethereumToAsc = (
+  code: string,
+  ethereumType: string,
+  internalType?: string,
+) =>
   findConversionFromType('ethereum', 'AssemblyScript', ethereumType).get('convert')(
     code,
     internalType,
   )
 
-const ethereumFromAsc = (code, ethereumType) =>
+export const ethereumFromAsc = (code: string, ethereumType: string) =>
   findConversionToType('AssemblyScript', 'ethereum', ethereumType).get('convert')(code)
 
-const ascTypeForValue = valueType =>
+export const ascTypeForValue = (valueType: string) =>
   findConversionFromType('Value', 'AssemblyScript', valueType).getIn(['to', 'type'])
 
-const valueTypeForAsc = ascType =>
+export const valueTypeForAsc = (ascType: string) =>
   findConversionFromType('AssemblyScript', 'Value', ascType).getIn(['to', 'type'])
 
-const valueToAsc = (code, valueType) =>
+export const valueToAsc = (code: string, valueType: string) =>
   findConversionFromType('Value', 'AssemblyScript', valueType).get('convert')(code)
 
-const valueFromAsc = (code, valueType) =>
+export const valueFromAsc = (code: string, valueType: string) =>
   findConversionToType('AssemblyScript', 'Value', valueType).get('convert')(code)
-
-export {
-  // protocol <-> AssemblyScript
-  ascTypeForProtocol,
-  // ethereum <-> AssemblyScript
-  ascTypeForEthereum,
-  ethereumTypeForAsc,
-  ethereumToAsc,
-  ethereumFromAsc,
-  // Value <-> AssemblyScript
-  ascTypeForValue,
-  valueTypeForAsc,
-  valueToAsc,
-  valueFromAsc,
-}

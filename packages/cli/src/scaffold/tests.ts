@@ -11,14 +11,14 @@ const VARIABLES_VALUES = {
   bool: true,
 }
 
-const generateTestsFiles = (contract, events, indexEvents) => {
+export const generateTestsFiles = (contract: any, events: any[], indexEvents: number) => {
   const eventsTypes = events
     .flatMap(event =>
-      event.inputs.map(input => {
+      event.inputs.map((input: any) => {
         // If the asc type is Array<T> we need to check if T is a native type or a custom graph-ts type
         // If we don't do that we may miss a type that should be imported from graph-ts
         const ascType = ascTypeForEthereum(input.type)
-        const inner = fetchArrayInnerType(ascType)
+        const inner = fetchArrayInnerType(String(ascType))
         return inner ? inner[1] : ascType
       }),
     )
@@ -44,17 +44,17 @@ const generateTestsFiles = (contract, events, indexEvents) => {
   let displayName = "Example string value"
   let imageUrl = "Example string value"
 */
-const generateArguments = eventInputs => {
+const generateArguments = (eventInputs: any[]) => {
   return eventInputs
     .map((input, index) => {
       let ascType = ascTypeForEthereum(input.type)
-      return `let ${input.name || `param${index}`} = ${assignValue(ascType, input.name)}`
+      return `let ${input.name || `param${index}`} = ${assignValue(ascType)}`
     })
     .join('\n')
 }
 
 // Generates the value that will be assigned to a variable in generateArguments()
-const assignValue = type => {
+const assignValue = (type: string): string | number | boolean => {
   switch (type) {
     case 'string':
       return `"${VARIABLES_VALUES[type]}"`
@@ -65,10 +65,10 @@ const assignValue = type => {
     case 'Bytes':
       return `Bytes.fromI32(${VARIABLES_VALUES[type]})`
     case fetchArrayInnerType(type)?.input:
-      const innerType = fetchArrayInnerType(type)[1]
+      const innerType = fetchArrayInnerType(type)![1]
       return `[${assignValue(innerType)}]`
     default:
-      let value = VARIABLES_VALUES[type]
+      let value = VARIABLES_VALUES[type as keyof typeof VARIABLES_VALUES]
       return value ? value : `"${type} Not implemented"`
   }
 }
@@ -82,7 +82,11 @@ const assignValue = type => {
     "0x0000000000000000000000000000000000000001"
   )
 */
-const generateFieldsAssertions = (entity, eventInputs, indexEvents) =>
+const generateFieldsAssertions = (
+  entity: string,
+  eventInputs: any[],
+  indexEvents: number,
+) =>
   eventInputs
     .filter(input => input.name != 'id')
     .map(
@@ -97,28 +101,33 @@ const generateFieldsAssertions = (entity, eventInputs, indexEvents) =>
     .join('\n')
 
 // Returns the expected value for a given type in generateFieldsAssertions()
-const expectedValue = type => {
+const expectedValue = (type: string): string | number | boolean => {
   switch (type) {
     case fetchArrayInnerType(type)?.input:
-      const innerType = fetchArrayInnerType(type)[1]
+      const innerType = fetchArrayInnerType(type)![1]
       return `[${expectedValue(innerType)}]`
     default:
-      let value = VARIABLES_VALUES[type]
+      let value = VARIABLES_VALUES[type as keyof typeof VARIABLES_VALUES]
       return value ? value : `${type} Not implemented`
   }
 }
 
 // Checks if the type is a native AS type or should be imported from graph-ts
-const isNativeType = type => {
+const isNativeType = (type: string) => {
   let natives = [/i32/, /string/, /boolean/]
 
   return natives.some(rx => rx.test(type))
 }
 
-const fetchArrayInnerType = type => type.match(/Array<(.*?)>/)
+const fetchArrayInnerType = (type: string) => type.match(/Array<(.*?)>/)
 
 // Generates the example test.ts file
-const generateExampleTest = (contract, event, indexEvents, importTypes) => {
+const generateExampleTest = (
+  contract: string,
+  event: any,
+  indexEvents: number,
+  importTypes: string,
+) => {
   const entity = indexEvents ? `${event._alias}` : 'ExampleEntity'
   const eventInputs = event.inputs
   const eventName = event._alias
@@ -141,7 +150,7 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
     beforeAll(() => {
       ${generateArguments(eventInputs)}
       let new${eventName}Event = create${eventName}Event(${eventInputs
-    .map((input, index) => input.name || `param${index}`)
+    .map((input: any, index: number) => input.name || `param${index}`)
     .join(', ')});
       handle${eventName}(new${eventName}Event)
     })
@@ -167,7 +176,7 @@ const generateExampleTest = (contract, event, indexEvents, importTypes) => {
 }
 
 // Generates the utils helper file
-const generateTestHelper = (contract, events, importTypes) => {
+const generateTestHelper = (contract: string, events: any[], importTypes: string) => {
   const eventsNames = events.map(event => event._alias)
 
   return `
@@ -178,20 +187,22 @@ const generateTestHelper = (contract, events, importTypes) => {
   ${generateMockedEvents(events).join('\n')}`
 }
 
-const generateMockedEvents = events =>
+const generateMockedEvents = (events: any[]) =>
   events.reduce((acc, event) => acc.concat(generateMockedEvent(event)), [])
 
-const generateMockedEvent = event => {
+const generateMockedEvent = (event: any) => {
   const varName = `${strings.camelCase(event._alias)}Event`
   const fnArgs = event.inputs.map(
-    (input, index) =>
+    (input: any, index: number) =>
       `${input.name || `param${index}`}: ${ascTypeForEthereum(input.type)}`,
   )
   const ascToEth = event.inputs.map(
-    (input, index) =>
-      `${varName}.parameters.push(new ethereum.EventParam("${
-        input.name || `param${index}`
-      }", ${ethereumFromAsc(input.name || `param${index}`, input.type)}))`,
+    (input: any, index: number) =>
+      `${varName}.parameters.push(new ethereum.EventParam("${input.name ||
+        `param${index}`}", ${ethereumFromAsc(
+        input.name || `param${index}`,
+        input.type,
+      )}))`,
   )
 
   return `
@@ -206,5 +217,3 @@ const generateMockedEvent = event => {
     }
   `
 }
-
-export { generateTestsFiles }
