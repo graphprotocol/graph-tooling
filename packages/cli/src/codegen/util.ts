@@ -1,4 +1,12 @@
-const disambiguateNames = ({ values, getName, setName }) => {
+export function disambiguateNames<T>({
+  values,
+  getName,
+  setName,
+}: {
+  values: T[]
+  getName: (value: T, index: number) => string
+  setName: (value: T, name: string) => void
+}) {
   let collisionCounter = new Map()
   return values.map((value, index) => {
     let name = getName(value, index)
@@ -13,41 +21,35 @@ const disambiguateNames = ({ values, getName, setName }) => {
   })
 }
 
-const isTupleType = t => {
+export function isTupleType(t: string) {
   return t === 'tuple'
 }
 
-const containsTupleType = t => {
+export function containsTupleType(t: string) {
   return isTupleType(t) || isTupleArrayType(t) || isTupleMatrixType(t)
 }
 
-const isTupleArrayType = t => {
+export function isTupleArrayType(t: string) {
   return t.match(/^tuple\[([0-9]+)?\]$/)
 }
 
-const isTupleMatrixType = t => {
+export function isTupleMatrixType(t: string) {
   return t.match(/^tuple\[([0-9]+)?\]\[([0-9]+)?\]$/)
 }
 
-const unrollTuple = ({ path, index, value }) =>
-  value.components.reduce((acc, component, index) => {
+export const unrollTuple = ({
+  path,
+  value,
+}: {
+  path: string[]
+  index: number // TODO: index is unused, do we really need it?
+  value: any
+}) =>
+  value.components.reduce((acc: any[], component: any, index: number) => {
     let name = component.name || `value${index}`
     return acc.concat(
       component.type === 'tuple'
-        ? unrollTuple({
-            path: [...path, name],
-            index,
-            value: component,
-          })
+        ? unrollTuple({ path: [...path, name], index, value: component })
         : [{ path: [...path, name], type: component.type }],
     )
   }, [])
-
-export {
-  containsTupleType,
-  disambiguateNames,
-  isTupleType,
-  isTupleArrayType,
-  isTupleMatrixType,
-  unrollTuple,
-}

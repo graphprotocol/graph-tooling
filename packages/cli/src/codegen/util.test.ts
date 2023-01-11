@@ -6,7 +6,7 @@ describe('Codegen utilities', () => {
       disambiguateNames({
         values: ['a', 'b', 'c'],
         getName: x => x,
-        setName: (x, name) => name,
+        setName: (_x, name) => name,
       }),
     ).toEqual(['a', 'b', 'c'])
 
@@ -14,7 +14,7 @@ describe('Codegen utilities', () => {
       disambiguateNames({
         values: ['a', 'a', 'a'],
         getName: x => x,
-        setName: (x, name) => name,
+        setName: (_x, name) => name,
       }),
     ).toEqual(['a', 'a1', 'a2'])
 
