@@ -86,6 +86,10 @@ export default {
       requestError,
       // @ts-expect-error TODO: why are the arguments not typed?
       jsonRpcError,
+      // TODO: why are the arguments not typed?
+      // TODO: this argument is unused, but removing it fails the basic-event-handlers tests
+      // @ts-expect-error
+      res,
     ) {
       if (jsonRpcError) {
         spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
