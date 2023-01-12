@@ -6,20 +6,30 @@ import stripAnsi from 'strip-ansi'
 // Deletes folder if:
 // - flag is true
 // - folder exists
-const deleteDir = (dir, flag) => {
+const deleteDir = (dir: string, flag: boolean) => {
   if (flag && fs.existsSync(dir)) {
     fs.removeSync(dir)
   }
 }
 
-const resolvePath = p => path.join(__dirname, p)
+const resolvePath = (p: string) => path.join(__dirname, p)
 
-const cliTest = (title, args, testPath, options = {}) => {
+export function cliTest(
+  title: string,
+  args: string[],
+  testPath: string,
+  options: {
+    cwd?: string
+    deleteDir?: boolean
+    exitCode?: number
+    timeout?: number
+  } = {},
+) {
   test(
     title,
     async () => {
       try {
-        deleteDir(resolvePath(`./${testPath}`), options.deleteDir)
+        deleteDir(resolvePath(`./${testPath}`), !!options.deleteDir)
 
         // Use the provided cwd if desired
         let cwd = options.cwd ? options.cwd : resolvePath(`./${testPath}`)
@@ -62,14 +72,24 @@ const cliTest = (title, args, testPath, options = {}) => {
           expect(stripAnsi(stdout)).toBe(expectedStdout)
         }
       } finally {
-        deleteDir(resolvePath(`./${testPath}`), options.deleteDir)
+        deleteDir(resolvePath(`./${testPath}`), !!options.deleteDir)
       }
     },
     options.timeout || undefined,
   )
 }
 
-const runCommand = async (command, args = [], cwd = process.cwd()) => {
+function runCommand(
+  command: string,
+  args: string[] = [],
+  cwd = process.cwd(),
+): Promise<
+  [
+    number | null, // exitCode
+    string, // stdout
+    string, // stderr
+  ]
+> {
   // Make sure to set an absolute working directory
   cwd = cwd[0] !== '/' ? path.resolve(__dirname, cwd) : cwd
 
@@ -82,11 +102,11 @@ const runCommand = async (command, args = [], cwd = process.cwd()) => {
       reject(error)
     })
 
-    child.stdout.on('data', data => {
+    child.stdout.on('data', (data: Buffer) => {
       stdout += data.toString()
     })
 
-    child.stderr.on('data', data => {
+    child.stderr.on('data', (data: Buffer) => {
       stderr += data.toString()
     })
 
@@ -96,15 +116,13 @@ const runCommand = async (command, args = [], cwd = process.cwd()) => {
   })
 }
 
-const runGraphCli = async (args, cwd) => {
+export function runGraphCli(args: string[], cwd: string) {
   // Resolve the path to graph.js
   let graphCli = path.join(__dirname, '..', '..', 'dist', 'bin.js')
 
-  return await runCommand(graphCli, args, cwd)
+  return runCommand(graphCli, args, cwd)
 }
 
-const npmLinkCli = () => runCommand('npm', ['link'])
+export const npmLinkCli = () => runCommand('npm', ['link'])
 
-const npmUnlinkCli = () => runCommand('npm', ['unlink'])
-
-export { cliTest, npmLinkCli, npmUnlinkCli, runGraphCli }
+export const npmUnlinkCli = () => runCommand('npm', ['unlink'])
