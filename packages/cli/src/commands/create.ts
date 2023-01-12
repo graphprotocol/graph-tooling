@@ -15,7 +15,7 @@ ${chalk.dim('Options:')}
   -g, --node <url>              Graph node to create the subgraph in
 `
 
-export interface AddOptions {
+export interface CreateOptions {
   accessToken?: string
   help?: boolean
   node?: string
