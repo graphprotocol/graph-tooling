@@ -9,6 +9,7 @@ describe('Version Command Helpers', () => {
 
     describe('With just dataSources', () => {
       test('When all of them are less than minimum apiVersion', async () => {
+        // @ts-expect-error TODO: dont pollute the globals
         loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
           Promise.resolve({
             dataSources: [
@@ -28,6 +29,7 @@ describe('Version Command Helpers', () => {
         )
       })
       test('When one of them is less than minimum apiVersion', async () => {
+        // @ts-expect-error TODO: dont pollute the globals
         loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
           Promise.resolve({
             dataSources: [
@@ -47,6 +49,7 @@ describe('Version Command Helpers', () => {
         )
       })
       test('When none of them are less than minimum apiVersion', async () => {
+        // @ts-expect-error TODO: dont pollute the globals
         loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
           Promise.resolve({
             dataSources: [
@@ -65,6 +68,7 @@ describe('Version Command Helpers', () => {
     describe('With dataSources and templates', () => {
       describe('And the dataSources have a lower apiVersion', () => {
         test('When all of the templates are less than minimum apiVersion', async () => {
+          // @ts-expect-error TODO: dont pollute the globals
           loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
             Promise.resolve({
               dataSources: [
@@ -89,6 +93,7 @@ describe('Version Command Helpers', () => {
           )
         })
         test('When one of the templates is less than minimum apiVersion', async () => {
+          // @ts-expect-error TODO: dont pollute the globals
           loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
             Promise.resolve({
               dataSources: [
@@ -113,6 +118,7 @@ describe('Version Command Helpers', () => {
           )
         })
         test('When none of the templates are less than minimum apiVersion', async () => {
+          // @ts-expect-error TODO: dont pollute the globals
           loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
             Promise.resolve({
               dataSources: [
@@ -139,6 +145,7 @@ describe('Version Command Helpers', () => {
       })
       describe('And the dataSources do NOT have a lower apiVersion', () => {
         test('When all of the templates are less than minimum apiVersion', async () => {
+          // @ts-expect-error TODO: dont pollute the globals
           loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
             Promise.resolve({
               dataSources: [
@@ -163,6 +170,7 @@ describe('Version Command Helpers', () => {
           )
         })
         test('When one of the templates is less than minimum apiVersion', async () => {
+          // @ts-expect-error TODO: dont pollute the globals
           loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
             Promise.resolve({
               dataSources: [
@@ -187,6 +195,7 @@ describe('Version Command Helpers', () => {
           )
         })
         test('When none of the templates are less than minimum apiVersion', async () => {
+          // @ts-expect-error TODO: dont pollute the globals
           loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
             Promise.resolve({
               dataSources: [
@@ -214,6 +223,7 @@ describe('Version Command Helpers', () => {
     const minimumGraphTsVersion = '0.22.0'
 
     test("When the installed graph-ts version is less than what's supported", async () => {
+      // @ts-expect-error TODO: dont pollute the globals
       graphTsUtil.getGraphTsVersion = jest
         .fn()
         .mockImplementation(() => Promise.resolve('0.19.0'))
@@ -228,6 +238,7 @@ Also, you'll probably need to take a look at our AssemblyScript migration guide 
       )
     })
     test('When the installed graph-ts version is a supported one', async () => {
+      // @ts-expect-error TODO: dont pollute the globals
       graphTsUtil.getGraphTsVersion = jest
         .fn()
         .mockImplementation(() => Promise.resolve('0.22.0'))

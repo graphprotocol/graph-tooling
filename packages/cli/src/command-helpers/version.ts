@@ -2,10 +2,13 @@ import semver from 'semver'
 import * as graphTsUtil from '../migrations/util/versions'
 import * as manifestUtil from '../migrations/util/load-manifest'
 
-const assertManifestApiVersion = async (manifestPath, minimumApiVersion) => {
+export const assertManifestApiVersion = async (
+  manifestPath: string,
+  minimumApiVersion: string,
+) => {
   let manifest = await manifestUtil.loadManifest(manifestPath)
 
-  let lessThanMinimumVersion = manifestApiVersion =>
+  let lessThanMinimumVersion = (manifestApiVersion: string) =>
     semver.lt(manifestApiVersion, minimumApiVersion)
 
   let isLessThanMinimumVersion = false
@@ -13,7 +16,7 @@ const assertManifestApiVersion = async (manifestPath, minimumApiVersion) => {
   if (manifest) {
     if (manifest.dataSources && Array.isArray(manifest.dataSources)) {
       isLessThanMinimumVersion = manifest.dataSources.some(
-        dataSource =>
+        (dataSource: any) =>
           dataSource &&
           dataSource.mapping &&
           dataSource.mapping.apiVersion &&
@@ -25,7 +28,7 @@ const assertManifestApiVersion = async (manifestPath, minimumApiVersion) => {
       isLessThanMinimumVersion =
         isLessThanMinimumVersion ||
         manifest.templates.some(
-          template =>
+          (template: any) =>
             template &&
             template.mapping &&
             template.mapping.apiVersion &&
@@ -41,7 +44,10 @@ const assertManifestApiVersion = async (manifestPath, minimumApiVersion) => {
   }
 }
 
-const assertGraphTsVersion = async (sourceDir, minimumGraphTsVersion) => {
+export const assertGraphTsVersion = async (
+  sourceDir: string,
+  minimumGraphTsVersion: string,
+) => {
   let graphTsVersion
   try {
     graphTsVersion = await graphTsUtil.getGraphTsVersion(sourceDir)
@@ -52,12 +58,13 @@ const assertGraphTsVersion = async (sourceDir, minimumGraphTsVersion) => {
   // Coerce needed because we may be dealing with an alpha version
   // and in the `semver` library, this would return true when comparing
   // the same version.
-  if (graphTsVersion && semver.lt(semver.coerce(graphTsVersion), minimumGraphTsVersion)) {
+  if (
+    graphTsVersion &&
+    semver.lt(semver.coerce(graphTsVersion)!, minimumGraphTsVersion)
+  ) {
     throw new Error(
       `To use this version of the graph-cli you must upgrade the graph-ts dependency to a version greater than or equal to ${minimumGraphTsVersion}
 Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://thegraph.com/docs/developer/assemblyscript-migration-guide`,
     )
   }
 }
-
-export { assertManifestApiVersion, assertGraphTsVersion }

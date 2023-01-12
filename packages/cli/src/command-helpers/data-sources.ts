@@ -1,21 +1,26 @@
 import immutable from 'immutable'
 import { loadManifest } from '../migrations/util/load-manifest'
+import Protocol from '../protocols'
 
 // Loads manifest from file path and returns all:
 // - data sources
 // - templates
 // In a single list.
-const fromFilePath = async manifestPath => {
+export const fromFilePath = async (manifestPath: string) => {
   const { dataSources = [], templates = [] } = await loadManifest(manifestPath)
 
   return dataSources.concat(templates)
 }
 
-const extractDataSourceByType = (manifest, dataSourceType, protocol) =>
+const extractDataSourceByType = (
+  manifest: immutable.Map<any, any>,
+  dataSourceType: string,
+  protocol: Protocol,
+) =>
   manifest
     .get(dataSourceType, immutable.List())
     .reduce(
-      (dataSources, dataSource, dataSourceIndex) =>
+      (dataSources: any[], dataSource: any, dataSourceIndex: number) =>
         protocol.isValidKindName(dataSource.get('kind'))
           ? dataSources.push(
               immutable.Map({ path: [dataSourceType, dataSourceIndex], dataSource }),
@@ -25,11 +30,9 @@ const extractDataSourceByType = (manifest, dataSourceType, protocol) =>
     )
 
 // Extracts data sources and templates from a immutable manifest data structure
-const fromManifest = (manifest, protocol) => {
+export const fromManifest = (manifest: immutable.Map<any, any>, protocol: Protocol) => {
   const dataSources = extractDataSourceByType(manifest, 'dataSources', protocol)
   const templates = extractDataSourceByType(manifest, 'templates', protocol)
 
   return dataSources.concat(templates)
 }
-
-export { fromFilePath, fromManifest }

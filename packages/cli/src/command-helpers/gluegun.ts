@@ -24,7 +24,7 @@
 // options has a string value; if so, it pushes it to the front of the
 // parameters array and returns the result of that.
 //
-const fixParameters = (parameters, booleanOptions) => {
+export const fixParameters = (parameters: any, booleanOptions: any) => {
   let unexpectedStringOptions = Object.keys(booleanOptions)
     .filter(key => typeof booleanOptions[key] === 'string')
     .map(key => ({ key, value: booleanOptions[key] }))
@@ -45,5 +45,3 @@ const fixParameters = (parameters, booleanOptions) => {
     return parameters.array
   }
 }
-
-export { fixParameters }
