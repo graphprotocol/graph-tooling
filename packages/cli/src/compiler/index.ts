@@ -82,7 +82,7 @@ export default class Compiler {
     this.protocol = this.options.protocol
     this.ABI = this.protocol.getABI()
 
-    process.on('uncaughtException', function(e) {
+    process.on('uncaughtException', function (e) {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
     })
   }

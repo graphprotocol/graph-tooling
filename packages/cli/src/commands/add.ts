@@ -44,14 +44,8 @@ export default {
     let { print, system } = toolbox
 
     // Read CLI parameters
-    let {
-      abi,
-      contractName,
-      h,
-      help,
-      mergeEntities,
-      networkFile,
-    } = toolbox.parameters.options
+    let { abi, contractName, h, help, mergeEntities, networkFile } =
+      toolbox.parameters.options
 
     contractName = contractName || 'Contract'
 

@@ -40,22 +40,8 @@ export default {
   description: 'Runs rust binary for subgraph testing',
   run: async (toolbox: GluegunToolbox) => {
     // Read CLI parameters
-    let {
-      c,
-      coverage,
-      d,
-      docker,
-      f,
-      force,
-      h,
-      help,
-      l,
-      logs,
-      r,
-      recompile,
-      v,
-      version,
-    } = toolbox.parameters.options
+    let { c, coverage, d, docker, f, force, h, help, l, logs, r, recompile, v, version } =
+      toolbox.parameters.options
 
     const testsFolder = './tests'
     let opts: TestOptions = {
@@ -168,8 +154,9 @@ async function runBinary(datasource: string | undefined, opts: TestOptions) {
 
   const platform = await getPlatform(logsOpt)
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt ||
-    latestVersion}/${platform}`
+  const url = `https://github.com/LimeChain/matchstick/releases/download/${
+    versionOpt || latestVersion
+  }/${platform}`
 
   if (logsOpt) {
     print.info(`Download link: ${url}`)
@@ -197,8 +184,9 @@ async function getPlatform(logsOpt: boolean | undefined) {
 
   if (logsOpt) {
     print.info(
-      `OS type: ${linuxDistro ||
-        type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
+      `OS type: ${
+        linuxDistro || type
+      }\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
         cpuCore.model
       }`,
     )

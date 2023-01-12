@@ -81,27 +81,31 @@ export default {
     }
 
     let spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`)
-    client.request('subgraph_remove', { name: subgraphName }, function(
-      // @ts-expect-error TODO: why are the arguments not typed?
-      requestError,
-      // @ts-expect-error TODO: why are the arguments not typed?
-      jsonRpcError,
-      // TODO: why are the arguments not typed?
-      // TODO: this argument is unused, but removing it from the commands/create.ts fails the basic-event-handlers tests.
-      //       I'll therefore leave it in here too until we figure out the weirdness
-      // @ts-expect-error
-      res,
-    ) {
-      if (jsonRpcError) {
-        spinner.fail(`Error removing the subgraph: ${jsonRpcError.message}`)
-        process.exitCode = 1
-      } else if (requestError) {
-        spinner.fail(`HTTP error removing the subgraph: ${requestError.code}`)
-        process.exitCode = 1
-      } else {
-        spinner.stop()
-        print.success(`Removed subgraph: ${subgraphName}`)
-      }
-    })
+    client.request(
+      'subgraph_remove',
+      { name: subgraphName },
+      function (
+        // @ts-expect-error TODO: why are the arguments not typed?
+        requestError,
+        // @ts-expect-error TODO: why are the arguments not typed?
+        jsonRpcError,
+        // TODO: why are the arguments not typed?
+        // TODO: this argument is unused, but removing it from the commands/create.ts fails the basic-event-handlers tests.
+        //       I'll therefore leave it in here too until we figure out the weirdness
+        // @ts-expect-error
+        res,
+      ) {
+        if (jsonRpcError) {
+          spinner.fail(`Error removing the subgraph: ${jsonRpcError.message}`)
+          process.exitCode = 1
+        } else if (requestError) {
+          spinner.fail(`HTTP error removing the subgraph: ${requestError.code}`)
+          process.exitCode = 1
+        } else {
+          spinner.stop()
+          print.success(`Removed subgraph: ${subgraphName}`)
+        }
+      },
+    )
   },
 }

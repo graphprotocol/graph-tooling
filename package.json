@@ -8,10 +8,8 @@
     "@changesets/changelog-github": "^0.4.7",
     "@changesets/cli": "^2.25.2",
     "babel-jest": "^29.3.1",
-    "eslint": "^8.29.0",
-    "eslint-plugin-prettier": "^4.2.1",
     "jest": "26.0.0",
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.2"
   },
   "repository": {
     "type": "git",
@@ -26,7 +24,7 @@
     "pnpm": ">=7.14.2"
   },
   "scripts": {
-    "lint": "eslint packages/**/src",
+    "lint": "prettier -c .",
     "type-check": "pnpm --filter=@graphprotocol/graph-cli type-check",
     "build": "pnpm --filter=@graphprotocol/graph-cli build",
     "release": "changeset publish",

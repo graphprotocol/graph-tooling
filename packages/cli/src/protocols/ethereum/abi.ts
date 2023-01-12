@@ -82,14 +82,8 @@ export default class ABI {
    * - Multiple inputs and outputs: `example(uint256,(string,bytes32)):(bool,uint256)`
    */
   functionSignature(fn: immutable.Map<any, any>) {
-    let inputs = fn
-      .get('inputs', [])
-      .map(buildSignatureParameter)
-      .join(',')
-    let outputs = fn
-      .get('outputs', [])
-      .map(buildSignatureParameter)
-      .join(',')
+    let inputs = fn.get('inputs', []).map(buildSignatureParameter).join(',')
+    let outputs = fn.get('outputs', []).map(buildSignatureParameter).join(',')
     return `${fn.get('name')}(${inputs})${outputs.length > 0 ? `:(${outputs})` : ''}`
   }
 

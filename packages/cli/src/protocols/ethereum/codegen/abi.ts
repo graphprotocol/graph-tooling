@@ -442,9 +442,9 @@ export default class AbiCodeGenerator {
       tsCodegen.staticMethod(
         'bind',
         // TODO: add support for iterable staticMethod params
-        (immutable.List([
+        immutable.List([
           tsCodegen.param('address', typesCodegen.ascTypeForEthereum('address')),
-        ]) as unknown) as tsCodegen.Param[],
+        ]) as unknown as tsCodegen.Param[],
         tsCodegen.namedType(this.abi.name),
         `
         return new ${this.abi.name}('${this.abi.name}', address);

@@ -81,26 +81,30 @@ export default {
     }
 
     let spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`)
-    client.request('subgraph_create', { name: subgraphName }, function(
-      // @ts-expect-error TODO: why are the arguments not typed?
-      requestError,
-      // @ts-expect-error TODO: why are the arguments not typed?
-      jsonRpcError,
-      // TODO: why are the arguments not typed?
-      // TODO: this argument is unused, but removing it fails the basic-event-handlers tests
-      // @ts-expect-error
-      res,
-    ) {
-      if (jsonRpcError) {
-        spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
-        process.exitCode = 1
-      } else if (requestError) {
-        spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
-        process.exitCode = 1
-      } else {
-        spinner.stop()
-        print.success(`Created subgraph: ${subgraphName}`)
-      }
-    })
+    client.request(
+      'subgraph_create',
+      { name: subgraphName },
+      function (
+        // @ts-expect-error TODO: why are the arguments not typed?
+        requestError,
+        // @ts-expect-error TODO: why are the arguments not typed?
+        jsonRpcError,
+        // TODO: why are the arguments not typed?
+        // TODO: this argument is unused, but removing it fails the basic-event-handlers tests
+        // @ts-expect-error
+        res,
+      ) {
+        if (jsonRpcError) {
+          spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
+          process.exitCode = 1
+        } else if (requestError) {
+          spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
+          process.exitCode = 1
+        } else {
+          spinner.stop()
+          print.success(`Created subgraph: ${subgraphName}`)
+        }
+      },
+    )
   },
 }
