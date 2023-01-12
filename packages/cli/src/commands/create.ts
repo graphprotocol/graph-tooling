@@ -1,5 +1,6 @@
 import { URL } from 'url'
 import chalk from 'chalk'
+import * as toolbox from 'gluegun'
 import { validateNodeUrl } from '../command-helpers/node'
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth'
 import { createJsonRpcClient } from '../command-helpers/jsonrpc'
@@ -14,11 +15,17 @@ ${chalk.dim('Options:')}
   -g, --node <url>              Graph node to create the subgraph in
 `
 
+export interface AddOptions {
+  accessToken?: string
+  help?: boolean
+  node?: string
+}
+
 export default {
   description: 'Registers a subgraph name',
-  run: async toolbox => {
+  run: async (toolbox: toolbox.GluegunToolbox) => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    const { print } = toolbox
 
     // Read CLI parameters
     let { accessToken, g, h, help, node } = toolbox.parameters.options
@@ -69,25 +76,27 @@ export default {
     // Use the access token, if one is set
     accessToken = await identifyAccessToken(node, accessToken)
     if (accessToken !== undefined && accessToken !== null) {
+      // @ts-expect-error options property seems to exist
       client.options.headers = { Authorization: `Bearer ${accessToken}` }
     }
 
     let spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`)
-    client.request(
-      'subgraph_create',
-      { name: subgraphName },
-      function (requestError, jsonRpcError, res) {
-        if (jsonRpcError) {
-          spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
-          process.exitCode = 1
-        } else if (requestError) {
-          spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
-          process.exitCode = 1
-        } else {
-          spinner.stop()
-          print.success(`Created subgraph: ${subgraphName}`)
-        }
-      },
-    )
+    client.request('subgraph_create', { name: subgraphName }, function(
+      // @ts-expect-error TODO: why are the arguments not typed?
+      requestError,
+      // @ts-expect-error TODO: why are the arguments not typed?
+      jsonRpcError,
+    ) {
+      if (jsonRpcError) {
+        spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`)
+        process.exitCode = 1
+      } else if (requestError) {
+        spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`)
+        process.exitCode = 1
+      } else {
+        spinner.stop()
+        print.success(`Created subgraph: ${subgraphName}`)
+      }
+    })
   },
 }

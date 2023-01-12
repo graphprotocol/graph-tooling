@@ -1,7 +1,7 @@
 import jayson from 'jayson'
 import { print } from 'gluegun'
 
-const createJsonRpcClient = (url: URL) => {
+export function createJsonRpcClient(url: URL): jayson.Client | null {
   const params = {
     host: url.hostname,
     port: url.port,
@@ -24,5 +24,3 @@ const createJsonRpcClient = (url: URL) => {
     return null
   }
 }
-
-export { createJsonRpcClient }
