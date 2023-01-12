@@ -91,10 +91,9 @@ export const ascTypeForEthereum = (ethereumType: string) =>
   ascTypeForProtocol('ethereum', ethereumType)
 
 export const ethereumTypeForAsc = (ascType: string) =>
-  findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn([
-    'to',
-    'type',
-  ]) as string
+  findConversionFromType('AssemblyScript', 'ethereum', ascType).getIn(['to', 'type']) as
+    | string
+    | RegExp
 
 export const ethereumToAsc = (
   code: string,

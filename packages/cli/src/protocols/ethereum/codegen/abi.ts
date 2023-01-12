@@ -2,16 +2,17 @@ import immutable from 'immutable'
 import fs from 'fs'
 import yaml from 'yaml'
 import request from 'sync-request'
-const Web3EthAbi = require('web3-eth-abi')
+import Web3EthAbi from 'web3-eth-abi'
 
 import * as tsCodegen from '../../../codegen/typescript'
 import * as typesCodegen from '../../../codegen/types'
 import * as util from '../../../codegen/util'
+import ABI from '../abi'
 
 const doFixtureCodegen = fs.existsSync('./fixtures.yaml')
 
 export default class AbiCodeGenerator {
-  constructor(abi) {
+  constructor(private abi: ABI) {
     this.abi = abi
   }
 
@@ -55,16 +56,19 @@ export default class AbiCodeGenerator {
 
   _generateCallTypes() {
     let callFunctions = util.disambiguateNames({
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       values: this.abi.callFunctions(),
       getName: fn =>
+        // @ts-expect-error improve typings of disambiguateNames to handle iterables
         fn.get('name') || (fn.get('type') === 'constructor' ? 'constructor' : 'default'),
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       setName: (fn, name) => fn.set('_alias', name),
-    })
+    }) as any[]
 
     callFunctions = callFunctions.map(fn => {
       let fnAlias = fn.get('_alias')
       let fnClassName = `${fnAlias.charAt(0).toUpperCase()}${fnAlias.slice(1)}Call`
-      let tupleClasses = []
+      let tupleClasses: any[] = []
 
       // First, generate a class with the input getters
       let inputsClassName = fnClassName + '__Inputs'
@@ -83,10 +87,12 @@ export default class AbiCodeGenerator {
       util
         .disambiguateNames({
           values: fn.get('inputs', immutable.List()),
+          // @ts-expect-error improve typings of disambiguateNames to handle iterables
           getName: (input, index) => input.get('name') || `value${index}`,
+          // @ts-expect-error improve typings of disambiguateNames to handle iterables
           setName: (input, name) => input.set('name', name),
         })
-        .forEach((input, index) => {
+        .forEach((input: any, index) => {
           let callInput = this._generateInputOrOutput(
             input,
             index,
@@ -115,10 +121,12 @@ export default class AbiCodeGenerator {
       util
         .disambiguateNames({
           values: fn.get('outputs', immutable.List()),
+          // @ts-expect-error improve typings of disambiguateNames to handle iterables
           getName: (output, index) => output.get('name') || `value${index}`,
+          // @ts-expect-error improve typings of disambiguateNames to handle iterables
           setName: (output, name) => output.set('name', name),
         })
-        .forEach((output, index) => {
+        .forEach((output: any, index) => {
           let callInput = this._generateInputOrOutput(
             output,
             index,
@@ -164,14 +172,17 @@ export default class AbiCodeGenerator {
   _generateEventTypes() {
     // Enumerate events with duplicate names
     let events = util.disambiguateNames({
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       values: this.abi.data.filter(member => member.get('type') === 'event'),
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       getName: event => event.get('name'),
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       setName: (event, name) => event.set('_alias', name),
-    })
+    }) as any[]
 
     events = events.map(event => {
       let eventClassName = event.get('_alias')
-      let tupleClasses = []
+      let tupleClasses: any[] = []
 
       // First, generate a class with the param getters
       let paramsClassName = eventClassName + '__Params'
@@ -189,11 +200,13 @@ export default class AbiCodeGenerator {
       // Enumerate inputs with duplicate names
       let inputs = util.disambiguateNames({
         values: event.get('inputs'),
+        // @ts-expect-error improve typings of disambiguateNames to handle iterables
         getName: (input, index) => input.get('name') || `param${index}`,
+        // @ts-expect-error improve typings of disambiguateNames to handle iterables
         setName: (input, name) => input.set('name', name),
-      })
+      }) as any[]
 
-      let namesAndTypes = []
+      let namesAndTypes: any[] = []
       inputs.forEach((input, index) => {
         // Generate getters and classes for event params
         let paramObject = this._generateInputOrOutput(
@@ -207,9 +220,11 @@ export default class AbiCodeGenerator {
 
         // Fixture generation
         if (doFixtureCodegen) {
-          let ethType = typesCodegen.ethereumTypeForAsc(paramObject.getter.returnType)
+          let ethType = typesCodegen.ethereumTypeForAsc(
+            String(paramObject.getter.returnType),
+          )
           if (
-            typeof ethType === typeof {} &&
+            typeof ethType !== 'string' &&
             (ethType.test('int256') || ethType.test('uint256'))
           ) {
             ethType = 'int32'
@@ -249,7 +264,9 @@ export default class AbiCodeGenerator {
           throw new Error(body.result)
         }
 
-        let res = Web3EthAbi.decodeLog(namesAndTypes, body.result[0].data, [])
+        let res = Web3EthAbi
+          // @ts-expect-error decodeLog seems to exist on Web3EthAbi
+          .decodeLog(namesAndTypes, body.result[0].data, [])
 
         let stmnts = ''
         for (let i = 0; i < namesAndTypes.length; i++) {
@@ -289,7 +306,13 @@ export default class AbiCodeGenerator {
     )
   }
 
-  _generateInputOrOutput(inputOrOutput, index, parentClass, parentType, parentField) {
+  _generateInputOrOutput(
+    inputOrOutput: immutable.Map<any, any>,
+    index: number,
+    parentClass: string,
+    parentType: string,
+    parentField?: string,
+  ) {
     // Get name and type of the param, adjusting for indexed params and missing names
     let name = inputOrOutput.get('name')
     let valueType =
@@ -329,11 +352,22 @@ export default class AbiCodeGenerator {
         }
   }
 
-  _tupleTypeName(inputOrOutput, index, parentClass, parentType) {
+  _tupleTypeName(
+    inputOrOutput: any,
+    index: number,
+    parentClass: string,
+    parentType: string,
+  ) {
     return this._generateTupleType(inputOrOutput, index, parentClass, parentType, '').name
   }
 
-  _generateTupleType(inputOrOutput, index, parentClass, parentType, parentField) {
+  _generateTupleType(
+    inputOrOutput: any,
+    index: number,
+    parentClass: string,
+    parentType: string,
+    parentField?: string,
+  ) {
     let type = inputOrOutput.get('type')
     let name = inputOrOutput.get('name')
     if (name === undefined || name === null || name === '') {
@@ -342,7 +376,7 @@ export default class AbiCodeGenerator {
 
     let tupleIdentifier = parentClass + tsCodegen.namedType(name).capitalize()
     let tupleClassName = tupleIdentifier + 'Struct'
-    let tupleClasses = []
+    let tupleClasses: any[] = []
 
     let isTupleType = util.isTupleType(type)
     let returnValue = typesCodegen.ethereumToAsc(
@@ -376,8 +410,7 @@ export default class AbiCodeGenerator {
     })
 
     // Add param getters to tuple class and generate classes for each tuple parameter
-    inputOrOutput.get('components').forEach((component, index) => {
-      let name = component.get('name')
+    inputOrOutput.get('components').forEach((component: any, index: number) => {
       let paramObject = this._generateInputOrOutput(
         component,
         index,
@@ -408,9 +441,10 @@ export default class AbiCodeGenerator {
     klass.addMethod(
       tsCodegen.staticMethod(
         'bind',
-        immutable.List([
+        // TODO: add support for iterable staticMethod params
+        (immutable.List([
           tsCodegen.param('address', typesCodegen.ascTypeForEthereum('address')),
-        ]),
+        ]) as unknown) as tsCodegen.Param[],
         tsCodegen.namedType(this.abi.name),
         `
         return new ${this.abi.name}('${this.abi.name}', address);
@@ -423,10 +457,13 @@ export default class AbiCodeGenerator {
 
     // Disambiguate functions with duplicate names
     functions = util.disambiguateNames({
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       values: functions,
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       getName: fn => fn.get('name'),
+      // @ts-expect-error improve typings of disambiguateNames to handle iterables
       setName: (fn, name) => fn.set('_alias', name),
-    })
+    }) as any
 
     functions.forEach(member => {
       let fnName = member.get('name')
@@ -434,16 +471,18 @@ export default class AbiCodeGenerator {
       let fnSignature = this.abi.functionSignature(member)
 
       // Generate a type for the result of calling the function
-      let returnType = undefined
+      let returnType: any = undefined
       let simpleReturnType = true
       let tupleResultParentType = this.abi.name + '__' + fnAlias + 'Result'
 
       // Disambiguate outputs with duplicate names
       let outputs = util.disambiguateNames({
         values: member.get('outputs', immutable.List()),
+        // @ts-expect-error improve typings of disambiguateNames to handle iterables
         getName: (input, index) => input.get('name') || `value${index}`,
+        // @ts-expect-error improve typings of disambiguateNames to handle iterables
         setName: (input, name) => input.set('name', name),
-      })
+      }) as any
 
       if (member.get('outputs', immutable.List()).size > 1) {
         simpleReturnType = false
@@ -457,7 +496,7 @@ export default class AbiCodeGenerator {
         returnType.addMethod(
           tsCodegen.method(
             'constructor',
-            outputs.map((output, index) =>
+            outputs.map((output: any, index: number) =>
               tsCodegen.param(
                 `value${index}`,
                 this._getTupleParamType(output, index, tupleResultParentType),
@@ -465,7 +504,7 @@ export default class AbiCodeGenerator {
             ),
             null,
             outputs
-              .map((output, index) => `this.value${index} = value${index}`)
+              .map((_output: any, index: number) => `this.value${index} = value${index}`)
               .join('\n'),
           ),
         )
@@ -480,7 +519,7 @@ export default class AbiCodeGenerator {
             let map = new TypedMap<string,ethereum.Value>();
             ${outputs
               .map(
-                (output, index) =>
+                (output: any, index: number) =>
                   `map.set('value${index}', ${typesCodegen.ethereumFromAsc(
                     `this.value${index}`,
                     output.get('type'),
@@ -494,18 +533,18 @@ export default class AbiCodeGenerator {
 
         // Add value0, value1 etc. members to the type
         outputs
-          .map((output, index) =>
+          .map((output: any, index: number) =>
             tsCodegen.klassMember(
               `value${index}`,
               this._getTupleParamType(output, index, tupleResultParentType),
             ),
           )
-          .forEach(member => returnType.addMember(member))
+          .forEach((member: any) => returnType.addMember(member))
 
         // Add getters to the type
         outputs
           .map(
-            (output, index) =>
+            (output: any, index: number) =>
               !!output.get('name') &&
               tsCodegen.method(
                 `get${output.get('name')[0].toUpperCase()}${output.get('name').slice(1)}`,
@@ -514,10 +553,10 @@ export default class AbiCodeGenerator {
                 `return this.value${index};`,
               ),
           )
-          .forEach(method => !!method && returnType.addMethod(method))
+          .forEach((method: any) => !!method && returnType.addMethod(method))
 
         // Create types for Tuple outputs
-        outputs.forEach((output, index) => {
+        outputs.forEach((output: any, index: number) => {
           if (util.containsTupleType(output.get('type'))) {
             types = types.concat(
               this._generateTupleType(
@@ -558,15 +597,17 @@ export default class AbiCodeGenerator {
       // Disambiguate inputs with duplicate names
       let inputs = util.disambiguateNames({
         values: member.get('inputs', immutable.List()),
+        // @ts-expect-error improve typings of disambiguateNames to handle iterables
         getName: (input, index) => input.get('name') || `param${index}`,
+        // @ts-expect-error improve typings of disambiguateNames to handle iterables
         setName: (input, name) => input.set('name', name),
-      })
+      }) as any
 
       // Generate a type prefix to identify the Tuple inputs to a function
       let tupleInputParentType = this.abi.name + '__' + fnAlias + 'Input'
 
       // Create types for Tuple inputs
-      inputs.forEach((input, index) => {
+      inputs.forEach((input: any, index: number) => {
         if (util.containsTupleType(input.get('type'))) {
           types = types.concat(
             this._generateTupleType(
@@ -582,7 +623,7 @@ export default class AbiCodeGenerator {
 
       // Generate and add a method that implements calling the function on
       // the smart contract
-      let params = inputs.map((input, index) =>
+      let params = inputs.map((input: any, index: number) =>
         tsCodegen.param(
           input.get('name'),
           this._getTupleParamType(input, index, tupleInputParentType),
@@ -595,15 +636,15 @@ export default class AbiCodeGenerator {
       [${
         inputs.size > 0
           ? inputs
-              .map(input =>
+              .map((input: any) =>
                 typesCodegen.ethereumFromAsc(input.get('name'), input.get('type')),
               )
-              .map(coercion => coercion.toString())
+              .map((coercion: any) => coercion.toString())
               .join(', ')
           : ''
       }]`
 
-      let methodCallBody = isTry => {
+      let methodCallBody = (isTry: boolean) => {
         const methodBody = `
         ${
           isTry
@@ -635,7 +676,7 @@ export default class AbiCodeGenerator {
             )
           : `new ${returnType.name}(
                 ${outputs
-                  .map((output, index) => {
+                  .map((output: any, index: number) => {
                     const val = typesCodegen.ethereumToAsc(
                       isTry ? `value[${index}]` : `result[${index}]`,
                       output.get('type'),
@@ -683,7 +724,7 @@ export default class AbiCodeGenerator {
     return [...types, klass]
   }
 
-  _getTupleParamType(inputOrOutput, index, tupleParentType) {
+  _getTupleParamType(inputOrOutput: any, index: number, tupleParentType: string) {
     const type = inputOrOutput.get('type')
     return util.isTupleType(type)
       ? this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)
@@ -704,7 +745,7 @@ export default class AbiCodeGenerator {
       : typesCodegen.ascTypeForEthereum(type)
   }
 
-  _indexedInputType(inputType) {
+  _indexedInputType(inputType: string) {
     // strings, bytes and arrays are encoded and hashed to a bytes32 value
     if (
       inputType === 'string' ||

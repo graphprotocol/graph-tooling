@@ -6,9 +6,9 @@ import ABI from '../abi'
 import * as ts from '../../../codegen/typescript'
 import AbiCodeGenerator from './abi'
 
-let tempdir
-let abi
-let generatedTypes
+let tempdir: string
+let abi: ABI
+let generatedTypes: any[]
 
 describe('ABI code generation', () => {
   beforeAll(async () => {
@@ -203,50 +203,54 @@ describe('ABI code generation', () => {
 
     test('Has `bind` method', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
-      expect(contract.methods.find(method => method.name === 'bind')).toBeDefined()
+      expect(contract.methods.find((method: any) => method.name === 'bind')).toBeDefined()
     })
 
     test('Has methods for all callable functions', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
-      expect(contract.methods.map(method => method.name)).toContain('getProposal')
+      expect(contract.methods.map((method: any) => method.name)).toContain('getProposal')
     })
   })
 
   describe('Methods for callable functions', () => {
     test('Have correct parameters', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
-      expect(contract.methods.map(method => [method.name, method.params])).toEqual([
-        ['bind', immutable.List([ts.param('address', 'Address')])],
-        ['read', immutable.List()],
-        ['try_read', immutable.List()],
+      expect(contract.methods.map((method: any) => [method.name, method.params])).toEqual(
         [
-          'getProposal',
-          immutable.List([
-            ts.param('proposalId', 'BigInt'),
-            ts.param('param1', 'Contract__getProposalInputParam1Struct'),
-          ]),
+          ['bind', immutable.List([ts.param('address', 'Address')])],
+          ['read', immutable.List()],
+          ['try_read', immutable.List()],
+          [
+            'getProposal',
+            immutable.List([
+              ts.param('proposalId', 'BigInt'),
+              ts.param('param1', 'Contract__getProposalInputParam1Struct'),
+            ]),
+          ],
+          [
+            'try_getProposal',
+            immutable.List([
+              ts.param('proposalId', 'BigInt'),
+              ts.param('param1', 'Contract__getProposalInputParam1Struct'),
+            ]),
+          ],
+          ['getProposals', immutable.List()],
+          ['try_getProposals', immutable.List()],
+          ['overloaded', immutable.List([ts.param('param0', 'string')])],
+          ['try_overloaded', immutable.List([ts.param('param0', 'string')])],
+          ['overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
+          ['try_overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
+          ['overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
+          ['try_overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
         ],
-        [
-          'try_getProposal',
-          immutable.List([
-            ts.param('proposalId', 'BigInt'),
-            ts.param('param1', 'Contract__getProposalInputParam1Struct'),
-          ]),
-        ],
-        ['getProposals', immutable.List()],
-        ['try_getProposals', immutable.List()],
-        ['overloaded', immutable.List([ts.param('param0', 'string')])],
-        ['try_overloaded', immutable.List([ts.param('param0', 'string')])],
-        ['overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
-        ['try_overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
-        ['overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
-        ['try_overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
-      ])
+      )
     })
 
     test('Have correct return types', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
-      expect(contract.methods.map(method => [method.name, method.returnType])).toEqual([
+      expect(
+        contract.methods.map((method: any) => [method.name, method.returnType]),
+      ).toEqual([
         ['bind', ts.namedType('Contract')],
         ['read', ts.namedType('Bytes')],
         ['try_read', 'ethereum.CallResult<Bytes>'],
@@ -278,7 +282,9 @@ describe('ABI code generation', () => {
 
       // Verify that the tuple type has getters for all tuple fields with
       // the right return types
-      expect(tupleType.methods.map(method => [method.name, method.returnType])).toEqual([
+      expect(
+        tupleType.methods.map((method: any) => [method.name, method.returnType]),
+      ).toEqual([
         ['get foo', 'i32'],
         ['get bar', 'Contract__getProposalInputParam1BarStruct'],
       ])
@@ -293,9 +299,9 @@ describe('ABI code generation', () => {
 
       // Verify that the tuple type has getters for all tuple fields with
       // the right return types
-      expect(tupleType.methods.map(method => [method.name, method.returnType])).toEqual([
-        ['get baz', 'Address'],
-      ])
+      expect(
+        tupleType.methods.map((method: any) => [method.name, method.returnType]),
+      ).toEqual([['get baz', 'Address']])
     })
 
     test('Tuple types exist for function return values', () => {
@@ -308,7 +314,9 @@ describe('ABI code generation', () => {
 
       // Verify that the tuple type has getters for all tuple fields with
       // the right return types
-      expect(tupleType.methods.map(method => [method.name, method.returnType])).toEqual([
+      expect(
+        tupleType.methods.map((method: any) => [method.name, method.returnType]),
+      ).toEqual([
         ['get result', 'i32'],
         ['get target', 'Address'],
         ['get data', 'Bytes'],
@@ -323,7 +331,7 @@ describe('ABI code generation', () => {
 
     test('Function bodies are generated correctly for tuple arrays', () => {
       let contract = generatedTypes.find(type => type.name === 'Contract')
-      let getter = contract.methods.find(method => method.name === 'getProposals')
+      let getter = contract.methods.find((method: any) => method.name === 'getProposals')
 
       expect(getter.body).not.toContain('toTupleArray<undefined>')
       expect(getter.body).toContain(
