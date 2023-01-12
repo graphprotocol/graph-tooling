@@ -2,7 +2,7 @@ import { Binary } from 'binary-install-raw'
 import os from 'os'
 import chalk from 'chalk'
 import fetch from 'node-fetch'
-import { filesystem, patching, print, system } from 'gluegun'
+import { filesystem, GluegunToolbox, patching, print, system } from 'gluegun'
 import { fixParameters } from '../command-helpers/gluegun'
 import path from 'path'
 import semver from 'semver'
@@ -22,14 +22,46 @@ ${chalk.dim('Options:')}
   -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
   `
 
+export interface TestOptions {
+  coverage?: boolean
+  docker?: boolean
+  force?: boolean
+  help?: boolean
+  logs?: boolean
+  recompile?: boolean
+  version?: string
+  // not a cli arg
+  testsFolder: string
+  cachePath: string
+  latestVersion?: string
+}
+
 export default {
   description: 'Runs rust binary for subgraph testing',
-  run: async toolbox => {
+  run: async (toolbox: GluegunToolbox) => {
     // Read CLI parameters
-    let { c, coverage, d, docker, f, force, h, help, l, logs, r, recompile, v, version } =
-      toolbox.parameters.options
+    let {
+      c,
+      coverage,
+      d,
+      docker,
+      f,
+      force,
+      h,
+      help,
+      l,
+      logs,
+      r,
+      recompile,
+      v,
+      version,
+    } = toolbox.parameters.options
 
-    let opts = {}
+    const testsFolder = './tests'
+    let opts: TestOptions = {
+      testsFolder,
+      cachePath: path.join(testsFolder, '.latest.json'),
+    }
     // Support both long and short option variants
     opts.coverage = coverage || c
     opts.docker = docker || d
@@ -38,7 +70,6 @@ export default {
     opts.logs = logs || l
     opts.recompile = recompile || r
     opts.version = version || v
-    opts.testsFolder = './tests'
     // Fix if a boolean flag (e.g -c, --coverage) has an argument
     try {
       fixParameters(toolbox.parameters, {
@@ -61,7 +92,7 @@ export default {
       return
     }
 
-    let datasource = toolbox.parameters.first || toolbox.parameters.array[0]
+    let datasource = toolbox.parameters.first || toolbox.parameters.array?.[0]
     // Show help text if requested
     if (opts.help) {
       print.info(HELP)
@@ -72,7 +103,7 @@ export default {
     if (filesystem.exists('matchstick.yaml')) {
       try {
         // Load the config
-        let config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8'))
+        let config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8')!)
 
         // Check if matchstick.yaml and testsFolder not null
         if (config && config.testsFolder) {
@@ -88,7 +119,6 @@ export default {
       }
     }
 
-    opts.cachePath = path.join(opts.testsFolder, '.latest.json')
     setVersionFromCache(opts)
 
     // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
@@ -116,7 +146,7 @@ export default {
   },
 }
 
-async function setVersionFromCache(opts) {
+async function setVersionFromCache(opts: TestOptions) {
   if (filesystem.exists(opts.cachePath) == 'file') {
     let cached = filesystem.read(opts.cachePath, 'json')
     // Get the cache age in days
@@ -128,7 +158,7 @@ async function setVersionFromCache(opts) {
   }
 }
 
-async function runBinary(datasource, opts) {
+async function runBinary(datasource: string | undefined, opts: TestOptions) {
   let coverageOpt = opts.coverage
   let forceOpt = opts.force
   let logsOpt = opts.logs
@@ -138,9 +168,8 @@ async function runBinary(datasource, opts) {
 
   const platform = await getPlatform(logsOpt)
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${
-    versionOpt || latestVersion
-  }/${platform}`
+  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt ||
+    latestVersion}/${platform}`
 
   if (logsOpt) {
     print.info(`Download link: ${url}`)
@@ -156,7 +185,7 @@ async function runBinary(datasource, opts) {
   args.length > 0 ? binary.run(...args) : binary.run()
 }
 
-async function getPlatform(logsOpt) {
+async function getPlatform(logsOpt: boolean | undefined) {
   const type = os.type()
   const arch = os.arch()
   const cpuCore = os.cpus()[0]
@@ -164,13 +193,12 @@ async function getPlatform(logsOpt) {
   const linuxInfo = type === 'Linux' ? await getLinuxInfo() : {}
   const linuxDistro = linuxInfo.name
   const release = linuxInfo.version || os.release()
-  const majorVersion = parseInt(linuxInfo.version, 10) || semver.major(release)
+  const majorVersion = parseInt(linuxInfo.version || '', 10) || semver.major(release)
 
   if (logsOpt) {
     print.info(
-      `OS type: ${
-        linuxDistro || type
-      }\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
+      `OS type: ${linuxDistro ||
+        type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
         cpuCore.model
       }`,
     )
@@ -199,7 +227,21 @@ async function getPlatform(logsOpt) {
   throw new Error(`Unsupported platform: ${type} ${arch} ${majorVersion}`)
 }
 
-async function getLinuxInfo() {
+/**
+ * The result of running `cat /etc/*-release | grep -E '(^VERSION|^NAME)='`
+ *
+ * May look like this:
+ * ```sh
+ * NAME="Ubuntu"
+ * VERSION="16.04.7 LTS (Xenial Xerus)"
+ * ```
+ */
+interface LinuxInfo {
+  name?: string
+  version?: string
+}
+
+async function getLinuxInfo(): Promise<LinuxInfo> {
   try {
     let result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {
       trim: true,
@@ -208,10 +250,10 @@ async function getLinuxInfo() {
       .replace(/['"]+/g, '')
       .split('\n')
       .map(p => p.split('='))
-    let linuxInfo = {}
+    let linuxInfo: LinuxInfo = {}
 
     infoArray.forEach(val => {
-      linuxInfo[val[0].toLowerCase()] = val[1]
+      linuxInfo[val[0].toLowerCase() as keyof LinuxInfo] = val[1]
     })
 
     return linuxInfo
@@ -221,7 +263,7 @@ async function getLinuxInfo() {
   }
 }
 
-async function runDocker(datasource, opts) {
+async function runDocker(datasource: string | undefined, opts: TestOptions) {
   let coverageOpt = opts.coverage
   let forceOpt = opts.force
   let versionOpt = opts.version
@@ -230,10 +272,10 @@ async function runDocker(datasource, opts) {
 
   // Remove binary-install-raw binaries, because docker has permission issues
   // when building the docker images
-  await filesystem.remove('./node_modules/binary-install-raw/bin')
+  filesystem.remove('./node_modules/binary-install-raw/bin')
 
   // Get current working directory
-  let current_folder = await filesystem.cwd()
+  let current_folder = filesystem.cwd()
 
   // Declate dockerfilePath with default location
   let dockerfilePath = path.join(opts.testsFolder || 'tests', '.docker/Dockerfile')
@@ -248,7 +290,7 @@ async function runDocker(datasource, opts) {
   }
 
   // Run a command to check if matchstick image already exists
-  exec('docker images -q matchstick', (error, stdout, stderr) => {
+  exec('docker images -q matchstick', (_error, stdout, _stderr) => {
     // Collect all(if any) flags and options that have to be passed to the matchstick binary
     let testArgs = ''
     if (coverageOpt) testArgs = testArgs + ' -c'
@@ -277,7 +319,7 @@ async function runDocker(datasource, opts) {
     // Use spawn() and {stdio: 'inherit'} so we can see the logs in real time.
     if (!dockerfileExists || stdout === '' || versionOpt || forceOpt) {
       if (stdout !== '') {
-        exec('docker image rm matchstick', (error, stdout, stderr) => {
+        exec('docker image rm matchstick', (_error, stdout, _stderr) => {
           print.info(chalk.bold(`Removing matchstick image\n${stdout}`))
         })
       }
@@ -300,7 +342,11 @@ async function runDocker(datasource, opts) {
 
 // Downloads Dockerfile template from the demo-subgraph repo
 // Replaces the placeholders with their respective values
-async function dockerfile(dockerfilePath, versionOpt, latestVersion) {
+async function dockerfile(
+  dockerfilePath: string,
+  versionOpt: string | undefined,
+  latestVersion: string | undefined,
+) {
   let spinner = print.spin('Generating Dockerfile...')
 
   try {
@@ -318,13 +364,13 @@ async function dockerfile(dockerfilePath, versionOpt, latestVersion) {
     })
 
     // Write the Dockerfile
-    await filesystem.write(dockerfilePath, content)
+    filesystem.write(dockerfilePath, content)
 
     // Replaces the version placeholders
     await patching.replace(
       dockerfilePath,
       '<MATCHSTICK_VERSION>',
-      versionOpt || latestVersion,
+      versionOpt || latestVersion || 'unknown',
     )
   } catch (error) {
     spinner.fail(

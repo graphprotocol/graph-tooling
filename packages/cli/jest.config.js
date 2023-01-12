@@ -136,7 +136,7 @@ module.exports = {
   testMatch: ['**/?(*.)+(spec|test).(t|j)s?(x)'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  testPathIgnorePatterns: ['/src/commands/test.js', '/node_modules/', '/dist/'],
+  testPathIgnorePatterns: ['/src/commands/test.ts', '/node_modules/', '/dist/'],
 
   // The regexp pattern Jest uses to detect test files
   // testRegex: "",
