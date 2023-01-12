@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import * as toolbox from 'gluegun'
+import { GluegunToolbox } from 'gluegun'
 import immutable from 'immutable'
 import { withSpinner } from '../command-helpers/spinner'
 import Subgraph from '../subgraph'
@@ -39,7 +39,7 @@ export interface AddOptions {
 
 export default {
   description: 'Adds a new datasource to a subgraph',
-  run: async (toolbox: toolbox.GluegunToolbox) => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
     let { print, system } = toolbox
 
@@ -112,6 +112,7 @@ export default {
     }
 
     let { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(
+      toolbox,
       ethabi,
       entities,
       contractName,
@@ -199,6 +200,7 @@ const getContractNames = (manifest: any) => {
 }
 
 const updateEventNamesOnCollision = (
+  toolbox: GluegunToolbox,
   ethabi: any,
   entities: any,
   contractName: string,

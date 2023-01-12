@@ -1,6 +1,6 @@
 import { URL } from 'url'
 import chalk from 'chalk'
-import * as toolbox from 'gluegun'
+import { GluegunToolbox } from 'gluegun'
 import { validateNodeUrl } from '../command-helpers/node'
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth'
 import { createJsonRpcClient } from '../command-helpers/jsonrpc'
@@ -23,7 +23,7 @@ export interface RemoveOptions {
 
 export default {
   description: 'Unregisters a subgraph name',
-  run: async (toolbox: toolbox.GluegunToolbox) => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
     const { print } = toolbox
 

@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import * as toolbox from 'gluegun'
+import { GluegunToolbox } from 'gluegun'
 import { createCompiler } from '../command-helpers/compiler'
 import { fixParameters } from '../command-helpers/gluegun'
 import { updateSubgraphNetwork } from '../command-helpers/network'
@@ -37,7 +37,7 @@ export interface BuildOptions {
 
 export default {
   description: 'Builds a subgraph and (optionally) uploads it to IPFS',
-  run: async (toolbox: toolbox.GluegunToolbox) => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
     const { filesystem, print } = toolbox
 
