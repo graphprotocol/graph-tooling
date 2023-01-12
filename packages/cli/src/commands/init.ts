@@ -461,8 +461,7 @@ export default {
         const ABI = protocolInstance.getABI()
         if (abi) {
           try {
-            // @ts-expect-error TODO: how does this even work when the filename is expected?
-            abi = loadAbiFromFile(ABI, abi)
+            abi = loadAbiFromFile(toolbox, ABI, abi)
           } catch (e) {
             print.error(`Failed to load ABI: ${e.message}`)
             process.exitCode = 1
@@ -814,7 +813,7 @@ const initSubgraphFromExample = async (
         }
 
         // Write package.json
-        await filesystem.write(pkgJsonFilename, pkgJson, { jsonIndent: 2 })
+        filesystem.write(pkgJsonFilename, pkgJson, { jsonIndent: 2 })
         return true
       } catch (e) {
         print.error(`Failed to preconfigure the subgraph: ${e}`)
