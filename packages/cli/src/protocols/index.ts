@@ -21,6 +21,7 @@ import * as CosmosMappingScaffold from './cosmos/scaffold/mapping'
 import debug from '../debug'
 import Subgraph from '../subgraph'
 import { SubgraphOptions } from './subgraph'
+import { ContractCtor } from './contract'
 
 let protocolDebug = debug('graph-cli:protocol')
 
@@ -113,7 +114,10 @@ export default class Protocol {
         'juno-1',
         'uni-3', // Juno testnet
       ],
-    }) as immutable.Map<string, string[]>
+    }) as immutable.Map<
+      'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams',
+      string[]
+    >
 
     let allNetworks: string[] = []
     networks.forEach(value => {
@@ -210,7 +214,7 @@ export type ProtocolName = 'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substre
 export interface ProtocolConfig {
   displayName: string
   abi?: any
-  contract?: any
+  contract?: ContractCtor
   getTemplateCodeGen?: (template: any) => any
   getTypeGenerator?: (options: any) => any
   getSubgraph(options: SubgraphOptions): Subgraph

@@ -1,12 +1,19 @@
-const allowedStudioNetworks = ['mainnet', 'rinkeby', 'goerli', 'gnosis'] as const
+export const allowedStudioNetworks = ['mainnet', 'rinkeby', 'goerli', 'gnosis'] as const
 
-const validateStudioNetwork = ({ studio, product, network }:{
-  studio?: boolean
-  product?: 'subgraph-studio'
-  network: typeof allowedStudioNetworks[number]
+export const validateStudioNetwork = ({
+  studio,
+  product,
+  network,
+}: {
+  studio?: string | boolean
+  product?: string
+  network: string
 }) => {
   let isStudio = studio || product === 'subgraph-studio'
-  let isAllowedNetwork = allowedStudioNetworks.includes(network)
+  let isAllowedNetwork = allowedStudioNetworks.includes(
+    // @ts-expect-error we're checking if the network is allowed
+    network,
+  )
 
   if (isStudio && !isAllowedNetwork) {
     throw new Error(
@@ -16,5 +23,3 @@ const validateStudioNetwork = ({ studio, product, network }:{
     )
   }
 }
-
-export { allowedStudioNetworks, validateStudioNetwork }

@@ -7,7 +7,7 @@ export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
   network: string,
   address: string,
-) =>
+): Promise<ABI> =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,

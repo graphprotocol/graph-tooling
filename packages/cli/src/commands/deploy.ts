@@ -252,7 +252,7 @@ export default {
     }
 
     if (network) {
-      let identifierName = protocol.getContract().identifierName()
+      let identifierName = protocol.getContract()!.identifierName()
       await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName)
     }
 

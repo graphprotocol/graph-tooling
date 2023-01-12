@@ -37,7 +37,6 @@ describe('Version Command Helpers', () => {
         expect(() =>
           validateStudioNetwork({
             product: 'subgraph-studio',
-            // @ts-expect-error for tests sake
             network: 'celo',
           }),
         ).toThrow(
@@ -69,9 +68,7 @@ describe('Version Command Helpers', () => {
       test("And it's NOT an allowed network", () => {
         expect(() =>
           validateStudioNetwork({
-            // @ts-expect-error for tests sake
             product: 'hosted-service',
-            // @ts-expect-error for tests sake
             network: 'celo',
           }),
         ).not.toThrow(

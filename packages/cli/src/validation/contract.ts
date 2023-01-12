@@ -1,7 +1,8 @@
 import immutable from 'immutable'
 import Protocol from '../protocols'
+import { ContractCtor } from '../protocols/contract'
 
-export const validateContract = (value: any, ProtocolContract: any) => {
+export const validateContract = (value: string, ProtocolContract: ContractCtor) => {
   const contract = new ProtocolContract(value)
 
   const { valid, error } = contract.validate()
@@ -20,7 +21,7 @@ export const validateContractValues = (
   manifest: immutable.Map<any, any>,
   protocol: Protocol,
 ) => {
-  const ProtocolContract = protocol.getContract()
+  const ProtocolContract = protocol.getContract()!
 
   const fieldName = ProtocolContract.identifierName()
 

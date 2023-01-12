@@ -1,22 +1,24 @@
 import chalk from 'chalk'
 import os from 'os'
 import path from 'path'
-import * as toolbox from 'gluegun/toolbox'
+import { GluegunToolbox } from 'gluegun'
 import fs from 'fs'
-import graphCli from '../cli'
+import * as graphCli from '../cli'
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph'
 import * as DataSourcesExtractor from '../command-helpers/data-sources'
 import { validateStudioNetwork } from '../command-helpers/studio'
 import { initNetworksConfig } from '../command-helpers/network'
-import { withSpinner, step } from '../command-helpers/spinner'
+import { withSpinner } from '../command-helpers/spinner'
 import { fixParameters } from '../command-helpers/gluegun'
 import { chooseNodeUrl } from '../command-helpers/node'
 import { loadAbiFromEtherscan, loadAbiFromBlockScout } from '../command-helpers/abi'
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold'
 import { abiEvents } from '../scaffold/schema'
 import { validateContract } from '../validation'
-import Protocol from '../protocols'
+import Protocol, { ProtocolName } from '../protocols'
 import debug from '../debug'
+import EthereumABI from '../protocols/ethereum/abi'
+import { ContractCtor } from '../protocols/contract'
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys())
 const availableNetworks = Protocol.availableNetworks()
@@ -51,22 +53,22 @@ ${chalk.dim('Options for --from-contract:')}
 ${chalk.dim.underline('Ethereum:')}
 
       --abi <path>               Path to the contract ABI (default: download from Etherscan)
-      --network <${availableNetworks.get('ethereum').join('|')}>
+      --network <${availableNetworks.get('ethereum')!.join('|')}>
                                  Selects the network the contract is deployed to
 
 ${chalk.dim.underline('NEAR:')}
 
-      --network <${availableNetworks.get('near').join('|')}>
+      --network <${availableNetworks.get('near')!.join('|')}>
                                  Selects the network the contract is deployed to
 
 ${chalk.dim.underline('Cosmos:')}
 
-      --network <${availableNetworks.get('cosmos').join('|')}>
+      --network <${availableNetworks.get('cosmos')!.join('|')}>
                                  Selects the network the contract is deployed to
 `
 
 const processInitForm = async (
-  toolbox,
+  toolbox: GluegunToolbox,
   {
     protocol,
     product,
@@ -81,13 +83,41 @@ const processInitForm = async (
     network,
     subgraphName,
     contractName,
+  }: {
+    protocol: ProtocolName
+    product: string
+    studio: string
+    node: string
+    abi: EthereumABI
+    allowSimpleName: boolean
+    directory: string
+    contract: string
+    indexEvents: boolean
+    fromExample: string | boolean
+    network: string
+    subgraphName: string
+    contractName: string
   },
-) => {
-  let abiFromEtherscan = undefined
+): Promise<
+  | {
+      abi: EthereumABI
+      protocolInstance: Protocol
+      subgraphName: string
+      directory: string
+      studio: string
+      product: string
+      network: string
+      contract: string
+      indexEvents: boolean
+      contractName: string
+    }
+  | undefined
+> => {
+  let abiFromEtherscan: EthereumABI | undefined = undefined
   let abiFromFile = undefined
-  let protocolInstance
-  let ProtocolContract
-  let ABI
+  let protocolInstance!: Protocol
+  let ProtocolContract: ContractCtor
+  let ABI: typeof EthereumABI
 
   let questions = [
     {
@@ -96,7 +126,7 @@ const processInitForm = async (
       message: 'Protocol',
       choices: protocolChoices,
       skip: protocolChoices.includes(protocol),
-      result: value => {
+      result: (value: string) => {
         protocol = protocol || value
         protocolInstance = new Protocol(protocol)
         return protocol
@@ -115,7 +145,7 @@ const processInitForm = async (
         product === 'hosted-service' ||
         studio !== undefined ||
         node !== undefined,
-      result: value => {
+      result: (value: string | undefined) => {
         // For now we only support NEAR subgraphs in the Hosted Service
         if (protocol === 'near') {
           // Can be overwritten because the question will be skipped (product === undefined)
@@ -127,7 +157,7 @@ const processInitForm = async (
           allowSimpleName = true
         }
 
-        product = value
+        product = value as any
         return value
       },
     },
@@ -137,7 +167,7 @@ const processInitForm = async (
       message: () =>
         product == 'subgraph-studio' || studio ? 'Subgraph slug' : 'Subgraph name',
       initial: subgraphName,
-      validate: name => {
+      validate: (name: string) => {
         try {
           validateSubgraphName(name, { allowSimpleName })
           return true
@@ -150,7 +180,7 @@ const processInitForm = async (
     $ graph init ${name} --allow-simple-name`
         }
       },
-      result: value => {
+      result: (value: string) => {
         subgraphName = value
         return value
       },
@@ -160,7 +190,7 @@ const processInitForm = async (
       name: 'directory',
       message: 'Directory to create the subgraph in',
       initial: () => directory || getSubgraphBasename(subgraphName),
-      validate: value =>
+      validate: (value: string) =>
         toolbox.filesystem.exists(value || directory || getSubgraphBasename(subgraphName))
           ? 'Directory already exists'
           : true,
@@ -173,16 +203,20 @@ const processInitForm = async (
         initDebug(
           'Generating list of available networks for protocol "%s" (%M)',
           protocol,
-          availableNetworks.get(protocol),
+          availableNetworks.get(protocol as any),
         )
-        return availableNetworks
-          .get(protocol) // Get networks related to the chosen protocol.
-          .toArray() // Needed because of gluegun. It can't even receive a JS iterable.
+        return (
+          // @ts-expect-error TODO: wait what?
+          availableNetworks
+            .get(protocol) // Get networks related to the chosen protocol.
+            // @ts-expect-error TODO: wait what?
+            .toArray()
+        ) // Needed because of gluegun. It can't even receive a JS iterable.
       },
 
       skip: fromExample !== undefined,
       initial: network || 'mainnet',
-      result: value => {
+      result: (value: string) => {
         network = value
         return value
       },
@@ -196,12 +230,12 @@ const processInitForm = async (
       type: 'input',
       name: 'contract',
       message: () => {
-        ProtocolContract = protocolInstance.getContract()
+        ProtocolContract = protocolInstance.getContract()!
         return `Contract ${ProtocolContract.identifierName()}`
       },
       skip: () => fromExample !== undefined || !protocolInstance.hasContract(),
       initial: contract,
-      validate: async value => {
+      validate: async (value: string) => {
         if (fromExample !== undefined || !protocolInstance.hasContract()) {
           return true
         }
@@ -211,7 +245,7 @@ const processInitForm = async (
 
         return valid ? true : error
       },
-      result: async value => {
+      result: async (value: string) => {
         if (fromExample !== undefined) {
           return value
         }
@@ -222,9 +256,10 @@ const processInitForm = async (
         if (protocolInstance.hasABIs() && !abi) {
           try {
             if (network === 'poa-core') {
-              abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
+              // TODO: this variable is never used anywhere, what happens?
+              // abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
             } else {
-              abiFromEtherscan = await loadAbiFromEtherscan(ABI, network, value)
+              abiFromEtherscan = await loadAbiFromEtherscan(ABI, network!, value)
             }
           } catch (e) {}
         }
@@ -240,13 +275,13 @@ const processInitForm = async (
         !protocolInstance.hasABIs() ||
         fromExample !== undefined ||
         abiFromEtherscan !== undefined,
-      validate: async value => {
+      validate: async (value: string) => {
         if (fromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
           return true
         }
 
         try {
-          abiFromFile = await loadAbiFromFile(ABI, value)
+          abiFromFile = loadAbiFromFile(toolbox, ABI, value)
           return true
         } catch (e) {
           return e.message
@@ -259,8 +294,8 @@ const processInitForm = async (
       message: 'Contract Name',
       initial: contractName || 'Contract',
       skip: () => fromExample !== undefined || !protocolInstance.hasContract(),
-      validate: value => value && value.length > 0,
-      result: value => {
+      validate: (value: string) => value && value.length > 0,
+      result: (value: string) => {
         contractName = value
         return value
       },
@@ -271,7 +306,7 @@ const processInitForm = async (
       message: 'Index contract events as entities',
       initial: true,
       skip: () => !!indexEvents,
-      result: value => {
+      result: (value: boolean) => {
         indexEvents = value
         return value
       },
@@ -279,15 +314,26 @@ const processInitForm = async (
   ]
 
   try {
-    let answers = await toolbox.prompt.ask(questions)
-    return { ...answers, abi: abiFromEtherscan || abiFromFile, protocolInstance }
+    let answers = await toolbox.prompt.ask(
+      // @ts-expect-error questions do somehow fit
+      questions,
+    )
+    return {
+      ...(answers as any), // necessary answers are here
+      abi: (abiFromEtherscan || abiFromFile)!,
+      protocolInstance,
+    }
   } catch (e) {
     return undefined
   }
 }
 
-const loadAbiFromFile = async (ABI, filename) => {
-  let exists = await toolbox.filesystem.exists(filename)
+const loadAbiFromFile = (
+  toolbox: GluegunToolbox,
+  ABI: typeof EthereumABI,
+  filename: string,
+) => {
+  let exists = toolbox.filesystem.exists(filename)
 
   if (!exists) {
     throw Error('File does not exist.')
@@ -296,15 +342,15 @@ const loadAbiFromFile = async (ABI, filename) => {
   } else if (exists === 'other') {
     throw Error('Not sure what this path points to.')
   } else {
-    return await ABI.load('Contract', filename)
+    return ABI.load('Contract', filename)
   }
 }
 
 export default {
   description: 'Creates a new subgraph with basic scaffolding',
-  run: async toolbox => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
-    let { print, system } = toolbox
+    const { print, system } = toolbox
 
     // Read CLI parameters
     let {
@@ -360,7 +406,7 @@ export default {
     }
 
     // Detect git
-    let git = await system.which('git')
+    let git = system.which('git')
     if (git === null) {
       print.error(
         `Git was not found on your system. Please install 'git' so it is in $PATH.`,
@@ -370,8 +416,8 @@ export default {
     }
 
     // Detect Yarn and/or NPM
-    let yarn = await system.which('yarn')
-    let npm = await system.which('npm')
+    let yarn = system.which('yarn')
+    let npm = system.which('npm')
     if (!yarn && !npm) {
       print.error(
         `Neither Yarn nor NPM were found on your system. Please install one of them.`,
@@ -415,7 +461,8 @@ export default {
         const ABI = protocolInstance.getABI()
         if (abi) {
           try {
-            abi = await loadAbiFromFile(ABI, abi)
+            // @ts-expect-error TODO: how does this even work when the filename is expected?
+            abi = loadAbiFromFile(ABI, abi)
           } catch (e) {
             print.error(`Failed to load ABI: ${e.message}`)
             process.exitCode = 1
@@ -520,7 +567,11 @@ export default {
   },
 }
 
-const revalidateSubgraphName = async (toolbox, subgraphName, { allowSimpleName }) => {
+const revalidateSubgraphName = async (
+  toolbox: GluegunToolbox,
+  subgraphName: string,
+  { allowSimpleName }: { allowSimpleName: boolean },
+) => {
   // Fail if the subgraph name is invalid
   try {
     validateSubgraphName(subgraphName, { allowSimpleName })
@@ -536,17 +587,17 @@ const revalidateSubgraphName = async (toolbox, subgraphName, { allowSimpleName }
   }
 }
 
-const initRepository = async (toolbox, directory) =>
+const initRepository = async (toolbox: GluegunToolbox, directory: string) =>
   await withSpinner(
     `Initialize subgraph repository`,
     `Failed to initialize subgraph repository`,
     `Warnings while initializing subgraph repository`,
-    async spinner => {
+    async () => {
       // Remove .git dir in --from-example mode; in --from-contract, we're
       // starting from an empty directory
       let gitDir = path.join(directory, '.git')
       if (toolbox.filesystem.exists(gitDir)) {
-        await toolbox.filesystem.remove(gitDir)
+        toolbox.filesystem.remove(gitDir)
       }
       await toolbox.system.run('git init', { cwd: directory })
       await toolbox.system.run('git add --all', { cwd: directory })
@@ -562,18 +613,22 @@ const initRepository = async (toolbox, directory) =>
 // This requires that the command `npm link` is called
 // on the root directory of this repository, as described here:
 // https://docs.npmjs.com/cli/v7/commands/npm-link.
-const npmLinkToLocalCli = async (toolbox, directory) => {
+const npmLinkToLocalCli = async (toolbox: GluegunToolbox, directory: string) => {
   if (process.env.GRAPH_CLI_TESTS) {
     await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory })
   }
 }
 
-const installDependencies = async (toolbox, directory, installCommand) =>
+const installDependencies = async (
+  toolbox: GluegunToolbox,
+  directory: string,
+  installCommand: string,
+) =>
   await withSpinner(
     `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
     `Failed to install dependencies`,
     `Warnings while installing dependencies`,
-    async spinner => {
+    async () => {
       // Links to local graph-cli if we're running the automated tests
       await npmLinkToLocalCli(toolbox, directory)
 
@@ -582,19 +637,35 @@ const installDependencies = async (toolbox, directory, installCommand) =>
     },
   )
 
-const runCodegen = async (toolbox, directory, codegenCommand) =>
+const runCodegen = async (
+  toolbox: GluegunToolbox,
+  directory: string,
+  codegenCommand: string,
+) =>
   await withSpinner(
     `Generate ABI and schema types with ${toolbox.print.colors.muted(codegenCommand)}`,
     `Failed to generate code from ABI and GraphQL schema`,
     `Warnings while generating code from ABI and GraphQL schema`,
-    async spinner => {
+    async () => {
       await toolbox.system.run(codegenCommand, { cwd: directory })
       return true
     },
   )
 
-const printNextSteps = (toolbox, { subgraphName, directory }, { commands }) => {
-  let { print } = toolbox
+const printNextSteps = (
+  toolbox: GluegunToolbox,
+  { subgraphName, directory }: { subgraphName: string; directory: string },
+  {
+    commands,
+  }: {
+    commands: {
+      install: string
+      codegen: string
+      deploy: string
+    }
+  },
+) => {
+  const { print } = toolbox
 
   let relativeDir = path.relative(process.cwd(), directory)
 
@@ -616,14 +687,38 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 }
 
 const initSubgraphFromExample = async (
-  toolbox,
-  { fromExample, allowSimpleName, subgraphName, directory, studio, product },
-  { commands },
+  toolbox: GluegunToolbox,
+  {
+    fromExample,
+    allowSimpleName,
+    subgraphName,
+    directory,
+    studio,
+    product,
+  }: {
+    fromExample: string | boolean
+    allowSimpleName?: boolean
+    subgraphName: string
+    directory: string
+    studio: string
+    product: string
+  },
+  {
+    commands,
+  }: {
+    commands: {
+      install: string
+      codegen: string
+      deploy: string
+    }
+  },
 ) => {
   let { filesystem, print, system } = toolbox
 
   // Fail if the subgraph name is invalid
-  if (!revalidateSubgraphName(toolbox, subgraphName, { allowSimpleName })) {
+  if (
+    !revalidateSubgraphName(toolbox, subgraphName, { allowSimpleName: !!allowSimpleName })
+  ) {
     process.exitCode = 1
     return
   }
@@ -640,7 +735,7 @@ const initSubgraphFromExample = async (
     `Cloning example subgraph`,
     `Failed to clone example subgraph`,
     `Warnings while cloning example subgraph`,
-    async spinner => {
+    async () => {
       // Create a temporary directory
       const prefix = path.join(os.tmpdir(), 'example-subgraph-')
       const tmpDir = fs.mkdtempSync(prefix)
@@ -655,7 +750,7 @@ const initSubgraphFromExample = async (
           fromExample = DEFAULT_EXAMPLE_SUBGRAPH
         }
 
-        const exampleSubgraphPath = path.join(tmpDir, fromExample)
+        const exampleSubgraphPath = path.join(tmpDir, String(fromExample))
 
         if (!filesystem.exists(exampleSubgraphPath)) {
           return { result: false, error: `Example not found: ${fromExample}` }
@@ -700,7 +795,7 @@ const initSubgraphFromExample = async (
     `Update subgraph name and commands in package.json`,
     `Failed to update subgraph name and commands in package.json`,
     `Warnings while updating subgraph name and commands in package.json`,
-    async spinner => {
+    async () => {
       try {
         // Load package.json
         let pkgJsonFilename = filesystem.path(directory, 'package.json')
@@ -758,7 +853,7 @@ const initSubgraphFromExample = async (
 }
 
 const initSubgraphFromContract = async (
-  toolbox,
+  toolbox: GluegunToolbox,
   {
     protocolInstance,
     allowSimpleName,
@@ -772,8 +867,31 @@ const initSubgraphFromContract = async (
     node,
     studio,
     product,
+  }: {
+    protocolInstance: Protocol
+    allowSimpleName: boolean
+    subgraphName: string
+    directory: string
+    abi: EthereumABI
+    network: string
+    contract: string
+    indexEvents: boolean
+    contractName: string
+    node: string
+    studio: string
+    product: string
   },
-  { commands, addContract },
+  {
+    commands,
+    addContract,
+  }: {
+    commands: {
+      install: string
+      codegen: string
+      deploy: string
+    }
+    addContract: boolean
+  },
 ) => {
   let { print } = toolbox
 
@@ -790,7 +908,12 @@ const initSubgraphFromContract = async (
     return
   }
 
-  if (protocolInstance.hasABIs() && abiEvents(abi).length === 0) {
+  if (
+    protocolInstance.hasABIs() &&
+    (abiEvents(abi).size === 0 ||
+      // @ts-expect-error TODO: the abiEvents result is expected to be a List, how's it an array?
+      abiEvents(abi).length === 0)
+  ) {
     // Fail if the ABI does not contain any events
     print.error(`ABI does not contain any events`)
     process.exitCode = 1
@@ -837,7 +960,7 @@ const initSubgraphFromContract = async (
   }
 
   if (protocolInstance.hasContract()) {
-    let identifierName = protocolInstance.getContract().identifierName()
+    let identifierName = protocolInstance.getContract()!.identifierName()
     let networkConf = await initNetworksConfig(toolbox, directory, identifierName)
     if (networkConf !== true) {
       process.exitCode = 1
@@ -873,19 +996,22 @@ const initSubgraphFromContract = async (
   printNextSteps(toolbox, { subgraphName, directory }, { commands })
 }
 
-const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
+const addAnotherContract = async (
+  toolbox: GluegunToolbox,
+  { protocolInstance, directory }: { protocolInstance: Protocol; directory: string },
+) => {
   const addContractConfirmation = await toolbox.prompt.confirm('Add another contract?')
 
   if (addContractConfirmation) {
-    let abiFromFile
-    let ProtocolContract = protocolInstance.getContract()
+    let abiFromFile: boolean = false
+    let ProtocolContract = protocolInstance.getContract()!
 
     let questions = [
       {
         type: 'input',
         name: 'contract',
         message: () => `Contract ${ProtocolContract.identifierName()}`,
-        validate: async value => {
+        validate: async (value: string) => {
           // Validate whether the contract is valid
           const { valid, error } = validateContract(value, ProtocolContract)
           return valid ? true : error
@@ -896,7 +1022,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         name: 'localAbi',
         message: 'Provide local ABI path?',
         choices: ['yes', 'no'],
-        result: value => {
+        result: (value: string) => {
           abiFromFile = value === 'yes' ? true : false
           return abiFromFile
         },
@@ -912,7 +1038,7 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
         name: 'contractName',
         message: 'Contract Name',
         initial: 'Contract',
-        validate: value => value && value.length > 0,
+        validate: (value: string) => value && value.length > 0,
       },
     ]
 
@@ -920,7 +1046,10 @@ const addAnotherContract = async (toolbox, { protocolInstance, directory }) => {
     const cwd = process.cwd()
 
     try {
-      let { abi, contract, contractName } = await toolbox.prompt.ask(questions)
+      let { abi, contract, contractName } = await toolbox.prompt.ask(
+        // @ts-expect-error questions do somehow fit
+        questions,
+      )
 
       if (fs.existsSync(directory)) {
         process.chdir(directory)

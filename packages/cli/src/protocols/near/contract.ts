@@ -1,16 +1,16 @@
+import { Contract } from '../contract'
+
 const MINIMUM_ACCOUNT_ID_LENGTH = 2 as const
 const MAXIMUM_ACCOUNT_ID_LENGTH = 64 as const
 
 const RULES_URL = 'https://docs.near.org/docs/concepts/account#account-id-rules' as const
 
-export default class NearContract {
-  private account: string
-
+export default class NearContract implements Contract {
   static identifierName() {
     return 'account'
   }
 
-  constructor(account: string) {
+  constructor(private account: string) {
     this.account = account
   }
 

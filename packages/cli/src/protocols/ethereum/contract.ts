@@ -1,4 +1,6 @@
-export default class EthereumContract {
+import { Contract } from '../contract'
+
+export default class EthereumContract implements Contract {
   static identifierName() {
     return 'address'
   }

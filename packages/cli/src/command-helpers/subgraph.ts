@@ -1,6 +1,6 @@
-const validateSubgraphName = (
+export const validateSubgraphName = (
   name: string,
-  { allowSimpleName }: { allowSimpleName: string },
+  { allowSimpleName }: { allowSimpleName?: boolean },
 ) => {
   if (allowSimpleName) {
     return name
@@ -16,9 +16,7 @@ You can bypass this check with --allow-simple-name.`)
   }
 }
 
-const getSubgraphBasename = (name: string) => {
+export const getSubgraphBasename = (name: string) => {
   let segments = name.split('/', 2)
   return segments[segments.length - 1]
 }
-
-export { validateSubgraphName, getSubgraphBasename }

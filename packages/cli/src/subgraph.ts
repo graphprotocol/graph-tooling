@@ -4,7 +4,7 @@ import path from 'path'
 import yaml from 'yaml'
 import { strOptions } from 'yaml/types'
 import * as graphql from 'graphql/language'
-import validation from './validation'
+import * as validation from './validation'
 import debug from './debug'
 import { Subgraph as ISubgraph } from './protocols/subgraph'
 
