@@ -1,5 +1,5 @@
-import { initNetworksConfig, updateSubgraphNetwork } from '../command-helpers/network'
-import * as toolbox from 'gluegun/toolbox'
+import { initNetworksConfig, updateSubgraphNetwork } from './network'
+import * as toolbox from 'gluegun'
 import yaml from 'yaml'
 import path from 'path'
 
@@ -18,7 +18,7 @@ describe('initNetworksConfig', () => {
     await initNetworksConfig(toolbox, SUBGRAPH_PATH_BASE, 'address')
   })
   afterAll(async () => {
-    await toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/networks.json`)
+    toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/networks.json`)
   })
 
   test('generates networks.json from subgraph.yaml', () => {
@@ -26,8 +26,8 @@ describe('initNetworksConfig', () => {
   })
 
   test('Populates the networks.json file with the data from subgraph.yaml', async () => {
-    let networksStr = await toolbox.filesystem.read(`${SUBGRAPH_PATH_BASE}/networks.json`)
-    let networks = JSON.parse(networksStr)
+    let networksStr = toolbox.filesystem.read(`${SUBGRAPH_PATH_BASE}/networks.json`)
+    let networks = JSON.parse(networksStr!)
 
     let expected = {
       mainnet: {
@@ -47,23 +47,23 @@ describe('updateSubgraphNetwork', () => {
       },
     }
 
-    await toolbox.filesystem.write(`${SUBGRAPH_PATH_BASE}/networks.json`, content)
-    await toolbox.filesystem.copy(
+    toolbox.filesystem.write(`${SUBGRAPH_PATH_BASE}/networks.json`, content)
+    toolbox.filesystem.copy(
       `${SUBGRAPH_PATH_BASE}/subgraph.yaml`,
       `${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`,
     )
   })
 
   afterAll(async () => {
-    await toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/networks.json`)
-    await toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`)
+    toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/networks.json`)
+    toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`)
   })
 
   test('Updates subgraph.yaml', async () => {
     let manifest = `${SUBGRAPH_PATH_BASE}/subgraph_copy.yaml`
     let networksFie = `${SUBGRAPH_PATH_BASE}/networks.json`
-    let subgraph = await toolbox.filesystem.read(manifest)
-    let subgraphObj = yaml.parse(subgraph)
+    let subgraph = toolbox.filesystem.read(manifest)
+    let subgraphObj = yaml.parse(subgraph!)
 
     let network = subgraphObj.dataSources[0].network
     let address = subgraphObj.dataSources[0].source.address
@@ -73,8 +73,8 @@ describe('updateSubgraphNetwork', () => {
 
     await updateSubgraphNetwork(toolbox, manifest, 'optimism', networksFie, 'address')
 
-    subgraph = await toolbox.filesystem.read(manifest)
-    subgraphObj = yaml.parse(subgraph)
+    subgraph = toolbox.filesystem.read(manifest)
+    subgraphObj = yaml.parse(subgraph!)
 
     network = subgraphObj.dataSources[0].network
     address = subgraphObj.dataSources[0].source.address

@@ -7,33 +7,33 @@ import AbiCodeGenerator from './codegen/abi'
 const TUPLE_ARRAY_PATTERN = /^tuple\[([0-9]*)\]$/
 const TUPLE_MATRIX_PATTERN = /^tuple\[([0-9]*)\]\[([0-9]*)\]$/
 
-const buildOldSignatureParameter = input => {
+const buildOldSignatureParameter = (input: immutable.Map<any, any>) => {
   return input.get('type') === 'tuple'
     ? `(${input
         .get('components')
-        .map(component => buildSignatureParameter(component))
+        .map((component: any) => buildSignatureParameter(component))
         .join(',')})`
     : `${input.get('type')}`
 }
 
-const buildSignatureParameter = input => {
+const buildSignatureParameter = (input: immutable.Map<any, any>) => {
   if (input.get('type') === 'tuple') {
     return `(${input.get('indexed') ? 'indexed ' : ''}${input
       .get('components')
-      .map(component => buildSignatureParameter(component))
+      .map((component: any) => buildSignatureParameter(component))
       .join(',')})`
   } else if (input.get('type').match(TUPLE_ARRAY_PATTERN)) {
     const length = input.get('type').match(TUPLE_ARRAY_PATTERN)[1]
     return `(${input.get('indexed') ? 'indexed ' : ''}${input
       .get('components')
-      .map(component => buildSignatureParameter(component))
+      .map((component: any) => buildSignatureParameter(component))
       .join(',')})[${length ? length : ''}]`
   } else if (input.get('type').match(TUPLE_MATRIX_PATTERN)) {
     const length1 = input.get('type').match(TUPLE_MATRIX_PATTERN)[1]
     const length2 = input.get('type').match(TUPLE_MATRIX_PATTERN)[2]
     return `(${input.get('indexed') ? 'indexed ' : ''}${input
       .get('components')
-      .map(component => buildSignatureParameter(component))
+      .map((component: any) => buildSignatureParameter(component))
       .join(',')})[${length1 ? length1 : ''}][${length2 ? length2 : ''}]`
   } else {
     return `${input.get('indexed') ? 'indexed ' : ''}${input.get('type')}`
@@ -41,7 +41,11 @@ const buildSignatureParameter = input => {
 }
 
 export default class ABI {
-  constructor(name, file, data) {
+  constructor(
+    public name: string,
+    public file: string | undefined,
+    public data: immutable.Collection<any, any>,
+  ) {
     this.name = name
     this.file = file
     this.data = data
@@ -51,14 +55,14 @@ export default class ABI {
     return new AbiCodeGenerator(this)
   }
 
-  static oldEventSignature(event) {
+  static oldEventSignature(event: immutable.Map<any, any>) {
     return `${event.get('name')}(${event
       .get('inputs', [])
       .map(buildOldSignatureParameter)
       .join(',')})`
   }
 
-  static eventSignature(event) {
+  static eventSignature(event: immutable.Map<any, any>) {
     return `${event.get('name')}(${event
       .get('inputs', [])
       .map(buildSignatureParameter)
@@ -77,21 +81,27 @@ export default class ABI {
    * - One input and output: `example(uint256):(bool)`
    * - Multiple inputs and outputs: `example(uint256,(string,bytes32)):(bool,uint256)`
    */
-  functionSignature(fn) {
-    let inputs = fn.get('inputs', []).map(buildSignatureParameter).join(',')
-    let outputs = fn.get('outputs', []).map(buildSignatureParameter).join(',')
+  functionSignature(fn: immutable.Map<any, any>) {
+    let inputs = fn
+      .get('inputs', [])
+      .map(buildSignatureParameter)
+      .join(',')
+    let outputs = fn
+      .get('outputs', [])
+      .map(buildSignatureParameter)
+      .join(',')
     return `${fn.get('name')}(${inputs})${outputs.length > 0 ? `:(${outputs})` : ''}`
   }
 
   oldEventSignatures() {
     return this.data
-      .filter(entry => entry.get('type') === 'event')
+      .filter((entry: any) => entry.get('type') === 'event')
       .map(ABI.oldEventSignature)
   }
 
   eventSignatures() {
     return this.data
-      .filter(entry => entry.get('type') === 'event')
+      .filter((entry: any) => entry.get('type') === 'event')
       .map(ABI.eventSignature)
   }
 
@@ -100,14 +110,14 @@ export default class ABI {
     // 'constructor', 'function' or 'fallback'
     let functionTypes = immutable.Set(['constructor', 'function', 'fallback'])
     let functions = this.data.filter(
-      entry => !entry.has('type') || functionTypes.includes(entry.get('type')),
+      (entry: any) => !entry.has('type') || functionTypes.includes(entry.get('type')),
     )
 
     // A function is a call function if it is nonpayable, payable or
     // not constant
     let mutabilityTypes = immutable.Set(['nonpayable', 'payable'])
     return functions.filter(
-      entry =>
+      (entry: any) =>
         mutabilityTypes.includes(entry.get('stateMutability')) ||
         entry.get('constant') === false,
     )
@@ -115,18 +125,18 @@ export default class ABI {
 
   callFunctionSignatures() {
     return this.callFunctions()
-      .filter(entry => entry.get('type') !== 'constructor')
-      .map(entry => {
+      .filter((entry: any) => entry.get('type') !== 'constructor')
+      .map((entry: any) => {
         const name = entry.get('name', '<default>')
         const inputs = entry
           .get('inputs', immutable.List())
-          .map(input => buildSignatureParameter(input))
+          .map((input: any) => buildSignatureParameter(input))
 
         return `${name}(${inputs.join(',')})`
       })
   }
 
-  static normalized(json) {
+  static normalized(json: any) {
     if (Array.isArray(json)) {
       return json
     } else if (json.abi !== undefined) {
@@ -141,8 +151,8 @@ export default class ABI {
     }
   }
 
-  static load(name, file) {
-    let data = JSON.parse(fs.readFileSync(file))
+  static load(name: string, file: string) {
+    let data = JSON.parse(fs.readFileSync(file).toString())
     let abi = ABI.normalized(data)
 
     if (abi === null || abi === undefined) {

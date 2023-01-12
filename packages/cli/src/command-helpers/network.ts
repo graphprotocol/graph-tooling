@@ -1,13 +1,14 @@
 import path from 'path'
 import yaml from 'yaml'
-import { step, withSpinner } from '../command-helpers/spinner'
+import { step, withSpinner } from './spinner'
+import { GluegunFilesystem, GluegunPatching } from 'gluegun'
 
-const updateSubgraphNetwork = async (
-  toolbox,
-  manifest,
-  network,
-  networksFile,
-  identifierName,
+export const updateSubgraphNetwork = async (
+  toolbox: { filesystem: GluegunFilesystem; patching: GluegunPatching },
+  manifest: any,
+  network: string,
+  networksFile: string,
+  identifierName: string,
 ) =>
   await withSpinner(
     `Update sources network`,
@@ -28,10 +29,10 @@ const updateSubgraphNetwork = async (
       await toolbox.patching.update(manifest, content => {
         let subgraph = yaml.parse(content)
         let networkSources = Object.keys(networkConfig)
-        let subgraphSources = subgraph.dataSources.map(value => value.name)
+        let subgraphSources = subgraph.dataSources.map((value: any) => value.name)
 
         // Update the dataSources network config
-        subgraph.dataSources = subgraph.dataSources.map(source => {
+        subgraph.dataSources = subgraph.dataSources.map((source: any) => {
           if (!networkSources.includes(source.name)) {
             throw new Error(
               `'${source.name}' was not found in the '${network}' configuration, please update!`,
@@ -53,7 +54,7 @@ const updateSubgraphNetwork = async (
         // All data sources shoud be on the same network,
         // so we have to update the network of all templates too.
         if (subgraph.templates) {
-          subgraph.templates = subgraph.templates.map(template => ({
+          subgraph.templates = subgraph.templates.map((template: any) => ({
             ...template,
             network,
           }))
@@ -75,19 +76,21 @@ const updateSubgraphNetwork = async (
     },
   )
 
-const initNetworksConfig = async (toolbox, directory, identifierName) =>
+export const initNetworksConfig = async (
+  toolbox: { filesystem: GluegunFilesystem },
+  directory: string,
+  identifierName: string,
+) =>
   await withSpinner(
     `Initialize networks config`,
     `Failed to initialize networks config`,
     `Warnings while initializing networks config`,
-    async spinner => {
-      let subgraphStr = await toolbox.filesystem.read(
-        path.join(directory, 'subgraph.yaml'),
-      )
-      let subgraph = yaml.parse(subgraphStr)
+    async () => {
+      let subgraphStr = toolbox.filesystem.read(path.join(directory, 'subgraph.yaml'))
+      let subgraph = yaml.parse(subgraphStr!)
 
       const networks = subgraph.dataSources.reduce(
-        (acc, source) =>
+        (acc: any, source: any) =>
           Object.assign(acc, {
             [source.network]: {
               [source.name]: {
@@ -99,14 +102,19 @@ const initNetworksConfig = async (toolbox, directory, identifierName) =>
         {},
       )
 
-      await toolbox.filesystem.write(`${directory}/networks.json`, networks)
+      toolbox.filesystem.write(`${directory}/networks.json`, networks)
 
       return true
     },
   )
 
 // Checks if any network attribute has been changed
-function hasChanges(identifierName, network, networkConfig, dataSource) {
+function hasChanges(
+  identifierName: string,
+  network: string,
+  networkConfig: any,
+  dataSource: any,
+) {
   let networkChanged = dataSource.network !== network
 
   // Return directly if the network is different
@@ -119,12 +127,12 @@ function hasChanges(identifierName, network, networkConfig, dataSource) {
   return networkChanged || addressChanged || startBlockChanged
 }
 
-const updateNetworksFile = async (
-  toolbox,
-  network,
-  dataSource,
-  address,
-  networksFile,
+export const updateNetworksFile = async (
+  toolbox: { patching: GluegunPatching },
+  network: string,
+  dataSource: any,
+  address: string,
+  networksFile: string,
 ) => {
   await toolbox.patching.update(networksFile, config => {
     if (Object.keys(config).includes(network)) {
@@ -135,5 +143,3 @@ const updateNetworksFile = async (
     return config
   })
 }
-
-export { updateSubgraphNetwork, initNetworksConfig, updateNetworksFile }

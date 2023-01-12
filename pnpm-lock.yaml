@@ -56,6 +56,7 @@ importers:
       '@types/fs-extra': ^9.0.13
       '@types/jest': ^26.0.24
       '@types/js-yaml': ^3.12.7
+      '@types/node-fetch': ^2.6.2
       '@types/semver': ^7.3.13
       '@types/which': ^2.0.1
       assemblyscript: 0.19.23
@@ -121,6 +122,7 @@ importers:
       '@types/fs-extra': 9.0.13
       '@types/jest': 26.0.24
       '@types/js-yaml': 3.12.7
+      '@types/node-fetch': 2.6.2
       '@types/semver': 7.3.13
       '@types/which': 2.0.1
       copyfiles: 2.4.1
@@ -2223,6 +2225,13 @@ packages:
 
   /@types/ms/0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
+    dev: true
+
+  /@types/node-fetch/2.6.2:
+    resolution: {integrity: sha512-DHqhlq5jeESLy19TYhLakJ07kNumXWjcDdxXsLUMJZ6ue8VZJj4kLPQVE/2mdHh3xZziNF1xppu5lwmS53HR+A==}
+    dependencies:
+      '@types/node': 18.11.9
+      form-data: 3.0.1
     dev: true
 
   /@types/node/10.17.60:

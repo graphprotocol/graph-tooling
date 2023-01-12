@@ -1,13 +1,18 @@
 import { withSpinner } from './spinner'
 import fetch from 'node-fetch'
 import immutable from 'immutable'
+import ABI from '../protocols/ethereum/abi'
 
-const loadAbiFromEtherscan = async (ABI, network, address) =>
+export const loadAbiFromEtherscan = async (
+  ABICtor: typeof ABI,
+  network: string,
+  address: string,
+) =>
   await withSpinner(
     `Fetching ABI from Etherscan`,
     `Failed to fetch ABI from Etherscan`,
     `Warnings while fetching ABI from Etherscan`,
-    async spinner => {
+    async () => {
       const scanApiUrl = getEtherscanLikeAPIUrl(network)
       let result = await fetch(
         `${scanApiUrl}?module=contract&action=getabi&address=${address}`,
@@ -18,19 +23,27 @@ const loadAbiFromEtherscan = async (ABI, network, address) =>
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
-        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
+        return new ABICtor(
+          'Contract',
+          undefined,
+          immutable.fromJS(JSON.parse(json.result)),
+        )
       } else {
         throw new Error('ABI not found, try loading it from a local file')
       }
     },
   )
 
-const loadAbiFromBlockScout = async (ABI, network, address) =>
+export const loadAbiFromBlockScout = async (
+  ABICtor: typeof ABI,
+  network: string,
+  address: string,
+) =>
   await withSpinner(
     `Fetching ABI from BlockScout`,
     `Failed to fetch ABI from BlockScout`,
     `Warnings while fetching ABI from BlockScout`,
-    async spinner => {
+    async () => {
       let result = await fetch(
         `https://blockscout.com/${network.replace(
           '-',
@@ -43,14 +56,18 @@ const loadAbiFromBlockScout = async (ABI, network, address) =>
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
-        return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
+        return new ABICtor(
+          'Contract',
+          undefined,
+          immutable.fromJS(JSON.parse(json.result)),
+        )
       } else {
         throw new Error('ABI not found, try loading it from a local file')
       }
     },
   )
 
-const getEtherscanLikeAPIUrl = network => {
+const getEtherscanLikeAPIUrl = (network: string) => {
   switch (network) {
     case 'mainnet':
       return `https://api.etherscan.io/api`
@@ -90,5 +107,3 @@ const getEtherscanLikeAPIUrl = network => {
       return `https://api-${network}.etherscan.io/api`
   }
 }
-
-export { loadAbiFromEtherscan, loadAbiFromBlockScout }

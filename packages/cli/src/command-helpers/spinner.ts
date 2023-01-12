@@ -2,7 +2,7 @@ import * as toolbox from 'gluegun'
 
 export type Spinner = ReturnType<toolbox.GluegunPrint['spin']>
 
-export const step = (spinner: Spinner, subject: string, text: string) => {
+export const step = (spinner: Spinner, subject: string, text?: string) => {
   if (text) {
     spinner.stopAndPersist({
       text: toolbox.print.colors.muted(`${subject} ${text}`),

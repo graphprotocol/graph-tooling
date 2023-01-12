@@ -3,7 +3,7 @@ import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types'
 import * as util from '../codegen/util'
 import Protocol from '../protocols'
 
-export function abiEvents(abi: { data: immutable.Map<any, any> }) {
+export function abiEvents(abi: { data: immutable.Collection<any, any> }) {
   return (util.disambiguateNames({
     // @ts-expect-error improve typings of disambiguateNames to handle iterables
     values: abi.data.filter(item => item.get('type') === 'event'),

@@ -3,20 +3,22 @@ import path from 'path'
 import prettier from 'prettier'
 import yaml from 'yaml'
 
-import { step } from './spinner'
+import { Spinner, step } from './spinner'
 import Scaffold from '../scaffold'
 import { generateEventIndexingHandlers } from '../scaffold/mapping'
 import { generateEventType, abiEvents } from '../scaffold/schema'
 import { generateTestsFiles } from '../scaffold/tests'
 import { strings } from 'gluegun'
 import { Map } from 'immutable'
+import Protocol from '../protocols'
+import ABI from '../protocols/ethereum/abi'
 
-const generateDataSource = async (
-  protocol,
-  contractName,
-  network,
-  contractAddress,
-  abi,
+export const generateDataSource = async (
+  protocol: Protocol,
+  contractName: string,
+  network: string,
+  contractAddress: string,
+  abi: ABI,
 ) => {
   const protocolManifest = protocol.getManifestScaffold()
 
@@ -43,7 +45,7 @@ const generateDataSource = async (
   ).asMutable()
 }
 
-const generateScaffold = async (
+export const generateScaffold = async (
   {
     protocolInstance,
     abi,
@@ -53,8 +55,17 @@ const generateScaffold = async (
     indexEvents,
     contractName = 'Contract',
     node,
+  }: {
+    protocolInstance: Protocol
+    abi: ABI
+    contract: string
+    network: string
+    subgraphName: string
+    indexEvents: boolean
+    contractName?: string
+    node: string
   },
-  spinner,
+  spinner: Spinner,
 ) => {
   step(spinner, 'Generate subgraph')
 
@@ -72,7 +83,11 @@ const generateScaffold = async (
   return scaffold.generate()
 }
 
-const writeScaffoldDirectory = async (scaffold, directory, spinner) => {
+const writeScaffoldDirectory = async (
+  scaffold: any,
+  directory: string,
+  spinner: Spinner,
+) => {
   // Create directory itself
   await fs.mkdirs(directory)
 
@@ -93,12 +108,16 @@ const writeScaffoldDirectory = async (scaffold, directory, spinner) => {
   await Promise.all(promises)
 }
 
-const writeScaffold = async (scaffold, directory, spinner) => {
+export const writeScaffold = async (
+  scaffold: any,
+  directory: string,
+  spinner: Spinner,
+) => {
   step(spinner, `Write subgraph to directory`)
   await writeScaffoldDirectory(scaffold, directory, spinner)
 }
 
-const writeABI = async (abi, contractName) => {
+export const writeABI = async (abi: ABI, contractName: string) => {
   let data = prettier.format(JSON.stringify(abi.data), {
     parser: 'json',
   })
@@ -106,7 +125,12 @@ const writeABI = async (abi, contractName) => {
   await fs.writeFile(`./abis/${contractName}.json`, data, { encoding: 'utf-8' })
 }
 
-const writeSchema = async (abi, protocol, schemaPath, entities) => {
+export const writeSchema = async (
+  abi: ABI,
+  protocol: Protocol,
+  schemaPath: string,
+  entities: any,
+) => {
   const events = protocol.hasEvents()
     ? abiEvents(abi)
         .filter(event => entities.indexOf(event.get('name')) === -1)
@@ -123,7 +147,12 @@ const writeSchema = async (abi, protocol, schemaPath, entities) => {
   await fs.appendFile(schemaPath, data, { encoding: 'utf-8' })
 }
 
-const writeMapping = async (abi, protocol, contractName, entities) => {
+export const writeMapping = async (
+  abi: ABI,
+  protocol: Protocol,
+  contractName: string,
+  entities: any,
+) => {
   const events = protocol.hasEvents()
     ? abiEvents(abi)
         .filter(event => entities.indexOf(event.get('name')) === -1)
@@ -140,7 +169,11 @@ const writeMapping = async (abi, protocol, contractName, entities) => {
   })
 }
 
-const writeTestsFiles = async (abi, protocol, contractName) => {
+export const writeTestsFiles = async (
+  abi: ABI,
+  protocol: Protocol,
+  contractName: string,
+) => {
   const hasEvents = protocol.hasEvents()
   const events = hasEvents ? abiEvents(abi).toJS() : []
 
@@ -156,14 +189,4 @@ const writeTestsFiles = async (abi, protocol, contractName) => {
       })
     }
   }
-}
-
-export {
-  generateScaffold,
-  writeScaffold,
-  generateDataSource,
-  writeABI,
-  writeSchema,
-  writeMapping,
-  writeTestsFiles,
 }
