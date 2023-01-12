@@ -3,3 +3,4 @@
 ---
 dependencies updates:
   - Updated dependency [`immutable@4.2.1` ↗︎](https://www.npmjs.com/package/immutable/v/4.2.1) (from `3.8.2`, in `dependencies`)
+  - Removed dependency [`dockerode@2.5.8` ↗︎](https://www.npmjs.com/package/dockerode/v/2.5.8) (from `dependencies`)
