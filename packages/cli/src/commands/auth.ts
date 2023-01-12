@@ -19,7 +19,7 @@ ${chalk.dim('Options:')}
 
 export interface AuthOptions {
   product?: 'subgraph-studio' | 'hosted-service'
-  studio?: string
+  studio?: boolean
   help?: boolean
   // not a cli arg
   node?: string
