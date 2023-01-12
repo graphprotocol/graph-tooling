@@ -3,10 +3,10 @@ import compose from 'docker-compose'
 import http from 'http'
 import net from 'net'
 import tmp from 'tmp-promise'
-import Docker from 'dockerode'
 import path from 'path'
 import stripAnsi from 'strip-ansi'
-const spawn = require('child_process').spawn
+import { spawn, ChildProcess } from 'child_process'
+import { GluegunToolbox } from 'gluegun'
 
 import { fixParameters } from '../command-helpers/gluegun'
 import { step, withSpinner } from '../command-helpers/spinner'
@@ -32,12 +32,26 @@ Options:
       --timeout                 Time to wait for service containers. (optional, defaults to 120000 milliseconds)
 `
 
+export interface LocalOptions {
+  help?: boolean
+  nodeLogs?: boolean
+  ethereumLogs?: boolean
+  composeFile?: string
+  nodeImage?: string
+  standaloneNode?: string
+  standaloneNodeArgs?: string
+  skipWaitForIpfs?: boolean
+  skipWaitForEthereum?: boolean
+  skipWaitForPostgres?: boolean
+  timeout?: number
+}
+
 export default {
   description:
     'Runs local tests against a Graph Node environment (using Ganache by default)',
-  run: async toolbox => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
-    let { filesystem, print } = toolbox
+    const { filesystem, print } = toolbox
 
     // Parse CLI parameters
     let {
@@ -82,9 +96,6 @@ export default {
     }
 
     let testCommand = params[0]
-
-    // Create Docker client
-    let docker = new Docker()
 
     // Obtain the Docker Compose file for services that the tests run against
     composeFile =
@@ -141,7 +152,7 @@ export default {
 
     // Bring up Graph Node separately, if a standalone node is used
     let nodeProcess
-    let nodeOutputChunks = []
+    let nodeOutputChunks: Buffer[] = []
     if (standaloneNode) {
       try {
         nodeProcess = await startGraphNode(
@@ -245,7 +256,7 @@ export default {
 /**
  * Indents all lines of a string
  */
-const indent = (indentation, str) =>
+const indent = (indentation: string, str: string) =>
   str
     .split('\n')
     .map(s => `${indentation}${s}`)
@@ -253,17 +264,22 @@ const indent = (indentation, str) =>
     .map(s => s.replace(/^\s+$/g, ''))
     .join('\n')
 
-const configureTestEnvironment = async (toolbox, tempdir, composeFile, nodeImage) =>
+const configureTestEnvironment = async (
+  toolbox: GluegunToolbox,
+  tempdir: string,
+  composeFile: string,
+  nodeImage: string,
+) =>
   await withSpinner(
     `Configure test environment`,
     `Failed to configure test environment`,
     `Warnings configuring test environment`,
-    async spinner => {
+    async () => {
       // Temporary compose file
       let tempComposeFile = path.join(tempdir, 'compose', 'docker-compose.yml')
 
       // Copy the compose file to the temporary directory
-      await toolbox.filesystem.copy(composeFile, tempComposeFile)
+      toolbox.filesystem.copy(composeFile, tempComposeFile)
 
       // Substitute the graph-node image with the custom one, if appropriate
       if (nodeImage) {
@@ -276,9 +292,9 @@ const configureTestEnvironment = async (toolbox, tempdir, composeFile, nodeImage
     },
   )
 
-const waitFor = async (timeout, testFn) => {
+const waitFor = async (timeout: number, testFn: () => void) => {
   let deadline = Date.now() + timeout
-  let error = undefined
+  let error: Error | undefined = undefined
   return new Promise((resolve, reject) => {
     const check = async () => {
       if (Date.now() > deadline) {
@@ -298,7 +314,7 @@ const waitFor = async (timeout, testFn) => {
   })
 }
 
-const startTestEnvironment = async tempdir =>
+const startTestEnvironment = async (tempdir: string) =>
   await withSpinner(
     `Start test environment`,
     `Failed to start test environment`,
@@ -316,6 +332,11 @@ const waitForTestEnvironment = async ({
   skipWaitForIpfs,
   skipWaitForPostgres,
   timeout,
+}: {
+  skipWaitForEthereum: boolean
+  skipWaitForIpfs: boolean
+  skipWaitForPostgres: boolean
+  timeout: number
 }) =>
   await withSpinner(
     `Wait for test environment`,
@@ -331,7 +352,7 @@ const waitForTestEnvironment = async ({
           async () =>
             new Promise((resolve, reject) => {
               http
-                .get('http://localhost:15001/api/v0/version', response => {
+                .get('http://localhost:15001/api/v0/version', () => {
                   resolve()
                 })
                 .on('error', e => {
@@ -351,7 +372,7 @@ const waitForTestEnvironment = async ({
           async () =>
             new Promise((resolve, reject) => {
               http
-                .get('http://localhost:18545', response => {
+                .get('http://localhost:18545', () => {
                   resolve()
                 })
                 .on('error', e => {
@@ -386,12 +407,12 @@ const waitForTestEnvironment = async ({
     },
   )
 
-const stopTestEnvironment = async tempdir =>
+const stopTestEnvironment = async (tempdir: string) =>
   await withSpinner(
     `Stop test environment`,
     `Failed to stop test environment`,
     `Warnings stopping test environment`,
-    async spinner => {
+    async () => {
       // Our containers do not respond quickly to the SIGTERM which `down` tries before timing out
       // and killing them, so speed things up by sending a SIGKILL right away.
       try {
@@ -404,7 +425,11 @@ const stopTestEnvironment = async tempdir =>
     },
   )
 
-const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChunks) =>
+const startGraphNode = async (
+  standaloneNode: string,
+  standaloneNodeArgs: string,
+  nodeOutputChunks: Buffer[],
+): Promise<ChildProcess> =>
   await withSpinner(
     `Start Graph node`,
     `Failed to start Graph node`,
@@ -455,16 +480,16 @@ const startGraphNode = async (standaloneNode, standaloneNodeArgs, nodeOutputChun
     },
   )
 
-const waitForGraphNode = async timeout =>
+const waitForGraphNode = async (timeout: number) =>
   await withSpinner(
     `Wait for Graph node`,
     `Failed to wait for Graph node`,
     `Warnings waiting for Graph node`,
-    async spinner => {
+    async () => {
       await waitFor(
         timeout,
         async () =>
-          new Promise((resolve, reject) => {
+          new Promise<void>((resolve, reject) => {
             http
               .get('http://localhost:18000', { timeout }, () => resolve())
               .on('error', e => reject(e))
@@ -473,17 +498,21 @@ const waitForGraphNode = async timeout =>
     },
   )
 
-const stopGraphNode = async nodeProcess =>
+const stopGraphNode = async (nodeProcess: ChildProcess) =>
   await withSpinner(
     `Stop Graph node`,
     `Failed to stop Graph node`,
     `Warnings stopping Graph node`,
-    async spinner => {
+    async () => {
       nodeProcess.kill(9)
     },
   )
 
-const collectGraphNodeLogs = async (tempdir, standaloneNode, nodeOutputChunks) => {
+const collectGraphNodeLogs = async (
+  tempdir: string,
+  standaloneNode: string,
+  nodeOutputChunks: Buffer[],
+) => {
   if (standaloneNode) {
     // Pull the logs from the captured output
     return stripAnsi(Buffer.concat(nodeOutputChunks).toString('utf-8'))
@@ -497,7 +526,7 @@ const collectGraphNodeLogs = async (tempdir, standaloneNode, nodeOutputChunks) =
   }
 }
 
-const collectEthereumLogs = async tempdir => {
+const collectEthereumLogs = async (tempdir: string) => {
   let logs = await compose.logs('ethereum', {
     follow: false,
     cwd: path.join(tempdir, 'compose'),
@@ -505,14 +534,14 @@ const collectEthereumLogs = async tempdir => {
   return stripAnsi(logs.out.trim()).replace(/ethereum_1  \| /g, '')
 }
 
-const runTests = async testCommand =>
+const runTests = async (testCommand: string) =>
   await withSpinner(
     `Run tests`,
     `Failed to run tests`,
     `Warnings running tests`,
-    async spinner =>
-      new Promise((resolve, reject) => {
-        let output = []
+    async () =>
+      new Promise(resolve => {
+        const output: Buffer[] = []
         let testProcess = spawn(`${testCommand}`, { shell: true })
         testProcess.stdout.on('data', data => output.push(Buffer.from(data)))
         testProcess.stderr.on('data', data => output.push(Buffer.from(data)))
