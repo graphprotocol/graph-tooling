@@ -1,9 +1,14 @@
 import immutable from 'immutable'
+import { Subgraph, SubgraphOptions } from '../subgraph'
 import ABI from './abi'
 import * as DataSourcesExtractor from '../../command-helpers/data-sources'
 
-export default class EthereumSubgraph {
-  constructor(options = {}) {
+export default class EthereumSubgraph implements Subgraph {
+  public manifest: SubgraphOptions['manifest']
+  public resolveFile: SubgraphOptions['resolveFile']
+  public protocol: SubgraphOptions['protocol']
+
+  constructor(options: SubgraphOptions) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
     this.protocol = options.protocol
@@ -22,7 +27,7 @@ export default class EthereumSubgraph {
     )
 
     return dataSourcesAndTemplates.reduce(
-      (errors, dataSourceOrTemplate) =>
+      (errors: any[], dataSourceOrTemplate: any) =>
         errors.concat(
           this.validateDataSourceAbis(
             dataSourceOrTemplate.get('dataSource'),
@@ -33,11 +38,13 @@ export default class EthereumSubgraph {
     )
   }
 
-  validateDataSourceAbis(dataSource, path) {
+  validateDataSourceAbis(dataSource: any, path: string) {
     // Validate that the the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
     let abiName = dataSource.getIn(['source', 'abi'])
-    let abiNames = dataSource.getIn(['mapping', 'abis']).map(abi => abi.get('name'))
+    let abiNames = dataSource
+      .getIn(['mapping', 'abis'])
+      .map((abi: any) => abi.get('name'))
     let nameErrors = abiNames.includes(abiName)
       ? immutable.List()
       : immutable.fromJS([
@@ -48,7 +55,7 @@ ABI name '${abiName}' not found in mapping > abis.
 Available ABIs:
 ${abiNames
   .sort()
-  .map(name => `- ${name}`)
+  .map((name: string) => `- ${name}`)
   .join('\n')}`,
           },
         ])
@@ -56,7 +63,7 @@ ${abiNames
     // Validate that all ABI files are valid
     let fileErrors = dataSource
       .getIn(['mapping', 'abis'])
-      .reduce((errors, abi, abiIndex) => {
+      .reduce((errors: any[], abi: any, abiIndex: number) => {
         try {
           ABI.load(abi.get('name'), this.resolveFile(abi.get('file')))
           return errors
@@ -79,7 +86,7 @@ ${abiNames
       this.protocol,
     )
 
-    return dataSourcesAndTemplates.reduce((errors, dataSourceOrTemplate) => {
+    return dataSourcesAndTemplates.reduce((errors: any[], dataSourceOrTemplate: any) => {
       return errors.concat(
         this.validateDataSourceEvents(
           dataSourceOrTemplate.get('dataSource'),
@@ -89,14 +96,14 @@ ${abiNames
     }, immutable.List())
   }
 
-  validateDataSourceEvents(dataSource, path) {
-    let abi
+  validateDataSourceEvents(dataSource: any, path: string) {
+    let abi: ABI
     try {
       // Resolve the source ABI name into a real ABI object
       let abiName = dataSource.getIn(['source', 'abi'])
       let abiEntry = dataSource
         .getIn(['mapping', 'abis'])
-        .find(abi => abi.get('name') === abiName)
+        .find((abi: any) => abi.get('name') === abiName)
       abi = ABI.load(abiEntry.get('name'), this.resolveFile(abiEntry.get('file')))
     } catch (_) {
       // Ignore errors silently; we can't really say anything about
@@ -107,7 +114,7 @@ ${abiNames
     // Obtain event signatures from the mapping
     let manifestEvents = dataSource
       .getIn(['mapping', 'eventHandlers'], immutable.List())
-      .map(handler => handler.get('event'))
+      .map((handler: any) => handler.get('event'))
 
     // Obtain event signatures from the ABI
     let abiEvents = abi.eventSignatures()
@@ -115,7 +122,7 @@ ${abiNames
     // Add errors for every manifest event signature that is not
     // present in the ABI
     return manifestEvents.reduce(
-      (errors, manifestEvent, index) =>
+      (errors: any[], manifestEvent: any, index: number) =>
         abiEvents.includes(manifestEvent)
           ? errors
           : errors.push(
@@ -137,17 +144,17 @@ ${abiEvents
   validateCallFunctions() {
     return this.manifest
       .get('dataSources')
-      .filter(dataSource => this.protocol.isValidKindName(dataSource.get('kind')))
-      .reduce((errors, dataSource, dataSourceIndex) => {
+      .filter((dataSource: any) => this.protocol.isValidKindName(dataSource.get('kind')))
+      .reduce((errors: any[], dataSource: any, dataSourceIndex: string) => {
         let path = ['dataSources', dataSourceIndex, 'callHandlers']
 
-        let abi
+        let abi: ABI
         try {
           // Resolve the source ABI name into a real ABI object
           let abiName = dataSource.getIn(['source', 'abi'])
           let abiEntry = dataSource
             .getIn(['mapping', 'abis'])
-            .find(abi => abi.get('name') === abiName)
+            .find((abi: any) => abi.get('name') === abiName)
           abi = ABI.load(abiEntry.get('name'), this.resolveFile(abiEntry.get('file')))
         } catch (e) {
           // Ignore errors silently; we can't really say anything about
@@ -158,7 +165,7 @@ ${abiEvents
         // Obtain event signatures from the mapping
         let manifestFunctions = dataSource
           .getIn(['mapping', 'callHandlers'], immutable.List())
-          .map(handler => handler.get('function'))
+          .map((handler: any) => handler.get('function'))
 
         // Obtain event signatures from the ABI
         let abiFunctions = abi.callFunctionSignatures()
@@ -166,7 +173,7 @@ ${abiEvents
         // Add errors for every manifest event signature that is not
         // present in the ABI
         return manifestFunctions.reduce(
-          (errors, manifestFunction, index) =>
+          (errors: any[], manifestFunction: any, index: number) =>
             abiFunctions.includes(manifestFunction)
               ? errors
               : errors.push(

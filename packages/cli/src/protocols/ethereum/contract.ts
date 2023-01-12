@@ -3,7 +3,7 @@ export default class EthereumContract {
     return 'address'
   }
 
-  constructor(address) {
+  constructor(private address: string) {
     this.address = address
   }
 

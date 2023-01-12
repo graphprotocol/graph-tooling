@@ -1,6 +1,15 @@
 import { generateEventFieldAssignments } from '../../../scaffold/mapping'
+import ABI from '../abi'
 
-const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
+export const generatePlaceholderHandlers = ({
+  abi,
+  events,
+  contractName,
+}: {
+  abi: ABI
+  events: any[]
+  contractName: string
+}) =>
   `
   import { BigInt } from '@graphprotocol/graph-ts'
   import { ${contractName}, ${events.map(event => event._alias)} }
@@ -29,7 +38,9 @@ const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
       entity.count = entity.count + BigInt.fromI32(1)
 
       // Entity fields can be set based on event parameters
-      ${generateEventFieldAssignments(event).slice(0, 2).join('\n')}
+      ${generateEventFieldAssignments(event)
+        .slice(0, 2)
+        .join('\n')}
 
       // Entities can be written to the store with \`.save()\`
       entity.save()
@@ -50,12 +61,15 @@ const generatePlaceholderHandlers = ({ abi, events, contractName }) =>
       // state variables and other data:
       //
       // ${
-        abi.codeGenerator().callableFunctions().isEmpty()
+        abi
+          .codeGenerator()
+          .callableFunctions()
+          .isEmpty()
           ? 'None'
           : abi
               .codeGenerator()
               .callableFunctions()
-              .map(fn => `- contract.${fn.get('name')}(...)`)
+              .map((fn: any) => `- contract.${fn.get('name')}(...)`)
               .join('\n// ')
       }
     }
@@ -65,5 +79,3 @@ export function handle${event._alias}(event: ${event._alias}): void {}
 `,
     )
     .join('\n')}`
-
-export { generatePlaceholderHandlers }

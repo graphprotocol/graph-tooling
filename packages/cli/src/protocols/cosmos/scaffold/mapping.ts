@@ -1,4 +1,4 @@
-const generatePlaceholderHandlers = () =>
+export const generatePlaceholderHandlers = () =>
   `
   import { cosmos, BigInt } from '@graphprotocol/graph-ts'
   import { ExampleEntity } from '../generated/schema'
@@ -33,5 +33,3 @@ const generatePlaceholderHandlers = () =>
     // unchanged, allowing for partial updates to be applied.
   }
 `
-
-export { generatePlaceholderHandlers }

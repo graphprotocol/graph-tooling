@@ -1,4 +1,4 @@
-const generatePlaceholderHandlers = () =>
+export const generatePlaceholderHandlers = () =>
   `
   import { arweave, BigInt } from '@graphprotocol/graph-ts'
   import { Block, Transaction } from '../generated/schema'
@@ -47,5 +47,3 @@ const generatePlaceholderHandlers = () =>
     entity.save();
   }
 `
-
-export { generatePlaceholderHandlers }

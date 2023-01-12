@@ -1,9 +1,9 @@
 import { strings } from 'gluegun'
 
-const source = ({ contract }) => `
+export const source = ({ contract }: { contract: string }) => `
       account: '${contract}'`
 
-const mapping = ({ contractName }) => `
+export const mapping = ({ contractName }: { contractName: string }) => `
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
@@ -11,5 +11,3 @@ const mapping = ({ contractName }) => `
       receiptHandlers:
         - handler: handleReceipt
       file: ./src/${strings.kebabCase(contractName)}.ts`
-
-export { source, mapping }

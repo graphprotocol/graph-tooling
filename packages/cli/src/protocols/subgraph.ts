@@ -2,7 +2,7 @@ import immutable from 'immutable'
 
 export interface SubgraphOptions {
   manifest?: any
-  resolveFile?: (path: string) => string
+  resolveFile: (path: string) => string
   protocol?: any
 }
 

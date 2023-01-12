@@ -1,12 +1,12 @@
 import immutable from 'immutable'
+import Protocol from '../protocols'
 import IpfsFileTemplateCodeGen from '../protocols/ipfs/codegen/file_template'
-
 import * as tsCodegen from './typescript'
 
 export default class DataSourceTemplateCodeGenerator {
-  template: any
   protocolTemplateCodeGen: any
-  constructor(template: any, protocol: any) {
+
+  constructor(public template: immutable.Map<any, any>, protocol: Protocol) {
     this.template = template
     let kind = template.get('kind')
 

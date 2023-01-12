@@ -2,11 +2,17 @@ import { abiEvents } from '../../../scaffold/schema'
 import { strings } from 'gluegun'
 import ABI from '../abi'
 
-const source = ({ contract, contractName }) => `
+export const source = ({
+  contract,
+  contractName,
+}: {
+  contract: string
+  contractName: string
+}) => `
       address: '${contract}'
       abi: ${contractName}`
 
-const mapping = ({ abi, contractName }) => `
+export const mapping = ({ abi, contractName }: { abi: ABI; contractName: string }) => `
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
@@ -26,5 +32,3 @@ const mapping = ({ abi, contractName }) => `
           )
           .join('')}
       file: ./src/${strings.kebabCase(contractName)}.ts`
-
-export { source, mapping }

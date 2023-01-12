@@ -18,7 +18,7 @@ import Protocol from './protocols'
 // @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js'
 
-interface TypeGeneratorOptions {
+export interface TypeGeneratorOptions {
   sourceDir?: string
   subgraphManifest: string
   subgraph?: string

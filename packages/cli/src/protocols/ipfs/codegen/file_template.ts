@@ -1,7 +1,8 @@
+import immutable from 'immutable'
 import * as tsCodegen from '../../../codegen/typescript'
 
 export default class IpfsFileTemplateCodeGen {
-  constructor(template) {
+  constructor(private template: immutable.Map<any, any>) {
     this.template = template
   }
 

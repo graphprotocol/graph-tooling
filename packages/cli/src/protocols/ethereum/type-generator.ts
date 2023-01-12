@@ -3,17 +3,21 @@ import path from 'path'
 import immutable from 'immutable'
 import prettier from 'prettier'
 import ABI from './abi'
-import { step, withSpinner } from '../../command-helpers/spinner'
+import { Spinner, step, withSpinner } from '../../command-helpers/spinner'
 import { GENERATED_FILE_NOTE } from '../../codegen/typescript'
 import { displayPath } from '../../command-helpers/fs'
+import { TypeGeneratorOptions } from '../../type-generator'
 
 export default class EthereumTypeGenerator {
-  constructor(options = {}) {
+  private sourceDir: TypeGeneratorOptions['sourceDir']
+  private outputDir: TypeGeneratorOptions['outputDir']
+
+  constructor(options: TypeGeneratorOptions) {
     this.sourceDir = options.sourceDir
     this.outputDir = options.outputDir
   }
 
-  async loadABIs(subgraph) {
+  async loadABIs(subgraph: immutable.Map<any, any>) {
     return await withSpinner(
       'Load contract ABIs',
       'Failed to load contract ABIs',
@@ -23,11 +27,11 @@ export default class EthereumTypeGenerator {
           return subgraph
             .get('dataSources')
             .reduce(
-              (abis, dataSource) =>
+              (abis: any[], dataSource: any) =>
                 dataSource
                   .getIn(['mapping', 'abis'])
                   .reduce(
-                    (abis, abi) =>
+                    (abis: any[], abi: any) =>
                       abis.push(
                         this._loadABI(
                           dataSource,
@@ -47,7 +51,7 @@ export default class EthereumTypeGenerator {
     )
   }
 
-  _loadABI(dataSource, name, maybeRelativePath, spinner) {
+  _loadABI(dataSource: any, name: string, maybeRelativePath: string, spinner: Spinner) {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
@@ -61,7 +65,7 @@ export default class EthereumTypeGenerator {
     }
   }
 
-  async loadDataSourceTemplateABIs(subgraph) {
+  async loadDataSourceTemplateABIs(subgraph: immutable.Map<any, any>) {
     return await withSpinner(
       `Load data source template ABIs`,
       `Failed to load data source template ABIs`,
@@ -85,7 +89,12 @@ export default class EthereumTypeGenerator {
     )
   }
 
-  _loadDataSourceTemplateABI(template, name, maybeRelativePath, spinner) {
+  _loadDataSourceTemplateABI(
+    template: any,
+    name: string,
+    maybeRelativePath: string,
+    spinner: Spinner,
+  ) {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
@@ -99,20 +108,20 @@ export default class EthereumTypeGenerator {
     }
   }
 
-  generateTypesForABIs(abis) {
+  generateTypesForABIs(abis: any[]) {
     return withSpinner(
       `Generate types for contract ABIs`,
       `Failed to generate types for contract ABIs`,
       `Warnings while generating types for contract ABIs`,
       async spinner => {
         return await Promise.all(
-          abis.map(async (abi, name) => await this._generateTypesForABI(abi, spinner)),
+          abis.map(async abi => await this._generateTypesForABI(abi, spinner)),
         )
       },
     )
   }
 
-  async _generateTypesForABI(abi, spinner) {
+  async _generateTypesForABI(abi: any, spinner: Spinner) {
     try {
       step(
         spinner,
@@ -145,7 +154,7 @@ export default class EthereumTypeGenerator {
     }
   }
 
-  async generateTypesForDataSourceTemplateABIs(abis) {
+  async generateTypesForDataSourceTemplateABIs(abis: any[]) {
     return await withSpinner(
       `Generate types for data source template ABIs`,
       `Failed to generate types for data source template ABIs`,
@@ -153,15 +162,14 @@ export default class EthereumTypeGenerator {
       async spinner => {
         return await Promise.all(
           abis.map(
-            async (abi, name) =>
-              await this._generateTypesForDataSourceTemplateABI(abi, spinner),
+            async abi => await this._generateTypesForDataSourceTemplateABI(abi, spinner),
           ),
         )
       },
     )
   }
 
-  async _generateTypesForDataSourceTemplateABI(abi, spinner) {
+  async _generateTypesForDataSourceTemplateABI(abi: any, spinner: Spinner) {
     try {
       step(
         spinner,

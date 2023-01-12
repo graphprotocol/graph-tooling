@@ -1,7 +1,7 @@
-const source = ({ contract }) => `
+export const source = ({ contract }: { contract: string }) => `
       owner: '${contract}'`
 
-const mapping = () => `
+export const mapping = () => `
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
@@ -12,5 +12,3 @@ const mapping = () => `
       transactionHandlers:
         - handler: handleTx
       file: ./src/mapping.ts`
-
-export { source, mapping }

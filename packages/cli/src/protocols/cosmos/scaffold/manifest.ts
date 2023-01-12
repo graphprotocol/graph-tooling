@@ -1,7 +1,7 @@
-const source = () => `
+export const source = () => `
       startBlock: 0`
 
-const mapping = () => `
+export const mapping = () => `
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
@@ -9,5 +9,3 @@ const mapping = () => `
       blockHandlers:
         - handler: handleBlock
       file: ./src/contract.ts`
-
-export { source, mapping }

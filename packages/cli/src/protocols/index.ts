@@ -188,7 +188,7 @@ export default class Protocol {
     return this.config.abi
   }
 
-  getSubgraph(options = {}) {
+  getSubgraph(options: SubgraphOptions) {
     return this.config.getSubgraph({ ...options, protocol: this })
   }
 

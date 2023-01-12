@@ -6,7 +6,7 @@ export default class ArweaveSubgraph implements Subgraph {
   resolveFile: SubgraphOptions['resolveFile']
   protocol: SubgraphOptions['protocol']
 
-  constructor(options: SubgraphOptions = {}) {
+  constructor(options: SubgraphOptions) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
     this.protocol = options.protocol
