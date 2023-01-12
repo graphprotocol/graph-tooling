@@ -6,11 +6,11 @@ import Protocol from '../protocols'
 
 interface CreateCompilerOptions {
   ipfs: any
-  headers: any
+  headers?: any
   outputDir: string
   outputFormat: string
   skipMigrations: boolean
-  blockIpfsMethods: boolean
+  blockIpfsMethods?: boolean
   protocol: Protocol
 }
 

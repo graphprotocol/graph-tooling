@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import * as toolbox from 'gluegun'
 import { createCompiler } from '../command-helpers/compiler'
 import { fixParameters } from '../command-helpers/gluegun'
 import { updateSubgraphNetwork } from '../command-helpers/network'
@@ -23,11 +24,22 @@ Options:
       --network-file <path>     Networks config file path (default: "./networks.json")
 `
 
+export interface BuildOptions {
+  help?: boolean
+  ipfs?: string
+  outputDir?: string
+  outputFormat?: string
+  skipMigrations?: boolean
+  watch?: boolean
+  network?: string
+  networkFile?: string
+}
+
 export default {
   description: 'Builds a subgraph and (optionally) uploads it to IPFS',
-  run: async toolbox => {
+  run: async (toolbox: toolbox.GluegunToolbox) => {
     // Obtain tools
-    let { filesystem, patching, print, system } = toolbox
+    const { filesystem, print } = toolbox
 
     // Parse CLI parameters
     let {
