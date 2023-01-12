@@ -16,8 +16,8 @@ export function chooseNodeUrl({
 }: {
   product: string
   studio: string
-  node: string
-  allowSimpleName: boolean
+  node?: string
+  allowSimpleName?: boolean
 }) {
   if (node) {
     try {

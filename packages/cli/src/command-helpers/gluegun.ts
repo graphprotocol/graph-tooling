@@ -23,8 +23,13 @@
 // The `fixParameters` function checks if any of the provided boolean
 // options has a string value; if so, it pushes it to the front of the
 // parameters array and returns the result of that.
-//
-export const fixParameters = (parameters: any, booleanOptions: any) => {
+
+import { GluegunParameters } from 'gluegun'
+
+export const fixParameters = (
+  parameters: GluegunParameters,
+  booleanOptions: Record<string, string>,
+) => {
   let unexpectedStringOptions = Object.keys(booleanOptions)
     .filter(key => typeof booleanOptions[key] === 'string')
     .map(key => ({ key, value: booleanOptions[key] }))
@@ -39,9 +44,9 @@ export const fixParameters = (parameters: any, booleanOptions: any) => {
     )
   } else if (unexpectedStringOptions.length == 1) {
     let params = parameters.array
-    params.unshift(unexpectedStringOptions[0].value)
-    return params
+    params!.unshift(unexpectedStringOptions[0].value)
+    return params!
   } else {
-    return parameters.array
+    return parameters.array!
   }
 }

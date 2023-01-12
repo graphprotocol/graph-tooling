@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { GluegunToolbox } from 'gluegun'
 import { saveDeployKey } from '../command-helpers/auth'
 import { chooseNodeUrl } from '../command-helpers/node'
 import { fixParameters } from '../command-helpers/gluegun'
@@ -16,7 +17,19 @@ ${chalk.dim('Options:')}
   -h, --help                    Show usage information
 `
 
-const processForm = async (toolbox, { product, studio, node, deployKey }) => {
+export interface AuthOptions {
+  product?: 'subgraph-studio' | 'hosted-service'
+  studio?: string
+  help?: boolean
+  // not a cli arg
+  node?: string
+  deployKey?: string
+}
+
+const processForm = async (
+  toolbox: GluegunToolbox,
+  { product, studio, node, deployKey }: AuthOptions,
+) => {
   const questions = [
     {
       type: 'select',
@@ -47,12 +60,12 @@ const processForm = async (toolbox, { product, studio, node, deployKey }) => {
 
 export default {
   description: 'Sets the deploy key to use when deploying to a Graph node',
-  run: async toolbox => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    const { print } = toolbox
 
     // Read CLI parameters
-    let { product, studio, h, help } = toolbox.parameters.options
+    const { product, studio, h, help } = toolbox.parameters.options
 
     // Show help text if requested
     if (help || h) {
@@ -60,7 +73,7 @@ export default {
       return
     }
 
-    let firstParam, secondParam
+    let firstParam: string, secondParam: string
     try {
       ;[firstParam, secondParam] = fixParameters(toolbox.parameters, {
         h,
@@ -74,7 +87,7 @@ export default {
     }
 
     // if user specifies --product or --studio then deployKey is the first parameter
-    let node
+    let node: string | undefined
     let deployKey
     if (product || studio) {
       ;({ node } = chooseNodeUrl({ product, studio, node }))
@@ -119,7 +132,7 @@ export default {
     }
 
     try {
-      await saveDeployKey(node, deployKey)
+      await saveDeployKey(node!, deployKey)
       print.success(`Deploy key set for ${node}`)
     } catch (e) {
       print.error(e)
