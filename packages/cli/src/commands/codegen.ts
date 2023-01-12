@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import path from 'path'
+import { GluegunToolbox } from 'gluegun'
 import TypeGenerator from '../type-generator'
 import Protocol from '../protocols'
 import { fixParameters } from '../command-helpers/gluegun'
@@ -21,13 +22,22 @@ Options:
   -uc, --uncrashable-config <path>  Directory for uncrashable config (default: ./uncrashable-config.yaml)
   `
 
+export interface CodeGenOptions {
+  help?: boolean
+  outputDir?: string
+  skipMigrations?: boolean
+  watch?: boolean
+  uncrashable?: boolean
+  uncrashableConfig?: string
+}
+
 let codegenDebug = debug('graph-cli:codegen')
 
 export default {
   description: 'Generates AssemblyScript types for a subgraph',
-  run: async toolbox => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    const { filesystem, print } = toolbox
 
     // Read CLI parameters
     let {
