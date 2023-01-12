@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import * as toolbox from 'gluegun/toolbox'
+import * as toolbox from 'gluegun'
 import immutable from 'immutable'
 import { withSpinner } from '../command-helpers/spinner'
 import Subgraph from '../subgraph'
@@ -29,15 +29,29 @@ ${chalk.dim('Options:')}
   -h, --help                    Show usage information
 `
 
+export interface AddOptions {
+  abi?: string
+  contractName?: string
+  mergeEntities?: boolean
+  networkFile?: string
+  help?: boolean
+}
+
 export default {
   description: 'Adds a new datasource to a subgraph',
-  run: async toolbox => {
+  run: async (toolbox: toolbox.GluegunToolbox) => {
     // Obtain tools
     let { print, system } = toolbox
 
     // Read CLI parameters
-    let { abi, contractName, h, help, mergeEntities, networkFile } =
-      toolbox.parameters.options
+    let {
+      abi,
+      contractName,
+      h,
+      help,
+      mergeEntities,
+      networkFile,
+    } = toolbox.parameters.options
 
     contractName = contractName || 'Contract'
 
@@ -53,9 +67,9 @@ export default {
       return
     }
 
-    let address = toolbox.parameters.first || toolbox.parameters.array[0]
+    let address = toolbox.parameters.first || toolbox.parameters.array?.[0]
     let manifestPath =
-      toolbox.parameters.second || toolbox.parameters.array[1] || './subgraph.yaml'
+      toolbox.parameters.second || toolbox.parameters.array?.[1] || './subgraph.yaml'
 
     // Show help text if requested
     if (help || h) {
@@ -73,7 +87,7 @@ export default {
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath)
     let protocol = Protocol.fromDataSources(dataSourcesAndTemplates)
     let manifest = await Subgraph.load(manifestPath, { protocol })
-    let network = manifest.result.get('dataSources').get(0).get('network')
+    let network = manifest.result.getIn(['dataSources', 0, 'network']) as any
     let result = manifest.result.asMutable()
 
     let entities = getEntities(manifest)
@@ -109,7 +123,7 @@ export default {
     await writeSchema(
       ethabi,
       protocol,
-      result.getIn(['schema', 'file']),
+      result.getIn(['schema', 'file']) as any,
       collisionEntities,
     )
     await writeMapping(ethabi, protocol, contractName, collisionEntities)
@@ -127,7 +141,7 @@ export default {
     // Handle the collisions edge case by copying another data source yaml data
     if (mergeEntities && onlyCollisions) {
       let firstDataSource = dataSources.get(0)
-      let source = dataSource.get('source')
+      let source = dataSource.get('source') as any
       let mapping = firstDataSource.get('mapping').asMutable()
 
       // Save the address of the new data source
@@ -146,8 +160,8 @@ export default {
     await updateNetworksFile(toolbox, network, contractName, address, networksFile)
 
     // Detect Yarn and/or NPM
-    let yarn = await system.which('yarn')
-    let npm = await system.which('npm')
+    let yarn = system.which('yarn')
+    let npm = system.which('npm')
     if (!yarn && !npm) {
       print.error(
         `Neither Yarn nor NPM were found on your system. Please install one of them.`,
@@ -160,31 +174,36 @@ export default {
       'Running codegen',
       'Failed to run codegen',
       'Warning during codegen',
-      async spinner => {
+      async () => {
         await system.run(yarn ? 'yarn codegen' : 'npm run codegen')
       },
     )
   },
 }
 
-const getEntities = manifest => {
+const getEntities = (manifest: any) => {
   let dataSources = manifest.result.get('dataSources', immutable.List())
   let templates = manifest.result.get('templates', immutable.List())
 
   return dataSources
     .concat(templates)
-    .map(dataSource => dataSource.getIn(['mapping', 'entities']))
+    .map((dataSource: any) => dataSource.getIn(['mapping', 'entities']))
     .flatten()
 }
 
-const getContractNames = manifest => {
+const getContractNames = (manifest: any) => {
   let dataSources = manifest.result.get('dataSources', immutable.List())
   let templates = manifest.result.get('templates', immutable.List())
 
-  return dataSources.concat(templates).map(dataSource => dataSource.get('name'))
+  return dataSources.concat(templates).map((dataSource: any) => dataSource.get('name'))
 }
 
-const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntities) => {
+const updateEventNamesOnCollision = (
+  ethabi: any,
+  entities: any,
+  contractName: string,
+  mergeEntities: boolean,
+) => {
   let abiData = ethabi.data
   let { print } = toolbox
   let collisionEntities = []
@@ -199,7 +218,7 @@ const updateEventNamesOnCollision = (ethabi, entities, contractName, mergeEntiti
           print.error(`Contract name ('${contractName}')
             + event name ('${dataRow.get('name')}') entity already exists.`)
           process.exitCode = 1
-          return
+          break
         }
 
         if (mergeEntities) {

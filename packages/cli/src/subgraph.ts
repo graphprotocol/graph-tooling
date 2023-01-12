@@ -275,7 +275,7 @@ More than one template named '${name}', template names must be unique.`,
       }
     }
 
-    let manifest = immutable.fromJS(data)
+    let manifest = immutable.fromJS(data) as immutable.Map<any, any>
 
     // Validate the schema
     Subgraph.validateSchema(manifest, { resolveFile })
