@@ -1,14 +1,13 @@
 const URL = require('url').URL
 import chalk from 'chalk'
 import path from 'path'
+import { GluegunToolbox } from 'gluegun'
 
 import { identifyDeployKey } from '../command-helpers/auth'
 import { createCompiler } from '../command-helpers/compiler'
 import { fixParameters } from '../command-helpers/gluegun'
 import { createJsonRpcClient } from '../command-helpers/jsonrpc'
 import { chooseNodeUrl } from '../command-helpers/node'
-import { withSpinner } from '../command-helpers/spinner'
-import { validateSubgraphName } from '../command-helpers/subgraph'
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs'
 import {
   assertManifestApiVersion,
@@ -43,7 +42,27 @@ Options:
         --network-file <path>     Networks config file path (default: "./networks.json")
 `
 
-const processForm = async (toolbox, { product, studio, node, versionLabel }) => {
+export interface DeployOptions {
+  product?: 'subgraph-studio' | 'hosted-service'
+  studio?: boolean
+  node?: string
+  deployKey?: string
+  versionLabel?: string
+  help?: boolean
+  ipfs?: string
+  headers?: Record<string, string>
+  debugFork?: boolean
+  outputDir?: string
+  skipMigrations?: boolean
+  watch?: boolean
+  network?: string
+  networkFile?: string
+}
+
+const processForm = async (
+  toolbox: GluegunToolbox,
+  { product, studio, node, versionLabel }: DeployOptions,
+) => {
   const questions = [
     {
       type: 'select',
@@ -74,9 +93,9 @@ const processForm = async (toolbox, { product, studio, node, versionLabel }) => 
 
 export default {
   description: 'Deploys the subgraph to a Graph node',
-  run: async toolbox => {
+  run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
-    let { filesystem, print, system } = toolbox
+    const { filesystem, print } = toolbox
 
     // Parse CLI parameters
     let {
@@ -121,7 +140,7 @@ export default {
       return
     }
 
-    let subgraphName, manifest
+    let subgraphName: string, manifest: string
     try {
       ;[subgraphName, manifest] = fixParameters(toolbox.parameters, {
         h,
@@ -271,7 +290,7 @@ export default {
     }
 
     let requestUrl = new URL(node)
-    let client = createJsonRpcClient(requestUrl)
+    const client = createJsonRpcClient(requestUrl)
 
     // Exit with an error code if the client couldn't be created
     if (!client) {
@@ -285,10 +304,11 @@ export default {
     }
     deployKey = await identifyDeployKey(node, deployKey)
     if (deployKey !== undefined && deployKey !== null) {
+      // @ts-expect-error options property seems to exist
       client.options.headers = { Authorization: 'Bearer ' + deployKey }
     }
 
-    let deploySubgraph = async ipfsHash => {
+    let deploySubgraph = async (ipfsHash: string) => {
       let spinner = print.spin(`Deploying to Graph node ${requestUrl}`)
       //       `Failed to deploy to Graph node ${requestUrl}`,
       client.request(
@@ -299,7 +319,14 @@ export default {
           version_label: versionLabel,
           debug_fork: debugFork,
         },
-        async (requestError, jsonRpcError, res) => {
+        async (
+          // @ts-expect-error TODO: why are the arguments not typed?
+          requestError,
+          // @ts-expect-error TODO: why are the arguments not typed?
+          jsonRpcError,
+          // @ts-expect-error TODO: why are the arguments not typed?
+          res,
+        ) => {
           if (jsonRpcError) {
             spinner.fail(
               `Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`,
