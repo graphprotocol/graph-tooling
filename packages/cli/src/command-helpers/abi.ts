@@ -63,6 +63,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.arbiscan.io/api`;
     case 'bsc':
       return `https://api.bscscan.com/api`;
+    case 'chapel':
+      return `https://api-testnet.bscscan.com/api`;
     case 'matic':
       return `https://api.polygonscan.com/api`;
     case 'mumbai':
