@@ -69,7 +69,6 @@ Helpful links:
 - [Changesets](https://github.com/changesets/changesets)
 - [Snapshot release](https://github.com/changesets/changesets/blob/main/docs/snapshot-releases.md)
 
-
 ### Stable release example
 
 When PRs are merged and to `main` we can choose to merge the bot generated changeset PR to `main` and it will publish a new version to npm.

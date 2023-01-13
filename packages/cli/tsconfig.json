@@ -14,5 +14,6 @@
     "skipLibCheck": true,
     "allowJs": true
   },
-  "include": ["./src"]
+  "include": ["./src", "./tests"],
+  "exclude": ["./tests/cli/init", "./tests/cli/validation"]
 }
