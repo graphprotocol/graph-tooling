@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import immutable from 'immutable';
 import * as tsCodegen from '../../../codegen/typescript';
 

@@ -64,12 +64,14 @@ const assignValue = (type: string): string | number | boolean => {
       return `Address.fromString("${VARIABLES_VALUES[type]}")`;
     case 'Bytes':
       return `Bytes.fromI32(${VARIABLES_VALUES[type]})`;
-    case fetchArrayInnerType(type)?.input:
+    case fetchArrayInnerType(type)?.input: {
       const innerType = fetchArrayInnerType(type)![1];
       return `[${assignValue(innerType)}]`;
-    default:
+    }
+    default: {
       const value = VARIABLES_VALUES[type as keyof typeof VARIABLES_VALUES];
       return value ? value : `"${type} Not implemented"`;
+    }
   }
 };
 
@@ -99,12 +101,14 @@ const generateFieldsAssertions = (entity: string, eventInputs: any[], indexEvent
 // Returns the expected value for a given type in generateFieldsAssertions()
 const expectedValue = (type: string): string | number | boolean => {
   switch (type) {
-    case fetchArrayInnerType(type)?.input:
+    case fetchArrayInnerType(type)?.input: {
       const innerType = fetchArrayInnerType(type)![1];
       return `[${expectedValue(innerType)}]`;
-    default:
+    }
+    default: {
       const value = VARIABLES_VALUES[type as keyof typeof VARIABLES_VALUES];
       return value ? value : `${type} Not implemented`;
+    }
   }
 };
 

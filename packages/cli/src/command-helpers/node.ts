@@ -39,7 +39,7 @@ export function chooseNodeUrl({
         break;
     }
   }
-  if ((node && node.match(/studio/)) || product === 'subgraph-studio') {
+  if (node?.match(/studio/) || product === 'subgraph-studio') {
     allowSimpleName = true;
   }
   return { node, allowSimpleName };

@@ -43,12 +43,16 @@ export function cliTest(
         let expectedStdout = undefined;
         try {
           expectedStdout = fs.readFileSync(resolvePath(`./${testPath}.stdout`), 'utf-8');
-        } catch (e) {}
+        } catch (e) {
+          // noop
+        }
 
         let expectedStderr = undefined;
         try {
           expectedStderr = fs.readFileSync(resolvePath(`./${testPath}.stderr`), 'utf-8');
-        } catch (e) {}
+        } catch (e) {
+          // noop
+        }
 
         if (expectedStderr !== undefined) {
           // For some reason the error sometimes comes in stdout, then

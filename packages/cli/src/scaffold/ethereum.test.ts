@@ -263,23 +263,23 @@ import {
   clearStore,
   beforeAll,
   afterAll
-} from \"matchstick-as/assembly/index\"
-import { BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent } from \"../generated/schema\"
-import { ExampleEvent as ExampleEventEvent } from \"../generated/Contract/Contract\"
-import { handleExampleEvent } from \"../src/contract\"
-import { createExampleEventEvent } from \"./contract-utils\"
+} from "matchstick-as/assembly/index"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent } from "../generated/schema"
+import { ExampleEvent as ExampleEventEvent } from "../generated/Contract/Contract"
+import { handleExampleEvent } from "../src/contract"
+import { createExampleEventEvent } from "./contract-utils"
 
 // Tests structure (matchstick-as >=0.5.0)
 // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 
-describe(\"Describe entity assertions\", () => {
+describe("Describe entity assertions", () => {
   beforeAll(() => {
     let a = BigInt.fromI32(234)
     let b = [Bytes.fromI32(1234567890)]
-    let param2 = \"Example string value\"
-    let c = \"ethereum.Tuple Not implemented\"
-    let d = \"Example string value\"
+    let param2 = "Example string value"
+    let c = "ethereum.Tuple Not implemented"
+    let d = "Example string value"
     let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d)
     handleExampleEvent(newExampleEventEvent)
   })
@@ -291,39 +291,39 @@ describe(\"Describe entity assertions\", () => {
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test(\"ExampleEvent created and stored\", () => {
-    assert.entityCount(\"ExampleEvent\", 1)
+  test("ExampleEvent created and stored", () => {
+    assert.entityCount("ExampleEvent", 1)
 
     // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"a\",
-      \"234\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "a",
+      "234"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"b\",
-      \"[1234567890]\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "b",
+      "[1234567890]"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"param2\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "param2",
+      "Example string value"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"c\",
-      \"ethereum.Tuple Not implemented\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "c",
+      "ethereum.Tuple Not implemented"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"d\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "d",
+      "Example string value"
     )
 
     // More assert options:
@@ -332,9 +332,9 @@ describe(\"Describe entity assertions\", () => {
 })
 `);
     expect(utilsFile).toEqual(`\
-import { newMockEvent } from \"matchstick-as\"
-import { ethereum, BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent, ExampleEvent1 } from \"../generated/Contract/Contract\"
+import { newMockEvent } from "matchstick-as"
+import { ethereum, BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent, ExampleEvent1 } from "../generated/Contract/Contract"
 
 export function createExampleEventEvent(
   a: BigInt,
@@ -348,19 +348,19 @@ export function createExampleEventEvent(
   exampleEventEvent.parameters = new Array()
 
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromUnsignedBigInt(a))
+    new ethereum.EventParam("a", ethereum.Value.fromUnsignedBigInt(a))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"b\", ethereum.Value.fromBytesArray(b))
+    new ethereum.EventParam("b", ethereum.Value.fromBytesArray(b))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"param2\", ethereum.Value.fromString(param2))
+    new ethereum.EventParam("param2", ethereum.Value.fromString(param2))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"c\", ethereum.Value.fromTuple(c))
+    new ethereum.EventParam("c", ethereum.Value.fromTuple(c))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"d\", ethereum.Value.fromString(d))
+    new ethereum.EventParam("d", ethereum.Value.fromString(d))
   )
 
   return exampleEventEvent
@@ -372,7 +372,7 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
   exampleEvent1Event.parameters = new Array()
 
   exampleEvent1Event.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromFixedBytes(a))
+    new ethereum.EventParam("a", ethereum.Value.fromFixedBytes(a))
   )
 
   return exampleEvent1Event
@@ -393,23 +393,23 @@ import {
   clearStore,
   beforeAll,
   afterAll
-} from \"matchstick-as/assembly/index\"
-import { BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent } from \"../generated/schema\"
-import { ExampleEvent as ExampleEventEvent } from \"../generated/Contract/Contract\"
-import { handleExampleEvent } from \"../src/contract\"
-import { createExampleEventEvent } from \"./contract-utils\"
+} from "matchstick-as/assembly/index"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent } from "../generated/schema"
+import { ExampleEvent as ExampleEventEvent } from "../generated/Contract/Contract"
+import { handleExampleEvent } from "../src/contract"
+import { createExampleEventEvent } from "./contract-utils"
 
 // Tests structure (matchstick-as >=0.5.0)
 // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 
-describe(\"Describe entity assertions\", () => {
+describe("Describe entity assertions", () => {
   beforeAll(() => {
     let a = BigInt.fromI32(234)
     let b = [Bytes.fromI32(1234567890)]
-    let param2 = \"Example string value\"
-    let c = \"ethereum.Tuple Not implemented\"
-    let d = \"Example string value\"
+    let param2 = "Example string value"
+    let c = "ethereum.Tuple Not implemented"
+    let d = "Example string value"
     let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d)
     handleExampleEvent(newExampleEventEvent)
   })
@@ -421,39 +421,39 @@ describe(\"Describe entity assertions\", () => {
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test(\"ExampleEvent created and stored\", () => {
-    assert.entityCount(\"ExampleEvent\", 1)
+  test("ExampleEvent created and stored", () => {
+    assert.entityCount("ExampleEvent", 1)
 
     // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"a\",
-      \"234\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "a",
+      "234"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"b\",
-      \"[1234567890]\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "b",
+      "[1234567890]"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"param2\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "param2",
+      "Example string value"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"c\",
-      \"ethereum.Tuple Not implemented\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "c",
+      "ethereum.Tuple Not implemented"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"d\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "d",
+      "Example string value"
     )
 
     // More assert options:
@@ -462,9 +462,9 @@ describe(\"Describe entity assertions\", () => {
 })
 `);
     expect(utilsFile).toEqual(`\
-import { newMockEvent } from \"matchstick-as\"
-import { ethereum, BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent, ExampleEvent1 } from \"../generated/Contract/Contract\"
+import { newMockEvent } from "matchstick-as"
+import { ethereum, BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent, ExampleEvent1 } from "../generated/Contract/Contract"
 
 export function createExampleEventEvent(
   a: BigInt,
@@ -478,19 +478,19 @@ export function createExampleEventEvent(
   exampleEventEvent.parameters = new Array()
 
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromUnsignedBigInt(a))
+    new ethereum.EventParam("a", ethereum.Value.fromUnsignedBigInt(a))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"b\", ethereum.Value.fromBytesArray(b))
+    new ethereum.EventParam("b", ethereum.Value.fromBytesArray(b))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"param2\", ethereum.Value.fromString(param2))
+    new ethereum.EventParam("param2", ethereum.Value.fromString(param2))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"c\", ethereum.Value.fromTuple(c))
+    new ethereum.EventParam("c", ethereum.Value.fromTuple(c))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"d\", ethereum.Value.fromString(d))
+    new ethereum.EventParam("d", ethereum.Value.fromString(d))
   )
 
   return exampleEventEvent
@@ -502,7 +502,7 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
   exampleEvent1Event.parameters = new Array()
 
   exampleEvent1Event.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromFixedBytes(a))
+    new ethereum.EventParam("a", ethereum.Value.fromFixedBytes(a))
   )
 
   return exampleEvent1Event

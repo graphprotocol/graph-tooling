@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { npmLinkCli } from './util';
 
 export default async () => {

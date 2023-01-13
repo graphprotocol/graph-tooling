@@ -91,7 +91,7 @@ const writeScaffoldDirectory = async (scaffold: any, directory: string, spinner:
 
     // Write file or recurse into subdirectory
     if (typeof content === 'string') {
-      await fs.writeFile(filename, content, { encoding: 'utf-8' });
+      await fs.writeFile(filename, content, 'utf-8');
     } else if (content == null) {
       return; // continue loop
     } else {
@@ -112,7 +112,7 @@ export const writeABI = async (abi: ABI, contractName: string) => {
     parser: 'json',
   });
 
-  await fs.writeFile(`./abis/${contractName}.json`, data, { encoding: 'utf-8' });
+  await fs.writeFile(`./abis/${contractName}.json`, data, 'utf-8');
 };
 
 export const writeSchema = async (
@@ -154,9 +154,7 @@ export const writeMapping = async (
     semi: false,
   });
 
-  await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, {
-    encoding: 'utf-8',
-  });
+  await fs.writeFile(`./src/${strings.kebabCase(contractName)}.ts`, mapping, 'utf-8');
 };
 
 export const writeTestsFiles = async (abi: ABI, protocol: Protocol, contractName: string) => {
@@ -170,9 +168,7 @@ export const writeTestsFiles = async (abi: ABI, protocol: Protocol, contractName
     const testsFiles = generateTestsFiles(contractName, events, true);
 
     for (const [fileName, content] of Object.entries(testsFiles)) {
-      await fs.writeFile(`./tests/${fileName}`, content, {
-        encoding: 'utf-8',
-      });
+      await fs.writeFile(`./tests/${fileName}`, content, 'utf-8');
     }
   }
 };

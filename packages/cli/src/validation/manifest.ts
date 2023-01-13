@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import immutable from 'immutable';
 import yaml from 'js-yaml';
@@ -189,7 +190,7 @@ const validators = immutable.fromJS({
 
   File: (value: any, ctx: immutable.Map<any, any>) =>
     typeof value === 'string'
-      ? require('node:fs').existsSync(ctx.get('resolveFile')(value))
+      ? fs.existsSync(ctx.get('resolveFile')(value))
         ? List()
         : immutable.fromJS([
             {

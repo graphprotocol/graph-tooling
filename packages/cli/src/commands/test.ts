@@ -92,7 +92,7 @@ export default {
         const config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8')!);
 
         // Check if matchstick.yaml and testsFolder not null
-        if (config && config.testsFolder) {
+        if (config?.testsFolder) {
           // assign test folder from matchstick.yaml if present
           opts.testsFolder = config.testsFolder;
         }

@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { URL } from 'node:url';
 import chalk from 'chalk';
 import { GluegunToolbox } from 'gluegun';
 import { identifyDeployKey } from '../command-helpers/auth';
@@ -12,8 +13,6 @@ import { chooseNodeUrl } from '../command-helpers/node';
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import Protocol from '../protocols';
-
-const URL = require('node:url').URL;
 
 const HELP = `
 ${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(

@@ -19,7 +19,7 @@ export default class NearContract implements Contract {
   }
 
   private validateFormat(value: string) {
-    const pattern = /^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$/;
+    const pattern = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
 
     return pattern.test(value);
   }

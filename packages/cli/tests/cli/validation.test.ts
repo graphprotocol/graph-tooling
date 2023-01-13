@@ -1,4 +1,4 @@
-const cliTest = require('./util').cliTest;
+import { cliTest } from './util';
 
 describe('Validation', () => {
   cliTest(

@@ -39,7 +39,7 @@ const findConversionFromType = (
   const conversion = conversions.find(conversion =>
     typeof conversion.get(0) === 'string'
       ? conversion.get(0) === fromType
-      : Boolean(fromType.match(conversion.get(0))),
+      : !!fromType.match(conversion.get(0)),
   );
 
   if (conversion === undefined) {
@@ -62,7 +62,7 @@ const findConversionToType = (
   const conversion = conversions.find(conversion =>
     typeof conversion.get(1) === 'string'
       ? conversion.get(1) === toType
-      : Boolean(toType.match(conversion.get(1))),
+      : !!toType.match(conversion.get(1)),
   );
 
   if (conversion === undefined) {

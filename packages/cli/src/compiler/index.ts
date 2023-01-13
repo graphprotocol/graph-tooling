@@ -313,11 +313,7 @@ export default class Compiler {
       const outputFile = path.relative(baseDir, outFile);
 
       // Create output directory
-      try {
-        fs.mkdirsSync(path.dirname(outFile));
-      } catch (e) {
-        throw e;
-      }
+      fs.mkdirsSync(path.dirname(outFile));
 
       const libs = this.libsDirs.join(',');
       const global = path.relative(baseDir, this.globalsFile);
@@ -383,11 +379,7 @@ export default class Compiler {
       const outputFile = path.relative(baseDir, outFile);
 
       // Create output directory
-      try {
-        fs.mkdirsSync(path.dirname(outFile));
-      } catch (e) {
-        throw e;
-      }
+      fs.mkdirsSync(path.dirname(outFile));
 
       const libs = this.libsDirs.join(',');
       const global = path.relative(baseDir, this.globalsFile);

@@ -134,7 +134,7 @@ export default class ABI {
     if (json.abi !== undefined) {
       return json.abi;
     }
-    if (json.compilerOutput !== undefined && json.compilerOutput.abi !== undefined) {
+    if (json.compilerOutput?.abi) {
       return json.compilerOutput.abi;
     }
     return undefined;

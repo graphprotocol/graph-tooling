@@ -15,10 +15,8 @@ export const updateSubgraphNetwork = async (
     `Failed to update sources network`,
     `Warnings while updating sources network`,
     async spinner => {
-      let allNetworks;
-
       step(spinner, `Reading networks config`);
-      allNetworks = await toolbox.filesystem.read(networksFile, 'json');
+      const allNetworks = await toolbox.filesystem.read(networksFile, 'json');
       const networkConfig = allNetworks[network];
 
       // Exit if the network passed with --network does not exits in networks.json

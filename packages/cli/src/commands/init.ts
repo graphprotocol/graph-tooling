@@ -126,7 +126,7 @@ const processInitForm = async (
       message: 'Protocol',
       choices: protocolChoices,
       skip: protocolChoices.includes(protocol),
-      result: (value: string) => {
+      result: (value: ProtocolName) => {
         protocol ||= value;
         protocolInstance = new Protocol(protocol);
         return protocol;
@@ -260,7 +260,9 @@ const processInitForm = async (
             } else {
               abiFromEtherscan = await loadAbiFromEtherscan(ABI, network!, value);
             }
-          } catch (e) {}
+          } catch (e) {
+            // noop
+          }
         }
         return value;
       },

@@ -14,20 +14,14 @@ export const assertManifestApiVersion = async (manifestPath: string, minimumApiV
     if (manifest.dataSources && Array.isArray(manifest.dataSources)) {
       isLessThanMinimumVersion = manifest.dataSources.some(
         (dataSource: any) =>
-          dataSource &&
-          dataSource.mapping &&
-          dataSource.mapping.apiVersion &&
-          lessThanMinimumVersion(dataSource.mapping.apiVersion),
+          dataSource?.mapping?.apiVersion && lessThanMinimumVersion(dataSource.mapping.apiVersion),
       );
     }
 
     if (manifest.templates && Array.isArray(manifest.templates)) {
       isLessThanMinimumVersion ||= manifest.templates.some(
         (template: any) =>
-          template &&
-          template.mapping &&
-          template.mapping.apiVersion &&
-          lessThanMinimumVersion(template.mapping.apiVersion),
+          template?.mapping?.apiVersion && lessThanMinimumVersion(template.mapping.apiVersion),
       );
     }
   }

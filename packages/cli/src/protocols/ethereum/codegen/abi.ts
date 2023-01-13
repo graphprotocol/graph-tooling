@@ -267,9 +267,9 @@ export default class AbiCodeGenerator {
             code = `Address.fromString(${code})`;
           }
           stmnts = stmnts.concat(
-            `event.parameters.push(new ethereum.EventParam(\"${
+            `event.parameters.push(new ethereum.EventParam("${
               namesAndTypes[i].name
-            }\", ${typesCodegen.ethereumFromAsc(code, namesAndTypes[i].type)}));`,
+            }", ${typesCodegen.ethereumFromAsc(code, namesAndTypes[i].type)}));`,
             `\n`,
           );
         }
