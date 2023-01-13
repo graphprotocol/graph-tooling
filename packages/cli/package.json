@@ -1,11 +1,18 @@
 {
   "name": "@graphprotocol/graph-cli",
   "version": "0.37.2",
-  "license": "(Apache-2.0 OR MIT)",
   "description": "CLI for building for and deploying to The Graph",
-  "main": "dist/cli.js",
+  "license": "(Apache-2.0 OR MIT)",
   "bin": {
     "graph": "dist/bin.js"
+  },
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
+    "test": "jest --verbose",
+    "test:init": "jest tests/cli/init.test.ts --verbose",
+    "test:validation": "jest tests/cli/validation.test.ts --verbose",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
@@ -20,7 +27,7 @@
     "glob": "7.1.6",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
     "graphql": "15.5.0",
-    "immutable": "3.8.2",
+    "immutable": "4.2.1",
     "ipfs-http-client": "34.0.0",
     "jayson": "3.6.6",
     "js-yaml": "3.13.1",
@@ -36,19 +43,19 @@
     "yaml": "1.9.2"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^26.0.24",
+    "@types/js-yaml": "^3.12.7",
+    "@types/node-fetch": "^2.6.2",
+    "@types/semver": "^7.3.13",
+    "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
     "jest": "26.0.0",
     "spawn-command": "0.0.2-1",
     "strip-ansi": "6.0.0",
     "tern": "0.24.3",
     "typescript": "^4.9.4"
-  },
-  "scripts": {
-    "test": "jest --verbose",
-    "test:init": "jest tests/cli/init.test.js --verbose",
-    "test:validation": "jest tests/cli/validation.test.js --verbose",
-    "type-check": "tsc --noEmit",
-    "build": "tsc --build && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js"
   },
   "publishConfig": {
     "access": "public"

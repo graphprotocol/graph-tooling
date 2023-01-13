@@ -1,23 +1,23 @@
 {
   "name": "basic-event-handlers",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "codegen": "../../packages/cli/dist/bin.js codegen",
     "build": "../../packages/cli/dist/bin.js build",
-    "test": "docker compose up -d && sleep 30 && truffle test --network test && docker compose down",
+    "codegen": "../../packages/cli/dist/bin.js codegen",
     "create-test": "../../packages/cli/dist/bin.js create test/basic-event-handlers --node http://127.0.0.1:18020",
-    "deploy-test": "../../packages/cli/dist/bin.js deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020"
-  },
-  "devDependencies": {
-    "@graphprotocol/graph-ts": "0.29.1",
-    "apollo-fetch": "^0.7.0"
+    "deploy-test": "../../packages/cli/dist/bin.js deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020",
+    "test": "docker compose up -d && sleep 30 && truffle test --network test && docker compose down"
   },
   "dependencies": {
     "babel-polyfill": "6.26.0",
     "babel-register": "6.26.0",
     "truffle": "5.0.12",
     "truffle-hdwallet-provider": "1.0.6"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-ts": "0.29.1",
+    "apollo-fetch": "^0.7.0"
   },
   "resolutions": {
     "assemblyscript": "0.19.10"

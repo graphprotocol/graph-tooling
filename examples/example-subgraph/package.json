@@ -2,10 +2,10 @@
   "name": "example-event-handler",
   "private": true,
   "scripts": {
-    "codegen": "../../packages/cli/dist/bin.js codegen --output-dir src/types/ subgraph.yaml",
     "build": "../../packages/cli/dist/bin.js build subgraph.yaml",
     "build-ipfs": "../../packages/cli/dist/bin.js build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
-    "build-wast": "../../packages/cli/dist/bin.js build -t wast subgraph.yaml"
+    "build-wast": "../../packages/cli/dist/bin.js build -t wast subgraph.yaml",
+    "codegen": "../../packages/cli/dist/bin.js codegen --output-dir src/types/ subgraph.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-ts": "0.29.1"

@@ -1,0 +1,9 @@
+node_modules
+dist
+build
+generated
+packages/cli/tests/cli/init
+packages/cli/tests/cli/validation
+
+# TODO: cleanup examples and lint
+examples

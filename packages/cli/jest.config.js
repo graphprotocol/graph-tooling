@@ -49,10 +49,10 @@ module.exports = {
   // forceCoverageMatch: [],
 
   // A path to a module which exports an async function that is triggered once before all test suites
-  globalSetup: './tests/cli/globalSetup',
+  globalSetup: './tests/cli/globalSetup.ts',
 
   // A path to a module which exports an async function that is triggered once after all test suites
-  globalTeardown: './tests/cli/globalTeardown',
+  globalTeardown: './tests/cli/globalTeardown.ts',
 
   // A set of global variables that need to be available in all test environments
   // globals: {},
@@ -133,10 +133,10 @@ module.exports = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: ['**/?(*.)+(spec|test).js?(x)'],
+  testMatch: ['**/?(*.)+(spec|test).(t|j)s?(x)'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  testPathIgnorePatterns: ['/src/commands/test.js', '/node_modules/', '/dist/'],
+  testPathIgnorePatterns: ['/src/commands/test.ts', '/node_modules/', '/dist/'],
 
   // The regexp pattern Jest uses to detect test files
   // testRegex: "",
@@ -172,4 +172,4 @@ module.exports = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
-}
+};
