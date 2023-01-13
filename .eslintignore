@@ -1,0 +1,5 @@
+dist
+build
+generated
+packages/cli/tests/cli/init
+packages/cli/tests/cli/validation
