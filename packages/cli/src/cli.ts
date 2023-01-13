@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from 'path';
 import { build, system } from 'gluegun';
 
 const run = async (argv: string[]) => {

@@ -1,4 +1,4 @@
-import { URL } from 'node:url';
+import { URL } from 'url';
 import * as toolbox from 'gluegun';
 import ipfsHttpClient from 'ipfs-http-client';
 import Compiler from '../compiler';

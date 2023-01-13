@@ -1,4 +1,4 @@
-import { URL } from 'node:url';
+import { URL } from 'url';
 import chalk from 'chalk';
 import { GluegunToolbox } from 'gluegun';
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth';

@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from 'path';
 import fs from 'fs-extra';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';

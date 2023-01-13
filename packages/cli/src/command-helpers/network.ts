@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from 'path';
 import { GluegunFilesystem, GluegunPatching } from 'gluegun';
 import yaml from 'yaml';
 import { step, withSpinner } from './spinner';

@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from 'path';
 import * as toolbox from 'gluegun';
 import yaml from 'yaml';
 import { initNetworksConfig, updateSubgraphNetwork } from './network';

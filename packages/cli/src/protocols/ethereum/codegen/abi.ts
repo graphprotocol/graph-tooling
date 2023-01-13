@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'fs';
 import immutable from 'immutable';
 import request from 'sync-request';
 import Web3EthAbi from 'web3-eth-abi';

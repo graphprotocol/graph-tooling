@@ -1,6 +1,6 @@
-import { exec, spawn } from 'node:child_process';
-import os from 'node:os';
-import path from 'node:path';
+import { exec, spawn } from 'child_process';
+import os from 'os';
+import path from 'path';
 import { Binary } from 'binary-install-raw';
 import chalk from 'chalk';
 import { filesystem, GluegunToolbox, patching, print, system } from 'gluegun';

@@ -1,5 +1,5 @@
-import crypto from 'node:crypto';
-import path from 'node:path';
+import crypto from 'crypto';
+import path from 'path';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';

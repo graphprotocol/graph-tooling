@@ -11,5 +11,7 @@ module.exports = {
     'import/no-default-export': 'off',
     // TODO: remove once we get rid of all anys
     '@typescript-eslint/no-explicit-any': 'off',
+    // TODO: not ready yet
+    'unicorn/prefer-node-protocol': 'off',
   },
 };

@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from 'path';
 import chalk from 'chalk';
 import { GluegunToolbox } from 'gluegun';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';

@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'fs';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
 

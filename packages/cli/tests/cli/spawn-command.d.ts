@@ -1,5 +1,5 @@
 declare module 'spawn-command' {
-  import { spawn, SpawnOptions, ChildProcessByStdio } from 'node:child_process';
+  import { spawn, SpawnOptions, ChildProcessByStdio } from 'child_process';
 
   type SpawnResult = ChildProcessByStdio<Writable, Readable, Readable>;
   export { SpawnOptions, SpawnResult };

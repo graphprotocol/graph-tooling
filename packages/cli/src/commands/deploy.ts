@@ -1,5 +1,5 @@
-import path from 'node:path';
-import { URL } from 'node:url';
+import path from 'path';
+import { URL } from 'url';
 import chalk from 'chalk';
 import { GluegunToolbox } from 'gluegun';
 import { identifyDeployKey } from '../command-helpers/auth';
