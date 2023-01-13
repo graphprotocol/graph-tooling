@@ -6,7 +6,7 @@ import TYPE_CONVERSIONS from './conversions'
 
 const conversionsForTypeSystems = (fromTypeSystem: string, toTypeSystem: string) => {
   let conversions = TYPE_CONVERSIONS.getIn([fromTypeSystem, toTypeSystem])
-  if (conversions == undefined) {
+  if (conversions === undefined) {
     throw new Error(
       `Conversions from '${fromTypeSystem}' to '${toTypeSystem}' are not supported`,
     )
