@@ -1,17 +1,18 @@
-const URL = require('url').URL
-import ipfsHttpClient from 'ipfs-http-client'
-import * as toolbox from 'gluegun'
-import Compiler from '../compiler'
-import Protocol from '../protocols'
+import * as toolbox from 'gluegun';
+import ipfsHttpClient from 'ipfs-http-client';
+import Compiler from '../compiler';
+import Protocol from '../protocols';
+
+const URL = require('node:url').URL;
 
 interface CreateCompilerOptions {
-  ipfs: any
-  headers?: any
-  outputDir: string
-  outputFormat: string
-  skipMigrations: boolean
-  blockIpfsMethods?: boolean
-  protocol: Protocol
+  ipfs: any;
+  headers?: any;
+  outputDir: string;
+  outputFormat: string;
+  skipMigrations: boolean;
+  blockIpfsMethods?: boolean;
+  protocol: Protocol;
 }
 
 // Helper function to construct a subgraph compiler
@@ -28,13 +29,13 @@ export function createCompiler(
   }: CreateCompilerOptions,
 ) {
   // Parse the IPFS URL
-  let url
+  let url;
   try {
-    url = ipfs ? new URL(ipfs) : undefined
+    url = ipfs ? new URL(ipfs) : undefined;
   } catch (e) {
     toolbox.print.error(`Invalid IPFS URL: ${ipfs}
-The IPFS URL must be of the following format: http(s)://host[:port]/[path]`)
-    return null
+The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
+    return null;
   }
 
   // Connect to the IPFS node (if a node address was provided)
@@ -46,15 +47,15 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`)
         'api-path': url.pathname.replace(/\/$/, '') + '/api/v0/',
         headers,
       })
-    : undefined
+    : undefined;
 
   return new Compiler({
     ipfs,
     subgraphManifest: manifest,
-    outputDir: outputDir,
-    outputFormat: outputFormat,
+    outputDir,
+    outputFormat,
     skipMigrations,
     blockIpfsMethods,
     protocol,
-  })
+  });
 }

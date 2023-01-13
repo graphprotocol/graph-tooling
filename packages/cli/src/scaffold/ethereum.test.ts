@@ -1,7 +1,7 @@
-import ABI from '../protocols/ethereum/abi'
-import immutable from 'immutable'
-import Scaffold from './index'
-import Protocol from '../protocols'
+import immutable from 'immutable';
+import Protocol from '../protocols';
+import ABI from '../protocols/ethereum/abi';
+import Scaffold from './index';
 
 const TEST_EVENT = {
   name: 'ExampleEvent',
@@ -20,28 +20,24 @@ const TEST_EVENT = {
         {
           name: 'c3',
           type: 'tuple',
-          components: [
-            { name: 'c31', type: 'uint96' },
-            { type: 'string' },
-            { type: 'bytes32' },
-          ],
+          components: [{ name: 'c31', type: 'uint96' }, { type: 'string' }, { type: 'bytes32' }],
         },
       ],
     },
     { name: 'd', type: 'string', indexed: true },
   ],
-}
+};
 
 const OVERLOADED_EVENT = {
   name: 'ExampleEvent',
   type: 'event',
   inputs: [{ name: 'a', type: 'bytes32' }],
-}
+};
 
 const TEST_CONTRACT = {
   name: 'ExampleContract',
   type: 'contract',
-}
+};
 
 const TEST_CALLABLE_FUNCTIONS = [
   {
@@ -56,20 +52,15 @@ const TEST_CALLABLE_FUNCTIONS = [
     stateMutability: 'pure',
     outputs: [{ type: 'tuple', components: [{ type: 'uint256' }] }],
   },
-]
+];
 
 const TEST_ABI = new ABI(
   'Contract',
   undefined,
-  immutable.fromJS([
-    TEST_EVENT,
-    OVERLOADED_EVENT,
-    TEST_CONTRACT,
-    ...TEST_CALLABLE_FUNCTIONS,
-  ]),
-)
+  immutable.fromJS([TEST_EVENT, OVERLOADED_EVENT, TEST_CONTRACT, ...TEST_CALLABLE_FUNCTIONS]),
+);
 
-const protocol = new Protocol('ethereum')
+const protocol = new Protocol('ethereum');
 
 const scaffoldOptions = {
   protocol,
@@ -77,14 +68,14 @@ const scaffoldOptions = {
   contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
   network: 'kovan',
   contractName: 'Contract',
-}
+};
 
-const scaffold = new Scaffold(scaffoldOptions)
+const scaffold = new Scaffold(scaffoldOptions);
 
 const scaffoldWithIndexEvents = new Scaffold({
   ...scaffoldOptions,
   indexEvents: true,
-})
+});
 
 describe('Ethereum subgraph scaffolding', () => {
   test('Manifest', () => {
@@ -115,8 +106,8 @@ dataSources:
         - event: ExampleEvent(bytes32)
           handler: handleExampleEvent1
       file: ./src/contract.ts
-`)
-  })
+`);
+  });
 
   test('Schema (default)', () => {
     expect(scaffold.generateSchema()).toEqual(`\
@@ -126,8 +117,8 @@ type ExampleEntity @entity {
   a: BigInt! # uint256
   b: [Bytes]! # bytes[4]
 }
-`)
-  })
+`);
+  });
 
   test('Schema (for indexing events)', () => {
     expect(scaffoldWithIndexEvents.generateSchema()).toEqual(`\
@@ -155,8 +146,8 @@ type ExampleEvent1 @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
-`)
-  })
+`);
+  });
 
   test('Mapping (default)', () => {
     expect(scaffold.generateMapping()).toEqual(`\
@@ -212,8 +203,8 @@ export function handleExampleEvent(event: ExampleEvent): void {
 }
 
 export function handleExampleEvent1(event: ExampleEvent1): void {}
-`)
-  })
+`);
+  });
 
   test('Mapping (for indexing events)', () => {
     expect(scaffoldWithIndexEvents.generateMapping()).toEqual(`\
@@ -257,13 +248,13 @@ export function handleExampleEvent1(event: ExampleEvent1Event): void {
 
   entity.save()
 }
-`)
-  })
+`);
+  });
 
   test('Test Files (default)', () => {
-    const files = scaffoldWithIndexEvents.generateTests()
-    const testFile = files?.['contract.test.ts']
-    const utilsFile = files?.['contract-utils.ts']
+    const files = scaffoldWithIndexEvents.generateTests();
+    const testFile = files?.['contract.test.ts'];
+    const utilsFile = files?.['contract-utils.ts'];
     expect(testFile).toEqual(`\
 import {
   assert,
@@ -339,7 +330,7 @@ describe(\"Describe entity assertions\", () => {
     // https://thegraph.com/docs/en/developer/matchstick/#asserts
   })
 })
-`)
+`);
     expect(utilsFile).toEqual(`\
 import { newMockEvent } from \"matchstick-as\"
 import { ethereum, BigInt, Bytes } from \"@graphprotocol/graph-ts\"
@@ -386,13 +377,13 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
 
   return exampleEvent1Event
 }
-`)
-  })
+`);
+  });
 
   test('Test Files (for indexing events)', () => {
-    const files = scaffoldWithIndexEvents.generateTests()
-    const testFile = files?.['contract.test.ts']
-    const utilsFile = files?.['contract-utils.ts']
+    const files = scaffoldWithIndexEvents.generateTests();
+    const testFile = files?.['contract.test.ts'];
+    const utilsFile = files?.['contract-utils.ts'];
 
     expect(testFile).toEqual(`\
 import {
@@ -469,7 +460,7 @@ describe(\"Describe entity assertions\", () => {
     // https://thegraph.com/docs/en/developer/matchstick/#asserts
   })
 })
-`)
+`);
     expect(utilsFile).toEqual(`\
 import { newMockEvent } from \"matchstick-as\"
 import { ethereum, BigInt, Bytes } from \"@graphprotocol/graph-ts\"
@@ -516,6 +507,6 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
 
   return exampleEvent1Event
 }
-`)
-  })
-})
+`);
+  });
+});

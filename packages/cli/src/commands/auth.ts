@@ -1,13 +1,11 @@
-import chalk from 'chalk'
-import { GluegunToolbox } from 'gluegun'
-import { saveDeployKey } from '../command-helpers/auth'
-import { chooseNodeUrl } from '../command-helpers/node'
-import { fixParameters } from '../command-helpers/gluegun'
+import chalk from 'chalk';
+import { GluegunToolbox } from 'gluegun';
+import { saveDeployKey } from '../command-helpers/auth';
+import { fixParameters } from '../command-helpers/gluegun';
+import { chooseNodeUrl } from '../command-helpers/node';
 
 const HELP = `
-${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold(
-  '<deploy-key>',
-)}
+${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold('<deploy-key>')}
 
 ${chalk.dim('Options:')}
 
@@ -15,15 +13,15 @@ ${chalk.dim('Options:')}
                                 Selects the product for which to authenticate
       --studio                  Shortcut for --product subgraph-studio
   -h, --help                    Show usage information
-`
+`;
 
 export interface AuthOptions {
-  product?: 'subgraph-studio' | 'hosted-service'
-  studio?: boolean
-  help?: boolean
+  product?: 'subgraph-studio' | 'hosted-service';
+  studio?: boolean;
+  help?: boolean;
   // not a cli arg
-  node?: string
-  deployKey?: string
+  node?: string;
+  deployKey?: string;
 }
 
 const processForm = async (
@@ -48,53 +46,53 @@ const processForm = async (
       message: 'Deploy key',
       skip: deployKey !== undefined,
     },
-  ]
+  ];
 
   try {
-    const answers = await toolbox.prompt.ask(questions)
-    return answers
+    const answers = await toolbox.prompt.ask(questions);
+    return answers;
   } catch (e) {
-    return undefined
+    return undefined;
   }
-}
+};
 
 export default {
   description: 'Sets the deploy key to use when deploying to a Graph node',
   run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
-    const { print } = toolbox
+    const { print } = toolbox;
 
     // Read CLI parameters
-    const { product, studio, h, help } = toolbox.parameters.options
+    const { product, studio, h, help } = toolbox.parameters.options;
 
     // Show help text if requested
     if (help || h) {
-      print.info(HELP)
-      return
+      print.info(HELP);
+      return;
     }
 
-    let firstParam: string, secondParam: string
+    let firstParam: string, secondParam: string;
     try {
-      ;[firstParam, secondParam] = fixParameters(toolbox.parameters, {
+      [firstParam, secondParam] = fixParameters(toolbox.parameters, {
         h,
         help,
         studio,
-      })
+      });
     } catch (e) {
-      print.error(e.message)
-      process.exitCode = 1
-      return
+      print.error(e.message);
+      process.exitCode = 1;
+      return;
     }
 
     // if user specifies --product or --studio then deployKey is the first parameter
-    let node: string | undefined
-    let deployKey
+    let node: string | undefined;
+    let deployKey;
     if (product || studio) {
-      ;({ node } = chooseNodeUrl({ product, studio, node }))
-      deployKey = firstParam
+      ({ node } = chooseNodeUrl({ product, studio, node }));
+      deployKey = firstParam;
     } else {
-      node = firstParam
-      deployKey = secondParam
+      node = firstParam;
+      deployKey = secondParam;
     }
 
     if (!node || !deployKey) {
@@ -103,40 +101,38 @@ export default {
         studio,
         node,
         deployKey,
-      })
+      });
       if (inputs === undefined) {
-        process.exit(1)
+        process.exit(1);
       }
       if (!node) {
-        ;({ node } = chooseNodeUrl({
+        ({ node } = chooseNodeUrl({
           product: inputs.product,
           studio,
           node,
-        }))
+        }));
       }
-      if (!deployKey) {
-        deployKey = inputs.deployKey
-      }
+      deployKey ||= inputs.deployKey;
     }
 
     if (!deployKey) {
-      print.error(`No deploy key provided`)
-      print.info(HELP)
-      process.exitCode = 1
-      return
+      print.error(`No deploy key provided`);
+      print.info(HELP);
+      process.exitCode = 1;
+      return;
     }
     if (deployKey.length > 200) {
-      print.error(`Deploy key must not exceed 200 characters`)
-      process.exitCode = 1
-      return
+      print.error(`Deploy key must not exceed 200 characters`);
+      process.exitCode = 1;
+      return;
     }
 
     try {
-      await saveDeployKey(node!, deployKey)
-      print.success(`Deploy key set for ${node}`)
+      await saveDeployKey(node!, deployKey);
+      print.success(`Deploy key set for ${node}`);
     } catch (e) {
-      print.error(e)
-      process.exitCode = 1
+      print.error(e);
+      process.exitCode = 1;
     }
   },
-}
+};

@@ -1,17 +1,17 @@
-import immutable from 'immutable'
-import * as tsCodegen from '../../../codegen/typescript'
+import immutable from 'immutable';
+import * as tsCodegen from '../../../codegen/typescript';
 
 export default class EthereumTemplateCodeGen {
   constructor(public template: immutable.Map<any, any>) {
-    this.template = template
+    this.template = template;
   }
 
   generateModuleImports() {
-    return ['Address']
+    return ['Address'];
   }
 
   generateCreateMethod() {
-    const name = this.template.get('name')
+    const name = this.template.get('name');
 
     return tsCodegen.staticMethod(
       'create',
@@ -20,11 +20,11 @@ export default class EthereumTemplateCodeGen {
       `
       DataSourceTemplate.create('${name}', [address.toHex()])
       `,
-    )
+    );
   }
 
   generateCreateWithContextMethod() {
-    const name = this.template.get('name')
+    const name = this.template.get('name');
 
     return tsCodegen.staticMethod(
       'createWithContext',
@@ -36,6 +36,6 @@ export default class EthereumTemplateCodeGen {
       `
       DataSourceTemplate.createWithContext('${name}', [address.toHex()], context)
       `,
-    )
+    );
   }
 }

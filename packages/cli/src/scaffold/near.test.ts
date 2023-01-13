@@ -1,16 +1,16 @@
-import Scaffold from './index'
-import Protocol from '../protocols'
+import Protocol from '../protocols';
+import Scaffold from './index';
 
-const protocol = new Protocol('near')
+const protocol = new Protocol('near');
 
 const scaffoldOptions = {
   protocol,
   contract: 'abc.def.near',
   network: 'near-mainnet',
   contractName: 'Contract',
-}
+};
 
-const scaffold = new Scaffold(scaffoldOptions)
+const scaffold = new Scaffold(scaffoldOptions);
 
 describe('NEAR subgraph scaffolding', () => {
   test('Manifest', () => {
@@ -32,8 +32,8 @@ dataSources:
       receiptHandlers:
         - handler: handleReceipt
       file: ./src/contract.ts
-`)
-  })
+`);
+  });
 
   test('Schema (default)', () => {
     expect(scaffold.generateSchema()).toEqual(`\
@@ -42,8 +42,8 @@ type ExampleEntity @entity {
   block: Bytes!
   count: BigInt!
 }
-`)
-  })
+`);
+  });
 
   test('Mapping (default)', () => {
     expect(scaffold.generateMapping()).toEqual(`\
@@ -81,6 +81,6 @@ export function handleReceipt(
   // entity back to the store. Fields that were not set or unset remain
   // unchanged, allowing for partial updates to be applied.
 }
-`)
-  })
-})
+`);
+  });
+});

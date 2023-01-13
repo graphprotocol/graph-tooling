@@ -1,4 +1,4 @@
-import { validateStudioNetwork, allowedStudioNetworks } from './studio'
+import { allowedStudioNetworks, validateStudioNetwork } from './studio';
 
 describe('Version Command Helpers', () => {
   describe('validateStudioNetwork', () => {
@@ -15,8 +15,8 @@ describe('Version Command Helpers', () => {
               ', ',
             )}`,
           ),
-        )
-      })
+        );
+      });
 
       test("And it's Gnosis chain", () => {
         expect(() =>
@@ -30,8 +30,8 @@ describe('Version Command Helpers', () => {
               ', ',
             )}`,
           ),
-        )
-      })
+        );
+      });
 
       test("And it's NOT an allowed network", () => {
         expect(() =>
@@ -45,9 +45,9 @@ describe('Version Command Helpers', () => {
               ', ',
             )}`,
           ),
-        )
-      })
-    })
+        );
+      });
+    });
 
     describe("When it's NOT studio", () => {
       test("And it's Rinkeby", () => {
@@ -62,8 +62,8 @@ describe('Version Command Helpers', () => {
               ', ',
             )}`,
           ),
-        )
-      })
+        );
+      });
 
       test("And it's NOT an allowed network", () => {
         expect(() =>
@@ -77,8 +77,8 @@ describe('Version Command Helpers', () => {
               ', ',
             )}`,
           ),
-        )
-      })
-    })
-  })
-})
+        );
+      });
+    });
+  });
+});

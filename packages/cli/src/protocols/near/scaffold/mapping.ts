@@ -32,4 +32,4 @@ export const generatePlaceholderHandlers = () =>
     // entity back to the store. Fields that were not set or unset remain
     // unchanged, allowing for partial updates to be applied.
   }
-`
+`;

@@ -1,1 +1,1 @@
-declare module 'binary-install-raw'
+declare module 'binary-install-raw';

@@ -24,29 +24,29 @@
 // options has a string value; if so, it pushes it to the front of the
 // parameters array and returns the result of that.
 
-import { GluegunParameters } from 'gluegun'
+import { GluegunParameters } from 'gluegun';
 
 export const fixParameters = (
   parameters: GluegunParameters,
   booleanOptions: Record<string, string>,
 ) => {
-  let unexpectedStringOptions = Object.keys(booleanOptions)
+  const unexpectedStringOptions = Object.keys(booleanOptions)
     .filter(key => typeof booleanOptions[key] === 'string')
-    .map(key => ({ key, value: booleanOptions[key] }))
+    .map(key => ({ key, value: booleanOptions[key] }));
 
-  let optionNames = unexpectedStringOptions
+  const optionNames = unexpectedStringOptions
     .map(({ key }) => `--` + key.replace(/([A-Z])/, '-$1').toLowerCase())
-    .join(', ')
+    .join(', ');
 
   if (unexpectedStringOptions.length > 1) {
     throw new Error(
       `Unexpected value provided for one or more of ${optionNames}. See --help for more information.`,
-    )
+    );
   } else if (unexpectedStringOptions.length == 1) {
-    let params = parameters.array
-    params!.unshift(unexpectedStringOptions[0].value)
-    return params!
+    const params = parameters.array;
+    params!.unshift(unexpectedStringOptions[0].value);
+    return params!;
   } else {
-    return parameters.array!
+    return parameters.array!;
   }
-}
+};

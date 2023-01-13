@@ -1,17 +1,16 @@
-import immutable from 'immutable'
-import yaml from 'js-yaml'
-import path from 'path'
+import path from 'node:path';
+import immutable from 'immutable';
+import yaml from 'js-yaml';
+import Protocol from '../protocols';
 
-import Protocol from '../protocols'
-
-const List = immutable.List
-const Map = immutable.Map
+const List = immutable.List;
+const Map = immutable.Map;
 
 /**
  * Returns a user-friendly type name for a value.
  */
 const typeName = (value: immutable.Collection<unknown, unknown>) =>
-  List.isList(value) ? 'list' : Map.isMap(value) ? 'map' : typeof value
+  List.isList(value) ? 'list' : Map.isMap(value) ? 'map' : typeof value;
 
 /**
  * Converts an immutable or plain JavaScript value to a YAML string.
@@ -21,35 +20,30 @@ const toYAML = (x: immutable.Collection<unknown, unknown>) =>
     .safeDump(typeName(x) === 'list' || typeName(x) === 'map' ? x.toJS() : x, {
       indent: 2,
     })
-    .trim()
+    .trim();
 
 /**
  * Looks up the type of a field in a GraphQL object type.
  */
 const getFieldType = (type: immutable.Map<any, any>, fieldName: string) => {
-  let fieldDef = type
+  const fieldDef = type
     .get('fields')
-    .find((field: any) => field.getIn(['name', 'value']) === fieldName)
+    .find((field: any) => field.getIn(['name', 'value']) === fieldName);
 
-  return fieldDef !== undefined ? fieldDef.get('type') : undefined
-}
+  return fieldDef !== undefined ? fieldDef.get('type') : undefined;
+};
 
 /**
  * Resolves a type in the GraphQL schema.
  */
-const resolveType = (
-  schema: immutable.Map<any, any>,
-  type: immutable.Map<any, any>,
-): any =>
+const resolveType = (schema: immutable.Map<any, any>, type: immutable.Map<any, any>): any =>
   type.has('type')
     ? resolveType(schema, type.get('type'))
     : type.get('kind') === 'NamedType'
     ? schema
         .get('definitions')
-        .find(
-          (def: any) => def.getIn(['name', 'value']) === type.getIn(['name', 'value']),
-        )
-    : 'resolveType: unimplemented'
+        .find((def: any) => def.getIn(['name', 'value']) === type.getIn(['name', 'value']))
+    : 'resolveType: unimplemented';
 
 /**
  * A map of supported validators.
@@ -59,21 +53,21 @@ const validators = immutable.fromJS({
     (validators.get(ctx.getIn(['type', 'name', 'value'])) as any)(value, ctx),
 
   UnionTypeDefinition: (value: any, ctx: immutable.Map<any, any>) => {
-    const unionVariants = ctx.getIn(['type', 'types']) as any[]
+    const unionVariants = ctx.getIn(['type', 'types']) as any[];
 
-    let errors = List()
+    let errors = List();
 
     for (const variantType of unionVariants) {
-      const variantErrors = validateValue(value, ctx.set('type', variantType))
+      const variantErrors = validateValue(value, ctx.set('type', variantType));
       // No errors found, union variant matched, early return
       if (variantErrors.isEmpty()) {
-        return List()
+        return List();
       }
-      errors = errors.push(variantErrors)
+      errors = errors.push(variantErrors);
     }
 
     // Return errors from variant that matched the most
-    return List(errors.minBy((variantErrors: any) => variantErrors.count()) as any)
+    return List(errors.minBy((variantErrors: any) => variantErrors.count()) as any);
   },
 
   NamedType: (value: any, ctx: immutable.Map<any, any>) =>
@@ -102,9 +96,7 @@ const validators = immutable.fromJS({
             errors.concat(
               validateValue(
                 value,
-                ctx
-                  .update('path', path => path.push(i))
-                  .update('type', type => type.get('type')),
+                ctx.update('path', path => path.push(i)).update('type', type => type.get('type')),
               ),
             ),
           List(),
@@ -155,15 +147,15 @@ const validators = immutable.fromJS({
             path: ctx.get('path'),
             message: `Expected map, found ${typeName(value)}:\n${toYAML(value)}`,
           },
-        ])
+        ]);
   },
 
   EnumTypeDefinition: (value: any, ctx: immutable.Map<any, any>) => {
     const enumValues = (ctx.getIn(['type', 'values']) as any).map((v: any) => {
-      return v.getIn(['name', 'value'])
-    })
+      return v.getIn(['name', 'value']);
+    });
 
-    const allowedValues = enumValues.toArray().join(', ')
+    const allowedValues = enumValues.toArray().join(', ');
 
     return enumValues.includes(value)
       ? List()
@@ -172,7 +164,7 @@ const validators = immutable.fromJS({
             path: ctx.get('path'),
             message: `Unexpected enum value: ${value}, allowed values: ${allowedValues}`,
           },
-        ])
+        ]);
   },
 
   String: (value: any, ctx: immutable.Map<any, any>) =>
@@ -197,7 +189,7 @@ const validators = immutable.fromJS({
 
   File: (value: any, ctx: immutable.Map<any, any>) =>
     typeof value === 'string'
-      ? require('fs').existsSync(ctx.get('resolveFile')(value))
+      ? require('node:fs').existsSync(ctx.get('resolveFile')(value))
         ? List()
         : immutable.fromJS([
             {
@@ -218,35 +210,31 @@ const validators = immutable.fromJS({
       : immutable.fromJS([
           {
             path: ctx.get('path'),
-            message: `Expected true or false, found ${typeName(value)}:\n${toYAML(
-              value,
-            )}`,
+            message: `Expected true or false, found ${typeName(value)}:\n${toYAML(value)}`,
           },
         ]),
-})
+});
 
 const validateValue = (value: any, ctx: immutable.Collection<any, any>) => {
-  let kind = ctx.getIn(['type', 'kind'])
-  let validator = validators.get(kind) as any
+  const kind = ctx.getIn(['type', 'kind']);
+  const validator = validators.get(kind) as any;
 
   if (validator !== undefined) {
     // If the type is nullable, accept undefined and null; if the nullable
     // type is wrapped in a `NonNullType`, the validator for that `NonNullType`
     // will catch the missing/unset value
     if (kind !== 'NonNullType' && (value === undefined || value === null)) {
-      return List()
-    } else {
-      return validator(value, ctx)
+      return List();
     }
-  } else {
-    return immutable.fromJS([
-      {
-        path: ctx.get('path'),
-        message: `No validator for unsupported schema type: ${kind}`,
-      },
-    ])
+    return validator(value, ctx);
   }
-}
+  return immutable.fromJS([
+    {
+      path: ctx.get('path'),
+      message: `No validator for unsupported schema type: ${kind}`,
+    },
+  ]);
+};
 
 // Transforms list of data sources like this:
 // [
@@ -270,19 +258,17 @@ const dataSourceListToMap = (dataSources: any[]) =>
   dataSources.reduce(
     (protocolKinds, dataSource) =>
       protocolKinds.update(Protocol.normalizeName(dataSource.kind), (networks: any) =>
-        (networks || immutable.OrderedMap()).update(
-          dataSource.network,
-          (dataSourceNames: any) =>
-            (dataSourceNames || immutable.OrderedSet()).add(dataSource.name),
+        (networks || immutable.OrderedMap()).update(dataSource.network, (dataSourceNames: any) =>
+          (dataSourceNames || immutable.OrderedSet()).add(dataSource.name),
         ),
       ),
     immutable.OrderedMap(),
-  )
+  );
 
 const validateDataSourceProtocolAndNetworks = (value: any) => {
-  const dataSources = [...value.dataSources, ...(value.templates || [])]
+  const dataSources = [...value.dataSources, ...(value.templates || [])];
 
-  const protocolNetworkMap = dataSourceListToMap(dataSources)
+  const protocolNetworkMap = dataSourceListToMap(dataSources);
 
   if (protocolNetworkMap.size > 1) {
     return immutable.fromJS([
@@ -305,10 +291,10 @@ ${protocolNetworkMap
   .join('\n')}
 Recommendation: Make all data sources and templates use the same protocol kind.`,
       },
-    ])
+    ]);
   }
 
-  const networks = protocolNetworkMap.first()
+  const networks = protocolNetworkMap.first();
 
   if (networks.size > 1) {
     return immutable.fromJS([
@@ -327,11 +313,11 @@ ${networks
   .join('\n')}
 Recommendation: Make all data sources and templates use the same network name.`,
       },
-    ])
+    ]);
   }
 
-  return List()
-}
+  return List();
+};
 
 export const validateManifest = (
   value: any,
@@ -341,13 +327,13 @@ export const validateManifest = (
   { resolveFile }: { resolveFile: (path: string) => string },
 ) => {
   // Validate manifest using the GraphQL schema that defines its structure
-  let errors =
+  const errors =
     value !== null && value !== undefined
       ? validateValue(
           immutable.fromJS(value),
           immutable.fromJS({
-            schema: schema,
-            type: type,
+            schema,
+            type,
             path: [],
             errors: [],
             resolveFile,
@@ -359,15 +345,15 @@ export const validateManifest = (
             path: [],
             message: `Expected non-empty value, found ${typeName(value)}:\n  ${value}`,
           },
-        ])
+        ]);
 
   // Fail early because a broken manifest prevents us from performing
   // additional validation steps
   if (!errors.isEmpty()) {
-    return errors
+    return errors;
   }
 
   // Validate that all data sources are for the same `network` and `protocol` (kind)
   // (this includes _no_ network/protocol at all)
-  return validateDataSourceProtocolAndNetworks(value)
-}
+  return validateDataSourceProtocolAndNetworks(value);
+};

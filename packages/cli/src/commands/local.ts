@@ -1,18 +1,17 @@
-import chalk from 'chalk'
-import compose from 'docker-compose'
-import http from 'http'
-import net from 'net'
-import tmp from 'tmp-promise'
-import path from 'path'
-import stripAnsi from 'strip-ansi'
-import { spawn, ChildProcess } from 'child_process'
-import { GluegunToolbox } from 'gluegun'
-
-import { fixParameters } from '../command-helpers/gluegun'
-import { step, withSpinner } from '../command-helpers/spinner'
+import { ChildProcess, spawn } from 'node:child_process';
+import http from 'node:http';
+import net from 'node:net';
+import path from 'node:path';
+import chalk from 'chalk';
+import compose from 'docker-compose';
+import { GluegunToolbox } from 'gluegun';
+import stripAnsi from 'strip-ansi';
+import tmp from 'tmp-promise';
+import { fixParameters } from '../command-helpers/gluegun';
+import { step, withSpinner } from '../command-helpers/spinner';
 
 // Clean up temporary files even when an uncaught exception occurs
-tmp.setGracefulCleanup()
+tmp.setGracefulCleanup();
 
 const HELP = `
 ${chalk.bold('graph local')} [options] ${chalk.bold('<local-command>')}
@@ -30,28 +29,27 @@ Options:
       --skip-wait-for-ethereum  Don't wait for Ethereum to be up at localhost:18545 (optional)
       --skip-wait-for-postgres  Don't wait for Postgres to be up at localhost:15432 (optional)
       --timeout                 Time to wait for service containers. (optional, defaults to 120000 milliseconds)
-`
+`;
 
 export interface LocalOptions {
-  help?: boolean
-  nodeLogs?: boolean
-  ethereumLogs?: boolean
-  composeFile?: string
-  nodeImage?: string
-  standaloneNode?: string
-  standaloneNodeArgs?: string
-  skipWaitForIpfs?: boolean
-  skipWaitForEthereum?: boolean
-  skipWaitForPostgres?: boolean
-  timeout?: number
+  help?: boolean;
+  nodeLogs?: boolean;
+  ethereumLogs?: boolean;
+  composeFile?: string;
+  nodeImage?: string;
+  standaloneNode?: string;
+  standaloneNodeArgs?: string;
+  skipWaitForIpfs?: boolean;
+  skipWaitForEthereum?: boolean;
+  skipWaitForPostgres?: boolean;
+  timeout?: number;
 }
 
 export default {
-  description:
-    'Runs local tests against a Graph Node environment (using Ganache by default)',
+  description: 'Runs local tests against a Graph Node environment (using Ganache by default)',
   run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
-    const { filesystem, print } = toolbox
+    const { filesystem, print } = toolbox;
 
     // Parse CLI parameters
     let {
@@ -67,13 +65,13 @@ export default {
       standaloneNode,
       standaloneNodeArgs,
       timeout,
-    } = toolbox.parameters.options
+    } = toolbox.parameters.options;
 
     // Support both short and long option variants
-    help = help || h
+    help ||= h;
 
     // Extract test command
-    let params = fixParameters(toolbox.parameters, {
+    const params = fixParameters(toolbox.parameters, {
       ethereumLogs,
       h,
       help,
@@ -81,59 +79,57 @@ export default {
       skipWaitForEthereum,
       skipWaitForIpfs,
       skipWaitForPostgres,
-    })
+    });
 
     // Show help text if requested
     if (help) {
-      print.info(HELP)
-      return
+      print.info(HELP);
+      return;
     }
 
     if (params.length == 0) {
-      print.error(`Test command not provided as the last argument`)
-      process.exitCode = 1
-      return
+      print.error(`Test command not provided as the last argument`);
+      process.exitCode = 1;
+      return;
     }
 
-    let testCommand = params[0]
+    const testCommand = params[0];
 
     // Obtain the Docker Compose file for services that the tests run against
-    composeFile =
-      composeFile ||
-      path.join(
-        __dirname,
-        '..',
-        '..',
-        'resources',
-        'test',
-        standaloneNode ? 'docker-compose-standalone-node.yml' : 'docker-compose.yml',
-      )
+    composeFile ||= path.join(
+      __dirname,
+      '..',
+      '..',
+      'resources',
+      'test',
+      standaloneNode ? 'docker-compose-standalone-node.yml' : 'docker-compose.yml',
+    );
 
     // parse timeout. Defaults to 120 seconds
-    timeout = Math.abs(parseInt(timeout)) || 120000
+    timeout = Math.abs(parseInt(timeout)) || 120_000;
 
     if (!filesystem.exists(composeFile)) {
-      print.error(`Docker Compose file \`${composeFile}\` not found`)
-      process.exitCode = 1
-      return
+      print.error(`Docker Compose file \`${composeFile}\` not found`);
+      process.exitCode = 1;
+      return;
     }
 
     // Create temporary directory to operate in
-    let { path: tempdir } = await tmp.dir({ prefix: 'graph-test', unsafeCleanup: true })
+    const { path: tempdir } = await tmp.dir({ prefix: 'graph-test', unsafeCleanup: true });
     try {
-      await configureTestEnvironment(toolbox, tempdir, composeFile, nodeImage)
+      await configureTestEnvironment(toolbox, tempdir, composeFile, nodeImage);
     } catch (e) {
-      process.exitCode = 1
-      return
+      process.exitCode = 1;
+      return;
     }
 
     // Bring up test environment
     try {
-      await startTestEnvironment(tempdir)
+      await startTestEnvironment(tempdir);
     } catch (e) {
-      print.error(e)
-      process.exitCode = 1
-      return
+      print.error(e);
+      process.exitCode = 1;
+      return;
     }
 
     // Wait for test environment to come up
@@ -143,115 +139,106 @@ export default {
         skipWaitForIpfs,
         skipWaitForPostgres,
         timeout,
-      })
+      });
     } catch (e) {
-      await stopTestEnvironment(tempdir)
-      process.exitCode = 1
-      return
+      await stopTestEnvironment(tempdir);
+      process.exitCode = 1;
+      return;
     }
 
     // Bring up Graph Node separately, if a standalone node is used
-    let nodeProcess
-    let nodeOutputChunks: Buffer[] = []
+    let nodeProcess;
+    const nodeOutputChunks: Buffer[] = [];
     if (standaloneNode) {
       try {
-        nodeProcess = await startGraphNode(
-          standaloneNode,
-          standaloneNodeArgs,
-          nodeOutputChunks,
-        )
+        nodeProcess = await startGraphNode(standaloneNode, standaloneNodeArgs, nodeOutputChunks);
       } catch (e) {
-        toolbox.print.error('')
-        toolbox.print.error('  Graph Node')
-        toolbox.print.error('  ----------')
-        toolbox.print.error(
-          indent('  ', Buffer.concat(nodeOutputChunks).toString('utf-8')),
-        )
-        toolbox.print.error('')
-        await stopTestEnvironment(tempdir)
-        process.exitCode = 1
-        return
+        toolbox.print.error('');
+        toolbox.print.error('  Graph Node');
+        toolbox.print.error('  ----------');
+        toolbox.print.error(indent('  ', Buffer.concat(nodeOutputChunks).toString('utf-8')));
+        toolbox.print.error('');
+        await stopTestEnvironment(tempdir);
+        process.exitCode = 1;
+        return;
       }
     }
 
     // Wait for Graph Node to come up
     try {
-      await waitForGraphNode(timeout)
+      await waitForGraphNode(timeout);
     } catch (e) {
-      toolbox.print.error('')
-      toolbox.print.error('  Graph Node')
-      toolbox.print.error('  ----------')
+      toolbox.print.error('');
+      toolbox.print.error('  Graph Node');
+      toolbox.print.error('  ----------');
       toolbox.print.error(
-        indent(
-          '  ',
-          await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks),
-        ),
-      )
-      toolbox.print.error('')
-      await stopTestEnvironment(tempdir)
-      process.exitCode = 1
-      return
+        indent('  ', await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks)),
+      );
+      toolbox.print.error('');
+      await stopTestEnvironment(tempdir);
+      process.exitCode = 1;
+      return;
     }
 
     // Run tests
-    let result = await runTests(testCommand)
+    const result = await runTests(testCommand);
 
     // Bring down Graph Node, if a standalone node is used
     if (nodeProcess) {
       try {
-        await stopGraphNode(nodeProcess)
+        await stopGraphNode(nodeProcess);
       } catch (e) {
         // do nothing (the spinner already logs the problem)
       }
     }
 
     if (result.exitCode == 0) {
-      toolbox.print.success('✔ Tests passed')
+      toolbox.print.success('✔ Tests passed');
     } else {
-      toolbox.print.error('✖ Tests failed')
+      toolbox.print.error('✖ Tests failed');
     }
 
     // Capture logs
     nodeLogs =
       nodeLogs || result.exitCode !== 0
         ? await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks)
-        : undefined
-    ethereumLogs = ethereumLogs ? await collectEthereumLogs(tempdir) : undefined
+        : undefined;
+    ethereumLogs = ethereumLogs ? await collectEthereumLogs(tempdir) : undefined;
 
     // Bring down the test environment
     try {
-      await stopTestEnvironment(tempdir)
+      await stopTestEnvironment(tempdir);
     } catch (e) {
       // do nothing (the spinner already logs the problem)
     }
 
     if (nodeLogs) {
-      toolbox.print.info('')
-      toolbox.print.info('  Graph node')
-      toolbox.print.info('  ----------')
-      toolbox.print.info('')
-      toolbox.print.info(indent('  ', nodeLogs))
+      toolbox.print.info('');
+      toolbox.print.info('  Graph node');
+      toolbox.print.info('  ----------');
+      toolbox.print.info('');
+      toolbox.print.info(indent('  ', nodeLogs));
     }
 
     if (ethereumLogs) {
-      toolbox.print.info('')
-      toolbox.print.info('  Ethereum')
-      toolbox.print.info('  --------')
-      toolbox.print.info('')
-      toolbox.print.info(indent('  ', ethereumLogs))
+      toolbox.print.info('');
+      toolbox.print.info('  Ethereum');
+      toolbox.print.info('  --------');
+      toolbox.print.info('');
+      toolbox.print.info(indent('  ', ethereumLogs));
     }
 
     // Always print the test output
-    toolbox.print.info('')
-    toolbox.print.info('  Output')
-    toolbox.print.info('  ------')
-    toolbox.print.info('')
-    toolbox.print.info(indent('  ', result.output))
+    toolbox.print.info('');
+    toolbox.print.info('  Output');
+    toolbox.print.info('  ------');
+    toolbox.print.info('');
+    toolbox.print.info(indent('  ', result.output));
 
     // Propagate the exit code from the test run
-    process.exitCode = result.exitCode
+    process.exitCode = result.exitCode;
   },
-}
+};
 
 /**
  * Indents all lines of a string
@@ -262,7 +249,7 @@ const indent = (indentation: string, str: string) =>
     .map(s => `${indentation}${s}`)
     // Remove whitespace from empty lines
     .map(s => s.replace(/^\s+$/g, ''))
-    .join('\n')
+    .join('\n');
 
 const configureTestEnvironment = async (
   toolbox: GluegunToolbox,
@@ -276,10 +263,10 @@ const configureTestEnvironment = async (
     `Warnings configuring test environment`,
     async () => {
       // Temporary compose file
-      let tempComposeFile = path.join(tempdir, 'compose', 'docker-compose.yml')
+      const tempComposeFile = path.join(tempdir, 'compose', 'docker-compose.yml');
 
       // Copy the compose file to the temporary directory
-      toolbox.filesystem.copy(composeFile, tempComposeFile)
+      toolbox.filesystem.copy(composeFile, tempComposeFile);
 
       // Substitute the graph-node image with the custom one, if appropriate
       if (nodeImage) {
@@ -287,32 +274,32 @@ const configureTestEnvironment = async (
           tempComposeFile,
           'graphprotocol/graph-node:latest',
           nodeImage,
-        )
+        );
       }
     },
-  )
+  );
 
 const waitFor = async (timeout: number, testFn: () => void) => {
-  let deadline = Date.now() + timeout
-  let error: Error | undefined = undefined
+  const deadline = Date.now() + timeout;
+  let error: Error | undefined = undefined;
   return new Promise((resolve, reject) => {
     const check = async () => {
       if (Date.now() > deadline) {
-        reject(error)
+        reject(error);
       } else {
         try {
-          let result = await testFn()
-          resolve(result)
+          const result = await testFn();
+          resolve(result);
         } catch (e) {
-          error = e
-          setTimeout(check, 500)
+          error = e;
+          setTimeout(check, 500);
         }
       }
-    }
+    };
 
-    setTimeout(check, 0)
-  })
-}
+    setTimeout(check, 0);
+  });
+};
 
 const startTestEnvironment = async (tempdir: string) =>
   await withSpinner(
@@ -323,9 +310,9 @@ const startTestEnvironment = async (tempdir: string) =>
       // Bring up the test environment
       await compose.upAll({
         cwd: path.join(tempdir, 'compose'),
-      })
+      });
     },
-  )
+  );
 
 const waitForTestEnvironment = async ({
   skipWaitForEthereum,
@@ -333,10 +320,10 @@ const waitForTestEnvironment = async ({
   skipWaitForPostgres,
   timeout,
 }: {
-  skipWaitForEthereum: boolean
-  skipWaitForIpfs: boolean
-  skipWaitForPostgres: boolean
-  timeout: number
+  skipWaitForEthereum: boolean;
+  skipWaitForIpfs: boolean;
+  skipWaitForPostgres: boolean;
+  timeout: number;
 }) =>
   await withSpinner(
     `Wait for test environment`,
@@ -345,7 +332,7 @@ const waitForTestEnvironment = async ({
     async spinner => {
       // Wait 10s for IPFS (if desired)
       if (skipWaitForIpfs) {
-        step(spinner, 'Skip waiting for IPFS')
+        step(spinner, 'Skip waiting for IPFS');
       } else {
         await waitFor(
           timeout,
@@ -353,19 +340,19 @@ const waitForTestEnvironment = async ({
             new Promise((resolve, reject) => {
               http
                 .get('http://localhost:15001/api/v0/version', () => {
-                  resolve()
+                  resolve();
                 })
                 .on('error', e => {
-                  reject(new Error(`Could not connect to IPFS: ${e}`))
-                })
+                  reject(new Error(`Could not connect to IPFS: ${e}`));
+                });
             }),
-        )
-        step(spinner, 'IPFS is up')
+        );
+        step(spinner, 'IPFS is up');
       }
 
       // Wait 10s for Ethereum (if desired)
       if (skipWaitForEthereum) {
-        step(spinner, 'Skip waiting for Ethereum')
+        step(spinner, 'Skip waiting for Ethereum');
       } else {
         await waitFor(
           timeout,
@@ -373,39 +360,37 @@ const waitForTestEnvironment = async ({
             new Promise((resolve, reject) => {
               http
                 .get('http://localhost:18545', () => {
-                  resolve()
+                  resolve();
                 })
                 .on('error', e => {
-                  reject(new Error(`Could not connect to Ethereum: ${e}`))
-                })
+                  reject(new Error(`Could not connect to Ethereum: ${e}`));
+                });
             }),
-        )
-        step(spinner, 'Ethereum is up')
+        );
+        step(spinner, 'Ethereum is up');
       }
 
       // Wait 10s for Postgres (if desired)
       if (skipWaitForPostgres) {
-        step(spinner, 'Skip waiting for Postgres')
+        step(spinner, 'Skip waiting for Postgres');
       } else {
         await waitFor(
           timeout,
           async () =>
             new Promise((resolve, reject) => {
               try {
-                let socket = net.connect(15432, 'localhost', () => resolve())
-                socket.on('error', e =>
-                  reject(new Error(`Could not connect to Postgres: ${e}`)),
-                )
-                socket.end()
+                const socket = net.connect(15_432, 'localhost', () => resolve());
+                socket.on('error', e => reject(new Error(`Could not connect to Postgres: ${e}`)));
+                socket.end();
               } catch (e) {
-                reject(new Error(`Could not connect to Postgres: ${e}`))
+                reject(new Error(`Could not connect to Postgres: ${e}`));
               }
             }),
-        )
-        step(spinner, 'Postgres is up')
+        );
+        step(spinner, 'Postgres is up');
       }
     },
-  )
+  );
 
 const stopTestEnvironment = async (tempdir: string) =>
   await withSpinner(
@@ -416,14 +401,14 @@ const stopTestEnvironment = async (tempdir: string) =>
       // Our containers do not respond quickly to the SIGTERM which `down` tries before timing out
       // and killing them, so speed things up by sending a SIGKILL right away.
       try {
-        await compose.kill({ cwd: path.join(tempdir, 'compose') })
+        await compose.kill({ cwd: path.join(tempdir, 'compose') });
       } catch (e) {
         // Do nothing, we will just try to run 'down'
         // to bring down the environment
       }
-      await compose.down({ cwd: path.join(tempdir, 'compose') })
+      await compose.down({ cwd: path.join(tempdir, 'compose') });
     },
-  )
+  );
 
 const startGraphNode = async (
   standaloneNode: string,
@@ -435,7 +420,7 @@ const startGraphNode = async (
     `Failed to start Graph node`,
     `Warnings starting Graph node`,
     async spinner => {
-      let defaultArgs = [
+      const defaultArgs = [
         '--ipfs',
         'localhost:15001',
         '--postgres-url',
@@ -452,33 +437,33 @@ const startGraphNode = async (
         '18030',
         '--metrics-port',
         '18040',
-      ]
+      ];
 
-      let defaultEnv = {
+      const defaultEnv = {
         GRAPH_LOG: 'debug',
         GRAPH_MAX_API_VERSION: '0.0.5',
-      }
+      };
 
-      let args = standaloneNodeArgs ? standaloneNodeArgs.split(' ') : defaultArgs
-      let env = { ...defaultEnv, ...process.env }
+      const args = standaloneNodeArgs ? standaloneNodeArgs.split(' ') : defaultArgs;
+      const env = { ...defaultEnv, ...process.env };
 
-      let nodeProcess = spawn(standaloneNode, args, {
+      const nodeProcess = spawn(standaloneNode, args, {
         cwd: process.cwd(),
         env,
-      })
+      });
 
-      step(spinner, 'Graph node:', `${nodeProcess.spawnargs.join(' ')}`)
+      step(spinner, 'Graph node:', String(nodeProcess.spawnargs.join(' ')));
 
-      nodeProcess.stdout.on('data', data => nodeOutputChunks.push(Buffer.from(data)))
-      nodeProcess.stderr.on('data', data => nodeOutputChunks.push(Buffer.from(data)))
+      nodeProcess.stdout.on('data', data => nodeOutputChunks.push(Buffer.from(data)));
+      nodeProcess.stderr.on('data', data => nodeOutputChunks.push(Buffer.from(data)));
       nodeProcess.on('error', e => {
-        nodeOutputChunks.push(Buffer.from(`${e}`, 'utf-8'))
-      })
+        nodeOutputChunks.push(Buffer.from(String(e), 'utf-8'));
+      });
 
       // Return the node child process
-      return nodeProcess
+      return nodeProcess;
     },
-  )
+  );
 
 const waitForGraphNode = async (timeout: number) =>
   await withSpinner(
@@ -492,11 +477,11 @@ const waitForGraphNode = async (timeout: number) =>
           new Promise<void>((resolve, reject) => {
             http
               .get('http://localhost:18000', { timeout }, () => resolve())
-              .on('error', e => reject(e))
+              .on('error', e => reject(e));
           }),
-      )
+      );
     },
-  )
+  );
 
 const stopGraphNode = async (nodeProcess: ChildProcess) =>
   await withSpinner(
@@ -504,9 +489,9 @@ const stopGraphNode = async (nodeProcess: ChildProcess) =>
     `Failed to stop Graph node`,
     `Warnings stopping Graph node`,
     async () => {
-      nodeProcess.kill(9)
+      nodeProcess.kill(9);
     },
-  )
+  );
 
 const collectGraphNodeLogs = async (
   tempdir: string,
@@ -515,24 +500,23 @@ const collectGraphNodeLogs = async (
 ) => {
   if (standaloneNode) {
     // Pull the logs from the captured output
-    return stripAnsi(Buffer.concat(nodeOutputChunks).toString('utf-8'))
-  } else {
-    // Pull the logs from docker compose
-    let logs = await compose.logs('graph-node', {
-      follow: false,
-      cwd: path.join(tempdir, 'compose'),
-    })
-    return stripAnsi(logs.out.trim()).replace(/graph-node_1  \| /g, '')
+    return stripAnsi(Buffer.concat(nodeOutputChunks).toString('utf-8'));
   }
-}
-
-const collectEthereumLogs = async (tempdir: string) => {
-  let logs = await compose.logs('ethereum', {
+  // Pull the logs from docker compose
+  const logs = await compose.logs('graph-node', {
     follow: false,
     cwd: path.join(tempdir, 'compose'),
-  })
-  return stripAnsi(logs.out.trim()).replace(/ethereum_1  \| /g, '')
-}
+  });
+  return stripAnsi(logs.out.trim()).replace(/graph-node_1 {2}\| /g, '');
+};
+
+const collectEthereumLogs = async (tempdir: string) => {
+  const logs = await compose.logs('ethereum', {
+    follow: false,
+    cwd: path.join(tempdir, 'compose'),
+  });
+  return stripAnsi(logs.out.trim()).replace(/ethereum_1 {2}\| /g, '');
+};
 
 const runTests = async (testCommand: string) =>
   await withSpinner(
@@ -541,15 +525,15 @@ const runTests = async (testCommand: string) =>
     `Warnings running tests`,
     async () =>
       new Promise(resolve => {
-        const output: Buffer[] = []
-        let testProcess = spawn(`${testCommand}`, { shell: true })
-        testProcess.stdout.on('data', data => output.push(Buffer.from(data)))
-        testProcess.stderr.on('data', data => output.push(Buffer.from(data)))
+        const output: Buffer[] = [];
+        const testProcess = spawn(String(testCommand), { shell: true });
+        testProcess.stdout.on('data', data => output.push(Buffer.from(data)));
+        testProcess.stderr.on('data', data => output.push(Buffer.from(data)));
         testProcess.on('close', code => {
           resolve({
             exitCode: code,
             output: Buffer.concat(output).toString('utf-8'),
-          })
-        })
+          });
+        });
       }),
-  )
+  );

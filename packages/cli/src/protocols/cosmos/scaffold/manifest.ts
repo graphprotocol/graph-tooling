@@ -1,5 +1,5 @@
 export const source = () => `
-      startBlock: 0`
+      startBlock: 0`;
 
 export const mapping = () => `
       apiVersion: 0.0.5
@@ -8,4 +8,4 @@ export const mapping = () => `
         - ExampleEntity
       blockHandlers:
         - handler: handleBlock
-      file: ./src/contract.ts`
+      file: ./src/contract.ts`;

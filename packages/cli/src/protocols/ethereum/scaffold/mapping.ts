@@ -1,14 +1,14 @@
-import { generateEventFieldAssignments } from '../../../scaffold/mapping'
-import ABI from '../abi'
+import { generateEventFieldAssignments } from '../../../scaffold/mapping';
+import ABI from '../abi';
 
 export const generatePlaceholderHandlers = ({
   abi,
   events,
   contractName,
 }: {
-  abi: ABI
-  events: any[]
-  contractName: string
+  abi: ABI;
+  events: any[];
+  contractName: string;
 }) =>
   `
   import { BigInt } from '@graphprotocol/graph-ts'
@@ -73,4 +73,4 @@ export const generatePlaceholderHandlers = ({
 export function handle${event._alias}(event: ${event._alias}): void {}
 `,
     )
-    .join('\n')}`
+    .join('\n')}`;
