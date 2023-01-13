@@ -1,11 +1,11 @@
-import path from 'path'
-import { cliTest } from './util'
+import path from 'path';
+import { cliTest } from './util';
 
 describe('Init', () => {
-  const baseDir = path.join(__dirname, 'init')
+  const baseDir = path.join(__dirname, 'init');
 
   describe('Ethereum', () => {
-    const ethereumBaseDir = path.join(baseDir, 'ethereum')
+    const ethereumBaseDir = path.join(baseDir, 'ethereum');
 
     cliTest(
       'From example',
@@ -22,11 +22,11 @@ describe('Init', () => {
       path.join('init', 'ethereum', 'from-example'),
       {
         exitCode: 0,
-        timeout: 100000,
+        timeout: 100_000,
         cwd: ethereumBaseDir,
         deleteDir: true,
       },
-    )
+    );
 
     cliTest(
       'From contract',
@@ -45,11 +45,11 @@ describe('Init', () => {
       path.join('init', 'ethereum', 'from-contract'),
       {
         exitCode: 0,
-        timeout: 100000,
+        timeout: 100_000,
         cwd: ethereumBaseDir,
         deleteDir: true,
       },
-    )
+    );
 
     cliTest(
       'From contract with abi',
@@ -70,11 +70,11 @@ describe('Init', () => {
       path.join('init', 'ethereum', 'from-contract-with-abi'),
       {
         exitCode: 0,
-        timeout: 100000,
+        timeout: 100_000,
         cwd: ethereumBaseDir,
         deleteDir: true,
       },
-    )
+    );
 
     cliTest(
       'From contract with abi and structs',
@@ -95,11 +95,11 @@ describe('Init', () => {
       path.join('init', 'ethereum', 'from-contract-with-abi-and-structs'),
       {
         exitCode: 0,
-        timeout: 100000,
+        timeout: 100_000,
         cwd: ethereumBaseDir,
         deleteDir: true,
       },
-    )
+    );
 
     cliTest(
       'From contract with overloaded elements',
@@ -120,15 +120,15 @@ describe('Init', () => {
       path.join('init', 'ethereum', 'from-contract-with-overloaded-elements'),
       {
         exitCode: 0,
-        timeout: 100000,
+        timeout: 100_000,
         cwd: ethereumBaseDir,
         deleteDir: true,
       },
-    )
-  })
+    );
+  });
 
   describe('NEAR', () => {
-    const nearBaseDir = path.join(baseDir, 'near')
+    const nearBaseDir = path.join(baseDir, 'near');
 
     cliTest(
       'From contract',
@@ -148,10 +148,10 @@ describe('Init', () => {
       path.join('init', 'near', 'from-contract'),
       {
         exitCode: 0,
-        timeout: 100000,
+        timeout: 100_000,
         cwd: nearBaseDir,
         deleteDir: true,
       },
-    )
-  })
-})
+    );
+  });
+});

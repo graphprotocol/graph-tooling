@@ -1,1 +1,1 @@
-declare module 'ipfs-http-client'
+declare module 'ipfs-http-client';

@@ -1,4 +1,4 @@
-const cliTest = require('./util').cliTest
+import { cliTest } from './util';
 
 describe('Validation', () => {
   cliTest(
@@ -8,7 +8,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Invalid subgraph manifest (cannot infer protocol)',
     ['codegen', '--skip-migrations'],
@@ -16,7 +16,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'ABI not found in data source',
     ['codegen', '--skip-migrations'],
@@ -24,13 +24,10 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
-  cliTest(
-    'Invalid ABI files',
-    ['codegen', '--skip-migrations'],
-    'validation/invalid-abis',
-    { exitCode: 1 },
-  )
+  );
+  cliTest('Invalid ABI files', ['codegen', '--skip-migrations'], 'validation/invalid-abis', {
+    exitCode: 1,
+  });
   cliTest(
     'Event not found in ABI',
     ['codegen', '--skip-migrations'],
@@ -38,7 +35,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Call function not found in the ABI',
     ['codegen', '--skip-migrations'],
@@ -46,7 +43,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Call handler with tuple',
     ['codegen', '--skip-migrations'],
@@ -54,7 +51,7 @@ describe('Validation', () => {
     {
       exitCode: 0,
     },
-  )
+  );
   cliTest(
     'Missing entity "id" field',
     ['codegen', '--skip-migrations'],
@@ -62,7 +59,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Invalid entity field types',
     ['codegen', '--skip-migrations'],
@@ -70,12 +67,12 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Invalid contract addresses',
     ['codegen', '--skip-migrations'],
     'validation/invalid-contract-addresses',
-  )
+  );
   cliTest(
     'Entity field arguments',
     ['codegen', '--skip-migrations'],
@@ -83,13 +80,13 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Example values found in manifest',
     ['codegen', '--skip-migrations'],
     'validation/example-values-found',
     { exitCode: 0 },
-  )
+  );
   cliTest(
     'Source without address is valid',
     ['codegen', '--skip-migrations'],
@@ -97,13 +94,13 @@ describe('Validation', () => {
     {
       exitCode: 0,
     },
-  )
+  );
   cliTest(
     'Invalid data source template',
     ['codegen', '--skip-migrations'],
     'validation/invalid-data-source-template',
     { exitCode: 1 },
-  )
+  );
   cliTest(
     'BigDecimal is a valid type',
     ['codegen', '--skip-migrations'],
@@ -111,7 +108,7 @@ describe('Validation', () => {
     {
       exitCode: 0,
     },
-  )
+  );
   cliTest(
     'topic0 is valid in an event handler',
     ['codegen', '--skip-migrations'],
@@ -119,7 +116,7 @@ describe('Validation', () => {
     {
       exitCode: 0,
     },
-  )
+  );
   cliTest(
     'Ethereum contract data source without handlers',
     ['codegen', '--skip-migrations'],
@@ -127,7 +124,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Missing or invalid @derivedFrom fields',
     ['codegen', '--skip-migrations'],
@@ -135,7 +132,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
   cliTest(
     'Deriving from interface-typed fields is allowed',
     ['codegen', '--skip-migrations'],
@@ -143,7 +140,7 @@ describe('Validation', () => {
     {
       exitCode: 0,
     },
-  )
+  );
   cliTest(
     '@derivedFrom target type missing',
     ['codegen', '--skip-migrations'],
@@ -151,15 +148,10 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
-  cliTest(
-    'NEAR is a valid chain',
-    ['codegen', '--skip-migrations'],
-    'validation/near-is-valid',
-    {
-      exitCode: 0,
-    },
-  )
+  );
+  cliTest('NEAR is a valid chain', ['codegen', '--skip-migrations'], 'validation/near-is-valid', {
+    exitCode: 0,
+  });
   cliTest(
     'Deprecated template format gives nice error',
     ['codegen', '--skip-migrations'],
@@ -167,7 +159,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
 
   cliTest(
     'Duplicate data source name',
@@ -176,7 +168,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
 
   cliTest(
     'Duplicate template name',
@@ -185,7 +177,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
 
   cliTest(
     'No network names (valid)',
@@ -194,7 +186,7 @@ describe('Validation', () => {
     {
       exitCode: 0,
     },
-  )
+  );
 
   cliTest(
     'Conflicting network names',
@@ -203,7 +195,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
 
   cliTest(
     'Conflicting protocol names',
@@ -212,7 +204,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
 
   cliTest(
     'Invalid @fulltext directive',
@@ -221,7 +213,7 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
+  );
 
   cliTest(
     'Invalid GraphQL schema',
@@ -230,5 +222,5 @@ describe('Validation', () => {
     {
       exitCode: 1,
     },
-  )
-})
+  );
+});

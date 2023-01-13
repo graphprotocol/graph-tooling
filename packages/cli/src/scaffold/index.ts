@@ -1,50 +1,49 @@
-import prettier from 'prettier'
-import { strings } from 'gluegun'
+import { strings } from 'gluegun';
+import prettier from 'prettier';
+import { getSubgraphBasename } from '../command-helpers/subgraph';
+import Protocol from '../protocols';
+import ABI from '../protocols/ethereum/abi';
+import { generateEventIndexingHandlers } from './mapping';
+import { abiEvents, generateEventType, generateExampleEntityType } from './schema';
+import { generateTestsFiles } from './tests';
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   ? // JSON.stringify should remove this key, we will install the local
     // graph-cli for the tests using `npm link` instead of fetching from npm.
     undefined
   : // For scaffolding real subgraphs
-    `${module.exports.version}`
-
-import { abiEvents, generateEventType, generateExampleEntityType } from './schema'
-import { generateEventIndexingHandlers } from './mapping'
-import { generateTestsFiles } from './tests'
-import Protocol from '../protocols'
-import { getSubgraphBasename } from '../command-helpers/subgraph'
-import ABI from '../protocols/ethereum/abi'
+    String(module.exports.version);
 
 export interface ScaffoldOptions {
-  protocol: Protocol
-  abi?: ABI
-  indexEvents?: boolean
-  contract?: string
-  network: string
-  contractName: string
-  subgraphName?: string
-  node?: string
+  protocol: Protocol;
+  abi?: ABI;
+  indexEvents?: boolean;
+  contract?: string;
+  network: string;
+  contractName: string;
+  subgraphName?: string;
+  node?: string;
 }
 
 export default class Scaffold {
-  protocol: Protocol
-  abi?: ABI
-  indexEvents?: boolean
-  contract?: string
-  network: string
-  contractName: string
-  subgraphName?: string
-  node?: string
+  protocol: Protocol;
+  abi?: ABI;
+  indexEvents?: boolean;
+  contract?: string;
+  network: string;
+  contractName: string;
+  subgraphName?: string;
+  node?: string;
 
   constructor(options: ScaffoldOptions) {
-    this.protocol = options.protocol
-    this.abi = options.abi
-    this.indexEvents = options.indexEvents
-    this.contract = options.contract
-    this.network = options.network
-    this.contractName = options.contractName
-    this.subgraphName = options.subgraphName
-    this.node = options.node
+    this.protocol = options.protocol;
+    this.abi = options.abi;
+    this.indexEvents = options.indexEvents;
+    this.contract = options.contract;
+    this.network = options.network;
+    this.contractName = options.contractName;
+    this.subgraphName = options.subgraphName;
+    this.node = options.node;
   }
 
   generatePackageJson() {
@@ -69,16 +68,14 @@ export default class Scaffold {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
           '@graphprotocol/graph-ts': `0.29.1`,
         },
-        devDependencies: this.protocol.hasEvents()
-          ? { 'matchstick-as': `0.5.0` }
-          : undefined,
+        devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0` } : undefined,
       }),
       { parser: 'json' },
-    )
+    );
   }
 
   generateManifest() {
-    const protocolManifest = this.protocol.getManifestScaffold()
+    const protocolManifest = this.protocol.getManifestScaffold();
 
     return prettier.format(
       `
@@ -93,23 +90,21 @@ dataSources:
     mapping: ${protocolManifest.mapping(this)}
 `,
       { parser: 'yaml' },
-    )
+    );
   }
 
   generateSchema() {
-    const hasEvents = this.protocol.hasEvents()
-    const events = hasEvents ? abiEvents(this.abi!).toJS() : []
+    const hasEvents = this.protocol.hasEvents();
+    const events = hasEvents ? abiEvents(this.abi!).toJS() : [];
 
     return prettier.format(
       hasEvents && this.indexEvents
-        ? events
-            .map((event: any) => generateEventType(event, this.protocol.name))
-            .join('\n\n')
+        ? events.map((event: any) => generateEventType(event, this.protocol.name)).join('\n\n')
         : generateExampleEntityType(this.protocol, events),
       {
         parser: 'graphql',
       },
-    )
+    );
   }
 
   generateTsConfig() {
@@ -119,19 +114,19 @@ dataSources:
         include: ['src'],
       }),
       { parser: 'json' },
-    )
+    );
   }
 
   generateMappings() {
     return this.protocol.getMappingScaffold()
       ? { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() }
-      : undefined
+      : undefined;
   }
 
   generateMapping() {
-    const hasEvents = this.protocol.hasEvents()
-    const events = hasEvents ? abiEvents(this.abi!).toJS() : []
-    const protocolMapping = this.protocol.getMappingScaffold()
+    const hasEvents = this.protocol.hasEvents();
+    const events = hasEvents ? abiEvents(this.abi!).toJS() : [];
+    const protocolMapping = this.protocol.getMappingScaffold();
 
     return prettier.format(
       hasEvents && this.indexEvents
@@ -141,7 +136,7 @@ dataSources:
             events,
           }),
       { parser: 'typescript', semi: false },
-    )
+    );
   }
 
   generateABIs() {
@@ -151,16 +146,16 @@ dataSources:
             parser: 'json',
           }),
         }
-      : undefined
+      : undefined;
   }
 
   generateTests() {
-    const hasEvents = this.protocol.hasEvents()
-    const events = hasEvents ? abiEvents(this.abi!).toJS() : []
+    const hasEvents = this.protocol.hasEvents();
+    const events = hasEvents ? abiEvents(this.abi!).toJS() : [];
 
     return events.length > 0
       ? generateTestsFiles(this.contractName, events, this.indexEvents)
-      : undefined
+      : undefined;
   }
 
   generate() {
@@ -172,6 +167,6 @@ dataSources:
       src: this.generateMappings(),
       abis: this.generateABIs(),
       tests: this.generateTests(),
-    }
+    };
   }
 }

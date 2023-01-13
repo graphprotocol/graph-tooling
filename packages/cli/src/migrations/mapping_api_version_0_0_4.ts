@@ -1,29 +1,25 @@
-import semver from 'semver'
-import * as toolbox from 'gluegun'
-import { loadManifest } from './util/load-manifest'
-import { getGraphTsVersion } from './util/versions'
+/* eslint-disable */
+
+import * as toolbox from 'gluegun';
+import semver from 'semver';
+import { loadManifest } from './util/load-manifest';
+import { getGraphTsVersion } from './util/versions';
 
 // If any of the manifest apiVersions are 0.0.4, replace them with 0.0.5
 export default {
   name: 'Bump mapping apiVersion from 0.0.4 to 0.0.5',
-  predicate: async ({
-    sourceDir,
-    manifestFile,
-  }: {
-    sourceDir: string
-    manifestFile: string
-  }) => {
+  predicate: async ({ sourceDir, manifestFile }: { sourceDir: string; manifestFile: string }) => {
     // Obtain the graph-ts version, if possible
-    let graphTsVersion
+    let graphTsVersion;
     try {
-      graphTsVersion = await getGraphTsVersion(sourceDir)
+      graphTsVersion = await getGraphTsVersion(sourceDir);
     } catch (_) {
       // If we cannot obtain the version, return a hint that the graph-ts
       // hasn't been installed yet
-      return 'graph-ts dependency not installed yet'
+      return 'graph-ts dependency not installed yet';
     }
 
-    let manifest = await loadManifest(manifestFile)
+    const manifest = await loadManifest(manifestFile);
     return (
       // Only migrate if the graph-ts version is >= 0.22.0...
       // Coerce needed because we may be dealing with an alpha version
@@ -52,7 +48,7 @@ export default {
                 template.mapping.apiVersion === '0.0.4'),
             false,
           )))
-    )
+    );
   },
   apply: async ({ manifestFile }: { manifestFile: string }) => {
     // Make sure we catch all variants; we could load the manifest
@@ -64,18 +60,18 @@ export default {
       // @ts-expect-error toolbox patching seems to accept RegExp
       new RegExp('apiVersion: 0.0.4', 'g'),
       'apiVersion: 0.0.5',
-    )
+    );
     await toolbox.patching.replace(
       manifestFile,
       // @ts-expect-error toolbox patching seems to accept RegExp
       new RegExp("apiVersion: '0.0.4'", 'g'),
       "apiVersion: '0.0.5'",
-    )
+    );
     await toolbox.patching.replace(
       manifestFile,
       // @ts-expect-error toolbox patching seems to accept RegExp
       new RegExp('apiVersion: "0.0.4"', 'g'),
       'apiVersion: "0.0.5"',
-    )
+    );
   },
-}
+};

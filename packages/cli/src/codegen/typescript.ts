@@ -1,11 +1,11 @@
 class Param {
   constructor(public name: string, public type: string | NamedType | NullableType) {
-    this.name = name
-    this.type = type
+    this.name = name;
+    this.type = type;
   }
 
   toString() {
-    return `${this.name}: ${this.type.toString()}`
+    return `${this.name}: ${this.type.toString()}`;
   }
 }
 
@@ -16,10 +16,10 @@ class Method {
     public returnType: string | NamedType | null | undefined,
     public body: string,
   ) {
-    this.name = name
-    this.params = params || []
-    this.returnType = returnType
-    this.body = body || ''
+    this.name = name;
+    this.params = params || [];
+    this.returnType = returnType;
+    this.body = body || '';
   }
 
   toString() {
@@ -28,7 +28,7 @@ class Method {
       this.returnType ? `: ${this.returnType.toString()}` : ''
     } {${this.body}
   }
-`
+`;
   }
 }
 
@@ -39,10 +39,10 @@ class StaticMethod {
     public returnType: NamedType | NullableType,
     public body: string,
   ) {
-    this.name = name
-    this.params = params || []
-    this.returnType = returnType || 'void'
-    this.body = body || ''
+    this.name = name;
+    this.params = params || [];
+    this.returnType = returnType || 'void';
+    this.body = body || '';
   }
 
   toString() {
@@ -51,76 +51,74 @@ class StaticMethod {
       this.returnType ? `: ${this.returnType.toString()}` : ''
     } {${this.body}
   }
-`
+`;
   }
 }
 
 interface ClassOptions {
-  extends?: string
-  export?: boolean
+  extends?: string;
+  export?: boolean;
 }
 
 class Class {
-  public extends: string | undefined
-  public methods: string[]
-  public members: any[]
-  public export: boolean
+  public extends: string | undefined;
+  public methods: string[];
+  public members: any[];
+  public export: boolean;
 
   constructor(public name: string, options: ClassOptions) {
-    this.name = name
-    this.extends = options.extends
-    this.methods = []
-    this.members = []
-    this.export = options.export || false
+    this.name = name;
+    this.extends = options.extends;
+    this.methods = [];
+    this.members = [];
+    this.export = options.export || false;
   }
 
   addMember(member: any) {
-    this.members.push(member)
+    this.members.push(member);
   }
 
   addMethod(method: any) {
-    this.methods.push(method)
+    this.methods.push(method);
   }
 
   toString() {
     return `
-${this.export ? 'export' : ''} class ${this.name}${
-      this.extends ? ` extends ${this.extends}` : ''
-    } {
+${this.export ? 'export' : ''} class ${this.name}${this.extends ? ` extends ${this.extends}` : ''} {
 ${this.members.map(member => member.toString()).join('\n')}
 ${this.methods.map(method => method.toString()).join('')}
 }
-`
+`;
   }
 }
 
 class ClassMember {
   constructor(public name: string, public type: string) {
-    this.name = name
-    this.type = type
+    this.name = name;
+    this.type = type;
   }
 
   toString() {
-    return `  ${this.name}: ${this.type.toString()}`
+    return `  ${this.name}: ${this.type.toString()}`;
   }
 }
 
 class NamedType {
   constructor(public name: string) {
-    this.name = name
+    this.name = name;
   }
 
   toString() {
-    return this.name
+    return this.name;
   }
 
   capitalize() {
-    this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1)
-    return this
+    this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1);
+    return this;
   }
 
   isPrimitive() {
-    let primitives = [
+    const primitives = [
       'boolean',
       'u8',
       'i8',
@@ -134,93 +132,93 @@ class NamedType {
       'f64',
       'usize',
       'isize',
-    ]
-    return primitives.includes(this.name)
+    ];
+    return primitives.includes(this.name);
   }
 }
 
 class ArrayType {
-  public name: string
+  public name: string;
 
   constructor(public inner: NamedType) {
-    this.inner = inner
-    this.name = `Array<${inner.toString()}>`
+    this.inner = inner;
+    this.name = `Array<${inner.toString()}>`;
   }
 
   toString() {
-    return this.name
+    return this.name;
   }
 }
 
 class NullableType {
   constructor(public inner: NamedType | ArrayType) {
-    this.inner = inner
+    this.inner = inner;
   }
 
   toString() {
-    return `${this.inner.toString()} | null`
+    return `${this.inner.toString()} | null`;
   }
 }
 
 class ModuleImports {
   constructor(public nameOrNames: string | string[], public module: string) {
-    this.nameOrNames = nameOrNames
-    this.module = module
+    this.nameOrNames = nameOrNames;
+    this.module = module;
   }
 
   toString() {
     return `import { ${
       typeof this.nameOrNames === 'string' ? this.nameOrNames : this.nameOrNames.join(',')
-    } } from "${this.module}"`
+    } } from "${this.module}"`;
   }
 }
 
-const namedType = (name: string) => new NamedType(name)
-const arrayType = (name: NamedType) => new ArrayType(name)
-const param = (name: string, type: string | NamedType) => new Param(name, type)
+const namedType = (name: string) => new NamedType(name);
+const arrayType = (name: NamedType) => new ArrayType(name);
+const param = (name: string, type: string | NamedType) => new Param(name, type);
 const method = (
   name: string,
   params: Param[],
   returnType: string | NamedType | null | undefined,
   body: string,
-) => new Method(name, params, returnType, body)
+) => new Method(name, params, returnType, body);
 const staticMethod = (
   name: string,
   params: Param[],
   returnType: NamedType | NullableType,
   body: string,
-) => new StaticMethod(name, params, returnType, body)
-const klass = (name: string, options: ClassOptions) => new Class(name, options)
-const klassMember = (name: string, type: string) => new ClassMember(name, type)
-const nullableType = (type: NamedType | ArrayType) => new NullableType(type)
+) => new StaticMethod(name, params, returnType, body);
+const klass = (name: string, options: ClassOptions) => new Class(name, options);
+const klassMember = (name: string, type: string) => new ClassMember(name, type);
+const nullableType = (type: NamedType | ArrayType) => new NullableType(type);
 const moduleImports = (nameOrNames: string | string[], module: string) =>
-  new ModuleImports(nameOrNames, module)
+  new ModuleImports(nameOrNames, module);
 
 const GENERATED_FILE_NOTE = `
 // THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
-`
+`;
 
 export {
-  // Types
-  Param,
-  Method,
-  StaticMethod,
+  ArrayType,
+  arrayType,
   Class,
   ClassMember,
-  NamedType,
-  NullableType,
-  ArrayType,
-  ModuleImports,
-  // Code generators
-  namedType,
-  arrayType,
-  klass,
-  klassMember,
-  method,
-  staticMethod,
-  param,
-  nullableType,
-  moduleImports,
   // Utilities
   GENERATED_FILE_NOTE,
-}
+  klass,
+  klassMember,
+  Method,
+  method,
+  ModuleImports,
+  moduleImports,
+  NamedType,
+  // Code generators
+  namedType,
+  NullableType,
+  nullableType,
+  // Types
+  Param,
+  param,
+  StaticMethod,
+  staticMethod,
+};

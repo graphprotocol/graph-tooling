@@ -1,3 +1,3 @@
-const DEFAULT_IPFS_URL = 'https://api.thegraph.com/ipfs/' as const
+const DEFAULT_IPFS_URL = 'https://api.thegraph.com/ipfs/' as const;
 
-export { DEFAULT_IPFS_URL }
+export { DEFAULT_IPFS_URL };

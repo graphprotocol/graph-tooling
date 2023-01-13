@@ -1,16 +1,10 @@
-import { abiEvents } from '../../../scaffold/schema'
-import { strings } from 'gluegun'
-import ABI from '../abi'
+import { strings } from 'gluegun';
+import { abiEvents } from '../../../scaffold/schema';
+import ABI from '../abi';
 
-export const source = ({
-  contract,
-  contractName,
-}: {
-  contract: string
-  contractName: string
-}) => `
+export const source = ({ contract, contractName }: { contract: string; contractName: string }) => `
       address: '${contract}'
-      abi: ${contractName}`
+      abi: ${contractName}`;
 
 export const mapping = ({ abi, contractName }: { abi: ABI; contractName: string }) => `
       kind: ethereum/events
@@ -31,4 +25,4 @@ export const mapping = ({ abi, contractName }: { abi: ABI; contractName: string 
           handler: handle${event.get('_alias')}`,
           )
           .join('')}
-      file: ./src/${strings.kebabCase(contractName)}.ts`
+      file: ./src/${strings.kebabCase(contractName)}.ts`;

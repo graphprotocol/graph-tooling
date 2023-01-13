@@ -1,20 +1,20 @@
-import fs from 'fs-extra'
-import path from 'path'
-import immutable from 'immutable'
-import prettier from 'prettier'
-import ABI from './abi'
-import { Spinner, step, withSpinner } from '../../command-helpers/spinner'
-import { GENERATED_FILE_NOTE } from '../../codegen/typescript'
-import { displayPath } from '../../command-helpers/fs'
-import { TypeGeneratorOptions } from '../../type-generator'
+import path from 'path';
+import fs from 'fs-extra';
+import immutable from 'immutable';
+import prettier from 'prettier';
+import { GENERATED_FILE_NOTE } from '../../codegen/typescript';
+import { displayPath } from '../../command-helpers/fs';
+import { Spinner, step, withSpinner } from '../../command-helpers/spinner';
+import { TypeGeneratorOptions } from '../../type-generator';
+import ABI from './abi';
 
 export default class EthereumTypeGenerator {
-  private sourceDir: TypeGeneratorOptions['sourceDir']
-  private outputDir: TypeGeneratorOptions['outputDir']
+  private sourceDir: TypeGeneratorOptions['sourceDir'];
+  private outputDir: TypeGeneratorOptions['outputDir'];
 
   constructor(options: TypeGeneratorOptions) {
-    this.sourceDir = options.sourceDir
-    this.outputDir = options.outputDir
+    this.sourceDir = options.sourceDir;
+    this.outputDir = options.outputDir;
   }
 
   async loadABIs(subgraph: immutable.Map<any, any>) {
@@ -33,35 +33,29 @@ export default class EthereumTypeGenerator {
                   .reduce(
                     (abis: any[], abi: any) =>
                       abis.push(
-                        this._loadABI(
-                          dataSource,
-                          abi.get('name'),
-                          abi.get('file'),
-                          spinner,
-                        ),
+                        this._loadABI(dataSource, abi.get('name'), abi.get('file'), spinner),
                       ),
                     abis,
                   ),
               immutable.List(),
-            )
+            );
         } catch (e) {
-          throw Error(`Failed to load contract ABIs: ${e.message}`)
+          throw Error(`Failed to load contract ABIs: ${e.message}`);
         }
       },
-    )
+    );
   }
 
   _loadABI(dataSource: any, name: string, maybeRelativePath: string, spinner: Spinner) {
     try {
       if (this.sourceDir) {
-        let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
-        step(spinner, `Load contract ABI from`, displayPath(absolutePath))
-        return { dataSource: dataSource, abi: ABI.load(name, absolutePath) }
-      } else {
-        return { dataSource: dataSource, abi: ABI.load(name, maybeRelativePath) }
+        const absolutePath = path.resolve(this.sourceDir, maybeRelativePath);
+        step(spinner, `Load contract ABI from`, displayPath(absolutePath));
+        return { dataSource, abi: ABI.load(name, absolutePath) };
       }
+      return { dataSource, abi: ABI.load(name, maybeRelativePath) };
     } catch (e) {
-      throw Error(`Failed to load contract ABI: ${e.message}`)
+      throw Error(`Failed to load contract ABI: ${e.message}`);
     }
   }
 
@@ -71,22 +65,17 @@ export default class EthereumTypeGenerator {
       `Failed to load data source template ABIs`,
       `Warnings while loading data source template ABIs`,
       async spinner => {
-        let abis = []
-        for (let template of subgraph.get('templates', immutable.List())) {
-          for (let abi of template.getIn(['mapping', 'abis'])) {
+        const abis = [];
+        for (const template of subgraph.get('templates', immutable.List())) {
+          for (const abi of template.getIn(['mapping', 'abis'])) {
             abis.push(
-              this._loadDataSourceTemplateABI(
-                template,
-                abi.get('name'),
-                abi.get('file'),
-                spinner,
-              ),
-            )
+              this._loadDataSourceTemplateABI(template, abi.get('name'), abi.get('file'), spinner),
+            );
           }
         }
-        return abis
+        return abis;
       },
-    )
+    );
   }
 
   _loadDataSourceTemplateABI(
@@ -97,14 +86,13 @@ export default class EthereumTypeGenerator {
   ) {
     try {
       if (this.sourceDir) {
-        let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
-        step(spinner, `Load data source template ABI from`, displayPath(absolutePath))
-        return { template, abi: ABI.load(name, absolutePath) }
-      } else {
-        return { template, abi: ABI.load(name, maybeRelativePath) }
+        const absolutePath = path.resolve(this.sourceDir, maybeRelativePath);
+        step(spinner, `Load data source template ABI from`, displayPath(absolutePath));
+        return { template, abi: ABI.load(name, absolutePath) };
       }
+      return { template, abi: ABI.load(name, maybeRelativePath) };
     } catch (e) {
-      throw Error(`Failed to load data source template ABI: ${e.message}`)
+      throw Error(`Failed to load data source template ABI: ${e.message}`);
     }
   }
 
@@ -116,9 +104,9 @@ export default class EthereumTypeGenerator {
       async spinner => {
         return await Promise.all(
           abis.map(async abi => await this._generateTypesForABI(abi, spinner)),
-        )
+        );
       },
-    )
+    );
   }
 
   async _generateTypesForABI(abi: any, spinner: Spinner) {
@@ -127,10 +115,10 @@ export default class EthereumTypeGenerator {
         spinner,
         `Generate types for contract ABI:`,
         `${abi.abi.name} (${displayPath(abi.abi.file)})`,
-      )
+      );
 
-      let codeGenerator = abi.abi.codeGenerator()
-      let code = prettier.format(
+      const codeGenerator = abi.abi.codeGenerator();
+      const code = prettier.format(
         [
           GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
@@ -139,18 +127,18 @@ export default class EthereumTypeGenerator {
         {
           parser: 'typescript',
         },
-      )
+      );
 
-      let outputFile = path.join(
+      const outputFile = path.join(
         this.outputDir,
         abi.dataSource.get('name'),
         `${abi.abi.name}.ts`,
-      )
-      step(spinner, `Write types to`, displayPath(outputFile))
-      await fs.mkdirs(path.dirname(outputFile))
-      await fs.writeFile(outputFile, code)
+      );
+      step(spinner, `Write types to`, displayPath(outputFile));
+      await fs.mkdirs(path.dirname(outputFile));
+      await fs.writeFile(outputFile, code);
     } catch (e) {
-      throw Error(`Failed to generate types for contract ABI: ${e.message}`)
+      throw Error(`Failed to generate types for contract ABI: ${e.message}`);
     }
   }
 
@@ -161,12 +149,10 @@ export default class EthereumTypeGenerator {
       `Warnings while generating types for data source template ABIs`,
       async spinner => {
         return await Promise.all(
-          abis.map(
-            async abi => await this._generateTypesForDataSourceTemplateABI(abi, spinner),
-          ),
-        )
+          abis.map(async abi => await this._generateTypesForDataSourceTemplateABI(abi, spinner)),
+        );
       },
-    )
+    );
   }
 
   async _generateTypesForDataSourceTemplateABI(abi: any, spinner: Spinner) {
@@ -175,10 +161,10 @@ export default class EthereumTypeGenerator {
         spinner,
         `Generate types for data source template ABI:`,
         `${abi.template.get('name')} > ${abi.abi.name} (${displayPath(abi.abi.file)})`,
-      )
+      );
 
-      let codeGenerator = abi.abi.codeGenerator()
-      let code = prettier.format(
+      const codeGenerator = abi.abi.codeGenerator();
+      const code = prettier.format(
         [
           GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
@@ -187,19 +173,19 @@ export default class EthereumTypeGenerator {
         {
           parser: 'typescript',
         },
-      )
+      );
 
-      let outputFile = path.join(
+      const outputFile = path.join(
         this.outputDir,
         'templates',
         abi.template.get('name'),
         `${abi.abi.name}.ts`,
-      )
-      step(spinner, `Write types to`, displayPath(outputFile))
-      await fs.mkdirs(path.dirname(outputFile))
-      await fs.writeFile(outputFile, code)
+      );
+      step(spinner, `Write types to`, displayPath(outputFile));
+      await fs.mkdirs(path.dirname(outputFile));
+      await fs.writeFile(outputFile, code);
     } catch (e) {
-      throw Error(`Failed to generate types for data source template ABI: ${e.message}`)
+      throw Error(`Failed to generate types for data source template ABI: ${e.message}`);
     }
   }
 }

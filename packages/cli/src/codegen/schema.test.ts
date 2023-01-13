@@ -1,49 +1,48 @@
-import prettier from 'prettier'
-import * as graphql from 'graphql/language'
-import immutable from 'immutable'
-import Schema from '../schema'
-import SchemaCodeGenerator from './schema'
+import * as graphql from 'graphql/language';
+import immutable from 'immutable';
+import prettier from 'prettier';
+import Schema from '../schema';
+import SchemaCodeGenerator from './schema';
 import {
+  ArrayType,
   Class,
   Method,
-  StaticMethod,
-  Param,
   NamedType,
   NullableType,
-  ArrayType,
-} from './typescript'
+  Param,
+  StaticMethod,
+} from './typescript';
 
-const formatTS = (code: string) =>
-  prettier.format(code, { parser: 'typescript', semi: false })
+const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
 
 const createSchemaCodeGen = (schema: string) =>
-  new SchemaCodeGenerator(new Schema('', schema, immutable.fromJS(graphql.parse(schema))))
+  new SchemaCodeGenerator(new Schema('', schema, immutable.fromJS(graphql.parse(schema))));
 
 const testEntity = (generatedTypes: any[], expectedEntity: any) => {
-  const entity = generatedTypes.find(type => type.name === expectedEntity.name)
+  const entity = generatedTypes.find(type => type.name === expectedEntity.name);
 
-  expect(entity instanceof Class).toBe(true)
-  expect(entity.extends).toBe('Entity')
-  expect(entity.export).toBe(true)
+  expect(entity instanceof Class).toBe(true);
+  expect(entity.extends).toBe('Entity');
+  expect(entity.export).toBe(true);
 
-  const { members, methods } = entity
+  const { members, methods } = entity;
 
-  expect(members).toStrictEqual(expectedEntity.members)
+  expect(members).toStrictEqual(expectedEntity.members);
 
   for (const expectedMethod of expectedEntity.methods) {
-    const method = methods.find((method: any) => method.name === expectedMethod.name)
+    const method = methods.find((method: any) => method.name === expectedMethod.name);
 
     expectedMethod.static
       ? expect(method instanceof StaticMethod).toBe(true)
-      : expect(method instanceof Method).toBe(true)
+      : expect(method instanceof Method).toBe(true);
 
-    expect(method.params).toStrictEqual(expectedMethod.params)
-    expect(method.returnType).toStrictEqual(expectedMethod.returnType)
-    expect(formatTS(method.body)).toBe(formatTS(expectedMethod.body))
+    expect(method.params).toStrictEqual(expectedMethod.params);
+    expect(method.returnType).toStrictEqual(expectedMethod.returnType);
+    expect(formatTS(method.body)).toBe(formatTS(expectedMethod.body));
   }
 
-  expect(methods.length).toBe(expectedEntity.methods.length)
-}
+  expect(methods.length).toBe(expectedEntity.methods.length);
+};
 
 describe('Schema code generator', () => {
   test('Should generate nothing for non entity types', () => {
@@ -55,10 +54,10 @@ describe('Schema code generator', () => {
       type Bar {
         barfoo: Int
       }
-    `)
+    `);
 
-    expect(codegen.generateTypes().size).toBe(0)
-  })
+    expect(codegen.generateTypes().size).toBe(0);
+  });
 
   describe('Should generate correct classes for each entity', () => {
     const codegen = createSchemaCodeGen(`
@@ -87,16 +86,16 @@ describe('Schema code generator', () => {
         amount: BigInt!
         account: Account!
       }
-    `)
+    `);
 
-    const generatedTypes = codegen.generateTypes()
+    const generatedTypes = codegen.generateTypes();
 
     test('Foo is NOT an entity', () => {
-      const foo = generatedTypes.find((type: any) => type.name === 'Foo')
-      expect(foo).toBe(undefined)
+      const foo = generatedTypes.find((type: any) => type.name === 'Foo');
+      expect(foo).toBe(undefined);
       // Account and Wallet
-      expect(generatedTypes.size).toBe(2)
-    })
+      expect(generatedTypes.size).toBe(2);
+    });
 
     test('Account is an entity with the correct methods', () => {
       testEntity(generatedTypes, {
@@ -244,12 +243,7 @@ describe('Schema code generator', () => {
           },
           {
             name: 'set wallets',
-            params: [
-              new Param(
-                'value',
-                new NullableType(new ArrayType(new NamedType('string'))),
-              ),
-            ],
+            params: [new Param('value', new NullableType(new ArrayType(new NamedType('string'))))],
             returnType: undefined,
             body: `
               if (!value) {
@@ -260,8 +254,8 @@ describe('Schema code generator', () => {
             `,
           },
         ],
-      })
-    })
+      });
+    });
 
     test('Wallet is an entity with the correct methods', () => {
       testEntity(generatedTypes, {
@@ -353,9 +347,9 @@ describe('Schema code generator', () => {
             `,
           },
         ],
-      })
-    })
-  })
+      });
+    });
+  });
 
   test('Should handle references with Bytes id types', () => {
     const codegen = createSchemaCodeGen(`
@@ -374,9 +368,9 @@ describe('Schema code generator', () => {
       employee: Employee!
       worker: Worker!
    }
-`)
+`);
 
-    const generatedTypes = codegen.generateTypes()
+    const generatedTypes = codegen.generateTypes();
     testEntity(generatedTypes, {
       name: 'Task',
       members: [],
@@ -461,6 +455,6 @@ describe('Schema code generator', () => {
           body: "\n      this.set('worker', Value.fromBytes(value))\n    ",
         },
       ],
-    })
-  })
-})
+    });
+  });
+});

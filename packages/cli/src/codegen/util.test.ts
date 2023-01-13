@@ -1,4 +1,4 @@
-import { disambiguateNames, unrollTuple } from './util'
+import { disambiguateNames, unrollTuple } from './util';
 
 describe('Codegen utilities', () => {
   test('Name disambiguation', () => {
@@ -8,7 +8,7 @@ describe('Codegen utilities', () => {
         getName: x => x,
         setName: (_x, name) => name,
       }),
-    ).toEqual(['a', 'b', 'c'])
+    ).toEqual(['a', 'b', 'c']);
 
     expect(
       disambiguateNames({
@@ -16,7 +16,7 @@ describe('Codegen utilities', () => {
         getName: x => x,
         setName: (_x, name) => name,
       }),
-    ).toEqual(['a', 'a1', 'a2'])
+    ).toEqual(['a', 'a1', 'a2']);
 
     expect(
       disambiguateNames({
@@ -27,16 +27,16 @@ describe('Codegen utilities', () => {
         ],
         getName: event => event.name,
         setName: (event, name) => {
-          event.name = name
-          return event
+          event.name = name;
+          return event;
         },
       }),
     ).toEqual([
       { name: 'ExampleEvent', inputs: [] },
       { name: 'ExampleEvent1', inputs: [{ type: 'uint256' }] },
       { name: 'ExampleEvent2', inputs: [{ type: 'uint96' }] },
-    ])
-  })
+    ]);
+  });
 
   test('Tuple unrolling', () => {
     expect(
@@ -45,7 +45,7 @@ describe('Codegen utilities', () => {
         path: ['value'],
         index: 0,
       }),
-    ).toEqual([])
+    ).toEqual([]);
 
     expect(
       unrollTuple({
@@ -57,7 +57,7 @@ describe('Codegen utilities', () => {
         path: ['value'],
         index: 0,
       }),
-    ).toEqual([{ path: ['value', 'a'], type: 'string' }])
+    ).toEqual([{ path: ['value', 'a'], type: 'string' }]);
 
     expect(
       unrollTuple({
@@ -75,7 +75,7 @@ describe('Codegen utilities', () => {
     ).toEqual([
       { path: ['value', 'a'], type: 'string' },
       { path: ['value', 'b'], type: 'uint256' },
-    ])
+    ]);
 
     expect(
       unrollTuple({
@@ -107,6 +107,6 @@ describe('Codegen utilities', () => {
       { path: ['value', 'b'], type: 'uint256' },
       { path: ['value', 'c', 'value0'], type: 'bytes32' },
       { path: ['value', 'c', 'd', 'd1'], type: 'uint72' },
-    ])
-  })
-})
+    ]);
+  });
+});

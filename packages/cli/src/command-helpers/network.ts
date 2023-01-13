@@ -1,7 +1,7 @@
-import path from 'path'
-import yaml from 'yaml'
-import { step, withSpinner } from './spinner'
-import { GluegunFilesystem, GluegunPatching } from 'gluegun'
+import path from 'path';
+import { GluegunFilesystem, GluegunPatching } from 'gluegun';
+import yaml from 'yaml';
+import { step, withSpinner } from './spinner';
 
 export const updateSubgraphNetwork = async (
   toolbox: { filesystem: GluegunFilesystem; patching: GluegunPatching },
@@ -15,66 +15,59 @@ export const updateSubgraphNetwork = async (
     `Failed to update sources network`,
     `Warnings while updating sources network`,
     async spinner => {
-      let allNetworks
-
-      step(spinner, `Reading networks config`)
-      allNetworks = await toolbox.filesystem.read(networksFile, 'json')
-      let networkConfig = allNetworks[network]
+      step(spinner, `Reading networks config`);
+      const allNetworks = await toolbox.filesystem.read(networksFile, 'json');
+      const networkConfig = allNetworks[network];
 
       // Exit if the network passed with --network does not exits in networks.json
       if (!networkConfig) {
-        throw new Error(`Network '${network}' was not found in '${networksFile}'`)
+        throw new Error(`Network '${network}' was not found in '${networksFile}'`);
       }
 
       await toolbox.patching.update(manifest, content => {
-        let subgraph = yaml.parse(content)
-        let networkSources = Object.keys(networkConfig)
-        let subgraphSources = subgraph.dataSources.map((value: any) => value.name)
+        const subgraph = yaml.parse(content);
+        const networkSources = Object.keys(networkConfig);
+        const subgraphSources = subgraph.dataSources.map((value: any) => value.name);
 
         // Update the dataSources network config
         subgraph.dataSources = subgraph.dataSources.map((source: any) => {
           if (!networkSources.includes(source.name)) {
             throw new Error(
               `'${source.name}' was not found in the '${network}' configuration, please update!`,
-            )
+            );
           }
 
           if (hasChanges(identifierName, network, networkConfig[source.name], source)) {
-            step(spinner, `Update '${source.name}' network configuration`)
-            source.network = network
-            source.source = source.source.abi ? { abi: source.source.abi } : {}
-            Object.assign(source.source, networkConfig[source.name])
+            step(spinner, `Update '${source.name}' network configuration`);
+            source.network = network;
+            source.source = source.source.abi ? { abi: source.source.abi } : {};
+            Object.assign(source.source, networkConfig[source.name]);
           } else {
-            step(spinner, `Skip '${source.name}': No changes to network configuration`)
+            step(spinner, `Skip '${source.name}': No changes to network configuration`);
           }
 
-          return source
-        })
+          return source;
+        });
 
         // All data sources shoud be on the same network,
         // so we have to update the network of all templates too.
-        if (subgraph.templates) {
-          subgraph.templates = subgraph.templates.map((template: any) => ({
-            ...template,
-            network,
-          }))
-        }
+        subgraph.templates &&= subgraph.templates.map((template: any) => ({
+          ...template,
+          network,
+        }));
 
-        let unsusedSources = networkSources.filter(x => !subgraphSources.includes(x))
+        const unsusedSources = networkSources.filter(x => !subgraphSources.includes(x));
 
         unsusedSources.forEach(source => {
-          step(
-            spinner,
-            `dataSource '${source}' from '${networksFile}' not found in ${manifest}`,
-          )
-        })
+          step(spinner, `dataSource '${source}' from '${networksFile}' not found in ${manifest}`);
+        });
 
-        let yaml_doc = new yaml.Document()
-        yaml_doc.contents = subgraph
-        return yaml_doc.toString()
-      })
+        const yaml_doc = new yaml.Document();
+        yaml_doc.contents = subgraph;
+        return yaml_doc.toString();
+      });
     },
-  )
+  );
 
 export const initNetworksConfig = async (
   toolbox: { filesystem: GluegunFilesystem },
@@ -86,8 +79,8 @@ export const initNetworksConfig = async (
     `Failed to initialize networks config`,
     `Warnings while initializing networks config`,
     async () => {
-      let subgraphStr = toolbox.filesystem.read(path.join(directory, 'subgraph.yaml'))
-      let subgraph = yaml.parse(subgraphStr!)
+      const subgraphStr = toolbox.filesystem.read(path.join(directory, 'subgraph.yaml'));
+      const subgraph = yaml.parse(subgraphStr!);
 
       const networks = subgraph.dataSources.reduce(
         (acc: any, source: any) =>
@@ -100,31 +93,26 @@ export const initNetworksConfig = async (
             },
           }),
         {},
-      )
+      );
 
-      toolbox.filesystem.write(`${directory}/networks.json`, networks)
+      toolbox.filesystem.write(`${directory}/networks.json`, networks);
 
-      return true
+      return true;
     },
-  )
+  );
 
 // Checks if any network attribute has been changed
-function hasChanges(
-  identifierName: string,
-  network: string,
-  networkConfig: any,
-  dataSource: any,
-) {
-  let networkChanged = dataSource.network !== network
+function hasChanges(identifierName: string, network: string, networkConfig: any, dataSource: any) {
+  const networkChanged = dataSource.network !== network;
 
   // Return directly if the network is different
-  if (networkChanged) return networkChanged
+  if (networkChanged) return networkChanged;
 
-  let addressChanged = networkConfig[identifierName] !== dataSource.source[identifierName]
+  const addressChanged = networkConfig[identifierName] !== dataSource.source[identifierName];
 
-  let startBlockChanged = networkConfig.startBlock !== dataSource.source.startBlock
+  const startBlockChanged = networkConfig.startBlock !== dataSource.source.startBlock;
 
-  return networkChanged || addressChanged || startBlockChanged
+  return networkChanged || addressChanged || startBlockChanged;
 }
 
 export const updateNetworksFile = async (
@@ -136,10 +124,10 @@ export const updateNetworksFile = async (
 ) => {
   await toolbox.patching.update(networksFile, config => {
     if (Object.keys(config).includes(network)) {
-      Object.assign(config[network], { [dataSource]: { address } })
+      Object.assign(config[network], { [dataSource]: { address } });
     } else {
-      Object.assign(config, { [network]: { [dataSource]: { address } } })
+      Object.assign(config, { [network]: { [dataSource]: { address } } });
     }
-    return config
-  })
-}
+    return config;
+  });
+};

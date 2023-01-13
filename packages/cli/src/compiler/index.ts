@@ -1,45 +1,45 @@
-import chalk from 'chalk'
-import crypto from 'crypto'
-import fs from 'fs-extra'
-import immutable from 'immutable'
-import path from 'path'
-import yaml from 'js-yaml'
-import * as toolbox from 'gluegun'
-import { Spinner, step, withSpinner } from '../command-helpers/spinner'
-import Subgraph from '../subgraph'
-import Watcher from '../watcher'
-import { applyMigrations } from '../migrations'
-import * as asc from './asc'
-import debug from '../debug'
-import Protocol from '../protocols'
+import crypto from 'crypto';
+import path from 'path';
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import * as toolbox from 'gluegun';
+import immutable from 'immutable';
+import yaml from 'js-yaml';
+import { Spinner, step, withSpinner } from '../command-helpers/spinner';
+import debug from '../debug';
+import { applyMigrations } from '../migrations';
+import Protocol from '../protocols';
+import Subgraph from '../subgraph';
+import Watcher from '../watcher';
+import * as asc from './asc';
 
-let compilerDebug = debug('graph-cli:compiler')
+const compilerDebug = debug('graph-cli:compiler');
 
 interface CompilerOptions {
-  ipfs: any
-  subgraphManifest: string
-  outputDir: string
-  outputFormat: string
-  skipMigrations: boolean
-  blockIpfsMethods?: boolean
-  protocol: Protocol
+  ipfs: any;
+  subgraphManifest: string;
+  outputDir: string;
+  outputFormat: string;
+  skipMigrations: boolean;
+  blockIpfsMethods?: boolean;
+  protocol: Protocol;
 }
 
 export default class Compiler {
-  private ipfs: any
-  private sourceDir: string
-  private blockIpfsMethods?: boolean
-  private libsDirs: string[]
-  private globalsFile: string
-  private protocol: Protocol
-  private ABI: any
+  private ipfs: any;
+  private sourceDir: string;
+  private blockIpfsMethods?: boolean;
+  private libsDirs: string[];
+  private globalsFile: string;
+  private protocol: Protocol;
+  private ABI: any;
 
   constructor(private options: CompilerOptions) {
-    this.options = options
-    this.ipfs = options.ipfs
-    this.sourceDir = path.dirname(options.subgraphManifest)
-    this.blockIpfsMethods = options.blockIpfsMethods
-    this.libsDirs = []
+    this.options = options;
+    this.ipfs = options.ipfs;
+    this.sourceDir = path.dirname(options.subgraphManifest);
+    this.blockIpfsMethods = options.blockIpfsMethods;
+    this.libsDirs = [];
 
     if (options.protocol.name !== 'substreams') {
       for (
@@ -50,55 +50,53 @@ export default class Compiler {
         dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
       ) {
         if (fs.existsSync(path.join(dir, 'node_modules'))) {
-          this.libsDirs.push(path.join(dir, 'node_modules'))
+          this.libsDirs.push(path.join(dir, 'node_modules'));
         }
       }
 
       if (this.libsDirs.length === 0) {
-        throw Error(
-          `could not locate \`node_modules\` in parent directories of subgraph manifest`,
-        )
+        throw Error(`could not locate \`node_modules\` in parent directories of subgraph manifest`);
       }
 
-      const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts')
+      const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts');
       const globalsLib = this.libsDirs.find(item => {
-        return fs.existsSync(path.join(item, globalsFile))
-      })
+        return fs.existsSync(path.join(item, globalsFile));
+      });
 
       if (!globalsLib) {
         throw Error(
           'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
-        )
+        );
       }
 
-      this.globalsFile = path.join(globalsLib, globalsFile)
+      this.globalsFile = path.join(globalsLib, globalsFile);
     }
 
     // @ts-expect-error assigned or not, we dont care
     if (!this.globalsFile) {
-      throw new Error('Globals file is missing.')
+      throw new Error('Globals file is missing.');
     }
 
-    this.protocol = this.options.protocol
-    this.ABI = this.protocol.getABI()
+    this.protocol = this.options.protocol;
+    this.ABI = this.protocol.getABI();
 
-    process.on('uncaughtException', function (e) {
-      toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`)
-    })
+    process.on('uncaughtException', e => {
+      toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`);
+    });
   }
 
   subgraphDir(parent: string, subgraph: immutable.Map<any, any>) {
-    return path.join(parent, subgraph.get('name'))
+    return path.join(parent, subgraph.get('name'));
   }
 
   displayPath(p: string) {
-    return path.relative(process.cwd(), p)
+    return path.relative(process.cwd(), p);
   }
 
   cacheKeyForFile(filename: string) {
-    let hash = crypto.createHash('sha1')
-    hash.update(fs.readFileSync(filename))
-    return hash.digest('hex')
+    const hash = crypto.createHash('sha1');
+    hash.update(fs.readFileSync(filename));
+    return hash.digest('hex');
   }
 
   async compile() {
@@ -107,115 +105,112 @@ export default class Compiler {
         await applyMigrations({
           sourceDir: this.sourceDir,
           manifestFile: this.options.subgraphManifest,
-        })
+        });
       }
-      let subgraph = await this.loadSubgraph()
-      let compiledSubgraph = await this.compileSubgraph(subgraph)
-      let localSubgraph = await this.writeSubgraphToOutputDirectory(
+      const subgraph = await this.loadSubgraph();
+      const compiledSubgraph = await this.compileSubgraph(subgraph);
+      const localSubgraph = await this.writeSubgraphToOutputDirectory(
         this.options.protocol,
         compiledSubgraph,
-      )
+      );
 
       if (this.ipfs !== undefined) {
-        let ipfsHash = await this.uploadSubgraphToIPFS(localSubgraph)
-        this.completed(ipfsHash)
-        return ipfsHash
-      } else {
-        this.completed(path.join(this.options.outputDir, 'subgraph.yaml'))
-        return true
+        const ipfsHash = await this.uploadSubgraphToIPFS(localSubgraph);
+        this.completed(ipfsHash);
+        return ipfsHash;
       }
+      this.completed(path.join(this.options.outputDir, 'subgraph.yaml'));
+      return true;
     } catch (e) {
-      toolbox.print.error(e)
-      return false
+      toolbox.print.error(e);
+      return false;
     }
   }
 
   completed(ipfsHashOrPath: string) {
-    toolbox.print.info('')
-    toolbox.print.success(`Build completed: ${chalk.blue(ipfsHashOrPath)}`)
-    toolbox.print.info('')
+    toolbox.print.info('');
+    toolbox.print.success(`Build completed: ${chalk.blue(ipfsHashOrPath)}`);
+    toolbox.print.info('');
   }
 
   async loadSubgraph({ quiet } = { quiet: false }) {
-    const subgraphLoadOptions = { protocol: this.protocol, skipValidation: false }
+    const subgraphLoadOptions = { protocol: this.protocol, skipValidation: false };
 
     if (quiet) {
-      return (await Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions))
-        .result
-    } else {
-      const manifestPath = this.displayPath(this.options.subgraphManifest)
-
-      return await withSpinner(
-        `Load subgraph from ${manifestPath}`,
-        `Failed to load subgraph from ${manifestPath}`,
-        `Warnings loading subgraph from ${manifestPath}`,
-        async () => {
-          return Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)
-        },
-      )
+      return (await Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)).result;
     }
+    const manifestPath = this.displayPath(this.options.subgraphManifest);
+
+    return await withSpinner(
+      `Load subgraph from ${manifestPath}`,
+      `Failed to load subgraph from ${manifestPath}`,
+      `Warnings loading subgraph from ${manifestPath}`,
+      async () => {
+        return Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions);
+      },
+    );
   }
 
   async getFilesToWatch() {
     try {
-      let files = []
-      let subgraph = await this.loadSubgraph({ quiet: true })
+      const files = [];
+      const subgraph = await this.loadSubgraph({ quiet: true });
 
       // Add the subgraph manifest file
-      files.push(this.options.subgraphManifest)
+      files.push(this.options.subgraphManifest);
 
       // Add all file paths specified in manifest
-      files.push(path.resolve(subgraph.getIn(['schema', 'file'])))
+      files.push(path.resolve(subgraph.getIn(['schema', 'file'])));
       subgraph.get('dataSources').map((dataSource: any) => {
-        files.push(dataSource.getIn(['mapping', 'file']))
+        files.push(dataSource.getIn(['mapping', 'file']));
         // Only watch ABI related files if the target protocol has support/need for them.
         if (this.protocol.hasABIs()) {
           dataSource.getIn(['mapping', 'abis']).map((abi: any) => {
-            files.push(abi.get('file'))
-          })
+            files.push(abi.get('file'));
+          });
         }
-      })
+      });
 
       // Make paths absolute
-      return files.map(file => path.resolve(file))
+      return files.map(file => path.resolve(file));
     } catch (e) {
-      throw Error(`Failed to load subgraph: ${e.message}`)
+      throw Error(`Failed to load subgraph: ${e.message}`);
     }
   }
 
   async watchAndCompile(onCompiled?: (ipfsHash: string) => void) {
-    let compiler = this
-    let spinner: Spinner
+    const compiler = this;
+    let spinner: Spinner;
 
     // Create watcher and recompile once and then on every change to a watched file
-    let watcher = new Watcher({
+    const watcher = new Watcher({
       onReady: () => (spinner = toolbox.print.spin('Watching subgraph files')),
       onTrigger: async changedFile => {
         if (changedFile !== undefined) {
-          spinner.info(`File change detected: ${this.displayPath(changedFile)}\n`)
+          spinner.info(`File change detected: ${this.displayPath(changedFile)}\n`);
         }
-        let ipfsHash = await compiler.compile()
-        onCompiled?.(ipfsHash)
-        spinner.start()
+        const ipfsHash = await compiler.compile();
+        onCompiled?.(ipfsHash);
+        spinner.start();
       },
       onCollectFiles: async () => await compiler.getFilesToWatch(),
       onError: error => {
-        spinner.stop()
-        toolbox.print.error(`${error.message}\n`)
-        spinner.start()
+        spinner.stop();
+        toolbox.print.error(`${error.message}\n`);
+        spinner.start();
       },
-    })
+    });
 
     // Catch keyboard interrupt: close watcher and exit process
     process.on('SIGINT', () => {
-      watcher.close()
-      process.exit()
-    })
+      watcher.close();
+      process.exit();
+    });
 
     try {
-      await watcher.watch()
+      await watcher.watch();
     } catch (e) {
-      toolbox.print.error(`${e.message}`)
+      toolbox.print.error(String(e.message));
     }
   }
 
@@ -226,13 +221,13 @@ export default class Compiler {
     targetDir: string,
     spinner: Spinner,
   ) {
-    let absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile)
-    let relativeSourceFile = path.relative(sourceDir, absoluteSourceFile)
-    let targetFile = path.join(targetDir, relativeSourceFile)
-    step(spinner, 'Write subgraph file', this.displayPath(targetFile))
-    fs.mkdirsSync(path.dirname(targetFile))
-    fs.writeFileSync(targetFile, data)
-    return targetFile
+    const absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile);
+    const relativeSourceFile = path.relative(sourceDir, absoluteSourceFile);
+    const targetFile = path.join(targetDir, relativeSourceFile);
+    step(spinner, 'Write subgraph file', this.displayPath(targetFile));
+    fs.mkdirsSync(path.dirname(targetFile));
+    fs.writeFileSync(targetFile, data);
+    return targetFile;
   }
 
   async compileSubgraph(subgraph: any) {
@@ -242,9 +237,9 @@ export default class Compiler {
       `Warnings while compiling subgraph`,
       async spinner => {
         // Cache compiled files so identical input files are only compiled once
-        let compiledFiles = new Map()
+        const compiledFiles = new Map();
 
-        await asc.ready()
+        await asc.ready();
 
         subgraph = subgraph.update('dataSources', (dataSources: any[]) =>
           dataSources.map((dataSource: any) =>
@@ -258,26 +253,21 @@ export default class Compiler {
               ),
             ),
           ),
-        )
+        );
 
         subgraph = subgraph.update('templates', (templates: any) =>
           templates === undefined
             ? templates
             : templates.map((template: any) =>
                 template.updateIn(['mapping', 'file'], (mappingPath: string) =>
-                  this._compileTemplateMapping(
-                    template,
-                    mappingPath,
-                    compiledFiles,
-                    spinner,
-                  ),
+                  this._compileTemplateMapping(template, mappingPath, compiledFiles, spinner),
                 ),
               ),
-        )
+        );
 
-        return subgraph
+        return subgraph;
       },
-    )
+    );
   }
 
   _compileDataSourceMapping(
@@ -288,55 +278,45 @@ export default class Compiler {
     spinner: Spinner,
   ) {
     if (protocol.name == 'substreams') {
-      return
+      return;
     }
 
     try {
-      let dataSourceName = dataSource.getIn(['name'])
+      const dataSourceName = dataSource.getIn(['name']);
 
-      let baseDir = this.sourceDir
-      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
-      let inputFile = path.relative(baseDir, absoluteMappingPath)
-      this._validateMappingContent(absoluteMappingPath)
+      const baseDir = this.sourceDir;
+      const absoluteMappingPath = path.resolve(baseDir, mappingPath);
+      const inputFile = path.relative(baseDir, absoluteMappingPath);
+      this._validateMappingContent(absoluteMappingPath);
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
-      let inputCacheKey = this.cacheKeyForFile(absoluteMappingPath)
-      let alreadyCompiled = compiledFiles.has(inputCacheKey)
+      const inputCacheKey = this.cacheKeyForFile(absoluteMappingPath);
+      const alreadyCompiled = compiledFiles.has(inputCacheKey);
       if (alreadyCompiled) {
-        let outFile = compiledFiles.get(inputCacheKey)
+        const outFile = compiledFiles.get(inputCacheKey);
         step(
           spinner,
           'Compile data source:',
           `${dataSourceName} => ${this.displayPath(outFile)} (already compiled)`,
-        )
-        return outFile
+        );
+        return outFile;
       }
 
-      let outFile = path.resolve(
+      const outFile = path.resolve(
         this.subgraphDir(this.options.outputDir, dataSource),
-        this.options.outputFormat == 'wasm'
-          ? `${dataSourceName}.wasm`
-          : `${dataSourceName}.wast`,
-      )
+        this.options.outputFormat == 'wasm' ? `${dataSourceName}.wasm` : `${dataSourceName}.wast`,
+      );
 
-      step(
-        spinner,
-        'Compile data source:',
-        `${dataSourceName} => ${this.displayPath(outFile)}`,
-      )
+      step(spinner, 'Compile data source:', `${dataSourceName} => ${this.displayPath(outFile)}`);
 
-      let outputFile = path.relative(baseDir, outFile)
+      const outputFile = path.relative(baseDir, outFile);
 
       // Create output directory
-      try {
-        fs.mkdirsSync(path.dirname(outFile))
-      } catch (e) {
-        throw e
-      }
+      fs.mkdirsSync(path.dirname(outFile));
 
-      let libs = this.libsDirs.join(',')
-      let global = path.relative(baseDir, this.globalsFile)
+      const libs = this.libsDirs.join(',');
+      const global = path.relative(baseDir, this.globalsFile);
 
       asc.compile({
         inputFile,
@@ -344,14 +324,14 @@ export default class Compiler {
         baseDir,
         libs,
         outputFile,
-      })
+      });
 
       // Remember the output file to avoid compiling the same file again
-      compiledFiles.set(inputCacheKey, outFile)
+      compiledFiles.set(inputCacheKey, outFile);
 
-      return outFile
+      return outFile;
     } catch (e) {
-      throw Error(`Failed to compile data source mapping: ${e.message}`)
+      throw Error(`Failed to compile data source mapping: ${e.message}`);
     }
   }
 
@@ -362,53 +342,47 @@ export default class Compiler {
     spinner: Spinner,
   ) {
     try {
-      let templateName = template.get('name')
+      const templateName = template.get('name');
 
-      let baseDir = this.sourceDir
-      let absoluteMappingPath = path.resolve(baseDir, mappingPath)
-      let inputFile = path.relative(baseDir, absoluteMappingPath)
-      this._validateMappingContent(absoluteMappingPath)
+      const baseDir = this.sourceDir;
+      const absoluteMappingPath = path.resolve(baseDir, mappingPath);
+      const inputFile = path.relative(baseDir, absoluteMappingPath);
+      this._validateMappingContent(absoluteMappingPath);
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
-      let inputCacheKey = this.cacheKeyForFile(absoluteMappingPath)
-      let alreadyCompiled = compiledFiles.has(inputCacheKey)
+      const inputCacheKey = this.cacheKeyForFile(absoluteMappingPath);
+      const alreadyCompiled = compiledFiles.has(inputCacheKey);
       if (alreadyCompiled) {
-        let outFile = compiledFiles.get(inputCacheKey)
+        const outFile = compiledFiles.get(inputCacheKey);
         step(
           spinner,
           'Compile data source template:',
           `${templateName} => ${this.displayPath(outFile)} (already compiled)`,
-        )
-        return outFile
+        );
+        return outFile;
       }
 
-      let outFile = path.resolve(
+      const outFile = path.resolve(
         this.options.outputDir,
         'templates',
         templateName,
-        this.options.outputFormat == 'wasm'
-          ? `${templateName}.wasm`
-          : `${templateName}.wast`,
-      )
+        this.options.outputFormat == 'wasm' ? `${templateName}.wasm` : `${templateName}.wast`,
+      );
 
       step(
         spinner,
         'Compile data source template:',
         `${templateName} => ${this.displayPath(outFile)}`,
-      )
+      );
 
-      let outputFile = path.relative(baseDir, outFile)
+      const outputFile = path.relative(baseDir, outFile);
 
       // Create output directory
-      try {
-        fs.mkdirsSync(path.dirname(outFile))
-      } catch (e) {
-        throw e
-      }
+      fs.mkdirsSync(path.dirname(outFile));
 
-      let libs = this.libsDirs.join(',')
-      let global = path.relative(baseDir, this.globalsFile)
+      const libs = this.libsDirs.join(',');
+      const global = path.relative(baseDir, this.globalsFile);
 
       asc.compile({
         inputFile,
@@ -416,38 +390,30 @@ export default class Compiler {
         baseDir,
         libs,
         outputFile,
-      })
+      });
 
       // Remember the output file to avoid compiling the same file again
-      compiledFiles.set(inputCacheKey, outFile)
+      compiledFiles.set(inputCacheKey, outFile);
 
-      return outFile
+      return outFile;
     } catch (e) {
-      throw Error(`Failed to compile data source template: ${e.message}`)
+      throw Error(`Failed to compile data source template: ${e.message}`);
     }
   }
 
   _validateMappingContent(filePath: string) {
-    const data = fs.readFileSync(filePath)
-    if (
-      this.blockIpfsMethods &&
-      (data.includes('ipfs.cat') || data.includes('ipfs.map'))
-    ) {
+    const data = fs.readFileSync(filePath);
+    if (this.blockIpfsMethods && (data.includes('ipfs.cat') || data.includes('ipfs.map'))) {
       throw Error(`
       Subgraph Studio does not support mappings with ipfs methods.
       Please remove all instances of ipfs.cat and ipfs.map from
       ${filePath}
-      `)
+      `);
     }
   }
 
-  async writeSubgraphToOutputDirectory(
-    protocol: Protocol,
-    subgraph: immutable.Map<any, any>,
-  ) {
-    const displayDir = `${this.displayPath(this.options.outputDir)}${
-      toolbox.filesystem.separator
-    }`
+  async writeSubgraphToOutputDirectory(protocol: Protocol, subgraph: immutable.Map<any, any>) {
+    const displayDir = `${this.displayPath(this.options.outputDir)}${toolbox.filesystem.separator}`;
 
     return await withSpinner(
       `Write compiled subgraph to ${displayDir}`,
@@ -456,18 +422,18 @@ export default class Compiler {
       async spinner => {
         // Copy schema and update its path
         subgraph = subgraph.updateIn(['schema', 'file'], schemaFile => {
-          const schemaFilePath = path.resolve(this.sourceDir, schemaFile as string)
-          const schemaFileName = path.basename(schemaFile as string)
-          const targetFile = path.resolve(this.options.outputDir, schemaFileName)
-          step(spinner, 'Copy schema file', this.displayPath(targetFile))
-          fs.copyFileSync(schemaFilePath, targetFile)
-          return path.relative(this.options.outputDir, targetFile)
-        })
+          const schemaFilePath = path.resolve(this.sourceDir, schemaFile as string);
+          const schemaFileName = path.basename(schemaFile as string);
+          const targetFile = path.resolve(this.options.outputDir, schemaFileName);
+          step(spinner, 'Copy schema file', this.displayPath(targetFile));
+          fs.copyFileSync(schemaFilePath, targetFile);
+          return path.relative(this.options.outputDir, targetFile);
+        });
 
         // Copy data source files and update their paths
         subgraph = subgraph.update('dataSources', (dataSources: any[]) =>
           dataSources.map(dataSource => {
-            let updatedDataSource = dataSource
+            let updatedDataSource = dataSource;
 
             if (this.protocol.hasABIs()) {
               updatedDataSource = updatedDataSource
@@ -475,8 +441,8 @@ export default class Compiler {
                 .updateIn(['mapping', 'abis'], (abis: any[]) =>
                   abis.map((abi: any) =>
                     abi.update('file', (abiFile: string) => {
-                      abiFile = path.resolve(this.sourceDir, abiFile)
-                      let abiData = this.ABI.load(abi.get('name'), abiFile)
+                      abiFile = path.resolve(this.sourceDir, abiFile);
+                      const abiData = this.ABI.load(abi.get('name'), abiFile);
                       return path.relative(
                         this.options.outputDir,
                         this._writeSubgraphFile(
@@ -486,10 +452,10 @@ export default class Compiler {
                           this.subgraphDir(this.options.outputDir, dataSource),
                           spinner,
                         ),
-                      )
+                      );
                     }),
                   ),
-                )
+                );
             }
 
             if (protocol.name == 'substreams') {
@@ -497,8 +463,8 @@ export default class Compiler {
                 // Write data source ABIs to the output directory
                 .updateIn(['source', 'package'], (substreamsPackage: any) =>
                   substreamsPackage.update('file', (packageFile: string) => {
-                    packageFile = path.resolve(this.sourceDir, packageFile)
-                    let packageContent = fs.readFileSync(packageFile)
+                    packageFile = path.resolve(this.sourceDir, packageFile);
+                    const packageContent = fs.readFileSync(packageFile);
 
                     return path.relative(
                       this.options.outputDir,
@@ -509,32 +475,27 @@ export default class Compiler {
                         this.subgraphDir(this.options.outputDir, dataSource),
                         spinner,
                       ),
-                    )
+                    );
                   }),
-                )
+                );
 
-              return updatedDataSource
+              return updatedDataSource;
             }
 
             // The mapping file is already being written to the output
             // directory by the AssemblyScript compiler
-            return updatedDataSource.updateIn(
-              ['mapping', 'file'],
-              (mappingFile: string) =>
-                path.relative(
-                  this.options.outputDir,
-                  path.resolve(this.sourceDir, mappingFile),
-                ),
-            )
+            return updatedDataSource.updateIn(['mapping', 'file'], (mappingFile: string) =>
+              path.relative(this.options.outputDir, path.resolve(this.sourceDir, mappingFile)),
+            );
           }),
-        )
+        );
 
         // Copy template files and update their paths
         subgraph = subgraph.update('templates', templates =>
           templates === undefined
             ? templates
             : templates.map((template: any) => {
-                let updatedTemplate = template
+                let updatedTemplate = template;
 
                 if (this.protocol.hasABIs()) {
                   updatedTemplate = updatedTemplate
@@ -542,8 +503,8 @@ export default class Compiler {
                     .updateIn(['mapping', 'abis'], (abis: any[]) =>
                       abis.map(abi =>
                         abi.update('file', (abiFile: string) => {
-                          abiFile = path.resolve(this.sourceDir, abiFile)
-                          let abiData = this.ABI.load(abi.get('name'), abiFile)
+                          abiFile = path.resolve(this.sourceDir, abiFile);
+                          const abiData = this.ABI.load(abi.get('name'), abiFile);
                           return path.relative(
                             this.options.outputDir,
                             this._writeSubgraphFile(
@@ -553,33 +514,28 @@ export default class Compiler {
                               this.subgraphDir(this.options.outputDir, template),
                               spinner,
                             ),
-                          )
+                          );
                         }),
                       ),
-                    )
+                    );
                 }
 
                 // The mapping file is already being written to the output
                 // directory by the AssemblyScript compiler
-                return updatedTemplate.updateIn(
-                  ['mapping', 'file'],
-                  (mappingFile: string) =>
-                    path.relative(
-                      this.options.outputDir,
-                      path.resolve(this.sourceDir, mappingFile),
-                    ),
-                )
+                return updatedTemplate.updateIn(['mapping', 'file'], (mappingFile: string) =>
+                  path.relative(this.options.outputDir, path.resolve(this.sourceDir, mappingFile)),
+                );
               }),
-        )
+        );
 
         // Write the subgraph manifest itself
-        let outputFilename = path.join(this.options.outputDir, 'subgraph.yaml')
-        step(spinner, 'Write subgraph manifest', this.displayPath(outputFilename))
-        await Subgraph.write(subgraph, outputFilename)
+        const outputFilename = path.join(this.options.outputDir, 'subgraph.yaml');
+        step(spinner, 'Write subgraph manifest', this.displayPath(outputFilename));
+        await Subgraph.write(subgraph, outputFilename);
 
-        return subgraph
+        return subgraph;
       },
-    )
+    );
   }
 
   async uploadSubgraphToIPFS(subgraph: immutable.Map<any, any>) {
@@ -589,10 +545,10 @@ export default class Compiler {
       `Warnings while uploading subgraph to IPFS`,
       async spinner => {
         // Cache uploaded IPFS files so identical files are only uploaded once
-        let uploadedFiles = new Map()
+        const uploadedFiles = new Map();
 
         // Collect all source (path -> hash) updates to apply them later
-        let updates = []
+        const updates = [];
 
         // Upload the schema to IPFS
         updates.push({
@@ -602,26 +558,22 @@ export default class Compiler {
             uploadedFiles,
             spinner,
           ),
-        })
+        });
 
         if (this.protocol.hasABIs()) {
-          for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
-            for (let [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
+          for (const [i, dataSource] of subgraph.get('dataSources').entries()) {
+            for (const [j, abi] of dataSource.getIn(['mapping', 'abis']).entries()) {
               updates.push({
                 keyPath: ['dataSources', i, 'mapping', 'abis', j, 'file'],
-                value: await this._uploadFileToIPFS(
-                  abi.get('file'),
-                  uploadedFiles,
-                  spinner,
-                ),
-              })
+                value: await this._uploadFileToIPFS(abi.get('file'), uploadedFiles, spinner),
+              });
             }
           }
         }
 
         // Upload all mappings
         if (this.protocol.name !== 'substreams') {
-          for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+          for (const [i, dataSource] of subgraph.get('dataSources').entries()) {
             updates.push({
               keyPath: ['dataSources', i, 'mapping', 'file'],
               value: await this._uploadFileToIPFS(
@@ -629,10 +581,10 @@ export default class Compiler {
                 uploadedFiles,
                 spinner,
               ),
-            })
+            });
           }
         } else {
-          for (let [i, dataSource] of subgraph.get('dataSources').entries()) {
+          for (const [i, dataSource] of subgraph.get('dataSources').entries()) {
             updates.push({
               keyPath: ['dataSources', i, 'source', 'package', 'file'],
               value: await this._uploadFileToIPFS(
@@ -640,21 +592,17 @@ export default class Compiler {
                 uploadedFiles,
                 spinner,
               ),
-            })
+            });
           }
         }
 
-        for (let [i, template] of subgraph.get('templates', immutable.List()).entries()) {
+        for (const [i, template] of subgraph.get('templates', immutable.List()).entries()) {
           if (this.protocol.hasABIs()) {
-            for (let [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
+            for (const [j, abi] of template.getIn(['mapping', 'abis']).entries()) {
               updates.push({
                 keyPath: ['templates', i, 'mapping', 'abis', j, 'file'],
-                value: await this._uploadFileToIPFS(
-                  abi.get('file'),
-                  uploadedFiles,
-                  spinner,
-                ),
-              })
+                value: await this._uploadFileToIPFS(abi.get('file'), uploadedFiles, spinner),
+              });
             }
           }
 
@@ -665,18 +613,18 @@ export default class Compiler {
               uploadedFiles,
               spinner,
             ),
-          })
+          });
         }
 
         // Apply all updates to the subgraph
-        for (let update of updates) {
-          subgraph = subgraph.setIn(update.keyPath, update.value)
+        for (const update of updates) {
+          subgraph = subgraph.setIn(update.keyPath, update.value);
         }
 
         // Upload the subgraph itself
-        return await this._uploadSubgraphDefinitionToIPFS(subgraph)
+        return await this._uploadSubgraphDefinitionToIPFS(subgraph);
       },
-    )
+    );
   }
 
   async _uploadFileToIPFS(
@@ -688,46 +636,42 @@ export default class Compiler {
       'Resolving IPFS file "%s" from output dir "%s"',
       maybeRelativeFile,
       this.options.outputDir,
-    )
-    let absoluteFile = path.resolve(this.options.outputDir, maybeRelativeFile)
-    step(spinner, 'Add file to IPFS', this.displayPath(absoluteFile))
+    );
+    const absoluteFile = path.resolve(this.options.outputDir, maybeRelativeFile);
+    step(spinner, 'Add file to IPFS', this.displayPath(absoluteFile));
 
-    let uploadCacheKey = this.cacheKeyForFile(absoluteFile)
-    let alreadyUploaded = uploadedFiles.has(uploadCacheKey)
+    const uploadCacheKey = this.cacheKeyForFile(absoluteFile);
+    const alreadyUploaded = uploadedFiles.has(uploadCacheKey);
 
     if (!alreadyUploaded) {
       // @ts-expect-error Buffer.from with Buffer data can indeed accept utf-8
-      let content = Buffer.from(await fs.readFile(absoluteFile), 'utf-8')
-      let hash = await this._uploadToIPFS({
+      const content = Buffer.from(await fs.readFile(absoluteFile), 'utf-8');
+      const hash = await this._uploadToIPFS({
         path: path.relative(this.options.outputDir, absoluteFile),
-        content: content,
-      })
+        content,
+      });
 
-      uploadedFiles.set(uploadCacheKey, hash)
+      uploadedFiles.set(uploadCacheKey, hash);
     }
 
-    let hash = uploadedFiles.get(uploadCacheKey)
-    step(
-      spinner,
-      '              ..',
-      `${hash}${alreadyUploaded ? ' (already uploaded)' : ''}`,
-    )
-    return immutable.fromJS({ '/': `/ipfs/${hash}` })
+    const hash = uploadedFiles.get(uploadCacheKey);
+    step(spinner, '              ..', `${hash}${alreadyUploaded ? ' (already uploaded)' : ''}`);
+    return immutable.fromJS({ '/': `/ipfs/${hash}` });
   }
 
   async _uploadSubgraphDefinitionToIPFS(subgraph: immutable.Map<any, any>) {
-    let str = yaml.safeDump(subgraph.toJS(), { noRefs: true, sortKeys: true })
-    let file = { path: 'subgraph.yaml', content: Buffer.from(str, 'utf-8') }
-    return await this._uploadToIPFS(file)
+    const str = yaml.safeDump(subgraph.toJS(), { noRefs: true, sortKeys: true });
+    const file = { path: 'subgraph.yaml', content: Buffer.from(str, 'utf-8') };
+    return await this._uploadToIPFS(file);
   }
 
   async _uploadToIPFS(file: { path: string; content: Buffer }) {
     try {
-      let hash = (await this.ipfs.add([file]))[0].hash
-      await this.ipfs.pin.add(hash)
-      return hash
+      const hash = (await this.ipfs.add([file]))[0].hash;
+      await this.ipfs.pin.add(hash);
+      return hash;
     } catch (e) {
-      throw Error(`Failed to upload file to IPFS: ${e.message}`)
+      throw Error(`Failed to upload file to IPFS: ${e.message}`);
     }
   }
 }

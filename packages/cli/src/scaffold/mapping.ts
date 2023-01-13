@@ -1,27 +1,21 @@
-import * as util from '../codegen/util'
+import * as util from '../codegen/util';
 
 export const generateFieldAssignment = (path: string[]) =>
-  `entity.${path.join('_')} = event.params.${path.join('.')}`
+  `entity.${path.join('_')} = event.params.${path.join('.')}`;
 
-export const generateFieldAssignments = ({
-  index,
-  input,
-}: {
-  index: number
-  input: any
-}) =>
+export const generateFieldAssignments = ({ index, input }: { index: number; input: any }) =>
   input.type === 'tuple'
     ? util
         .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
         .map(({ path }: any) => generateFieldAssignment(path))
-    : generateFieldAssignment([input.name || `param${index}`])
+    : generateFieldAssignment([input.name || `param${index}`]);
 
 export const generateEventFieldAssignments = (event: any) =>
   event.inputs.reduce(
     (acc: any[], input: any, index: number) =>
       acc.concat(generateFieldAssignments({ input, index })),
     [],
-  )
+  );
 
 export const generateEventIndexingHandlers = (events: any[], contractName: string) =>
   `
@@ -35,9 +29,7 @@ export const generateEventIndexingHandlers = (events: any[], contractName: strin
       event =>
         `
   export function handle${event._alias}(event: ${event._alias}Event): void {
-    let entity = new ${
-      event._alias
-    }(event.transaction.hash.concatI32(event.logIndex.toI32()))
+    let entity = new ${event._alias}(event.transaction.hash.concatI32(event.logIndex.toI32()))
     ${generateEventFieldAssignments(event).join('\n')}
 
     entity.blockNumber = event.block.number
@@ -49,4 +41,4 @@ export const generateEventIndexingHandlers = (events: any[], contractName: strin
     `,
     )
     .join('\n')}
-`
+`;

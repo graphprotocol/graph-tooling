@@ -46,4 +46,4 @@ export const generatePlaceholderHandlers = () =>
 
     entity.save();
   }
-`
+`;

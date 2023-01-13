@@ -1,4 +1,4 @@
-import immutable from 'immutable'
+import immutable from 'immutable';
 
 /**
  * ethereum.Value -> AssemblyScript conversions
@@ -105,7 +105,7 @@ const ETHEREUM_VALUE_TO_ASSEMBLYSCRIPT = [
     'Array<Array<ethereum.Tuple>>',
     (code: any, type: any) => `${code}.toTupleMatrix<${type}>()`,
   ],
-]
+];
 
 /**
  * AssemblyScript -> ethereum.Value conversions
@@ -161,11 +161,7 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     /^byte\[([0-9]+)?\]$/,
     (code: any) => `ethereum.Value.fromFixedBytesArray(${code})`,
   ],
-  [
-    'Array<Bytes>',
-    /bytes\[([0-9]+)?\]$/,
-    (code: any) => `ethereum.Value.fromBytesArray(${code})`,
-  ],
+  ['Array<Bytes>', /bytes\[([0-9]+)?\]$/, (code: any) => `ethereum.Value.fromBytesArray(${code})`],
   [
     'Array<Bytes>',
     /^bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)\[([0-9]+)?\]$/,
@@ -263,7 +259,7 @@ const ASSEMBLYSCRIPT_TO_ETHEREUM_VALUE = [
     /^tuple\[([0-9]+)?\]\[([0-9]+)?\]$/,
     (code: any) => `ethereum.Value.fromTupleMatrix(${code})`,
   ],
-]
+];
 
 /**
  * Value -> AssemblyScript conversions
@@ -290,7 +286,7 @@ const VALUE_TO_ASSEMBLYSCRIPT = [
   ['String', 'string', (code: any) => `${code}.toString()`],
   ['BigDecimal', 'BigDecimal', (code: any) => `${code}.toBigDecimal()`],
   [/.*/, 'string', (code: any) => `${code}.toString()`],
-]
+];
 
 /**
  * AssemblyScript -> Value conversions
@@ -304,33 +300,17 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
 
   ['Array<Array<Address>>', '[[Bytes]]', (code: any) => `Value.fromBytesMatrix(${code})`],
   ['Array<Array<Bytes>>', '[[Bytes]]', (code: any) => `Value.fromBytesMatrix(${code})`],
-  [
-    'Array<Array<boolean>>',
-    '[[Boolean]]',
-    (code: any) => `Value.fromBooleanMatrix(${code})`,
-  ],
+  ['Array<Array<boolean>>', '[[Boolean]]', (code: any) => `Value.fromBooleanMatrix(${code})`],
   ['Array<Array<i32>>', '[[Int]]', (code: any) => `Value.fromI32Matrix(${code})`],
-  [
-    'Array<Array<BigInt>>',
-    '[[BigInt]]',
-    (code: any) => `Value.fromBigIntMatrix(${code})`,
-  ],
-  [
-    'Array<Array<string>>',
-    '[[String]]',
-    (code: any) => `Value.fromStringMatrix(${code})`,
-  ],
+  ['Array<Array<BigInt>>', '[[BigInt]]', (code: any) => `Value.fromBigIntMatrix(${code})`],
+  ['Array<Array<string>>', '[[String]]', (code: any) => `Value.fromStringMatrix(${code})`],
   ['Array<Array<string>>', '[[ID]]', (code: any) => `Value.fromStringMatrix(${code})`],
   [
     'Array<Array<BigDecimal>>',
     '[[BigDecimal]]',
     (code: any) => `Value.fromBigDecimalMatrix(${code})`,
   ],
-  [
-    'Array<Array<string>>',
-    /\[\[.*\]\]/,
-    (code: any) => `Value.fromStringMatrix(${code})`,
-  ],
+  ['Array<Array<string>>', /\[\[.*\]\]/, (code: any) => `Value.fromStringMatrix(${code})`],
   ['Array<Array<string | null>>', null, (code: any) => `Value.fromStringMatrix(${code})`], // is this overwriting the Array null below?
 
   // Arrays
@@ -342,11 +322,7 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
   ['Array<BigInt>', '[BigInt]', (code: any) => `Value.fromBigIntArray(${code})`],
   ['Array<string>', '[String]', (code: any) => `Value.fromStringArray(${code})`],
   ['Array<string>', '[ID]', (code: any) => `Value.fromStringArray(${code})`],
-  [
-    'Array<BigDecimal>',
-    '[BigDecimal]',
-    (code: any) => `Value.fromBigDecimalArray(${code})`,
-  ],
+  ['Array<BigDecimal>', '[BigDecimal]', (code: any) => `Value.fromBigDecimalArray(${code})`],
   ['Array<string>', /\[.*\]/, (code: any) => `Value.fromStringArray(${code})`],
   ['Array<string | null>', null, (code: any) => `Value.fromStringArray(${code})`],
 
@@ -361,7 +337,7 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
   ['string', 'ID', (code: any) => `Value.fromString(${code})`],
   ['BigDecimal', 'BigDecimal', (code: any) => `Value.fromBigDecimal(${code})`],
   ['string', /.*/, (code: any) => `Value.fromString(${code})`],
-]
+];
 
 const CONVERSIONS = {
   ethereum: {
@@ -374,9 +350,9 @@ const CONVERSIONS = {
   Value: {
     AssemblyScript: VALUE_TO_ASSEMBLYSCRIPT,
   },
-} as const
+} as const;
 
 /**
  * Type conversions
  */
-export default immutable.fromJS(CONVERSIONS)
+export default immutable.fromJS(CONVERSIONS);

@@ -1,19 +1,19 @@
-import immutable from 'immutable'
-import Protocol from '../protocols'
-import IpfsFileTemplateCodeGen from '../protocols/ipfs/codegen/file_template'
-import * as tsCodegen from './typescript'
+import immutable from 'immutable';
+import Protocol from '../protocols';
+import IpfsFileTemplateCodeGen from '../protocols/ipfs/codegen/file_template';
+import * as tsCodegen from './typescript';
 
 export default class DataSourceTemplateCodeGenerator {
-  protocolTemplateCodeGen: any
+  protocolTemplateCodeGen: any;
 
   constructor(public template: immutable.Map<any, any>, protocol: Protocol) {
-    this.template = template
-    let kind = template.get('kind')
+    this.template = template;
+    const kind = template.get('kind');
 
     if (kind.split('/')[0] == protocol.name) {
-      this.protocolTemplateCodeGen = protocol.getTemplateCodeGen(template)
+      this.protocolTemplateCodeGen = protocol.getTemplateCodeGen(template);
     } else if (kind == 'file/ipfs') {
-      this.protocolTemplateCodeGen = new IpfsFileTemplateCodeGen(template)
+      this.protocolTemplateCodeGen = new IpfsFileTemplateCodeGen(template);
     }
   }
 
@@ -27,19 +27,19 @@ export default class DataSourceTemplateCodeGenerator {
         ],
         '@graphprotocol/graph-ts',
       ),
-    ]
+    ];
   }
 
   generateTypes() {
-    return immutable.List([this._generateTemplateType()])
+    return immutable.List([this._generateTemplateType()]);
   }
 
   _generateTemplateType() {
-    let name = this.template.get('name')
+    const name = this.template.get('name');
 
-    let klass = tsCodegen.klass(name, { export: true, extends: 'DataSourceTemplate' })
-    klass.addMethod(this.protocolTemplateCodeGen.generateCreateMethod())
-    klass.addMethod(this.protocolTemplateCodeGen.generateCreateWithContextMethod())
-    return klass
+    const klass = tsCodegen.klass(name, { export: true, extends: 'DataSourceTemplate' });
+    klass.addMethod(this.protocolTemplateCodeGen.generateCreateMethod());
+    klass.addMethod(this.protocolTemplateCodeGen.generateCreateWithContextMethod());
+    return klass;
   }
 }

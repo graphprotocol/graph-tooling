@@ -1,7 +1,7 @@
-import ABI from '../protocols/ethereum/abi'
-import immutable from 'immutable'
-import Scaffold from './index'
-import Protocol from '../protocols'
+import immutable from 'immutable';
+import Protocol from '../protocols';
+import ABI from '../protocols/ethereum/abi';
+import Scaffold from './index';
 
 const TEST_EVENT = {
   name: 'ExampleEvent',
@@ -20,28 +20,24 @@ const TEST_EVENT = {
         {
           name: 'c3',
           type: 'tuple',
-          components: [
-            { name: 'c31', type: 'uint96' },
-            { type: 'string' },
-            { type: 'bytes32' },
-          ],
+          components: [{ name: 'c31', type: 'uint96' }, { type: 'string' }, { type: 'bytes32' }],
         },
       ],
     },
     { name: 'd', type: 'string', indexed: true },
   ],
-}
+};
 
 const OVERLOADED_EVENT = {
   name: 'ExampleEvent',
   type: 'event',
   inputs: [{ name: 'a', type: 'bytes32' }],
-}
+};
 
 const TEST_CONTRACT = {
   name: 'ExampleContract',
   type: 'contract',
-}
+};
 
 const TEST_CALLABLE_FUNCTIONS = [
   {
@@ -56,20 +52,15 @@ const TEST_CALLABLE_FUNCTIONS = [
     stateMutability: 'pure',
     outputs: [{ type: 'tuple', components: [{ type: 'uint256' }] }],
   },
-]
+];
 
 const TEST_ABI = new ABI(
   'Contract',
   undefined,
-  immutable.fromJS([
-    TEST_EVENT,
-    OVERLOADED_EVENT,
-    TEST_CONTRACT,
-    ...TEST_CALLABLE_FUNCTIONS,
-  ]),
-)
+  immutable.fromJS([TEST_EVENT, OVERLOADED_EVENT, TEST_CONTRACT, ...TEST_CALLABLE_FUNCTIONS]),
+);
 
-const protocol = new Protocol('ethereum')
+const protocol = new Protocol('ethereum');
 
 const scaffoldOptions = {
   protocol,
@@ -77,14 +68,14 @@ const scaffoldOptions = {
   contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
   network: 'kovan',
   contractName: 'Contract',
-}
+};
 
-const scaffold = new Scaffold(scaffoldOptions)
+const scaffold = new Scaffold(scaffoldOptions);
 
 const scaffoldWithIndexEvents = new Scaffold({
   ...scaffoldOptions,
   indexEvents: true,
-})
+});
 
 describe('Ethereum subgraph scaffolding', () => {
   test('Manifest', () => {
@@ -115,8 +106,8 @@ dataSources:
         - event: ExampleEvent(bytes32)
           handler: handleExampleEvent1
       file: ./src/contract.ts
-`)
-  })
+`);
+  });
 
   test('Schema (default)', () => {
     expect(scaffold.generateSchema()).toEqual(`\
@@ -126,8 +117,8 @@ type ExampleEntity @entity {
   a: BigInt! # uint256
   b: [Bytes]! # bytes[4]
 }
-`)
-  })
+`);
+  });
 
   test('Schema (for indexing events)', () => {
     expect(scaffoldWithIndexEvents.generateSchema()).toEqual(`\
@@ -155,8 +146,8 @@ type ExampleEvent1 @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
-`)
-  })
+`);
+  });
 
   test('Mapping (default)', () => {
     expect(scaffold.generateMapping()).toEqual(`\
@@ -212,8 +203,8 @@ export function handleExampleEvent(event: ExampleEvent): void {
 }
 
 export function handleExampleEvent1(event: ExampleEvent1): void {}
-`)
-  })
+`);
+  });
 
   test('Mapping (for indexing events)', () => {
     expect(scaffoldWithIndexEvents.generateMapping()).toEqual(`\
@@ -257,13 +248,13 @@ export function handleExampleEvent1(event: ExampleEvent1Event): void {
 
   entity.save()
 }
-`)
-  })
+`);
+  });
 
   test('Test Files (default)', () => {
-    const files = scaffoldWithIndexEvents.generateTests()
-    const testFile = files?.['contract.test.ts']
-    const utilsFile = files?.['contract-utils.ts']
+    const files = scaffoldWithIndexEvents.generateTests();
+    const testFile = files?.['contract.test.ts'];
+    const utilsFile = files?.['contract-utils.ts'];
     expect(testFile).toEqual(`\
 import {
   assert,
@@ -272,23 +263,23 @@ import {
   clearStore,
   beforeAll,
   afterAll
-} from \"matchstick-as/assembly/index\"
-import { BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent } from \"../generated/schema\"
-import { ExampleEvent as ExampleEventEvent } from \"../generated/Contract/Contract\"
-import { handleExampleEvent } from \"../src/contract\"
-import { createExampleEventEvent } from \"./contract-utils\"
+} from "matchstick-as/assembly/index"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent } from "../generated/schema"
+import { ExampleEvent as ExampleEventEvent } from "../generated/Contract/Contract"
+import { handleExampleEvent } from "../src/contract"
+import { createExampleEventEvent } from "./contract-utils"
 
 // Tests structure (matchstick-as >=0.5.0)
 // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 
-describe(\"Describe entity assertions\", () => {
+describe("Describe entity assertions", () => {
   beforeAll(() => {
     let a = BigInt.fromI32(234)
     let b = [Bytes.fromI32(1234567890)]
-    let param2 = \"Example string value\"
-    let c = \"ethereum.Tuple Not implemented\"
-    let d = \"Example string value\"
+    let param2 = "Example string value"
+    let c = "ethereum.Tuple Not implemented"
+    let d = "Example string value"
     let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d)
     handleExampleEvent(newExampleEventEvent)
   })
@@ -300,50 +291,50 @@ describe(\"Describe entity assertions\", () => {
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test(\"ExampleEvent created and stored\", () => {
-    assert.entityCount(\"ExampleEvent\", 1)
+  test("ExampleEvent created and stored", () => {
+    assert.entityCount("ExampleEvent", 1)
 
     // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"a\",
-      \"234\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "a",
+      "234"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"b\",
-      \"[1234567890]\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "b",
+      "[1234567890]"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"param2\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "param2",
+      "Example string value"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"c\",
-      \"ethereum.Tuple Not implemented\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "c",
+      "ethereum.Tuple Not implemented"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"d\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "d",
+      "Example string value"
     )
 
     // More assert options:
     // https://thegraph.com/docs/en/developer/matchstick/#asserts
   })
 })
-`)
+`);
     expect(utilsFile).toEqual(`\
-import { newMockEvent } from \"matchstick-as\"
-import { ethereum, BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent, ExampleEvent1 } from \"../generated/Contract/Contract\"
+import { newMockEvent } from "matchstick-as"
+import { ethereum, BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent, ExampleEvent1 } from "../generated/Contract/Contract"
 
 export function createExampleEventEvent(
   a: BigInt,
@@ -357,19 +348,19 @@ export function createExampleEventEvent(
   exampleEventEvent.parameters = new Array()
 
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromUnsignedBigInt(a))
+    new ethereum.EventParam("a", ethereum.Value.fromUnsignedBigInt(a))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"b\", ethereum.Value.fromBytesArray(b))
+    new ethereum.EventParam("b", ethereum.Value.fromBytesArray(b))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"param2\", ethereum.Value.fromString(param2))
+    new ethereum.EventParam("param2", ethereum.Value.fromString(param2))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"c\", ethereum.Value.fromTuple(c))
+    new ethereum.EventParam("c", ethereum.Value.fromTuple(c))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"d\", ethereum.Value.fromString(d))
+    new ethereum.EventParam("d", ethereum.Value.fromString(d))
   )
 
   return exampleEventEvent
@@ -381,18 +372,18 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
   exampleEvent1Event.parameters = new Array()
 
   exampleEvent1Event.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromFixedBytes(a))
+    new ethereum.EventParam("a", ethereum.Value.fromFixedBytes(a))
   )
 
   return exampleEvent1Event
 }
-`)
-  })
+`);
+  });
 
   test('Test Files (for indexing events)', () => {
-    const files = scaffoldWithIndexEvents.generateTests()
-    const testFile = files?.['contract.test.ts']
-    const utilsFile = files?.['contract-utils.ts']
+    const files = scaffoldWithIndexEvents.generateTests();
+    const testFile = files?.['contract.test.ts'];
+    const utilsFile = files?.['contract-utils.ts'];
 
     expect(testFile).toEqual(`\
 import {
@@ -402,23 +393,23 @@ import {
   clearStore,
   beforeAll,
   afterAll
-} from \"matchstick-as/assembly/index\"
-import { BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent } from \"../generated/schema\"
-import { ExampleEvent as ExampleEventEvent } from \"../generated/Contract/Contract\"
-import { handleExampleEvent } from \"../src/contract\"
-import { createExampleEventEvent } from \"./contract-utils\"
+} from "matchstick-as/assembly/index"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent } from "../generated/schema"
+import { ExampleEvent as ExampleEventEvent } from "../generated/Contract/Contract"
+import { handleExampleEvent } from "../src/contract"
+import { createExampleEventEvent } from "./contract-utils"
 
 // Tests structure (matchstick-as >=0.5.0)
 // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 
-describe(\"Describe entity assertions\", () => {
+describe("Describe entity assertions", () => {
   beforeAll(() => {
     let a = BigInt.fromI32(234)
     let b = [Bytes.fromI32(1234567890)]
-    let param2 = \"Example string value\"
-    let c = \"ethereum.Tuple Not implemented\"
-    let d = \"Example string value\"
+    let param2 = "Example string value"
+    let c = "ethereum.Tuple Not implemented"
+    let d = "Example string value"
     let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d)
     handleExampleEvent(newExampleEventEvent)
   })
@@ -430,50 +421,50 @@ describe(\"Describe entity assertions\", () => {
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test(\"ExampleEvent created and stored\", () => {
-    assert.entityCount(\"ExampleEvent\", 1)
+  test("ExampleEvent created and stored", () => {
+    assert.entityCount("ExampleEvent", 1)
 
     // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"a\",
-      \"234\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "a",
+      "234"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"b\",
-      \"[1234567890]\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "b",
+      "[1234567890]"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"param2\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "param2",
+      "Example string value"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"c\",
-      \"ethereum.Tuple Not implemented\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "c",
+      "ethereum.Tuple Not implemented"
     )
     assert.fieldEquals(
-      \"ExampleEvent\",
-      \"0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1\",
-      \"d\",
-      \"Example string value\"
+      "ExampleEvent",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "d",
+      "Example string value"
     )
 
     // More assert options:
     // https://thegraph.com/docs/en/developer/matchstick/#asserts
   })
 })
-`)
+`);
     expect(utilsFile).toEqual(`\
-import { newMockEvent } from \"matchstick-as\"
-import { ethereum, BigInt, Bytes } from \"@graphprotocol/graph-ts\"
-import { ExampleEvent, ExampleEvent1 } from \"../generated/Contract/Contract\"
+import { newMockEvent } from "matchstick-as"
+import { ethereum, BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { ExampleEvent, ExampleEvent1 } from "../generated/Contract/Contract"
 
 export function createExampleEventEvent(
   a: BigInt,
@@ -487,19 +478,19 @@ export function createExampleEventEvent(
   exampleEventEvent.parameters = new Array()
 
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromUnsignedBigInt(a))
+    new ethereum.EventParam("a", ethereum.Value.fromUnsignedBigInt(a))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"b\", ethereum.Value.fromBytesArray(b))
+    new ethereum.EventParam("b", ethereum.Value.fromBytesArray(b))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"param2\", ethereum.Value.fromString(param2))
+    new ethereum.EventParam("param2", ethereum.Value.fromString(param2))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"c\", ethereum.Value.fromTuple(c))
+    new ethereum.EventParam("c", ethereum.Value.fromTuple(c))
   )
   exampleEventEvent.parameters.push(
-    new ethereum.EventParam(\"d\", ethereum.Value.fromString(d))
+    new ethereum.EventParam("d", ethereum.Value.fromString(d))
   )
 
   return exampleEventEvent
@@ -511,11 +502,11 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
   exampleEvent1Event.parameters = new Array()
 
   exampleEvent1Event.parameters.push(
-    new ethereum.EventParam(\"a\", ethereum.Value.fromFixedBytes(a))
+    new ethereum.EventParam("a", ethereum.Value.fromFixedBytes(a))
   )
 
   return exampleEvent1Event
 }
-`)
-  })
-})
+`);
+  });
+});

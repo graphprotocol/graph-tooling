@@ -1,96 +1,96 @@
-import chokidar from 'chokidar'
-import path from 'path'
+import path from 'path';
+import chokidar from 'chokidar';
 
 export default class Watcher {
-  private onReady: () => void
-  private onTrigger: (arg: any) => void
-  private onCollectFiles: () => Promise<string[]>
-  private onError: (error: Error) => void
-  private watcher: chokidar.FSWatcher | undefined
+  private onReady: () => void;
+  private onTrigger: (arg: any) => void;
+  private onCollectFiles: () => Promise<string[]>;
+  private onError: (error: Error) => void;
+  private watcher: chokidar.FSWatcher | undefined;
 
   constructor(options: {
-    onReady: () => void
-    onTrigger: (arg: any) => void
-    onCollectFiles: () => Promise<string[]>
-    onError: (error: Error) => void
+    onReady: () => void;
+    onTrigger: (arg: any) => void;
+    onCollectFiles: () => Promise<string[]>;
+    onError: (error: Error) => void;
   }) {
-    const { onReady, onTrigger, onCollectFiles, onError } = options
-    this.onReady = onReady
-    this.onTrigger = onTrigger
-    this.onCollectFiles = onCollectFiles
-    this.onError = onError
+    const { onReady, onTrigger, onCollectFiles, onError } = options;
+    this.onReady = onReady;
+    this.onTrigger = onTrigger;
+    this.onCollectFiles = onCollectFiles;
+    this.onError = onError;
   }
 
   async watch() {
     // Collect files to watch
-    let files = await this.onCollectFiles()
+    const files = await this.onCollectFiles();
 
     // Initialize watcher
     this.watcher = chokidar.watch(files, {
       persistent: true,
       ignoreInitial: true,
       atomic: 500,
-    })
+    });
 
     // Bind variables locally
-    let watcher = this.watcher
-    let onTrigger = this.onTrigger
-    let onCollectFiles = this.onCollectFiles
-    let onError = this.onError
-    let onReady = this.onReady
+    const watcher = this.watcher;
+    const onTrigger = this.onTrigger;
+    const onCollectFiles = this.onCollectFiles;
+    const onError = this.onError;
+    const onReady = this.onReady;
 
     watcher.on('ready', async () => {
       // Notify listeners that we're watching
-      onReady()
+      onReady();
 
       // Trigger once when ready
-      await onTrigger(undefined)
-    })
+      await onTrigger(undefined);
+    });
 
     watcher.on('error', (error: any) => {
-      onError(error)
-    })
+      onError(error);
+    });
 
     watcher.on('all', async (_: any, file: any) => {
       try {
         // Collect watch all new files to watch
-        let newFiles = await onCollectFiles()
+        const newFiles = await onCollectFiles();
 
         // Collect watched files, if there are any
-        let watchedFiles = []
+        let watchedFiles = [];
 
-        let watched = watcher.getWatched()
+        const watched = watcher.getWatched();
         watchedFiles = Object.keys(watched).reduce(
           (files: string[], dirname: string) =>
             watched[dirname].reduce((files: string[], filename: string) => {
-              files.push(path.resolve(path.join(dirname, filename)))
-              return files
+              files.push(path.resolve(path.join(dirname, filename)));
+              return files;
             }, files),
           [],
-        )
+        );
 
-        let diff = (xs: any[], ys: any[]) => ({
-          added: ys.filter((y: any) => xs.indexOf(y) < 0),
-          removed: xs.filter((x: any) => ys.indexOf(x) < 0),
-        })
+        const diff = (xs: any[], ys: any[]) => ({
+          added: ys.filter((y: any) => !xs.includes(y)),
+          removed: xs.filter((x: any) => !ys.includes(x)),
+        });
 
         // Diff previously watched files and new files; then remove and
         // add files from/to the watcher accordingly
-        let filesDiff = diff(watchedFiles, newFiles)
-        watcher.unwatch(filesDiff.removed)
-        watcher.add(filesDiff.added)
+        const filesDiff = diff(watchedFiles, newFiles);
+        watcher.unwatch(filesDiff.removed);
+        watcher.add(filesDiff.added);
 
         // Run the trigger callback
-        await onTrigger(file)
+        await onTrigger(file);
       } catch (e) {
-        onError(e)
+        onError(e);
       }
-    })
+    });
   }
 
   close() {
     if (this.watcher !== undefined) {
-      this.watcher.close()
+      this.watcher.close();
     }
   }
 }

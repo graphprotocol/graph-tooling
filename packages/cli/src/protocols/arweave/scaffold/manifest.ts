@@ -1,5 +1,5 @@
 export const source = ({ contract }: { contract: string }) => `
-      owner: '${contract}'`
+      owner: '${contract}'`;
 
 export const mapping = () => `
       apiVersion: 0.0.5
@@ -11,4 +11,4 @@ export const mapping = () => `
         - handler: handleBlock
       transactionHandlers:
         - handler: handleTx
-      file: ./src/mapping.ts`
+      file: ./src/mapping.ts`;
