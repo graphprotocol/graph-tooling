@@ -99,8 +99,8 @@ async function testFile(sourceFile, outputWasmPath) {
   const module = await WebAssembly.instantiate(wasmCode, {
     env: {
       memory,
-      abort: function (messagePtr, fileNamePtr, lineNumber, columnNumber) {
-        let fileSource = path.join(__dirname, '..', sourceFile);
+      abort (messagePtr, fileNamePtr, lineNumber, columnNumber) {
+        const fileSource = path.join(__dirname, '..', sourceFile);
         let message = 'assertion failure';
         if (messagePtr !== 0) {
           message += `: ${getString(memory, messagePtr)}`;
@@ -110,7 +110,7 @@ async function testFile(sourceFile, outputWasmPath) {
       },
     },
     conversion: {
-      'typeConversion.bytesToHex': function () {},
+      'typeConversion.bytesToHex' () {},
     },
   });
 
@@ -127,9 +127,9 @@ async function testFile(sourceFile, outputWasmPath) {
 }
 
 function getString(memory, addr) {
-  let byteCount = Buffer.from(new Uint8Array(memory.buffer, addr - 4, 4)).readInt32LE();
-  let buffer = new Uint8Array(memory.buffer, addr, byteCount);
-  let encoder = new StringDecoder('utf16le');
+  const byteCount = Buffer.from(new Uint8Array(memory.buffer, addr - 4, 4)).readInt32LE();
+  const buffer = new Uint8Array(memory.buffer, addr, byteCount);
+  const encoder = new StringDecoder('utf16le');
 
   return encoder.write(buffer);
 }

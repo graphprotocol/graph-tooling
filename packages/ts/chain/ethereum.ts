@@ -72,16 +72,16 @@ export namespace ethereum {
         this.kind == ValueKind.INT || this.kind == ValueKind.UINT,
         'Ethereum value is not an int or uint.',
       );
-      let bigInt = changetype<BigInt>(this.data as u32);
+      const bigInt = changetype<bigint>(this.data as u32);
       return bigInt.toI32();
     }
 
-    toBigInt(): BigInt {
+    toBigInt(): bigint {
       assert(
         this.kind == ValueKind.INT || this.kind == ValueKind.UINT,
         'Ethereum value is not an int or uint.',
       );
-      return changetype<BigInt>(this.data as u32);
+      return changetype<bigint>(this.data as u32);
     }
 
     toString(): string {
@@ -103,8 +103,8 @@ export namespace ethereum {
     }
 
     toMatrix(): Array<Array<Value>> {
-      let valueArray = this.toArray();
-      let out = new Array<Array<Value>>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<Array<Value>>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = valueArray[i].toArray();
       }
@@ -116,8 +116,8 @@ export namespace ethereum {
         this.kind == ValueKind.ARRAY || this.kind == ValueKind.FIXED_ARRAY,
         'Ethereum value is not an array.',
       );
-      let valueArray = this.toArray();
-      let out = new Array<T>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<T>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = changetype<T>(valueArray[i].toTuple());
       }
@@ -125,8 +125,8 @@ export namespace ethereum {
     }
 
     toTupleMatrix<T extends Tuple>(): Array<Array<T>> {
-      let valueMatrix = this.toMatrix();
-      let out = new Array<Array<T>>(valueMatrix.length);
+      const valueMatrix = this.toMatrix();
+      const out = new Array<Array<T>>(valueMatrix.length);
       for (let i: i32 = 0; i < valueMatrix.length; i++) {
         out[i] = new Array<T>(valueMatrix[i].length);
         for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -141,8 +141,8 @@ export namespace ethereum {
         this.kind == ValueKind.ARRAY || this.kind == ValueKind.FIXED_ARRAY,
         'Ethereum value is not an array or fixed array.',
       );
-      let valueArray = this.toArray();
-      let out = new Array<boolean>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<boolean>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = valueArray[i].toBoolean();
       }
@@ -154,8 +154,8 @@ export namespace ethereum {
         this.kind == ValueKind.ARRAY || this.kind == ValueKind.FIXED_ARRAY,
         'Ethereum value is not an array or fixed array.',
       );
-      let valueArray = this.toArray();
-      let out = new Array<Bytes>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<Bytes>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = valueArray[i].toBytes();
       }
@@ -167,8 +167,8 @@ export namespace ethereum {
         this.kind == ValueKind.ARRAY || this.kind == ValueKind.FIXED_ARRAY,
         'Ethereum value is not an array or fixed array.',
       );
-      let valueArray = this.toArray();
-      let out = new Array<Address>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<Address>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = valueArray[i].toAddress();
       }
@@ -180,8 +180,8 @@ export namespace ethereum {
         this.kind == ValueKind.ARRAY || this.kind == ValueKind.FIXED_ARRAY,
         'Ethereum value is not an array or fixed array.',
       );
-      let valueArray = this.toArray();
-      let out = new Array<string>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<string>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = valueArray[i].toString();
       }
@@ -193,21 +193,21 @@ export namespace ethereum {
         this.kind == ValueKind.ARRAY || this.kind == ValueKind.FIXED_ARRAY,
         'Ethereum value is not an array or fixed array.',
       );
-      let valueArray = this.toArray();
-      let out = new Array<i32>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<i32>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = valueArray[i].toI32();
       }
       return out;
     }
 
-    toBigIntArray(): Array<BigInt> {
+    toBigIntArray(): Array<bigint> {
       assert(
         this.kind == ValueKind.ARRAY || this.kind == ValueKind.FIXED_ARRAY,
         'Ethereum value is not an array or fixed array.',
       );
-      let valueArray = this.toArray();
-      let out = new Array<BigInt>(valueArray.length);
+      const valueArray = this.toArray();
+      const out = new Array<bigint>(valueArray.length);
       for (let i: i32 = 0; i < valueArray.length; i++) {
         out[i] = valueArray[i].toBigInt();
       }
@@ -215,8 +215,8 @@ export namespace ethereum {
     }
 
     toBooleanMatrix(): Array<Array<boolean>> {
-      let valueMatrix = this.toMatrix();
-      let out = new Array<Array<boolean>>(valueMatrix.length);
+      const valueMatrix = this.toMatrix();
+      const out = new Array<Array<boolean>>(valueMatrix.length);
       for (let i: i32 = 0; i < valueMatrix.length; i++) {
         out[i] = new Array<boolean>(valueMatrix[i].length);
         for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -227,8 +227,8 @@ export namespace ethereum {
     }
 
     toBytesMatrix(): Array<Array<Bytes>> {
-      let valueMatrix = this.toMatrix();
-      let out = new Array<Array<Bytes>>(valueMatrix.length);
+      const valueMatrix = this.toMatrix();
+      const out = new Array<Array<Bytes>>(valueMatrix.length);
       for (let i: i32 = 0; i < valueMatrix.length; i++) {
         out[i] = new Array<Bytes>(valueMatrix[i].length);
         for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -239,8 +239,8 @@ export namespace ethereum {
     }
 
     toAddressMatrix(): Array<Array<Address>> {
-      let valueMatrix = this.toMatrix();
-      let out = new Array<Array<Address>>(valueMatrix.length);
+      const valueMatrix = this.toMatrix();
+      const out = new Array<Array<Address>>(valueMatrix.length);
       for (let i: i32 = 0; i < valueMatrix.length; i++) {
         out[i] = new Array<Address>(valueMatrix[i].length);
         for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -251,8 +251,8 @@ export namespace ethereum {
     }
 
     toStringMatrix(): Array<Array<string>> {
-      let valueMatrix = this.toMatrix();
-      let out = new Array<Array<string>>(valueMatrix.length);
+      const valueMatrix = this.toMatrix();
+      const out = new Array<Array<string>>(valueMatrix.length);
       for (let i: i32 = 0; i < valueMatrix.length; i++) {
         out[i] = new Array<string>(valueMatrix[i].length);
         for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -263,8 +263,8 @@ export namespace ethereum {
     }
 
     toI32Matrix(): Array<Array<i32>> {
-      let valueMatrix = this.toMatrix();
-      let out = new Array<Array<i32>>(valueMatrix.length);
+      const valueMatrix = this.toMatrix();
+      const out = new Array<Array<i32>>(valueMatrix.length);
       for (let i: i32 = 0; i < valueMatrix.length; i++) {
         out[i] = new Array<i32>(valueMatrix[i].length);
         for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -274,11 +274,11 @@ export namespace ethereum {
       return out;
     }
 
-    toBigIntMatrix(): Array<Array<BigInt>> {
-      let valueMatrix = this.toMatrix();
-      let out = new Array<Array<BigInt>>(valueMatrix.length);
+    toBigIntMatrix(): Array<Array<bigint>> {
+      const valueMatrix = this.toMatrix();
+      const out = new Array<Array<bigint>>(valueMatrix.length);
       for (let i: i32 = 0; i < valueMatrix.length; i++) {
-        out[i] = new Array<BigInt>(valueMatrix[i].length);
+        out[i] = new Array<bigint>(valueMatrix[i].length);
         for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
           out[i][j] = valueMatrix[i][j].toBigInt();
         }
@@ -307,11 +307,11 @@ export namespace ethereum {
       return new Value(ValueKind.INT, changetype<u32>(BigInt.fromI32(i)));
     }
 
-    static fromSignedBigInt(i: BigInt): Value {
+    static fromSignedBigInt(i: bigint): Value {
       return new Value(ValueKind.INT, changetype<u32>(i));
     }
 
-    static fromUnsignedBigInt(i: BigInt): Value {
+    static fromUnsignedBigInt(i: bigint): Value {
       return new Value(ValueKind.UINT, changetype<u32>(i));
     }
 
@@ -332,7 +332,7 @@ export namespace ethereum {
     }
 
     static fromMatrix(values: Array<Array<Value>>): Value {
-      let innerOut = new Array<Value>(values.length);
+      const innerOut = new Array<Value>(values.length);
       for (let i: i32 = 0; i < innerOut.length; i++) {
         innerOut[i] = Value.fromArray(values[i]);
       }
@@ -340,7 +340,7 @@ export namespace ethereum {
     }
 
     static fromTupleArray(values: Array<Tuple>): Value {
-      let out = new Array<Value>(values.length);
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromTuple(values[i]);
       }
@@ -348,7 +348,7 @@ export namespace ethereum {
     }
 
     static fromTupleMatrix(values: Array<Array<Tuple>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -359,7 +359,7 @@ export namespace ethereum {
     }
 
     static fromBooleanArray(values: Array<boolean>): Value {
-      let out = new Array<Value>(values.length);
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromBoolean(values[i]);
       }
@@ -367,7 +367,7 @@ export namespace ethereum {
     }
 
     static fromBytesArray(values: Array<Bytes>): Value {
-      let out = new Array<Value>(values.length);
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromBytes(values[i]);
       }
@@ -375,7 +375,7 @@ export namespace ethereum {
     }
 
     static fromFixedBytesArray(values: Array<Bytes>): Value {
-      let out = new Array<Value>(values.length);
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromFixedBytes(values[i]);
       }
@@ -383,7 +383,7 @@ export namespace ethereum {
     }
 
     static fromAddressArray(values: Array<Address>): Value {
-      let out = new Array<Value>(values.length);
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromAddress(values[i]);
       }
@@ -391,7 +391,7 @@ export namespace ethereum {
     }
 
     static fromStringArray(values: Array<string>): Value {
-      let out = new Array<Value>(values.length);
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromString(values[i]);
       }
@@ -399,23 +399,23 @@ export namespace ethereum {
     }
 
     static fromI32Array(values: Array<i32>): Value {
-      let out = new Array<Value>(values.length);
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromI32(values[i]);
       }
       return Value.fromArray(out);
     }
 
-    static fromSignedBigIntArray(values: Array<BigInt>): Value {
-      let out = new Array<Value>(values.length);
+    static fromSignedBigIntArray(values: Array<bigint>): Value {
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromSignedBigInt(values[i]);
       }
       return Value.fromArray(out);
     }
 
-    static fromUnsignedBigIntArray(values: Array<BigInt>): Value {
-      let out = new Array<Value>(values.length);
+    static fromUnsignedBigIntArray(values: Array<bigint>): Value {
+      const out = new Array<Value>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = Value.fromUnsignedBigInt(values[i]);
       }
@@ -423,7 +423,7 @@ export namespace ethereum {
     }
 
     static fromBooleanMatrix(values: Array<Array<boolean>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -434,7 +434,7 @@ export namespace ethereum {
     }
 
     static fromBytesMatrix(values: Array<Array<Bytes>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -445,7 +445,7 @@ export namespace ethereum {
     }
 
     static fromFixedBytesMatrix(values: Array<Array<Bytes>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -456,7 +456,7 @@ export namespace ethereum {
     }
 
     static fromAddressMatrix(values: Array<Array<Address>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -467,7 +467,7 @@ export namespace ethereum {
     }
 
     static fromStringMatrix(values: Array<Array<string>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -478,7 +478,7 @@ export namespace ethereum {
     }
 
     static fromI32Matrix(values: Array<Array<i32>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -488,8 +488,8 @@ export namespace ethereum {
       return Value.fromMatrix(out);
     }
 
-    static fromSignedBigIntMatrix(values: Array<Array<BigInt>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+    static fromSignedBigIntMatrix(values: Array<Array<bigint>>): Value {
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -499,8 +499,8 @@ export namespace ethereum {
       return Value.fromMatrix(out);
     }
 
-    static fromUnsignedBigIntMatrix(values: Array<Array<BigInt>>): Value {
-      let out = new Array<Array<Value>>(values.length);
+    static fromUnsignedBigIntMatrix(values: Array<Array<bigint>>): Value {
+      const out = new Array<Array<Value>>(values.length);
       for (let i: i32 = 0; i < values.length; i++) {
         out[i] = new Array<Value>(values[i].length);
         for (let j: i32 = 0; j < values[i].length; j++) {
@@ -532,14 +532,14 @@ export namespace ethereum {
       public stateRoot: Bytes,
       public transactionsRoot: Bytes,
       public receiptsRoot: Bytes,
-      public number: BigInt,
-      public gasUsed: BigInt,
-      public gasLimit: BigInt,
-      public timestamp: BigInt,
-      public difficulty: BigInt,
-      public totalDifficulty: BigInt,
-      public size: BigInt | null,
-      public baseFeePerGas: BigInt | null,
+      public number: bigint,
+      public gasUsed: bigint,
+      public gasLimit: bigint,
+      public timestamp: bigint,
+      public difficulty: bigint,
+      public totalDifficulty: bigint,
+      public size: bigint | null,
+      public baseFeePerGas: bigint | null,
     ) {}
   }
 
@@ -549,14 +549,14 @@ export namespace ethereum {
   export class Transaction {
     constructor(
       public hash: Bytes,
-      public index: BigInt,
+      public index: bigint,
       public from: Address,
       public to: Address | null,
-      public value: BigInt,
-      public gasLimit: BigInt,
-      public gasPrice: BigInt,
+      public value: bigint,
+      public gasLimit: bigint,
+      public gasPrice: bigint,
       public input: Bytes,
-      public nonce: BigInt,
+      public nonce: bigint,
     ) {}
   }
 
@@ -566,14 +566,14 @@ export namespace ethereum {
   export class TransactionReceipt {
     constructor(
       public transactionHash: Bytes,
-      public transactionIndex: BigInt,
+      public transactionIndex: bigint,
       public blockHash: Bytes,
-      public blockNumber: BigInt,
-      public cumulativeGasUsed: BigInt,
-      public gasUsed: BigInt,
+      public blockNumber: bigint,
+      public cumulativeGasUsed: bigint,
+      public gasUsed: bigint,
       public contractAddress: Address,
       public logs: Array<Log>,
-      public status: BigInt,
+      public status: bigint,
       public root: Bytes,
       public logsBloom: Bytes,
     ) {}
@@ -590,9 +590,9 @@ export namespace ethereum {
       public blockHash: Bytes,
       public blockNumber: Bytes,
       public transactionHash: Bytes,
-      public transactionIndex: BigInt,
-      public logIndex: BigInt,
-      public transactionLogIndex: BigInt,
+      public transactionIndex: bigint,
+      public logIndex: bigint,
+      public transactionLogIndex: bigint,
       public logType: string,
       public removed: Wrapped<bool> | null,
     ) {}
@@ -618,8 +618,8 @@ export namespace ethereum {
   export class Event {
     constructor(
       public address: Address,
-      public logIndex: BigInt,
-      public transactionLogIndex: BigInt,
+      public logIndex: bigint,
+      public transactionLogIndex: bigint,
       public logType: string | null,
       public block: Block,
       public transaction: Transaction,
@@ -670,8 +670,8 @@ export namespace ethereum {
     }
 
     call(name: string, signature: string, params: Array<Value>): Array<Value> {
-      let call = new SmartContractCall(this._name, this._address, name, signature, params);
-      let result = ethereum.call(call);
+      const call = new SmartContractCall(this._name, this._address, name, signature, params);
+      const result = ethereum.call(call);
       assert(
         result != null,
         'Call reverted, probably because an `assert` or `require` in the contract failed, ' +
@@ -683,13 +683,13 @@ export namespace ethereum {
     }
 
     tryCall(name: string, signature: string, params: Array<Value>): CallResult<Array<Value>> {
-      let call = new SmartContractCall(this._name, this._address, name, signature, params);
-      let result = ethereum.call(call);
+      const call = new SmartContractCall(this._name, this._address, name, signature, params);
+      const result = ethereum.call(call);
       if (result == null) {
         return new CallResult();
-      } else {
+      } 
         return CallResult.fromValue(changetype<Array<Value>>(result));
-      }
+      
     }
   }
 
@@ -702,7 +702,7 @@ export namespace ethereum {
     }
 
     static fromValue<T>(value: T): CallResult<T> {
-      let result = new CallResult<T>();
+      const result = new CallResult<T>();
       result._value = new Wrapped(value);
       return result;
     }

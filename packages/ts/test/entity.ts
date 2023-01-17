@@ -1,8 +1,7 @@
-import { BigDecimal, BigInt } from 'temp_lib/index';
-import { Entity, Bytes } from 'temp_lib/index';
+import { BigDecimal, BigInt , Bytes,Entity } from 'temp_lib/index';
 
 export function testEntity(): void {
-  let entity = new Entity();
+  const entity = new Entity();
 
   entity.setBytes('x', new Bytes(1));
   assert(entity.getBytes('x') == new Bytes(1));

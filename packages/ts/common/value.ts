@@ -1,6 +1,6 @@
-import { Address, BigInt, BigDecimal } from './numbers';
 import { Bytes, TypedMap } from './collections';
 import { json } from './json';
+import { Address, BigDecimal,BigInt } from './numbers';
 
 /**
  * Enum for supported value types.
@@ -71,9 +71,9 @@ export class Value {
     return changetype<string>(this.data as u32);
   }
 
-  toBigInt(): BigInt {
+  toBigInt(): bigint {
     assert(this.kind == ValueKind.BIGINT, 'Value is not a BigInt.');
-    return changetype<BigInt>(this.data as u32);
+    return changetype<bigint>(this.data as u32);
   }
 
   toBigDecimal(): BigDecimal {
@@ -87,8 +87,8 @@ export class Value {
   }
 
   toMatrix(): Array<Array<Value>> {
-    let valueArray = this.toArray();
-    let out = new Array<Array<Value>>(valueArray.length);
+    const valueArray = this.toArray();
+    const out = new Array<Array<Value>>(valueArray.length);
     for (let i: i32 = 0; i < valueArray.length; i++) {
       out[i] = valueArray[i].toArray();
     }
@@ -96,8 +96,8 @@ export class Value {
   }
 
   toBooleanArray(): Array<boolean> {
-    let values = this.toArray();
-    let output = new Array<boolean>(values.length);
+    const values = this.toArray();
+    const output = new Array<boolean>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toBoolean();
     }
@@ -105,8 +105,8 @@ export class Value {
   }
 
   toBytesArray(): Array<Bytes> {
-    let values = this.toArray();
-    let output = new Array<Bytes>(values.length);
+    const values = this.toArray();
+    const output = new Array<Bytes>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toBytes();
     }
@@ -114,8 +114,8 @@ export class Value {
   }
 
   toStringArray(): Array<string> {
-    let values = this.toArray();
-    let output = new Array<string>(values.length);
+    const values = this.toArray();
+    const output = new Array<string>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toString();
     }
@@ -123,17 +123,17 @@ export class Value {
   }
 
   toI32Array(): Array<i32> {
-    let values = this.toArray();
-    let output = new Array<i32>(values.length);
+    const values = this.toArray();
+    const output = new Array<i32>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toI32();
     }
     return output;
   }
 
-  toBigIntArray(): Array<BigInt> {
-    let values = this.toArray();
-    let output = new Array<BigInt>(values.length);
+  toBigIntArray(): Array<bigint> {
+    const values = this.toArray();
+    const output = new Array<bigint>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toBigInt();
     }
@@ -141,8 +141,8 @@ export class Value {
   }
 
   toBigDecimalArray(): Array<BigDecimal> {
-    let values = this.toArray();
-    let output = new Array<BigDecimal>(values.length);
+    const values = this.toArray();
+    const output = new Array<BigDecimal>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toBigDecimal();
     }
@@ -150,8 +150,8 @@ export class Value {
   }
 
   toBooleanMatrix(): Array<Array<boolean>> {
-    let valueMatrix = this.toMatrix();
-    let out = new Array<Array<boolean>>(valueMatrix.length);
+    const valueMatrix = this.toMatrix();
+    const out = new Array<Array<boolean>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
       out[i] = new Array<boolean>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -162,8 +162,8 @@ export class Value {
   }
 
   toBytesMatrix(): Array<Array<Bytes>> {
-    let valueMatrix = this.toMatrix();
-    let out = new Array<Array<Bytes>>(valueMatrix.length);
+    const valueMatrix = this.toMatrix();
+    const out = new Array<Array<Bytes>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
       out[i] = new Array<Bytes>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -174,8 +174,8 @@ export class Value {
   }
 
   toAddressMatrix(): Array<Array<Address>> {
-    let valueMatrix = this.toMatrix();
-    let out = new Array<Array<Address>>(valueMatrix.length);
+    const valueMatrix = this.toMatrix();
+    const out = new Array<Array<Address>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
       out[i] = new Array<Address>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -186,8 +186,8 @@ export class Value {
   }
 
   toStringMatrix(): Array<Array<string>> {
-    let valueMatrix = this.toMatrix();
-    let out = new Array<Array<string>>(valueMatrix.length);
+    const valueMatrix = this.toMatrix();
+    const out = new Array<Array<string>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
       out[i] = new Array<string>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -198,8 +198,8 @@ export class Value {
   }
 
   toI32Matrix(): Array<Array<i32>> {
-    let valueMatrix = this.toMatrix();
-    let out = new Array<Array<i32>>(valueMatrix.length);
+    const valueMatrix = this.toMatrix();
+    const out = new Array<Array<i32>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
       out[i] = new Array<i32>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
@@ -209,11 +209,11 @@ export class Value {
     return out;
   }
 
-  toBigIntMatrix(): Array<Array<BigInt>> {
-    let valueMatrix = this.toMatrix();
-    let out = new Array<Array<BigInt>>(valueMatrix.length);
+  toBigIntMatrix(): Array<Array<bigint>> {
+    const valueMatrix = this.toMatrix();
+    const out = new Array<Array<bigint>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<BigInt>(valueMatrix[i].length);
+      out[i] = new Array<bigint>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
         out[i][j] = valueMatrix[i][j].toBigInt();
       }
@@ -226,9 +226,9 @@ export class Value {
   displayKind(): string {
     if (this.kind >= VALUE_KIND_NAMES.length) {
       return `Unknown (${this.kind})`;
-    } else {
+    } 
       return VALUE_KIND_NAMES[this.kind];
-    }
+    
   }
 
   /** Return a string representation of the value of `this` for logging and
@@ -244,7 +244,7 @@ export class Value {
       case ValueKind.BOOL:
         return this.toBoolean().toString();
       case ValueKind.ARRAY:
-        let arr = this.toArray();
+        const arr = this.toArray();
         return '[' + arr.map<string>(elt => elt.displayData()).join(', ') + ']';
       case ValueKind.NULL:
         return 'null';
@@ -258,7 +258,7 @@ export class Value {
   }
 
   static fromBooleanArray(input: Array<boolean>): Value {
-    let output = new Array<Value>(input.length);
+    const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromBoolean(input[i]);
     }
@@ -266,7 +266,7 @@ export class Value {
   }
 
   static fromBytesArray(input: Array<Bytes>): Value {
-    let output = new Array<Value>(input.length);
+    const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromBytes(input[i]);
     }
@@ -274,15 +274,15 @@ export class Value {
   }
 
   static fromI32Array(input: Array<i32>): Value {
-    let output = new Array<Value>(input.length);
+    const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromI32(input[i]);
     }
     return Value.fromArray(output);
   }
 
-  static fromBigIntArray(input: Array<BigInt>): Value {
-    let output = new Array<Value>(input.length);
+  static fromBigIntArray(input: Array<bigint>): Value {
+    const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromBigInt(input[i]);
     }
@@ -290,7 +290,7 @@ export class Value {
   }
 
   static fromBigDecimalArray(input: Array<BigDecimal>): Value {
-    let output = new Array<Value>(input.length);
+    const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromBigDecimal(input[i]);
     }
@@ -298,7 +298,7 @@ export class Value {
   }
 
   static fromStringArray(input: Array<string>): Value {
-    let output = new Array<Value>(input.length);
+    const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromString(input[i]);
     }
@@ -306,7 +306,7 @@ export class Value {
   }
 
   static fromAddressArray(input: Array<Address>): Value {
-    let output = new Array<Value>(input.length);
+    const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromAddress(input[i]);
     }
@@ -317,7 +317,7 @@ export class Value {
     return new Value(ValueKind.ARRAY, changetype<u32>(input));
   }
 
-  static fromBigInt(n: BigInt): Value {
+  static fromBigInt(n: bigint): Value {
     return new Value(ValueKind.BIGINT, changetype<u32>(n));
   }
 
@@ -350,7 +350,7 @@ export class Value {
   }
 
   static fromMatrix(values: Array<Array<Value>>): Value {
-    let innerOut = new Array<Value>(values.length);
+    const innerOut = new Array<Value>(values.length);
     for (let i: i32 = 0; i < innerOut.length; i++) {
       innerOut[i] = Value.fromArray(values[i]);
     }
@@ -358,7 +358,7 @@ export class Value {
   }
 
   static fromBooleanMatrix(values: Array<Array<boolean>>): Value {
-    let out = new Array<Array<Value>>(values.length);
+    const out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
@@ -369,7 +369,7 @@ export class Value {
   }
 
   static fromBytesMatrix(values: Array<Array<Bytes>>): Value {
-    let out = new Array<Array<Value>>(values.length);
+    const out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
@@ -380,7 +380,7 @@ export class Value {
   }
 
   static fromAddressMatrix(values: Array<Array<Address>>): Value {
-    let out = new Array<Array<Value>>(values.length);
+    const out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
@@ -391,7 +391,7 @@ export class Value {
   }
 
   static fromStringMatrix(values: Array<Array<string>>): Value {
-    let out = new Array<Array<Value>>(values.length);
+    const out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
@@ -402,7 +402,7 @@ export class Value {
   }
 
   static fromI32Matrix(values: Array<Array<i32>>): Value {
-    let out = new Array<Array<Value>>(values.length);
+    const out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
@@ -412,8 +412,8 @@ export class Value {
     return Value.fromMatrix(out);
   }
 
-  static fromBigIntMatrix(values: Array<Array<BigInt>>): Value {
-    let out = new Array<Array<Value>>(values.length);
+  static fromBigIntMatrix(values: Array<Array<bigint>>): Value {
+    const out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
@@ -456,25 +456,25 @@ export class JSONValue {
 
   toI64(): i64 {
     assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
-    let decimalString = changetype<string>(this.data as u32);
+    const decimalString = changetype<string>(this.data as u32);
     return json.toI64(decimalString);
   }
 
   toU64(): u64 {
     assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
-    let decimalString = changetype<string>(this.data as u32);
+    const decimalString = changetype<string>(this.data as u32);
     return json.toU64(decimalString);
   }
 
   toF64(): f64 {
     assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
-    let decimalString = changetype<string>(this.data as u32);
+    const decimalString = changetype<string>(this.data as u32);
     return json.toF64(decimalString);
   }
 
-  toBigInt(): BigInt {
+  toBigInt(): bigint {
     assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
-    let decimalString = changetype<string>(this.data as u32);
+    const decimalString = changetype<string>(this.data as u32);
     return json.toBigInt(decimalString);
   }
 

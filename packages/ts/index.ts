@@ -1,5 +1,7 @@
 // Side-effect to evaluate eagerly the offset of stub AS runtime
 import './common/eager_offset';
+import { ByteArray, Bytes, Entity } from './common/collections';
+import { Value } from './common/value';
 // Arweave support
 export * from './chain/arweave';
 // Ethereum support
@@ -9,15 +11,12 @@ export * from './chain/near';
 // Cosmos support
 export * from './chain/cosmos';
 // Regular re-exports
-export * from './common/numbers';
 export * from './common/collections';
-export * from './common/value';
 export * from './common/conversion';
-export * from './common/json';
 export * from './common/datasource';
-
-import { Bytes, ByteArray, Entity } from './common/collections';
-import { Value } from './common/value';
+export * from './common/json';
+export * from './common/numbers';
+export * from './common/value';
 
 /**
  * Host store interface.
