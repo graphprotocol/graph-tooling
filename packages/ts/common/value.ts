@@ -243,6 +243,8 @@ export class Value {
       case ValueKind.BOOL:
         return this.toBoolean().toString();
       case ValueKind.ARRAY:
+        // TODO: we need to clean it up. Not sure how `this` works in AssemblyScript so leaving as it is for now
+        // eslint-disable-next-line no-case-declarations
         const arr = this.toArray();
         return '[' + arr.map<string>(elt => elt.displayData()).join(', ') + ']';
       case ValueKind.NULL:
