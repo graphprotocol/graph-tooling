@@ -42,14 +42,14 @@ importers:
       truffle: 5.0.12
       truffle-hdwallet-provider: 1.0.6
     devDependencies:
-      '@graphprotocol/graph-ts': 0.29.1
+      '@graphprotocol/graph-ts': link:../../packages/ts
       apollo-fetch: 0.7.0
 
   examples/example-subgraph:
     specifiers:
       '@graphprotocol/graph-ts': 0.29.1
     devDependencies:
-      '@graphprotocol/graph-ts': 0.29.1
+      '@graphprotocol/graph-ts': link:../../packages/ts
 
   packages/cli:
     specifiers:
@@ -133,6 +133,15 @@ importers:
       strip-ansi: 6.0.0
       tern: 0.24.3
       typescript: 4.9.4
+
+  packages/ts:
+    specifiers:
+      assemblyscript: 0.19.10
+      prettier: ^2.4.1
+    dependencies:
+      assemblyscript: 0.19.10
+    devDependencies:
+      prettier: 2.8.2
 
 packages:
 
@@ -1747,12 +1756,6 @@ packages:
       js-yaml: 4.1.0
     dev: false
 
-  /@graphprotocol/graph-ts/0.29.1:
-    resolution: {integrity: sha512-GhAP2ijk3cTM0xBjoAFxEmdZbYl1BueCYqAGw5G7UyBX3EV8FWkvD5DMam6IkLGqXasBmelCFrROK3B5t6zVdg==}
-    dependencies:
-      assemblyscript: 0.19.10
-    dev: true
-
   /@humanwhocodes/config-array/0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}
     engines: {node: '>=10.10.0'}
@@ -2850,7 +2853,7 @@ packages:
     dependencies:
       binaryen: 101.0.0-nightly.20210723
       long: 4.0.0
-    dev: true
+    dev: false
 
   /assemblyscript/0.19.23:
     resolution: {integrity: sha512-fwOQNZVTMga5KRsfY80g7cpOl4PsFQczMwHzdtgoqLXaYhkhavufKb0sB0l3T1DUxpAufA0KNhlbpuuhZUwxMA==}
@@ -3274,7 +3277,7 @@ packages:
   /binaryen/101.0.0-nightly.20210723:
     resolution: {integrity: sha512-eioJNqhHlkguVSbblHOtLqlhtC882SOEPKmNFZaDuz1hzQjolxZ+eu3/kaS10n3sGPONsIZsO7R9fR00UyhEUA==}
     hasBin: true
-    dev: true
+    dev: false
 
   /binaryen/102.0.0-nightly.20211028:
     resolution: {integrity: sha512-GCJBVB5exbxzzvyt8MGDv/MeUjs6gkXDvf4xOIItRBptYl0Tz5sm1o/uG95YK0L0VeG5ajDu3hRtkBP2kzqC5w==}
@@ -3906,7 +3909,7 @@ packages:
       import-fresh: 3.3.0
       parse-json: 5.2.0
       path-type: 4.0.0
-      yaml: 1.9.2
+      yaml: 1.10.2
     dev: false
 
   /cosmiconfig/7.1.0:
@@ -7562,7 +7565,7 @@ packages:
 
   /long/4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
-    dev: true
+    dev: false
 
   /long/5.2.1:
     resolution: {integrity: sha512-GKSNGeNAtw8IryjjkhZxuKB3JzlcLTwjtiQCHKvqQet81I93kXslhDQruGI/QsddO83mcDToBVy7GqGS/zYf/A==}
@@ -11103,7 +11106,6 @@ packages:
   /yaml/1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
-    dev: true
 
   /yaml/1.9.2:
     resolution: {integrity: sha512-HPT7cGGI0DuRcsO51qC1j9O16Dh1mZ2bnXwsi0jrSpsLz0WxOLSLXfkABVl6bZO629py3CU+OMJtpNHDLB97kg==}
