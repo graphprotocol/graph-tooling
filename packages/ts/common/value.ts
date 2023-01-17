@@ -1,6 +1,6 @@
 import { Bytes, TypedMap } from './collections';
 import { json } from './json';
-import { Address, BigDecimal,BigInt } from './numbers';
+import { Address, BigDecimal, BigInt } from './numbers';
 
 /**
  * Enum for supported value types.
@@ -226,9 +226,8 @@ export class Value {
   displayKind(): string {
     if (this.kind >= VALUE_KIND_NAMES.length) {
       return `Unknown (${this.kind})`;
-    } 
-      return VALUE_KIND_NAMES[this.kind];
-    
+    }
+    return VALUE_KIND_NAMES[this.kind];
   }
 
   /** Return a string representation of the value of `this` for logging and

@@ -27,7 +27,7 @@ module.exports = {
         // TODO: warning for now, clean up
         '@typescript-eslint/no-loss-of-precision': 'warn',
         // AssemblyScript types are different from TS and in cases we want to use what TS may think we should not
-        "@typescript-eslint/ban-types":"off"
+        '@typescript-eslint/ban-types': 'off',
       },
     },
   ],
