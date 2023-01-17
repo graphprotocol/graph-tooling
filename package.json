@@ -20,6 +20,7 @@
     "lint:prettier": "prettier -c .",
     "release": "pnpm build && changeset publish",
     "test:cli": "pnpm --filter @graphprotocol/graph-cli test",
+    "test:ts": "pnpm --filter @graphprotocol/graph-ts test",
     "type-check": "pnpm --filter=@graphprotocol/graph-cli type-check"
   },
   "devDependencies": {
