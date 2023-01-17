@@ -7,6 +7,10 @@
     "graph": "dist/bin.js"
   },
   "main": "dist/cli.js",
+  "files": [
+    "CHANGELOG.md",
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -b tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
     "test": "jest --verbose",
