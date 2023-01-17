@@ -1,48 +1,48 @@
 // Side-effect to evaluate eagerly the offset of stub AS runtime
-import './common/eager_offset'
+import './common/eager_offset';
 // Arweave support
-export * from './chain/arweave'
+export * from './chain/arweave';
 // Ethereum support
-export * from './chain/ethereum'
+export * from './chain/ethereum';
 // NEAR support
-export * from './chain/near'
+export * from './chain/near';
 // Cosmos support
-export * from './chain/cosmos'
+export * from './chain/cosmos';
 // Regular re-exports
-export * from './common/numbers'
-export * from './common/collections'
-export * from './common/value'
-export * from './common/conversion'
-export * from './common/json'
-export * from './common/datasource'
+export * from './common/numbers';
+export * from './common/collections';
+export * from './common/value';
+export * from './common/conversion';
+export * from './common/json';
+export * from './common/datasource';
 
-import { Bytes, ByteArray, Entity } from './common/collections'
-import { Value } from './common/value'
+import { Bytes, ByteArray, Entity } from './common/collections';
+import { Value } from './common/value';
 
 /**
  * Host store interface.
  */
 export declare namespace store {
-  function get(entity: string, id: string): Entity | null
-  function set(entity: string, id: string, data: Entity): void
-  function remove(entity: string, id: string): void
+  function get(entity: string, id: string): Entity | null;
+  function set(entity: string, id: string, data: Entity): void;
+  function remove(entity: string, id: string): void;
 }
 
 /** Host IPFS interface */
 export declare namespace ipfs {
-  function cat(hash: string): Bytes | null
-  function map(hash: string, callback: string, userData: Value, flags: string[]): void
+  function cat(hash: string): Bytes | null;
+  function map(hash: string, callback: string, userData: Value, flags: string[]): void;
 }
 
 export namespace ipfs {
   export function mapJSON(hash: string, callback: string, userData: Value): void {
-    ipfs.map(hash, callback, userData, ['json'])
+    ipfs.map(hash, callback, userData, ['json']);
   }
 }
 
 /** Host crypto utilities interface */
 export declare namespace crypto {
-  function keccak256(input: ByteArray): ByteArray
+  function keccak256(input: ByteArray): ByteArray;
 }
 
 /**
@@ -51,12 +51,12 @@ export declare namespace crypto {
  * data loaded **
  */
 export declare namespace ens {
-  function nameByHash(hash: string): string | null
+  function nameByHash(hash: string): string | null;
 }
 
 function format(fmt: string, args: string[]): string {
-  let out = ''
-  let argIndex = 0
+  let out = '';
+  let argIndex = 0;
   for (let i: i32 = 0, len: i32 = fmt.length; i < len; i++) {
     if (
       i < len - 1 &&
@@ -64,22 +64,22 @@ function format(fmt: string, args: string[]): string {
       fmt.charCodeAt(i + 1) == 0x7d /* '}' */
     ) {
       if (argIndex >= args.length) {
-        throw new Error('Too few arguments for format string: ' + fmt)
+        throw new Error('Too few arguments for format string: ' + fmt);
       } else {
-        out += args[argIndex++]
-        i++
+        out += args[argIndex++];
+        i++;
       }
     } else {
-      out += fmt.charAt(i)
+      out += fmt.charAt(i);
     }
   }
-  return out
+  return out;
 }
 
 // Host interface for logging
 export declare namespace log {
   // Host export for logging, providing basic logging functionality
-  export function log(level: Level, msg: string): void
+  export function log(level: Level, msg: string): void;
 }
 
 export namespace log {
@@ -98,7 +98,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function critical(msg: string, args: Array<string>): void {
-    log.log(Level.CRITICAL, format(msg, args))
+    log.log(Level.CRITICAL, format(msg, args));
   }
 
   /**
@@ -108,7 +108,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function error(msg: string, args: Array<string>): void {
-    log.log(Level.ERROR, format(msg, args))
+    log.log(Level.ERROR, format(msg, args));
   }
 
   /** Logs a warning message.
@@ -117,7 +117,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function warning(msg: string, args: Array<string>): void {
-    log.log(Level.WARNING, format(msg, args))
+    log.log(Level.WARNING, format(msg, args));
   }
 
   /** Logs an info message.
@@ -126,7 +126,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function info(msg: string, args: Array<string>): void {
-    log.log(Level.INFO, format(msg, args))
+    log.log(Level.INFO, format(msg, args));
   }
 
   /** Logs a debug message.
@@ -135,6 +135,6 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function debug(msg: string, args: Array<string>): void {
-    log.log(Level.DEBUG, format(msg, args))
+    log.log(Level.DEBUG, format(msg, args));
   }
 }

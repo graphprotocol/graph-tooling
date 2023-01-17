@@ -1,5 +1,5 @@
-import '../common/eager_offset'
-import { Bytes } from '../common/collections'
+import '../common/eager_offset';
+import { Bytes } from '../common/collections';
 
 export namespace cosmos {
   export class Block {
@@ -199,15 +199,15 @@ export namespace cosmos {
     getAttribute(key: string): EventAttribute | null {
       for (let i = 0; i < this.attributes.length; i++) {
         if (this.attributes[i].key == key) {
-          return this.attributes[i]
+          return this.attributes[i];
         }
       }
-      return null
+      return null;
     }
 
     getAttributeValue(key: string): string {
-      const attribute = this.getAttribute(key)
-      return attribute ? attribute.value : ''
+      const attribute = this.getAttribute(key);
+      return attribute ? attribute.value : '';
     }
   }
 
@@ -271,11 +271,7 @@ export namespace cosmos {
   }
 
   export class Tx {
-    constructor(
-      public body: TxBody,
-      public authInfo: AuthInfo,
-      public signatures: Array<Bytes>,
-    ) {}
+    constructor(public body: TxBody, public authInfo: AuthInfo, public signatures: Array<Bytes>) {}
   }
 
   export class TxBody {
@@ -293,11 +289,7 @@ export namespace cosmos {
   }
 
   export class AuthInfo {
-    constructor(
-      public signerInfos: Array<SignerInfo>,
-      public fee: Fee,
-      public tip: Tip,
-    ) {}
+    constructor(public signerInfos: Array<SignerInfo>, public fee: Fee, public tip: Tip) {}
   }
 
   export class SignerInfo {

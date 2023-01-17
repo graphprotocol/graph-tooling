@@ -1,6 +1,6 @@
-import { Address, BigInt, BigDecimal } from './numbers'
-import { Bytes, TypedMap } from './collections'
-import { json } from './json'
+import { Address, BigInt, BigDecimal } from './numbers';
+import { Bytes, TypedMap } from './collections';
+import { json } from './json';
 
 /**
  * Enum for supported value types.
@@ -25,14 +25,14 @@ const VALUE_KIND_NAMES = [
   'null',
   'Bytes',
   'BigInt',
-]
+];
 
 /**
  * Pointer type for Value data.
  *
  * Big enough to fit any pointer or native `this.data`.
  */
-export type ValuePayload = u64
+export type ValuePayload = u64;
 
 /**
  * A dynamically typed value.
@@ -41,193 +41,193 @@ export class Value {
   constructor(public kind: ValueKind, public data: ValuePayload) {}
 
   toAddress(): Address {
-    assert(this.kind == ValueKind.BYTES, 'Value is not an address.')
-    return changetype<Address>(this.data as u32)
+    assert(this.kind == ValueKind.BYTES, 'Value is not an address.');
+    return changetype<Address>(this.data as u32);
   }
 
   toBoolean(): boolean {
     if (this.kind == ValueKind.NULL) {
-      return false
+      return false;
     }
-    assert(this.kind == ValueKind.BOOL, 'Value is not a boolean.')
-    return this.data != 0
+    assert(this.kind == ValueKind.BOOL, 'Value is not a boolean.');
+    return this.data != 0;
   }
 
   toBytes(): Bytes {
-    assert(this.kind == ValueKind.BYTES, 'Value is not a byte array.')
-    return changetype<Bytes>(this.data as u32)
+    assert(this.kind == ValueKind.BYTES, 'Value is not a byte array.');
+    return changetype<Bytes>(this.data as u32);
   }
 
   toI32(): i32 {
     if (this.kind == ValueKind.NULL) {
-      return 0
+      return 0;
     }
-    assert(this.kind == ValueKind.INT, 'Value is not an i32.')
-    return this.data as i32
+    assert(this.kind == ValueKind.INT, 'Value is not an i32.');
+    return this.data as i32;
   }
 
   toString(): string {
-    assert(this.kind == ValueKind.STRING, 'Value is not a string.')
-    return changetype<string>(this.data as u32)
+    assert(this.kind == ValueKind.STRING, 'Value is not a string.');
+    return changetype<string>(this.data as u32);
   }
 
   toBigInt(): BigInt {
-    assert(this.kind == ValueKind.BIGINT, 'Value is not a BigInt.')
-    return changetype<BigInt>(this.data as u32)
+    assert(this.kind == ValueKind.BIGINT, 'Value is not a BigInt.');
+    return changetype<BigInt>(this.data as u32);
   }
 
   toBigDecimal(): BigDecimal {
-    assert(this.kind == ValueKind.BIGDECIMAL, 'Value is not a BigDecimal.')
-    return changetype<BigDecimal>(this.data as u32)
+    assert(this.kind == ValueKind.BIGDECIMAL, 'Value is not a BigDecimal.');
+    return changetype<BigDecimal>(this.data as u32);
   }
 
   toArray(): Array<Value> {
-    assert(this.kind == ValueKind.ARRAY, 'Value is not an array.')
-    return changetype<Array<Value>>(this.data as u32)
+    assert(this.kind == ValueKind.ARRAY, 'Value is not an array.');
+    return changetype<Array<Value>>(this.data as u32);
   }
 
   toMatrix(): Array<Array<Value>> {
-    let valueArray = this.toArray()
-    let out = new Array<Array<Value>>(valueArray.length)
+    let valueArray = this.toArray();
+    let out = new Array<Array<Value>>(valueArray.length);
     for (let i: i32 = 0; i < valueArray.length; i++) {
-      out[i] = valueArray[i].toArray()
+      out[i] = valueArray[i].toArray();
     }
-    return out
+    return out;
   }
 
   toBooleanArray(): Array<boolean> {
-    let values = this.toArray()
-    let output = new Array<boolean>(values.length)
+    let values = this.toArray();
+    let output = new Array<boolean>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      output[i] = values[i].toBoolean()
+      output[i] = values[i].toBoolean();
     }
-    return output
+    return output;
   }
 
   toBytesArray(): Array<Bytes> {
-    let values = this.toArray()
-    let output = new Array<Bytes>(values.length)
+    let values = this.toArray();
+    let output = new Array<Bytes>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      output[i] = values[i].toBytes()
+      output[i] = values[i].toBytes();
     }
-    return output
+    return output;
   }
 
   toStringArray(): Array<string> {
-    let values = this.toArray()
-    let output = new Array<string>(values.length)
+    let values = this.toArray();
+    let output = new Array<string>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      output[i] = values[i].toString()
+      output[i] = values[i].toString();
     }
-    return output
+    return output;
   }
 
   toI32Array(): Array<i32> {
-    let values = this.toArray()
-    let output = new Array<i32>(values.length)
+    let values = this.toArray();
+    let output = new Array<i32>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      output[i] = values[i].toI32()
+      output[i] = values[i].toI32();
     }
-    return output
+    return output;
   }
 
   toBigIntArray(): Array<BigInt> {
-    let values = this.toArray()
-    let output = new Array<BigInt>(values.length)
+    let values = this.toArray();
+    let output = new Array<BigInt>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      output[i] = values[i].toBigInt()
+      output[i] = values[i].toBigInt();
     }
-    return output
+    return output;
   }
 
   toBigDecimalArray(): Array<BigDecimal> {
-    let values = this.toArray()
-    let output = new Array<BigDecimal>(values.length)
+    let values = this.toArray();
+    let output = new Array<BigDecimal>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      output[i] = values[i].toBigDecimal()
+      output[i] = values[i].toBigDecimal();
     }
-    return output
+    return output;
   }
 
   toBooleanMatrix(): Array<Array<boolean>> {
-    let valueMatrix = this.toMatrix()
-    let out = new Array<Array<boolean>>(valueMatrix.length)
+    let valueMatrix = this.toMatrix();
+    let out = new Array<Array<boolean>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<boolean>(valueMatrix[i].length)
+      out[i] = new Array<boolean>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
-        out[i][j] = valueMatrix[i][j].toBoolean()
+        out[i][j] = valueMatrix[i][j].toBoolean();
       }
     }
-    return out
+    return out;
   }
 
   toBytesMatrix(): Array<Array<Bytes>> {
-    let valueMatrix = this.toMatrix()
-    let out = new Array<Array<Bytes>>(valueMatrix.length)
+    let valueMatrix = this.toMatrix();
+    let out = new Array<Array<Bytes>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<Bytes>(valueMatrix[i].length)
+      out[i] = new Array<Bytes>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
-        out[i][j] = valueMatrix[i][j].toBytes()
+        out[i][j] = valueMatrix[i][j].toBytes();
       }
     }
-    return out
+    return out;
   }
 
   toAddressMatrix(): Array<Array<Address>> {
-    let valueMatrix = this.toMatrix()
-    let out = new Array<Array<Address>>(valueMatrix.length)
+    let valueMatrix = this.toMatrix();
+    let out = new Array<Array<Address>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<Address>(valueMatrix[i].length)
+      out[i] = new Array<Address>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
-        out[i][j] = valueMatrix[i][j].toAddress()
+        out[i][j] = valueMatrix[i][j].toAddress();
       }
     }
-    return out
+    return out;
   }
 
   toStringMatrix(): Array<Array<string>> {
-    let valueMatrix = this.toMatrix()
-    let out = new Array<Array<string>>(valueMatrix.length)
+    let valueMatrix = this.toMatrix();
+    let out = new Array<Array<string>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<string>(valueMatrix[i].length)
+      out[i] = new Array<string>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
-        out[i][j] = valueMatrix[i][j].toString()
+        out[i][j] = valueMatrix[i][j].toString();
       }
     }
-    return out
+    return out;
   }
 
   toI32Matrix(): Array<Array<i32>> {
-    let valueMatrix = this.toMatrix()
-    let out = new Array<Array<i32>>(valueMatrix.length)
+    let valueMatrix = this.toMatrix();
+    let out = new Array<Array<i32>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<i32>(valueMatrix[i].length)
+      out[i] = new Array<i32>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
-        out[i][j] = valueMatrix[i][j].toI32()
+        out[i][j] = valueMatrix[i][j].toI32();
       }
     }
-    return out
+    return out;
   }
 
   toBigIntMatrix(): Array<Array<BigInt>> {
-    let valueMatrix = this.toMatrix()
-    let out = new Array<Array<BigInt>>(valueMatrix.length)
+    let valueMatrix = this.toMatrix();
+    let out = new Array<Array<BigInt>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<BigInt>(valueMatrix[i].length)
+      out[i] = new Array<BigInt>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
-        out[i][j] = valueMatrix[i][j].toBigInt()
+        out[i][j] = valueMatrix[i][j].toBigInt();
       }
     }
-    return out
+    return out;
   }
 
   /** Return a string that indicates the kind of value `this` contains for
    * logging and error messages */
   displayKind(): string {
     if (this.kind >= VALUE_KIND_NAMES.length) {
-      return `Unknown (${this.kind})`
+      return `Unknown (${this.kind})`;
     } else {
-      return VALUE_KIND_NAMES[this.kind]
+      return VALUE_KIND_NAMES[this.kind];
     }
   }
 
@@ -236,191 +236,191 @@ export class Value {
   displayData(): string {
     switch (this.kind) {
       case ValueKind.STRING:
-        return this.toString()
+        return this.toString();
       case ValueKind.INT:
-        return this.toI32().toString()
+        return this.toI32().toString();
       case ValueKind.BIGDECIMAL:
-        return this.toBigDecimal().toString()
+        return this.toBigDecimal().toString();
       case ValueKind.BOOL:
-        return this.toBoolean().toString()
+        return this.toBoolean().toString();
       case ValueKind.ARRAY:
-        let arr = this.toArray()
-        return '[' + arr.map<string>((elt) => elt.displayData()).join(', ') + ']'
+        let arr = this.toArray();
+        return '[' + arr.map<string>(elt => elt.displayData()).join(', ') + ']';
       case ValueKind.NULL:
-        return 'null'
+        return 'null';
       case ValueKind.BYTES:
-        return this.toBytes().toHexString()
+        return this.toBytes().toHexString();
       case ValueKind.BIGINT:
-        return this.toBigInt().toString()
+        return this.toBigInt().toString();
       default:
-        return `Unknown data (kind = ${this.kind})`
+        return `Unknown data (kind = ${this.kind})`;
     }
   }
 
   static fromBooleanArray(input: Array<boolean>): Value {
-    let output = new Array<Value>(input.length)
+    let output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
-      output[i] = Value.fromBoolean(input[i])
+      output[i] = Value.fromBoolean(input[i]);
     }
-    return Value.fromArray(output)
+    return Value.fromArray(output);
   }
 
   static fromBytesArray(input: Array<Bytes>): Value {
-    let output = new Array<Value>(input.length)
+    let output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
-      output[i] = Value.fromBytes(input[i])
+      output[i] = Value.fromBytes(input[i]);
     }
-    return Value.fromArray(output)
+    return Value.fromArray(output);
   }
 
   static fromI32Array(input: Array<i32>): Value {
-    let output = new Array<Value>(input.length)
+    let output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
-      output[i] = Value.fromI32(input[i])
+      output[i] = Value.fromI32(input[i]);
     }
-    return Value.fromArray(output)
+    return Value.fromArray(output);
   }
 
   static fromBigIntArray(input: Array<BigInt>): Value {
-    let output = new Array<Value>(input.length)
+    let output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
-      output[i] = Value.fromBigInt(input[i])
+      output[i] = Value.fromBigInt(input[i]);
     }
-    return Value.fromArray(output)
+    return Value.fromArray(output);
   }
 
   static fromBigDecimalArray(input: Array<BigDecimal>): Value {
-    let output = new Array<Value>(input.length)
+    let output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
-      output[i] = Value.fromBigDecimal(input[i])
+      output[i] = Value.fromBigDecimal(input[i]);
     }
-    return Value.fromArray(output)
+    return Value.fromArray(output);
   }
 
   static fromStringArray(input: Array<string>): Value {
-    let output = new Array<Value>(input.length)
+    let output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
-      output[i] = Value.fromString(input[i])
+      output[i] = Value.fromString(input[i]);
     }
-    return Value.fromArray(output)
+    return Value.fromArray(output);
   }
 
   static fromAddressArray(input: Array<Address>): Value {
-    let output = new Array<Value>(input.length)
+    let output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
-      output[i] = Value.fromAddress(input[i])
+      output[i] = Value.fromAddress(input[i]);
     }
-    return Value.fromArray(output)
+    return Value.fromArray(output);
   }
 
   static fromArray(input: Array<Value>): Value {
-    return new Value(ValueKind.ARRAY, changetype<u32>(input))
+    return new Value(ValueKind.ARRAY, changetype<u32>(input));
   }
 
   static fromBigInt(n: BigInt): Value {
-    return new Value(ValueKind.BIGINT, changetype<u32>(n))
+    return new Value(ValueKind.BIGINT, changetype<u32>(n));
   }
 
   static fromBoolean(b: bool): Value {
-    return new Value(ValueKind.BOOL, b ? 1 : 0)
+    return new Value(ValueKind.BOOL, b ? 1 : 0);
   }
 
   static fromBytes(bytes: Bytes): Value {
-    return new Value(ValueKind.BYTES, changetype<u32>(bytes))
+    return new Value(ValueKind.BYTES, changetype<u32>(bytes));
   }
 
   static fromNull(): Value {
-    return new Value(ValueKind.NULL, 0)
+    return new Value(ValueKind.NULL, 0);
   }
 
   static fromI32(n: i32): Value {
-    return new Value(ValueKind.INT, n as u64)
+    return new Value(ValueKind.INT, n as u64);
   }
 
   static fromString(s: string): Value {
-    return new Value(ValueKind.STRING, changetype<u32>(s))
+    return new Value(ValueKind.STRING, changetype<u32>(s));
   }
 
   static fromAddress(s: Address): Value {
-    return new Value(ValueKind.BYTES, changetype<u32>(s))
+    return new Value(ValueKind.BYTES, changetype<u32>(s));
   }
 
   static fromBigDecimal(n: BigDecimal): Value {
-    return new Value(ValueKind.BIGDECIMAL, changetype<u32>(n))
+    return new Value(ValueKind.BIGDECIMAL, changetype<u32>(n));
   }
 
   static fromMatrix(values: Array<Array<Value>>): Value {
-    let innerOut = new Array<Value>(values.length)
+    let innerOut = new Array<Value>(values.length);
     for (let i: i32 = 0; i < innerOut.length; i++) {
-      innerOut[i] = Value.fromArray(values[i])
+      innerOut[i] = Value.fromArray(values[i]);
     }
-    return Value.fromArray(innerOut)
+    return Value.fromArray(innerOut);
   }
 
   static fromBooleanMatrix(values: Array<Array<boolean>>): Value {
-    let out = new Array<Array<Value>>(values.length)
+    let out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      out[i] = new Array<Value>(values[i].length)
+      out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
-        out[i][j] = Value.fromBoolean(values[i][j])
+        out[i][j] = Value.fromBoolean(values[i][j]);
       }
     }
-    return Value.fromMatrix(out)
+    return Value.fromMatrix(out);
   }
 
   static fromBytesMatrix(values: Array<Array<Bytes>>): Value {
-    let out = new Array<Array<Value>>(values.length)
+    let out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      out[i] = new Array<Value>(values[i].length)
+      out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
-        out[i][j] = Value.fromBytes(values[i][j])
+        out[i][j] = Value.fromBytes(values[i][j]);
       }
     }
-    return Value.fromMatrix(out)
+    return Value.fromMatrix(out);
   }
 
   static fromAddressMatrix(values: Array<Array<Address>>): Value {
-    let out = new Array<Array<Value>>(values.length)
+    let out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      out[i] = new Array<Value>(values[i].length)
+      out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
-        out[i][j] = Value.fromAddress(values[i][j])
+        out[i][j] = Value.fromAddress(values[i][j]);
       }
     }
-    return Value.fromMatrix(out)
+    return Value.fromMatrix(out);
   }
 
   static fromStringMatrix(values: Array<Array<string>>): Value {
-    let out = new Array<Array<Value>>(values.length)
+    let out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      out[i] = new Array<Value>(values[i].length)
+      out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
-        out[i][j] = Value.fromString(values[i][j])
+        out[i][j] = Value.fromString(values[i][j]);
       }
     }
-    return Value.fromMatrix(out)
+    return Value.fromMatrix(out);
   }
 
   static fromI32Matrix(values: Array<Array<i32>>): Value {
-    let out = new Array<Array<Value>>(values.length)
+    let out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      out[i] = new Array<Value>(values[i].length)
+      out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
-        out[i][j] = Value.fromI32(values[i][j])
+        out[i][j] = Value.fromI32(values[i][j]);
       }
     }
-    return Value.fromMatrix(out)
+    return Value.fromMatrix(out);
   }
 
   static fromBigIntMatrix(values: Array<Array<BigInt>>): Value {
-    let out = new Array<Array<Value>>(values.length)
+    let out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      out[i] = new Array<Value>(values[i].length)
+      out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
-        out[i][j] = Value.fromBigInt(values[i][j])
+        out[i][j] = Value.fromBigInt(values[i][j]);
       }
     }
-    return Value.fromMatrix(out)
+    return Value.fromMatrix(out);
   }
 }
 
@@ -439,57 +439,57 @@ export enum JSONValueKind {
  *
  * Big enough to fit any pointer or native `this.data`.
  */
-export type JSONValuePayload = u64
+export type JSONValuePayload = u64;
 
 export class JSONValue {
-  kind: JSONValueKind
-  data: JSONValuePayload
+  kind: JSONValueKind;
+  data: JSONValuePayload;
 
   isNull(): boolean {
-    return this.kind == JSONValueKind.NULL
+    return this.kind == JSONValueKind.NULL;
   }
 
   toBool(): boolean {
-    assert(this.kind == JSONValueKind.BOOL, 'JSON value is not a boolean.')
-    return this.data != 0
+    assert(this.kind == JSONValueKind.BOOL, 'JSON value is not a boolean.');
+    return this.data != 0;
   }
 
   toI64(): i64 {
-    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
-    let decimalString = changetype<string>(this.data as u32)
-    return json.toI64(decimalString)
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
+    let decimalString = changetype<string>(this.data as u32);
+    return json.toI64(decimalString);
   }
 
   toU64(): u64 {
-    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
-    let decimalString = changetype<string>(this.data as u32)
-    return json.toU64(decimalString)
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
+    let decimalString = changetype<string>(this.data as u32);
+    return json.toU64(decimalString);
   }
 
   toF64(): f64 {
-    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
-    let decimalString = changetype<string>(this.data as u32)
-    return json.toF64(decimalString)
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
+    let decimalString = changetype<string>(this.data as u32);
+    return json.toF64(decimalString);
   }
 
   toBigInt(): BigInt {
-    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.')
-    let decimalString = changetype<string>(this.data as u32)
-    return json.toBigInt(decimalString)
+    assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
+    let decimalString = changetype<string>(this.data as u32);
+    return json.toBigInt(decimalString);
   }
 
   toString(): string {
-    assert(this.kind == JSONValueKind.STRING, 'JSON value is not a string.')
-    return changetype<string>(this.data as u32)
+    assert(this.kind == JSONValueKind.STRING, 'JSON value is not a string.');
+    return changetype<string>(this.data as u32);
   }
 
   toArray(): Array<JSONValue> {
-    assert(this.kind == JSONValueKind.ARRAY, 'JSON value is not an array.')
-    return changetype<Array<JSONValue>>(this.data as u32)
+    assert(this.kind == JSONValueKind.ARRAY, 'JSON value is not an array.');
+    return changetype<Array<JSONValue>>(this.data as u32);
   }
 
   toObject(): TypedMap<string, JSONValue> {
-    assert(this.kind == JSONValueKind.OBJECT, 'JSON value is not an object.')
-    return changetype<TypedMap<string, JSONValue>>(this.data as u32)
+    assert(this.kind == JSONValueKind.OBJECT, 'JSON value is not an object.');
+    return changetype<TypedMap<string, JSONValue>>(this.data as u32);
   }
 }

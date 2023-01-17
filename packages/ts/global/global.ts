@@ -1,17 +1,10 @@
-import { BigDecimal } from '../common/numbers'
-import {
-  Bytes,
-  TypedMapEntry,
-  Entity,
-  TypedMap,
-  Result,
-  Wrapped,
-} from '../common/collections'
-import { JSONValue, Value } from '../common/value'
-import { arweave } from '../chain/arweave'
-import { ethereum } from '../chain/ethereum'
-import { near } from '../chain/near'
-import { cosmos } from '../chain/cosmos'
+import { BigDecimal } from '../common/numbers';
+import { Bytes, TypedMapEntry, Entity, TypedMap, Result, Wrapped } from '../common/collections';
+import { JSONValue, Value } from '../common/value';
+import { arweave } from '../chain/arweave';
+import { ethereum } from '../chain/ethereum';
+import { near } from '../chain/near';
+import { cosmos } from '../chain/cosmos';
 
 /**
  * Contains type IDs and their discriminants for every blockchain supported by Graph-Node.
@@ -243,339 +236,339 @@ export enum TypeId {
 export function id_of_type(typeId: TypeId): usize {
   switch (typeId) {
     case TypeId.String:
-      return idof<string>()
+      return idof<string>();
     case TypeId.ArrayBuffer:
-      return idof<ArrayBuffer>()
+      return idof<ArrayBuffer>();
     case TypeId.Int8Array:
-      return idof<Int8Array>()
+      return idof<Int8Array>();
     case TypeId.Int16Array:
-      return idof<Int16Array>()
+      return idof<Int16Array>();
     case TypeId.Int32Array:
-      return idof<Int32Array>()
+      return idof<Int32Array>();
     case TypeId.Int64Array:
-      return idof<Int64Array>()
+      return idof<Int64Array>();
     case TypeId.Uint8Array:
-      return idof<Uint8Array>()
+      return idof<Uint8Array>();
     case TypeId.Uint16Array:
-      return idof<Uint16Array>()
+      return idof<Uint16Array>();
     case TypeId.Uint32Array:
-      return idof<Uint32Array>()
+      return idof<Uint32Array>();
     case TypeId.Uint64Array:
-      return idof<Uint64Array>()
+      return idof<Uint64Array>();
     case TypeId.Float32Array:
-      return idof<Float32Array>()
+      return idof<Float32Array>();
     case TypeId.Float64Array:
-      return idof<Float64Array>()
+      return idof<Float64Array>();
     case TypeId.BigDecimal:
-      return idof<BigDecimal>()
+      return idof<BigDecimal>();
     case TypeId.ArrayBool:
-      return idof<Array<bool>>()
+      return idof<Array<bool>>();
     case TypeId.ArrayUint8Array:
-      return idof<Array<Uint8Array>>()
+      return idof<Array<Uint8Array>>();
     case TypeId.ArrayEthereumValue:
-      return idof<Array<ethereum.Value>>()
+      return idof<Array<ethereum.Value>>();
     case TypeId.ArrayStoreValue:
-      return idof<Array<Value>>()
+      return idof<Array<Value>>();
     case TypeId.ArrayJsonValue:
-      return idof<Array<JSONValue>>()
+      return idof<Array<JSONValue>>();
     case TypeId.ArrayString:
-      return idof<Array<string>>()
+      return idof<Array<string>>();
     case TypeId.ArrayEventParam:
-      return idof<Array<ethereum.EventParam>>()
+      return idof<Array<ethereum.EventParam>>();
     case TypeId.ArrayTypedMapEntryStringJsonValue:
-      return idof<Array<TypedMapEntry<string, JSONValue>>>()
+      return idof<Array<TypedMapEntry<string, JSONValue>>>();
     case TypeId.ArrayTypedMapEntryStringStoreValue:
-      return idof<Array<Entity>>()
+      return idof<Array<Entity>>();
     case TypeId.WrappedTypedMapStringJsonValue:
-      return idof<Wrapped<TypedMapEntry<string, JSONValue>>>()
+      return idof<Wrapped<TypedMapEntry<string, JSONValue>>>();
     case TypeId.WrappedBool:
-      return idof<Wrapped<boolean>>()
+      return idof<Wrapped<boolean>>();
     case TypeId.WrappedJsonValue:
-      return idof<Wrapped<JSONValue>>()
+      return idof<Wrapped<JSONValue>>();
     case TypeId.SmartContractCall:
-      return idof<ethereum.SmartContractCall>()
+      return idof<ethereum.SmartContractCall>();
     case TypeId.EventParam:
-      return idof<ethereum.EventParam>()
+      return idof<ethereum.EventParam>();
     case TypeId.EthereumTransaction:
-      return idof<ethereum.Transaction>()
+      return idof<ethereum.Transaction>();
     case TypeId.EthereumBlock:
-      return idof<ethereum.Block>()
+      return idof<ethereum.Block>();
     case TypeId.EthereumCall:
-      return idof<ethereum.Call>()
+      return idof<ethereum.Call>();
     case TypeId.EthereumValue:
-      return idof<ethereum.Value>()
+      return idof<ethereum.Value>();
     case TypeId.StoreValue:
-      return idof<Value>()
+      return idof<Value>();
     case TypeId.JsonValue:
-      return idof<JSONValue>()
+      return idof<JSONValue>();
     case TypeId.EthereumEvent:
-      return idof<ethereum.Event>()
+      return idof<ethereum.Event>();
     case TypeId.TypedMapEntryStringStoreValue:
-      return idof<Entity>()
+      return idof<Entity>();
     case TypeId.TypedMapEntryStringJsonValue:
-      return idof<TypedMap<string, JSONValue>>()
+      return idof<TypedMap<string, JSONValue>>();
     case TypeId.TypedMapStringStoreValue:
-      return idof<TypedMap<string, Value>>()
+      return idof<TypedMap<string, Value>>();
     case TypeId.TypedMapStringJsonValue:
-      return idof<TypedMap<string, JSONValue>>()
+      return idof<TypedMap<string, JSONValue>>();
     case TypeId.TypedMapStringTypedMapStringJsonValue:
-      return idof<TypedMap<string, TypedMap<string, JSONValue>>>()
+      return idof<TypedMap<string, TypedMap<string, JSONValue>>>();
     case TypeId.ResultTypedMapStringJsonValueBool:
-      return idof<Result<TypedMap<string, JSONValue>, boolean>>()
+      return idof<Result<TypedMap<string, JSONValue>, boolean>>();
     case TypeId.ResultJsonValueBool:
-      return idof<Result<JSONValue, boolean>>()
+      return idof<Result<JSONValue, boolean>>();
     case TypeId.ArrayU8:
-      return idof<Array<u8>>()
+      return idof<Array<u8>>();
     case TypeId.ArrayU16:
-      return idof<Array<u16>>()
+      return idof<Array<u16>>();
     case TypeId.ArrayU32:
-      return idof<Array<u32>>()
+      return idof<Array<u32>>();
     case TypeId.ArrayU64:
-      return idof<Array<u64>>()
+      return idof<Array<u64>>();
     case TypeId.ArrayI8:
-      return idof<Array<i8>>()
+      return idof<Array<i8>>();
     case TypeId.ArrayI16:
-      return idof<Array<i16>>()
+      return idof<Array<i16>>();
     case TypeId.ArrayI32:
-      return idof<Array<i32>>()
+      return idof<Array<i32>>();
     case TypeId.ArrayI64:
-      return idof<Array<i64>>()
+      return idof<Array<i64>>();
     case TypeId.ArrayF32:
-      return idof<Array<f32>>()
+      return idof<Array<f32>>();
     case TypeId.ArrayF64:
-      return idof<Array<f64>>()
+      return idof<Array<f64>>();
     case TypeId.ArrayBigDecimal:
-      return idof<Array<BigDecimal>>()
+      return idof<Array<BigDecimal>>();
     case TypeId.NearArrayDataReceiver:
-      return idof<Array<near.DataReceiver>>()
+      return idof<Array<near.DataReceiver>>();
     case TypeId.NearArrayCryptoHash:
-      return idof<Array<near.CryptoHash>>()
+      return idof<Array<near.CryptoHash>>();
     case TypeId.NearArrayActionValue:
-      return idof<Array<near.ActionValue>>()
+      return idof<Array<near.ActionValue>>();
     case TypeId.NearMerklePath:
-      return idof<near.MerklePath>()
+      return idof<near.MerklePath>();
     case TypeId.NearArrayValidatorStake:
-      return idof<Array<near.ValidatorStake>>()
+      return idof<Array<near.ValidatorStake>>();
     case TypeId.NearArraySlashedValidator:
-      return idof<Array<near.SlashedValidator>>()
+      return idof<Array<near.SlashedValidator>>();
     case TypeId.NearArraySignature:
-      return idof<Array<near.Signature>>()
+      return idof<Array<near.Signature>>();
     case TypeId.NearArrayChunkHeader:
-      return idof<Array<near.ChunkHeader>>()
+      return idof<Array<near.ChunkHeader>>();
     case TypeId.NearAccessKeyPermissionValue:
-      return idof<near.AccessKeyPermissionValue>()
+      return idof<near.AccessKeyPermissionValue>();
     case TypeId.NearActionValue:
-      return idof<near.ActionValue>()
+      return idof<near.ActionValue>();
     // Commented out because it's an enum, there's no type_id
     // case TypeId.NearDirection:
     //   return idof<near.Direction>()
     case TypeId.NearPublicKey:
-      return idof<near.PublicKey>()
+      return idof<near.PublicKey>();
     case TypeId.NearSignature:
-      return idof<near.Signature>()
+      return idof<near.Signature>();
     case TypeId.NearFunctionCallPermission:
-      return idof<near.FunctionCallPermission>()
+      return idof<near.FunctionCallPermission>();
     case TypeId.NearFullAccessPermission:
-      return idof<near.FullAccessPermission>()
+      return idof<near.FullAccessPermission>();
     case TypeId.NearAccessKey:
-      return idof<near.AccessKeyPermissionValue>()
+      return idof<near.AccessKeyPermissionValue>();
     case TypeId.NearDataReceiver:
-      return idof<near.DataReceiver>()
+      return idof<near.DataReceiver>();
     case TypeId.NearCreateAccountAction:
-      return idof<near.CreateAccountAction>()
+      return idof<near.CreateAccountAction>();
     case TypeId.NearDeployContractAction:
-      return idof<near.DeployContractAction>()
+      return idof<near.DeployContractAction>();
     case TypeId.NearFunctionCallAction:
-      return idof<near.FunctionCallAction>()
+      return idof<near.FunctionCallAction>();
     case TypeId.NearTransferAction:
-      return idof<near.TransferAction>()
+      return idof<near.TransferAction>();
     case TypeId.NearStakeAction:
-      return idof<near.StakeAction>()
+      return idof<near.StakeAction>();
     case TypeId.NearAddKeyAction:
-      return idof<near.AddKeyAction>()
+      return idof<near.AddKeyAction>();
     case TypeId.NearDeleteKeyAction:
-      return idof<near.DeleteKeyAction>()
+      return idof<near.DeleteKeyAction>();
     case TypeId.NearDeleteAccountAction:
-      return idof<near.DeleteAccountAction>()
+      return idof<near.DeleteAccountAction>();
     case TypeId.NearActionReceipt:
-      return idof<near.ActionReceipt>()
+      return idof<near.ActionReceipt>();
     case TypeId.NearSuccessStatus:
-      return idof<near.SuccessStatus>()
+      return idof<near.SuccessStatus>();
     case TypeId.NearMerklePathItem:
-      return idof<near.MerklePathItem>()
+      return idof<near.MerklePathItem>();
     case TypeId.NearExecutionOutcome:
-      return idof<near.ExecutionOutcome>()
+      return idof<near.ExecutionOutcome>();
     case TypeId.NearSlashedValidator:
-      return idof<near.SlashedValidator>()
+      return idof<near.SlashedValidator>();
     case TypeId.NearBlockHeader:
-      return idof<near.BlockHeader>()
+      return idof<near.BlockHeader>();
     case TypeId.NearValidatorStake:
-      return idof<near.ValidatorStake>()
+      return idof<near.ValidatorStake>();
     case TypeId.NearChunkHeader:
-      return idof<near.ChunkHeader>()
+      return idof<near.ChunkHeader>();
     case TypeId.NearBlock:
-      return idof<near.Block>()
+      return idof<near.Block>();
     case TypeId.NearReceiptWithOutcome:
-      return idof<near.ReceiptWithOutcome>()
+      return idof<near.ReceiptWithOutcome>();
     case TypeId.TransactionReceipt:
-      return idof<ethereum.TransactionReceipt>()
+      return idof<ethereum.TransactionReceipt>();
     case TypeId.Log:
-      return idof<ethereum.Log>()
+      return idof<ethereum.Log>();
     case TypeId.ArrayH256:
-      return idof<Array<Uint8Array>>()
+      return idof<Array<Uint8Array>>();
     case TypeId.ArrayLog:
-      return idof<Array<ethereum.Log>>()
+      return idof<Array<ethereum.Log>>();
     case TypeId.CosmosAny:
-      return idof<cosmos.Any>()
+      return idof<cosmos.Any>();
     case TypeId.CosmosAnyArray:
-      return idof<Array<cosmos.Any>>()
+      return idof<Array<cosmos.Any>>();
     case TypeId.CosmosBytesArray:
-      return idof<Array<Bytes>>()
+      return idof<Array<Bytes>>();
     case TypeId.CosmosCoinArray:
-      return idof<Array<cosmos.Coin>>()
+      return idof<Array<cosmos.Coin>>();
     case TypeId.CosmosCommitSigArray:
-      return idof<Array<cosmos.CommitSig>>()
+      return idof<Array<cosmos.CommitSig>>();
     case TypeId.CosmosEventArray:
-      return idof<Array<cosmos.Event>>()
+      return idof<Array<cosmos.Event>>();
     case TypeId.CosmosEventAttributeArray:
-      return idof<Array<cosmos.EventAttribute>>()
+      return idof<Array<cosmos.EventAttribute>>();
     case TypeId.CosmosEvidenceArray:
-      return idof<Array<cosmos.Evidence>>()
+      return idof<Array<cosmos.Evidence>>();
     case TypeId.CosmosModeInfoArray:
-      return idof<Array<cosmos.ModeInfo>>()
+      return idof<Array<cosmos.ModeInfo>>();
     case TypeId.CosmosSignerInfoArray:
-      return idof<Array<cosmos.SignerInfo>>()
+      return idof<Array<cosmos.SignerInfo>>();
     case TypeId.CosmosTxResultArray:
-      return idof<Array<cosmos.TxResult>>()
+      return idof<Array<cosmos.TxResult>>();
     case TypeId.CosmosValidatorArray:
-      return idof<Array<cosmos.Validator>>()
+      return idof<Array<cosmos.Validator>>();
     case TypeId.CosmosValidatorUpdateArray:
-      return idof<Array<cosmos.ValidatorUpdate>>()
+      return idof<Array<cosmos.ValidatorUpdate>>();
     case TypeId.CosmosAuthInfo:
-      return idof<cosmos.AuthInfo>()
+      return idof<cosmos.AuthInfo>();
     case TypeId.CosmosBlock:
-      return idof<cosmos.Block>()
+      return idof<cosmos.Block>();
     case TypeId.CosmosBlockId:
-      return idof<cosmos.BlockID>()
+      return idof<cosmos.BlockID>();
     case TypeId.CosmosBlockIdFlagEnum:
-      return idof<Array<cosmos.BlockIDFlag>>()
+      return idof<Array<cosmos.BlockIDFlag>>();
     case TypeId.CosmosBlockParams:
-      return idof<cosmos.BlockParams>()
+      return idof<cosmos.BlockParams>();
     case TypeId.CosmosCoin:
-      return idof<cosmos.Coin>()
+      return idof<cosmos.Coin>();
     case TypeId.CosmosCommit:
-      return idof<cosmos.Commit>()
+      return idof<cosmos.Commit>();
     case TypeId.CosmosCommitSig:
-      return idof<cosmos.CommitSig>()
+      return idof<cosmos.CommitSig>();
     case TypeId.CosmosCompactBitArray:
-      return idof<cosmos.CompactBitArray>()
+      return idof<cosmos.CompactBitArray>();
     case TypeId.CosmosConsensus:
-      return idof<cosmos.Consensus>()
+      return idof<cosmos.Consensus>();
     case TypeId.CosmosConsensusParams:
-      return idof<cosmos.ConsensusParams>()
+      return idof<cosmos.ConsensusParams>();
     case TypeId.CosmosDuplicateVoteEvidence:
-      return idof<cosmos.DuplicateVoteEvidence>()
+      return idof<cosmos.DuplicateVoteEvidence>();
     case TypeId.CosmosDuration:
-      return idof<cosmos.Duration>()
+      return idof<cosmos.Duration>();
     case TypeId.CosmosEvent:
-      return idof<cosmos.Event>()
+      return idof<cosmos.Event>();
     case TypeId.CosmosEventAttribute:
-      return idof<cosmos.EventAttribute>()
+      return idof<cosmos.EventAttribute>();
     case TypeId.CosmosEventData:
-      return idof<cosmos.EventData>()
+      return idof<cosmos.EventData>();
     case TypeId.CosmosEventVote:
-      return idof<cosmos.EventVote>()
+      return idof<cosmos.EventVote>();
     case TypeId.CosmosEvidence:
-      return idof<cosmos.Evidence>()
+      return idof<cosmos.Evidence>();
     case TypeId.CosmosEvidenceList:
-      return idof<cosmos.EvidenceList>()
+      return idof<cosmos.EvidenceList>();
     case TypeId.CosmosEvidenceParams:
-      return idof<cosmos.EvidenceParams>()
+      return idof<cosmos.EvidenceParams>();
     case TypeId.CosmosFee:
-      return idof<cosmos.Fee>()
+      return idof<cosmos.Fee>();
     case TypeId.CosmosHeader:
-      return idof<cosmos.Header>()
+      return idof<cosmos.Header>();
     case TypeId.CosmosHeaderOnlyBlock:
-      return idof<cosmos.HeaderOnlyBlock>()
+      return idof<cosmos.HeaderOnlyBlock>();
     case TypeId.CosmosLightBlock:
-      return idof<cosmos.LightBlock>()
+      return idof<cosmos.LightBlock>();
     case TypeId.CosmosLightClientAttackEvidence:
-      return idof<cosmos.LightClientAttackEvidence>()
+      return idof<cosmos.LightClientAttackEvidence>();
     case TypeId.CosmosModeInfo:
-      return idof<cosmos.ModeInfo>()
+      return idof<cosmos.ModeInfo>();
     case TypeId.CosmosModeInfoMulti:
-      return idof<cosmos.ModeInfoMulti>()
+      return idof<cosmos.ModeInfoMulti>();
     case TypeId.CosmosModeInfoSingle:
-      return idof<cosmos.ModeInfoSingle>()
+      return idof<cosmos.ModeInfoSingle>();
     case TypeId.CosmosPartSetHeader:
-      return idof<cosmos.PartSetHeader>()
+      return idof<cosmos.PartSetHeader>();
     case TypeId.CosmosPublicKey:
-      return idof<cosmos.PublicKey>()
+      return idof<cosmos.PublicKey>();
     case TypeId.CosmosResponseBeginBlock:
-      return idof<cosmos.ResponseBeginBlock>()
+      return idof<cosmos.ResponseBeginBlock>();
     case TypeId.CosmosResponseDeliverTx:
-      return idof<cosmos.ResponseDeliverTx>()
+      return idof<cosmos.ResponseDeliverTx>();
     case TypeId.CosmosResponseEndBlock:
-      return idof<cosmos.ResponseEndBlock>()
+      return idof<cosmos.ResponseEndBlock>();
     case TypeId.CosmosSignModeEnum:
-      return idof<Array<cosmos.SignMode>>()
+      return idof<Array<cosmos.SignMode>>();
     case TypeId.CosmosSignedHeader:
-      return idof<cosmos.SignedHeader>()
+      return idof<cosmos.SignedHeader>();
     case TypeId.CosmosSignedMsgTypeEnum:
-      return idof<Array<cosmos.SignedMsgType>>()
+      return idof<Array<cosmos.SignedMsgType>>();
     case TypeId.CosmosSignerInfo:
-      return idof<cosmos.SignerInfo>()
+      return idof<cosmos.SignerInfo>();
     case TypeId.CosmosTimestamp:
-      return idof<cosmos.Timestamp>()
+      return idof<cosmos.Timestamp>();
     case TypeId.CosmosTip:
-      return idof<cosmos.Tip>()
+      return idof<cosmos.Tip>();
     case TypeId.CosmosTransactionData:
-      return idof<cosmos.TransactionData>()
+      return idof<cosmos.TransactionData>();
     case TypeId.CosmosTx:
-      return idof<cosmos.Tx>()
+      return idof<cosmos.Tx>();
     case TypeId.CosmosTxBody:
-      return idof<cosmos.TxBody>()
+      return idof<cosmos.TxBody>();
     case TypeId.CosmosTxResult:
-      return idof<cosmos.TxResult>()
+      return idof<cosmos.TxResult>();
     case TypeId.CosmosValidator:
-      return idof<cosmos.Validator>()
+      return idof<cosmos.Validator>();
     case TypeId.CosmosValidatorParams:
-      return idof<cosmos.ValidatorParams>()
+      return idof<cosmos.ValidatorParams>();
     case TypeId.CosmosValidatorSet:
-      return idof<cosmos.ValidatorSet>()
+      return idof<cosmos.ValidatorSet>();
     case TypeId.CosmosValidatorSetUpdates:
-      return idof<cosmos.ValidatorSetUpdates>()
+      return idof<cosmos.ValidatorSetUpdates>();
     case TypeId.CosmosValidatorUpdate:
-      return idof<cosmos.ValidatorUpdate>()
+      return idof<cosmos.ValidatorUpdate>();
     case TypeId.CosmosVersionParams:
-      return idof<cosmos.VersionParams>()
+      return idof<cosmos.VersionParams>();
     case TypeId.CosmosMessageData:
-      return idof<cosmos.MessageData>()
+      return idof<cosmos.MessageData>();
     case TypeId.CosmosTransactionContext:
-      return idof<cosmos.TransactionContext>()
+      return idof<cosmos.TransactionContext>();
     /**
      * Arweave type ids
      */
     case TypeId.ArweaveBlock:
-      return idof<arweave.Block>()
+      return idof<arweave.Block>();
     case TypeId.ArweaveProofOfAccess:
-      return idof<arweave.ProofOfAccess>()
+      return idof<arweave.ProofOfAccess>();
     case TypeId.ArweaveTag:
-      return idof<arweave.Tag>()
+      return idof<arweave.Tag>();
     case TypeId.ArweaveTagArray:
-      return idof<Array<arweave.Tag>>()
+      return idof<Array<arweave.Tag>>();
     case TypeId.ArweaveTransaction:
-      return idof<arweave.Transaction>()
+      return idof<arweave.Transaction>();
     case TypeId.ArweaveTransactionArray:
-      return idof<Array<arweave.Transaction>>()
+      return idof<Array<arweave.Transaction>>();
     case TypeId.ArweaveTransactionWithBlockPtr:
-      return idof<arweave.TransactionWithBlockPtr>()
+      return idof<arweave.TransactionWithBlockPtr>();
     default:
-      return 0
+      return 0;
   }
 }
 
 export function allocate(size: usize): usize {
   // @ts-ignore We do not want to expose __alloc, hence why we just ignore the error
-  return __alloc(size)
+  return __alloc(size);
 }

@@ -1,24 +1,20 @@
-import './eager_offset'
-import { Address } from './numbers'
-import { Entity } from './collections'
+import './eager_offset';
+import { Address } from './numbers';
+import { Entity } from './collections';
 
 /** Host interface for managing data sources */
 export declare namespace dataSource {
-  function create(name: string, params: Array<string>): void
-  function createWithContext(
-    name: string,
-    params: Array<string>,
-    context: DataSourceContext,
-  ): void
+  function create(name: string, params: Array<string>): void;
+  function createWithContext(name: string, params: Array<string>, context: DataSourceContext): void;
 
   // Properties of the data source that fired the event.
-  function address(): Address
-  function network(): string
-  function context(): DataSourceContext
+  function address(): Address;
+  function network(): string;
+  function context(): DataSourceContext;
 }
 export namespace dataSource {
   export function stringParam(): string {
-    return String.UTF8.decode(dataSource.address().buffer)
+    return String.UTF8.decode(dataSource.address().buffer);
   }
 }
 
@@ -36,14 +32,10 @@ export class DataSourceTemplate {
    * data source.
    */
   static create(name: string, params: Array<string>): void {
-    dataSource.create(name, params)
+    dataSource.create(name, params);
   }
 
-  static createWithContext(
-    name: string,
-    params: Array<string>,
-    context: DataSourceContext,
-  ): void {
-    dataSource.createWithContext(name, params, context)
+  static createWithContext(name: string, params: Array<string>, context: DataSourceContext): void {
+    dataSource.createWithContext(name, params, context);
   }
 }

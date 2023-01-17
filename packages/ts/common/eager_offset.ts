@@ -39,4 +39,4 @@
 // - Runtimes in AS: https://www.assemblyscript.org/garbage-collection.html#runtime-variants
 // - `offset` variable in question: https://github.com/AssemblyScript/assemblyscript/blob/f4091b8f3b6b029d30cd917cf84d97421faadeeb/std/assembly/rt/stub.ts#L9
 // @ts-ignore We do not want to expose __alloc, hence why we just ignore the error
-__alloc(0)
+__alloc(0);
