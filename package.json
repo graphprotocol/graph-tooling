@@ -18,7 +18,7 @@
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier -c .",
-    "release": "changeset publish",
+    "release": "pnpm build && changeset publish",
     "test:cli": "pnpm --filter @graphprotocol/graph-cli test",
     "type-check": "pnpm --filter=@graphprotocol/graph-cli type-check"
   },
