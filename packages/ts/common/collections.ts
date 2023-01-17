@@ -1,5 +1,5 @@
 import { typeConversion } from './conversion';
-import { BigDecimal } from './numbers';
+import { BigDecimal, BigInt } from './numbers';
 import { Value } from './value';
 
 /**
@@ -89,7 +89,7 @@ export class ByteArray extends Uint8Array {
     return changetype<ByteArray>(ByteArray.wrap(utf8));
   }
 
-  static fromBigInt(bigInt: bigint): ByteArray {
+  static fromBigInt(bigInt: BigInt): ByteArray {
     return changetype<ByteArray>(bigInt);
   }
 
@@ -417,7 +417,7 @@ export class Entity extends TypedMap<string, Value> {
     this.set(key, Value.fromI32(value));
   }
 
-  setBigInt(key: string, value: bigint): void {
+  setBigInt(key: string, value: BigInt): void {
     this.set(key, Value.fromBigInt(value));
   }
 
@@ -441,7 +441,7 @@ export class Entity extends TypedMap<string, Value> {
     return this.get(key)!.toI32();
   }
 
-  getBigInt(key: string): bigint {
+  getBigInt(key: string): BigInt {
     return this.get(key)!.toBigInt();
   }
 

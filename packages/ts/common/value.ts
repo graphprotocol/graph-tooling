@@ -1,6 +1,6 @@
 import { Bytes, TypedMap } from './collections';
 import { json } from './json';
-import { Address, BigDecimal } from './numbers';
+import { Address, BigDecimal,BigInt } from './numbers';
 
 /**
  * Enum for supported value types.
@@ -71,9 +71,9 @@ export class Value {
     return changetype<string>(this.data as u32);
   }
 
-  toBigInt(): bigint {
+  toBigInt(): BigInt {
     assert(this.kind == ValueKind.BIGINT, 'Value is not a BigInt.');
-    return changetype<bigint>(this.data as u32);
+    return changetype<BigInt>(this.data as u32);
   }
 
   toBigDecimal(): BigDecimal {
@@ -131,9 +131,9 @@ export class Value {
     return output;
   }
 
-  toBigIntArray(): Array<bigint> {
+  toBigIntArray(): Array<BigInt> {
     const values = this.toArray();
-    const output = new Array<bigint>(values.length);
+    const output = new Array<BigInt>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toBigInt();
     }
@@ -209,11 +209,11 @@ export class Value {
     return out;
   }
 
-  toBigIntMatrix(): Array<Array<bigint>> {
+  toBigIntMatrix(): Array<Array<BigInt>> {
     const valueMatrix = this.toMatrix();
-    const out = new Array<Array<bigint>>(valueMatrix.length);
+    const out = new Array<Array<BigInt>>(valueMatrix.length);
     for (let i: i32 = 0; i < valueMatrix.length; i++) {
-      out[i] = new Array<bigint>(valueMatrix[i].length);
+      out[i] = new Array<BigInt>(valueMatrix[i].length);
       for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
         out[i][j] = valueMatrix[i][j].toBigInt();
       }
@@ -226,8 +226,9 @@ export class Value {
   displayKind(): string {
     if (this.kind >= VALUE_KIND_NAMES.length) {
       return `Unknown (${this.kind})`;
-    }
-    return VALUE_KIND_NAMES[this.kind];
+    } 
+      return VALUE_KIND_NAMES[this.kind];
+    
   }
 
   /** Return a string representation of the value of `this` for logging and
@@ -243,8 +244,6 @@ export class Value {
       case ValueKind.BOOL:
         return this.toBoolean().toString();
       case ValueKind.ARRAY:
-        //TODO: we need to clean it up. Not sure how `this` works in AssemblyScript so leaving as it is for now
-        // eslint-disable-next-line no-case-declarations
         const arr = this.toArray();
         return '[' + arr.map<string>(elt => elt.displayData()).join(', ') + ']';
       case ValueKind.NULL:
@@ -282,7 +281,7 @@ export class Value {
     return Value.fromArray(output);
   }
 
-  static fromBigIntArray(input: Array<bigint>): Value {
+  static fromBigIntArray(input: Array<BigInt>): Value {
     const output = new Array<Value>(input.length);
     for (let i: i32 = 0; i < input.length; i++) {
       output[i] = Value.fromBigInt(input[i]);
@@ -318,7 +317,7 @@ export class Value {
     return new Value(ValueKind.ARRAY, changetype<u32>(input));
   }
 
-  static fromBigInt(n: bigint): Value {
+  static fromBigInt(n: BigInt): Value {
     return new Value(ValueKind.BIGINT, changetype<u32>(n));
   }
 
@@ -413,7 +412,7 @@ export class Value {
     return Value.fromMatrix(out);
   }
 
-  static fromBigIntMatrix(values: Array<Array<bigint>>): Value {
+  static fromBigIntMatrix(values: Array<Array<BigInt>>): Value {
     const out = new Array<Array<Value>>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       out[i] = new Array<Value>(values[i].length);
@@ -473,7 +472,7 @@ export class JSONValue {
     return json.toF64(decimalString);
   }
 
-  toBigInt(): bigint {
+  toBigInt(): BigInt {
     assert(this.kind == JSONValueKind.NUMBER, 'JSON value is not a number.');
     const decimalString = changetype<string>(this.data as u32);
     return json.toBigInt(decimalString);

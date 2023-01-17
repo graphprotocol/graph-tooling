@@ -14,7 +14,7 @@
     "pnpm": ">=7.14.2"
   },
   "scripts": {
-    "build": "pnpm --filter=@graphprotocol/graph-cli build",
+    "build": "pnpm --filter=@graphprotocol/graph-* build",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier -c .",

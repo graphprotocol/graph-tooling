@@ -1,5 +1,6 @@
 import '../common/eager_offset';
 import { Bytes } from '../common/collections';
+import { BigInt } from '../common/numbers';
 
 // Most types from this namespace are direct mappings or adaptations from:
 // https://github.com/streamingfast/proto-near/blob/develop/sf/near/codec/v1/codec.proto
@@ -10,7 +11,7 @@ export namespace near {
 
   export type BlockHeight = u64;
 
-  export type Balance = bigint;
+  export type Balance = BigInt;
 
   export type Gas = u64;
 
@@ -42,7 +43,7 @@ export namespace near {
 
   export class FunctionCallPermission {
     constructor(
-      public allowance: bigint,
+      public allowance: BigInt,
       public receiverId: string,
       public methodNames: Array<string>,
     ) {}
@@ -114,12 +115,12 @@ export namespace near {
       public methodName: string,
       public args: Bytes,
       public gas: u64,
-      public deposit: bigint,
+      public deposit: BigInt,
     ) {}
   }
 
   export class TransferAction {
-    constructor(public deposit: bigint) {}
+    constructor(public deposit: BigInt) {}
   }
 
   export class StakeAction {
@@ -225,7 +226,7 @@ export namespace near {
       // ReceiptAction fields
       public signerId: string,
       public signerPublicKey: PublicKey,
-      public gasPrice: bigint,
+      public gasPrice: BigInt,
       public outputDataReceivers: Array<DataReceiver>,
       public inputDataIds: Array<CryptoHash>,
       public actions: Array<ActionValue>,
@@ -270,13 +271,13 @@ export namespace near {
     constructor(public hash: CryptoHash, public direction: Direction) {}
 
     @operator('<')
-    lt(_: MerklePathItem): boolean {
+    lt(other: MerklePathItem): boolean {
       abort("Less than operator isn't supported in MerklePathItem");
       return false;
     }
 
     @operator('>')
-    gt(_: MerklePathItem): boolean {
+    gt(other: MerklePathItem): boolean {
       abort("Greater than operator isn't supported in MerklePathItem");
       return false;
     }
@@ -296,7 +297,7 @@ export namespace near {
       public id: CryptoHash,
       public logs: Array<string>,
       public receiptIds: Array<CryptoHash>,
-      public tokensBurnt: bigint,
+      public tokensBurnt: BigInt,
       public executorId: string,
       public status: SuccessStatus,
     ) {}
