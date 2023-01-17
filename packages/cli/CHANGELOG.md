@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.37.4
+
+### Patch Changes
+
+- [#1033](https://github.com/graphprotocol/graph-cli/pull/1033)
+  [`ac2cf09`](https://github.com/graphprotocol/graph-cli/commit/ac2cf094b0f19b7778cab888c2e9b324b6544073)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Include dist folder in packaged files
+
 ## 0.37.3
 
 ### Patch Changes
