@@ -6,6 +6,9 @@ import { Address, BigInt } from '../common/numbers';
 export declare namespace ethereum {
   function call(call: SmartContractCall): Array<Value> | null;
   function encode(token: Value): Bytes | null;
+  //TODO: make this a string, just not doing today to avoid any issues
+  // Doubt this will cause any issues but still
+  //  eslint-disable-next-line @typescript-eslint/ban-types
   function decode(types: String, data: Bytes): Value | null;
 }
 
@@ -38,13 +41,13 @@ export namespace ethereum {
     constructor(public kind: ValueKind, public data: ValuePayload) {}
 
     @operator('<')
-    lt(other: Value): boolean {
+    lt(_: Value): boolean {
       abort("Less than operator isn't supported in Value");
       return false;
     }
 
     @operator('>')
-    gt(other: Value): boolean {
+    gt(_: Value): boolean {
       abort("Greater than operator isn't supported in Value");
       return false;
     }
@@ -687,9 +690,8 @@ export namespace ethereum {
       const result = ethereum.call(call);
       if (result == null) {
         return new CallResult();
-      } 
-        return CallResult.fromValue(changetype<Array<Value>>(result));
-      
+      }
+      return CallResult.fromValue(changetype<Array<Value>>(result));
     }
   }
 

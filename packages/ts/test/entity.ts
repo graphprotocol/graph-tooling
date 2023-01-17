@@ -1,4 +1,4 @@
-import { BigDecimal, BigInt , Bytes,Entity } from 'temp_lib/index';
+import { BigDecimal, BigInt, Bytes, Entity } from 'temp_lib/index';
 
 export function testEntity(): void {
   const entity = new Entity();

@@ -1,6 +1,6 @@
 import { Bytes, TypedMap } from './collections';
 import { json } from './json';
-import { Address, BigDecimal,BigInt } from './numbers';
+import { Address, BigDecimal } from './numbers';
 
 /**
  * Enum for supported value types.
@@ -226,9 +226,8 @@ export class Value {
   displayKind(): string {
     if (this.kind >= VALUE_KIND_NAMES.length) {
       return `Unknown (${this.kind})`;
-    } 
-      return VALUE_KIND_NAMES[this.kind];
-    
+    }
+    return VALUE_KIND_NAMES[this.kind];
   }
 
   /** Return a string representation of the value of `this` for logging and
@@ -244,6 +243,8 @@ export class Value {
       case ValueKind.BOOL:
         return this.toBoolean().toString();
       case ValueKind.ARRAY:
+        //TODO: we need to clean it up. Not sure how `this` works in AssemblyScript so leaving as it is for now
+        // eslint-disable-next-line no-case-declarations
         const arr = this.toArray();
         return '[' + arr.map<string>(elt => elt.displayData()).join(', ') + ']';
       case ValueKind.NULL:

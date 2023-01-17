@@ -1,6 +1,5 @@
 import './eager_offset';
 import { Bytes, Result } from './collections';
-import { BigInt } from './numbers';
 import { JSONValue } from './value';
 
 /** Host JSON interface */

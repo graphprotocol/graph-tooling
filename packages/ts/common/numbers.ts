@@ -1,5 +1,5 @@
 import './eager_offset';
-import { ByteArray,Bytes } from './collections';
+import { ByteArray, Bytes } from './collections';
 import { typeConversion } from './conversion';
 
 /** Host interface for BigInt arithmetic */
@@ -281,7 +281,8 @@ export class BigInt extends Uint8Array {
 
     if (!aIsNeg && bIsNeg) {
       return 1;
-    } if (aIsNeg && !bIsNeg) {
+    }
+    if (aIsNeg && !bIsNeg) {
       return -1;
     }
 
@@ -305,7 +306,8 @@ export class BigInt extends Uint8Array {
     // Otherwise the one with less relevant bytes is larger.
     if (aRelevantBytes > bRelevantBytes) {
       return aIsNeg ? -1 : 1;
-    } if (bRelevantBytes > aRelevantBytes) {
+    }
+    if (bRelevantBytes > aRelevantBytes) {
       return aIsNeg ? 1 : -1;
     }
 
@@ -317,7 +319,8 @@ export class BigInt extends Uint8Array {
     for (let i = 1; i <= relevantBytes; i++) {
       if (a[relevantBytes - i] < b[relevantBytes - i]) {
         return -1;
-      } if (a[relevantBytes - i] > b[relevantBytes - i]) {
+      }
+      if (a[relevantBytes - i] > b[relevantBytes - i]) {
         return 1;
       }
     }
@@ -353,13 +356,12 @@ export class BigDecimal {
     const truncateLength = this.digits.toString().length - newDigitLength;
     if (truncateLength < 0) {
       return this;
-    } 
-      for (let i = 0; i < truncateLength; i++) {
-        this.digits = this.digits.div(BigInt.fromI32(10));
-      }
-      this.exp = BigInt.fromI32(decimals * -1);
-      return this;
-    
+    }
+    for (let i = 0; i < truncateLength; i++) {
+      this.digits = this.digits.div(BigInt.fromI32(10));
+    }
+    this.exp = BigInt.fromI32(decimals * -1);
+    return this;
   }
 
   @operator('+')

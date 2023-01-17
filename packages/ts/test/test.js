@@ -1,3 +1,6 @@
+// TODO: disabling eslint for now
+// We need to re-do this and use TS instead of JS
+/* eslint-disable */
 const fs = require('fs');
 const asc = require('assemblyscript/cli/asc');
 const path = require('path');
@@ -99,7 +102,7 @@ async function testFile(sourceFile, outputWasmPath) {
   const module = await WebAssembly.instantiate(wasmCode, {
     env: {
       memory,
-      abort (messagePtr, fileNamePtr, lineNumber, columnNumber) {
+      abort(messagePtr, fileNamePtr, lineNumber, columnNumber) {
         const fileSource = path.join(__dirname, '..', sourceFile);
         let message = 'assertion failure';
         if (messagePtr !== 0) {
@@ -110,7 +113,7 @@ async function testFile(sourceFile, outputWasmPath) {
       },
     },
     conversion: {
-      'typeConversion.bytesToHex' () {},
+      'typeConversion.bytesToHex'() {},
     },
   });
 

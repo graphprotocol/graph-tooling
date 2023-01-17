@@ -53,9 +53,9 @@ export function parseCSV(csv: string): Array<string> {
         state = CSVState.BETWEEN;
       }
     } else if (state == CSVState.QUOTED_VALUE && csv.charAt(i) == '"') {
-        values.push(csv.substr(valueStart, i - valueStart));
-        state = CSVState.BETWEEN;
-      }
+      values.push(csv.substr(valueStart, i - valueStart));
+      state = CSVState.BETWEEN;
+    }
   }
 
   return values;
