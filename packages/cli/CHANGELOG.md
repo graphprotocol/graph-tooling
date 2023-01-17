@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.37.5
+
+### Patch Changes
+
+- [#1035](https://github.com/graphprotocol/graph-cli/pull/1035)
+  [`d6fee92`](https://github.com/graphprotocol/graph-cli/commit/d6fee92d6de9b0addf9e24fd33e8820979f9f310)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Build before release
+
 ## 0.37.4
 
 ### Patch Changes
