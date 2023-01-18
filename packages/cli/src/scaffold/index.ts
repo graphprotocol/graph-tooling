@@ -1,10 +1,9 @@
-import fs from 'fs';
-import path from 'path';
 import { strings } from 'gluegun';
 import prettier from 'prettier';
 import { getSubgraphBasename } from '../command-helpers/subgraph';
 import Protocol from '../protocols';
 import ABI from '../protocols/ethereum/abi';
+import { version } from '../version';
 import { generateEventIndexingHandlers } from './mapping';
 import { abiEvents, generateEventType, generateExampleEntityType } from './schema';
 import { generateTestsFiles } from './tests';
@@ -14,14 +13,7 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
     // graph-cli for the tests using `npm link` instead of fetching from npm.
     undefined
   : // For scaffolding real subgraphs
-    JSON.parse(
-      fs
-        .readFileSync(
-          // works even when bundled/built because the path to package.json is the same
-          path.join(__dirname, '..', '..', 'package.json'),
-        )
-        .toString(),
-    ).version;
+    version;
 
 export interface ScaffoldOptions {
   protocol: Protocol;
