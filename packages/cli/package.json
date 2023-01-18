@@ -3,6 +3,9 @@
   "version": "0.37.5",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
+  "engines": {
+    "node": ">=14"
+  },
   "bin": {
     "graph": "dist/bin.js"
   },
