@@ -18,7 +18,7 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
       fs
         .readFileSync(
           // works even when bundled/built because the path to package.json is the same
-          path.join('..', '..', 'package.json'),
+          path.join(__dirname, '..', '..', 'package.json'),
         )
         .toString(),
     ).version;
