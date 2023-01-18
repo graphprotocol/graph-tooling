@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { strings } from 'gluegun';
 import prettier from 'prettier';
 import { getSubgraphBasename } from '../command-helpers/subgraph';
@@ -12,7 +14,14 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
     // graph-cli for the tests using `npm link` instead of fetching from npm.
     undefined
   : // For scaffolding real subgraphs
-    String(module.exports.version);
+    JSON.parse(
+      fs
+        .readFileSync(
+          // works even when bundled/built because the path to package.json is the same
+          path.join('..', '..', 'package.json'),
+        )
+        .toString(),
+    ).version;
 
 export interface ScaffoldOptions {
   protocol: Protocol;
