@@ -2,10 +2,15 @@
 
 Monorepo for various tools used by subgraph developers.
 
-This repository houses the following tools: | NPM | Name | | --- | --- | |
-[![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-cli.svg?color=success)](https://www.npmjs.com/package/@graphprotocol/graph-cli)
-| `@graphprotocol/graph-cli` | `@graphprotocol/graph-cli`
-|[![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-ts.svg)](https://www.npmjs.com/package/@graphprotocol/graph-ts)|`@graphprotocol/graph-ts`|
+This repository houses the following tools:
+
+<!-- prettier-ignore-start -->
+| NPM | Name | 
+| --- | --- | 
+|[![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-cli.svg?color=success)](https://www.npmjs.com/package/@graphprotocol/graph-cli)| `@graphprotocol/graph-cli` | `@graphprotocol/graph-cli`|
+[![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-ts.svg)](https://www.npmjs.com/package/@graphprotocol/graph-ts)|`@graphprotocol/graph-ts`|
+
+<!-- prettier-ignore-end -->
 
 ## Release process
 
