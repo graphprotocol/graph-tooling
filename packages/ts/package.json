@@ -1,0 +1,21 @@
+{
+  "name": "@graphprotocol/graph-ts",
+  "version": "0.29.1",
+  "description": "TypeScript/AssemblyScript library for writing subgraph mappings for The Graph",
+  "main": "index.ts",
+  "module": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "build": "asc --explicitStart --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts -b index.wasm",
+    "format": "prettier --write -c **/*.{js,ts}",
+    "lint": "prettier -c **/*.{js,ts}",
+    "test": "node test/test.js"
+  },
+  "dependencies": {
+    "assemblyscript": "0.19.10"
+  },
+  "devDependencies": {
+    "prettier": "^2.4.1"
+  },
+  "ascMain": "index.ts"
+}

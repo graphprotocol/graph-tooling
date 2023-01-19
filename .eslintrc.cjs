@@ -14,4 +14,21 @@ module.exports = {
     // TODO: not ready yet
     'unicorn/prefer-node-protocol': 'off',
   },
+  overrides: [
+    {
+      files: ['packages/ts/**'],
+      rules: {
+        // TODO: want to avoid any structural change so fix it later
+        '@typescript-eslint/no-namespace': 'off',
+        // TODO: warning for now, clean up
+        'unicorn/filename-case': 'warn',
+        // TODO: warning for now, clean up
+        'sonarjs/no-inverted-boolean-check': 'warn',
+        // TODO: warning for now, clean up
+        '@typescript-eslint/no-loss-of-precision': 'warn',
+        // AssemblyScript types are different from TS and in cases we want to use what TS may think we should not
+        '@typescript-eslint/ban-types': 'off',
+      },
+    },
+  ],
 };
