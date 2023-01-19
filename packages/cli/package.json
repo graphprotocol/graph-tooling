@@ -11,6 +11,7 @@
   },
   "main": "dist/cli.js",
   "files": [
+    "README.md",
     "CHANGELOG.md",
     "dist"
   ],
