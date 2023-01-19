@@ -1,5 +1,25 @@
 # @graphprotocol/graph-cli
 
+## 0.37.6
+
+### Patch Changes
+
+- [#1039](https://github.com/graphprotocol/graph-cli/pull/1039)
+  [`accefb6`](https://github.com/graphprotocol/graph-cli/commit/accefb637bf1c1db64f63b32a18c291574aa4974)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Removed dependency [`pkginfo@0.4.1` ↗︎](https://www.npmjs.com/package/pkginfo/v/0.4.1) (from
+    `dependencies`)
+
+- [#1040](https://github.com/graphprotocol/graph-cli/pull/1040)
+  [`5fd1e9c`](https://github.com/graphprotocol/graph-cli/commit/5fd1e9c00c85db4b0c65e37ba0c0b09ea034bb96)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Target Node 14 and specify engine in
+  package.json
+
+- [#1039](https://github.com/graphprotocol/graph-cli/pull/1039)
+  [`accefb6`](https://github.com/graphprotocol/graph-cli/commit/accefb637bf1c1db64f63b32a18c291574aa4974)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Use package.json to get package version
+
 ## 0.37.5
 
 ### Patch Changes
