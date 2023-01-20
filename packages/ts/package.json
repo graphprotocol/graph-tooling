@@ -5,6 +5,9 @@
   "main": "index.ts",
   "module": "index.ts",
   "types": "index.ts",
+  "files": [
+    "README.md"
+  ],
   "scripts": {
     "build": "asc --explicitStart --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts -b index.wasm",
     "format": "prettier --write -c **/*.{js,ts}",

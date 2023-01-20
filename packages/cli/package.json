@@ -12,7 +12,8 @@
   "main": "dist/cli.js",
   "files": [
     "CHANGELOG.md",
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
