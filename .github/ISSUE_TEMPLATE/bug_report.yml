@@ -15,6 +15,7 @@ body:
       # TODO: All all other packages once we move them into that monorepo
       options:
         - '@graphprotocol/graph-cli'
+        - '@graphprotocol/graph-ts'
     validations:
       required: true
   - type: markdown
