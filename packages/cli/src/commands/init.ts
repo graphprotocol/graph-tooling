@@ -727,6 +727,9 @@ const initSubgraphFromExample = async (
       try {
         await system.run(`git clone http://github.com/graphprotocol/example-subgraphs ${tmpDir}`);
 
+        // Remove .git to avoid submodules in this repo
+        await system.run(`rm -rf ${path.join(tmpDir, '.git')}`);
+
         // If an example is not specified, use the default one
         if (fromExample === undefined || fromExample === true) {
           fromExample = DEFAULT_EXAMPLE_SUBGRAPH;
