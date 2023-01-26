@@ -83,7 +83,7 @@ const processInitForm = async (
     network,
     subgraphName,
     contractName,
-    startBlock
+    startBlock,
   }: {
     protocol: ProtocolName;
     product: string;
@@ -98,7 +98,7 @@ const processInitForm = async (
     network: string;
     subgraphName: string;
     contractName: string;
-    startBlock: string
+    startBlock: string;
   },
 ): Promise<
   | {
@@ -289,8 +289,8 @@ const processInitForm = async (
           return e.message;
         }
       },
-     },
-     {
+    },
+    {
       type: 'input',
       name: 'startBlock',
       message: 'Start Block',
@@ -378,7 +378,7 @@ export default {
       help,
       indexEvents,
       network,
-      startBlock
+      startBlock,
     } = toolbox.parameters.options;
 
     node ||= g;
@@ -524,7 +524,7 @@ export default {
       network,
       subgraphName,
       contractName,
-      startBlock
+      startBlock,
     });
 
     // Exit immediately when the form is cancelled
@@ -568,7 +568,7 @@ export default {
           node,
           studio: inputs.studio,
           product: inputs.product,
-          startBlock: inputs.startBlock
+          startBlock: inputs.startBlock,
         },
         { commands, addContract: true },
       );
