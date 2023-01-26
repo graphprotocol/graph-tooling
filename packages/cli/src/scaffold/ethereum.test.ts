@@ -80,8 +80,7 @@ const scaffoldWithIndexEvents = new Scaffold({
 
 describe('Ethereum subgraph scaffolding', () => {
   test('Manifest', () => {
-    let generatedManifest = scaffold.generateManifest();
-    expect(generatedManifest).toEqual(`\
+    expect(scaffold.generateManifest()).toEqual(`\
 specVersion: 0.0.5
 schema:
   file: ./schema.graphql
