@@ -52,6 +52,7 @@ export const generateScaffold = async (
     subgraphName,
     indexEvents,
     contractName = 'Contract',
+    startBlock,
     node,
   }: {
     protocolInstance: Protocol;
@@ -61,6 +62,7 @@ export const generateScaffold = async (
     subgraphName: string;
     indexEvents: boolean;
     contractName?: string;
+    startBlock?: string;
     node: string;
   },
   spinner: Spinner,
@@ -74,6 +76,7 @@ export const generateScaffold = async (
     contract,
     network,
     contractName,
+    startBlock,
     subgraphName,
     node,
   });

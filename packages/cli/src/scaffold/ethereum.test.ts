@@ -68,6 +68,7 @@ const scaffoldOptions = {
   contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
   network: 'kovan',
   contractName: 'Contract',
+  startBlock: '12345',
 };
 
 const scaffold = new Scaffold(scaffoldOptions);
@@ -79,7 +80,8 @@ const scaffoldWithIndexEvents = new Scaffold({
 
 describe('Ethereum subgraph scaffolding', () => {
   test('Manifest', () => {
-    expect(scaffold.generateManifest()).toEqual(`\
+    let generatedManifest =scaffold.generateManifest()
+    expect(generatedManifest).toEqual(`\
 specVersion: 0.0.5
 schema:
   file: ./schema.graphql
@@ -90,6 +92,7 @@ dataSources:
     source:
       address: "0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d"
       abi: Contract
+      startBlock: 12345
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
