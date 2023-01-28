@@ -113,7 +113,7 @@ export default class AddCommand extends Command {
     ethabi.data = abiData;
 
     await writeABI(ethabi, contractName);
-    await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']) as any, collisionEntities);
+    await writeSchema(ethabi, protocol, result.getIn(['schema', 'file']) as any, collisionEntities, contractName);
     await writeMapping(ethabi, protocol, contractName, collisionEntities);
     await writeTestsFiles(ethabi, protocol, contractName);
 

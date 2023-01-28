@@ -1,21 +1,39 @@
 import * as util from '../codegen/util';
 
-export const generateFieldAssignment = (path: string[]) =>
-  `entity.${path.join('_')} = event.params.${path.join('.')}`;
+interface BlacklistDictionary {
+  [Key: string]: string;
+}
+
+export const generateFieldAssignment = (key: string[], value: string[]) =>
+  `entity.${key.join('_')} = event.params.${value.join('.')}`;
 
 export const generateFieldAssignments = ({ index, input }: { index: number; input: any }) =>
   input.type === 'tuple'
     ? util
         .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
-        .map(({ path }: any) => generateFieldAssignment(path))
-    : generateFieldAssignment([input.name || `param${index}`]);
+        .map(({ path }: any) => generateFieldAssignment(path, path))
+    : generateFieldAssignment(
+        [(input.mappedName ?? input.name) || `param${index}`],
+        [input.name || `param${index}`],
+      );
 
-export const generateEventFieldAssignments = (event: any) =>
-  event.inputs.reduce(
-    (acc: any[], input: any, index: number) =>
-      acc.concat(generateFieldAssignments({ input, index })),
-    [],
-  );
+const renamedInput = (name: string, subgraphName: string) => {
+  const inputMap: BlacklistDictionary = {
+    id: `${subgraphName}_id`,
+  };
+
+  return inputMap[name] ?? name;
+};
+
+export const generateEventFieldAssignments = (event: any, contractName: string) =>
+  event.inputs.reduce((acc: any[], input: any, index: number) => {
+    const inputNamesBlacklist = ['id'];
+
+    if (inputNamesBlacklist.includes(input.name)) {
+      input.mappedName = renamedInput(input.name, contractName ?? 'contract');
+    }
+    return acc.concat(generateFieldAssignments({ input, index }));
+  }, []);
 
 export const generateEventIndexingHandlers = (events: any[], contractName: string) =>
   `
@@ -30,7 +48,7 @@ export const generateEventIndexingHandlers = (events: any[], contractName: strin
         `
   export function handle${event._alias}(event: ${event._alias}Event): void {
     let entity = new ${event._alias}(event.transaction.hash.concatI32(event.logIndex.toI32()))
-    ${generateEventFieldAssignments(event).join('\n')}
+    ${generateEventFieldAssignments(event, contractName).join('\n')}
 
     entity.blockNumber = event.block.number
     entity.blockTimestamp = event.block.timestamp
