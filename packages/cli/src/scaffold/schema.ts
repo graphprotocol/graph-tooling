@@ -62,7 +62,7 @@ export const generateEventFields = ({
       ];
 
       
-const renamedInput = (name: string, subgraphName: string) => {
+const renameInput = (name: string, subgraphName: string) => {
   const inputMap: BlacklistDictionary = {
     id: `${subgraphName}_id`
   } 
@@ -80,7 +80,7 @@ export const generateEventType = (event: any, protocolName: string, subgraphName
           .reduce(
             (acc: any[], input: any, index: number) => {
               if (inputNamesBlacklist.includes(input.name)) {
-                input.name = renamedInput(input.name, subgraphName ?? "contract");
+                input.name = renameInput(input.name, subgraphName ?? "contract");
               }
               return acc.concat(generateEventFields({ input, index, protocolName }))
             },

@@ -17,7 +17,7 @@ export const generateFieldAssignments = ({ index, input }: { index: number; inpu
         [input.name || `param${index}`],
       );
 
-const renamedInput = (name: string, subgraphName: string) => {
+const renameInput = (name: string, subgraphName: string) => {
   const inputMap: BlacklistDictionary = {
     id: `${subgraphName}_id`,
   };
@@ -30,7 +30,7 @@ export const generateEventFieldAssignments = (event: any, contractName: string) 
     const inputNamesBlacklist = ['id'];
 
     if (inputNamesBlacklist.includes(input.name)) {
-      input.mappedName = renamedInput(input.name, contractName ?? 'contract');
+      input.mappedName = renameInput(input.name, contractName ?? 'contract');
     }
     return acc.concat(generateFieldAssignments({ input, index }));
   }, []);
