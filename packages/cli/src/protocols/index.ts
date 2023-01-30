@@ -99,7 +99,7 @@ export default class Protocol {
         'moonriver',
         'mbase',
         'arbitrum-one',
-        'arbitrum-rinkeby',
+        'arbitrum-goerli',
         'optimism',
         'optimism-kovan',
         'aurora',
