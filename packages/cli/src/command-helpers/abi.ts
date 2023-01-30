@@ -61,6 +61,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.etherscan.io/api`;
     case 'arbitrum-one':
       return `https://api.arbiscan.io/api`;
+    case 'arbitrum-goerli':
+      return `https://api-goerli.arbiscan.io/api`;
     case 'bsc':
       return `https://api.bscscan.com/api`;
     case 'chapel':
