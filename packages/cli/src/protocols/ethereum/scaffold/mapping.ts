@@ -38,9 +38,7 @@ export const generatePlaceholderHandlers = ({
       entity.count = entity.count + BigInt.fromI32(1)
 
       // Entity fields can be set based on event parameters
-      ${generateEventFieldAssignments(event, contractName)
-        .slice(0, 2)
-        .join('\n')}
+      ${generateEventFieldAssignments(event, contractName).slice(0, 2).join('\n')}
 
       // Entities can be written to the store with \`.save()\`
       entity.save()
@@ -61,10 +59,7 @@ export const generatePlaceholderHandlers = ({
       // state variables and other data:
       //
       // ${
-        abi
-          .codeGenerator()
-          .callableFunctions()
-          .isEmpty()
+        abi.codeGenerator().callableFunctions().isEmpty()
           ? 'None'
           : abi
               .codeGenerator()

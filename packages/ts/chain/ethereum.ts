@@ -1,5 +1,5 @@
-import '../common/eager_offset';
 import { Bytes, Wrapped } from '../common/collections';
+import '../common/eager_offset';
 import { Address, BigInt } from '../common/numbers';
 
 /** Host Ethereum interface */

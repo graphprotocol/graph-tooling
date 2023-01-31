@@ -173,7 +173,7 @@ describe('Init', () => {
           timeout: 100_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
-          runBuild: true
+          runBuild: true,
         },
       );
     });

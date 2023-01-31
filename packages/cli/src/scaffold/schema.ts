@@ -61,37 +61,35 @@ export const generateEventFields = ({
         }),
       ];
 
-      
 const renameInput = (name: string, subgraphName: string) => {
   const inputMap: BlacklistDictionary = {
-    id: `${subgraphName}_id`
-  } 
+    id: `${subgraphName}_id`,
+  };
 
   return inputMap[name] ?? name;
-}
+};
 
-export const generateEventType = (event: any, protocolName: string, subgraphName: string | undefined) => {
+export const generateEventType = (
+  event: any,
+  protocolName: string,
+  subgraphName: string | undefined,
+) => {
   const inputNamesBlacklist = ['id'];
-  return `type ${
-    event._alias
-  } @entity(immutable: true) {
+  return `type ${event._alias} @entity(immutable: true) {
         id: Bytes!
         ${event.inputs
-          .reduce(
-            (acc: any[], input: any, index: number) => {
-              if (inputNamesBlacklist.includes(input.name)) {
-                input.name = renameInput(input.name, subgraphName ?? "contract");
-              }
-              return acc.concat(generateEventFields({ input, index, protocolName }))
-            },
-            [],
-          )
+          .reduce((acc: any[], input: any, index: number) => {
+            if (inputNamesBlacklist.includes(input.name)) {
+              input.name = renameInput(input.name, subgraphName ?? 'contract');
+            }
+            return acc.concat(generateEventFields({ input, index, protocolName }));
+          }, [])
           .join('\n')}
         blockNumber: BigInt!
         blockTimestamp: BigInt!
         transactionHash: Bytes!
       }`;
-}
+};
 
 export const generateExampleEntityType = (protocol: Protocol, events: any[]) => {
   if (protocol.hasABIs() && events.length > 0) {
