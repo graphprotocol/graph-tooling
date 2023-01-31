@@ -49,6 +49,7 @@ ${chalk.dim('Options for --from-contract:')}
 
       --contract-name            Name of the contract (default: Contract)
       --index-events             Index contract events as entities
+      --start-block              Block number to start indexing from (default: 0)
 
 ${chalk.dim.underline('Ethereum:')}
 
