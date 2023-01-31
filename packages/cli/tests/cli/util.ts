@@ -142,4 +142,3 @@ export const unlinkCli = () => {
 };
 
 export const packageManagerBuild = (cwd: string) => runCommand(system.which('yarn') ? 'yarn' : 'npm', ['run', 'build'], cwd);
-
