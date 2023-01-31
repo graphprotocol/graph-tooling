@@ -125,6 +125,33 @@ describe('Init', () => {
         deleteDir: true,
       },
     );
+
+    describe('ABI with ID in events', () => {
+      cliTest(
+        'From contract with index events and abi with ID in events',
+        [
+          'init',
+          '--protocol',
+          'ethereum',
+          '--studio',
+          '--from-contract',
+          '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
+          '--index-events',
+          '--network',
+          'mainnet',
+          'user/subgraph-from-contract-with-index-events-and-abi-with-id',
+          path.join(ethereumBaseDir, 'duplicate-ids'),
+        ],
+        path.join('init', 'ethereum', 'duplicate-ids'),
+        {
+          exitCode: 0,
+          timeout: 100_000,
+          cwd: ethereumBaseDir,
+          deleteDir: true,
+          runBuild: true
+        },
+      );
+    });
   });
 
   describe('NEAR', () => {
