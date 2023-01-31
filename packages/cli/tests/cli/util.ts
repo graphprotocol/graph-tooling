@@ -24,6 +24,7 @@ export function cliTest(
     deleteDir?: boolean;
     exitCode?: number;
     timeout?: number;
+    runBuild?: boolean;
   } = {},
 ) {
   test(
@@ -77,6 +78,10 @@ export function cliTest(
           expect(stripAnsi(stdout)).toBe(expectedStdout);
         }
       } finally {
+        if (options.runBuild) {
+          const [exitCode] = await packageManagerBuild(resolvePath(`./${testPath}`))
+          expect(exitCode).toBe(0);
+        }
         deleteDir(resolvePath(`./${testPath}`), !!options.deleteDir);
       }
     },
@@ -135,3 +140,6 @@ export const linkCli = () => {
 export const unlinkCli = () => {
   runCommand(system.which('yarn') ? 'yarn' : 'npm', ['unlink']);
 };
+
+export const packageManagerBuild = (cwd: string) => runCommand(system.which('yarn') ? 'yarn' : 'npm', ['run', 'build'], cwd);
+
