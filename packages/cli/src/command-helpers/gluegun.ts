@@ -23,7 +23,6 @@
 // The `fixParameters` function checks if any of the provided boolean
 // options has a string value; if so, it pushes it to the front of the
 // parameters array and returns the result of that.
-
 import { GluegunParameters } from 'gluegun';
 
 export const fixParameters = (

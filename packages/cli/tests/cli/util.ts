@@ -78,7 +78,7 @@ export function cliTest(
         }
       } finally {
         if (options.runBuild) {
-          const [exitCode] = await npmBuild(resolvePath(`./${testPath}`))
+          const [exitCode] = await npmBuild(resolvePath(`./${testPath}`));
           expect(exitCode).toBe(0);
         }
         deleteDir(resolvePath(`./${testPath}`), !!options.deleteDir);

@@ -120,7 +120,7 @@ export const writeSchema = async (
   protocol: Protocol,
   schemaPath: string,
   entities: any,
-  contractName: string
+  contractName: string,
 ) => {
   const events = protocol.hasEvents()
     ? abiEvents(abi)

@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 import { npmUnlinkCli } from './util';
 
 export default async () => {

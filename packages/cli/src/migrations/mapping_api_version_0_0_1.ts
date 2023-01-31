@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 import * as toolbox from 'gluegun';
 import semver from 'semver';
 import { loadManifest } from './util/load-manifest';

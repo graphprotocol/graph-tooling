@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 import * as toolbox from 'gluegun';
 import { loadManifest } from './util/load-manifest';
 

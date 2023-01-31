@@ -1,7 +1,8 @@
 // Side-effect to evaluate eagerly the offset of stub AS runtime
-import './common/eager_offset';
 import { ByteArray, Bytes, Entity } from './common/collections';
+import './common/eager_offset';
 import { Value } from './common/value';
+
 // Arweave support
 export * from './chain/arweave';
 // Ethereum support
