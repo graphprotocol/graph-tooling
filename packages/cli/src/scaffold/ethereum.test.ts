@@ -68,6 +68,7 @@ const scaffoldOptions = {
   contract: '0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d',
   network: 'kovan',
   contractName: 'Contract',
+  startBlock: '12345',
 };
 
 const scaffold = new Scaffold(scaffoldOptions);
@@ -90,6 +91,7 @@ dataSources:
     source:
       address: "0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d"
       abi: Contract
+      startBlock: 12345
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

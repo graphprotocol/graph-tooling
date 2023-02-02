@@ -49,6 +49,7 @@ ${chalk.dim('Options for --from-contract:')}
 
       --contract-name            Name of the contract (default: Contract)
       --index-events             Index contract events as entities
+      --start-block              Block number to start indexing from (default: 0)
 
 ${chalk.dim.underline('Ethereum:')}
 
@@ -83,6 +84,7 @@ const processInitForm = async (
     network,
     subgraphName,
     contractName,
+    startBlock,
   }: {
     protocol: ProtocolName;
     product: string;
@@ -97,6 +99,7 @@ const processInitForm = async (
     network: string;
     subgraphName: string;
     contractName: string;
+    startBlock: string;
   },
 ): Promise<
   | {
@@ -110,6 +113,7 @@ const processInitForm = async (
       contract: string;
       indexEvents: boolean;
       contractName: string;
+      startBlock: string;
     }
   | undefined
 > => {
@@ -289,6 +293,18 @@ const processInitForm = async (
     },
     {
       type: 'input',
+      name: 'startBlock',
+      message: 'Start Block',
+      initial: startBlock || '0',
+      skip: () => fromExample !== undefined || startBlock,
+      validate: (value: string) => parseInt(value) >= 0,
+      result: (value: string) => {
+        startBlock = value;
+        return value;
+      },
+    },
+    {
+      type: 'input',
       name: 'contractName',
       message: 'Contract Name',
       initial: contractName || 'Contract',
@@ -363,6 +379,7 @@ export default {
       help,
       indexEvents,
       network,
+      startBlock,
     } = toolbox.parameters.options;
 
     node ||= g;
@@ -487,6 +504,7 @@ export default {
           node,
           studio,
           product,
+          startBlock,
         },
         { commands, addContract: false },
       );
@@ -507,6 +525,7 @@ export default {
       network,
       subgraphName,
       contractName,
+      startBlock,
     });
 
     // Exit immediately when the form is cancelled
@@ -550,6 +569,7 @@ export default {
           node,
           studio: inputs.studio,
           product: inputs.product,
+          startBlock: inputs.startBlock,
         },
         { commands, addContract: true },
       );
@@ -849,6 +869,7 @@ const initSubgraphFromContract = async (
     node,
     studio,
     product,
+    startBlock,
   }: {
     protocolInstance: Protocol;
     allowSimpleName: boolean;
@@ -862,6 +883,7 @@ const initSubgraphFromContract = async (
     node: string;
     studio: string;
     product: string;
+    startBlock: string;
   },
   {
     commands,
@@ -928,6 +950,7 @@ const initSubgraphFromContract = async (
           contract,
           indexEvents,
           contractName,
+          startBlock,
           node,
         },
         spinner,

@@ -2,7 +2,21 @@ import { strings } from 'gluegun';
 import { abiEvents } from '../../../scaffold/schema';
 import ABI from '../abi';
 
-export const source = ({ contract, contractName }: { contract: string; contractName: string }) => `
+export const source = ({
+  contract,
+  contractName,
+  startBlock,
+}: {
+  contract: string;
+  contractName: string;
+  startBlock?: string;
+}) =>
+  startBlock
+    ? `
+      address: '${contract}'
+      abi: ${contractName}
+      startBlock: ${startBlock}`
+    : `
       address: '${contract}'
       abi: ${contractName}`;
 
