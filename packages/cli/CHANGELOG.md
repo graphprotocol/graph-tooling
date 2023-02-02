@@ -1,5 +1,17 @@
 # @graphprotocol/graph-cli
 
+## 0.38.0
+
+### Minor Changes
+
+- [#1049](https://github.com/graphprotocol/graph-tooling/pull/1049)
+  [`18cf83f`](https://github.com/graphprotocol/graph-tooling/commit/18cf83fe1ec703fdc74fa03f898e2ca8b7e5f1fd)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add startBlock prompt
+
+- [#1053](https://github.com/graphprotocol/graph-tooling/pull/1053)
+  [`bc82507`](https://github.com/graphprotocol/graph-tooling/commit/bc8250763799ae2871c5d5b67c279c673329bcbc)
+  Thanks [@saihaj](https://github.com/saihaj)! - Remove arbitrum-rinkeby to add arbitrum-goerli
+
 ## 0.37.7
 
 ### Patch Changes
