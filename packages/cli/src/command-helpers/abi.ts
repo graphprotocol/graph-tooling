@@ -27,6 +27,58 @@ export const loadAbiFromEtherscan = async (
     },
   );
 
+export const loadDeployContractTransactionFromEtherscan = async (
+  network: string,
+  address: string,
+): Promise<string> =>
+  await withSpinner(
+    `Fetching deploy contract transaction from Etherscan`,
+    `Failed to fetch deploy contract transaction from Etherscan`,
+    `Warnings while fetching deploy contract transaction from Etherscan`,
+    async () => {
+      fetchDeployContractTransactionFromEtherscan(network, address);
+    },
+  );
+
+export const fetchDeployContractTransactionFromEtherscan = async (
+  network: string,
+  address: string,
+): Promise<string> => {
+  const scanApiUrl = getEtherscanLikeAPIUrl(network);
+
+  const result = await fetch(
+    `${scanApiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
+  );
+
+  const json = await result.json();
+  if (json.status === '1') {
+    return json.result[0].txHash;
+  }
+  throw new Error('Unable to fetch deploy contract transaction from Etherscan');
+};
+
+export const fetchTransactionByHashFromRPC = async (
+  network: string,
+  transactionHash: string,
+): Promise<any> => {
+  const RPCURL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
+  const result = await fetch(`${RPCURL}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'eth_getTransactionByHash',
+      params: [transactionHash],
+      id: 1,
+    }),
+  });
+
+  const json = await result.json();
+  return json;
+};
+
 export const loadAbiFromBlockScout = async (
   ABICtor: typeof ABI,
   network: string,
