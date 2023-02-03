@@ -27,7 +27,7 @@ export const loadAbiFromEtherscan = async (
     },
   );
 
-export const loadDeployContractTransactionFromEtherscan = async (
+export const loadStartBlockForContract = async (
   network: string,
   address: string,
 ): Promise<string> =>
@@ -36,7 +36,7 @@ export const loadDeployContractTransactionFromEtherscan = async (
     `Failed to fetch deploy contract transaction from Etherscan`,
     `Warnings while fetching deploy contract transaction from Etherscan`,
     async () => {
-      fetchDeployContractTransactionFromEtherscan(network, address);
+      return getStartBlockForContract(network, address);
     },
   );
 
@@ -61,7 +61,7 @@ export const fetchTransactionByHashFromRPC = async (
   network: string,
   transactionHash: string,
 ): Promise<any> => {
-  const RPCURL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
+  const RPCURL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'; // TODO : use network specific RPC
   const result = await fetch(`${RPCURL}`, {
     method: 'POST',
     headers: {
@@ -77,6 +77,15 @@ export const fetchTransactionByHashFromRPC = async (
 
   const json = await result.json();
   return json;
+};
+
+export const getStartBlockForContract = async (
+  network: string,
+  address: string,
+): Promise<number> => {
+  const transactionHash = await fetchDeployContractTransactionFromEtherscan(network, address);
+  const txn = await fetchTransactionByHashFromRPC(network, transactionHash);
+  return parseInt(txn.result.blockNumber, 16);
 };
 
 export const loadAbiFromBlockScout = async (
