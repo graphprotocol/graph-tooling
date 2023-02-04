@@ -2,6 +2,7 @@ import immutable from 'immutable';
 import fetch from 'node-fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
+import { PUBLIC_RPC_ENDPOINTS } from './constants';
 
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
@@ -54,38 +55,50 @@ export const fetchDeployContractTransactionFromEtherscan = async (
   if (json.status === '1') {
     return json.result[0].txHash;
   }
-  throw new Error('Unable to fetch deploy contract transaction from Etherscan');
+
+  throw new Error(
+    `Unable to fetch deploy contract transaction from Etherscan for ${network} with scanApiUrl ${scanApiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
+  );
 };
 
 export const fetchTransactionByHashFromRPC = async (
   network: string,
   transactionHash: string,
 ): Promise<any> => {
-  const RPCURL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'; // TODO : use network specific RPC
-  const result = await fetch(`${RPCURL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      method: 'eth_getTransactionByHash',
-      params: [transactionHash],
-      id: 1,
-    }),
-  });
+  let json: any;
+  try {
+    const RPCURL = PUBLIC_RPC_ENDPOINTS[`${network}`]; // TODO : use network specific RPC
+    const result = await fetch(`${RPCURL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'eth_getTransactionByHash',
+        params: [transactionHash],
+        id: 1,
+      }),
+    });
 
-  const json = await result.json();
-  return json;
+    json = await result.json();
+    return json;
+  } catch (error) {
+    throw new Error('Unable to fetch transaction by hash from RPC');
+  }
 };
 
 export const getStartBlockForContract = async (
   network: string,
   address: string,
 ): Promise<number> => {
-  const transactionHash = await fetchDeployContractTransactionFromEtherscan(network, address);
-  const txn = await fetchTransactionByHashFromRPC(network, transactionHash);
-  return parseInt(txn.result.blockNumber, 16);
+  try {
+    const transactionHash = await fetchDeployContractTransactionFromEtherscan(network, address);
+    const txn = await fetchTransactionByHashFromRPC(network, transactionHash);
+    return parseInt(txn.result.blockNumber, 16);
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 export const loadAbiFromBlockScout = async (

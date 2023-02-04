@@ -1,4 +1,4 @@
-export const PUBLIC_RPC_ENDPOINTS = {
+export const PUBLIC_RPC_ENDPOINTS: any = {
   mainnet: 'https://rpc.ankr.com/eth',
   rinkeby: 'https://rpc.ankr.com/eth_rinkeby',
   goerli: 'https://rpc.ankr.com/eth_goerli',
