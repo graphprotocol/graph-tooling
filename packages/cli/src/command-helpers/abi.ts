@@ -1,8 +1,8 @@
 import immutable from 'immutable';
 import fetch from 'node-fetch';
 import ABI from '../protocols/ethereum/abi';
-import { withSpinner } from './spinner';
 import { PUBLIC_RPC_ENDPOINTS } from './constants';
+import { withSpinner } from './spinner';
 
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
@@ -56,9 +56,7 @@ export const fetchDeployContractTransactionFromEtherscan = async (
     return json.result[0].txHash;
   }
 
-  throw new Error(
-    `Unable to fetch deploy contract transaction from Etherscan for ${network} with scanApiUrl ${scanApiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
-  );
+  throw new Error(`Failed to fetch deploy contract transaction`);
 };
 
 export const fetchTransactionByHashFromRPC = async (
@@ -67,8 +65,9 @@ export const fetchTransactionByHashFromRPC = async (
 ): Promise<any> => {
   let json: any;
   try {
-    const RPCURL = PUBLIC_RPC_ENDPOINTS[`${network}`]; // TODO : use network specific RPC
-    const result = await fetch(`${RPCURL}`, {
+    const RPCURL = PUBLIC_RPC_ENDPOINTS[String(network)];
+    if (!RPCURL) throw new Error(`Unable to fetch RPC URL for ${network}`);
+    const result = await fetch(String(RPCURL), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -80,11 +79,10 @@ export const fetchTransactionByHashFromRPC = async (
         id: 1,
       }),
     });
-
     json = await result.json();
     return json;
   } catch (error) {
-    throw new Error('Unable to fetch transaction by hash from RPC');
+    throw new Error('Unable to fetch contract creation hash from RPC');
   }
 };
 

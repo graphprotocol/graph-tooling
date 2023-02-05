@@ -1,4 +1,3 @@
-import { loadStartBlockForContract } from './../command-helpers/abi';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -20,6 +19,7 @@ import { ContractCtor } from '../protocols/contract';
 import EthereumABI from '../protocols/ethereum/abi';
 import { abiEvents } from '../scaffold/schema';
 import { validateContract } from '../validation';
+import { loadStartBlockForContract } from './../command-helpers/abi';
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
@@ -269,17 +269,14 @@ const processInitForm = async (
             // noop
           }
         }
-
         // If startBlock is not set, try to load it.
-        if(!startBlock){
-
+        if (!startBlock) {
           try {
-          // Load startBlock for this contract
-          startBlock =  Number( await loadStartBlockForContract(network!, value)).toString();
+            // Load startBlock for this contract
+            startBlock = Number(await loadStartBlockForContract(network!, value)).toString();
           } catch (error) {
             // noop
           }
-      
         }
         return value;
       },
@@ -394,6 +391,7 @@ export default {
       network,
       startBlock,
     } = toolbox.parameters.options;
+    startBlock &&= Number(startBlock).toString();
 
     node ||= g;
     ({ node, allowSimpleName } = chooseNodeUrl({
