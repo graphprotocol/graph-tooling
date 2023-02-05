@@ -1,3 +1,4 @@
+import { loadStartBlockForContract } from './../command-helpers/abi';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -268,6 +269,18 @@ const processInitForm = async (
             // noop
           }
         }
+
+        // If startBlock is not set, try to load it.
+        if(!startBlock){
+
+          try {
+          // Load startBlock for this contract
+          startBlock =  Number( await loadStartBlockForContract(network!, value)).toString();
+          } catch (error) {
+            // noop
+          }
+      
+        }
         return value;
       },
     },
@@ -295,8 +308,8 @@ const processInitForm = async (
       type: 'input',
       name: 'startBlock',
       message: 'Start Block',
-      initial: startBlock || '0',
-      skip: () => fromExample !== undefined || startBlock,
+      initial: () => startBlock || '0',
+      skip: () => fromExample !== undefined,
       validate: (value: string) => parseInt(value) >= 0,
       result: (value: string) => {
         startBlock = value;

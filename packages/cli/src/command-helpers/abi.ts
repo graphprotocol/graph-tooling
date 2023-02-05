@@ -33,8 +33,8 @@ export const loadStartBlockForContract = async (
   address: string,
 ): Promise<string> =>
   await withSpinner(
-    `Fetching deploy contract transaction from Etherscan`,
-    `Failed to fetch deploy contract transaction from Etherscan`,
+    `Fetching Start Block`,
+    `Failed to fetch Start Block`,
     `Warnings while fetching deploy contract transaction from Etherscan`,
     async () => {
       return getStartBlockForContract(network, address);
