@@ -47,16 +47,35 @@ export const fetchDeployContractTransactionFromEtherscan = async (
 ): Promise<string> => {
   const scanApiUrl = getEtherscanLikeAPIUrl(network);
 
-  const result = await fetch(
+  const json = await fetchContractCreationHashWithRetry(
     `${scanApiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
+    5,
   );
-
-  const json = await result.json();
   if (json.status === '1') {
     return json.result[0].txHash;
   }
 
   throw new Error(`Failed to fetch deploy contract transaction`);
+};
+
+export const fetchContractCreationHashWithRetry = async (
+  url: string,
+  retryCount: number,
+): Promise<any> => {
+  let json: any;
+  try {
+    const result = await fetch(url);
+    json = await result.json();
+    if (json.status === '0') {
+      return await fetchContractCreationHashWithRetry(url, retryCount - 1);
+    }
+    return json;
+  } catch (error) {
+    if (retryCount > 0) {
+      return await fetchContractCreationHashWithRetry(url, retryCount - 1);
+    }
+    throw new Error('Failed to fetch contract creation hash from RPC');
+  }
 };
 
 export const fetchTransactionByHashFromRPC = async (
@@ -82,7 +101,7 @@ export const fetchTransactionByHashFromRPC = async (
     json = await result.json();
     return json;
   } catch (error) {
-    throw new Error('Unable to fetch contract creation hash from RPC');
+    throw new Error('Failed to fetch contract creation hash from RPC');
   }
 };
 
