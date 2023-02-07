@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-// run the CLI with the current process arguments
-import { run } from './cli';
+import * as oclif from '@oclif/core';
+import flush from '@oclif/core/flush';
+// @ts-expect-error Handle is a pure JS file
+import handle from '@oclif/core/handle';
 
-run(process.argv);
+oclif.run().then(flush).catch(handle);
