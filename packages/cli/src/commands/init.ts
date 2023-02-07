@@ -3,7 +3,6 @@ import os from 'os';
 import path from 'path';
 import chalk from 'chalk';
 import { GluegunToolbox } from 'gluegun';
-import * as graphCli from '../cli';
 import { loadAbiFromBlockScout, loadAbiFromEtherscan } from '../command-helpers/abi';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { fixParameters } from '../command-helpers/gluegun';
@@ -20,6 +19,7 @@ import EthereumABI from '../protocols/ethereum/abi';
 import { abiEvents } from '../scaffold/schema';
 import { validateContract } from '../validation';
 import { loadStartBlockForContract } from './../command-helpers/abi';
+import Add from './add';
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
@@ -1078,7 +1078,7 @@ const addAnotherContract = async (
         }
       }
 
-      await graphCli.run(commandLine);
+      await Add.run(commandLine)
     } catch (e) {
       toolbox.print.error(e);
       process.exit(1);

@@ -1,4 +1,6 @@
 import * as toolbox from 'gluegun';
+import { ux } from '@oclif/core';
+import { ActionBase } from '@oclif/core/lib/cli-ux';
 
 export type Spinner = ReturnType<toolbox.GluegunPrint['spin']>;
 
@@ -23,6 +25,8 @@ export const step = (spinner: Spinner, subject: string, text?: string) => {
 //   spinner stops with the warning message and returns the `result` value.
 // Otherwise the spinner prints the in-progress message with a check mark
 //   and simply returns the value returned by `f`.
+//
+// @deprecated
 export const withSpinner = async (
   text: string,
   errorText: string,
@@ -58,3 +62,41 @@ export const withSpinner = async (
     throw e;
   }
 };
+
+// Executes the function `f` while displaying a command-line spinner.
+export async function useSpinner<T = any>(
+  text: string,
+  errorText: string,
+  warningText: string,
+  f: (action: ActionBase) => Promise<T> | T, // TODO: return type is not correct. we might unfold the result field
+): Promise<T> {
+  const { action } = ux;
+  action.start(text);
+  try {
+    const result = await f(action);
+    if (result && typeof result === 'object') {
+      const hasError = 'error' in result;
+      const hasWarning = 'warning' in result;
+      const hasResult = 'result' in result;
+
+      if (hasError) {
+        action.stop(`✖ ${errorText}: ${result.error}`);
+        return (hasResult ? result.result : result) as T;
+      }
+      if (hasWarning && hasResult) {
+        if (result.warning !== null) {
+          action.stop(`⚠️ ${warningText}: ${result.warning}`);
+        }
+        action.stop('✔');
+        return result.result as T;
+      }
+      action.stop('✔');
+      return result;
+    }
+    action.stop('✔');
+    return result;
+  } catch (e) {
+    action.stop(`✖ ${errorText}: ${e.message}`);
+    throw e;
+  }
+}

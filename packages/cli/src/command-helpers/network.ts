@@ -1,5 +1,5 @@
 import path from 'path';
-import { GluegunFilesystem, GluegunPatching } from 'gluegun';
+import { GluegunFilesystem, GluegunPatching, patching } from 'gluegun';
 import yaml from 'yaml';
 import { step, withSpinner } from './spinner';
 
@@ -51,10 +51,12 @@ export const updateSubgraphNetwork = async (
 
         // All data sources shoud be on the same network,
         // so we have to update the network of all templates too.
-        subgraph.templates &&= subgraph.templates.map((template: any) => ({
-          ...template,
-          network,
-        }));
+        // eslint-disable-next-line -- prettier has problems with &&=
+        subgraph.templates &&
+          (subgraph.templates = subgraph.templates.map((template: any) => ({
+            ...template,
+            network,
+          })));
 
         const unsusedSources = networkSources.filter(x => !subgraphSources.includes(x));
 
@@ -115,14 +117,13 @@ function hasChanges(identifierName: string, network: string, networkConfig: any,
   return networkChanged || addressChanged || startBlockChanged;
 }
 
-export const updateNetworksFile = async (
-  toolbox: { patching: GluegunPatching },
+export async function updateNetworksFile(
   network: string,
   dataSource: any,
   address: string,
   networksFile: string,
-) => {
-  await toolbox.patching.update(networksFile, config => {
+) {
+  await patching.update(networksFile, config => {
     if (Object.keys(config).includes(network)) {
       Object.assign(config[network], { [dataSource]: { address } });
     } else {
@@ -130,4 +131,4 @@ export const updateNetworksFile = async (
     }
     return config;
   });
-};
+}
