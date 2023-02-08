@@ -17,7 +17,7 @@ import Protocol from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import Subgraph from '../subgraph';
 
-export default class Add extends Command {
+export default class AddCommand extends Command {
   static description = 'Adds a new datasource to a subgraph.';
 
   static args = {
@@ -54,7 +54,7 @@ export default class Add extends Command {
     const {
       args: { address, subgraphManifest: manifestPath },
       flags: { abi, contractName, mergeEntities, networkFile: networksFile },
-    } = await this.parse(Add);
+    } = await this.parse(AddCommand);
 
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath);
     const protocol = Protocol.fromDataSources(dataSourcesAndTemplates);

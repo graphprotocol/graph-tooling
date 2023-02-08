@@ -19,7 +19,7 @@ import EthereumABI from '../protocols/ethereum/abi';
 import { abiEvents } from '../scaffold/schema';
 import { validateContract } from '../validation';
 import { loadStartBlockForContract } from './../command-helpers/abi';
-import Add from './add';
+import AddCommand from './add';
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
@@ -1078,7 +1078,7 @@ const addAnotherContract = async (
         }
       }
 
-      await Add.run(commandLine)
+      await AddCommand.run(commandLine)
     } catch (e) {
       toolbox.print.error(e);
       process.exit(1);
