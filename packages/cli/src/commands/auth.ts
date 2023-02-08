@@ -28,11 +28,13 @@ export default class AuthCommand extends Command {
     } = await this.parse(AuthCommand);
 
     // if user specifies --product or --studio then deployKey is the first parameter
-    let node = nodeOrDeployKey;
+    let node: string | undefined;
     let deployKey = deployKeyFlag;
     if (product || studio) {
       ({ node } = chooseNodeUrl({ product, studio, node }));
       deployKey = nodeOrDeployKey;
+    } else {
+      node = nodeOrDeployKey;
     }
 
     // eslint-disable-next-line -- prettier has problems with ||=
@@ -53,12 +55,12 @@ export default class AuthCommand extends Command {
       this.error('✖ Deploy key must not exceed 200 characters', { exit: 1 });
     }
 
-    ux.action.start(`Setting deploy key for "${node}"...`);
+    ux.action.start(`Setting deploy key for "${node}"`);
     try {
       await saveDeployKey(node!, deployKey);
-      ux.action.stop(`✔ Deploy key set for "${node}"!`);
+      ux.action.stop(`✔ Deploy key set for "${node}"`);
     } catch (e) {
-      this.error(e);
+      this.error(e, { exit: 1 });
     }
   }
 }
