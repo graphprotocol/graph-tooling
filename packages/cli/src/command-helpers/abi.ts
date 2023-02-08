@@ -1,7 +1,6 @@
 import immutable from 'immutable';
 import fetch from 'node-fetch';
 import ABI from '../protocols/ethereum/abi';
-import { PUBLIC_RPC_ENDPOINTS } from './constants';
 import { withSpinner } from './spinner';
 
 export const loadAbiFromEtherscan = async (
@@ -84,7 +83,7 @@ export const fetchTransactionByHashFromRPC = async (
 ): Promise<any> => {
   let json: any;
   try {
-    const RPCURL = PUBLIC_RPC_ENDPOINTS[String(network)];
+    const RPCURL = getPublicRPCEndpoint(network);
     if (!RPCURL) throw new Error(`Unable to fetch RPC URL for ${network}`);
     const result = await fetch(String(RPCURL), {
       method: 'POST',
@@ -188,5 +187,66 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-testnet.ftmscan.com/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
+  }
+};
+
+const getPublicRPCEndpoint = (network: string) => {
+  switch (network) {
+    case 'mainnet':
+      return 'https://rpc.ankr.com/eth';
+    case 'rinkeby':
+      return 'https://rpc.ankr.com/eth_rinkeby';
+    case 'goerli':
+      return 'https://rpc.ankr.com/eth_goerli';
+    case 'poa-core':
+      return 'https://core.poa.network';
+    case 'poa-sokol':
+      return 'https://sokol.poa.network';
+    case 'gnosis':
+      return 'https://safe-transaction.gnosis.io';
+    case 'matic':
+      return 'https://rpc-mainnet.maticvigil.com';
+    case 'mumbai':
+      return 'https://rpc-mumbai.maticvigil.com';
+    case 'fantom':
+      return 'https://rpcapi.fantom.network';
+    case 'fantom-testnet':
+      return 'https://rpc.testnet.fantom.network';
+    case 'bsc':
+      return 'https://bsc-dataseed.binance.org';
+    case 'chapel':
+      return 'https://rpc.chapel.dev';
+    case 'clover':
+      return 'https://rpc.clover.finance';
+    case 'avalanche':
+      return 'https://api.avax.network/ext/bc/C/rpc';
+    case 'fuji':
+      return 'https://api.avax-test.network/ext/bc/C/rpc';
+    case 'celo':
+      return 'https://forno.celo.org';
+    case 'celo-alfajores':
+      return 'https://alfajores-forno.celo-testnet.org';
+    case 'fuse':
+      return 'https://rpc.fuse.io';
+    case 'moonbeam':
+      return 'https://rpc.api.moonbeam.network';
+    case 'moonriver':
+      return 'https://moonriver.public.blastapi.io';
+    case 'mbase':
+      return 'https://rpc.moonbase.moonbeam.network';
+    case 'arbitrum-one':
+      return 'https://arb1.arbitrum.io/rpc';
+    case 'arbitrum-goerli':
+      return 'https://goerli.arbitrum.io/rpc';
+    case 'optimism':
+      return 'https://mainnet.optimism.io';
+    case 'optimism-kovan':
+      return 'https://kovan.optimism.io';
+    case 'aurora':
+      return 'https://rpc.mainnet.aurora.dev';
+    case 'aurora-testnet':
+      return 'https://rpc.testnet.aurora.dev';
+    default:
+      throw new Error(`Unknown network: ${network}`);
   }
 };
