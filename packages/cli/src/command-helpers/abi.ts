@@ -45,7 +45,6 @@ export const fetchDeployContractTransactionFromEtherscan = async (
   address: string,
 ): Promise<string> => {
   const scanApiUrl = getEtherscanLikeAPIUrl(network);
-
   const json = await fetchContractCreationHashWithRetry(
     `${scanApiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
     5,
@@ -61,20 +60,20 @@ export const fetchContractCreationHashWithRetry = async (
   url: string,
   retryCount: number,
 ): Promise<any> => {
-  let json: any;
-  try {
-    const result = await fetch(url);
-    json = await result.json();
-    if (json.status === '0') {
-      return await fetchContractCreationHashWithRetry(url, retryCount - 1);
+  let json;
+  for (let i = 0; i < retryCount; i++) {
+    try {
+      const result = await fetch(url);
+      json = await result.json();
+      if (json.status !== '0') {
+        return json;
+      }
+    } catch (error) {
+      /* empty */
     }
-    return json;
-  } catch (error) {
-    if (retryCount > 0) {
-      return await fetchContractCreationHashWithRetry(url, retryCount - 1);
-    }
-    throw new Error('Failed to fetch contract creation hash from RPC');
   }
+  throw new Error(`Failed to fetch contract creation transaction hash
+  `);
 };
 
 export const fetchTransactionByHashFromRPC = async (
@@ -100,7 +99,7 @@ export const fetchTransactionByHashFromRPC = async (
     json = await result.json();
     return json;
   } catch (error) {
-    throw new Error('Failed to fetch contract creation hash from RPC');
+    throw new Error('Failed to fetch contract creation transaction');
   }
 };
 
@@ -113,7 +112,7 @@ export const getStartBlockForContract = async (
     const txn = await fetchTransactionByHashFromRPC(network, transactionHash);
     return parseInt(txn.result.blockNumber, 16);
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error?.message);
   }
 };
 
@@ -189,63 +188,62 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-${network}.etherscan.io/api`;
   }
 };
-
 const getPublicRPCEndpoint = (network: string) => {
   switch (network) {
-    case 'mainnet':
-      return 'https://rpc.ankr.com/eth';
-    case 'rinkeby':
-      return 'https://rpc.ankr.com/eth_rinkeby';
-    case 'goerli':
-      return 'https://rpc.ankr.com/eth_goerli';
-    case 'poa-core':
-      return 'https://core.poa.network';
-    case 'poa-sokol':
-      return 'https://sokol.poa.network';
-    case 'gnosis':
-      return 'https://safe-transaction.gnosis.io';
-    case 'matic':
-      return 'https://rpc-mainnet.maticvigil.com';
-    case 'mumbai':
-      return 'https://rpc-mumbai.maticvigil.com';
-    case 'fantom':
-      return 'https://rpcapi.fantom.network';
-    case 'fantom-testnet':
-      return 'https://rpc.testnet.fantom.network';
-    case 'bsc':
-      return 'https://bsc-dataseed.binance.org';
-    case 'chapel':
-      return 'https://rpc.chapel.dev';
-    case 'clover':
-      return 'https://rpc.clover.finance';
-    case 'avalanche':
-      return 'https://api.avax.network/ext/bc/C/rpc';
-    case 'fuji':
-      return 'https://api.avax-test.network/ext/bc/C/rpc';
-    case 'celo':
-      return 'https://forno.celo.org';
-    case 'celo-alfajores':
-      return 'https://alfajores-forno.celo-testnet.org';
-    case 'fuse':
-      return 'https://rpc.fuse.io';
-    case 'moonbeam':
-      return 'https://rpc.api.moonbeam.network';
-    case 'moonriver':
-      return 'https://moonriver.public.blastapi.io';
-    case 'mbase':
-      return 'https://rpc.moonbase.moonbeam.network';
+    case 'arbitrum-goerli':
+      return 'https://goerli-rollup.arbitrum.io/rpc';
     case 'arbitrum-one':
       return 'https://arb1.arbitrum.io/rpc';
-    case 'arbitrum-goerli':
-      return 'https://goerli.arbitrum.io/rpc';
-    case 'optimism':
-      return 'https://mainnet.optimism.io';
-    case 'optimism-kovan':
-      return 'https://kovan.optimism.io';
     case 'aurora':
       return 'https://rpc.mainnet.aurora.dev';
     case 'aurora-testnet':
       return 'https://rpc.testnet.aurora.dev';
+    case 'avalanche':
+      return 'https://api.avax.network/ext/bc/C/rpc';
+    case 'bsc':
+      return 'https://bsc-dataseed.binance.org';
+    case 'celo':
+      return 'https://forno.celo.org';
+    case 'celo-alfajores':
+      return 'https://alfajores-forno.celo-testnet.org';
+    case 'chapel':
+      return 'https://rpc.chapel.dev';
+    case 'clover':
+      return 'https://rpc.clover.finance';
+    case 'fantom':
+      return 'https://rpcapi.fantom.network';
+    case 'fantom-testnet':
+      return 'https://rpc.testnet.fantom.network';
+    case 'fuji':
+      return 'https://api.avax-test.network/ext/bc/C/rpc';
+    case 'fuse':
+      return 'https://rpc.fuse.io';
+    case 'goerli':
+      return 'https://rpc.ankr.com/eth_goerli';
+    case 'gnosis':
+      return 'https://safe-transaction.gnosis.io';
+    case 'mainnet':
+      return 'https://rpc.ankr.com/eth';
+    case 'matic':
+      return 'https://rpc-mainnet.maticvigil.com';
+    case 'mbase':
+      return 'https://rpc.moonbase.moonbeam.network';
+    case 'mumbai':
+      return 'https://rpc-mumbai.maticvigil.com';
+    case 'moonbeam':
+      return 'https://rpc.api.moonbeam.network';
+    case 'moonriver':
+      return 'https://moonriver.public.blastapi.io';
+    case 'optimism':
+      return 'https://mainnet.optimism.io';
+    case 'optimism-kovan':
+      return 'https://kovan.optimism.io';
+    case 'poa-core':
+      return 'https://core.poa.network';
+    case 'poa-sokol':
+      return 'https://sokol.poa.network';
+    case 'rinkeby':
+      return 'https://rpc.ankr.com/eth_rinkeby';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
