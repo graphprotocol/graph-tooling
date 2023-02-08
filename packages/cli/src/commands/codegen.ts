@@ -1,87 +1,60 @@
 import path from 'path';
-import chalk from 'chalk';
-import { GluegunToolbox } from 'gluegun';
+import { Args, Command, Flags } from '@oclif/core';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { fixParameters } from '../command-helpers/gluegun';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import debug from '../debug';
 import Protocol from '../protocols';
 import TypeGenerator from '../type-generator';
 
-const HELP = `
-${chalk.bold('graph codegen')} [options] ${chalk.bold('[<subgraph-manifest>]')}
-Options:
-  -h, --help                    Show usage information
-  -o, --output-dir <path>       Output directory for generated types (default: generated/)
-  --skip-migrations         Skip subgraph migrations (default: false)
-  -w, --watch                   Regenerate types when subgraph files change (default: false)
-  -u, --uncrashable            Generate Float Subgraph Uncrashable helper file
-  -uc, --uncrashable-config <path>  Directory for uncrashable config (default: ./uncrashable-config.yaml)
-  `;
-
-export interface CodeGenOptions {
-  help?: boolean;
-  outputDir?: string;
-  skipMigrations?: boolean;
-  watch?: boolean;
-  uncrashable?: boolean;
-  uncrashableConfig?: string;
-}
-
 const codegenDebug = debug('graph-cli:codegen');
 
-export default {
-  description: 'Generates AssemblyScript types for a subgraph',
-  run: async (toolbox: GluegunToolbox) => {
-    // Obtain tools
-    const { filesystem, print } = toolbox;
+export default class CodegenCommand extends Command {
+  static description = 'Generates AssemblyScript types for a subgraph.';
 
-    // Read CLI parameters
-    let { h, help, o, outputDir, skipMigrations, w, watch, u, uncrashable, uc, uncrashableConfig } =
-      toolbox.parameters.options;
+  static args = {
+    'subgraph-manifest': Args.string({
+      required: true,
+    }),
+  };
 
-    // Support both long and short option variants
-    help ||= h;
-    outputDir ||= o;
-    watch ||= w;
-    uncrashable ||= u;
-    let uncrashable_config = uncrashableConfig || uc;
+  static flags = {
+    'output-dir': Flags.string({
+      summary: 'Output directory for generated types.',
+      char: 'o',
+      default: 'generated/',
+    }),
+    'skip-migrations': Flags.boolean({
+      summary: 'Skip subgraph migrations.',
+    }),
+    watch: Flags.boolean({
+      summary: 'Regenerate types when subgraph files change.',
+      char: 'w',
+    }),
+    uncrashable: Flags.boolean({
+      summary: 'Generate Float Subgraph Uncrashable helper file.',
+      char: 'u',
+    }),
+    'uncrashable-config': Flags.string({
+      summary: 'Directory for uncrashable config.',
+      aliases: ['uc'],
+      default: 'uncrashable-config.yaml',
+      dependsOn: ['uncrashable'],
+    }),
+  };
 
-    let manifest;
-    try {
-      [manifest] = fixParameters(toolbox.parameters, {
-        h,
-        help,
-        skipMigrations,
-        w,
+  async run() {
+    const {
+      args: { 'subgraph-manifest': manifest },
+      flags: {
+        'output-dir': outputDir,
+        'skip-migrations': skipMigrations,
         watch,
-        u,
         uncrashable,
-      });
-    } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
-    }
+        'uncrashable-config': uncrashableConfig,
+      },
+    } = await this.parse(CodegenCommand);
 
     codegenDebug('Initialized codegen manifest: %o', manifest);
-
-    // Fall back to default values for options / parameters
-    outputDir =
-      outputDir !== undefined && outputDir !== '' ? outputDir : filesystem.path('generated');
-    manifest =
-      manifest !== undefined && manifest !== '' ? manifest : filesystem.resolve('subgraph.yaml');
-
-    uncrashable_config =
-      uncrashable_config !== undefined && uncrashable_config !== ''
-        ? uncrashable_config
-        : filesystem.resolve('uncrashable-config.yaml');
-
-    // Show help text if requested
-    if (help) {
-      print.info(HELP);
-      return;
-    }
 
     let protocol;
     try {
@@ -98,9 +71,7 @@ export default {
 
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
     } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
+      this.error(e, { exit: 1 });
     }
 
     const generator = new TypeGenerator({
@@ -109,7 +80,7 @@ export default {
       skipMigrations,
       protocol,
       uncrashable,
-      uncrashableConfig: uncrashable_config,
+      uncrashableConfig,
     });
 
     // Watch working directory for file updates or additions, trigger
@@ -119,5 +90,5 @@ export default {
     } else if (!(await generator.generateTypes())) {
       process.exitCode = 1;
     }
-  },
-};
+  }
+}
