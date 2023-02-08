@@ -43,7 +43,7 @@ export default class AddCommand extends Command {
       summary: 'Whether to merge entities with the same name.',
       default: false,
     }),
-    // TODO: should be networksFile (with an "s")
+    // TODO: should be networksFile (with an "s"), or?
     networkFile: Flags.string({
       summary: 'Networks config file path.',
       default: 'networks.json',
@@ -65,7 +65,7 @@ export default class AddCommand extends Command {
     const entities = getEntities(manifest);
     const contractNames = getContractNames(manifest);
     if (contractNames.includes(contractName)) {
-      throw new CLIError(
+      this.error(
         `Datasource or template with name ${contractName} already exists, please choose a different name.`,
         { exit: 1 },
       );
@@ -120,10 +120,9 @@ export default class AddCommand extends Command {
     const yarn = system.which('yarn');
     const npm = system.which('npm');
     if (!yarn && !npm) {
-      throw new CLIError(
-        'Neither Yarn nor NPM were found on your system. Please install one of them.',
-        { exit: 1 },
-      );
+      this.error('Neither Yarn nor NPM were found on your system. Please install one of them.', {
+        exit: 1,
+      });
     }
 
     await useSpinner('Running codegen', 'Failed to run codegen', 'Warning during codegen', () =>
@@ -166,8 +165,9 @@ const updateEventNamesOnCollision = (
       if (entities.includes(dataRow.get('name'))) {
         if (entities.includes(`${contractName}${dataRow.get('name')}`)) {
           throw new CLIError(
-            `Contract name ('${contractName}')
-          + event name ('${dataRow.get('name')}') entity already exists.`,
+            `Contract name ('${contractName}') + event name ('${dataRow.get(
+              'name',
+            )}') entity already exists.`,
             { exit: 1 },
           );
         }

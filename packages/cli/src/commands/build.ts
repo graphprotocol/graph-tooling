@@ -1,122 +1,86 @@
-import chalk from 'chalk';
-import { GluegunToolbox } from 'gluegun';
+import { Args, Command, Flags } from '@oclif/core';
+import { filesystem } from 'gluegun';
 import { createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { fixParameters } from '../command-helpers/gluegun';
 import { updateSubgraphNetwork } from '../command-helpers/network';
 import debug from '../debug';
 import Protocol from '../protocols';
 
 const buildDebug = debug('graph-cli:build');
 
-const HELP = `
-${chalk.bold('graph build')} [options] ${chalk.bold('[<subgraph-manifest>]')}
+export default class BuildCommand extends Command {
+  static description = 'Builds a subgraph and (optionally) uploads it to IPFS.';
 
-Options:
+  static args = {
+    'subgraph-manifest': Args.string({
+      default: 'subgraph.yaml',
+    }),
+  };
 
-  -h, --help                    Show usage information
-  -i, --ipfs <node>             Upload build results to an IPFS node
-  -o, --output-dir <path>       Output directory for build results (default: build/)
-  -t, --output-format <format>  Output format for mappings (wasm, wast) (default: wasm)
-      --skip-migrations         Skip subgraph migrations (default: false)
-  -w, --watch                   Regenerate types when subgraph files change (default: false)
-      --network <name>          Network configuration to use from the networks config file
-      --network-file <path>     Networks config file path (default: "./networks.json")
-`;
+  static flags = {
+    ipfs: Flags.string({
+      summary: 'Upload build results to an IPFS node.',
+      char: 'i',
+    }),
+    'output-dir': Flags.string({
+      summary: 'Output directory for build results.',
+      char: 'o',
+      default: 'build/',
+    }),
+    'output-format': Flags.string({
+      summary: 'Output format for mappings.',
+      char: 't',
+      options: ['wasm', 'wast'],
+      default: 'wasm',
+    }),
+    'skip-migrations': Flags.boolean({
+      summary: 'Skip subgraph migrations.',
+    }),
+    watch: Flags.boolean({
+      summary: 'Regenerate types when subgraph files change.',
+      char: 'w',
+    }),
+    network: Flags.string({
+      summary: 'Network configuration to use from the networks config file.',
+    }),
+    // TODO: should be networksFile (with an "s"), or?
+    'network-file': Flags.string({
+      summary: 'Networks config file path.',
+      default: 'networks.json',
+    }),
+  };
 
-export interface BuildOptions {
-  help?: boolean;
-  ipfs?: string;
-  outputDir?: string;
-  outputFormat?: string;
-  skipMigrations?: boolean;
-  watch?: boolean;
-  network?: string;
-  networkFile?: string;
-}
-
-export default {
-  description: 'Builds a subgraph and (optionally) uploads it to IPFS',
-  run: async (toolbox: GluegunToolbox) => {
-    // Obtain tools
-    const { filesystem, print } = toolbox;
-
-    // Parse CLI parameters
-    let {
-      i,
-      h,
-      help,
-      ipfs,
-      o,
-      outputDir,
-      outputFormat,
-      skipMigrations,
-      t,
-      w,
-      watch,
-      network,
-      networkFile,
-    } = toolbox.parameters.options;
-
-    // Support both short and long option variants
-    help ||= h;
-    ipfs ||= i;
-    outputDir ||= o;
-    outputFormat ||= t;
-    watch ||= w;
-
-    let manifest;
-    try {
-      [manifest] = fixParameters(toolbox.parameters, {
-        h,
-        help,
-        w,
+  async run() {
+    const {
+      args: { 'subgraph-manifest': manifest },
+      flags: {
+        ipfs,
+        'output-dir': outputDir,
+        'output-format': outputFormat,
+        'skip-migrations': skipMigrations,
         watch,
-      });
-    } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
-    }
-
-    // Fall back to default values for options / parameters
-    outputFormat = outputFormat && ['wasm', 'wast'].includes(outputFormat) ? outputFormat : 'wasm';
-    outputDir = outputDir && outputDir !== '' ? outputDir : filesystem.path('build');
-    manifest =
-      manifest !== undefined && manifest !== '' ? manifest : filesystem.resolve('subgraph.yaml');
-    networkFile =
-      networkFile !== undefined && networkFile !== ''
-        ? networkFile
-        : filesystem.resolve('networks.json');
-
-    // Show help text if requested
-    if (help) {
-      print.info(HELP);
-      return;
-    }
+        network,
+        'network-file': networkFile,
+      },
+    } = await this.parse(BuildCommand);
 
     let protocol;
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
-
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
     } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
+      this.error(e, { exit: 1 });
     }
 
     buildDebug('Detected protocol "%s" (%o)', protocol.name, protocol);
 
     if (network && filesystem.exists(networkFile) !== 'file') {
-      print.error(`Network file '${networkFile}' does not exists or is not a file!`);
-      process.exitCode = 1;
-      return;
+      this.error(`Network file '${networkFile}' does not exists or is not a file!`, { exit: 1 });
     }
 
     if (network) {
       const identifierName = protocol.getContract()!.identifierName();
-      await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName);
+      await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
     }
 
     const compiler = createCompiler(manifest, {
@@ -129,7 +93,7 @@ export default {
 
     // Exit with an error code if the compiler couldn't be created
     if (!compiler) {
-      process.exitCode = 1;
+      this.exit(1);
       return;
     }
 
@@ -140,8 +104,8 @@ export default {
     } else {
       const result = await compiler.compile();
       if (result === false) {
-        process.exitCode = 1;
+        this.exit(1);
       }
     }
-  },
-};
+  }
+}

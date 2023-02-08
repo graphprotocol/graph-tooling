@@ -245,7 +245,7 @@ export default {
 
     if (network) {
       const identifierName = protocol.getContract()!.identifierName();
-      await updateSubgraphNetwork(toolbox, manifest, network, networkFile, identifierName);
+      await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
     }
 
     const isStudio = node.match(/studio/);
