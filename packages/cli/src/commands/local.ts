@@ -2,124 +2,101 @@ import { ChildProcess, spawn } from 'child_process';
 import http from 'http';
 import net from 'net';
 import path from 'path';
-import chalk from 'chalk';
+import { Args, Command, Flags } from '@oclif/core';
 import compose from 'docker-compose';
-import { GluegunToolbox } from 'gluegun';
+import { filesystem, patching } from 'gluegun';
 import stripAnsi from 'strip-ansi';
 import tmp from 'tmp-promise';
-import { fixParameters } from '../command-helpers/gluegun';
 import { step, withSpinner } from '../command-helpers/spinner';
 
 // Clean up temporary files even when an uncaught exception occurs
 tmp.setGracefulCleanup();
 
-const HELP = `
-${chalk.bold('graph local')} [options] ${chalk.bold('<local-command>')}
+export default class LocalCommand extends Command {
+  static description =
+    'Runs local tests against a Graph Node environment (using Ganache by default).';
 
-Options:
+  static args = {
+    'local-command': Args.string({
+      required: true,
+    }),
+  };
 
-  -h, --help                    Show usage information
-      --node-logs               Print the Graph Node logs (optional)
-      --ethereum-logs           Print the Ethereum logs (optional)
-      --compose-file <file>     Custom Docker Compose file for additional services (optional)
-      --node-image <image>      Custom Graph Node image to test against (default: graphprotocol/graph-node:latest)
-      --standalone-node <cmd>   Use a standalone Graph Node outside Docker Compose (optional)
-      --standalone-node-args    Custom arguments to be passed to the standalone Graph Node (optional)
-      --skip-wait-for-ipfs      Don't wait for IPFS to be up at localhost:15001 (optional)
-      --skip-wait-for-ethereum  Don't wait for Ethereum to be up at localhost:18545 (optional)
-      --skip-wait-for-postgres  Don't wait for Postgres to be up at localhost:15432 (optional)
-      --timeout                 Time to wait for service containers. (optional, defaults to 120000 milliseconds)
-`;
+  static flags = {
+    'node-logs': Flags.boolean({
+      summary: 'Print the Graph Node logs.',
+    }),
+    'ethereum-logs': Flags.boolean({
+      summary: 'Print the Ethereum logs.',
+    }),
+    'compose-file': Flags.string({
+      summary: 'Custom Docker Compose file for additional services.',
+    }),
+    'node-image': Flags.string({
+      summary: 'Custom Graph Node image to test against.',
+      default: 'graphprotocol/graph-node:latest',
+    }),
+    'standalone-node': Flags.string({
+      summary: 'Use a standalone Graph Node outside Docker Compose.',
+    }),
+    'standalone-node-args': Flags.string({
+      summary: 'Custom arguments to be passed to the standalone Graph Node.',
+      dependsOn: ['standalone-node'],
+    }),
+    'skip-wait-for-ipfs': Flags.boolean({
+      summary: "Don't wait for IPFS to be up at localhost:15001",
+    }),
+    'skip-wait-for-etherium': Flags.boolean({
+      summary: "Don't wait for Ethereum to be up at localhost:18545",
+    }),
+    'skip-wait-for-postgres': Flags.boolean({
+      summary: "Don't wait for Postgres to be up at localhost:15432",
+    }),
+    timeout: Flags.integer({
+      summary: 'Time to wait for service containers in milliseconds.',
+      default: 120_000,
+    }),
+  };
 
-export interface LocalOptions {
-  help?: boolean;
-  nodeLogs?: boolean;
-  ethereumLogs?: boolean;
-  composeFile?: string;
-  nodeImage?: string;
-  standaloneNode?: string;
-  standaloneNodeArgs?: string;
-  skipWaitForIpfs?: boolean;
-  skipWaitForEthereum?: boolean;
-  skipWaitForPostgres?: boolean;
-  timeout?: number;
-}
-
-export default {
-  description: 'Runs local tests against a Graph Node environment (using Ganache by default)',
-  run: async (toolbox: GluegunToolbox) => {
-    // Obtain tools
-    const { filesystem, print } = toolbox;
-
-    // Parse CLI parameters
-    let {
-      composeFile,
-      ethereumLogs,
-      h,
-      help,
-      nodeImage,
-      nodeLogs,
-      skipWaitForEthereum,
-      skipWaitForIpfs,
-      skipWaitForPostgres,
-      standaloneNode,
-      standaloneNodeArgs,
-      timeout,
-    } = toolbox.parameters.options;
-
-    // Support both short and long option variants
-    help ||= h;
-
-    // Extract test command
-    const params = fixParameters(toolbox.parameters, {
-      ethereumLogs,
-      h,
-      help,
-      nodeLogs,
-      skipWaitForEthereum,
-      skipWaitForIpfs,
-      skipWaitForPostgres,
-    });
-
-    // Show help text if requested
-    if (help) {
-      print.info(HELP);
-      return;
-    }
-
-    if (params.length == 0) {
-      print.error(`Test command not provided as the last argument`);
-      process.exitCode = 1;
-      return;
-    }
-
-    const testCommand = params[0];
+  async run() {
+    const {
+      args: { 'local-command': testCommand },
+      flags: {
+        'compose-file': composeFileFlag,
+        'ethereum-logs': ethereumLogsFlag,
+        'node-image': nodeImage,
+        'node-logs': nodeLogsFlag,
+        'skip-wait-for-etherium': skipWaitForEthereum,
+        'skip-wait-for-ipfs': skipWaitForIpfs,
+        'skip-wait-for-postgres': skipWaitForPostgres,
+        'standalone-node': standaloneNode,
+        'standalone-node-args': standaloneNodeArgs,
+        timeout,
+      },
+    } = await this.parse(LocalCommand);
 
     // Obtain the Docker Compose file for services that the tests run against
-    composeFile ||= path.join(
-      __dirname,
-      '..',
-      '..',
-      'resources',
-      'test',
-      standaloneNode ? 'docker-compose-standalone-node.yml' : 'docker-compose.yml',
-    );
-
-    // parse timeout. Defaults to 120 seconds
-    timeout = Math.abs(parseInt(timeout)) || 120_000;
+    const composeFile =
+      composeFileFlag ||
+      path.join(
+        __dirname,
+        '..',
+        '..',
+        'resources',
+        'test',
+        standaloneNode ? 'docker-compose-standalone-node.yml' : 'docker-compose.yml',
+      );
 
     if (!filesystem.exists(composeFile)) {
-      print.error(`Docker Compose file \`${composeFile}\` not found`);
-      process.exitCode = 1;
-      return;
+      this.error(`Docker Compose file "${composeFile}" not found`, { exit: 1 });
     }
 
     // Create temporary directory to operate in
     const { path: tempdir } = await tmp.dir({ prefix: 'graph-test', unsafeCleanup: true });
     try {
-      await configureTestEnvironment(toolbox, tempdir, composeFile, nodeImage);
+      await configureTestEnvironment(tempdir, composeFile, nodeImage);
     } catch (e) {
-      process.exitCode = 1;
+      this.exit(1);
       return;
     }
 
@@ -127,9 +104,7 @@ export default {
     try {
       await startTestEnvironment(tempdir);
     } catch (e) {
-      print.error(e);
-      process.exitCode = 1;
-      return;
+      this.error(e, { exit: 1 });
     }
 
     // Wait for test environment to come up
@@ -142,7 +117,7 @@ export default {
       });
     } catch (e) {
       await stopTestEnvironment(tempdir);
-      process.exitCode = 1;
+      this.exit(1);
       return;
     }
 
@@ -153,14 +128,13 @@ export default {
       try {
         nodeProcess = await startGraphNode(standaloneNode, standaloneNodeArgs, nodeOutputChunks);
       } catch (e) {
-        toolbox.print.error('');
-        toolbox.print.error('  Graph Node');
-        toolbox.print.error('  ----------');
-        toolbox.print.error(indent('  ', Buffer.concat(nodeOutputChunks).toString('utf-8')));
-        toolbox.print.error('');
         await stopTestEnvironment(tempdir);
-        process.exitCode = 1;
-        return;
+        let errorMessage = '\n';
+        errorMessage += '  Graph Node';
+        errorMessage += '  ----------';
+        errorMessage += indent('  ', Buffer.concat(nodeOutputChunks).toString('utf-8'));
+        errorMessage += '\n';
+        this.error(errorMessage, { exit: 1 });
       }
     }
 
@@ -168,16 +142,16 @@ export default {
     try {
       await waitForGraphNode(timeout);
     } catch (e) {
-      toolbox.print.error('');
-      toolbox.print.error('  Graph Node');
-      toolbox.print.error('  ----------');
-      toolbox.print.error(
-        indent('  ', await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks)),
-      );
-      toolbox.print.error('');
       await stopTestEnvironment(tempdir);
-      process.exitCode = 1;
-      return;
+      let errorMessage = '\n';
+      errorMessage += '  Graph Node';
+      errorMessage += '  ----------';
+      errorMessage += indent(
+        '  ',
+        await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks),
+      );
+      errorMessage += '\n';
+      this.error(errorMessage, { exit: 1 });
     }
 
     // Run tests
@@ -193,17 +167,17 @@ export default {
     }
 
     if (result.exitCode == 0) {
-      toolbox.print.success('✔ Tests passed');
+      this.log('✔ Tests passed');
     } else {
-      toolbox.print.error('✖ Tests failed');
+      this.log('✖ Tests failed');
     }
 
     // Capture logs
-    nodeLogs =
-      nodeLogs || result.exitCode !== 0
+    const nodeLogs =
+      nodeLogsFlag || result.exitCode !== 0
         ? await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks)
         : undefined;
-    ethereumLogs = ethereumLogs ? await collectEthereumLogs(tempdir) : undefined;
+    const ethereumLogs = ethereumLogsFlag ? await collectEthereumLogs(tempdir) : undefined;
 
     // Bring down the test environment
     try {
@@ -213,32 +187,32 @@ export default {
     }
 
     if (nodeLogs) {
-      toolbox.print.info('');
-      toolbox.print.info('  Graph node');
-      toolbox.print.info('  ----------');
-      toolbox.print.info('');
-      toolbox.print.info(indent('  ', nodeLogs));
+      this.log('');
+      this.log('  Graph node');
+      this.log('  ----------');
+      this.log('');
+      this.log(indent('  ', nodeLogs));
     }
 
     if (ethereumLogs) {
-      toolbox.print.info('');
-      toolbox.print.info('  Ethereum');
-      toolbox.print.info('  --------');
-      toolbox.print.info('');
-      toolbox.print.info(indent('  ', ethereumLogs));
+      this.log('');
+      this.log('  Ethereum');
+      this.log('  --------');
+      this.log('');
+      this.log(indent('  ', ethereumLogs));
     }
 
     // Always print the test output
-    toolbox.print.info('');
-    toolbox.print.info('  Output');
-    toolbox.print.info('  ------');
-    toolbox.print.info('');
-    toolbox.print.info(indent('  ', result.output));
+    this.log('');
+    this.log('  Output');
+    this.log('  ------');
+    this.log('');
+    this.log(indent('  ', result.output));
 
     // Propagate the exit code from the test run
-    process.exitCode = result.exitCode;
-  },
-};
+    this.exit(result.exitCode);
+  }
+}
 
 /**
  * Indents all lines of a string
@@ -251,12 +225,7 @@ const indent = (indentation: string, str: string) =>
     .map(s => s.replace(/^\s+$/g, ''))
     .join('\n');
 
-const configureTestEnvironment = async (
-  toolbox: GluegunToolbox,
-  tempdir: string,
-  composeFile: string,
-  nodeImage: string,
-) =>
+const configureTestEnvironment = async (tempdir: string, composeFile: string, nodeImage: string) =>
   await withSpinner(
     `Configure test environment`,
     `Failed to configure test environment`,
@@ -266,15 +235,11 @@ const configureTestEnvironment = async (
       const tempComposeFile = path.join(tempdir, 'compose', 'docker-compose.yml');
 
       // Copy the compose file to the temporary directory
-      toolbox.filesystem.copy(composeFile, tempComposeFile);
+      filesystem.copy(composeFile, tempComposeFile);
 
       // Substitute the graph-node image with the custom one, if appropriate
       if (nodeImage) {
-        await toolbox.patching.replace(
-          tempComposeFile,
-          'graphprotocol/graph-node:latest',
-          nodeImage,
-        );
+        await patching.replace(tempComposeFile, 'graphprotocol/graph-node:latest', nodeImage);
       }
     },
   );
@@ -412,7 +377,7 @@ const stopTestEnvironment = async (tempdir: string) =>
 
 const startGraphNode = async (
   standaloneNode: string,
-  standaloneNodeArgs: string,
+  standaloneNodeArgs: string | undefined,
   nodeOutputChunks: Buffer[],
 ): Promise<ChildProcess> =>
   await withSpinner(
@@ -495,7 +460,7 @@ const stopGraphNode = async (nodeProcess: ChildProcess) =>
 
 const collectGraphNodeLogs = async (
   tempdir: string,
-  standaloneNode: string,
+  standaloneNode: string | undefined,
   nodeOutputChunks: Buffer[],
 ) => {
   if (standaloneNode) {
