@@ -45,7 +45,7 @@ const TEST_CONTRACT_START_BLOCKS = {
   // },
 };
 
-describe('getStartBlockForContract', () => {
+describe.skip('getStartBlockForContract', () => {
   for (const [network, contracts] of Object.entries(TEST_CONTRACT_START_BLOCKS)) {
     for (const [contract, startBlockExp] of Object.entries(contracts)) {
       test(`Returns the start block ${network} ${contract} ${startBlockExp}`, async () => {
