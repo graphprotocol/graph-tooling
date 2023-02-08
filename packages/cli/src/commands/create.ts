@@ -1,67 +1,39 @@
 import { URL } from 'url';
-import chalk from 'chalk';
-import { GluegunToolbox } from 'gluegun';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { validateNodeUrl } from '../command-helpers/node';
 
-const HELP = `
-${chalk.bold('graph create')} ${chalk.dim('[options]')} ${chalk.bold('<subgraph-name>')}
+export default class CreateCommand extends Command {
+  static description = 'Registers a subgraph name';
 
-${chalk.dim('Options:')}
+  static args = {
+    'subgraph-name': Args.string({
+      required: true,
+    }),
+  };
 
-      --access-token <token>    Graph access token
-  -h, --help                    Show usage information
-  -g, --node <url>              Graph node to create the subgraph in
-`;
+  static flags = {
+    node: Flags.string({
+      summary: 'Graph node to create the subgraph in.',
+      char: 'g',
+      required: true,
+    }),
+    'access-token': Flags.string({
+      summary: 'Graph access token.',
+    }),
+  };
 
-export interface CreateOptions {
-  accessToken?: string;
-  help?: boolean;
-  node?: string;
-}
+  async run() {
+    const {
+      args: { 'subgraph-name': subgraphName },
+      flags: { 'access-token': accessTokenFlag, node },
+    } = await this.parse(CreateCommand);
 
-export default {
-  description: 'Registers a subgraph name',
-  run: async (toolbox: GluegunToolbox) => {
-    // Obtain tools
-    const { print } = toolbox;
-
-    // Read CLI parameters
-    let { accessToken, g, h, help, node } = toolbox.parameters.options;
-    const subgraphName = toolbox.parameters.first;
-
-    // Support both long and short option variants
-    node ||= g;
-    help ||= h;
-
-    // Show help text if requested
-    if (help) {
-      print.info(HELP);
-      return;
-    }
-
-    // Validate the subgraph name
-    if (!subgraphName) {
-      print.error('No subgraph name provided');
-      print.info(HELP);
-      process.exitCode = 1;
-      return;
-    }
-
-    // Validate node
-    if (!node) {
-      print.error(`No Graph node provided`);
-      print.info(HELP);
-      process.exitCode = 1;
-      return;
-    }
     try {
       validateNodeUrl(node);
     } catch (e) {
-      print.error(`Graph node "${node}" is invalid: ${e.message}`);
-      process.exitCode = 1;
-      return;
+      this.error(`Graph node "${node}" is invalid: ${e.message}`, { exit: 1 });
     }
 
     const requestUrl = new URL(node);
@@ -74,13 +46,13 @@ export default {
     }
 
     // Use the access token, if one is set
-    accessToken = await identifyAccessToken(node, accessToken);
+    const accessToken = await identifyAccessToken(node, accessTokenFlag);
     if (accessToken !== undefined && accessToken !== null) {
       // @ts-expect-error options property seems to exist
       client.options.headers = { Authorization: `Bearer ${accessToken}` };
     }
 
-    const spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`);
+    ux.action.start(`Creating subgraph in Graph node: ${requestUrl}`);
     client.request(
       'subgraph_create',
       { name: subgraphName },
@@ -94,16 +66,16 @@ export default {
         _res,
       ) => {
         if (jsonRpcError) {
-          spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`);
-          process.exitCode = 1;
+          ux.action.stop(`✖ Error creating the subgraph: ${jsonRpcError.message}`);
+          this.exit(1);
         } else if (requestError) {
-          spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`);
-          process.exitCode = 1;
+          ux.action.stop(`✖ HTTP error creating the subgraph: ${requestError.code}`);
+          this.exit(1);
         } else {
-          spinner.stop();
-          print.success(`Created subgraph: ${subgraphName}`);
+          ux.action.stop();
+          this.exit(1);
         }
       },
     );
-  },
-};
+  }
+}
