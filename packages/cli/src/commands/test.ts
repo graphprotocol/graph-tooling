@@ -1,10 +1,9 @@
 import { exec, spawn } from 'child_process';
 import os from 'os';
 import path from 'path';
-import { Args, Command, Flags } from '@oclif/core';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import { Binary } from 'binary-install-raw';
-import chalk from 'chalk';
-import { filesystem, patching, print, system } from 'gluegun';
+import { filesystem, patching, system } from 'gluegun';
 import yaml from 'js-yaml';
 import fetch from 'node-fetch';
 import semver from 'semver';
@@ -81,7 +80,7 @@ export default class TestCommand extends Command {
           opts.testsDir = config.testsDir;
         }
       } catch (error) {
-        this.error(`A problem occurred while reading "matchstick.yaml": ${error.message}`, {
+        this.error(`A problem occurred while reading "matchstick.yaml":\n${error.message}`, {
           exit: 1,
         });
       }
@@ -89,7 +88,7 @@ export default class TestCommand extends Command {
 
     // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
     if (opts.force || (!opts.version && !opts.latestVersion)) {
-      print.info('Fetching latest version tag');
+      this.log('Fetching latest version tag...');
       const result = await fetch(
         'https://api.github.com/repos/LimeChain/matchstick/releases/latest',
       );
@@ -105,9 +104,9 @@ export default class TestCommand extends Command {
     }
 
     if (opts.docker) {
-      runDocker(datasource, opts);
+      runDocker.bind(this)(datasource, opts);
     } else {
-      runBinary(datasource, opts);
+      runBinary.bind(this)(datasource, opts);
     }
   }
 }
@@ -126,6 +125,7 @@ function getLatestVersionFromCache(cachePath: string) {
 }
 
 async function runBinary(
+  this: TestCommand,
   datasource: string | undefined,
   opts: {
     coverage: boolean;
@@ -143,13 +143,13 @@ async function runBinary(
   const latestVersion = opts.latestVersion;
   const recompileOpt = opts.recompile;
 
-  const platform = await getPlatform(logsOpt);
+  const platform = await getPlatform.bind(this)(logsOpt);
 
   const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt ||
     latestVersion}/${platform}`;
 
   if (logsOpt) {
-    print.info(`Download link: ${url}`);
+    this.log(`Download link: ${url}`);
   }
 
   const binary = new Binary(platform, url, versionOpt || latestVersion);
@@ -162,18 +162,18 @@ async function runBinary(
   args.length > 0 ? binary.run(...args) : binary.run();
 }
 
-async function getPlatform(logsOpt: boolean | undefined) {
+async function getPlatform(this: TestCommand, logsOpt: boolean | undefined) {
   const type = os.type();
   const arch = os.arch();
   const cpuCore = os.cpus()[0];
   const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|processor)/.test(cpuCore.model);
-  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : {};
+  const linuxInfo = type === 'Linux' ? await getLinuxInfo.bind(this)() : {};
   const linuxDistro = linuxInfo.name;
   const release = linuxInfo.version || os.release();
   const majorVersion = parseInt(linuxInfo.version || '', 10) || semver.major(release);
 
   if (logsOpt) {
-    print.info(
+    this.log(
       `OS type: ${linuxDistro ||
         type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
         cpuCore.model
@@ -219,7 +219,7 @@ interface LinuxInfo {
   version?: string;
 }
 
-async function getLinuxInfo(): Promise<LinuxInfo> {
+async function getLinuxInfo(this: TestCommand): Promise<LinuxInfo> {
   try {
     const result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {
       trim: true,
@@ -236,12 +236,12 @@ async function getLinuxInfo(): Promise<LinuxInfo> {
 
     return linuxInfo;
   } catch (error) {
-    print.error(`Error fetching the Linux version:\n ${error}`);
-    process.exit(1);
+    this.error(`Error fetching the Linux version:\n${error}`, { exit: 1 });
   }
 }
 
 async function runDocker(
+  this: TestCommand,
   datasource: string | undefined,
   opts: {
     testsDir: string;
@@ -274,7 +274,7 @@ async function runDocker(
   // Generate the Dockerfile only if it doesn't exists,
   // version flag and/or force flag is passed.
   if (!dockerfileExists || versionOpt || forceOpt) {
-    await dockerfile(dockerfilePath, versionOpt, latestVersion);
+    await dockerfile.bind(this)(dockerfilePath, versionOpt, latestVersion);
   }
 
   // Run a command to check if matchstick image already exists
@@ -308,7 +308,7 @@ async function runDocker(
     if (!dockerfileExists || stdout === '' || versionOpt || forceOpt) {
       if (stdout !== '') {
         exec('docker image rm matchstick', (_error, stdout, _stderr) => {
-          print.info(chalk.bold(`Removing matchstick image\n${stdout}`));
+          this.log(`Remove matchstick image result:\n${stdout}`);
         });
       }
       // Build a docker image. If the process has executed successfully
@@ -321,7 +321,7 @@ async function runDocker(
         }
       });
     } else {
-      print.info('Docker image already exists. Skipping `docker build` command.');
+      this.log('Docker image already exists. Skipping `docker build` command...');
       // Run the container from the existing matchstick docker image
       spawn('docker', dockerRunOpts, { stdio: 'inherit' });
     }
@@ -331,11 +331,12 @@ async function runDocker(
 // Downloads Dockerfile template from the demo-subgraph repo
 // Replaces the placeholders with their respective values
 async function dockerfile(
+  this: TestCommand,
   dockerfilePath: string,
   versionOpt: string | null | undefined,
   latestVersion: string | null | undefined,
 ) {
-  const spinner = print.spin('Generating Dockerfile...');
+  ux.action.start('Generating Dockerfile');
 
   try {
     // Fetch the Dockerfile template content from the demo-subgraph repo
@@ -358,11 +359,10 @@ async function dockerfile(
       versionOpt || latestVersion || 'unknown',
     );
   } catch (error) {
-    spinner.fail(
-      `A problem occurred while generating the Dockerfile. Please attend to the errors below:\n ${error.message}`,
-    );
-    process.exit(1);
+    this.error(`A problem occurred while generating the Dockerfile:\n${error.message}`, {
+      exit: 1,
+    });
   }
 
-  spinner.succeed('Successfully generated Dockerfile.');
+  ux.action.stop('Successfully generated Dockerfile');
 }
