@@ -72,7 +72,7 @@ export default class CreateCommand extends Command {
           ux.action.stop(`✖ HTTP error creating the subgraph: ${requestError.code}`);
           this.exit(1);
         } else {
-          ux.action.stop();
+          ux.action.stop('Subgraph created');
           this.exit(1);
         }
       },
