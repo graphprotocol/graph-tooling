@@ -1,6 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { Args, Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import { GluegunToolbox } from 'gluegun';
 import { loadAbiFromBlockScout, loadAbiFromEtherscan } from '../command-helpers/abi';
@@ -27,6 +28,85 @@ const availableNetworks = Protocol.availableNetworks();
 const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum/gravatar';
 
 const initDebug = debug('graph-cli:init');
+
+export default class InitCommand extends Command {
+  static args = {
+    subgraphName: Args.string({
+      required: true,
+    }),
+    directory: Args.string({
+      required: true,
+    }),
+  };
+
+  static flags = {
+    protocol: Flags.string({
+      required: true,
+      options: protocolChoices,
+    }),
+    product: Flags.string({
+      summary: 'Selects the product for which to initialize.',
+      required: true,
+      options: ['subgraph-studio', 'hosted-service'],
+    }),
+    studio: Flags.boolean({
+      summary: 'Shortcut for "--product subgraph-studio".',
+      exclusive: ['product'],
+    }),
+    node: Flags.string({
+      summary: 'Graph node for which to initialize.',
+      char: 'g',
+      required: true,
+    }),
+    'allow-simple-name': Flags.boolean({
+      description: 'Use a subgraph name without a prefix.',
+      default: false,
+    }),
+
+    'from-contract': Flags.string({
+      helpGroup: 'Scaffold',
+      description: 'Creates a scaffold based on an existing contract.',
+      required: true,
+      exclusive: ['from-example'],
+    }),
+    'from-example': Flags.string({
+      helpGroup: 'Scaffold',
+      description: 'Creates a scaffold based on an example subgraph.',
+      default: 'Contract',
+      exclusive: ['from-contract'],
+    }),
+
+    'contract-name': Flags.string({
+      helpGroup: 'Scaffold from contract',
+      description: 'Name of the contract.',
+      required: true,
+      dependsOn: ['from-contract'],
+    }),
+    'index-events': Flags.boolean({
+      helpGroup: 'Scaffold from contract',
+      description: 'Index contract events as entities.',
+      dependsOn: ['from-contract'],
+    }),
+    'start-block': Flags.integer({
+      helpGroup: 'Scaffold from contract',
+      description: 'Block number to start indexing from.',
+      default: 0,
+      dependsOn: ['from-contract'],
+    }),
+
+    abi: Flags.string({
+      helpGroup: 'Ethereum',
+    }),
+    network: Flags.string({
+      helpGroup: 'Ethereum',
+    }),
+  };
+
+  async run() {
+    const { flags } = await this.parse(InitCommand);
+    console.log(flags);
+  }
+}
 
 const HELP = `
 ${chalk.bold('graph init')} [options] [subgraph-name] [directory]
@@ -132,7 +212,8 @@ const processInitForm = async (
       choices: protocolChoices,
       skip: protocolChoices.includes(protocol),
       result: (value: ProtocolName) => {
-        protocol ||= value;
+        // eslint-disable-next-line -- prettier has problems with ||=
+        protocol = protocol || value;
         protocolInstance = new Protocol(protocol);
         return protocol;
       },
@@ -367,7 +448,7 @@ const loadAbiFromFile = (toolbox: GluegunToolbox, ABI: typeof EthereumABI, filen
   }
 };
 
-export default {
+export const comm = {
   description: 'Creates a new subgraph with basic scaffolding',
   run: async (toolbox: GluegunToolbox) => {
     // Obtain tools
@@ -393,7 +474,9 @@ export default {
     } = toolbox.parameters.options;
     startBlock &&= Number(startBlock).toString();
 
-    node ||= g;
+    // eslint-disable-next-line -- prettier has problems with ||=
+    node = node || g;
+
     ({ node, allowSimpleName } = chooseNodeUrl({
       product,
       studio,
@@ -1078,7 +1161,7 @@ const addAnotherContract = async (
         }
       }
 
-      await AddCommand.run(commandLine)
+      await AddCommand.run(commandLine);
     } catch (e) {
       toolbox.print.error(e);
       process.exit(1);
