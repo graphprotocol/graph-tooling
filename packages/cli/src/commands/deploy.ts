@@ -13,152 +13,107 @@ import { chooseNodeUrl } from '../command-helpers/node';
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import Protocol from '../protocols';
+import { Args, Command, Flags } from '@oclif/core';
 
-const HELP = `
-${chalk.bold('graph deploy')} [options] ${chalk.bold('<subgraph-name>')} ${chalk.bold(
-  '[<subgraph-manifest>]',
-)}
+const headersFlag = Flags.custom<Record<string, string>>({
+  summary: 'Add custom headers that will be used by the IPFS HTTP client.',
+  aliases: ['hdr'],
+  parse: val => JSON.parse(val),
+  default: {},
+});
 
-Options:
+export default class DeployCommand extends Command {
+  static description = 'Deploys a subgraph to a Graph node.';
 
-        --product <subgraph-studio|hosted-service>
-                                Selects the product to which to deploy
-        --studio                  Shortcut for --product subgraph-studio
-  -g,   --node <node>             Graph node to which to deploy
-        --deploy-key <key>        User deploy key
-  -l    --version-label <label>   Version label used for the deployment
-  -h,   --help                    Show usage information
-  -i,   --ipfs <node>             Upload build results to an IPFS node (default: ${DEFAULT_IPFS_URL})
-  -hdr, --headers <map>           Add custom headers that will be used by the IPFS HTTP client (default: {})
-        --debug-fork              ID of a remote subgraph whose store will be GraphQL queried
-  -o,   --output-dir <path>       Output directory for build results (default: build/)
-        --skip-migrations         Skip subgraph migrations (default: false)
-  -w,   --watch                   Regenerate types when subgraph files change (default: false)
-        --network <name>          Network configuration to use from the networks config file
-        --network-file <path>     Networks config file path (default: "./networks.json")
-`;
+  static args = {
+    'subgraph-name': Args.string({
+      required: true,
+    }),
+    'subgraph-manifest': Args.string({
+      default: 'subgraph.yaml',
+    }),
+  };
 
-export interface DeployOptions {
-  product?: 'subgraph-studio' | 'hosted-service';
-  studio?: boolean;
-  node?: string;
-  deployKey?: string;
-  versionLabel?: string;
-  help?: boolean;
-  ipfs?: string;
-  headers?: Record<string, string>;
-  debugFork?: boolean;
-  outputDir?: string;
-  skipMigrations?: boolean;
-  watch?: boolean;
-  network?: string;
-  networkFile?: string;
-}
+  static flags = {
+    product: Flags.string({
+      summary: 'Select a product for which to authenticate.',
+      options: ['subgraph-studio', 'hosted-service'],
+    }),
+    studio: Flags.boolean({
+      summary: 'Shortcut for "--product subgraph-studio".',
+      exclusive: ['product'],
+    }),
+    node: Flags.string({
+      summary: 'Graph node for which to initialize.',
+      char: 'g',
+      required: true,
+    }),
+    'deploy-key': Flags.string({
+      summary: 'User deploy key.',
+      required: true,
+      exclusive: ['access-token'],
+    }),
+    'access-token': Flags.string({
+      deprecated: true,
+      summary: 'Graph access key. DEPRECATED: Use "--deploy-key" instead.',
+      exclusive: ['deploy-key'],
+    }),
+    'version-label': Flags.string({
+      summary: 'Version label used for the deployment.',
+      char: 'l',
+    }),
+    ipfs: Flags.string({
+      summary: 'Upload build results to an IPFS node.',
+      char: 'i',
+      required: true, // TODO: do we need? will be optional if env is set?
+      env: 'DEFAULT_IPFS_URL',
+    }),
+    headers: headersFlag(),
+    'debug-fork': Flags.string({
+      summary: 'ID of a remote subgraph whose store will be GraphQL queried.',
+    }),
+    'output-dir': Flags.directory({
+      summary: 'Output directory for build results.',
+      char: 'o',
+      default: 'build/',
+    }),
+    'skip-migrations': Flags.boolean({
+      summary: 'Skip subgraph migrations.',
+    }),
+    watch: Flags.boolean({
+      summary: 'Regenerate types when subgraph files change.',
+      char: 'w',
+    }),
+    network: Flags.string({
+      summary: 'Network configuration to use from the networks config file.',
+    }),
+    // TODO: should be networksFile (with an "s"), or?
+    'network-file': Flags.file({
+      summary: 'Networks config file path.',
+      default: 'networks.json',
+    }),
+  };
 
-const processForm = async (
-  toolbox: GluegunToolbox,
-  { product, studio, node, versionLabel }: DeployOptions,
-) => {
-  const questions = [
-    {
-      type: 'select',
-      name: 'product',
-      message: 'Product for which to deploy',
-      choices: ['subgraph-studio', 'hosted-service'],
-      skip:
-        product === 'subgraph-studio' ||
-        product === 'hosted-service' ||
-        studio !== undefined ||
-        node !== undefined,
-    },
-    {
-      type: 'input',
-      name: 'versionLabel',
-      message: 'Version Label (e.g. v0.0.1)',
-      skip: versionLabel !== undefined,
-    },
-  ];
-
-  try {
-    const answers = await toolbox.prompt.ask(questions);
-    return answers;
-  } catch (e) {
-    return undefined;
-  }
-};
-
-export default {
-  description: 'Deploys the subgraph to a Graph node',
-  run: async (toolbox: GluegunToolbox) => {
-    // Obtain tools
-    const { filesystem, print } = toolbox;
-
-    // Parse CLI parameters
-    let {
-      product,
-      studio,
-      deployKey,
-      accessToken,
-      versionLabel,
-      l,
-      g,
-      h,
-      i,
-      help,
-      ipfs,
-      headers,
-      hdr,
-      node,
-      o,
-      outputDir,
-      skipMigrations,
-      w,
-      watch,
-      debugFork,
-      network,
-      networkFile,
-    } = toolbox.parameters.options;
-
-    // Support both long and short option variants
-    help ||= h;
-    ipfs = ipfs || i || DEFAULT_IPFS_URL;
-    headers = headers || hdr || '{}';
-    node ||= g;
-    outputDir ||= o;
-    watch ||= w;
-    versionLabel ||= l;
-
-    try {
-      headers = JSON.parse(headers);
-    } catch (e) {
-      print.error('Please make sure headers is a valid JSON value');
-      process.exitCode = 1;
-      return;
-    }
-
-    let subgraphName: string, manifest: string;
-    try {
-      [subgraphName, manifest] = fixParameters(toolbox.parameters, {
-        h,
-        help,
-        w,
-        watch,
+  async run() {
+    const {
+      args: { 'subgraph-name': subgraphName, 'subgraph-manifest': manifest },
+      flags: {
+        product,
         studio,
-      });
-    } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
-    }
-
-    // Fall back to default values for options / parameters
-    outputDir = outputDir && outputDir !== '' ? outputDir : filesystem.path('build');
-    manifest =
-      manifest !== undefined && manifest !== '' ? manifest : filesystem.resolve('subgraph.yaml');
-    networkFile =
-      networkFile !== undefined && networkFile !== ''
-        ? networkFile
-        : filesystem.resolve('networks.json');
+        'deploy-key': deployKeyFlag,
+        'access-token': accessToken,
+        'version-label': versionLabel,
+        ipfs,
+        headers,
+        node,
+        'output-dir': outputDir,
+        'skip-migrations': skipMigrations,
+        watch,
+        'debug-fork': debugFork,
+        network,
+        'network-file': networkFile,
+      },
+    } = await this.parse(DeployCommand);
 
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
@@ -167,15 +122,7 @@ export default {
         validateStudioNetwork({ studio, product, network });
       }
     } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
-    }
-
-    // Show help text if requested
-    if (help) {
-      print.info(HELP);
-      return;
+      this.error(e, { exit: 1 });
     }
 
     ({ node } = chooseNodeUrl({ product, studio, node }));
@@ -199,25 +146,15 @@ export default {
 
     // Validate the subgraph name
     if (!subgraphName) {
-      print.error(
+      this.error(
         `No subgraph ${product == 'subgraph-studio' || studio ? 'slug' : 'name'} provided`,
+        { exit: 1 },
       );
-      print.info(HELP);
-      process.exitCode = 1;
-      return;
     }
 
     // Validate node
     if (!node) {
       print.error(`No Graph node provided`);
-      print.info(HELP);
-      process.exitCode = 1;
-      return;
-    }
-
-    // Validate IPFS
-    if (!ipfs) {
-      print.error(`No IPFS node provided`);
       print.info(HELP);
       process.exitCode = 1;
       return;
@@ -238,9 +175,7 @@ export default {
 
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
     } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
+      this.error(e, { exit: 1 });
     }
 
     if (network) {
@@ -257,13 +192,13 @@ export default {
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
-      blockIpfsMethods: isStudio, // Network does not support publishing subgraphs with IPFS methods
+      blockIpfsMethods: isStudio || undefined, // Network does not support publishing subgraphs with IPFS methods
       protocol,
     });
 
     // Exit with an error code if the compiler couldn't be created
     if (!compiler) {
-      process.exitCode = 1;
+      this.exit(1);
       return;
     }
 
@@ -286,11 +221,12 @@ export default {
 
     // Exit with an error code if the client couldn't be created
     if (!client) {
-      process.exitCode = 1;
+      this.exit(1);
       return;
     }
 
     // Use the deploy key, if one is set
+    let deployKey = deployKeyFlag;
     if (!deployKey && accessToken) {
       deployKey = accessToken; // backwards compatibility
     }
@@ -384,5 +320,54 @@ $ graph create --node ${node} ${subgraphName}`);
       }
       await deploySubgraph(result);
     }
-  },
+  }
+}
+
+export interface DeployOptions {
+  product?: 'subgraph-studio' | 'hosted-service';
+  studio?: boolean;
+  node?: string;
+  deployKey?: string;
+  versionLabel?: string;
+  help?: boolean;
+  ipfs?: string;
+  headers?: Record<string, string>;
+  debugFork?: boolean;
+  outputDir?: string;
+  skipMigrations?: boolean;
+  watch?: boolean;
+  network?: string;
+  networkFile?: string;
+}
+
+const processForm = async (
+  toolbox: GluegunToolbox,
+  { product, studio, node, versionLabel }: DeployOptions,
+) => {
+  const questions = [
+    {
+      type: 'select',
+      name: 'product',
+      message: 'Product for which to deploy',
+      choices: ['subgraph-studio', 'hosted-service'],
+      skip:
+        product === 'subgraph-studio' ||
+        product === 'hosted-service' ||
+        studio !== undefined ||
+        node !== undefined,
+    },
+    {
+      type: 'input',
+      name: 'versionLabel',
+      message: 'Version Label (e.g. v0.0.1)',
+      skip: versionLabel !== undefined,
+    },
+  ];
+
+  try {
+    const answers = await toolbox.prompt.ask(questions);
+    return answers;
+  } catch (e) {
+    return undefined;
+  }
 };
