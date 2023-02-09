@@ -21,14 +21,14 @@ interface CompilerOptions {
   outputDir: string;
   outputFormat: string;
   skipMigrations: boolean;
-  blockIpfsMethods?: boolean;
+  blockIpfsMethods?: RegExpMatchArray;
   protocol: Protocol;
 }
 
 export default class Compiler {
   private ipfs: any;
   private sourceDir: string;
-  private blockIpfsMethods?: boolean;
+  private blockIpfsMethods?: RegExpMatchArray;
   private libsDirs: string[];
   private globalsFile: string;
   private protocol: Protocol;
