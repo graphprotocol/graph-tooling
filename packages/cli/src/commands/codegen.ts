@@ -18,7 +18,7 @@ export default class CodegenCommand extends Command {
   };
 
   static flags = {
-    'output-dir': Flags.string({
+    'output-dir': Flags.directory({
       summary: 'Output directory for generated types.',
       char: 'o',
       default: 'generated/',
@@ -34,7 +34,7 @@ export default class CodegenCommand extends Command {
       summary: 'Generate Float Subgraph Uncrashable helper file.',
       char: 'u',
     }),
-    'uncrashable-config': Flags.string({
+    'uncrashable-config': Flags.file({
       summary: 'Directory for uncrashable config.',
       aliases: ['uc'],
       default: 'uncrashable-config.yaml',

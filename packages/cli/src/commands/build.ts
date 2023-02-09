@@ -22,7 +22,7 @@ export default class BuildCommand extends Command {
       summary: 'Upload build results to an IPFS node.',
       char: 'i',
     }),
-    'output-dir': Flags.string({
+    'output-dir': Flags.directory({
       summary: 'Output directory for build results.',
       char: 'o',
       default: 'build/',
@@ -44,7 +44,7 @@ export default class BuildCommand extends Command {
       summary: 'Network configuration to use from the networks config file.',
     }),
     // TODO: should be networksFile (with an "s"), or?
-    'network-file': Flags.string({
+    'network-file': Flags.file({
       summary: 'Networks config file path.',
       default: 'networks.json',
     }),

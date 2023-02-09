@@ -29,7 +29,7 @@ export default class LocalCommand extends Command {
     'ethereum-logs': Flags.boolean({
       summary: 'Print the Ethereum logs.',
     }),
-    'compose-file': Flags.string({
+    'compose-file': Flags.file({
       summary: 'Custom Docker Compose file for additional services.',
     }),
     'node-image': Flags.string({

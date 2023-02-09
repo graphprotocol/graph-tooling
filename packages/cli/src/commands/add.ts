@@ -44,7 +44,7 @@ export default class AddCommand extends Command {
       default: false,
     }),
     // TODO: should be networksFile (with an "s"), or?
-    networkFile: Flags.string({
+    networkFile: Flags.file({
       summary: 'Networks config file path.',
       default: 'networks.json',
     }),
