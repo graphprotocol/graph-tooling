@@ -1,11 +1,9 @@
 import path from 'path';
 import { URL } from 'url';
-import chalk from 'chalk';
-import { GluegunToolbox } from 'gluegun';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import { identifyDeployKey } from '../command-helpers/auth';
 import { createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { fixParameters } from '../command-helpers/gluegun';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { updateSubgraphNetwork } from '../command-helpers/network';
@@ -13,7 +11,6 @@ import { chooseNodeUrl } from '../command-helpers/node';
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import Protocol from '../protocols';
-import { Args, Command, Flags } from '@oclif/core';
 
 const headersFlag = Flags.custom<Record<string, string>>({
   summary: 'Add custom headers that will be used by the IPFS HTTP client.',
@@ -46,7 +43,6 @@ export default class DeployCommand extends Command {
     node: Flags.string({
       summary: 'Graph node for which to initialize.',
       char: 'g',
-      required: true,
     }),
     'deploy-key': Flags.string({
       summary: 'User deploy key.',
@@ -65,8 +61,7 @@ export default class DeployCommand extends Command {
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
       char: 'i',
-      required: true, // TODO: do we need? will be optional if env is set?
-      env: 'DEFAULT_IPFS_URL',
+      default: DEFAULT_IPFS_URL,
     }),
     headers: headersFlag(),
     'debug-fork': Flags.string({
@@ -102,10 +97,10 @@ export default class DeployCommand extends Command {
         studio,
         'deploy-key': deployKeyFlag,
         'access-token': accessToken,
-        'version-label': versionLabel,
+        'version-label': versionLabelFlag,
         ipfs,
         headers,
-        node,
+        node: nodeFlag,
         'output-dir': outputDir,
         'skip-migrations': skipMigrations,
         watch,
@@ -125,39 +120,18 @@ export default class DeployCommand extends Command {
       this.error(e, { exit: 1 });
     }
 
-    ({ node } = chooseNodeUrl({ product, studio, node }));
+    const { node } = chooseNodeUrl({
+      product,
+      studio,
+      node:
+        nodeFlag ||
+        (await ux.prompt('Which product to deploy for?', {
+          required: true,
+        })),
+    });
     if (!node) {
-      const inputs = await processForm(toolbox, {
-        product,
-        studio,
-        node,
-        versionLabel: 'skip', // determine label requirement later
-      });
-      if (inputs === undefined) {
-        process.exit(1);
-      }
-      product = inputs.product;
-      ({ node } = chooseNodeUrl({
-        product,
-        studio,
-        node,
-      }));
-    }
-
-    // Validate the subgraph name
-    if (!subgraphName) {
-      this.error(
-        `No subgraph ${product == 'subgraph-studio' || studio ? 'slug' : 'name'} provided`,
-        { exit: 1 },
-      );
-    }
-
-    // Validate node
-    if (!node) {
-      print.error(`No Graph node provided`);
-      print.info(HELP);
-      process.exitCode = 1;
-      return;
+      // shouldn't happen, but we do the check to satisfy TS
+      this.error('No Graph node provided');
     }
 
     let protocol;
@@ -203,17 +177,11 @@ export default class DeployCommand extends Command {
     }
 
     // Ask for label if not on hosted service
+    let versionLabel = versionLabelFlag;
     if (!versionLabel && !isHostedService) {
-      const inputs = await processForm(toolbox, {
-        product,
-        studio,
-        node,
-        versionLabel,
+      versionLabel = await ux.prompt('Which version label to use? (e.g. "v0.0.1")', {
+        required: true,
       });
-      if (inputs === undefined) {
-        process.exit(1);
-      }
-      versionLabel = inputs.versionLabel;
     }
 
     const requestUrl = new URL(node);
@@ -236,9 +204,11 @@ export default class DeployCommand extends Command {
       client.options.headers = { Authorization: 'Bearer ' + deployKey };
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias -- request needs it
+    const self = this;
+
     const deploySubgraph = async (ipfsHash: string) => {
-      const spinner = print.spin(`Deploying to Graph node ${requestUrl}`);
-      //       `Failed to deploy to Graph node ${requestUrl}`,
+      ux.action.start(`Deploying to Graph node ${requestUrl}`);
       client.request(
         'subgraph_deploy',
         {
@@ -256,26 +226,24 @@ export default class DeployCommand extends Command {
           res,
         ) => {
           if (jsonRpcError) {
-            spinner.fail(`Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`);
+            let errorMessage = `Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`;
 
             // Provide helpful advice when the subgraph has not been created yet
             if (jsonRpcError.message.match(/subgraph name not found/)) {
               if (isHostedService) {
-                print.info(`
-You may need to create it at https://thegraph.com/explorer/dashboard.`);
+                errorMessage +=
+                  '\nYou may need to create it at https://thegraph.com/explorer/dashboard.';
               } else {
-                print.info(`
+                errorMessage += `
 Make sure to create the subgraph first by running the following command:
-$ graph create --node ${node} ${subgraphName}`);
+$ graph create --node ${node} ${subgraphName}`;
               }
             }
-            process.exitCode = 1;
-          } else if (requestError) {
-            spinner.fail(`HTTP error deploying the subgraph ${requestError.code}`);
-            process.exitCode = 1;
-          } else {
-            spinner.stop();
 
+            self.error(errorMessage, { exit: 1 });
+          } else if (requestError) {
+            self.error(`HTTP error deploying the subgraph ${requestError.code}`, { exit: 1 });
+          } else {
             const base = requestUrl.protocol + '//' + requestUrl.hostname;
             let playground = res.playground;
             let queries = res.queries;
@@ -289,17 +257,12 @@ $ graph create --node ${node} ${subgraphName}`);
             }
 
             if (isHostedService) {
-              print.success(
-                `Deployed to ${chalk.blue(
-                  `https://thegraph.com/explorer/subgraph/${subgraphName}`,
-                )}`,
-              );
+              ux.action.stop(`Deployed to https://thegraph.com/explorer/subgraph/${subgraphName}`);
             } else {
-              print.success(`Deployed to ${chalk.blue(String(playground))}`);
+              ux.action.stop(`Deployed to ${String(playground)}`);
             }
-            print.info('\nSubgraph endpoints:');
-            print.info(`Queries (HTTP):     ${queries}`);
-            print.info(``);
+            self.log('Subgraph endpoints:');
+            self.log(`Queries (HTTP):\n${queries}`);
           }
         },
       );
@@ -322,52 +285,3 @@ $ graph create --node ${node} ${subgraphName}`);
     }
   }
 }
-
-export interface DeployOptions {
-  product?: 'subgraph-studio' | 'hosted-service';
-  studio?: boolean;
-  node?: string;
-  deployKey?: string;
-  versionLabel?: string;
-  help?: boolean;
-  ipfs?: string;
-  headers?: Record<string, string>;
-  debugFork?: boolean;
-  outputDir?: string;
-  skipMigrations?: boolean;
-  watch?: boolean;
-  network?: string;
-  networkFile?: string;
-}
-
-const processForm = async (
-  toolbox: GluegunToolbox,
-  { product, studio, node, versionLabel }: DeployOptions,
-) => {
-  const questions = [
-    {
-      type: 'select',
-      name: 'product',
-      message: 'Product for which to deploy',
-      choices: ['subgraph-studio', 'hosted-service'],
-      skip:
-        product === 'subgraph-studio' ||
-        product === 'hosted-service' ||
-        studio !== undefined ||
-        node !== undefined,
-    },
-    {
-      type: 'input',
-      name: 'versionLabel',
-      message: 'Version Label (e.g. v0.0.1)',
-      skip: versionLabel !== undefined,
-    },
-  ];
-
-  try {
-    const answers = await toolbox.prompt.ask(questions);
-    return answers;
-  } catch (e) {
-    return undefined;
-  }
-};
