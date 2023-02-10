@@ -62,7 +62,7 @@ export const generateScaffold = async (
     subgraphName: string;
     indexEvents: boolean;
     contractName?: string;
-    startBlock?: string;
+    startBlock?: number;
     node: string;
   },
   spinner: Spinner,

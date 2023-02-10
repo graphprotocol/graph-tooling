@@ -22,7 +22,7 @@ export interface ScaffoldOptions {
   contract?: string;
   network: string;
   contractName: string;
-  startBlock?: string;
+  startBlock?: number;
   subgraphName?: string;
   node?: string;
 }
@@ -36,7 +36,7 @@ export default class Scaffold {
   contractName: string;
   subgraphName?: string;
   node?: string;
-  startBlock?: string;
+  startBlock?: number;
 
   constructor(options: ScaffoldOptions) {
     this.protocol = options.protocol;
