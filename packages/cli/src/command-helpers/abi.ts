@@ -27,6 +27,95 @@ export const loadAbiFromEtherscan = async (
     },
   );
 
+export const loadStartBlockForContract = async (
+  network: string,
+  address: string,
+): Promise<string> =>
+  await withSpinner(
+    `Fetching Start Block`,
+    `Failed to fetch Start Block`,
+    `Warnings while fetching deploy contract transaction from Etherscan`,
+    async () => {
+      return getStartBlockForContract(network, address);
+    },
+  );
+
+export const fetchDeployContractTransactionFromEtherscan = async (
+  network: string,
+  address: string,
+): Promise<string> => {
+  const scanApiUrl = getEtherscanLikeAPIUrl(network);
+  const json = await fetchContractCreationHashWithRetry(
+    `${scanApiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
+    5,
+  );
+  if (json.status === '1') {
+    return json.result[0].txHash;
+  }
+
+  throw new Error(`Failed to fetch deploy contract transaction`);
+};
+
+export const fetchContractCreationHashWithRetry = async (
+  url: string,
+  retryCount: number,
+): Promise<any> => {
+  let json;
+  for (let i = 0; i < retryCount; i++) {
+    try {
+      const result = await fetch(url);
+      json = await result.json();
+      if (json.status !== '0') {
+        return json;
+      }
+    } catch (error) {
+      /* empty */
+    }
+  }
+  throw new Error(`Failed to fetch contract creation transaction hash
+  `);
+};
+
+export const fetchTransactionByHashFromRPC = async (
+  network: string,
+  transactionHash: string,
+): Promise<any> => {
+  let json: any;
+  try {
+    const RPCURL = getPublicRPCEndpoint(network);
+    if (!RPCURL) throw new Error(`Unable to fetch RPC URL for ${network}`);
+    const result = await fetch(String(RPCURL), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'eth_getTransactionByHash',
+        params: [transactionHash],
+        id: 1,
+      }),
+    });
+    json = await result.json();
+    return json;
+  } catch (error) {
+    throw new Error('Failed to fetch contract creation transaction');
+  }
+};
+
+export const getStartBlockForContract = async (
+  network: string,
+  address: string,
+): Promise<number> => {
+  try {
+    const transactionHash = await fetchDeployContractTransactionFromEtherscan(network, address);
+    const txn = await fetchTransactionByHashFromRPC(network, transactionHash);
+    return parseInt(txn.result.blockNumber, 16);
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+
 export const loadAbiFromBlockScout = async (
   ABICtor: typeof ABI,
   network: string,
@@ -97,5 +186,65 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-testnet.ftmscan.com/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
+  }
+};
+const getPublicRPCEndpoint = (network: string) => {
+  switch (network) {
+    case 'arbitrum-goerli':
+      return 'https://goerli-rollup.arbitrum.io/rpc';
+    case 'arbitrum-one':
+      return 'https://arb1.arbitrum.io/rpc';
+    case 'aurora':
+      return 'https://rpc.mainnet.aurora.dev';
+    case 'aurora-testnet':
+      return 'https://rpc.testnet.aurora.dev';
+    case 'avalanche':
+      return 'https://api.avax.network/ext/bc/C/rpc';
+    case 'bsc':
+      return 'https://bsc-dataseed.binance.org';
+    case 'celo':
+      return 'https://forno.celo.org';
+    case 'celo-alfajores':
+      return 'https://alfajores-forno.celo-testnet.org';
+    case 'chapel':
+      return 'https://rpc.chapel.dev';
+    case 'clover':
+      return 'https://rpc.clover.finance';
+    case 'fantom':
+      return 'https://rpcapi.fantom.network';
+    case 'fantom-testnet':
+      return 'https://rpc.testnet.fantom.network';
+    case 'fuji':
+      return 'https://api.avax-test.network/ext/bc/C/rpc';
+    case 'fuse':
+      return 'https://rpc.fuse.io';
+    case 'goerli':
+      return 'https://rpc.ankr.com/eth_goerli';
+    case 'gnosis':
+      return 'https://safe-transaction.gnosis.io';
+    case 'mainnet':
+      return 'https://rpc.ankr.com/eth';
+    case 'matic':
+      return 'https://rpc-mainnet.maticvigil.com';
+    case 'mbase':
+      return 'https://rpc.moonbase.moonbeam.network';
+    case 'mumbai':
+      return 'https://rpc-mumbai.maticvigil.com';
+    case 'moonbeam':
+      return 'https://rpc.api.moonbeam.network';
+    case 'moonriver':
+      return 'https://moonriver.public.blastapi.io';
+    case 'optimism':
+      return 'https://mainnet.optimism.io';
+    case 'optimism-kovan':
+      return 'https://kovan.optimism.io';
+    case 'poa-core':
+      return 'https://core.poa.network';
+    case 'poa-sokol':
+      return 'https://sokol.poa.network';
+    case 'rinkeby':
+      return 'https://rpc.ankr.com/eth_rinkeby';
+    default:
+      throw new Error(`Unknown network: ${network}`);
   }
 };
