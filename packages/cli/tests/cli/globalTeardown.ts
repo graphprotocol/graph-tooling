@@ -1,8 +1,8 @@
 /* eslint-disable */
 
-import { npmUnlinkCli } from './util';
+import { unlinkCli } from './util';
 
 export default async () => {
   delete process.env.GRAPH_CLI_TESTS;
-  await npmUnlinkCli();
+  await unlinkCli();
 };

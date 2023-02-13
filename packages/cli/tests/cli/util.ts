@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
+import { system } from 'gluegun';
 import spawn from 'spawn-command';
 import stripAnsi from 'strip-ansi';
 
@@ -127,6 +128,10 @@ export function runGraphCli(args: string[], cwd: string) {
   return runCommand(graphCli, args, cwd);
 }
 
-export const npmLinkCli = () => runCommand('npm', ['link']);
+export const linkCli = () => {
+  runCommand(system.which('yarn') ? 'yarn' : 'npm', ['link']);
+};
 
-export const npmUnlinkCli = () => runCommand('npm', ['unlink']);
+export const unlinkCli = () => {
+  runCommand(system.which('yarn') ? 'yarn' : 'npm', ['unlink']);
+};

@@ -446,6 +446,7 @@ export default {
     }
 
     const commands = {
+      link: yarn ? 'yarn link @graphprotocol/graph-cli' : 'npm link @graphprotocol/graph-cli',
       install: yarn ? 'yarn' : 'npm install',
       codegen: yarn ? 'yarn codegen' : 'npm run codegen',
       deploy: yarn ? 'yarn deploy' : 'npm run deploy',
@@ -629,31 +630,25 @@ const initRepository = async (toolbox: GluegunToolbox, directory: string) =>
     },
   );
 
-// Only used for local testing / continuous integration.
-//
-// This requires that the command `npm link` is called
-// on the root directory of this repository, as described here:
-// https://docs.npmjs.com/cli/v7/commands/npm-link.
-const npmLinkToLocalCli = async (toolbox: GluegunToolbox, directory: string) => {
-  if (process.env.GRAPH_CLI_TESTS) {
-    await toolbox.system.run('npm link @graphprotocol/graph-cli', { cwd: directory });
-  }
-};
-
 const installDependencies = async (
   toolbox: GluegunToolbox,
   directory: string,
-  installCommand: string,
+  commands: {
+    link: string;
+    install: string;
+  },
 ) =>
   await withSpinner(
-    `Install dependencies with ${toolbox.print.colors.muted(installCommand)}`,
+    `Install dependencies with ${toolbox.print.colors.muted(commands.install)}`,
     `Failed to install dependencies`,
     `Warnings while installing dependencies`,
     async () => {
-      // Links to local graph-cli if we're running the automated tests
-      await npmLinkToLocalCli(toolbox, directory);
+      if (process.env.GRAPH_CLI_TESTS) {
+        await toolbox.system.run(commands.link, { cwd: directory });
+      }
 
-      await toolbox.system.run(installCommand, { cwd: directory });
+      await toolbox.system.run(commands.install, { cwd: directory });
+
       return true;
     },
   );
@@ -724,6 +719,7 @@ const initSubgraphFromExample = async (
     commands,
   }: {
     commands: {
+      link: string;
       install: string;
       codegen: string;
       deploy: string;
@@ -849,7 +845,7 @@ const initSubgraphFromExample = async (
   }
 
   // Install dependencies
-  const installed = await installDependencies(toolbox, directory, commands.install);
+  const installed = await installDependencies(toolbox, directory, commands);
   if (installed !== true) {
     process.exitCode = 1;
     return;
@@ -901,6 +897,7 @@ const initSubgraphFromContract = async (
     addContract,
   }: {
     commands: {
+      link: string;
       install: string;
       codegen: string;
       deploy: string;
@@ -992,7 +989,7 @@ const initSubgraphFromContract = async (
   }
 
   // Install dependencies
-  const installed = await installDependencies(toolbox, directory, commands.install);
+  const installed = await installDependencies(toolbox, directory, commands);
   if (installed !== true) {
     process.exitCode = 1;
     return;
