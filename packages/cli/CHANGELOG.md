@@ -1,5 +1,19 @@
 # @graphprotocol/graph-cli
 
+## 0.39.0
+
+### Minor Changes
+
+- [#1059](https://github.com/graphprotocol/graph-tooling/pull/1059)
+  [`7ffaf0c`](https://github.com/graphprotocol/graph-tooling/commit/7ffaf0ce9532011ae458abff4cf425328aa5c40f)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Auto fetch startBlock
+
+### Patch Changes
+
+- [#968](https://github.com/graphprotocol/graph-tooling/pull/968)
+  [`bf4f541`](https://github.com/graphprotocol/graph-tooling/commit/bf4f5417beca4714792321b271d25fe754350fa3)
+  Thanks [@kosecki123](https://github.com/kosecki123)! - fix cleoscan explorer URLs
+
 ## 0.38.0
 
 ### Minor Changes
