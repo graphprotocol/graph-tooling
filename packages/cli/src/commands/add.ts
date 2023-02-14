@@ -1,7 +1,11 @@
 import chalk from 'chalk';
 import { GluegunToolbox } from 'gluegun';
 import immutable from 'immutable';
-import { loadAbiFromBlockScout, loadAbiFromEtherscan } from '../command-helpers/abi';
+import {
+  loadAbiFromBlockScout,
+  loadAbiFromEtherscan,
+  loadStartBlockForContract,
+} from '../command-helpers/abi';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { fixParameters } from '../command-helpers/gluegun';
 import { updateNetworksFile } from '../command-helpers/network';
@@ -44,7 +48,8 @@ export default {
     const { print, system } = toolbox;
 
     // Read CLI parameters
-    let { abi, contractName, h, help, mergeEntities, networkFile } = toolbox.parameters.options;
+    let { abi, contractName, h, help, mergeEntities, networkFile, startBlock } =
+      toolbox.parameters.options;
 
     contractName ||= 'Contract';
 
@@ -102,6 +107,13 @@ export default {
       ethabi = await loadAbiFromEtherscan(EthereumABI, network, address);
     }
 
+    try {
+      startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
+    } catch (error) {
+      // If we can't get the start block, we'll just leave it out of the manifest
+      // TODO: Ask the user for the start block
+    }
+
     const { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(
       toolbox,
       ethabi,
@@ -117,7 +129,14 @@ export default {
     await writeTestsFiles(ethabi, protocol, contractName);
 
     const dataSources = result.get('dataSources');
-    const dataSource = await generateDataSource(protocol, contractName, network, address, ethabi);
+    const dataSource = await generateDataSource(
+      protocol,
+      contractName,
+      network,
+      address,
+      ethabi,
+      startBlock,
+    );
 
     // Handle the collisions edge case by copying another data source yaml data
     if (mergeEntities && onlyCollisions) {
