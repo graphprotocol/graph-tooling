@@ -1,4 +1,21 @@
-export const allowedStudioNetworks = ['mainnet', 'rinkeby', 'goerli', 'gnosis'] as const;
+export const allowedStudioNetworks = [
+  'mainnet',
+  'rinkeby',
+  'goerli',
+  'gnosis',
+  'chapel',
+  'optimism-goerli',
+  'clover',
+  'fantom-testnet',
+  'arbitrum-goerli',
+  'fuji',
+  'celo-alfajores',
+  'mumbai',
+  'aurora-testnet',
+  'near-testnet',
+  'theta-testnet-001',
+  'osmo-test-4',
+] as const;
 
 export const validateStudioNetwork = ({
   studio,
