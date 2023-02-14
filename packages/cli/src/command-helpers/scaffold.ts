@@ -18,6 +18,7 @@ export const generateDataSource = async (
   network: string,
   contractAddress: string,
   abi: ABI,
+  startBlock?: string,
 ) => {
   const protocolManifest = protocol.getManifestScaffold();
 
@@ -30,9 +31,12 @@ export const generateDataSource = async (
     network,
     'source',
     yaml.parse(
-      prettier.format(protocolManifest.source({ contract: contractAddress, contractName }), {
-        parser: 'yaml',
-      }),
+      prettier.format(
+        protocolManifest.source({ contract: contractAddress, contractName, startBlock }),
+        {
+          parser: 'yaml',
+        },
+      ),
     ),
     'mapping',
     yaml.parse(
