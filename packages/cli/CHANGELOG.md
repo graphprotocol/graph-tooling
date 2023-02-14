@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.40.0
+
+### Minor Changes
+
+- [#1064](https://github.com/graphprotocol/graph-tooling/pull/1064)
+  [`aaecb6e`](https://github.com/graphprotocol/graph-tooling/commit/aaecb6e31c15b7191797bf61c9d496a6d20a3248)
+  Thanks [@saihaj](https://github.com/saihaj)! - enable deploymnets of testnets in studio
+
 ## 0.39.0
 
 ### Minor Changes
