@@ -62,7 +62,8 @@ export default class InitCommand extends Command {
     }),
     'from-example': Flags.string({
       description: 'Creates a scaffold based on an example subgraph.',
-      default: 'Contract',
+      // TODO: using a default sets the value and therefore requires not to have --from-contract
+      // default: 'Contract',
       exclusive: ['from-contract'],
     }),
 
