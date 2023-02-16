@@ -670,11 +670,11 @@ Subgraph ${subgraphName} created in ${relativeDir}
   );
   this.log(`Next steps:
 
-  1. Run "graph auth" to authenticate with your deploy key.
+  1. Run \`graph auth\` to authenticate with your deploy key.
 
-  2. Type "cd ${relativeDir}" to enter the subgraph.
+  2. Type \`cd ${relativeDir}\` to enter the subgraph.
 
-  3. Run "${commands.deploy}" to deploy the subgraph.
+  3. Run \`${commands.deploy}\` to deploy the subgraph.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.`);
 }
