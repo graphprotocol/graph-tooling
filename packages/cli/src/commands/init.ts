@@ -828,7 +828,7 @@ async function initSubgraphFromExample(
   // Run code-generation
   const codegen = await runCodegen(directory, commands.codegen);
   if (codegen !== true) {
-    process.exitCode = 1;
+    this.exit(1);
     return;
   }
 
