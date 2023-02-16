@@ -41,7 +41,7 @@ export default class CreateCommand extends Command {
 
     // Exit with an error code if the client couldn't be created
     if (!client) {
-      process.exitCode = 1;
+      this.exit(1);
       return;
     }
 
