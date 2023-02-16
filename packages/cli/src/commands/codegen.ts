@@ -13,7 +13,7 @@ export default class CodegenCommand extends Command {
 
   static args = {
     'subgraph-manifest': Args.string({
-      required: true,
+      default: 'subgraph.yaml',
     }),
   };
 
@@ -37,7 +37,8 @@ export default class CodegenCommand extends Command {
     'uncrashable-config': Flags.file({
       summary: 'Directory for uncrashable config.',
       aliases: ['uc'],
-      default: 'uncrashable-config.yaml',
+      // TODO: using a default sets the value and therefore requires --uncrashable
+      // default: 'uncrashable-config.yaml',
       dependsOn: ['uncrashable'],
     }),
   };
@@ -80,7 +81,7 @@ export default class CodegenCommand extends Command {
       skipMigrations,
       protocol,
       uncrashable,
-      uncrashableConfig,
+      uncrashableConfig: uncrashableConfig || 'uncrashable-config.yaml',
     });
 
     // Watch working directory for file updates or additions, trigger
