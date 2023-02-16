@@ -12,7 +12,7 @@ import {
   writeSchema,
   writeTestsFiles,
 } from '../command-helpers/scaffold';
-import { useSpinner } from '../command-helpers/spinner';
+import { withSpinner } from '../command-helpers/spinner';
 import Protocol from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import Subgraph from '../subgraph';
@@ -125,7 +125,7 @@ export default class AddCommand extends Command {
       });
     }
 
-    await useSpinner('Running codegen', 'Failed to run codegen', 'Warning during codegen', () =>
+    await withSpinner('Running codegen', 'Failed to run codegen', 'Warning during codegen', () =>
       system.run(yarn ? 'yarn codegen' : 'npm run codegen'),
     );
   }

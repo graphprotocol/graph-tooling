@@ -9,7 +9,6 @@ export const updateSubgraphNetwork = async (
   networksFile: string,
   identifierName: string,
 ) =>
-  // TODO: use useSpinner
   await withSpinner(
     `Update sources network`,
     `Failed to update sources network`,
@@ -72,7 +71,6 @@ export const updateSubgraphNetwork = async (
   );
 
 export const initNetworksConfig = async (directory: string, identifierName: string) =>
-  // TODO: use useSpinner
   await withSpinner(
     `Initialize networks config`,
     `Failed to initialize networks config`,

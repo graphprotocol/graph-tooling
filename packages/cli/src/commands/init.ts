@@ -8,7 +8,7 @@ import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
-import { useSpinner, withSpinner } from '../command-helpers/spinner';
+import { withSpinner } from '../command-helpers/spinner';
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
 import Protocol, { ProtocolName } from '../protocols';
@@ -622,7 +622,7 @@ const installDependencies = async (
   },
 ) =>
   await withSpinner(
-    `Install dependencies with "${commands.install}"`,
+    `Install dependencies with ${commands.install}`,
     `Failed to install dependencies`,
     `Warnings while installing dependencies`,
     async () => {
@@ -637,7 +637,7 @@ const installDependencies = async (
   );
 
 const runCodegen = async (directory: string, codegenCommand: string) =>
-  await useSpinner(
+  await withSpinner(
     `Generate ABI and schema types with "${codegenCommand}"`,
     `Failed to generate code from ABI and GraphQL schema`,
     `Warnings while generating code from ABI and GraphQL schema`,

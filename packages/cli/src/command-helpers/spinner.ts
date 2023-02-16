@@ -1,16 +1,14 @@
-import * as toolbox from 'gluegun';
-import { ux } from '@oclif/core';
-import { ActionBase } from '@oclif/core/lib/cli-ux';
+import { GluegunPrint, print } from 'gluegun';
 
-export type Spinner = ReturnType<toolbox.GluegunPrint['spin']>;
+export type Spinner = ReturnType<GluegunPrint['spin']>;
 
 export const step = (spinner: Spinner, subject: string, text?: string) => {
   if (text) {
     spinner.stopAndPersist({
-      text: toolbox.print.colors.muted(`${subject} ${text}`),
+      text: print.colors.muted(`${subject} ${text}`),
     });
   } else {
-    spinner.stopAndPersist({ text: toolbox.print.colors.muted(subject) });
+    spinner.stopAndPersist({ text: print.colors.muted(subject) });
   }
   spinner.start();
   return spinner;
@@ -25,15 +23,13 @@ export const step = (spinner: Spinner, subject: string, text?: string) => {
 //   spinner stops with the warning message and returns the `result` value.
 // Otherwise the spinner prints the in-progress message with a check mark
 //   and simply returns the value returned by `f`.
-//
-// @deprecated
 export const withSpinner = async (
   text: string,
   errorText: string,
   warningText: string,
   f: (spinner: Spinner) => Promise<any> | any, // TODO: type result
 ) => {
-  const spinner = toolbox.print.spin(text);
+  const spinner = print.spin(text);
   try {
     const result = await f(spinner);
     if (typeof result === 'object') {
@@ -62,41 +58,3 @@ export const withSpinner = async (
     throw e;
   }
 };
-
-// Executes the function `f` while displaying a command-line spinner.
-export async function useSpinner<T = any>(
-  text: string,
-  errorText: string,
-  warningText: string,
-  f: (action: ActionBase) => Promise<T> | T, // TODO: return type is not correct. we might unfold the result field
-): Promise<T> {
-  const { action } = ux;
-  action.start(text);
-  try {
-    const result = await f(action);
-    if (result && typeof result === 'object') {
-      const hasError = 'error' in result;
-      const hasWarning = 'warning' in result;
-      const hasResult = 'result' in result;
-
-      if (hasError) {
-        action.stop(`✖ ${errorText}: ${result.error}`);
-        return (hasResult ? result.result : result) as T;
-      }
-      if (hasWarning && hasResult) {
-        if (result.warning !== null) {
-          action.stop(`⚠️ ${warningText}: ${result.warning}`);
-        }
-        action.stop('✔');
-        return result.result as T;
-      }
-      action.stop('✔');
-      return result;
-    }
-    action.stop('✔');
-    return result;
-  } catch (e) {
-    action.stop(`✖ ${errorText}: ${e.message}`);
-    throw e;
-  }
-}
