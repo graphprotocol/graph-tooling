@@ -25,7 +25,7 @@ export default class AddCommand extends Command {
       description: 'The contract address',
       required: true,
     }),
-    subgraphManifest: Args.string({
+    'subgraph-manifest': Args.string({
       default: 'subgraph.yaml',
     }),
   };
@@ -35,16 +35,16 @@ export default class AddCommand extends Command {
       summary: 'Path to the contract ABI.',
       default: '*Download from Etherscan*',
     }),
-    contractName: Flags.string({
+    'contract-name': Flags.string({
       summary: 'Name of the contract.',
       default: 'Contract',
     }),
-    mergeEntities: Flags.boolean({
+    'merge-entities': Flags.boolean({
       summary: 'Whether to merge entities with the same name.',
       default: false,
     }),
     // TODO: should be networksFile (with an "s"), or?
-    networkFile: Flags.file({
+    'network-file': Flags.file({
       summary: 'Networks config file path.',
       default: 'networks.json',
     }),
@@ -52,8 +52,13 @@ export default class AddCommand extends Command {
 
   async run() {
     const {
-      args: { address, subgraphManifest: manifestPath },
-      flags: { abi, contractName, mergeEntities, networkFile: networksFile },
+      args: { address, 'subgraph-manifest': manifestPath },
+      flags: {
+        abi,
+        'contract-name': contractName,
+        'merge-entities': mergeEntities,
+        'network-file': networksFile,
+      },
     } = await this.parse(AddCommand);
 
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath);
