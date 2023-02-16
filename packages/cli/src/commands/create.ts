@@ -1,5 +1,6 @@
 import { URL } from 'url';
-import { Args, Command, Flags, ux } from '@oclif/core';
+import { Args, Command, Flags } from '@oclif/core';
+import { print } from 'gluegun';
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { validateNodeUrl } from '../command-helpers/node';
@@ -52,7 +53,7 @@ export default class CreateCommand extends Command {
       client.options.headers = { Authorization: `Bearer ${accessToken}` };
     }
 
-    ux.action.start(`Creating subgraph in Graph node: ${requestUrl}`);
+    const spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`);
     client.request(
       'subgraph_create',
       { name: subgraphName },
@@ -66,14 +67,14 @@ export default class CreateCommand extends Command {
         _res,
       ) => {
         if (jsonRpcError) {
-          ux.action.stop(`✖ Error creating the subgraph: ${jsonRpcError.message}`);
+          spinner.fail(`Error creating the subgraph: ${jsonRpcError.message}`);
           this.exit(1);
         } else if (requestError) {
-          ux.action.stop(`✖ HTTP error creating the subgraph: ${requestError.code}`);
+          spinner.fail(`HTTP error creating the subgraph: ${requestError.code}`);
           this.exit(1);
         } else {
-          ux.action.stop('Subgraph created');
-          this.exit(1);
+          spinner.stop();
+          print.success(`Created subgraph: ${subgraphName}`);
         }
       },
     );
