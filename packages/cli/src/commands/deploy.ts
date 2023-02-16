@@ -1,6 +1,7 @@
 import path from 'path';
 import { URL } from 'url';
 import { Args, Command, Flags, ux } from '@oclif/core';
+import { print } from 'gluegun';
 import { identifyDeployKey } from '../command-helpers/auth';
 import { createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
@@ -207,7 +208,7 @@ export default class DeployCommand extends Command {
     const self = this;
 
     const deploySubgraph = async (ipfsHash: string) => {
-      ux.action.start(`Deploying to Graph node ${requestUrl}`);
+      const spinner = print.spin(`Deploying to Graph node ${requestUrl}`);
       client.request(
         'subgraph_deploy',
         {
@@ -241,8 +242,11 @@ $ graph create --node ${node} ${subgraphName}`;
 
             self.error(errorMessage, { exit: 1 });
           } else if (requestError) {
-            self.error(`HTTP error deploying the subgraph ${requestError.code}`, { exit: 1 });
+            spinner.fail(`HTTP error deploying the subgraph ${requestError.code}`);
+            this.exit(1);
           } else {
+            spinner.stop();
+
             const base = requestUrl.protocol + '//' + requestUrl.hostname;
             let playground = res.playground;
             let queries = res.queries;
@@ -256,12 +260,13 @@ $ graph create --node ${node} ${subgraphName}`;
             }
 
             if (isHostedService) {
-              ux.action.stop(`Deployed to https://thegraph.com/explorer/subgraph/${subgraphName}`);
+              print.success(`Deployed to https://thegraph.com/explorer/subgraph/${subgraphName}`);
             } else {
-              ux.action.stop(`Deployed to ${String(playground)}`);
+              print.success(`Deployed to ${playground}`);
             }
-            self.log('Subgraph endpoints:');
-            self.log(`Queries (HTTP):\n${queries}`);
+            print.info('\nSubgraph endpoints:');
+            print.info(`Queries (HTTP):     ${queries}`);
+            print.info(``);
           }
         },
       );
