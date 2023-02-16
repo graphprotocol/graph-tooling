@@ -638,7 +638,7 @@ const installDependencies = async (
 
 const runCodegen = async (directory: string, codegenCommand: string) =>
   await withSpinner(
-    `Generate ABI and schema types with "${codegenCommand}"`,
+    `Generate ABI and schema types with ${codegenCommand}`,
     `Failed to generate code from ABI and GraphQL schema`,
     `Warnings while generating code from ABI and GraphQL schema`,
     async () => {
