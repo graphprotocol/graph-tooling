@@ -34,17 +34,12 @@ export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';
 
   static args = {
-    subgraphName: Args.string({
-      required: true,
-    }),
-    directory: Args.string({
-      required: true,
-    }),
+    subgraphName: Args.string(),
+    directory: Args.string(),
   };
 
   static flags = {
     protocol: Flags.string({
-      required: true,
       options: protocolChoices,
     }),
     product: Flags.string({
@@ -114,7 +109,7 @@ export default class InitCommand extends Command {
     const {
       args: { subgraphName, directory },
       flags: {
-        protocol: protocolFlag,
+        protocol,
         product,
         studio,
         node: nodeFlag,
@@ -128,16 +123,6 @@ export default class InitCommand extends Command {
         'start-block': startBlock,
       },
     } = await this.parse(InitCommand);
-
-    const protocol = protocolFlag as ProtocolName;
-    if (!protocolChoices.includes(protocol)) {
-      this.error(
-        `Invalid protocol "${protocol}" provided. Supported protocols are: ${protocolChoices.join(
-          ', ',
-        )}.`,
-        { exit: 1 },
-      );
-    }
 
     let { node, allowSimpleName } = chooseNodeUrl({
       product,
@@ -188,12 +173,10 @@ export default class InitCommand extends Command {
     // Will be assigned below if ethereum
     let abi!: EthereumABI;
 
-    const protocolInstance = new Protocol(protocol);
-
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract
     if (fromContract && protocol && subgraphName && directory && network && node) {
-      if (!protocolChoices.includes(protocol)) {
+      if (!protocolChoices.includes(protocol as ProtocolName)) {
         this.error(
           `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
             ', ',
@@ -201,6 +184,8 @@ export default class InitCommand extends Command {
           { exit: 1 },
         );
       }
+
+      const protocolInstance = new Protocol(protocol as ProtocolName);
 
       if (protocolInstance.hasABIs()) {
         const ABI = protocolInstance.getABI();
@@ -246,7 +231,7 @@ export default class InitCommand extends Command {
 
     // Otherwise, take the user through the interactive form
     const answers = await processInitForm.bind(this)({
-      protocol,
+      protocol: protocol as ProtocolName | undefined,
       product,
       studio,
       node,
@@ -324,18 +309,18 @@ async function processInitForm(
     contractName,
     startBlock,
   }: {
-    protocol: ProtocolName;
+    protocol?: ProtocolName;
     product?: string;
     studio: boolean;
     node?: string;
     abi: EthereumABI;
     allowSimpleName: boolean | undefined;
-    directory: string;
+    directory?: string;
     contract?: string;
     indexEvents: boolean;
     fromExample?: string | boolean;
     network?: string;
-    subgraphName: string;
+    subgraphName?: string;
     contractName?: string;
     startBlock?: string;
   },
@@ -368,7 +353,7 @@ async function processInitForm(
       name: 'protocol',
       message: 'Protocol',
       choices: protocolChoices,
-      skip: protocolChoices.includes(protocol),
+      skip: protocolChoices.includes(String(protocol) as ProtocolName),
       result: (value: ProtocolName) => {
         // eslint-disable-next-line -- prettier has problems with ||=
         protocol = protocol || value;
@@ -432,9 +417,21 @@ async function processInitForm(
       type: 'input',
       name: 'directory',
       message: 'Directory to create the subgraph in',
-      initial: () => directory || getSubgraphBasename(subgraphName),
+      initial: () =>
+        directory ||
+        getSubgraphBasename(
+          // @ts-expect-error will be set by previous question
+          subgraphName,
+        ),
       validate: (value: string) =>
-        filesystem.exists(value || directory || getSubgraphBasename(subgraphName))
+        filesystem.exists(
+          value ||
+            directory ||
+            getSubgraphBasename(
+              // @ts-expect-error will be set by previous question
+              subgraphName,
+            ),
+        )
           ? 'Directory already exists'
           : true,
     },
@@ -451,7 +448,7 @@ async function processInitForm(
         return (
           // @ts-expect-error TODO: wait what?
           availableNetworks
-            .get(protocol) // Get networks related to the chosen protocol.
+            .get(protocol as ProtocolName) // Get networks related to the chosen protocol.
             // @ts-expect-error TODO: wait what?
             .toArray()
         ); // Needed because of gluegun. It can't even receive a JS iterable.
