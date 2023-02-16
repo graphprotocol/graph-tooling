@@ -46,7 +46,6 @@ export default class DeployCommand extends Command {
     }),
     'deploy-key': Flags.string({
       summary: 'User deploy key.',
-      required: true,
       exclusive: ['access-token'],
     }),
     'access-token': Flags.string({
