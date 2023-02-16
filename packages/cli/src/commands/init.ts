@@ -228,7 +228,7 @@ export default class InitCommand extends Command {
           node,
           studio,
           product: product!,
-          startBlock,
+          startBlock: startBlock!,
         },
         { commands, addContract: false },
       );
@@ -266,7 +266,7 @@ export default class InitCommand extends Command {
           node: node!,
           studio,
           product: product!,
-          startBlock,
+          startBlock: startBlock!,
         },
         { commands, addContract: true },
       );
