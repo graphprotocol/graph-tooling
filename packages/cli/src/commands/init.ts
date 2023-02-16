@@ -41,7 +41,6 @@ export default class InitCommand extends Command {
     }),
     product: Flags.string({
       summary: 'Selects the product for which to initialize.',
-      required: true,
       options: ['subgraph-studio', 'hosted-service'],
     }),
     studio: Flags.boolean({
@@ -51,7 +50,6 @@ export default class InitCommand extends Command {
     node: Flags.string({
       summary: 'Graph node for which to initialize.',
       char: 'g',
-      required: true,
     }),
     'allow-simple-name': Flags.boolean({
       description: 'Use a subgraph name without a prefix.',
@@ -60,7 +58,6 @@ export default class InitCommand extends Command {
 
     'from-contract': Flags.string({
       description: 'Creates a scaffold based on an existing contract.',
-      required: true,
       exclusive: ['from-example'],
     }),
     'from-example': Flags.string({
@@ -72,7 +69,6 @@ export default class InitCommand extends Command {
     'contract-name': Flags.string({
       helpGroup: 'Scaffold from contract',
       description: 'Name of the contract.',
-      required: true,
       dependsOn: ['from-contract'],
     }),
     'index-events': Flags.boolean({
@@ -83,13 +79,15 @@ export default class InitCommand extends Command {
     'start-block': Flags.string({
       helpGroup: 'Scaffold from contract',
       description: 'Block number to start indexing from.',
-      default: '0',
+      // TODO: using a default sets the value and therefore requires --from-contract
+      // default: '0',
       dependsOn: ['from-contract'],
     }),
 
     abi: Flags.string({
       summary: 'Path to the contract ABI',
-      default: '*Download from Etherscan*',
+      // TODO: using a default sets the value and therefore requires --from-contract
+      // default: '*Download from Etherscan*',
       dependsOn: ['from-contract'],
     }),
     network: Flags.string({
@@ -172,7 +170,7 @@ export default class InitCommand extends Command {
     // go straight to creating the subgraph from the example
     if (fromExample && subgraphName && directory) {
       return await initSubgraphFromExample.bind(this)(
-        { fromExample, allowSimpleName, directory, subgraphName, studio, product },
+        { fromExample, allowSimpleName, directory, subgraphName, studio, product: product! },
         { commands },
       );
     }
@@ -226,10 +224,10 @@ export default class InitCommand extends Command {
           indexEvents,
           network,
           subgraphName,
-          contractName,
+          contractName: contractName!,
           node,
           studio,
-          product,
+          product: product!,
           startBlock,
         },
         { commands, addContract: false },
@@ -243,7 +241,7 @@ export default class InitCommand extends Command {
           subgraphName,
           directory,
           studio,
-          product,
+          product: product!,
         },
         { commands },
       );
@@ -262,12 +260,12 @@ export default class InitCommand extends Command {
           directory,
           abi,
           network: network!,
-          contract: fromContract,
+          contract: fromContract!,
           indexEvents,
-          contractName,
+          contractName: contractName!,
           node: node!,
           studio,
-          product,
+          product: product!,
           startBlock,
         },
         { commands, addContract: true },
