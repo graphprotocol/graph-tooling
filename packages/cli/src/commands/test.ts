@@ -1,9 +1,9 @@
 import { exec, spawn } from 'child_process';
 import os from 'os';
 import path from 'path';
-import { Args, Command, Flags, ux } from '@oclif/core';
+import { Args, Command, Flags } from '@oclif/core';
 import { Binary } from 'binary-install-raw';
-import { filesystem, patching, system } from 'gluegun';
+import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
 import fetch from 'node-fetch';
 import semver from 'semver';
@@ -145,9 +145,8 @@ async function runBinary(
 
   const platform = await getPlatform.bind(this)(logsOpt);
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${
-    versionOpt || latestVersion
-  }/${platform}`;
+  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt ||
+    latestVersion}/${platform}`;
 
   if (logsOpt) {
     this.log(`Download link: ${url}`);
@@ -175,9 +174,8 @@ async function getPlatform(this: TestCommand, logsOpt: boolean | undefined) {
 
   if (logsOpt) {
     this.log(
-      `OS type: ${
-        linuxDistro || type
-      }\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
+      `OS type: ${linuxDistro ||
+        type}\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
         cpuCore.model
       }`,
     );
@@ -338,7 +336,7 @@ async function dockerfile(
   versionOpt: string | null | undefined,
   latestVersion: string | null | undefined,
 ) {
-  ux.action.start('Generating Dockerfile');
+  const spinner = print.spin('Generating Dockerfile...');
 
   try {
     // Fetch the Dockerfile template content from the demo-subgraph repo
@@ -366,5 +364,5 @@ async function dockerfile(
     });
   }
 
-  ux.action.stop('Successfully generated Dockerfile');
+  spinner.succeed('Successfully generated Dockerfile.');
 }

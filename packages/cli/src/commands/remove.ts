@@ -1,5 +1,6 @@
 import { URL } from 'url';
-import { Args, Command, Flags, ux } from '@oclif/core';
+import { Args, Command, Flags } from '@oclif/core';
+import { print } from 'gluegun';
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { validateNodeUrl } from '../command-helpers/node';
@@ -52,7 +53,7 @@ export default class RemoveCommand extends Command {
       client.options.headers = { Authorization: `Bearer ${accessToken}` };
     }
 
-    ux.action.start(`Removing subgraph in Graph node: ${requestUrl}`);
+    const spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`);
     client.request(
       'subgraph_remove',
       { name: subgraphName },
@@ -67,14 +68,14 @@ export default class RemoveCommand extends Command {
         _res,
       ) => {
         if (jsonRpcError) {
-          ux.action.stop(`✖ Error removed the subgraph: ${jsonRpcError.message}`);
+          spinner.fail(`Error removing the subgraph: ${jsonRpcError.message}`);
           this.exit(1);
         } else if (requestError) {
-          ux.action.stop(`✖ HTTP error removed the subgraph: ${requestError.code}`);
+          spinner.fail(`HTTP error removing the subgraph: ${requestError.code}`);
           this.exit(1);
         } else {
-          ux.action.stop('Subgraph removed');
-          this.exit(1);
+          spinner.stop();
+          print.success(`Removed subgraph: ${subgraphName}`);
         }
       },
     );

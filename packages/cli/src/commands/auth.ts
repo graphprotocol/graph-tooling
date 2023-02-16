@@ -1,4 +1,5 @@
 import { Args, Command, Flags, ux } from '@oclif/core';
+import { print } from 'gluegun';
 import { saveDeployKey } from '../command-helpers/auth';
 import { chooseNodeUrl } from '../command-helpers/node';
 
@@ -55,10 +56,9 @@ export default class AuthCommand extends Command {
       this.error('✖ Deploy key must not exceed 200 characters', { exit: 1 });
     }
 
-    ux.action.start(`Setting deploy key for "${node}"`);
     try {
       await saveDeployKey(node!, deployKey);
-      ux.action.stop(`✔ Deploy key set for "${node}"`);
+      print.success(`Deploy key set for ${node}`);
     } catch (e) {
       this.error(e, { exit: 1 });
     }
