@@ -32,7 +32,7 @@ export default class Compiler {
   private libsDirs: string[];
   /**
    * Path to the global.ts file in the graph-ts package.
-   * 
+   *
    * @note if you are using substreams as a protocol, this will be undefined.
    */
   private globalsFile?: string;
