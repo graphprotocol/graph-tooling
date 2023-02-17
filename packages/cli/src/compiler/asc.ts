@@ -5,7 +5,7 @@ const createExitHandler = (inputFile: string) => () => {
 Suggestion: try to comment the whole file and uncomment it little by little while re-running the graph-cli until you isolate the line where the problem happens.
 Also, please contact us so we can make the CLI better by handling errors like this. You can reach out in any of these links:
 - Discord channel: https://discord.gg/eM8CA6WA9r
-- Github issues: https://github.com/graphprotocol/graph-cli/issues`);
+- Github issues: https://github.com/graphprotocol/graph-tooling/issues/new/choose`);
 };
 
 const setupExitHandler = (exitHandler: (code: number) => void) =>
