@@ -23,6 +23,10 @@ export default class LocalCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     'node-logs': Flags.boolean({
       summary: 'Print the Graph Node logs.',
     }),

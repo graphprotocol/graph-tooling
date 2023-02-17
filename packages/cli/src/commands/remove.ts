@@ -15,6 +15,10 @@ export default class RemoveCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     node: Flags.string({
       summary: 'Graph node to delete the subgraph from.',
       char: 'g',

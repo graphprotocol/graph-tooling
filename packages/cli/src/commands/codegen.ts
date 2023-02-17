@@ -18,6 +18,10 @@ export default class CodegenCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     'output-dir': Flags.directory({
       summary: 'Output directory for generated types.',
       char: 'o',

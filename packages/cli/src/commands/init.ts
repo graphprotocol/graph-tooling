@@ -39,6 +39,10 @@ export default class InitCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     protocol: Flags.string({
       options: protocolChoices,
     }),

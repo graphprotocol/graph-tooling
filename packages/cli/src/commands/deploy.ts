@@ -33,6 +33,10 @@ export default class DeployCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     product: Flags.string({
       summary: 'Select a product for which to authenticate.',
       options: ['subgraph-studio', 'hosted-service'],

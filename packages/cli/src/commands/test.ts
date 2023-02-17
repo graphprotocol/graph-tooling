@@ -18,6 +18,10 @@ export default class TestCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     coverage: Flags.boolean({
       summary: 'Run the tests in coverage mode.',
       char: 'c',

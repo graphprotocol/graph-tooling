@@ -15,6 +15,10 @@ export default class CreateCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     node: Flags.string({
       summary: 'Graph node to create the subgraph in.',
       char: 'g',

@@ -18,6 +18,10 @@ export default class BuildCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
       char: 'i',

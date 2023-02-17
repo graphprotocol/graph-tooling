@@ -31,6 +31,10 @@ export default class AddCommand extends Command {
   };
 
   static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
+
     abi: Flags.string({
       summary: 'Path to the contract ABI.',
       default: '*Download from Etherscan*',
