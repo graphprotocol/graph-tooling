@@ -1,10 +1,9 @@
 import path from 'path';
-import { GluegunFilesystem, GluegunPatching } from 'gluegun';
+import { filesystem, patching } from 'gluegun';
 import yaml from 'yaml';
 import { step, withSpinner } from './spinner';
 
 export const updateSubgraphNetwork = async (
-  toolbox: { filesystem: GluegunFilesystem; patching: GluegunPatching },
   manifest: any,
   network: string,
   networksFile: string,
@@ -16,7 +15,7 @@ export const updateSubgraphNetwork = async (
     `Warnings while updating sources network`,
     async spinner => {
       step(spinner, `Reading networks config`);
-      const allNetworks = await toolbox.filesystem.read(networksFile, 'json');
+      const allNetworks = await filesystem.read(networksFile, 'json');
       const networkConfig = allNetworks[network];
 
       // Exit if the network passed with --network does not exits in networks.json
@@ -24,7 +23,7 @@ export const updateSubgraphNetwork = async (
         throw new Error(`Network '${network}' was not found in '${networksFile}'`);
       }
 
-      await toolbox.patching.update(manifest, content => {
+      await patching.update(manifest, content => {
         const subgraph = yaml.parse(content);
         const networkSources = Object.keys(networkConfig);
         const subgraphSources = subgraph.dataSources.map((value: any) => value.name);
@@ -51,10 +50,12 @@ export const updateSubgraphNetwork = async (
 
         // All data sources shoud be on the same network,
         // so we have to update the network of all templates too.
-        subgraph.templates &&= subgraph.templates.map((template: any) => ({
-          ...template,
-          network,
-        }));
+        // eslint-disable-next-line -- prettier has problems with &&=
+        subgraph.templates &&
+          (subgraph.templates = subgraph.templates.map((template: any) => ({
+            ...template,
+            network,
+          })));
 
         const unsusedSources = networkSources.filter(x => !subgraphSources.includes(x));
 
@@ -69,17 +70,13 @@ export const updateSubgraphNetwork = async (
     },
   );
 
-export const initNetworksConfig = async (
-  toolbox: { filesystem: GluegunFilesystem },
-  directory: string,
-  identifierName: string,
-) =>
+export const initNetworksConfig = async (directory: string, identifierName: string) =>
   await withSpinner(
     `Initialize networks config`,
     `Failed to initialize networks config`,
     `Warnings while initializing networks config`,
     async () => {
-      const subgraphStr = toolbox.filesystem.read(path.join(directory, 'subgraph.yaml'));
+      const subgraphStr = filesystem.read(path.join(directory, 'subgraph.yaml'));
       const subgraph = yaml.parse(subgraphStr!);
 
       const networks = subgraph.dataSources.reduce(
@@ -95,7 +92,7 @@ export const initNetworksConfig = async (
         {},
       );
 
-      toolbox.filesystem.write(`${directory}/networks.json`, networks);
+      filesystem.write(`${directory}/networks.json`, networks);
 
       return true;
     },
@@ -115,14 +112,13 @@ function hasChanges(identifierName: string, network: string, networkConfig: any,
   return networkChanged || addressChanged || startBlockChanged;
 }
 
-export const updateNetworksFile = async (
-  toolbox: { patching: GluegunPatching },
+export async function updateNetworksFile(
   network: string,
   dataSource: any,
   address: string,
   networksFile: string,
-) => {
-  await toolbox.patching.update(networksFile, config => {
+) {
+  await patching.update(networksFile, config => {
     if (Object.keys(config).includes(network)) {
       Object.assign(config[network], { [dataSource]: { address } });
     } else {
@@ -130,4 +126,4 @@ export const updateNetworksFile = async (
     }
     return config;
   });
-};
+}

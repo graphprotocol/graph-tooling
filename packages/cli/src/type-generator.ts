@@ -23,8 +23,8 @@ export interface TypeGeneratorOptions {
   protocol: Protocol;
   outputDir: string;
   skipMigrations?: boolean;
-  uncrashable: any;
-  uncrashableConfig: boolean;
+  uncrashable: boolean;
+  uncrashableConfig: string;
 }
 
 export default class TypeGenerator {

@@ -1,14 +1,14 @@
-import * as toolbox from 'gluegun';
+import { GluegunPrint, print } from 'gluegun';
 
-export type Spinner = ReturnType<toolbox.GluegunPrint['spin']>;
+export type Spinner = ReturnType<GluegunPrint['spin']>;
 
 export const step = (spinner: Spinner, subject: string, text?: string) => {
   if (text) {
     spinner.stopAndPersist({
-      text: toolbox.print.colors.muted(`${subject} ${text}`),
+      text: print.colors.muted(`${subject} ${text}`),
     });
   } else {
-    spinner.stopAndPersist({ text: toolbox.print.colors.muted(subject) });
+    spinner.stopAndPersist({ text: print.colors.muted(subject) });
   }
   spinner.start();
   return spinner;
@@ -29,7 +29,7 @@ export const withSpinner = async (
   warningText: string,
   f: (spinner: Spinner) => Promise<any> | any, // TODO: type result
 ) => {
-  const spinner = toolbox.print.spin(text);
+  const spinner = print.spin(text);
   try {
     const result = await f(spinner);
     if (typeof result === 'object') {

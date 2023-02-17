@@ -63,7 +63,7 @@ export const generateScaffold = async (
     indexEvents: boolean;
     contractName?: string;
     startBlock?: string;
-    node: string;
+    node?: string;
   },
   spinner: Spinner,
 ) => {

@@ -10,7 +10,7 @@ interface CreateCompilerOptions {
   outputDir: string;
   outputFormat: string;
   skipMigrations: boolean;
-  blockIpfsMethods?: boolean;
+  blockIpfsMethods?: RegExpMatchArray;
   protocol: Protocol;
 }
 
