@@ -1,5 +1,34 @@
 # @graphprotocol/graph-cli
 
+## 0.41.0
+
+### Minor Changes
+
+- [#1076](https://github.com/graphprotocol/graph-tooling/pull/1076)
+  [`c18a663`](https://github.com/graphprotocol/graph-tooling/commit/c18a66349e18c21636d83a19388df1580848aa64)
+  Thanks [@saihaj](https://github.com/saihaj)! - add `base-testnet` to studio
+
+- [#1055](https://github.com/graphprotocol/graph-tooling/pull/1055)
+  [`044cd92`](https://github.com/graphprotocol/graph-tooling/commit/044cd92d0ceb9628c7f7fbe3627a09b867710247)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Migrate to Oclif
+
+### Patch Changes
+
+- [#1055](https://github.com/graphprotocol/graph-tooling/pull/1055)
+  [`044cd92`](https://github.com/graphprotocol/graph-tooling/commit/044cd92d0ceb9628c7f7fbe3627a09b867710247)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+
+  - Added dependency [`@oclif/core@2.0.7` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.0.7) (to
+    `dependencies`)
+
+- [#1074](https://github.com/graphprotocol/graph-tooling/pull/1074)
+  [`e84d1e8`](https://github.com/graphprotocol/graph-tooling/commit/e84d1e873d9b2a8967c5fe2a85fce48b2caeb75f)
+  Thanks [@saihaj](https://github.com/saihaj)! - update GH issues link for error message
+
+- [#1071](https://github.com/graphprotocol/graph-tooling/pull/1071)
+  [`17d0888`](https://github.com/graphprotocol/graph-tooling/commit/17d08884fbc30a78089403e13139622b4145e9ff)
+  Thanks [@saihaj](https://github.com/saihaj)! - global files are not needed when using substreams
+
 ## 0.40.0
 
 ### Minor Changes
