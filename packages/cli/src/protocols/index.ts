@@ -104,6 +104,7 @@ export default class Protocol {
         'optimism-kovan',
         'aurora',
         'aurora-testnet',
+        'base-testnet'
       ],
       near: ['near-mainnet', 'near-testnet'],
       cosmos: [
