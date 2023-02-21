@@ -101,7 +101,7 @@ export default class Protocol {
         'arbitrum-one',
         'arbitrum-goerli',
         'optimism',
-        'optimism-kovan',
+        'optimism-goerli',
         'aurora',
         'aurora-testnet',
         'base-testnet',
