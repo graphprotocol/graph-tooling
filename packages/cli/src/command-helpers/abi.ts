@@ -164,8 +164,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.aurorascan.dev/api`;
     case 'aurora-testnet':
       return `https://api-testnet.aurorascan.dev/api`;
-    case 'optimism-kovan':
-      return `https://api-kovan-optimistic.etherscan.io/api`;
+    case 'optimism-goerli':
+      return `https://api-goerli-optimistic.etherscan.io/api`;
     case 'optimism':
       return `https://api-optimistic.etherscan.io/api`;
     case 'moonbeam':
@@ -240,8 +240,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://moonriver.public.blastapi.io';
     case 'optimism':
       return 'https://mainnet.optimism.io';
-    case 'optimism-kovan':
-      return 'https://kovan.optimism.io';
+    case 'optimism-goerli':
+      return 'https://goerli.optimism.io';
     case 'poa-core':
       return 'https://core.poa.network';
     case 'poa-sokol':
