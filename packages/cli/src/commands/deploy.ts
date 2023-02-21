@@ -97,7 +97,7 @@ export default class DeployCommand extends Command {
     const {
       args: { 'subgraph-name': subgraphName, 'subgraph-manifest': manifest },
       flags: {
-        product,
+        product: productFlag,
         studio,
         'deploy-key': deployKeyFlag,
         'access-token': accessToken,
@@ -114,6 +114,13 @@ export default class DeployCommand extends Command {
       },
     } = await this.parse(DeployCommand);
 
+    const product = studio
+      ? 'subgraph-studio'
+      : productFlag ||
+        (await ux.prompt('Which product to deploy for?', {
+          required: true,
+        }));
+
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
 
@@ -127,11 +134,7 @@ export default class DeployCommand extends Command {
     const { node } = chooseNodeUrl({
       product,
       studio,
-      node:
-        nodeFlag ||
-        (await ux.prompt('Which product to deploy for?', {
-          required: true,
-        })),
+      node: nodeFlag,
     });
     if (!node) {
       // shouldn't happen, but we do the check to satisfy TS
