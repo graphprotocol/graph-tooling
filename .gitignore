@@ -73,3 +73,6 @@ dist
 
 # Generated
 **/tests/**/generated
+
+# Oclif manifest
+oclif.manifest.json

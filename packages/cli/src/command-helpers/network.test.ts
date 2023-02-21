@@ -15,7 +15,7 @@ const SUBGRAPH_PATH_BASE = path.join(
 
 describe('initNetworksConfig', () => {
   beforeAll(async () => {
-    await initNetworksConfig(toolbox, SUBGRAPH_PATH_BASE, 'address');
+    await initNetworksConfig(SUBGRAPH_PATH_BASE, 'address');
   });
   afterAll(async () => {
     toolbox.filesystem.remove(`${SUBGRAPH_PATH_BASE}/networks.json`);
@@ -71,7 +71,7 @@ describe('updateSubgraphNetwork', () => {
     expect(network).toBe('mainnet');
     expect(address).toBe('0x22843e74c59580b3eaf6c233fa67d8b7c561a835');
 
-    await updateSubgraphNetwork(toolbox, manifest, 'optimism', networksFie, 'address');
+    await updateSubgraphNetwork(manifest, 'optimism', networksFie, 'address');
 
     subgraph = toolbox.filesystem.read(manifest);
     subgraphObj = yaml.parse(subgraph!);

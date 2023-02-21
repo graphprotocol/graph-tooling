@@ -14,8 +14,8 @@ export function chooseNodeUrl({
   node,
   allowSimpleName,
 }: {
-  product: string;
-  studio: string;
+  product: string | undefined;
+  studio: boolean | undefined;
   node?: string;
   allowSimpleName?: boolean;
 }) {

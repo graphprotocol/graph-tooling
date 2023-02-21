@@ -1,9 +1,9 @@
-import chalk from 'chalk';
-import { GluegunToolbox } from 'gluegun';
+import { Args, Command, Flags } from '@oclif/core';
+import { CLIError } from '@oclif/core/lib/errors';
+import { system } from 'gluegun';
 import immutable from 'immutable';
 import { loadAbiFromBlockScout, loadAbiFromEtherscan } from '../command-helpers/abi';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { fixParameters } from '../command-helpers/gluegun';
 import { updateNetworksFile } from '../command-helpers/network';
 import {
   generateDataSource,
@@ -17,65 +17,53 @@ import Protocol from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import Subgraph from '../subgraph';
 
-const HELP = `
-${chalk.bold('graph add')} <address> [<subgraph-manifest default: "./subgraph.yaml">]
+export default class AddCommand extends Command {
+  static description = 'Adds a new datasource to a subgraph.';
 
-${chalk.dim('Options:')}
+  static args = {
+    address: Args.string({
+      description: 'The contract address',
+      required: true,
+    }),
+    'subgraph-manifest': Args.string({
+      default: 'subgraph.yaml',
+    }),
+  };
 
-      --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --contract-name           Name of the contract (default: Contract)
-      --merge-entities          Whether to merge entities with the same name (default: false)
-      --network-file <path>     Networks config file path (default: "./networks.json")
-  -h, --help                    Show usage information
-`;
+  static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
 
-export interface AddOptions {
-  abi?: string;
-  contractName?: string;
-  mergeEntities?: boolean;
-  networkFile?: string;
-  help?: boolean;
-}
+    abi: Flags.string({
+      summary: 'Path to the contract ABI.',
+      default: '*Download from Etherscan*',
+    }),
+    'contract-name': Flags.string({
+      summary: 'Name of the contract.',
+      default: 'Contract',
+    }),
+    'merge-entities': Flags.boolean({
+      summary: 'Whether to merge entities with the same name.',
+      default: false,
+    }),
+    // TODO: should be networksFile (with an "s"), or?
+    'network-file': Flags.file({
+      summary: 'Networks config file path.',
+      default: 'networks.json',
+    }),
+  };
 
-export default {
-  description: 'Adds a new datasource to a subgraph',
-  run: async (toolbox: GluegunToolbox) => {
-    // Obtain tools
-    const { print, system } = toolbox;
-
-    // Read CLI parameters
-    let { abi, contractName, h, help, mergeEntities, networkFile } = toolbox.parameters.options;
-
-    contractName ||= 'Contract';
-
-    try {
-      fixParameters(toolbox.parameters, {
-        h,
-        help,
-        mergeEntities,
-      });
-    } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
-    }
-
-    const address = toolbox.parameters.first || toolbox.parameters.array?.[0];
-    const manifestPath =
-      toolbox.parameters.second || toolbox.parameters.array?.[1] || './subgraph.yaml';
-
-    // Show help text if requested
-    if (help || h) {
-      print.info(HELP);
-      return;
-    }
-
-    // Validate the address
-    if (!address) {
-      print.error('No contract address provided');
-      process.exitCode = 1;
-      return;
-    }
+  async run() {
+    const {
+      args: { address, 'subgraph-manifest': manifestPath },
+      flags: {
+        abi,
+        'contract-name': contractName,
+        'merge-entities': mergeEntities,
+        'network-file': networksFile,
+      },
+    } = await this.parse(AddCommand);
 
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath);
     const protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
@@ -86,11 +74,10 @@ export default {
     const entities = getEntities(manifest);
     const contractNames = getContractNames(manifest);
     if (contractNames.includes(contractName)) {
-      print.error(
-        `Datasource or template with name ${contractName} already exists, please choose a different name`,
+      this.error(
+        `Datasource or template with name ${contractName} already exists, please choose a different name.`,
+        { exit: 1 },
       );
-      process.exitCode = 1;
-      return;
     }
 
     let ethabi = null;
@@ -103,7 +90,6 @@ export default {
     }
 
     const { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(
-      toolbox,
       ethabi,
       entities,
       contractName,
@@ -137,28 +123,22 @@ export default {
     await Subgraph.write(result, manifestPath);
 
     // Update networks.json
-    const networksFile = networkFile || './networks.json';
-    await updateNetworksFile(toolbox, network, contractName, address, networksFile);
+    await updateNetworksFile(network, contractName, address, networksFile);
 
     // Detect Yarn and/or NPM
     const yarn = system.which('yarn');
     const npm = system.which('npm');
     if (!yarn && !npm) {
-      print.error(`Neither Yarn nor NPM were found on your system. Please install one of them.`);
-      process.exitCode = 1;
-      return;
+      this.error('Neither Yarn nor NPM were found on your system. Please install one of them.', {
+        exit: 1,
+      });
     }
 
-    await withSpinner(
-      'Running codegen',
-      'Failed to run codegen',
-      'Warning during codegen',
-      async () => {
-        await system.run(yarn ? 'yarn codegen' : 'npm run codegen');
-      },
+    await withSpinner('Running codegen', 'Failed to run codegen', 'Warning during codegen', () =>
+      system.run(yarn ? 'yarn codegen' : 'npm run codegen'),
     );
-  },
-};
+  }
+}
 
 const getEntities = (manifest: any) => {
   const dataSources = manifest.result.get('dataSources', immutable.List());
@@ -178,14 +158,12 @@ const getContractNames = (manifest: any) => {
 };
 
 const updateEventNamesOnCollision = (
-  toolbox: GluegunToolbox,
   ethabi: any,
   entities: any,
   contractName: string,
   mergeEntities: boolean,
 ) => {
   let abiData = ethabi.data;
-  const { print } = toolbox;
   const collisionEntities = [];
   let onlyCollisions = true;
 
@@ -195,10 +173,12 @@ const updateEventNamesOnCollision = (
     if (dataRow.get('type') === 'event') {
       if (entities.includes(dataRow.get('name'))) {
         if (entities.includes(`${contractName}${dataRow.get('name')}`)) {
-          print.error(`Contract name ('${contractName}')
-            + event name ('${dataRow.get('name')}') entity already exists.`);
-          process.exitCode = 1;
-          break;
+          throw new CLIError(
+            `Contract name ('${contractName}') + event name ('${dataRow.get(
+              'name',
+            )}') entity already exists.`,
+            { exit: 1 },
+          );
         }
 
         if (mergeEntities) {

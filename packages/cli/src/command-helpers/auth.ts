@@ -17,7 +17,7 @@ const getConfig = () => {
   return config;
 };
 
-export const identifyDeployKey = async (node: string, deployKey: string) => {
+export const identifyDeployKey = async (node: string, deployKey: string | undefined) => {
   // Determine the deploy key to use, if any:
   // - First try using --deploy-key, if provided
   // - Then see if we have a deploy key set for the Graph node

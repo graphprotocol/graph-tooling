@@ -1,89 +1,76 @@
 import { exec, spawn } from 'child_process';
 import os from 'os';
 import path from 'path';
+import { Args, Command, Flags } from '@oclif/core';
 import { Binary } from 'binary-install-raw';
-import chalk from 'chalk';
-import { filesystem, GluegunToolbox, patching, print, system } from 'gluegun';
+import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
 import fetch from 'node-fetch';
 import semver from 'semver';
-import { fixParameters } from '../command-helpers/gluegun';
 
-const HELP = `
-${chalk.bold('graph test')} ${chalk.dim('[options]')} ${chalk.bold('<datasource>')}
+export default class TestCommand extends Command {
+  static description = 'Runs rust binary for subgraph testing.';
 
-${chalk.dim('Options:')}
-  -c, --coverage                Run the tests in coverage mode
-  -d, --docker                  Run the tests in a docker container(Note: Please execute from the root folder of the subgraph)
-  -f  --force                   Binary - overwrites folder + file when downloading. Docker - rebuilds the docker image
-  -h, --help                    Show usage information
-  -l, --logs                    Logs to the console information about the OS, CPU model and download url (debugging purposes)
-  -r, --recompile               Force-recompile tests
-  -v, --version <tag>           Choose the version of the rust binary that you want to be downloaded/used
-  `;
+  static args = {
+    datasource: Args.string({
+      required: true,
+    }),
+  };
 
-export interface TestOptions {
-  coverage?: boolean;
-  docker?: boolean;
-  force?: boolean;
-  help?: boolean;
-  logs?: boolean;
-  recompile?: boolean;
-  version?: string;
-  // not a cli arg
-  testsFolder: string;
-  cachePath: string;
-  latestVersion?: string;
-}
+  static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
 
-export default {
-  description: 'Runs rust binary for subgraph testing',
-  run: async (toolbox: GluegunToolbox) => {
-    // Read CLI parameters
-    const { c, coverage, d, docker, f, force, h, help, l, logs, r, recompile, v, version } =
-      toolbox.parameters.options;
+    coverage: Flags.boolean({
+      summary: 'Run the tests in coverage mode.',
+      char: 'c',
+    }),
+    docker: Flags.boolean({
+      summary:
+        'Run the tests in a docker container (Note: Please execute from the root folder of the subgraph).',
+      char: 'd',
+    }),
+    force: Flags.boolean({
+      summary:
+        'Binary - overwrites folder + file when downloading. Docker - rebuilds the docker image.',
+      char: 'f',
+    }),
+    logs: Flags.boolean({
+      summary:
+        'Logs to the console information about the OS, CPU model and download url (debugging purposes).',
+      char: 'l',
+    }),
+    recompile: Flags.boolean({
+      summary: 'Force-recompile tests.',
+      char: 'r',
+    }),
+    version: Flags.string({
+      summary: 'Choose the version of the rust binary that you want to be downloaded/used.',
+      char: 'v',
+      required: true,
+    }),
+  };
 
-    const testsFolder = './tests';
-    const opts: TestOptions = {
-      testsFolder,
-      cachePath: path.join(testsFolder, '.latest.json'),
+  async run() {
+    const {
+      args: { datasource },
+      flags: { coverage, docker, force, logs, recompile, version },
+    } = await this.parse(TestCommand);
+
+    const testsDir = './tests';
+    const cachePath = path.resolve(testsDir, '.latest.json');
+    const opts = {
+      testsDir,
+      cachePath,
+      coverage,
+      docker,
+      force,
+      logs,
+      recompile,
+      version,
+      latestVersion: getLatestVersionFromCache(cachePath),
     };
-    // Support both long and short option variants
-    opts.coverage = coverage || c;
-    opts.docker = docker || d;
-    opts.force = force || f;
-    opts.help = help || h;
-    opts.logs = logs || l;
-    opts.recompile = recompile || r;
-    opts.version = version || v;
-    // Fix if a boolean flag (e.g -c, --coverage) has an argument
-    try {
-      fixParameters(toolbox.parameters, {
-        h,
-        help,
-        c,
-        coverage,
-        d,
-        docker,
-        f,
-        force,
-        l,
-        logs,
-        r,
-        recompile,
-      });
-    } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
-    }
-
-    const datasource = toolbox.parameters.first || toolbox.parameters.array?.[0];
-    // Show help text if requested
-    if (opts.help) {
-      print.info(HELP);
-      return;
-    }
 
     // Check if matchstick.yaml config exists
     if (filesystem.exists('matchstick.yaml')) {
@@ -91,25 +78,21 @@ export default {
         // Load the config
         const config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8')!);
 
-        // Check if matchstick.yaml and testsFolder not null
-        if (config?.testsFolder) {
+        // Check if matchstick.yaml and testsDir not null
+        if (config?.testsDir) {
           // assign test folder from matchstick.yaml if present
-          opts.testsFolder = config.testsFolder;
+          opts.testsDir = config.testsDir;
         }
       } catch (error) {
-        print.info(
-          'A problem occurred while reading matchstick.yaml. Please attend to the errors below:',
-        );
-        print.error(error.message);
-        process.exit(1);
+        this.error(`A problem occurred while reading "matchstick.yaml":\n${error.message}`, {
+          exit: 1,
+        });
       }
     }
 
-    setVersionFromCache(opts);
-
     // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
     if (opts.force || (!opts.version && !opts.latestVersion)) {
-      print.info('Fetching latest version tag');
+      this.log('Fetching latest version tag...');
       const result = await fetch(
         'https://api.github.com/repos/LimeChain/matchstick/releases/latest',
       );
@@ -125,26 +108,38 @@ export default {
     }
 
     if (opts.docker) {
-      runDocker(datasource, opts);
+      runDocker.bind(this)(datasource, opts);
     } else {
-      runBinary(datasource, opts);
-    }
-  },
-};
-
-async function setVersionFromCache(opts: TestOptions) {
-  if (filesystem.exists(opts.cachePath) == 'file') {
-    const cached = filesystem.read(opts.cachePath, 'json');
-    // Get the cache age in days
-    const cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24);
-    // If cache age is less than 1 day, use the cached version
-    if (cacheAge < 1) {
-      opts.latestVersion = cached.version;
+      runBinary.bind(this)(datasource, opts);
     }
   }
 }
 
-async function runBinary(datasource: string | undefined, opts: TestOptions) {
+function getLatestVersionFromCache(cachePath: string) {
+  if (filesystem.exists(cachePath) == 'file') {
+    const cached = filesystem.read(cachePath, 'json');
+    // Get the cache age in days
+    const cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24);
+    // If cache age is less than 1 day, use the cached version
+    if (cacheAge < 1) {
+      return cached.version as string;
+    }
+  }
+  return null;
+}
+
+async function runBinary(
+  this: TestCommand,
+  datasource: string | undefined,
+  opts: {
+    coverage: boolean;
+    force: boolean;
+    logs: boolean;
+    version: string;
+    latestVersion: string | null;
+    recompile: boolean;
+  },
+) {
   const coverageOpt = opts.coverage;
   const forceOpt = opts.force;
   const logsOpt = opts.logs;
@@ -152,14 +147,14 @@ async function runBinary(datasource: string | undefined, opts: TestOptions) {
   const latestVersion = opts.latestVersion;
   const recompileOpt = opts.recompile;
 
-  const platform = await getPlatform(logsOpt);
+  const platform = await getPlatform.bind(this)(logsOpt);
 
   const url = `https://github.com/LimeChain/matchstick/releases/download/${
     versionOpt || latestVersion
   }/${platform}`;
 
   if (logsOpt) {
-    print.info(`Download link: ${url}`);
+    this.log(`Download link: ${url}`);
   }
 
   const binary = new Binary(platform, url, versionOpt || latestVersion);
@@ -172,18 +167,18 @@ async function runBinary(datasource: string | undefined, opts: TestOptions) {
   args.length > 0 ? binary.run(...args) : binary.run();
 }
 
-async function getPlatform(logsOpt: boolean | undefined) {
+async function getPlatform(this: TestCommand, logsOpt: boolean | undefined) {
   const type = os.type();
   const arch = os.arch();
   const cpuCore = os.cpus()[0];
   const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|processor)/.test(cpuCore.model);
-  const linuxInfo = type === 'Linux' ? await getLinuxInfo() : {};
+  const linuxInfo = type === 'Linux' ? await getLinuxInfo.bind(this)() : {};
   const linuxDistro = linuxInfo.name;
   const release = linuxInfo.version || os.release();
   const majorVersion = parseInt(linuxInfo.version || '', 10) || semver.major(release);
 
   if (logsOpt) {
-    print.info(
+    this.log(
       `OS type: ${
         linuxDistro || type
       }\nOS arch: ${arch}\nOS release: ${release}\nOS major version: ${majorVersion}\nCPU model: ${
@@ -230,7 +225,7 @@ interface LinuxInfo {
   version?: string;
 }
 
-async function getLinuxInfo(): Promise<LinuxInfo> {
+async function getLinuxInfo(this: TestCommand): Promise<LinuxInfo> {
   try {
     const result = await system.run("cat /etc/*-release | grep -E '(^VERSION|^NAME)='", {
       trim: true,
@@ -247,12 +242,22 @@ async function getLinuxInfo(): Promise<LinuxInfo> {
 
     return linuxInfo;
   } catch (error) {
-    print.error(`Error fetching the Linux version:\n ${error}`);
-    process.exit(1);
+    this.error(`Error fetching the Linux version:\n${error}`, { exit: 1 });
   }
 }
 
-async function runDocker(datasource: string | undefined, opts: TestOptions) {
+async function runDocker(
+  this: TestCommand,
+  datasource: string | undefined,
+  opts: {
+    testsDir: string;
+    coverage: boolean;
+    force: boolean;
+    version: string;
+    latestVersion: string | null;
+    recompile: boolean;
+  },
+) {
   const coverageOpt = opts.coverage;
   const forceOpt = opts.force;
   const versionOpt = opts.version;
@@ -267,7 +272,7 @@ async function runDocker(datasource: string | undefined, opts: TestOptions) {
   const current_folder = filesystem.cwd();
 
   // Declate dockerfilePath with default location
-  const dockerfilePath = path.join(opts.testsFolder || 'tests', '.docker/Dockerfile');
+  const dockerfilePath = path.join(opts.testsDir || 'tests', '.docker/Dockerfile');
 
   // Check if the Dockerfil already exists
   const dockerfileExists = filesystem.exists(dockerfilePath);
@@ -275,7 +280,7 @@ async function runDocker(datasource: string | undefined, opts: TestOptions) {
   // Generate the Dockerfile only if it doesn't exists,
   // version flag and/or force flag is passed.
   if (!dockerfileExists || versionOpt || forceOpt) {
-    await dockerfile(dockerfilePath, versionOpt, latestVersion);
+    await dockerfile.bind(this)(dockerfilePath, versionOpt, latestVersion);
   }
 
   // Run a command to check if matchstick image already exists
@@ -309,7 +314,7 @@ async function runDocker(datasource: string | undefined, opts: TestOptions) {
     if (!dockerfileExists || stdout === '' || versionOpt || forceOpt) {
       if (stdout !== '') {
         exec('docker image rm matchstick', (_error, stdout, _stderr) => {
-          print.info(chalk.bold(`Removing matchstick image\n${stdout}`));
+          this.log(`Remove matchstick image result:\n${stdout}`);
         });
       }
       // Build a docker image. If the process has executed successfully
@@ -322,7 +327,7 @@ async function runDocker(datasource: string | undefined, opts: TestOptions) {
         }
       });
     } else {
-      print.info('Docker image already exists. Skipping `docker build` command.');
+      this.log('Docker image already exists. Skipping `docker build` command...');
       // Run the container from the existing matchstick docker image
       spawn('docker', dockerRunOpts, { stdio: 'inherit' });
     }
@@ -332,9 +337,10 @@ async function runDocker(datasource: string | undefined, opts: TestOptions) {
 // Downloads Dockerfile template from the demo-subgraph repo
 // Replaces the placeholders with their respective values
 async function dockerfile(
+  this: TestCommand,
   dockerfilePath: string,
-  versionOpt: string | undefined,
-  latestVersion: string | undefined,
+  versionOpt: string | null | undefined,
+  latestVersion: string | null | undefined,
 ) {
   const spinner = print.spin('Generating Dockerfile...');
 
@@ -359,10 +365,9 @@ async function dockerfile(
       versionOpt || latestVersion || 'unknown',
     );
   } catch (error) {
-    spinner.fail(
-      `A problem occurred while generating the Dockerfile. Please attend to the errors below:\n ${error.message}`,
-    );
-    process.exit(1);
+    this.error(`A problem occurred while generating the Dockerfile:\n${error.message}`, {
+      exit: 1,
+    });
   }
 
   spinner.succeed('Successfully generated Dockerfile.');

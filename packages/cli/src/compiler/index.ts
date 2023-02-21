@@ -21,16 +21,21 @@ interface CompilerOptions {
   outputDir: string;
   outputFormat: string;
   skipMigrations: boolean;
-  blockIpfsMethods?: boolean;
+  blockIpfsMethods?: RegExpMatchArray;
   protocol: Protocol;
 }
 
 export default class Compiler {
   private ipfs: any;
   private sourceDir: string;
-  private blockIpfsMethods?: boolean;
+  private blockIpfsMethods?: RegExpMatchArray;
   private libsDirs: string[];
-  private globalsFile: string;
+  /**
+   * Path to the global.ts file in the graph-ts package.
+   *
+   * @note if you are using substreams as a protocol, this will be undefined.
+   */
+  private globalsFile?: string;
   private protocol: Protocol;
   private ABI: any;
 
@@ -40,45 +45,41 @@ export default class Compiler {
     this.sourceDir = path.dirname(options.subgraphManifest);
     this.blockIpfsMethods = options.blockIpfsMethods;
     this.libsDirs = [];
-
-    if (options.protocol.name !== 'substreams') {
-      for (
-        let dir: string | undefined = path.resolve(this.sourceDir);
-        // Terminate after the root dir or when we have found node_modules
-        dir !== undefined;
-        // Continue with the parent directory, terminate after the root dir
-        dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
-      ) {
-        if (fs.existsSync(path.join(dir, 'node_modules'))) {
-          this.libsDirs.push(path.join(dir, 'node_modules'));
-        }
-      }
-
-      if (this.libsDirs.length === 0) {
-        throw Error(`could not locate \`node_modules\` in parent directories of subgraph manifest`);
-      }
-
-      const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts');
-      const globalsLib = this.libsDirs.find(item => {
-        return fs.existsSync(path.join(item, globalsFile));
-      });
-
-      if (!globalsLib) {
-        throw Error(
-          'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
-        );
-      }
-
-      this.globalsFile = path.join(globalsLib, globalsFile);
-    }
-
-    // @ts-expect-error assigned or not, we dont care
-    if (!this.globalsFile) {
-      throw new Error('Globals file is missing.');
-    }
-
     this.protocol = this.options.protocol;
     this.ABI = this.protocol.getABI();
+
+    if (options.protocol.name === 'substreams') {
+      return;
+    }
+
+    for (
+      let dir: string | undefined = path.resolve(this.sourceDir);
+      // Terminate after the root dir or when we have found node_modules
+      dir !== undefined;
+      // Continue with the parent directory, terminate after the root dir
+      dir = path.dirname(dir) === dir ? undefined : path.dirname(dir)
+    ) {
+      if (fs.existsSync(path.join(dir, 'node_modules'))) {
+        this.libsDirs.push(path.join(dir, 'node_modules'));
+      }
+    }
+
+    if (this.libsDirs.length === 0) {
+      throw Error(`could not locate \`node_modules\` in parent directories of subgraph manifest`);
+    }
+
+    const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts');
+    const globalsLib = this.libsDirs.find(item => {
+      return fs.existsSync(path.join(item, globalsFile));
+    });
+
+    if (!globalsLib) {
+      throw Error(
+        'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
+      );
+    }
+
+    this.globalsFile = path.join(globalsLib, globalsFile);
 
     process.on('uncaughtException', e => {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`);
@@ -316,6 +317,11 @@ export default class Compiler {
       fs.mkdirsSync(path.dirname(outFile));
 
       const libs = this.libsDirs.join(',');
+      if (!this.globalsFile) {
+        throw Error(
+          'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
+        );
+      }
       const global = path.relative(baseDir, this.globalsFile);
 
       asc.compile({
@@ -382,6 +388,11 @@ export default class Compiler {
       fs.mkdirsSync(path.dirname(outFile));
 
       const libs = this.libsDirs.join(',');
+      if (!this.globalsFile) {
+        throw Error(
+          'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
+        );
+      }
       const global = path.relative(baseDir, this.globalsFile);
 
       asc.compile({

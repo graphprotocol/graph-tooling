@@ -1,138 +1,70 @@
-import chalk from 'chalk';
-import { GluegunToolbox } from 'gluegun';
+import { Args, Command, Flags, ux } from '@oclif/core';
+import { print } from 'gluegun';
 import { saveDeployKey } from '../command-helpers/auth';
-import { fixParameters } from '../command-helpers/gluegun';
 import { chooseNodeUrl } from '../command-helpers/node';
 
-const HELP = `
-${chalk.bold('graph auth')} [options] ${chalk.bold('<node>')} ${chalk.bold('<deploy-key>')}
+export default class AuthCommand extends Command {
+  static description = 'Sets the deploy key to use when deploying to a Graph node.';
 
-${chalk.dim('Options:')}
+  static args = {
+    node: Args.string(),
+    'deploy-key': Args.string(),
+  };
 
-      --product <subgraph-studio|hosted-service>
-                                Selects the product for which to authenticate
-      --studio                  Shortcut for --product subgraph-studio
-  -h, --help                    Show usage information
-`;
+  static flags = {
+    help: Flags.help({
+      char: 'h',
+    }),
 
-export interface AuthOptions {
-  product?: 'subgraph-studio' | 'hosted-service';
-  studio?: boolean;
-  help?: boolean;
-  // not a cli arg
-  node?: string;
-  deployKey?: string;
-}
+    product: Flags.string({
+      summary: 'Select a product for which to authenticate.',
+      options: ['subgraph-studio', 'hosted-service'],
+    }),
+    studio: Flags.boolean({
+      summary: 'Shortcut for "--product subgraph-studio".',
+      exclusive: ['product'],
+    }),
+  };
 
-const processForm = async (
-  toolbox: GluegunToolbox,
-  { product, studio, node, deployKey }: AuthOptions,
-) => {
-  const questions = [
-    {
-      type: 'select',
-      name: 'product',
-      message: 'Product for which to initialize',
-      choices: ['subgraph-studio', 'hosted-service'],
-      skip:
-        product === 'subgraph-studio' ||
-        product === 'hosted-service' ||
-        studio !== undefined ||
-        node !== undefined,
-    },
-    {
-      type: 'password',
-      name: 'deployKey',
-      message: 'Deploy key',
-      skip: deployKey !== undefined,
-    },
-  ];
-
-  try {
-    const answers = await toolbox.prompt.ask(questions);
-    return answers;
-  } catch (e) {
-    return undefined;
-  }
-};
-
-export default {
-  description: 'Sets the deploy key to use when deploying to a Graph node',
-  run: async (toolbox: GluegunToolbox) => {
-    // Obtain tools
-    const { print } = toolbox;
-
-    // Read CLI parameters
-    const { product, studio, h, help } = toolbox.parameters.options;
-
-    // Show help text if requested
-    if (help || h) {
-      print.info(HELP);
-      return;
-    }
-
-    let firstParam: string, secondParam: string;
-    try {
-      [firstParam, secondParam] = fixParameters(toolbox.parameters, {
-        h,
-        help,
-        studio,
-      });
-    } catch (e) {
-      print.error(e.message);
-      process.exitCode = 1;
-      return;
-    }
+  async run() {
+    const {
+      args: { node: nodeOrDeployKey, 'deploy-key': deployKeyFlag },
+      flags: { product, studio },
+    } = await this.parse(AuthCommand);
 
     // if user specifies --product or --studio then deployKey is the first parameter
     let node: string | undefined;
-    let deployKey;
+    let deployKey = deployKeyFlag;
     if (product || studio) {
       ({ node } = chooseNodeUrl({ product, studio, node }));
-      deployKey = firstParam;
+      deployKey = nodeOrDeployKey;
     } else {
-      node = firstParam;
-      deployKey = secondParam;
+      node = nodeOrDeployKey;
     }
 
-    if (!node || !deployKey) {
-      const inputs = await processForm(toolbox, {
-        product,
-        studio,
-        node,
-        deployKey,
-      });
-      if (inputs === undefined) {
-        process.exit(1);
-      }
-      if (!node) {
-        ({ node } = chooseNodeUrl({
-          product: inputs.product,
-          studio,
-          node,
-        }));
-      }
-      deployKey ||= inputs.deployKey;
-    }
+    // eslint-disable-next-line -- prettier has problems with ||=
+    node =
+      node ||
+      (await ux.prompt('Which product to initialize?', {
+        required: true,
+      }));
 
-    if (!deployKey) {
-      print.error(`No deploy key provided`);
-      print.info(HELP);
-      process.exitCode = 1;
-      return;
-    }
+    // eslint-disable-next-line -- prettier has problems with ||=
+    deployKey =
+      deployKey ||
+      (await ux.prompt('What is the deploy key?', {
+        required: true,
+        type: 'mask',
+      }));
     if (deployKey.length > 200) {
-      print.error(`Deploy key must not exceed 200 characters`);
-      process.exitCode = 1;
-      return;
+      this.error('✖ Deploy key must not exceed 200 characters', { exit: 1 });
     }
 
     try {
       await saveDeployKey(node!, deployKey);
       print.success(`Deploy key set for ${node}`);
     } catch (e) {
-      print.error(e);
-      process.exitCode = 1;
+      this.error(e, { exit: 1 });
     }
-  },
-};
+  }
+}

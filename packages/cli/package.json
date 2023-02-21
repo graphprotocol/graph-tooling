@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.40.0",
+  "version": "0.41.1",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
@@ -9,14 +9,15 @@
   "bin": {
     "graph": "dist/bin.js"
   },
-  "main": "dist/cli.js",
+  "main": "dist/index.js",
   "files": [
     "CHANGELOG.md",
     "dist",
+    "oclif.manifest.json",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
+    "build": "tsc -b tsconfig.build.json && oclif manifest && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
     "test": "jest --verbose",
     "test:init": "jest tests/cli/init.test.ts --verbose",
     "test:validation": "jest tests/cli/validation.test.ts --verbose",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
+    "@oclif/core": "2.0.7",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
     "chalk": "3.0.0",
@@ -59,6 +61,7 @@
     "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
     "jest": "26.0.0",
+    "oclif": "3.6.1",
     "spawn-command": "0.0.2-1",
     "strip-ansi": "6.0.0",
     "tern": "0.24.3",
@@ -66,5 +69,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "oclif": {
+    "bin": "graph",
+    "commands": "./dist/commands"
   }
 }
