@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.41.1
+
+### Patch Changes
+
+- [#1077](https://github.com/graphprotocol/graph-tooling/pull/1077)
+  [`7efc38b`](https://github.com/graphprotocol/graph-tooling/commit/7efc38ba68dad1e7b09934f9b6b4e5566c298bc1)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Ask for product if missing when using deploy
+  command
+
 ## 0.41.0
 
 ### Minor Changes
