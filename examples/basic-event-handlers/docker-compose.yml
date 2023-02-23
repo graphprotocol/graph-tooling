@@ -38,4 +38,4 @@ services:
       POSTGRES_USER: graph
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph
-      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+      POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
