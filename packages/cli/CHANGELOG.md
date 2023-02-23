@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.42.2
+
+### Patch Changes
+
+- [#1132](https://github.com/graphprotocol/graph-tooling/pull/1132)
+  [`719c8f5`](https://github.com/graphprotocol/graph-tooling/commit/719c8f5e890cc2392fb15cdb318b8f55570f9419)
+  Thanks [@cmwhited](https://github.com/cmwhited)! - enable deployment of celo, avalance and
+  arbitrum-one in studio
+
 ## 0.42.1
 
 ### Patch Changes
