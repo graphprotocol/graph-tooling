@@ -2,7 +2,11 @@ import { Args, Command, Flags } from '@oclif/core';
 import { CLIError } from '@oclif/core/lib/errors';
 import { system } from 'gluegun';
 import immutable from 'immutable';
-import { loadAbiFromBlockScout, loadAbiFromEtherscan } from '../command-helpers/abi';
+import {
+  loadAbiFromBlockScout,
+  loadAbiFromEtherscan,
+  loadStartBlockForContract,
+} from '../command-helpers/abi';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { updateNetworksFile } from '../command-helpers/network';
 import {
@@ -34,10 +38,13 @@ export default class AddCommand extends Command {
     help: Flags.help({
       char: 'h',
     }),
-
     abi: Flags.string({
       summary: 'Path to the contract ABI.',
       default: '*Download from Etherscan*',
+    }),
+    'start-block': Flags.string({
+      summary: 'The block number to start indexing events from.',
+      default: '*Zero*',
     }),
     'contract-name': Flags.string({
       summary: 'Name of the contract.',
@@ -62,6 +69,7 @@ export default class AddCommand extends Command {
         'contract-name': contractName,
         'merge-entities': mergeEntities,
         'network-file': networksFile,
+        'start-block': startBlockFlag,
       },
     } = await this.parse(AddCommand);
 
@@ -70,6 +78,8 @@ export default class AddCommand extends Command {
     const manifest = await Subgraph.load(manifestPath, { protocol });
     const network = manifest.result.getIn(['dataSources', 0, 'network']) as any;
     const result = manifest.result.asMutable();
+
+    let startBlock = startBlockFlag;
 
     const entities = getEntities(manifest);
     const contractNames = getContractNames(manifest);
@@ -89,6 +99,13 @@ export default class AddCommand extends Command {
       ethabi = await loadAbiFromEtherscan(EthereumABI, network, address);
     }
 
+    try {
+      startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
+    } catch (error) {
+      // If we can't get the start block, we'll just leave it out of the manifest
+      // TODO: Ask the user for the start block
+    }
+
     const { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(
       ethabi,
       entities,
@@ -103,7 +120,14 @@ export default class AddCommand extends Command {
     await writeTestsFiles(ethabi, protocol, contractName);
 
     const dataSources = result.get('dataSources');
-    const dataSource = await generateDataSource(protocol, contractName, network, address, ethabi);
+    const dataSource = await generateDataSource(
+      protocol,
+      contractName,
+      network,
+      address,
+      ethabi,
+      startBlock,
+    );
 
     // Handle the collisions edge case by copying another data source yaml data
     if (mergeEntities && onlyCollisions) {
