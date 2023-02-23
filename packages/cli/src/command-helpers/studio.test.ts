@@ -37,7 +37,7 @@ describe('Version Command Helpers', () => {
         expect(() =>
           validateStudioNetwork({
             product: 'subgraph-studio',
-            network: 'celo',
+            network: 'moonriver',
           }),
         ).toThrow(
           new Error(
