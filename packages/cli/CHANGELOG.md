@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.42.1
+
+### Patch Changes
+
+- [#1129](https://github.com/graphprotocol/graph-tooling/pull/1129)
+  [`8e04027`](https://github.com/graphprotocol/graph-tooling/commit/8e04027ea1da22d7de22edf08d741192999b0146)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - Fix availableNetworks() for
+  substreams
+
 ## 0.42.0
 
 ### Minor Changes
