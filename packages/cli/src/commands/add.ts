@@ -42,7 +42,7 @@ export default class AddCommand extends Command {
       summary: 'Path to the contract ABI.',
       default: '*Download from Etherscan*',
     }),
-   'start-block': Flags.string({
+    'start-block': Flags.string({
       summary: 'The block number to start indexing events from.',
       default: '*Zero*',
     }),
@@ -79,7 +79,7 @@ export default class AddCommand extends Command {
     const network = manifest.result.getIn(['dataSources', 0, 'network']) as any;
     const result = manifest.result.asMutable();
 
-    let startBlock= startBlockFlag;
+    let startBlock = startBlockFlag;
 
     const entities = getEntities(manifest);
     const contractNames = getContractNames(manifest);
