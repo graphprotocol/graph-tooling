@@ -453,7 +453,6 @@ async function processInitForm(
           // @ts-expect-error TODO: wait what?
           availableNetworks
             .get(protocol as ProtocolName) // Get networks related to the chosen protocol.
-            // @ts-expect-error TODO: wait what?
             .toArray()
         ); // Needed because of gluegun. It can't even receive a JS iterable.
       },
