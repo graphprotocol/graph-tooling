@@ -1,5 +1,32 @@
 # @graphprotocol/graph-cli
 
+## 0.42.0
+
+### Minor Changes
+
+- [#1128](https://github.com/graphprotocol/graph-tooling/pull/1128)
+  [`2ebd032`](https://github.com/graphprotocol/graph-tooling/commit/2ebd0326cab00efc9abad7ad4287cee20a8cfea2)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add base scan URL
+
+- [#1068](https://github.com/graphprotocol/graph-tooling/pull/1068)
+  [`1e3195d`](https://github.com/graphprotocol/graph-tooling/commit/1e3195d365bd445f8bd6ba3f1c3b66be20510b94)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add startblock auto fetch for `add` command
+
+- [#1079](https://github.com/graphprotocol/graph-tooling/pull/1079)
+  [`570eb22`](https://github.com/graphprotocol/graph-tooling/commit/570eb225fad705998cca3998879a6a1140a73143)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Remove optimism-kovan, Add optimism-goerli
+
+- [#1126](https://github.com/graphprotocol/graph-tooling/pull/1126)
+  [`6d20494`](https://github.com/graphprotocol/graph-tooling/commit/6d204944e41079dd2ddd228a3b4f0e1a07124913)
+  Thanks [@azf20](https://github.com/azf20)! - Add `mainnet` as network for substreams
+
+### Patch Changes
+
+- [#1127](https://github.com/graphprotocol/graph-tooling/pull/1127)
+  [`b8d2297`](https://github.com/graphprotocol/graph-tooling/commit/b8d2297bea994b852d5a61b557e4eccda283ec75)
+  Thanks [@saihaj](https://github.com/saihaj)! - Prioirtize node flag. If provided we do not need to
+  go lookup what product to deploy to
+
 ## 0.41.1
 
 ### Patch Changes
