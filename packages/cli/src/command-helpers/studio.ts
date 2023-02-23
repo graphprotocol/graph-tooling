@@ -16,6 +16,9 @@ export const allowedStudioNetworks = [
   'theta-testnet-001',
   'osmo-test-4',
   'base-testnet',
+  'celo',
+  'arbitrum-one',
+  'avalanche',
 ] as const;
 
 export const validateStudioNetwork = ({
