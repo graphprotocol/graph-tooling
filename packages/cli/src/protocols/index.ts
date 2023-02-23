@@ -115,6 +115,7 @@ export default class Protocol {
         'juno-1',
         'uni-3', // Juno testnet
       ],
+      substreams: ['mainnet'],
     }) as immutable.Map<'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams', string[]>;
 
     const allNetworks: string[] = [];
