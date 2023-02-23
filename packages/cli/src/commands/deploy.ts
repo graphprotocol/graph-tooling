@@ -116,7 +116,7 @@ export default class DeployCommand extends Command {
 
     // We are given a node URL, so we prioritize that over the product flag
     const product = nodeFlag
-      ? productFlag 
+      ? productFlag
       : studio
       ? 'subgraph-studio'
       : productFlag ||
