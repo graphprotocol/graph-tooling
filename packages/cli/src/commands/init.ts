@@ -268,8 +268,8 @@ export default class InitCommand extends Command {
       );
     } else {
       ({ node, allowSimpleName } = chooseNodeUrl({
-        product,
-        studio,
+        product: answers.product,
+        studio: answers.studio,
         node,
         allowSimpleName,
       }));
