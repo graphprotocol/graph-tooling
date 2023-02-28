@@ -40,11 +40,9 @@ export default class AddCommand extends Command {
     }),
     abi: Flags.string({
       summary: 'Path to the contract ABI.',
-      default: '*Download from Etherscan*',
     }),
     'start-block': Flags.string({
       summary: 'The block number to start indexing events from.',
-      default: '*Zero*',
     }),
     'contract-name': Flags.string({
       summary: 'Name of the contract.',
