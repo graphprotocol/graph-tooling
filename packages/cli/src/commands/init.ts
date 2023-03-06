@@ -1047,7 +1047,10 @@ async function addAnotherContract(
       abiPath = await ux.prompt('\nABI file (path)', { required: true });
     }
 
-    const contractName = await ux.prompt('\nContract Name', { required: true, default: 'Contract' });
+    const contractName = await ux.prompt('\nContract Name', {
+      required: true,
+      default: 'Contract',
+    });
 
     // Get the cwd before process.chdir in order to switch back in the end of command execution
     const cwd = process.cwd();
