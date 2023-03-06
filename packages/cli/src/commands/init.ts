@@ -1026,7 +1026,7 @@ async function addAnotherContract(
 
     let contract = '';
     for (;;) {
-      contract = await ux.prompt(`Contract ${ProtocolContract.identifierName()}`, {
+      contract = await ux.prompt(`\nContract ${ProtocolContract.identifierName()}`, {
         required: true,
       });
       const { valid, error } = validateContract(contract, ProtocolContract);
@@ -1036,7 +1036,7 @@ async function addAnotherContract(
       this.log(`✖ ${error}`);
     }
 
-    const localAbi = await ux.prompt('Provide local ABI path? (y/n)', {
+    const localAbi = await ux.prompt('\nProvide local ABI path? (y/n)', {
       required: true,
       type: 'single',
     });
@@ -1044,10 +1044,13 @@ async function addAnotherContract(
 
     let abiPath = '';
     if (abiFromFile) {
-      abiPath = await ux.prompt('ABI file (path)', { required: true });
+      abiPath = await ux.prompt('\nABI file (path)', { required: true });
     }
 
-    const contractName = await ux.prompt('Contract Name', { required: true, default: 'Contract' });
+    const contractName = await ux.prompt('\nContract Name', {
+      required: true,
+      default: 'Contract',
+    });
 
     // Get the cwd before process.chdir in order to switch back in the end of command execution
     const cwd = process.cwd();
@@ -1057,7 +1060,7 @@ async function addAnotherContract(
         process.chdir(directory);
       }
 
-      const commandLine = ['add', contract, '--contract-name', contractName];
+      const commandLine = [contract, '--contract-name', contractName];
 
       if (abiFromFile) {
         if (abiPath.includes(directory)) {
