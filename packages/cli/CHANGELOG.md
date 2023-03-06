@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.42.4
+
+### Patch Changes
+
+- [#1185](https://github.com/graphprotocol/graph-tooling/pull/1185)
+  [`edf14d6`](https://github.com/graphprotocol/graph-tooling/commit/edf14d6fa580e99b317a977d0b693f182e746d4e)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Fix graph init failing to add more than one
+  contract
+
 ## 0.42.3
 
 ### Patch Changes
