@@ -23,6 +23,7 @@ export * from './common/value';
  */
 export declare namespace store {
   function get(entity: string, id: string): Entity | null;
+  function loadRelated(entity: string, id: string, field: string): Array<Entity>;
   function set(entity: string, id: string, data: Entity): void;
   function remove(entity: string, id: string): void;
 }

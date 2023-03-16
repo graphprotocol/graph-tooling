@@ -87,6 +87,16 @@ export default class SchemaCodeGenerator {
       .map((def: any) => this._generateEntityType(def));
   }
 
+  generateDerivedLoaders() {
+    const fields = this.schema.ast.get('definitions')
+      .filter((def: any) => this._isEntityTypeDefinition(def))
+      .map((def: any) => def.get('fields'))
+      .flatten(1)
+      .filter((def: any) => this._isDerivedField(def))
+      .map((def: any) => this._getTypeNameForField(def));
+
+    return [...new Set(fields)].map((typeName: any) => this._generateDerivedLoader(typeName));
+  }
   _isEntityTypeDefinition(def: immutable.Map<any, any>) {
     return (
       def.get('kind') === 'ObjectTypeDefinition' &&
@@ -96,6 +106,10 @@ export default class SchemaCodeGenerator {
     );
   }
 
+  _isDerivedField(field: any): boolean {
+    return field.get('directives')
+      .find((directive: any) => directive.getIn(['name', 'value']) === 'derivedFrom') !== undefined;
+  }
   _isInterfaceDefinition(def: immutable.Map<any, any>) {
     return def.get('kind') === 'InterfaceTypeDefinition';
   }
@@ -122,6 +136,39 @@ export default class SchemaCodeGenerator {
       .forEach((method: any) => klass.addMethod(method));
 
     return klass;
+  }
+
+  _generateDerivedLoader(typeName: string): any {
+    // <field>Loader
+    const klass = tsCodegen.klass(`${typeName}Loader`, { export: true, extends: 'Entity' });
+
+    klass.addMember(tsCodegen.klassMember("_entity", "string"))
+    klass.addMember(tsCodegen.klassMember("_field", "string"))
+    klass.addMember(tsCodegen.klassMember("_id", "string"))
+    // Generate and add a constructor
+    klass.addMethod(tsCodegen.method('constructor', [tsCodegen.param('entity', 'string'), tsCodegen.param('id', 'string'), tsCodegen.param('field', 'string')], undefined, `
+      super();
+      this._entity = entity;
+      this._id = id;
+      this._field = field;
+`));
+
+    // Generate load() method for the Loader
+    klass.addMethod(tsCodegen.method('load', [], `${typeName}[]`, `
+  let value = store.loadRelated(this._entity, this._id, this._field);
+  return changetype<${typeName}[]>(value);
+  `))
+
+    return klass;
+  }
+  _getTypeNameForField(gqlType: any): any {
+    if (gqlType.get('kind') === 'NonNullType') {
+      return this._getTypeNameForField(gqlType.get('type'))
+    } else if (gqlType.get('kind') === 'ListType') {
+      return this._getTypeNameForField(gqlType.get('type'))
+    } else {
+      return gqlType.getIn(['name', 'value'])
+    }
   }
 
   _generateConstructor(_entityName: string, fields: immutable.List<any>) {
@@ -172,7 +219,10 @@ export default class SchemaCodeGenerator {
     ]);
   }
 
-  _generateEntityFieldGetter(_entityDef: any, fieldDef: immutable.Map<any, any>) {
+  _generateEntityFieldGetter(entityDef: any, fieldDef: immutable.Map<any, any>) {
+    if (this._isDerivedField(fieldDef)) {
+      return this._generateDerivedFieldGetter(entityDef, fieldDef);
+    }
     const name = fieldDef.getIn(['name', 'value']);
     const gqlType = fieldDef.get('type');
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
@@ -196,8 +246,64 @@ export default class SchemaCodeGenerator {
       `,
     );
   }
+  _generateDerivedFieldGetter(entityDef: any, fieldDef: immutable.Map<any, any>) {
+    let entityName = entityDef.getIn(['name', 'value']);
+    let name = fieldDef.getIn(['name', 'value']);
+    let gqlType = fieldDef.get('type');
+    let returnType = this._returnTypeForDervied(gqlType)
+    return tsCodegen.method(
+      `get ${name}`,
+      [],
+      returnType,
+      `
+        return new ${returnType}('${entityName}', this.get('id')!.toString(), '${name}')
+      `,
+    )
+  }
 
+  _returnTypeForDervied(gqlType: any): any {
+    if (gqlType.get('kind') === 'NonNullType') {
+      return this._returnTypeForDervied(gqlType.get('type'))
+    } else if (gqlType.get('kind') === 'ListType') {
+      return this._returnTypeForDervied(gqlType.get('type'))
+    } else {
+
+      const type = tsCodegen.namedType(
+        gqlType.getIn(['name', 'value']) + 'Loader'
+      );
+      return type;
+    }
+  }
+
+  _generatedEntityDerivedFieldGetter(_entityDef: any, fieldDef: immutable.Map<any, any>) {
+    const name = fieldDef.getIn(['name', 'value']);
+    const gqlType = fieldDef.get('type');
+    const fieldValueType = this._valueTypeFromGraphQl(gqlType);
+    const returnType = this._typeFromGraphQl(gqlType);
+    const isNullable = returnType instanceof tsCodegen.NullableType;
+
+    const getNonNullable = `return ${typesCodegen.valueToAsc('value!', fieldValueType)}`;
+    const getNullable = `if (!value || value.kind == ValueKind.NULL) {
+                          return null
+                        } else {
+                          return ${typesCodegen.valueToAsc('value', fieldValueType)}
+                        }`;
+
+    return tsCodegen.method(
+      `get ${name}`,
+      [],
+      returnType,
+      `
+       let value = this.get('${name}')
+       ${isNullable ? getNullable : getNonNullable}
+      `,
+    );
+  }
   _generateEntityFieldSetter(_entityDef: any, fieldDef: immutable.Map<any, any>) {
+    // We shouldn't have setters for derived fields
+    // if (this._isDerivedField(fieldDef)) {
+    //   return;
+    // }
     const name = fieldDef.getIn(['name', 'value']);
     const gqlType = fieldDef.get('type');
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
@@ -297,3 +403,4 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type;
   }
 }
+
