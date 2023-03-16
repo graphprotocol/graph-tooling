@@ -104,6 +104,16 @@ export default class SchemaCodeGenerator {
       .filter(Boolean) as Array<tsCodegen.Class>;
   }
 
+  generateDerivedLoaders() {
+    const fields = this.schema.ast.definitions
+      .filter((def) => this._isEntityTypeDefinition(def))
+      .flatMap((def: any) => def.fields)
+      .filter((def: any) => this._isDerivedField(def))
+      .map((def: any) => this._getTypeNameForField(def));
+
+    return [...new Set(fields)].map((typeName: any) => this._generateDerivedLoader(typeName));
+  }
+
   _isEntityTypeDefinition(def: DefinitionNode): def is ObjectTypeDefinitionNode {
     return (
       def.kind === 'ObjectTypeDefinition' &&
@@ -111,6 +121,12 @@ export default class SchemaCodeGenerator {
     );
   }
 
+
+  _isDerivedField(field: any): boolean {
+    return field.directives?.find(
+      (directive: any) => directive.name.value === 'derivedFrom'
+    ) !== undefined
+  }
   _isInterfaceDefinition(def: DefinitionNode): def is InterfaceTypeDefinitionNode {
     return def.kind === 'InterfaceTypeDefinition';
   }
@@ -138,6 +154,39 @@ export default class SchemaCodeGenerator {
     return klass;
   }
 
+
+  _generateDerivedLoader(typeName: string): any {
+    // <field>Loader
+    const klass = tsCodegen.klass(`${typeName}Loader`, { export: true, extends: 'Entity' });
+
+    klass.addMember(tsCodegen.klassMember("_entity", "string"))
+    klass.addMember(tsCodegen.klassMember("_field", "string"))
+    klass.addMember(tsCodegen.klassMember("_id", "string"))
+    // Generate and add a constructor
+    klass.addMethod(tsCodegen.method('constructor', [tsCodegen.param('entity', 'string'), tsCodegen.param('id', 'string'), tsCodegen.param('field', 'string')], undefined, `
+      super();
+      this._entity = entity;
+      this._id = id;
+      this._field = field;
+`));
+
+    // Generate load() method for the Loader
+    klass.addMethod(tsCodegen.method('load', [], `${typeName}[]`, `
+  let value = store.loadRelated(this._entity, this._id, this._field);
+  return changetype<${typeName}[]>(value);
+  `))
+
+    return klass;
+  }
+  _getTypeNameForField(gqlType: any): any {
+    if (gqlType.kind === 'NonNullType') {
+      return this._getTypeNameForField(gqlType.type)
+    } else if (gqlType.kind === 'ListType') {
+      return this._getTypeNameForField(gqlType.type)
+    } else {
+      return gqlType.name.value
+    }
+  }
   _generateConstructor(_entityName: string, fields: readonly FieldDefinitionNode[] | undefined) {
     const idField = IdField.fromFields(fields);
     return tsCodegen.method(
@@ -206,6 +255,7 @@ export default class SchemaCodeGenerator {
     );
   }
 
+
   _generateEntityFieldGetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const name = fieldDef.name.value;
     const gqlType = fieldDef.type;
@@ -240,7 +290,60 @@ export default class SchemaCodeGenerator {
       `,
     );
   }
+  _generateDerivedFieldGetter(entityDef: any, fieldDef: FieldDefinitionNode) {
+    let entityName = entityDef.name.value;
+    let name = fieldDef.name.value;
+    let gqlType = fieldDef.type;
+    let returnType = this._returnTypeForDervied(gqlType)
+    return tsCodegen.method(
+      `get ${name}`,
+      [],
+      returnType,
+      `
+        return new ${returnType}('${entityName}', this.get('id')!.toString(), '${name}')
+      `,
+    )
+  }
 
+
+  _returnTypeForDervied(gqlType: any): any {
+    if (gqlType.kind === 'NonNullType') {
+      return this._returnTypeForDervied(gqlType.type)
+    } else if (gqlType.kind === 'ListType') {
+      return this._returnTypeForDervied(gqlType.type)
+    } else {
+
+      const type = tsCodegen.namedType(
+        gqlType.name.value + 'Loader'
+      );
+      return type;
+    }
+  }
+
+  _generatedEntityDerivedFieldGetter(_entityDef: any, fieldDef: FieldDefinitionNode) {
+    const name = fieldDef.name.value;
+    const gqlType = fieldDef.type;
+    const fieldValueType = this._valueTypeFromGraphQl(gqlType);
+    const returnType = this._typeFromGraphQl(gqlType);
+    const isNullable = returnType instanceof tsCodegen.NullableType;
+
+    const getNonNullable = `return ${typesCodegen.valueToAsc('value!', fieldValueType)}`;
+    const getNullable = `if (!value || value.kind == ValueKind.NULL) {
+                          return null
+                        } else {
+                          return ${typesCodegen.valueToAsc('value', fieldValueType)}
+                        }`;
+
+    return tsCodegen.method(
+      `get ${name}`,
+      [],
+      returnType,
+      `
+       let value = this.get('${name}')
+       ${isNullable ? getNullable : getNonNullable}
+      `,
+    );
+  }
   _generateEntityFieldSetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const name = fieldDef.name.value;
     const isDerivedField = !!fieldDef.directives?.find(
@@ -349,3 +452,4 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type;
   }
 }
+

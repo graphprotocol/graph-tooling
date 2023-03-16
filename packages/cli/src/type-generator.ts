@@ -161,6 +161,7 @@ export default class TypeGenerator {
             GENERATED_FILE_NOTE,
             ...codeGenerator.generateModuleImports(),
             ...codeGenerator.generateTypes(),
+            ...codeGenerator.generateDerivedLoaders(),
           ].join('\n'),
           {
             parser: 'typescript',
