@@ -166,10 +166,16 @@ export default class SchemaCodeGenerator {
   }
 
   _generateEntityFieldMethods(entityDef: any, fieldDef: immutable.Map<any, any>) {
-    return immutable.List([
-      this._generateEntityFieldGetter(entityDef, fieldDef),
-      this._generateEntityFieldSetter(entityDef, fieldDef),
-    ]);
+    return (
+      immutable
+        .List([
+          this._generateEntityFieldGetter(entityDef, fieldDef),
+          this._generateEntityFieldSetter(entityDef, fieldDef),
+        ])
+        // generator can return null if the field is not supported
+        // so we filter all falsy values
+        .filter(Boolean)
+    );
   }
 
   _generateEntityFieldGetter(_entityDef: any, fieldDef: immutable.Map<any, any>) {
@@ -199,6 +205,13 @@ export default class SchemaCodeGenerator {
 
   _generateEntityFieldSetter(_entityDef: any, fieldDef: immutable.Map<any, any>) {
     const name = fieldDef.getIn(['name', 'value']);
+    const isDerivedField = !!fieldDef
+      .get('directives')
+      .find((directive: any) => directive.getIn(['name', 'value']) === 'derivedFrom');
+
+    // We cannot have setters for derived fields
+    if (isDerivedField) return null;
+
     const gqlType = fieldDef.get('type');
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
     const paramType = this._typeFromGraphQl(gqlType);

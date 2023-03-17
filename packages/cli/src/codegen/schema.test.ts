@@ -241,18 +241,6 @@ describe('Schema code generator', () => {
               }
             `,
           },
-          {
-            name: 'set wallets',
-            params: [new Param('value', new NullableType(new ArrayType(new NamedType('string'))))],
-            returnType: undefined,
-            body: `
-              if (!value) {
-                this.unset('wallets')
-              } else {
-                this.set('wallets', Value.fromStringArray(<Array<string>>value))
-              }
-            `,
-          },
         ],
       });
     });
