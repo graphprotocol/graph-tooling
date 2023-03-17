@@ -19,6 +19,7 @@ export const allowedStudioNetworks = [
   'celo',
   'arbitrum-one',
   'avalanche',
+  'zksync-era',
 ] as const;
 
 export const validateStudioNetwork = ({

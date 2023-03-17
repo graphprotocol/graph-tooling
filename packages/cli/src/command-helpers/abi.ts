@@ -190,6 +190,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.ftmscan.com/api`;
     case 'fantom-testnet':
       return `https://api-testnet.ftmscan.com/api`;
+    case 'zksync-era':
+      return `https://explorer.zksync.io/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -252,6 +254,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://sokol.poa.network';
     case 'rinkeby':
       return 'https://rpc.ankr.com/eth_rinkeby';
+    case 'zksync-era':
+      return 'https://zksync2-mainnet.zksync.io';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
