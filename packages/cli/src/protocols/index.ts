@@ -105,6 +105,7 @@ export default class Protocol {
         'aurora',
         'aurora-testnet',
         'base-testnet',
+        'zksync-era',
       ],
       near: ['near-mainnet', 'near-testnet'],
       cosmos: [
