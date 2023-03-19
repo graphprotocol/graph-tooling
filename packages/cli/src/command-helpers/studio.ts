@@ -32,10 +32,12 @@ export const validateStudioNetwork = ({
   network: string;
 }) => {
   const isStudio = studio || product === 'subgraph-studio';
-  const isAllowedNetwork = !network || allowedStudioNetworks.includes(
-    // @ts-expect-error we're checking if the network is allowed
-    network,
-  );
+  const isAllowedNetwork =
+    !network ||
+    allowedStudioNetworks.includes(
+      // @ts-expect-error we're checking if the network is allowed
+      network,
+    );
 
   if (isStudio && !isAllowedNetwork) {
     throw new Error(
