@@ -29,7 +29,7 @@ export const validateStudioNetwork = ({
 }: {
   studio?: string | boolean;
   product?: string;
-  network: string;
+  network?: string;
 }) => {
   const isStudio = studio || product === 'subgraph-studio';
   const isAllowedNetwork =
