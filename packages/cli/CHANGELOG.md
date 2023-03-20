@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.43.0
+
+### Minor Changes
+
+- [#1192](https://github.com/graphprotocol/graph-tooling/pull/1192)
+  [`4a5d805`](https://github.com/graphprotocol/graph-tooling/commit/4a5d805d3a5c44899c4897d1a858b13c6c36673b)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add zksync era
+
 ## 0.42.4
 
 ### Patch Changes
