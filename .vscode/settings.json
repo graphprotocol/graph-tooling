@@ -1,4 +1,5 @@
 {
+  "editor.formatOnSave": true,
   "yaml.schemas": {
     "https://json.schemastore.org/github-issue-config.json": ".github/ISSUE_TEMPLATE/config.yml"
   }
