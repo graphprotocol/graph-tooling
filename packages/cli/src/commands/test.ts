@@ -12,9 +12,7 @@ export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
 
   static args = {
-    datasource: Args.string({
-      required: true,
-    }),
+    datasource: Args.string(),
   };
 
   static flags = {
@@ -48,7 +46,6 @@ export default class TestCommand extends Command {
     version: Flags.string({
       summary: 'Choose the version of the rust binary that you want to be downloaded/used.',
       char: 'v',
-      required: true,
     }),
   };
 
@@ -135,7 +132,7 @@ async function runBinary(
     coverage: boolean;
     force: boolean;
     logs: boolean;
-    version: string;
+    version: string | undefined;
     latestVersion: string | null;
     recompile: boolean;
   },
@@ -253,7 +250,7 @@ async function runDocker(
     testsDir: string;
     coverage: boolean;
     force: boolean;
-    version: string;
+    version: string | undefined;
     latestVersion: string | null;
     recompile: boolean;
   },
