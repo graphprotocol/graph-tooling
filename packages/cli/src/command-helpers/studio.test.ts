@@ -33,6 +33,21 @@ describe('Version Command Helpers', () => {
         );
       });
 
+      test('And no network is passed', () => {
+        expect(() =>
+          validateStudioNetwork({
+            studio: true,
+            network: undefined,
+          }),
+        ).not.toThrow(
+          new Error(
+            `The Subgraph Studio only allows subgraphs for these networks: ${allowedStudioNetworks.join(
+              ', ',
+            )}`,
+          ),
+        );
+      });
+
       test("And it's NOT an allowed network", () => {
         expect(() =>
           validateStudioNetwork({
