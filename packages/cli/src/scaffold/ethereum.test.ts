@@ -117,7 +117,7 @@ type ExampleEntity @entity {
   id: Bytes!
   count: BigInt!
   a: BigInt! # uint256
-  b: [Bytes]! # bytes[4]
+  b: [Bytes!]! # bytes[4]
 }
 `);
   });
@@ -127,7 +127,7 @@ type ExampleEntity @entity {
 type ExampleEvent @entity(immutable: true) {
   id: Bytes!
   a: BigInt! # uint256
-  b: [Bytes]! # bytes[4]
+  b: [Bytes!]! # bytes[4]
   param2: String! # string
   c_c1: BigInt! # uint256
   c_value1: Bytes! # bytes32

@@ -102,6 +102,31 @@ describe('Init', () => {
     );
 
     cliTest(
+      'From contract with list items in abi',
+      [
+        'init',
+        '--protocol',
+        'ethereum',
+        '--studio',
+        '--from-contract',
+        '0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e',
+        '--abi',
+        path.join(ethereumBaseDir, 'abis', 'Airdropped.json'),
+        '--network',
+        'mainnet',
+        'user/subgraph-from-contract-with-lists-in-abi',
+        path.join(ethereumBaseDir, 'from-contract-with-lists-in-abi'),
+      ],
+      path.join('init', 'ethereum', 'from-contract-with-lists-in-abi'),
+      {
+        exitCode: 0,
+        timeout: 100_000,
+        cwd: ethereumBaseDir,
+        deleteDir: true,
+      },
+    );
+
+    cliTest(
       'From contract with overloaded elements',
       [
         'init',

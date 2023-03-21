@@ -16,7 +16,14 @@ export function abiEvents(abi: { data: immutable.Collection<any, any> }) {
 
 export const protocolTypeToGraphQL = (protocol: string, name: string) => {
   const ascType = ascTypeForProtocol(protocol, name);
-  return valueTypeForAsc(ascType);
+  // TODO: we need to figure out how to improve types
+  // but for now this always is returning a string
+  const convertedType = valueTypeForAsc(ascType) as string;
+
+  // TODO: this is a hack to make array type non-nullable
+  // We should refactor the way we convert the Values from ASC to GraphQL
+  // For arrays we always want non-nullable children
+  return convertedType.endsWith(']') ? convertedType.replace(']', '!]') : convertedType;
 };
 
 export const generateField = ({
