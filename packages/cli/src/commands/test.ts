@@ -12,9 +12,7 @@ export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
 
   static args = {
-    datasource: Args.string({
-      required: true,
-    }),
+    datasource: Args.string(),
   };
 
   static flags = {
@@ -48,7 +46,6 @@ export default class TestCommand extends Command {
     version: Flags.string({
       summary: 'Choose the version of the rust binary that you want to be downloaded/used.',
       char: 'v',
-      required: true,
     }),
   };
 
@@ -58,7 +55,25 @@ export default class TestCommand extends Command {
       flags: { coverage, docker, force, logs, recompile, version },
     } = await this.parse(TestCommand);
 
-    const testsDir = './tests';
+    let testsDir = './tests';
+
+    // Check if matchstick.yaml config exists
+    if (filesystem.exists('matchstick.yaml')) {
+      try {
+        // Load the config
+        const config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8')!);
+        // Check if matchstick.yaml and testsFolder not null
+        if (config?.testsFolder) {
+          // assign test folder from matchstick.yaml if present
+          testsDir = config.testsFolder;
+        }
+      } catch (error) {
+        this.error(`A problem occurred while reading "matchstick.yaml":\n${error.message}`, {
+          exit: 1,
+        });
+      }
+    }
+
     const cachePath = path.resolve(testsDir, '.latest.json');
     const opts = {
       testsDir,
@@ -71,24 +86,6 @@ export default class TestCommand extends Command {
       version,
       latestVersion: getLatestVersionFromCache(cachePath),
     };
-
-    // Check if matchstick.yaml config exists
-    if (filesystem.exists('matchstick.yaml')) {
-      try {
-        // Load the config
-        const config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8')!);
-
-        // Check if matchstick.yaml and testsDir not null
-        if (config?.testsDir) {
-          // assign test folder from matchstick.yaml if present
-          opts.testsDir = config.testsDir;
-        }
-      } catch (error) {
-        this.error(`A problem occurred while reading "matchstick.yaml":\n${error.message}`, {
-          exit: 1,
-        });
-      }
-    }
 
     // Fetch the latest version tag if version is not specified with -v/--version or if the version is not cached
     if (opts.force || (!opts.version && !opts.latestVersion)) {
@@ -135,7 +132,7 @@ async function runBinary(
     coverage: boolean;
     force: boolean;
     logs: boolean;
-    version: string;
+    version: string | undefined;
     latestVersion: string | null;
     recompile: boolean;
   },
@@ -253,7 +250,7 @@ async function runDocker(
     testsDir: string;
     coverage: boolean;
     force: boolean;
-    version: string;
+    version: string | undefined;
     latestVersion: string | null;
     recompile: boolean;
   },
@@ -272,7 +269,7 @@ async function runDocker(
   const current_folder = filesystem.cwd();
 
   // Declate dockerfilePath with default location
-  const dockerfilePath = path.join(opts.testsDir || 'tests', '.docker/Dockerfile');
+  const dockerfilePath = path.join(opts.testsDir, '.docker/Dockerfile');
 
   // Check if the Dockerfil already exists
   const dockerfileExists = filesystem.exists(dockerfilePath);
