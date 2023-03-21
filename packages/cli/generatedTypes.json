@@ -1,0 +1,297 @@
+[
+  {
+    "name": "Account",
+    "extends": "Entity",
+    "methods": [
+      {
+        "name": "constructor",
+        "params": [
+          {
+            "name": "id",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "body": "\n      super()\n      this.set('id', Value.fromString(id))\n      "
+      },
+      {
+        "name": "save",
+        "params": [],
+        "returnType": {
+          "name": "void"
+        },
+        "body": "\n        let id = this.get('id')\n        assert(id != null,\n               'Cannot save Account entity without an ID')\n        if (id) {\n          assert(id.kind == ValueKind.STRING,\n                 `Entities of type Account must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`)\n          store.set('Account', id.toString(), this)\n        }"
+      },
+      {
+        "name": "load",
+        "params": [
+          {
+            "name": "id",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "returnType": {
+          "inner": {
+            "name": "Account"
+          }
+        },
+        "body": "\n        return changetype<Account | null>(store.get('Account', id))\n        "
+      },
+      {
+        "name": "get id",
+        "params": [],
+        "returnType": {
+          "name": "string"
+        },
+        "body": "\n       let value = this.get('id')\n       return value!.toString()\n      "
+      },
+      {
+        "name": "set id",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "body": "\n      this.set('id', Value.fromString(value))\n    "
+      },
+      {
+        "name": "get description",
+        "params": [],
+        "returnType": {
+          "inner": {
+            "name": "string"
+          }
+        },
+        "body": "\n       let value = this.get('description')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toString()\n                        }\n      "
+      },
+      {
+        "name": "set description",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "inner": {
+                "name": "string"
+              }
+            }
+          }
+        ],
+        "body": "\n      if (!value) {\n        this.unset('description')\n      } else {\n        this.set('description', Value.fromString(<string>value))\n      }\n    "
+      },
+      {
+        "name": "get name",
+        "params": [],
+        "returnType": {
+          "name": "string"
+        },
+        "body": "\n       let value = this.get('name')\n       return value!.toString()\n      "
+      },
+      {
+        "name": "set name",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "body": "\n      this.set('name', Value.fromString(value))\n    "
+      },
+      {
+        "name": "get age",
+        "params": [],
+        "returnType": {
+          "inner": {
+            "name": "i32"
+          }
+        },
+        "body": "\n       let value = this.get('age')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toI32()\n                        }\n      "
+      },
+      {
+        "name": "set age",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "inner": {
+                "name": "i32"
+              }
+            }
+          }
+        ],
+        "body": "\n      if (!value) {\n        this.unset('age')\n      } else {\n        this.set('age', Value.fromI32(<i32>value))\n      }\n    "
+      },
+      {
+        "name": "get count",
+        "params": [],
+        "returnType": {
+          "name": "i32"
+        },
+        "body": "\n       let value = this.get('count')\n       return value!.toI32()\n      "
+      },
+      {
+        "name": "set count",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "i32"
+            }
+          }
+        ],
+        "body": "\n      this.set('count', Value.fromI32(value))\n    "
+      },
+      {
+        "name": "get active",
+        "params": [],
+        "returnType": {
+          "inner": {
+            "name": "boolean"
+          }
+        },
+        "body": "\n       let value = this.get('active')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toBoolean()\n                        }\n      "
+      },
+      {
+        "name": "set active",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "inner": {
+                "name": "boolean"
+              }
+            }
+          }
+        ],
+        "body": "\n      if (!value) {\n        this.unset('active')\n      } else {\n        this.set('active', Value.fromBoolean(<boolean>value))\n      }\n    "
+      },
+      {
+        "name": "get wallets",
+        "params": [],
+        "returnType": {
+          "inner": {
+            "inner": {
+              "name": "string"
+            },
+            "name": "Array<string>"
+          }
+        },
+        "body": "\n       let value = this.get('wallets')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toStringArray()\n                        }\n      "
+      }
+    ],
+    "members": [],
+    "export": true
+  },
+  {
+    "name": "Wallet",
+    "extends": "Entity",
+    "methods": [
+      {
+        "name": "constructor",
+        "params": [
+          {
+            "name": "id",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "body": "\n      super()\n      this.set('id', Value.fromString(id))\n      "
+      },
+      {
+        "name": "save",
+        "params": [],
+        "returnType": {
+          "name": "void"
+        },
+        "body": "\n        let id = this.get('id')\n        assert(id != null,\n               'Cannot save Wallet entity without an ID')\n        if (id) {\n          assert(id.kind == ValueKind.STRING,\n                 `Entities of type Wallet must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`)\n          store.set('Wallet', id.toString(), this)\n        }"
+      },
+      {
+        "name": "load",
+        "params": [
+          {
+            "name": "id",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "returnType": {
+          "inner": {
+            "name": "Wallet"
+          }
+        },
+        "body": "\n        return changetype<Wallet | null>(store.get('Wallet', id))\n        "
+      },
+      {
+        "name": "get id",
+        "params": [],
+        "returnType": {
+          "name": "string"
+        },
+        "body": "\n       let value = this.get('id')\n       return value!.toString()\n      "
+      },
+      {
+        "name": "set id",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "body": "\n      this.set('id', Value.fromString(value))\n    "
+      },
+      {
+        "name": "get amount",
+        "params": [],
+        "returnType": {
+          "name": "BigInt"
+        },
+        "body": "\n       let value = this.get('amount')\n       return value!.toBigInt()\n      "
+      },
+      {
+        "name": "set amount",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "BigInt"
+            }
+          }
+        ],
+        "body": "\n      this.set('amount', Value.fromBigInt(value))\n    "
+      },
+      {
+        "name": "get account",
+        "params": [],
+        "returnType": {
+          "name": "string"
+        },
+        "body": "\n       let value = this.get('account')\n       return value!.toString()\n      "
+      },
+      {
+        "name": "set account",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "string"
+            }
+          }
+        ],
+        "body": "\n      this.set('account', Value.fromString(value))\n    "
+      }
+    ],
+    "members": [],
+    "export": true
+  }
+]

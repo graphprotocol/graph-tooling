@@ -1,3 +1,4 @@
+import { writeFile } from 'fs-extra';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
 import prettier from 'prettier';
@@ -59,7 +60,7 @@ describe('Schema code generator', () => {
     expect(codegen.generateTypes().size).toBe(0);
   });
 
-  describe('Should generate correct classes for each entity', () => {
+  describe.only('Should generate correct classes for each entity', () => {
     const codegen = createSchemaCodeGen(`
       # just to be sure nothing will be generated from non-entity types alongside regular ones
       type Foo {
@@ -76,6 +77,9 @@ describe('Schema code generator', () => {
         # two primitive types (i32)
         age: Int
         count: Int!
+        
+        # https://github.com/graphprotocol/graph-tooling/issues/1196
+        active: Boolean
 
         # derivedFrom
         wallets: [Wallet!] @derivedFrom(field: "account")
@@ -97,7 +101,9 @@ describe('Schema code generator', () => {
       expect(generatedTypes.size).toBe(2);
     });
 
-    test('Account is an entity with the correct methods', () => {
+    test.only('Account is an entity with the correct methods', () => {
+      writeFile('generatedTypes.json', JSON.stringify(generatedTypes.toJS(), null, 2), 'utf8');
+      
       testEntity(generatedTypes, {
         name: 'Account',
         members: [],
@@ -227,6 +233,30 @@ describe('Schema code generator', () => {
             body: `
               this.set('count', Value.fromI32(value))
             `,
+          },
+          {
+            "name": "get active",
+            "params": [],
+            "returnType": {
+              "inner": {
+                "name": "boolean"
+              }
+            },
+            "body": "\n       let value = this.get('active')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toBoolean()\n                        }\n      "
+          },
+          {
+            "name": "set active",
+            "params": [
+              {
+                "name": "value",
+                "type": {
+                  "inner": {
+                    "name": "boolean"
+                  }
+                }
+              }
+            ],
+            "body": "\n      if (!value) {\n        this.unset('active')\n      } else {\n        this.set('active', Value.fromBoolean(<boolean>value))\n      }\n    "
           },
           {
             name: 'get wallets',
