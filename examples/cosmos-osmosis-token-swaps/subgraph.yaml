@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 description: Osmosis Token Swaps Example
-repository: https://github.com/graphprotocol/example-subgraphs
+repository: https://github.com/graphprotocol/graph-toolings
 schema:
   file: ./schema.graphql
 dataSources:

@@ -2,7 +2,11 @@
   "name": "arweave-blocks-transactions-example",
   "version": "0.1.0",
   "description": "subgraph example for Arweave",
-  "repository": "https://github.com/graphprotocol/example-subgraph",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/arweave-blocks-transactions"
+  },
   "license": "MIT",
   "private": true,
   "scripts": {

@@ -1,7 +1,11 @@
 {
   "name": "ethereum-gravatar-example",
   "version": "0.1.0",
-  "repository": "https://github.com/graphprotocol/example-subgraph",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/ethereum-gravatar"
+  },
   "license": "MIT",
   "private": true,
   "scripts": {

@@ -1,6 +1,11 @@
 {
   "name": "basic-event-handlers",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/basic-event-handlers"
+  },
   "private": true,
   "scripts": {
     "build": "../../packages/cli/dist/bin.js build",

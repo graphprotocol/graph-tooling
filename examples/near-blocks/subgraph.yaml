@@ -1,6 +1,6 @@
 specVersion: 0.0.4
 description: NEAR Blocks
-repository: https://github.com/graphprotocol/example-subgraphs/tree/main/near/blocks-example
+repository: https://github.com/graphprotocol/graph-toolings/tree/main/near/blocks-example
 schema:
   file: ./schema.graphql
 dataSources:

@@ -1,5 +1,10 @@
 {
   "name": "example-event-handler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/example-subgraph"
+  },
   "private": true,
   "scripts": {
     "build": "../../packages/cli/dist/bin.js build subgraph.yaml",

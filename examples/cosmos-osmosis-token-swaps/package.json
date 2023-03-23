@@ -1,7 +1,11 @@
 {
   "name": "cosmos-osmosis-token-swaps-example",
   "version": "0.1.0",
-  "repository": "https://github.com/graphprotocol/example-subgraph",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/cosmos-osmosis-token-swaps"
+  },
   "license": "MIT",
   "private": true,
   "scripts": {
