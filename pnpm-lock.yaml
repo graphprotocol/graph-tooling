@@ -53,6 +53,21 @@ importers:
       '@graphprotocol/graph-ts': link:../../packages/ts
       apollo-fetch: 0.7.0
 
+  examples/cosmos-validator-rewards:
+    specifiers:
+      '@graphprotocol/graph-cli': workspace:*
+      '@graphprotocol/graph-ts': workspace:*
+      babel-polyfill: ^6.26.0
+      babel-register: ^6.26.0
+      mustache: ^4.2.0
+    dependencies:
+      babel-polyfill: 6.26.0
+      babel-register: 6.26.0
+    devDependencies:
+      '@graphprotocol/graph-cli': link:../../packages/cli
+      '@graphprotocol/graph-ts': link:../../packages/ts
+      mustache: 4.2.0
+
   examples/ethereum-gravatar:
     specifiers:
       '@graphprotocol/graph-cli': workspace:*
@@ -10452,6 +10467,11 @@ packages:
     resolution: {integrity: sha512-KL8QYUaxq7kUbcl0Yto51rMcYt7E/4N4BG3/c96Iqw1PQrTRspu8Cpx4TZ4Nunib1d4bEkIH3gjCYlP2RLBdow==}
     engines: {node: '>=0.10.0'}
     dev: false
+
+  /mustache/4.2.0:
+    resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
+    hasBin: true
+    dev: true
 
   /mute-stream/0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
