@@ -1,0 +1,21 @@
+specVersion: 0.0.4
+description: Good Morning NEAR
+repository: https://github.com/graphprotocol/example-subgraphs/tree/main/near/receipts-example
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: near
+    name: receipts
+    network: near-mainnet
+    source:
+      account: "app.good-morning.near"
+      startBlock: 50736511
+    mapping:
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Greeter
+        - Greeting
+      receiptHandlers:
+        - handler: handleReceipt
