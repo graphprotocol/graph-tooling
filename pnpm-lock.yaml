@@ -36,23 +36,6 @@ importers:
       '@graphprotocol/graph-cli': link:../../packages/cli
       '@graphprotocol/graph-ts': link:../../packages/ts
 
-  examples/basic-event-handlers:
-    specifiers:
-      '@graphprotocol/graph-ts': workspace:*
-      apollo-fetch: ^0.7.0
-      babel-polyfill: 6.26.0
-      babel-register: 6.26.0
-      truffle: 5.0.12
-      truffle-hdwallet-provider: 1.0.6
-    dependencies:
-      babel-polyfill: 6.26.0
-      babel-register: 6.26.0
-      truffle: 5.0.12
-      truffle-hdwallet-provider: 1.0.6
-    devDependencies:
-      '@graphprotocol/graph-ts': link:../../packages/ts
-      apollo-fetch: 0.7.0
-
   examples/cosmos-block-filtering:
     specifiers:
       '@graphprotocol/graph-cli': workspace:*
@@ -113,6 +96,23 @@ importers:
       '@graphprotocol/graph-ts': link:../../packages/ts
       mustache: 4.2.0
 
+  examples/ethereum-basic-event-handlers:
+    specifiers:
+      '@graphprotocol/graph-ts': workspace:*
+      apollo-fetch: ^0.7.0
+      babel-polyfill: 6.26.0
+      babel-register: 6.26.0
+      truffle: 5.0.12
+      truffle-hdwallet-provider: 1.0.6
+    dependencies:
+      babel-polyfill: 6.26.0
+      babel-register: 6.26.0
+      truffle: 5.0.12
+      truffle-hdwallet-provider: 1.0.6
+    devDependencies:
+      '@graphprotocol/graph-ts': link:../../packages/ts
+      apollo-fetch: 0.7.0
+
   examples/ethereum-gravatar:
     specifiers:
       '@graphprotocol/graph-cli': workspace:*
@@ -130,12 +130,6 @@ importers:
       truffle-hdwallet-provider: 1.0.6
     devDependencies:
       '@graphprotocol/graph-cli': link:../../packages/cli
-      '@graphprotocol/graph-ts': link:../../packages/ts
-
-  examples/example-subgraph:
-    specifiers:
-      '@graphprotocol/graph-ts': workspace:*
-    devDependencies:
       '@graphprotocol/graph-ts': link:../../packages/ts
 
   examples/near-blocks:
@@ -2453,7 +2447,7 @@ packages:
     dependencies:
       '@oclif/core': 2.0.7
       chalk: 4.1.2
-      debug: 4.3.4
+      debug: 4.3.1
       fs-extra: 9.1.0
       http-call: 5.3.0
       lodash: 4.17.21
@@ -4125,7 +4119,7 @@ packages:
     dev: true
 
   /browser-stdout/1.3.0:
-    resolution: {integrity: sha1-81HTKWnTL6XXpVZxVCY9korjvR8=}
+    resolution: {integrity: sha512-7Rfk377tpSM9TWBEeHs0FlDZGoAIei2V/4MdZJoFMBFAK6BqLpxAIUepGRHGdPFgGsLb02PXovC4qddyHvQqTg==}
     dev: false
 
   /browserify-aes/1.2.0:
@@ -5135,7 +5129,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.2
+      ms: 2.1.3
 
   /debug/4.3.1:
     resolution: {integrity: sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==}
@@ -14744,7 +14738,7 @@ packages:
       cli-table: 0.3.11
       commander: 7.1.0
       dateformat: 4.6.3
-      debug: 4.3.4
+      debug: 4.3.1
       diff: 5.1.0
       error: 10.4.0
       escape-string-regexp: 4.0.0
@@ -14788,7 +14782,7 @@ packages:
     dependencies:
       chalk: 4.1.2
       dargs: 7.0.0
-      debug: 4.3.4
+      debug: 4.3.1
       execa: 5.1.1
       github-username: 6.0.0
       lodash: 4.17.21
