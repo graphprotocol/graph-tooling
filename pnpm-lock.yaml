@@ -98,6 +98,7 @@ importers:
 
   examples/ethereum-basic-event-handlers:
     specifiers:
+      '@graphprotocol/graph-cli': workspace:*
       '@graphprotocol/graph-ts': workspace:*
       apollo-fetch: ^0.7.0
       babel-polyfill: 6.26.0
@@ -110,6 +111,7 @@ importers:
       truffle: 5.0.12
       truffle-hdwallet-provider: 1.0.6
     devDependencies:
+      '@graphprotocol/graph-cli': link:../../packages/cli
       '@graphprotocol/graph-ts': link:../../packages/ts
       apollo-fetch: 0.7.0
 

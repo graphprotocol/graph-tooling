@@ -21,6 +21,7 @@
     "truffle-hdwallet-provider": "1.0.6"
   },
   "devDependencies": {
+    "@graphprotocol/graph-cli": "workspace:*",
     "@graphprotocol/graph-ts": "workspace:*",
     "apollo-fetch": "^0.7.0"
   },
