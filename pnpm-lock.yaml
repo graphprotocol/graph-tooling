@@ -53,6 +53,23 @@ importers:
       '@graphprotocol/graph-ts': link:../../packages/ts
       apollo-fetch: 0.7.0
 
+  examples/cosmos-validator-delegations:
+    specifiers:
+      '@graphprotocol/graph-cli': workspace:*
+      '@graphprotocol/graph-ts': workspace:*
+      as-proto: ^0.2.3
+      babel-polyfill: ^6.26.0
+      babel-register: ^6.26.0
+      mustache: ^4.2.0
+    dependencies:
+      as-proto: 0.2.7
+      babel-polyfill: 6.26.0
+      babel-register: 6.26.0
+    devDependencies:
+      '@graphprotocol/graph-cli': link:../../packages/cli
+      '@graphprotocol/graph-ts': link:../../packages/ts
+      mustache: 4.2.0
+
   examples/cosmos-validator-rewards:
     specifiers:
       '@graphprotocol/graph-cli': workspace:*
@@ -3411,6 +3428,10 @@ packages:
     resolution: {integrity: sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==}
     engines: {node: '>=8'}
     dev: true
+
+  /as-proto/0.2.7:
+    resolution: {integrity: sha512-bUPk71lZd1no8YT+pT0KKr4kHn5gSoNm9mJcZ8oAXgrTf68urduin1lWSfUa5JvH5Oh+UnB7W4F0jWntR3f/Ww==}
+    dev: false
 
   /asap/2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
