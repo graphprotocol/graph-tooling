@@ -1,0 +1,27 @@
+{
+  "name": "ethereum-gravatar-example",
+  "version": "0.1.0",
+  "repository": "https://github.com/graphprotocol/example-subgraph",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build-contract": "solc contracts/Gravity.sol --abi -o abis --overwrite && solc contracts/Gravity.sol --bin -o bin --overwrite",
+    "create": "graph create example --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create example --node http://127.0.0.1:8020",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy example --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy example --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "workspace:*",
+    "@graphprotocol/graph-ts": "workspace:*"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "truffle": "^5.0.4",
+    "truffle-contract": "^4.0.5",
+    "truffle-hdwallet-provider": "^1.0.4"
+  }
+}
