@@ -1,5 +1,5 @@
 {
-  "name": "arweave-blocks-transactions-example",
+  "name": "example-arweave-blocks-transactions",
   "version": "0.1.0",
   "description": "subgraph example for Arweave",
   "repository": {
