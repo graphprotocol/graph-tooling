@@ -1,17 +1,17 @@
 {
-  "name": "basic-event-handlers",
+  "name": "ethereum-basic-event-handlers",
   "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/graphprotocol/graph-tooling",
-    "directory": "examples/basic-event-handlers"
+    "directory": "examples/ethereum-basic-event-handlers"
   },
   "private": true,
   "scripts": {
-    "build": "../../packages/cli/dist/bin.js build",
-    "codegen": "../../packages/cli/dist/bin.js codegen",
-    "create-test": "../../packages/cli/dist/bin.js create test/basic-event-handlers --node http://127.0.0.1:18020",
-    "deploy-test": "../../packages/cli/dist/bin.js deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020",
+    "build": "graph build",
+    "codegen": "graph codegen",
+    "create-test": "graph create test/basic-event-handlers --node http://127.0.0.1:18020",
+    "deploy-test": "graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020",
     "test": "docker compose up -d && sleep 30 && truffle test --network test && docker compose down"
   },
   "dependencies": {
