@@ -1,0 +1,56 @@
+type Block @entity {
+  id: ID!
+
+  timestamp: BigInt!
+  last_retarget: BigInt!
+  height: BigInt!
+  indep_hash: Bytes!  
+  nonce: Bytes!
+  previous_block: Bytes!
+  diff: Bytes!
+  hash: Bytes!
+  tx_root: Bytes!
+  txs: [Bytes!]!
+  wallet_list: Bytes!
+  reward_addr: Bytes!
+  tags: [Tag!]!
+  reward_pool: Bytes!
+  weave_size: Bytes!
+  block_size: Bytes!
+  cumulative_diff: Bytes!
+  hash_list_merkle: Bytes!
+  poa: Poa
+}
+
+type Transaction @entity {
+  id: ID!
+
+  block: Block!
+  tx_id: Bytes!
+  last_tx: Bytes!
+  owner: Bytes!
+  tags: [Tag!]!
+  target: Bytes!
+  quantity: Bytes!
+  data: Bytes!
+  data_size: Bytes!
+  data_root: Bytes!
+  signature: Bytes!
+  reward: Bytes!
+}
+
+type Poa @entity {
+  id: ID!
+
+  option: String!
+  tx_path: Bytes!
+  data_path: Bytes!
+  chunk: Bytes!
+}
+
+type Tag @entity {
+  id: ID!
+
+  name: Bytes!
+  value: Bytes!
+}

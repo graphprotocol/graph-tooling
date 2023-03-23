@@ -28,6 +28,14 @@ importers:
       jest: 26.0.0
       prettier: 2.8.2
 
+  examples/arweave-blocks-transactions:
+    specifiers:
+      '@graphprotocol/graph-cli': workspace:*
+      '@graphprotocol/graph-ts': workspace:*
+    devDependencies:
+      '@graphprotocol/graph-cli': link:../../packages/cli
+      '@graphprotocol/graph-ts': link:../../packages/ts
+
   examples/basic-event-handlers:
     specifiers:
       '@graphprotocol/graph-ts': workspace:*
