@@ -134,6 +134,12 @@ importers:
       '@graphprotocol/graph-cli': link:../../packages/cli
       '@graphprotocol/graph-ts': link:../../packages/ts
 
+  examples/example-subgraph:
+    specifiers:
+      '@graphprotocol/graph-ts': workspace:*
+    devDependencies:
+      '@graphprotocol/graph-ts': link:../../packages/ts
+
   examples/near-blocks:
     specifiers:
       '@graphprotocol/graph-cli': workspace:*
@@ -2449,7 +2455,7 @@ packages:
     dependencies:
       '@oclif/core': 2.0.7
       chalk: 4.1.2
-      debug: 4.3.1
+      debug: 4.3.4
       fs-extra: 9.1.0
       http-call: 5.3.0
       lodash: 4.17.21
@@ -4121,7 +4127,7 @@ packages:
     dev: true
 
   /browser-stdout/1.3.0:
-    resolution: {integrity: sha512-7Rfk377tpSM9TWBEeHs0FlDZGoAIei2V/4MdZJoFMBFAK6BqLpxAIUepGRHGdPFgGsLb02PXovC4qddyHvQqTg==}
+    resolution: {integrity: sha1-81HTKWnTL6XXpVZxVCY9korjvR8=}
     dev: false
 
   /browserify-aes/1.2.0:
@@ -5131,7 +5137,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.3
+      ms: 2.1.2
 
   /debug/4.3.1:
     resolution: {integrity: sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==}
@@ -12588,7 +12594,7 @@ packages:
       array.prototype.flat: 1.3.1
       breakword: 1.0.5
       grapheme-splitter: 1.0.4
-      strip-ansi: 6.0.1
+      strip-ansi: 6.0.0
       wcwidth: 1.0.1
       yargs: 15.4.1
     dev: true
@@ -14740,7 +14746,7 @@ packages:
       cli-table: 0.3.11
       commander: 7.1.0
       dateformat: 4.6.3
-      debug: 4.3.1
+      debug: 4.3.4
       diff: 5.1.0
       error: 10.4.0
       escape-string-regexp: 4.0.0
@@ -14784,7 +14790,7 @@ packages:
     dependencies:
       chalk: 4.1.2
       dargs: 7.0.0
-      debug: 4.3.1
+      debug: 4.3.4
       execa: 5.1.1
       github-username: 6.0.0
       lodash: 4.17.21

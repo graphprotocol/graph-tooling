@@ -1,0 +1,21 @@
+{
+  "name": "example-event-handler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/example-subgraph"
+  },
+  "private": true,
+  "scripts": {
+    "build": "../../packages/cli/dist/bin.js build subgraph.yaml",
+    "build-ipfs": "../../packages/cli/dist/bin.js build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
+    "build-wast": "../../packages/cli/dist/bin.js build -t wast subgraph.yaml",
+    "codegen": "../../packages/cli/dist/bin.js codegen --output-dir src/types/ subgraph.yaml"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-ts": "workspace:*"
+  },
+  "resolutions": {
+    "assemblyscript": "0.19.10"
+  }
+}
