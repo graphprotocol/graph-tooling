@@ -53,6 +53,21 @@ importers:
       '@graphprotocol/graph-ts': link:../../packages/ts
       apollo-fetch: 0.7.0
 
+  examples/cosmos-block-filtering:
+    specifiers:
+      '@graphprotocol/graph-cli': workspace:*
+      '@graphprotocol/graph-ts': workspace:*
+      babel-polyfill: ^6.26.0
+      babel-register: ^6.26.0
+      mustache: ^4.2.0
+    dependencies:
+      babel-polyfill: 6.26.0
+      babel-register: 6.26.0
+    devDependencies:
+      '@graphprotocol/graph-cli': link:../../packages/cli
+      '@graphprotocol/graph-ts': link:../../packages/ts
+      mustache: 4.2.0
+
   examples/cosmos-osmosis-token-swaps:
     specifiers:
       '@graphprotocol/graph-cli': workspace:*
