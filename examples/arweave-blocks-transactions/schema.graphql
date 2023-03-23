@@ -4,7 +4,7 @@ type Block @entity {
   timestamp: BigInt!
   last_retarget: BigInt!
   height: BigInt!
-  indep_hash: Bytes!  
+  indep_hash: Bytes!
   nonce: Bytes!
   previous_block: Bytes!
   diff: Bytes!

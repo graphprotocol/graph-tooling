@@ -5,8 +5,8 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: cosmos
-    name: {{ name }}
-    network: {{ network }}
+    name: { { name } }
+    network: { { network } }
     source:
       startBlock: 0
     mapping:

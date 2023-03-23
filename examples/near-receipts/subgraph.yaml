@@ -8,7 +8,7 @@ dataSources:
     name: receipts
     network: near-mainnet
     source:
-      account: "app.good-morning.near"
+      account: 'app.good-morning.near'
       startBlock: 50736511
     mapping:
       apiVersion: 0.0.5

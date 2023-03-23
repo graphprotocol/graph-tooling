@@ -1,6 +1,6 @@
-import { cosmos } from "@graphprotocol/graph-ts";
-import { MsgDelegate, MsgCoin, decodeMsgDelegate } from "./decoding";
-import { Delegation, Coin } from "../generated/schema";
+import { cosmos } from '@graphprotocol/graph-ts';
+import { MsgDelegate, MsgCoin, decodeMsgDelegate } from './decoding';
+import { Delegation, Coin } from '../generated/schema';
 
 export function handleTx(data: cosmos.TransactionData): void {
   const id = `${data.block.header.hash.toHexString()}-${data.tx.index}`;
@@ -10,8 +10,8 @@ export function handleTx(data: cosmos.TransactionData): void {
     let msgType = messages[i].typeUrl;
     let msgValue = messages[i].value as Uint8Array;
 
-    if (msgType == "/cosmos.staking.v1beta1.MsgDelegate") {
-      saveDelegation(id, decodeMsgDelegate(msgValue)) // The message needs to be decoded to access its attributes.
+    if (msgType == '/cosmos.staking.v1beta1.MsgDelegate') {
+      saveDelegation(id, decodeMsgDelegate(msgValue)); // The message needs to be decoded to access its attributes.
     }
   }
 }

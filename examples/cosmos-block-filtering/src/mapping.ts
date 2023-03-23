@@ -1,5 +1,5 @@
-import { BigInt, cosmos } from "@graphprotocol/graph-ts";
-import { Block } from "../generated/schema";
+import { BigInt, cosmos } from '@graphprotocol/graph-ts';
+import { Block } from '../generated/schema';
 
 export function handleBlock(bl: cosmos.Block): void {
   const hash = bl.header.hash.toHexString();

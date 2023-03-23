@@ -5,24 +5,24 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "build": "graph build",
+    "codegen": "graph codegen",
+    "create": "graph create cosmos-validator-delegations --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create cosmos-validator-delegations --node http://127.0.0.1:8020",
+    "deploy": "graph deploy cosmos-validator-delegations --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy cosmos-validator-delegations -l v0.1.0 --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
     "prepare:cosmoshub": "mustache config/cosmoshub.json subgraph.template.yaml > subgraph.yaml",
     "prepare:osmosis": "mustache config/osmosis.json subgraph.template.yaml > subgraph.yaml",
-    "codegen": "graph codegen",
-    "build": "graph build",
-    "create-local": "graph create cosmos-validator-delegations --node http://127.0.0.1:8020",
-    "deploy-local": "graph deploy cosmos-validator-delegations -l v0.1.0 --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
-    "remove-local": "graph remove cosmos-validator-delegations --node http://127.0.0.1:8020",
-    "create": "graph create cosmos-validator-delegations --node https://api.thegraph.com/deploy/",
-    "deploy": "graph deploy cosmos-validator-delegations --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
+    "remove-local": "graph remove cosmos-validator-delegations --node http://127.0.0.1:8020"
+  },
+  "dependencies": {
+    "as-proto": "^0.2.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "workspace:*",
     "@graphprotocol/graph-ts": "workspace:*",
     "mustache": "^4.2.0"
-  },
-  "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "babel-register": "^6.26.0",
-    "as-proto": "^0.2.3"
   }
 }

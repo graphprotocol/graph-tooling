@@ -1,4 +1,4 @@
-import { Protobuf, Reader } from "as-proto";
+import { Protobuf, Reader } from 'as-proto';
 
 export function decodeMsgDelegate(a: Uint8Array): MsgDelegate {
   return Protobuf.decode<MsgDelegate>(a, MsgDelegate.decode);
@@ -37,7 +37,11 @@ export class MsgDelegate {
   validator_address: string;
   amount: MsgCoin | null;
 
-  constructor(delegator_address: string = "", validator_address: string = "", amount: MsgCoin | null = null) {
+  constructor(
+    delegator_address: string = '',
+    validator_address: string = '',
+    amount: MsgCoin | null = null,
+  ) {
     this.delegator_address = delegator_address;
     this.validator_address = validator_address;
     this.amount = amount;
@@ -72,7 +76,7 @@ export class MsgCoin {
   denom: string;
   amount: string;
 
-  constructor(denom: string = "", amount: string = "") {
+  constructor(denom: string = '', amount: string = '') {
     this.denom = denom;
     this.amount = amount;
   }
