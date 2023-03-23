@@ -1,0 +1,13 @@
+type Token @entity {
+  id: ID!
+  amount: String
+  denom: String
+}
+
+type TokenSwap @entity {
+  id: ID!
+  sender: String
+  poolId: String
+  tokenIn: Token
+  tokenOut: Token
+}

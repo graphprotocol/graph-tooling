@@ -1,0 +1,21 @@
+specVersion: 0.0.5
+description: Osmosis Token Swaps Example
+repository: https://github.com/graphprotocol/example-subgraphs
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: cosmos
+    name: Osmosis
+    network: osmosis-1
+    source:
+      startBlock: 2522560
+    mapping:
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - TokenSwap
+        - Token
+      eventHandlers:
+        - event: token_swapped
+          handler: handleSwaps
+      file: ./src/mapping.ts
