@@ -73,7 +73,11 @@
   "oclif": {
     "bin": "graph",
     "commands": "./dist/commands",
-    "additionalHelpFlags": ["-h"],
-    "additionalVersionFlags": ["-v"]
+    "additionalHelpFlags": [
+      "-h"
+    ],
+    "additionalVersionFlags": [
+      "-v"
+    ]
   }
 }
