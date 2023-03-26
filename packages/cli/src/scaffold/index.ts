@@ -115,7 +115,7 @@ dataSources:
     return prettier.format(
       JSON.stringify({
         extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
-        include: ['src'],
+        include: ['src', 'tests'],
       }),
       { parser: 'json' },
     );
