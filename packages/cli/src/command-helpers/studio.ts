@@ -20,6 +20,8 @@ export const allowedStudioNetworks = [
   'arbitrum-one',
   'avalanche',
   'zksync-era',
+  'polygon-zkevm-testnet',
+  'polygon-zkevm',
 ] as const;
 
 export const validateStudioNetwork = ({
