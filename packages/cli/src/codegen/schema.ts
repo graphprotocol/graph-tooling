@@ -184,7 +184,6 @@ export default class SchemaCodeGenerator {
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
     const returnType = this._typeFromGraphQl(gqlType);
     const isNullable = returnType instanceof tsCodegen.NullableType;
-console.log({name,fieldValueType, returnType, isNullable})
     const getNonNullable = `return ${typesCodegen.valueToAsc('value!', fieldValueType)}`;
     const getNullable = `if (!value || value.kind == ValueKind.NULL) {
                           return null
@@ -295,7 +294,6 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
   }
 
   _typeFromGraphQl(gqlType: immutable.Map<any, any>, nullable = true): any {
-    console.log('_typeFromGraphQl', gqlType.toJS())
     if (gqlType.get('kind') === 'NonNullType') {
       return this._typeFromGraphQl(gqlType.get('type'), false);
     }
@@ -307,7 +305,6 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     const type = tsCodegen.namedType(
       typesCodegen.ascTypeForValue(this._resolveFieldType(gqlType)) as any,
     );
-    console.log({type})
     // In AssemblyScript, primitives cannot be nullable.
     return nullable ? tsCodegen.nullableType(type) : type;
   }

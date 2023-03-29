@@ -101,9 +101,7 @@ describe('Schema code generator', () => {
       expect(generatedTypes.size).toBe(2);
     });
 
-    test.only('Account is an entity with the correct methods', () => {
-      writeFile('generatedTypes.json', JSON.stringify(generatedTypes.toJS(), null, 2), 'utf8');
-      
+    test('Account is an entity with the correct methods', () => {
       testEntity(generatedTypes, {
         name: 'Account',
         members: [],
@@ -203,18 +201,26 @@ describe('Schema code generator', () => {
           {
             name: 'get age',
             params: [],
-            returnType: new NamedType('i32'),
+            returnType: new NullableType(new NamedType('i32')),
             body: `
-              let value = this.get('age')
-              return value!.toI32()
+              let value = this.get("age")
+              if (!value || value.kind == ValueKind.NULL) {
+                return null
+              } else {
+                return value.toI32()
+              }
             `,
           },
           {
             name: 'set age',
-            params: [new Param('value', new NamedType('i32'))],
+            params: [new Param('value', new NullableType(new NamedType('i32')))],
             returnType: undefined,
             body: `
-              this.set('age', Value.fromI32(value))
+             if (!value) {
+               this.unset("age")
+             } else {
+               this.set("age", Value.fromI32(<i32>value))
+             }
             `,
           },
           {
@@ -235,27 +241,14 @@ describe('Schema code generator', () => {
             `,
           },
           {
-            "name": "get active",
-            "params": [],
-            "returnType": {
-              "inner": {
-                "name": "boolean"
-              }
-            },
-            "body": "\n       let value = this.get('active')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toBoolean()\n                        }\n      "
+            name: "get active",
+            params: [],
+            returnType: new NullableType(new NamedType("boolean")), 
+            body: "\n       let value = this.get('active')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toBoolean()\n                        }\n      "
           },
           {
-            "name": "set active",
-            "params": [
-              {
-                "name": "value",
-                "type": {
-                  "inner": {
-                    "name": "boolean"
-                  }
-                }
-              }
-            ],
+            name: "set active",
+            params: [new Param("value", new NullableType(new NamedType("boolean")))],
             "body": "\n      if (!value) {\n        this.unset('active')\n      } else {\n        this.set('active', Value.fromBoolean(<boolean>value))\n      }\n    "
           },
           {
