@@ -60,7 +60,7 @@ describe('Schema code generator', () => {
     expect(codegen.generateTypes().size).toBe(0);
   });
 
-  describe.only('Should generate correct classes for each entity', () => {
+  describe('Should generate correct classes for each entity', () => {
     const codegen = createSchemaCodeGen(`
       # just to be sure nothing will be generated from non-entity types alongside regular ones
       type Foo {
