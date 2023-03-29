@@ -1,4 +1,3 @@
-import { writeFile } from 'fs-extra';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
 import prettier from 'prettier';
