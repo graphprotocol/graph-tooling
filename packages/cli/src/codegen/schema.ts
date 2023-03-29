@@ -305,7 +305,6 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     const type = tsCodegen.namedType(
       typesCodegen.ascTypeForValue(this._resolveFieldType(gqlType)) as any,
     );
-    // In AssemblyScript, primitives cannot be nullable.
     return nullable ? tsCodegen.nullableType(type) : type;
   }
 }
