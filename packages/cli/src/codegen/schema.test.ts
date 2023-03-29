@@ -241,15 +241,15 @@ describe('Schema code generator', () => {
             `,
           },
           {
-            name: "get active",
+            name: 'get active',
             params: [],
-            returnType: new NullableType(new NamedType("boolean")), 
-            body: "\n       let value = this.get('active')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toBoolean()\n                        }\n      "
+            returnType: new NullableType(new NamedType('boolean')),
+            body: "\n       let value = this.get('active')\n       if (!value || value.kind == ValueKind.NULL) {\n                          return null\n                        } else {\n                          return value.toBoolean()\n                        }\n      ",
           },
           {
-            name: "set active",
-            params: [new Param("value", new NullableType(new NamedType("boolean")))],
-            "body": "\n      if (!value) {\n        this.unset('active')\n      } else {\n        this.set('active', Value.fromBoolean(<boolean>value))\n      }\n    "
+            name: 'set active',
+            params: [new Param('value', new NullableType(new NamedType('boolean')))],
+            body: "\n      if (!value) {\n        this.unset('active')\n      } else {\n        this.set('active', Value.fromBoolean(<boolean>value))\n      }\n    ",
           },
           {
             name: 'get wallets',
