@@ -26,6 +26,7 @@
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
     "@oclif/core": "2.0.7",
+    "@whatwg-node/fetch": "^0.8.4",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
     "chalk": "3.0.0",
@@ -41,7 +42,6 @@
     "ipfs-http-client": "34.0.0",
     "jayson": "3.6.6",
     "js-yaml": "3.13.1",
-    "node-fetch": "2.6.0",
     "prettier": "1.19.1",
     "request": "2.88.2",
     "semver": "7.3.5",
@@ -56,7 +56,6 @@
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
     "@types/js-yaml": "^3.12.7",
-    "@types/node-fetch": "^2.6.2",
     "@types/semver": "^7.3.13",
     "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
