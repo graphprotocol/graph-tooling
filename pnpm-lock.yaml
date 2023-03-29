@@ -13,7 +13,7 @@ importers:
       '@theguild/prettier-config': ^1.0.0
       babel-jest: ^29.3.1
       eslint: ^8.31.0
-      jest: 26.0.0
+      jest: 26.6.3
       prettier: ^2.8.2
     devDependencies:
       '@babel/core': 7.20.5
@@ -25,7 +25,7 @@ importers:
       '@theguild/prettier-config': 1.0.0_prettier@2.8.2
       babel-jest: 29.3.1_@babel+core@7.20.5
       eslint: 8.31.0
-      jest: 26.0.0
+      jest: 26.6.3
       prettier: 2.8.2
 
   examples/basic-event-handlers:
@@ -77,7 +77,7 @@ importers:
       immutable: 4.2.1
       ipfs-http-client: 34.0.0
       jayson: 3.6.6
-      jest: 26.0.0
+      jest: 26.6.3
       js-yaml: 3.13.1
       oclif: 3.6.1
       prettier: 1.19.1
@@ -127,7 +127,7 @@ importers:
       '@types/semver': 7.3.13
       '@types/which': 2.0.1
       copyfiles: 2.4.1
-      jest: 26.0.0
+      jest: 26.6.3
       oclif: 3.6.1
       spawn-command: 0.0.2-1
       strip-ansi: 6.0.1
@@ -7104,6 +7104,7 @@ packages:
       tar-stream: 2.2.0
       through2: 3.0.2
     transitivePeerDependencies:
+      - encoding
       - supports-color
     dev: false
 
@@ -8236,8 +8237,8 @@ packages:
       supports-color: 8.1.1
     dev: true
 
-  /jest/26.0.0:
-    resolution: {integrity: sha512-OtoG+cpcP+UXx+pQ7rzoQ11Pfb5+OUkrsNn5YPc0GU2HeBktgTANonUZEgT6cCgUHX7jUiuDIusDNTL4iNcWGQ==}
+  /jest/26.6.3:
+    resolution: {integrity: sha512-lGS5PXGAzR4RF7V5+XObhqz2KZIDUA1yD0DG6pBVmy10eh0ZIXQImRuzocsI/N2XZ1GrLFwTS27In2i2jlpq1Q==}
     engines: {node: '>= 10.14.2'}
     hasBin: true
     dependencies:
@@ -8560,7 +8561,9 @@ packages:
     dependencies:
       abort-controller: 3.0.0
       ky: 0.11.2
-      node-fetch: 2.6.0
+      node-fetch: 2.6.9
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /ky/0.11.2:
@@ -9828,6 +9831,7 @@ packages:
   /node-fetch/2.6.0:
     resolution: {integrity: sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==}
     engines: {node: 4.x || >=6.0.0}
+    dev: true
 
   /node-fetch/2.6.9:
     resolution: {integrity: sha512-DJm/CJkZkRjKKj4Zi4BsKVZh3ValV5IR5s7LVZnW+6YMh0W1BfNA8XSs6DLMGYlId5F3KnA70uu2qepcR08Qqg==}
@@ -9839,7 +9843,6 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
-    dev: true
 
   /node-forge/0.10.0:
     resolution: {integrity: sha512-PPmu8eEeG9saEUvI97fm4OYxXVB6bFvyNTyiUOBichBpFG8A1Ljw3bY62+5oOjDEMHRnd0Y7HQ+x7uzxOzC6JA==}
@@ -12295,7 +12298,6 @@ packages:
 
   /tr46/0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
-    dev: true
 
   /tr46/2.1.0:
     resolution: {integrity: sha512-15Ih7phfcdP5YxqiB+iDtLoaTz4Nd35+IiAv0kQ5FNKHzXgdWqPoTIqEDDJmXceQt4JZk6lVPT8lnDlPpGDppw==}
@@ -12888,7 +12890,6 @@ packages:
 
   /webidl-conversions/3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
-    dev: true
 
   /webidl-conversions/5.0.0:
     resolution: {integrity: sha512-VlZwKPCkYKxQgeSbH5EyngOmRp7Ww7I9rQLERETtf5ofd9pGeswWiOtogpEO850jziPRarreGxn5QIiTqpb2wA==}
@@ -12933,7 +12934,6 @@ packages:
     dependencies:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
-    dev: true
 
   /whatwg-url/8.7.0:
     resolution: {integrity: sha512-gAojqb/m9Q8a5IV96E3fHJM70AzCkgt4uXYX2O7EmuyOnLrViCQlsEBmF9UQIu3/aeAIp2U17rtbpZWNntQqdg==}

@@ -33,7 +33,7 @@
     "@theguild/prettier-config": "^1.0.0",
     "babel-jest": "^29.3.1",
     "eslint": "^8.31.0",
-    "jest": "26.0.0",
+    "jest": "26.6.3",
     "prettier": "^2.8.2"
   }
 }
