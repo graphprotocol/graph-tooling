@@ -1,4 +1,4 @@
-import {fetch} from '@whatwg-node/fetch';
+import { fetch } from '@whatwg-node/fetch';
 import immutable from 'immutable';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
