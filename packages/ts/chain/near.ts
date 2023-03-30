@@ -1,5 +1,5 @@
-import { Bytes } from '../common/collections';
 import '../common/eager_offset';
+import { Bytes } from '../common/collections';
 import { BigInt } from '../common/numbers';
 
 // Most types from this namespace are direct mappings or adaptations from:

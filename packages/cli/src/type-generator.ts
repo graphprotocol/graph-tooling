@@ -1,11 +1,11 @@
 import path from 'path';
+// @ts-expect-error TODO: type out if necessary
+import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
 import prettier from 'prettier';
-// @ts-expect-error TODO: type out if necessary
-import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
 import DataSourceTemplateCodeGenerator from './codegen/template';
 import { GENERATED_FILE_NOTE } from './codegen/typescript';
 import { displayPath } from './command-helpers/fs';

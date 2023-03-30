@@ -1,5 +1,5 @@
-import { Bytes } from '../common/collections';
 import '../common/eager_offset';
+import { Bytes } from '../common/collections';
 
 export namespace cosmos {
   export class Block {

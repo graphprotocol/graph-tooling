@@ -1,5 +1,5 @@
-import { Entity } from './collections';
 import './eager_offset';
+import { Entity } from './collections';
 import { Address } from './numbers';
 
 /** Host interface for managing data sources */
