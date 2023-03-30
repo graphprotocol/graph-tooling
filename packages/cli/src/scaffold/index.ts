@@ -103,7 +103,9 @@ dataSources:
 
     return prettier.format(
       hasEvents && this.indexEvents
-        ? events.map((event: any) => generateEventType(event, this.protocol.name)).join('\n\n')
+        ? events
+            .map((event: any) => generateEventType(event, this.protocol.name, this.contractName))
+            .join('\n\n')
         : generateExampleEntityType(this.protocol, events),
       {
         parser: 'graphql',
