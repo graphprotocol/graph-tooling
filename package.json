@@ -36,8 +36,8 @@
     "jest": "26.6.3",
     "prettier": "^2.8.2"
   },
-  "//": "scrypt needs to land a patch so for now: https://github.com/barrysteyn/node-scrypt/issues/201#issuecomment-797372965",
   "resolutions": {
     "scrypt": "github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb"
-  }
+  },
+  "//": "scrypt needs to land a patch so for now: https://github.com/barrysteyn/node-scrypt/issues/201#issuecomment-797372965"
 }
