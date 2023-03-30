@@ -11,7 +11,7 @@ dataSources:
       account: 'app.good-morning.near'
       startBlock: 50736511
     mapping:
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       file: ./src/mapping.ts
       entities:

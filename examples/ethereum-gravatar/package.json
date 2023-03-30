@@ -20,9 +20,9 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "babel-register": "^6.26.0",
-    "truffle": "^5.0.4",
-    "truffle-contract": "^4.0.5",
-    "truffle-hdwallet-provider": "^1.0.4"
+    "truffle": "^5.8.1",
+    "truffle-contract": "^4.0.31",
+    "truffle-hdwallet-provider": "^1.0.17"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "workspace:*",
