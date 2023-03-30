@@ -105,8 +105,8 @@ importers:
         specifier: 7.1.6
         version: 7.1.6
       gluegun:
-        specifier: https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep
-        version: github.com/edgeandnode/gluegun/b34b9003d7bf556836da41b57ef36eb21570620a(debug@4.3.1)
+        specifier: https://github.com/edgeandnode/gluegun#v4.3.0
+        version: github.com/edgeandnode/gluegun/aee220d2f23869a7faa0923c2ce90169caeaedab(debug@4.3.1)
       graphql:
         specifier: 15.5.0
         version: 15.5.0
@@ -13540,11 +13540,11 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  github.com/edgeandnode/gluegun/b34b9003d7bf556836da41b57ef36eb21570620a(debug@4.3.1):
-    resolution: {tarball: https://codeload.github.com/edgeandnode/gluegun/tar.gz/b34b9003d7bf556836da41b57ef36eb21570620a}
-    id: github.com/edgeandnode/gluegun/b34b9003d7bf556836da41b57ef36eb21570620a
+  github.com/edgeandnode/gluegun/aee220d2f23869a7faa0923c2ce90169caeaedab(debug@4.3.1):
+    resolution: {tarball: https://codeload.github.com/edgeandnode/gluegun/tar.gz/aee220d2f23869a7faa0923c2ce90169caeaedab}
+    id: github.com/edgeandnode/gluegun/aee220d2f23869a7faa0923c2ce90169caeaedab
     name: gluegun
-    version: 4.3.1
+    version: 4.3.0
     hasBin: true
     dependencies:
       apisauce: 1.1.5(debug@4.3.1)
