@@ -1,5 +1,8 @@
 lockfileVersion: '6.0'
 
+overrides:
+  scrypt: github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb
+
 importers:
 
   .:
@@ -12596,16 +12599,8 @@ packages:
   /scrypt.js@0.2.0:
     resolution: {integrity: sha512-w+7aK4lgFOzsFTsS8tWfIrBzta/QY/5ue7UetpqHRTMe0zk+5iFTAIjG7P889EEAPmPgLYvoGYMCUShZbsH9Tg==}
     dependencies:
-      scrypt: 6.0.3
+      scrypt: github.com/barrysteyn/node-scrypt/fb60a8d3c158fe115a624b5ffa7480f3a24b03fb
       scryptsy: 1.2.1
-    dev: false
-
-  /scrypt@6.0.3:
-    resolution: {integrity: sha512-NDrWb9hCm6Ev170XYVl7TSgu4R44Rjc8EVw1ce0TMN8EkfLvkhlwcfp61OVNc8EJDiHaQwVErn1fIU0RO3kSZw==}
-    engines: {node: '>= 0.10'}
-    requiresBuild: true
-    dependencies:
-      nan: 2.17.0
     dev: false
 
   /scryptsy@1.2.1:
@@ -15197,6 +15192,16 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
+
+  github.com/barrysteyn/node-scrypt/fb60a8d3c158fe115a624b5ffa7480f3a24b03fb:
+    resolution: {tarball: https://codeload.github.com/barrysteyn/node-scrypt/tar.gz/fb60a8d3c158fe115a624b5ffa7480f3a24b03fb}
+    name: scrypt
+    version: 6.0.3
+    engines: {node: '>= 0.10'}
+    requiresBuild: true
+    dependencies:
+      nan: 2.17.0
+    dev: false
 
   github.com/edgeandnode/gluegun/b34b9003d7bf556836da41b57ef36eb21570620a(debug@4.3.1):
     resolution: {tarball: https://codeload.github.com/edgeandnode/gluegun/tar.gz/b34b9003d7bf556836da41b57ef36eb21570620a}
