@@ -33,7 +33,6 @@ export const renameInput = (name: string, subgraphName: string) => {
 
 export const generateEventFieldAssignments = (event: any, contractName: string) =>
   event.inputs.reduce((acc: any[], input: any, index: number) => {
-    console.log({ blacklist: Object.values(INPUT_NAMES_BLACKLIST), input: input.name });
     if (Object.values(INPUT_NAMES_BLACKLIST).includes(input.name)) {
       input.mappedName = renameInput(input.name, contractName ?? 'contract');
     }
