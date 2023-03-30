@@ -1,9 +1,5 @@
 import * as util from '../codegen/util';
 
-interface BlacklistDictionary {
-  [Key: string]: string;
-}
-
 export const generateFieldAssignment = (key: string[], value: string[]) =>
   `entity.${key.join('_')} = event.params.${value.join('.')}`;
 
@@ -17,19 +13,27 @@ export const generateFieldAssignments = ({ index, input }: { index: number; inpu
         [input.name || `param${index}`],
       );
 
-const renameInput = (name: string, subgraphName: string) => {
+type BlacklistDictionary = Record<string, string>;
+
+/**
+ * Map of input names that are reserved so we do not use them as field names to avoid conflicts
+ */
+export const INPUT_NAMES_BLACKLIST = {
+  /** Related to https://github.com/graphprotocol/graph-tooling/issues/710 */
+  id: 'id',
+} as const;
+
+export const renameInput = (name: string, subgraphName: string) => {
   const inputMap: BlacklistDictionary = {
-    id: `${subgraphName}_id`,
+    [INPUT_NAMES_BLACKLIST.id]: `${subgraphName}_id`,
   };
 
-  return inputMap[name] ?? name;
+  return inputMap?.[name] ?? name;
 };
 
 export const generateEventFieldAssignments = (event: any, contractName: string) =>
   event.inputs.reduce((acc: any[], input: any, index: number) => {
-    const inputNamesBlacklist = ['id'];
-
-    if (inputNamesBlacklist.includes(input.name)) {
+    if (Object.values(INPUT_NAMES_BLACKLIST).includes(input.name)) {
       input.mappedName = renameInput(input.name, contractName ?? 'contract');
     }
     return acc.concat(generateFieldAssignments({ input, index }));
