@@ -2,4 +2,4 @@
 '@graphprotocol/graph-cli': patch
 ---
 
-make generated list children non-nullable
+bring back short hand for version and help

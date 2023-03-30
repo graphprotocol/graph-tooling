@@ -127,6 +127,7 @@ export const writeSchema = async (
   protocol: Protocol,
   schemaPath: string,
   entities: any,
+  contractName: string,
 ) => {
   const events = protocol.hasEvents()
     ? abiEvents(abi)
@@ -135,7 +136,7 @@ export const writeSchema = async (
     : [];
 
   const data = prettier.format(
-    events.map(event => generateEventType(event, protocol.name)).join('\n\n'),
+    events.map(event => generateEventType(event, protocol.name, contractName)).join('\n\n'),
     {
       parser: 'graphql',
     },

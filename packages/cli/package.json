@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
@@ -26,10 +26,11 @@
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
     "@oclif/core": "2.0.7",
+    "@whatwg-node/fetch": "^0.8.4",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
     "chalk": "3.0.0",
-    "chokidar": "3.5.1",
+    "chokidar": "3.5.3",
     "debug": "4.3.1",
     "docker-compose": "0.23.4",
     "dockerode": "2.5.8",
@@ -41,7 +42,6 @@
     "ipfs-http-client": "34.0.0",
     "jayson": "3.6.6",
     "js-yaml": "3.13.1",
-    "node-fetch": "2.6.0",
     "prettier": "1.19.1",
     "request": "2.88.2",
     "semver": "7.3.5",
@@ -56,14 +56,13 @@
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
     "@types/js-yaml": "^3.12.7",
-    "@types/node-fetch": "^2.6.2",
     "@types/semver": "^7.3.13",
     "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
-    "jest": "26.0.0",
-    "oclif": "3.6.1",
+    "jest": "26.6.3",
+    "oclif": "3.7.3",
     "spawn-command": "0.0.2-1",
-    "strip-ansi": "6.0.0",
+    "strip-ansi": "6.0.1",
     "tern": "0.24.3",
     "typescript": "^4.9.4"
   },
@@ -72,6 +71,12 @@
   },
   "oclif": {
     "bin": "graph",
-    "commands": "./dist/commands"
+    "commands": "./dist/commands",
+    "additionalHelpFlags": [
+      "-h"
+    ],
+    "additionalVersionFlags": [
+      "-v"
+    ]
   }
 }

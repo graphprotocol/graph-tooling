@@ -1,5 +1,37 @@
 # @graphprotocol/graph-cli
 
+## 0.44.0
+
+### Minor Changes
+
+- [#1210](https://github.com/graphprotocol/graph-tooling/pull/1210)
+  [`17da832`](https://github.com/graphprotocol/graph-tooling/commit/17da8322d23e1632d57d27fa1c4c158e2858b967)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - Added polygon zkevm to cli
+
+### Patch Changes
+
+- [#1201](https://github.com/graphprotocol/graph-tooling/pull/1201)
+  [`f87e54c`](https://github.com/graphprotocol/graph-tooling/commit/f87e54c1615ace99ffc04ad9dc4b21bdcbe381bc)
+  Thanks [@saihaj](https://github.com/saihaj)! - read testsFolder from matchstick yaml and set the
+  paths based on that
+
+- [#1201](https://github.com/graphprotocol/graph-tooling/pull/1201)
+  [`f87e54c`](https://github.com/graphprotocol/graph-tooling/commit/f87e54c1615ace99ffc04ad9dc4b21bdcbe381bc)
+  Thanks [@saihaj](https://github.com/saihaj)! - make datasource and version optional args for test
+  command
+
+- [`876bc52`](https://github.com/graphprotocol/graph-tooling/commit/876bc523e5a53db162d9b5aa79e9de76a9e92ccf)
+  Thanks [@saihaj](https://github.com/saihaj)! - Allow file data sources (with no network) to deploy
+  to the studio. File data sources don't have a network specified.
+
+- [#1197](https://github.com/graphprotocol/graph-tooling/pull/1197)
+  [`b52e3b1`](https://github.com/graphprotocol/graph-tooling/commit/b52e3b1034cf3411a6c1c94aff73633b847256a0)
+  Thanks [@saihaj](https://github.com/saihaj)! - make generated list children non-nullable
+
+- [#1193](https://github.com/graphprotocol/graph-tooling/pull/1193)
+  [`c240588`](https://github.com/graphprotocol/graph-tooling/commit/c2405887fbe3128d530fd76ffd0f97fe195d37f5)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not generate setters for derived fields
+
 ## 0.43.0
 
 ### Minor Changes
