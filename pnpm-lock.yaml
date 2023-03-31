@@ -78,8 +78,8 @@ importers:
         specifier: ^0.8.4
         version: 0.8.4
       assemblyscript:
-        specifier: 0.19.23
-        version: 0.19.23
+        specifier: 0.27.1
+        version: 0.27.1
       binary-install-raw:
         specifier: 0.0.13
         version: 0.0.13(debug@4.3.1)
@@ -190,8 +190,8 @@ importers:
   packages/ts:
     dependencies:
       assemblyscript:
-        specifier: 0.19.10
-        version: 0.19.10
+        specifier: 0.27.1
+        version: 0.27.1
     devDependencies:
       prettier:
         specifier: ^2.4.1
@@ -3502,21 +3502,13 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /assemblyscript@0.19.10:
-    resolution: {integrity: sha512-HavcUBXB3mBTRGJcpvaQjmnmaqKHBGREjSPNsIvnAk2f9dj78y4BkMaSSdvBQYWcDDzsHQjyUC8stICFkD1Odg==}
+  /assemblyscript@0.27.1:
+    resolution: {integrity: sha512-0ZS9ujdoSAjuwc+qdZ4PeZy32wFh3U2GVy7/G2dfDr/5i0jOmWY29AaFsiNxDQ7z6MOeTo9YpNLfIqZ1WWzh8A==}
+    engines: {node: '>=16', npm: '>=7'}
     hasBin: true
     dependencies:
-      binaryen: 101.0.0-nightly.20210723
-      long: 4.0.0
-    dev: false
-
-  /assemblyscript@0.19.23:
-    resolution: {integrity: sha512-fwOQNZVTMga5KRsfY80g7cpOl4PsFQczMwHzdtgoqLXaYhkhavufKb0sB0l3T1DUxpAufA0KNhlbpuuhZUwxMA==}
-    hasBin: true
-    dependencies:
-      binaryen: 102.0.0-nightly.20211028
+      binaryen: 111.0.0-nightly.20230202
       long: 5.2.1
-      source-map-support: 0.5.21
     dev: false
 
   /assert-plus@1.0.0:
@@ -3962,13 +3954,8 @@ packages:
       - debug
     dev: false
 
-  /binaryen@101.0.0-nightly.20210723:
-    resolution: {integrity: sha512-eioJNqhHlkguVSbblHOtLqlhtC882SOEPKmNFZaDuz1hzQjolxZ+eu3/kaS10n3sGPONsIZsO7R9fR00UyhEUA==}
-    hasBin: true
-    dev: false
-
-  /binaryen@102.0.0-nightly.20211028:
-    resolution: {integrity: sha512-GCJBVB5exbxzzvyt8MGDv/MeUjs6gkXDvf4xOIItRBptYl0Tz5sm1o/uG95YK0L0VeG5ajDu3hRtkBP2kzqC5w==}
+  /binaryen@111.0.0-nightly.20230202:
+    resolution: {integrity: sha512-aGMDtxmc8zQHzAamyOBvO38n2e/GuXM0dZCJg+IuG2YUQODTqI37XSkAixS8c0wXn2dgLntDMk1VDblKCsy0GA==}
     hasBin: true
     dev: false
 
@@ -8907,10 +8894,6 @@ packages:
       is-unicode-supported: 0.1.0
     dev: true
 
-  /long@4.0.0:
-    resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
-    dev: false
-
   /long@5.2.1:
     resolution: {integrity: sha512-GKSNGeNAtw8IryjjkhZxuKB3JzlcLTwjtiQCHKvqQet81I93kXslhDQruGI/QsddO83mcDToBVy7GqGS/zYf/A==}
     dev: false
@@ -11444,7 +11427,7 @@ packages:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
     hasBin: true
     dependencies:
-      glob: 7.2.3
+      glob: 7.1.6
 
   /ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
@@ -11839,6 +11822,7 @@ packages:
     dependencies:
       buffer-from: 1.1.2
       source-map: 0.6.1
+    dev: true
 
   /source-map-url@0.4.1:
     resolution: {integrity: sha512-cPiFOTLUKvJFIg4SKVScy4ilPPW6rFgMgfuZJPNoDuMs3nC1HbMUycBoJw77xFIp6z1UJQJOfx6C9GMH80DiTw==}
@@ -11852,6 +11836,7 @@ packages:
   /source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+    dev: true
 
   /source-map@0.7.4:
     resolution: {integrity: sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==}

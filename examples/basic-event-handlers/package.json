@@ -20,6 +20,6 @@
     "apollo-fetch": "^0.7.0"
   },
   "resolutions": {
-    "assemblyscript": "0.19.10"
+    "assemblyscript": "0.27.1"
   }
 }
