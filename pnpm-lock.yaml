@@ -120,8 +120,8 @@ importers:
         specifier: 3.6.6
         version: 3.6.6
       js-yaml:
-        specifier: 3.13.1
-        version: 3.13.1
+        specifier: 3.14.1
+        version: 3.14.1
       prettier:
         specifier: 1.19.1
         version: 1.19.1
@@ -1565,7 +1565,7 @@ packages:
     resolution: {integrity: sha512-3eDVqVuBtp63i+BxEWHPFj2P1s3syk0PTrk2d94W9JD30iG+OER0Y6n65TeLlY8T2yB9Fvj6Ev5Gg0+cKe/ZUA==}
     dependencies:
       '@changesets/types': 5.2.0
-      js-yaml: 3.13.1
+      js-yaml: 3.14.1
     dev: true
 
   /@changesets/pre@1.0.13:
@@ -1856,7 +1856,7 @@ packages:
       camelcase: 5.3.1
       find-up: 4.1.0
       get-package-type: 0.1.0
-      js-yaml: 3.13.1
+      js-yaml: 3.14.1
       resolve-from: 5.0.0
     dev: true
 
@@ -8417,13 +8417,6 @@ packages:
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  /js-yaml@3.13.1:
-    resolution: {integrity: sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==}
-    hasBin: true
-    dependencies:
-      argparse: 1.0.10
-      esprima: 4.0.1
-
   /js-yaml@3.14.1:
     resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
     hasBin: true
@@ -8795,7 +8788,7 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       graceful-fs: 4.2.10
-      js-yaml: 3.13.1
+      js-yaml: 3.14.1
       pify: 4.0.1
       strip-bom: 3.0.0
     dev: true
@@ -11110,7 +11103,7 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       graceful-fs: 4.2.10
-      js-yaml: 3.13.1
+      js-yaml: 3.14.1
       pify: 4.0.1
       strip-bom: 3.0.0
     dev: true
