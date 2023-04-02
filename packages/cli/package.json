@@ -19,8 +19,8 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json && oclif manifest && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
     "test": "jest --verbose",
-    "test:init": "jest tests/cli/init.test.ts --verbose",
     "test:add": "jest tests/cli/add.test.ts --verbose",
+    "test:init": "jest tests/cli/init.test.ts --verbose",
     "test:validation": "jest tests/cli/validation.test.ts --verbose",
     "type-check": "tsc --noEmit"
   },
