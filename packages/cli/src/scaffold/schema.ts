@@ -61,14 +61,14 @@ export const generateEventFields = ({
 export const generateEventType = (
   event: any,
   protocolName: string,
-  subgraphName: string | undefined,
+  contractName: string | undefined,
 ) => {
-  return `type ${event._alias} @entity(immutable: true) {
+  return `type ${event.collision ? `${contractName}${event._alias}` : event._alias} @entity(immutable: true) {
         id: Bytes!
         ${event.inputs
           .reduce((acc: any[], input: any, index: number) => {
             if (Object.values(INPUT_NAMES_BLACKLIST).includes(input.name)) {
-              input.name = renameInput(input.name, subgraphName ?? 'contract');
+              input.name = renameInput(input.name, contractName ?? 'contract');
             }
             return acc.concat(generateEventFields({ input, index, protocolName }));
           }, [])
