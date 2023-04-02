@@ -63,7 +63,9 @@ export const generateEventType = (
   protocolName: string,
   contractName: string | undefined,
 ) => {
-  return `type ${event.collision ? `${contractName}${event._alias}` : event._alias} @entity(immutable: true) {
+  return `type ${
+    event.collision ? `${contractName}${event._alias}` : event._alias
+  } @entity(immutable: true) {
         id: Bytes!
         ${event.inputs
           .reduce((acc: any[], input: any, index: number) => {

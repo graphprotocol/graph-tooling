@@ -8,8 +8,8 @@
   },
   "devDependencies": {
     "@graphprotocol/graph-ts": "workspace:*",
-    "matchstick-as": "0.5.2",
-    "apollo-fetch": "^0.7.0"
+    "apollo-fetch": "^0.7.0",
+    "matchstick-as": "0.5.2"
   },
   "resolutions": {
     "assemblyscript": "0.19.10"
