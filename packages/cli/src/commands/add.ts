@@ -112,6 +112,7 @@ export default class AddCommand extends Command {
       contractName,
       mergeEntities,
     );
+
     ethabi.data = abiData;
 
     await writeSchema(
