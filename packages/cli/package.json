@@ -33,7 +33,7 @@
     "chokidar": "3.5.3",
     "debug": "4.3.1",
     "docker-compose": "0.23.4",
-    "dockerode": "2.5.8",
+    "dockerode": "3.3.5",
     "fs-extra": "9.0.0",
     "glob": "7.1.6",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
