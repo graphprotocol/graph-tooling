@@ -125,6 +125,7 @@ export default class Protocol {
     >;
 
     const allNetworks: string[] = [];
+    // eslint-disable-next-line unicorn/no-array-for-each
     networks.forEach(value => {
       allNetworks.push(...value);
     });

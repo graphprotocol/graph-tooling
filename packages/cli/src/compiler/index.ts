@@ -583,12 +583,12 @@ export default class Compiler {
         }
 
         // Upload all mappings
-        if (this.protocol.name !== 'substreams') {
+        if (this.protocol.name === 'substreams') {
           for (const [i, dataSource] of subgraph.get('dataSources').entries()) {
             updates.push({
-              keyPath: ['dataSources', i, 'mapping', 'file'],
+              keyPath: ['dataSources', i, 'source', 'package', 'file'],
               value: await this._uploadFileToIPFS(
-                dataSource.getIn(['mapping', 'file']),
+                dataSource.getIn(['source', 'package', 'file']),
                 uploadedFiles,
                 spinner,
               ),
@@ -597,9 +597,9 @@ export default class Compiler {
         } else {
           for (const [i, dataSource] of subgraph.get('dataSources').entries()) {
             updates.push({
-              keyPath: ['dataSources', i, 'source', 'package', 'file'],
+              keyPath: ['dataSources', i, 'mapping', 'file'],
               value: await this._uploadFileToIPFS(
-                dataSource.getIn(['source', 'package', 'file']),
+                dataSource.getIn(['mapping', 'file']),
                 uploadedFiles,
                 spinner,
               ),

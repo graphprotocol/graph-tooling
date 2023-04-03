@@ -13,6 +13,9 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     // TODO: not ready yet
     'unicorn/prefer-node-protocol': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    // AssemblyScript `===` is a reference equality check, not a value equality check. We are trying to do a value check. Learn more: https://github.com/AssemblyScript/assemblyscript/issues/621#issuecomment-497973428
+    eqeqeq: 'off',
   },
   overrides: [
     {
@@ -27,7 +30,6 @@ module.exports = {
         // TODO: warning for now, clean up
         '@typescript-eslint/no-loss-of-precision': 'warn',
         // AssemblyScript types are different from TS and in cases we want to use what TS may think we should not
-        '@typescript-eslint/ban-types': 'off',
       },
     },
   ],

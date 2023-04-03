@@ -27,7 +27,7 @@ const buildSignatureParameter = (input: immutable.Map<any, any>) => {
     return `(${input.get('indexed') ? 'indexed ' : ''}${input
       .get('components')
       .map((component: any) => buildSignatureParameter(component))
-      .join(',')})[${length ? length : ''}]`;
+      .join(',')})[${length || ''}]`;
   }
   if (input.get('type').match(TUPLE_MATRIX_PATTERN)) {
     const length1 = input.get('type').match(TUPLE_MATRIX_PATTERN)[1];
@@ -35,7 +35,7 @@ const buildSignatureParameter = (input: immutable.Map<any, any>) => {
     return `(${input.get('indexed') ? 'indexed ' : ''}${input
       .get('components')
       .map((component: any) => buildSignatureParameter(component))
-      .join(',')})[${length1 ? length1 : ''}][${length2 ? length2 : ''}]`;
+      .join(',')})[${length1 || ''}][${length2 || ''}]`;
   }
   return `${input.get('indexed') ? 'indexed ' : ''}${input.get('type')}`;
 };

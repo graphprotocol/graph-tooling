@@ -31,7 +31,9 @@ const getFieldType = (type: immutable.Map<any, any>, fieldName: string) => {
     .get('fields')
     .find((field: any) => field.getIn(['name', 'value']) === fieldName);
 
-  return fieldDef !== undefined ? fieldDef.get('type') : undefined;
+  if (fieldDef) {
+    return fieldDef.get('type');
+  }
 };
 
 /**

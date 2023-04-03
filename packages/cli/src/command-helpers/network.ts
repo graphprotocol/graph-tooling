@@ -57,11 +57,11 @@ export const updateSubgraphNetwork = async (
             network,
           })));
 
-        const unsusedSources = networkSources.filter(x => !subgraphSources.includes(x));
+        const unusedSources = networkSources.filter(x => !subgraphSources.includes(x));
 
-        unsusedSources.forEach(source => {
+        for (const source of unusedSources) {
           step(spinner, `dataSource '${source}' from '${networksFile}' not found in ${manifest}`);
-        });
+        }
 
         const yaml_doc = new yaml.Document();
         yaml_doc.contents = subgraph;
