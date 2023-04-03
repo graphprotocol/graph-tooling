@@ -3066,7 +3066,7 @@ packages:
       big.js: 6.2.1
       bn.js: 5.2.1
       cbor: 5.2.0
-      debug: 4.3.1
+      debug: 4.3.4(supports-color@8.1.1)
       lodash: 4.17.21
       semver: 7.3.7
       utf8: 3.0.0
@@ -3089,7 +3089,7 @@ packages:
       '@truffle/events': 0.1.22
       '@truffle/provider': 0.3.7
       conf: 10.2.0
-      debug: 4.3.1
+      debug: 4.3.4(supports-color@8.1.1)
       find-up: 2.1.0
       lodash: 4.17.21
       original-require: 1.0.1
@@ -3106,8 +3106,8 @@ packages:
     dependencies:
       '@truffle/dashboard-message-bus-common': 0.1.5
       '@truffle/promise-tracker': 0.1.5
-      axios: 1.2.4(debug@4.3.1)
-      debug: 4.3.1
+      axios: 1.2.4(debug@4.3.4)
+      debug: 4.3.4(supports-color@8.1.1)
       delay: 5.0.0
       isomorphic-ws: 4.0.1(ws@7.5.9)
       node-abort-controller: 3.1.1
@@ -3147,7 +3147,7 @@ packages:
       '@truffle/config': 1.3.54
       abstract-leveldown: 7.2.0
       apollo-server: 3.12.0(graphql@15.5.0)
-      debug: 4.3.1
+      debug: 4.3.4(supports-color@8.1.1)
       fs-extra: 9.1.0
       graphql: 15.5.0
       graphql-tag: 2.12.6(graphql@15.5.0)
@@ -3174,7 +3174,7 @@ packages:
       '@truffle/codec': 0.14.16
       '@truffle/source-map-utils': 1.3.108
       bn.js: 5.2.1
-      debug: 4.3.1
+      debug: 4.3.4(supports-color@8.1.1)
       json-pointer: 0.6.2
       json-stable-stringify: 1.0.2
       lodash: 4.17.21
@@ -3200,7 +3200,7 @@ packages:
     dependencies:
       '@truffle/dashboard-message-bus-client': 0.1.10
       '@truffle/spinners': 0.2.3
-      debug: 4.3.1
+      debug: 4.3.4(supports-color@8.1.1)
       emittery: 0.4.1
       web3-utils: 1.8.2
     transitivePeerDependencies:
@@ -3234,7 +3234,7 @@ packages:
     dependencies:
       '@truffle/error': 0.2.0
       '@truffle/interface-adapter': 0.5.31
-      debug: 4.3.1
+      debug: 4.3.4(supports-color@8.1.1)
       web3: 1.8.2
     transitivePeerDependencies:
       - bufferutil
@@ -3249,7 +3249,7 @@ packages:
     dependencies:
       '@truffle/code-utils': 3.0.2
       '@truffle/codec': 0.14.16
-      debug: 4.3.1
+      debug: 4.3.4(supports-color@8.1.1)
       json-pointer: 0.6.2
       node-interval-tree: 1.3.3
       web3-utils: 1.8.2
@@ -3263,6 +3263,14 @@ packages:
       '@trufflesuite/spinnies': 0.1.1
     dev: false
     optional: true
+
+  /@trufflesuite/bigint-buffer@1.1.10:
+    resolution: {integrity: sha512-pYIQC5EcMmID74t26GCC67946mgTJFiLXOT/BYozgrd4UEY2JHEGLhWi9cMiQCt5BSqFEvKkCHNnoj82SRjiEw==}
+    engines: {node: '>= 14.0.0'}
+    requiresBuild: true
+    dependencies:
+      node-gyp-build: 4.4.0
+    dev: false
 
   /@trufflesuite/spinnies@0.1.1:
     resolution: {integrity: sha512-jltEtmFJj6xmQqr85gP8OqBHCEiId+zw+uAsb3DyLLRD17O6sySW6Afa2Z/jpzSafj+32ssDfLJ+c0of1NLqcA==}
@@ -4510,10 +4518,10 @@ packages:
       - debug
     dev: false
 
-  /axios@1.2.4(debug@4.3.1):
+  /axios@1.2.4(debug@4.3.4):
     resolution: {integrity: sha512-lIQuCfBJvZB/Bv7+RWUqEJqNShGOVpk9v7P0ZWx5Ip0qY6u7JBAU6dzQPMLasU9vHL2uD8av/1FDJXj7n6c39w==}
     dependencies:
-      follow-redirects: 1.15.2(debug@4.3.1)
+      follow-redirects: 1.15.2(debug@4.3.4)
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -5581,7 +5589,7 @@ packages:
       object-assign: 4.1.1
       string-width: 2.1.1
     optionalDependencies:
-      colors: 1.3.3
+      colors: 1.4.0
     dev: false
 
   /cli-table@0.3.11:
@@ -7867,6 +7875,7 @@ packages:
     resolution: {integrity: sha512-kZUuOcgDQBtbxzs4iB3chg1iAc28s2ffdOdzyTTzo4vr9sb843w4PbWd5v1hsIqtcNjurcpLaW8XRp/cw2u++g==}
     hasBin: true
     dependencies:
+      '@trufflesuite/bigint-buffer': 1.1.10
       '@types/bn.js': 5.1.1
       '@types/lru-cache': 5.1.1
       '@types/seedrandom': 3.0.1
@@ -7874,6 +7883,9 @@ packages:
       abstract-leveldown: 7.2.0
       async-eventemitter: 0.2.4
       emittery: 0.10.0
+      keccak: 3.0.2
+      leveldown: 6.1.0
+      secp256k1: 4.0.3
     optionalDependencies:
       bufferutil: 4.0.5
       utf-8-validate: 5.0.7
@@ -10306,6 +10318,16 @@ packages:
     dev: false
     optional: true
 
+  /leveldown@6.1.0:
+    resolution: {integrity: sha512-8C7oJDT44JXxh04aSSsfcMI8YiaGRhOFI9/pMEL7nWJLVsWajDPTRxsSHTM2WcTVY5nXM+SuRHzPPi0GbnDX+w==}
+    engines: {node: '>=10.12.0'}
+    requiresBuild: true
+    dependencies:
+      abstract-leveldown: 7.2.0
+      napi-macros: 2.0.0
+      node-gyp-build: 4.5.0
+    dev: false
+
   /levelup@4.4.0:
     resolution: {integrity: sha512-94++VFO3qN95cM/d6eBXvd894oJE0w3cInq9USsyQzzoJxmiYzPAocNcuGCPGGjoXqDVJcr3C1jzt1TSjyaiLQ==}
     engines: {node: '>=6'}
@@ -11648,7 +11670,6 @@ packages:
   /napi-macros@2.0.0:
     resolution: {integrity: sha512-A0xLykHtARfueITVDernsAWdtIMbOJgKgcluwENp3AlsKN/PloyO10HtmoqnFAQAcxPkgZN7wdfPfEd0zNGxbg==}
     dev: false
-    optional: true
 
   /natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
@@ -11727,6 +11748,11 @@ packages:
     hasBin: true
     dev: false
     optional: true
+
+  /node-gyp-build@4.4.0:
+    resolution: {integrity: sha512-amJnQCcgtRVw9SvoebO3BKGESClrfXGCUTX9hSn1OuGQTQBOZmVd0Z0OlecpuRksKvbsUqALE8jls/ErClAPuQ==}
+    hasBin: true
+    dev: false
 
   /node-gyp-build@4.5.0:
     resolution: {integrity: sha512-2iGbaQBV+ITgCz76ZEjmhUKAKVf7xfY1sRl4UiKQspfZMH2h06SyhNsnSVy50cwkFQDGLyif6m/6uFXHkOZ6rg==}
@@ -14836,6 +14862,11 @@ packages:
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
+
+  /tslib@2.4.1:
+    resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
+    dev: false
+    optional: true
 
   /tslib@2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
