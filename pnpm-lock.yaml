@@ -108,8 +108,8 @@ importers:
         specifier: https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep
         version: github.com/edgeandnode/gluegun/b34b9003d7bf556836da41b57ef36eb21570620a(debug@4.3.4)
       graphql:
-        specifier: 15.5.0
-        version: 15.5.0
+        specifier: 16.6.0
+        version: 16.6.0
       immutable:
         specifier: 4.2.1
         version: 4.2.1
@@ -8186,6 +8186,7 @@ packages:
     resolution: {integrity: sha512-OmaM7y0kaK31NKG31q4YbD2beNYa6jBBKtMFT6gLYJljHLJr42IqJ8KX08u3Li/0ifzTU5HjmoOOrwa5BRLeDA==}
     engines: {node: '>= 10.x'}
     dev: false
+    optional: true
 
   /graphql@16.6.0:
     resolution: {integrity: sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==}
