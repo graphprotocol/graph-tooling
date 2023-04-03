@@ -86,6 +86,7 @@ export class BigInt extends Uint8Array {
    */
 
   static fromSignedBytes(bytes: Bytes): BigInt {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const byteArray = <ByteArray>bytes;
     return BigInt.fromByteArray(byteArray);
   }

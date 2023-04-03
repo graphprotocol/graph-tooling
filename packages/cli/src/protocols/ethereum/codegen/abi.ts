@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-array-for-each */
 import fs from 'fs';
 import immutable from 'immutable';
 import request from 'sync-request';
@@ -204,7 +205,7 @@ export default class AbiCodeGenerator {
       }) as any[];
 
       const namesAndTypes: any[] = [];
-      inputs.forEach((input, index) => {
+      for (const [index, input] of inputs.entries()) {
         // Generate getters and classes for event params
         const paramObject = this._generateInputOrOutput(
           input,
@@ -225,7 +226,7 @@ export default class AbiCodeGenerator {
         }
 
         tupleClasses.push(...paramObject.classes);
-      });
+      }
 
       // Then, generate the event class itself
       const klass = tsCodegen.klass(eventClassName, {
@@ -439,10 +440,10 @@ export default class AbiCodeGenerator {
       setName: (fn, name) => fn.set('_alias', name),
     }) as any;
 
-    functions.forEach(member => {
-      const fnName = member.get('name');
-      const fnAlias = member.get('_alias');
-      const fnSignature = this.abi.functionSignature(member);
+    for (const member of functions) {
+      const fnName = (member as any).get('name');
+      const fnAlias = (member as any).get('_alias');
+      const fnSignature = this.abi.functionSignature(member as any);
 
       // Generate a type for the result of calling the function
       let returnType: any = undefined;
@@ -451,14 +452,14 @@ export default class AbiCodeGenerator {
 
       // Disambiguate outputs with duplicate names
       const outputs = util.disambiguateNames({
-        values: member.get('outputs', immutable.List()),
+        values: (member as any).get('outputs', immutable.List()),
         // @ts-expect-error improve typings of disambiguateNames to handle iterables
         getName: (input, index) => input.get('name') || `value${index}`,
         // @ts-expect-error improve typings of disambiguateNames to handle iterables
         setName: (input, name) => input.set('name', name),
       }) as any;
 
-      if (member.get('outputs', immutable.List()).size > 1) {
+      if ((member as any).get('outputs', immutable.List()).size > 1) {
         simpleReturnType = false;
 
         // Create a type dedicated to holding the return values
@@ -570,7 +571,7 @@ export default class AbiCodeGenerator {
 
       // Disambiguate inputs with duplicate names
       const inputs = util.disambiguateNames({
-        values: member.get('inputs', immutable.List()),
+        values: (member as any).get('inputs', immutable.List()),
         // @ts-expect-error improve typings of disambiguateNames to handle iterables
         getName: (input, index) => input.get('name') || `param${index}`,
         // @ts-expect-error improve typings of disambiguateNames to handle iterables
@@ -674,7 +675,7 @@ export default class AbiCodeGenerator {
           methodCallBody(true),
         ),
       );
-    });
+    }
 
     return [...types, klass];
   }

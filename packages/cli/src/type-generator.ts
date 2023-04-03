@@ -108,9 +108,10 @@ export default class TypeGenerator {
     const subgraphLoadOptions = { protocol: this.protocol, skipValidation: false };
 
     if (quiet) {
-      return this.options.subgraph
-        ? this.options.subgraph
-        : (await Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)).result;
+      return (
+        this.options.subgraph ||
+        (await Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)).result
+      );
     }
     const manifestPath = displayPath(this.options.subgraphManifest);
 
@@ -119,9 +120,9 @@ export default class TypeGenerator {
       `Failed to load subgraph from ${manifestPath}`,
       `Warnings while loading subgraph from ${manifestPath}`,
       async _spinner => {
-        return this.options.subgraph
-          ? this.options.subgraph
-          : Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions);
+        return (
+          this.options.subgraph || Subgraph.load(this.options.subgraphManifest, subgraphLoadOptions)
+        );
       },
     );
   }

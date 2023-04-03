@@ -155,12 +155,14 @@ async function runBinary(
   }
 
   const binary = new Binary(platform, url, versionOpt || latestVersion);
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   forceOpt ? await binary.install(true) : await binary.install(false);
   const args = [];
 
   if (coverageOpt) args.push('-c');
   if (recompileOpt) args.push('-r');
   if (datasource) args.push(datasource);
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   args.length > 0 ? binary.run(...args) : binary.run();
 }
 
@@ -233,9 +235,9 @@ async function getLinuxInfo(this: TestCommand): Promise<LinuxInfo> {
       .map(p => p.split('='));
     const linuxInfo: LinuxInfo = {};
 
-    infoArray.forEach(val => {
+    for (const val of infoArray) {
       linuxInfo[val[0].toLowerCase() as keyof LinuxInfo] = val[1];
-    });
+    }
 
     return linuxInfo;
   } catch (error) {
