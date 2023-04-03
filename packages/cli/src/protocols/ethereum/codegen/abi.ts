@@ -571,7 +571,7 @@ export default class AbiCodeGenerator {
 
       // Disambiguate inputs with duplicate names
       const inputs = util.disambiguateNames({
-        values: member.get('inputs', immutable.List()),
+        values: (member as any).get('inputs', immutable.List()),
         // @ts-expect-error improve typings of disambiguateNames to handle iterables
         getName: (input, index) => input.get('name') || `param${index}`,
         // @ts-expect-error improve typings of disambiguateNames to handle iterables
