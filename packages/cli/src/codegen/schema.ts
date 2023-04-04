@@ -183,7 +183,11 @@ export default class SchemaCodeGenerator {
     const name = fieldDef.getIn(['name', 'value']);
     const gqlType = fieldDef.get('type');
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
-    const returnType = this._typeFromGraphQl(gqlType);
+    const returnType = this._typeFromGraphQl({
+      gqlType,
+      entityDef: _entityDef,
+      fieldDef: fieldDef,
+    });
     const isNullable = returnType instanceof tsCodegen.NullableType;
 
     const getNonNullable = `return ${typesCodegen.valueToAsc('value!', fieldValueType)}`;
@@ -215,7 +219,7 @@ export default class SchemaCodeGenerator {
 
     const gqlType = fieldDef.get('type');
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
-    const paramType = this._typeFromGraphQl(gqlType);
+    const paramType = this._typeFromGraphQl({ gqlType, entityDef: _entityDef, fieldDef });
     const isNullable = paramType instanceof tsCodegen.NullableType;
     const paramTypeString = isNullable ? paramType.inner.toString() : paramType.toString();
     const isArray = paramType instanceof tsCodegen.ArrayType;
@@ -295,19 +299,55 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     return gqlType.getIn(['name', 'value']);
   }
 
-  _typeFromGraphQl(gqlType: immutable.Map<any, any>, nullable = true): any {
+  _typeFromGraphQl({
+    gqlType,
+    nullable = true,
+    entityDef,
+    fieldDef,
+  }: {
+    gqlType: immutable.Map<any, any>;
+    nullable?: boolean;
+    entityDef: any;
+    fieldDef: immutable.Map<any, any>;
+  }): any {
     if (gqlType.get('kind') === 'NonNullType') {
-      return this._typeFromGraphQl(gqlType.get('type'), false);
+      return this._typeFromGraphQl({
+        gqlType: gqlType.get('type'),
+        nullable: false,
+        entityDef,
+        fieldDef,
+      });
     }
     if (gqlType.get('kind') === 'ListType') {
-      const type = tsCodegen.arrayType(this._typeFromGraphQl(gqlType.get('type')));
+      const type = tsCodegen.arrayType(
+        this._typeFromGraphQl({ gqlType: gqlType.get('type'), entityDef, fieldDef }),
+      );
       return nullable ? tsCodegen.nullableType(type) : type;
     }
     // NamedType
     const type = tsCodegen.namedType(
       typesCodegen.ascTypeForValue(this._resolveFieldType(gqlType)) as any,
     );
-    // In AssemblyScript, primitives cannot be nullable.
-    return nullable && !type.isPrimitive() ? tsCodegen.nullableType(type) : type;
+
+    // This is helpful for debugging
+    const schemaCoordinate = `${entityDef.getIn(['name', 'value'])}.${fieldDef.getIn([
+      'name',
+      'value',
+    ])}`;
+    const gqlTypeName = gqlType.get('name').get('value');
+
+    if (nullable) {
+      // In AssemblyScript, primitives cannot be nullable.
+      if (type.isPrimitive()) {
+        throw Error(
+          `A primitive type cannot be nullable. AssemblyScript does not support nullable primitives.
+Consider changing the type of "${schemaCoordinate}" from "${gqlTypeName}" to "${gqlTypeName}!"`,
+        );
+      } else {
+        return tsCodegen.nullableType(type);
+      }
+    }
+
+    return type;
   }
 }

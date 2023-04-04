@@ -12,6 +12,7 @@ import {
   Param,
   StaticMethod,
 } from './typescript';
+import { writeFileSync } from 'fs-extra';
 
 const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
 
@@ -31,6 +32,10 @@ const testEntity = (generatedTypes: any[], expectedEntity: any) => {
 
   for (const expectedMethod of expectedEntity.methods) {
     const method = methods.find((method: any) => method.name === expectedMethod.name);
+
+    if (!method) {
+      throw new Error(`Method ${expectedMethod.name} not found`);
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expectedMethod.static
@@ -75,8 +80,8 @@ describe('Schema code generator', () => {
         name: String!
 
         # two primitive types (i32)
-        age: Int
         count: Int!
+        isActive: Boolean!
 
         # derivedFrom
         wallets: [Wallet!] @derivedFrom(field: "account")
@@ -196,20 +201,20 @@ describe('Schema code generator', () => {
             `,
           },
           {
-            name: 'get age',
+            name: 'get isActive',
             params: [],
-            returnType: new NamedType('i32'),
+            returnType: new NamedType('boolean'),
             body: `
-              let value = this.get('age')
-              return value!.toI32()
+              let value = this.get('isActive')
+              return value!.toBoolean()
             `,
           },
           {
-            name: 'set age',
-            params: [new Param('value', new NamedType('i32'))],
+            name: 'set isActive',
+            params: [new Param('value', new NamedType('boolean'))],
             returnType: undefined,
             body: `
-              this.set('age', Value.fromI32(value))
+              this.set('isActive', Value.fromBoolean(value))
             `,
           },
           {
@@ -445,5 +450,20 @@ describe('Schema code generator', () => {
         },
       ],
     });
+  });
+
+  test('throw error when entity has nullable primitives', () => {
+    const codegen = createSchemaCodeGen(`
+      type Account @entity {
+        id: ID!
+        isActive: Boolean
+      }
+    `);
+
+    try {
+      codegen.generateTypes();
+    } catch (err) {
+      expect(err.message).toBe(`A primitive type cannot be nullable. AssemblyScript does not support nullable primitives.\nConsider changing the type of "Account.isActive" from "Boolean" to "Boolean!"`);
+    }
   });
 });
