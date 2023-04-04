@@ -186,7 +186,7 @@ export default class SchemaCodeGenerator {
     const returnType = this._typeFromGraphQl({
       gqlType,
       entityDef: _entityDef,
-      fieldDef: fieldDef,
+      fieldDef,
     });
     const isNullable = returnType instanceof tsCodegen.NullableType;
 
