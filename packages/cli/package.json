@@ -40,7 +40,7 @@
     "graphql": "15.5.0",
     "immutable": "4.2.1",
     "ipfs-http-client": "34.0.0",
-    "jayson": "3.7.0",
+    "jayson": "4.0.0",
     "js-yaml": "3.14.1",
     "prettier": "1.19.1",
     "request": "2.88.2",
