@@ -462,7 +462,9 @@ describe('Schema code generator', () => {
     try {
       codegen.generateTypes();
     } catch (err) {
-      expect(err.message).toBe(`A primitive type cannot be nullable. AssemblyScript does not support nullable primitives.\nConsider changing the type of "Account.isActive" from "Boolean" to "Boolean!"`);
+      expect(err.message).toBe(
+        `A primitive type cannot be nullable. AssemblyScript does not support nullable primitives.\nConsider changing the type of "Account.isActive" from "Boolean" to "Boolean!"`,
+      );
     }
   });
 });
