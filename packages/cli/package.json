@@ -12,12 +12,14 @@
   "main": "dist/index.js",
   "files": [
     "CHANGELOG.md",
+    "bin",
     "dist",
     "oclif.manifest.json",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.build.json && oclif manifest && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
+    "build": "tsc -b tsconfig.build.json && oclif manifest && oclif readme && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
+    "oclif:pack": "npm pack && pnpm oclif pack tarballs --no-xz",
     "test": "jest --verbose",
     "test:add": "jest tests/cli/add.test.ts --verbose",
     "test:init": "jest tests/cli/init.test.ts --verbose",
