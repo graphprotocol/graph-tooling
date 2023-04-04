@@ -272,6 +272,62 @@ export default class Compiler {
     );
   }
 
+  /**
+   * Validate that the compiled WASM has all the handlers that are defined in the subgraph manifest
+   *
+   * @returns a list of handlers that are missing from the compiled WASM
+   *
+   * This is a temporary solution to validate that the compiled WASM has all the event handlers.
+   * A better way would be if we can do this even before compiling
+   * but requires a larger refactor so we are running additional validations before compilation
+   */
+  _validateHandlersInWasm({
+    pathToWasm,
+    dataSource,
+  }: {
+    pathToWasm: string;
+    dataSource: immutable.Map<any, any>;
+  }) {
+    const getHandlerNames = (handlerName: string) =>
+      (dataSource as any)
+        .getIn(['mapping', handlerName])
+        // if there is no handler, it will be undefined
+        ?.toJS()
+        ?.map((e: { handler: string; event: string }) => e.handler) || [];
+
+    // Load the compiled WASM file
+    const buffer = fs.readFileSync(pathToWasm);
+    const wasmMod = new WebAssembly.Module(buffer);
+
+    // Apologies to TS gods for `any` usage
+    // Yet another reason to refactor out immutable.js
+    const handlerNamesFromDataSources = [
+      // TODO: this is hacky, better is figuring out how to utilize the `protocol.getSubgraph().handlerTypes()`
+      ...getHandlerNames('eventHandlers'),
+      ...getHandlerNames('callHandlers'),
+      ...getHandlerNames('blockHandlers'),
+      ...getHandlerNames('transactionHandlers'),
+      ...getHandlerNames('messageHandlers'),
+      ...getHandlerNames('receiptHandlers'),
+    ];
+
+    // We can check the WASM module for the exported functions
+    // https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/Module/exports
+    // Using a Set to avoid duplicates and makes it easier to check if a value is present
+    const handlerNamesFromWasm = new Set(
+      WebAssembly.Module.exports(wasmMod)
+        .filter(e => e.kind === 'function')
+        .map(e => e.name),
+    );
+
+    // Figure out which handlers are missing
+    const missingHandlers = handlerNamesFromDataSources.filter(
+      (handler: string) => !handlerNamesFromWasm.has(handler),
+    );
+
+    return missingHandlers;
+  }
+
   _compileDataSourceMapping(
     protocol: Protocol,
     dataSource: immutable.Map<any, any>,
@@ -332,6 +388,14 @@ export default class Compiler {
         libs,
         outputFile,
       });
+
+      const missingHandlers = this._validateHandlersInWasm({
+        pathToWasm: outFile,
+        dataSource,
+      });
+      if (missingHandlers.length > 0) {
+        throw Error(`\n\tMissing handlers in WASM: ${missingHandlers.join(', ')}`);
+      }
 
       // Remember the output file to avoid compiling the same file again
       compiledFiles.set(inputCacheKey, outFile);
