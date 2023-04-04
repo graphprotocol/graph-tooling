@@ -26,7 +26,14 @@ export const mapping = ({ abi, contractName }: { abi: ABI; contractName: string 
       language: wasm/assemblyscript
       entities:
         ${abiEvents(abi)
-          .map(event => `- ${event.get('_alias')}`)
+          .map(
+            event =>
+              `- ${
+                event.get('collision')
+                  ? `${contractName}${event.get('_alias')}`
+                  : event.get('_alias')
+              }`,
+          )
           .join('\n        ')}
       abis:
         - name: ${contractName}

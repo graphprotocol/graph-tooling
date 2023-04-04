@@ -104,15 +104,17 @@ export default class AddCommand extends Command {
       // TODO: Ask the user for the start block
     }
 
+    await writeABI(ethabi, contractName);
+
     const { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(
       ethabi,
       entities,
       contractName,
       mergeEntities,
     );
+
     ethabi.data = abiData;
 
-    await writeABI(ethabi, contractName);
     await writeSchema(
       ethabi,
       protocol,
@@ -215,7 +217,7 @@ const updateEventNamesOnCollision = (
           i--; // deletion also shifts values to the left
           continue;
         } else {
-          dataRow.set('name', `${contractName}${dataRow.get('name')}`);
+          dataRow.set('collision', true);
         }
       } else {
         onlyCollisions = false;
