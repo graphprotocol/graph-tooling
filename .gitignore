@@ -76,3 +76,6 @@ dist
 
 # Oclif manifest
 oclif.manifest.json
+
+# Oclif pack
+tmp
