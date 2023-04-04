@@ -12,7 +12,6 @@ import {
   Param,
   StaticMethod,
 } from './typescript';
-import { writeFileSync } from 'fs-extra';
 
 const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
 
