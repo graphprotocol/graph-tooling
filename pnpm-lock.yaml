@@ -1,5 +1,8 @@
 lockfileVersion: '6.0'
 
+overrides:
+  ipfs-http-client@34.0.0>concat-stream: github:mihirgupta0900/concat-stream#master
+
 importers:
 
   .:
@@ -8671,7 +8674,7 @@ packages:
       bs58: 4.0.1
       buffer: 5.7.1
       cids: 0.7.5
-      concat-stream: github.com/hugomrdias/concat-stream/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034
+      concat-stream: github.com/mihirgupta0900/concat-stream/ca374bb562cb9a9cf2a89bf2c873c9579780346a
       debug: 4.3.4(supports-color@8.1.1)
       detect-node: 2.1.0
       end-of-stream: 1.4.4
@@ -16324,16 +16327,6 @@ packages:
       - debug
     dev: false
 
-  github.com/hugomrdias/concat-stream/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034:
-    resolution: {tarball: https://codeload.github.com/hugomrdias/concat-stream/tar.gz/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034}
-    name: concat-stream
-    version: 2.0.0
-    engines: {node: '>=6.0.0'}
-    dependencies:
-      inherits: 2.0.4
-      readable-stream: 3.6.0
-    dev: false
-
   github.com/hugomrdias/ndjson/4db16da6b42e5b39bf300c3a7cde62abb3fa3a11:
     resolution: {tarball: https://codeload.github.com/hugomrdias/ndjson/tar.gz/4db16da6b42e5b39bf300c3a7cde62abb3fa3a11}
     name: ndjson
@@ -16344,4 +16337,14 @@ packages:
       minimist: 1.2.7
       split2: 3.2.2
       through2: 3.0.2
+    dev: false
+
+  github.com/mihirgupta0900/concat-stream/ca374bb562cb9a9cf2a89bf2c873c9579780346a:
+    resolution: {tarball: https://codeload.github.com/mihirgupta0900/concat-stream/tar.gz/ca374bb562cb9a9cf2a89bf2c873c9579780346a}
+    name: concat-stream
+    version: 2.0.0
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      inherits: 2.0.4
+      readable-stream: 3.6.0
     dev: false
