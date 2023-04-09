@@ -120,8 +120,8 @@ importers:
         specifier: 3.7.0
         version: 3.7.0
       js-yaml:
-        specifier: 3.14.1
-        version: 3.14.1
+        specifier: 4.1.0
+        version: 4.1.0
       prettier:
         specifier: 1.19.1
         version: 1.19.1
@@ -157,8 +157,8 @@ importers:
         specifier: ^26.0.24
         version: 26.0.24
       '@types/js-yaml':
-        specifier: ^3.12.7
-        version: 3.12.7
+        specifier: ^4.0.0
+        version: 4.0.0
       '@types/semver':
         specifier: ^7.3.13
         version: 7.3.13
@@ -3475,8 +3475,8 @@ packages:
       pretty-format: 26.6.2
     dev: true
 
-  /@types/js-yaml@3.12.7:
-    resolution: {integrity: sha512-S6+8JAYTE1qdsc9HMVsfY7+SgSuUU/Tp6TYTmITW0PZxiyIMvol3Gy//y69Wkhs0ti4py5qgR3uZH6uz/DNzJQ==}
+  /@types/js-yaml@4.0.0:
+    resolution: {integrity: sha512-4vlpCM5KPCL5CfGmTbpjwVKbISRYhduEJvvUWsH5EB7QInhEj94XPZ3ts/9FPiLZFqYO0xoW4ZL8z2AabTGgJA==}
     dev: true
 
   /@types/json-schema@7.0.11:
