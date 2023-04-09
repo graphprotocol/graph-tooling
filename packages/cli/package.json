@@ -36,7 +36,7 @@
     "docker-compose": "0.23.19",
     "dockerode": "2.5.8",
     "fs-extra": "9.1.0",
-    "glob": "9.3.4",
+    "glob": "10.0.0",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
     "graphql": "15.5.0",
     "immutable": "4.2.1",
