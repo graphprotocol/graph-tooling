@@ -1,5 +1,15 @@
 # @graphprotocol/graph-cli
 
+## 0.45.1
+
+### Patch Changes
+
+- [#1263](https://github.com/graphprotocol/graph-tooling/pull/1263)
+  [`2ba2ba9`](https://github.com/graphprotocol/graph-tooling/commit/2ba2ba96c6cdc10461903b0712f122eb6d245f86)
+  Thanks [@mihirgupta0900](https://github.com/mihirgupta0900)! - Fixes dependency error from
+  `ipfs-http-client` and `concat-stream`. Visit
+  https://github.com/graphprotocol/graph-tooling/issues/1262 for more details.
+
 ## 0.45.0
 
 ### Minor Changes
