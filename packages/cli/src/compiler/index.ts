@@ -27,7 +27,7 @@ interface CompilerOptions {
 }
 
 export default class Compiler {
-  private ipfs: IPFSHTTPClient
+  private ipfs: IPFSHTTPClient;
   private sourceDir: string;
   private blockIpfsMethods?: RegExpMatchArray;
   private libsDirs: string[];

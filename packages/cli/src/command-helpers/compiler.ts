@@ -1,6 +1,6 @@
 import { URL } from 'url';
 import * as toolbox from 'gluegun';
-import {create} from 'ipfs-http-client';
+import { create } from 'ipfs-http-client';
 import Compiler from '../compiler';
 import Protocol from '../protocols';
 
