@@ -681,7 +681,7 @@ export default class Compiler {
     try {
       const hash = await this.ipfs.add(file);
       await this.ipfs.pin.add(hash.cid);
-      return hash.toString();
+      return hash.cid.toString();
     } catch (e) {
       throw Error(`Failed to upload file to IPFS: ${e.message}`);
     }
