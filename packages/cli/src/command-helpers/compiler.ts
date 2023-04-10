@@ -39,11 +39,11 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
 
   // Connect to the IPFS node (if a node address was provided)
   ipfs = ipfs
-    ? ipfsHttpClient({
+    ? ipfsHttpClient.create({
         protocol: url?.protocol.replace(/[:]+$/, ''),
         host: url?.hostname,
-        port: url?.port,
-        'api-path': url?.pathname.replace(/\/$/, '') + '/api/v0/',
+        port: url?.port ? parseInt(url?.port): undefined,
+        apiPath: url?.pathname.replace(/\/$/, '') + '/api/v0/',
         headers,
       })
     : undefined;

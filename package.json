@@ -35,10 +35,5 @@
     "eslint": "^8.31.0",
     "jest": "26.6.3",
     "prettier": "^2.8.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "ipfs-http-client@34.0.0>concat-stream": "github:mihirgupta0900/concat-stream#master"
-    }
   }
 }
