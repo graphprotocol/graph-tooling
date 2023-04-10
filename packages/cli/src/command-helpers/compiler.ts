@@ -27,8 +27,9 @@ export function createCompiler(
     protocol,
   }: CreateCompilerOptions,
 ) {
+  // Validate the IPFS URL (if a node address was provided)
   try {
-    new URL(ipfs);
+    if (ipfs) new URL(ipfs);
   } catch (e) {
     toolbox.print.error(`Invalid IPFS URL: ${ipfs}
 The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
