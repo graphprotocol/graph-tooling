@@ -27,7 +27,6 @@ export function createCompiler(
     protocol,
   }: CreateCompilerOptions,
 ) {
-
   try {
     new URL(ipfs);
   } catch (e) {
