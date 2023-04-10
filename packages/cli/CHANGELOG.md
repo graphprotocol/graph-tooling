@@ -1,5 +1,18 @@
 # @graphprotocol/graph-cli
 
+## 0.45.2
+
+### Patch Changes
+
+- [#1268](https://github.com/graphprotocol/graph-tooling/pull/1268)
+  [`d473997`](https://github.com/graphprotocol/graph-tooling/commit/d473997a9fea02e91649a0e345fd84dbeff54fdf)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+  - Updated dependency
+    [`ipfs-http-client@55.0.0` ↗︎](https://www.npmjs.com/package/ipfs-http-client/v/55.0.0) (from
+    `34.0.0`, in `dependencies`)
+  - Updated dependency [`jayson@4.0.0` ↗︎](https://www.npmjs.com/package/jayson/v/4.0.0) (from
+    `3.7.0`, in `dependencies`)
+
 ## 0.45.1
 
 ### Patch Changes
