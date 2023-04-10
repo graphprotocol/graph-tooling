@@ -1,6 +1,6 @@
 import { URL } from 'url';
 import * as toolbox from 'gluegun';
-import ipfsHttpClient from 'ipfs-http-client';
+import {create} from 'ipfs-http-client';
 import Compiler from '../compiler';
 import Protocol from '../protocols';
 
@@ -39,7 +39,7 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
 
   // Connect to the IPFS node (if a node address was provided)
   ipfs = ipfs
-    ? ipfsHttpClient.create({
+    ? create({
         protocol: url?.protocol.replace(/[:]+$/, ''),
         host: url?.hostname,
         port: url?.port ? parseInt(url?.port) : undefined,
