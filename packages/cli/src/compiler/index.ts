@@ -12,6 +12,7 @@ import Protocol from '../protocols';
 import Subgraph from '../subgraph';
 import Watcher from '../watcher';
 import * as asc from './asc';
+import type { IPFSHTTPClient } from 'ipfs-http-client';
 
 const compilerDebug = debug('graph-cli:compiler');
 
@@ -26,7 +27,7 @@ interface CompilerOptions {
 }
 
 export default class Compiler {
-  private ipfs: any;
+  private ipfs: IPFSHTTPClient;
   private sourceDir: string;
   private blockIpfsMethods?: RegExpMatchArray;
   private libsDirs: string[];
@@ -678,9 +679,18 @@ export default class Compiler {
 
   async _uploadToIPFS(file: { path: string; content: Buffer }) {
     try {
-      const hash = (await this.ipfs.add([file]))[0].hash;
-      await this.ipfs.pin.add(hash);
-      return hash;
+      const files = this.ipfs.addAll([file]);
+
+      // We get back async iterable
+      const filesIterator = files[Symbol.asyncIterator]();
+      // We only care about the first item, since that is the file, rest could be directories
+      const { value } = await filesIterator.next();
+
+      // we grab the file and pin it
+      const uploadedFile = value as Awaited<ReturnType<typeof this.ipfs.add>>;
+      await this.ipfs.pin.add(uploadedFile.cid);
+
+      return uploadedFile.cid.toString();
     } catch (e) {
       throw Error(`Failed to upload file to IPFS: ${e.message}`);
     }
