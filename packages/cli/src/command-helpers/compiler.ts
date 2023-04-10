@@ -42,7 +42,7 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
     ? ipfsHttpClient.create({
         protocol: url?.protocol.replace(/[:]+$/, ''),
         host: url?.hostname,
-        port: url?.port ? parseInt(url?.port): undefined,
+        port: url?.port ? parseInt(url?.port) : undefined,
         apiPath: url?.pathname.replace(/\/$/, '') + '/api/v0/',
         headers,
       })
