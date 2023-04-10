@@ -47,8 +47,8 @@ importers:
         specifier: 6.26.0
         version: 6.26.0
       truffle:
-        specifier: 5.8.1
-        version: 5.8.1
+        specifier: 5.8.2
+        version: 5.8.2
       truffle-hdwallet-provider:
         specifier: 1.0.6
         version: 1.0.6
@@ -3069,8 +3069,8 @@ packages:
       cbor: 5.2.0
     dev: false
 
-  /@truffle/codec@0.14.16:
-    resolution: {integrity: sha512-a9UY3n/FnkKN3Q4zOuMFOOcLWb80mdknj+voim4vvXYtJm1aAZQZE5sG9aLnMBTl4TiGLzUtfNDVYY7WgWgDag==}
+  /@truffle/codec@0.14.17:
+    resolution: {integrity: sha512-kD4dD86huLeaBEq5R8D1zleJEu6NsXbyYLdXl1V1TKdiO8odw5CBC6Y/+wdu5d3t1dyEYrTbhn1dqknZa52pmw==}
     dependencies:
       '@truffle/abi-utils': 0.3.9
       '@truffle/compile-common': 0.9.4
@@ -3136,10 +3136,10 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/db-loader@0.2.20:
-    resolution: {integrity: sha512-HEphnZO7N6Avo+hlhWVI3iBM22ewqdCO8sbocR1UhL9atz70HYBltG10C6fD4aglXz95cm7+3ZnnYn4pOSIIQw==}
+  /@truffle/db-loader@0.2.21:
+    resolution: {integrity: sha512-79Fx0FKkP3OtVg2cFxrrncxAzcg+bSjmho+g6dQMxEk7szPh03g2a5STv8vc4DAcHP2Jrf84KNMyAtwJJwoKcg==}
     optionalDependencies:
-      '@truffle/db': 2.0.20
+      '@truffle/db': 2.0.21
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -3147,8 +3147,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@truffle/db@2.0.20:
-    resolution: {integrity: sha512-hSDQPopz3NA8QxOPQV3CSB4I6fZTQtavpLZH+G61tEJYldYkaY240HCEbC3ykMVE05zim83OqBqSKsSz8CYHpg==}
+  /@truffle/db@2.0.21:
+    resolution: {integrity: sha512-mYKxOqhOOXGtUJfYtvF4k7Ihvoj7Asl3YhaSBCB475TEJYNUSmCPwEsIt3WBZQD1sXaTB6x/aFR4YMIKkOYLEA==}
     requiresBuild: true
     dependencies:
       '@graphql-tools/delegate': 8.8.1(graphql@15.5.0)
@@ -3178,12 +3178,12 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/debugger@11.0.31:
-    resolution: {integrity: sha512-x9lzd8ROprAYDRoe1FhKBbygbGRa/1+q5nuOgq4PbB+ZbqhskLB4gay9N/w6JkTxAvC2KFTdXSvoUhpUokpS7A==}
+  /@truffle/debugger@11.0.32:
+    resolution: {integrity: sha512-EcOG4Ts/NtB9u38T4fQJzJKkSnxU2TNAINdDU0ND9GoRULbBjhcb4gpWfOJDTZnBZ/II6T+uY4vRmLUwgFtCqw==}
     dependencies:
       '@truffle/abi-utils': 0.3.9
-      '@truffle/codec': 0.14.16
-      '@truffle/source-map-utils': 1.3.108
+      '@truffle/codec': 0.14.17
+      '@truffle/source-map-utils': 1.3.109
       bn.js: 5.2.1
       debug: 4.3.4(supports-color@8.1.1)
       json-pointer: 0.6.2
@@ -3255,11 +3255,11 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/source-map-utils@1.3.108:
-    resolution: {integrity: sha512-yleh2/y+nsui9XmVgkq43795ar2JHaVO2RDHeA/IQ4NNmF7X5owOTdA5Rk/YvhqK1UUecvr2zKC3X3vLth8JFQ==}
+  /@truffle/source-map-utils@1.3.109:
+    resolution: {integrity: sha512-7YhlQ3XO2CEr8QypMNNMUfko2EB/QgeR6Uog8g9rfYJPdPPPmz2UpxgdBRKHaHn49ElrljlWsaRh8XVxZ0GNRw==}
     dependencies:
       '@truffle/code-utils': 3.0.2
-      '@truffle/codec': 0.14.16
+      '@truffle/codec': 0.14.17
       debug: 4.3.4(supports-color@8.1.1)
       json-pointer: 0.6.2
       node-interval-tree: 1.3.3
@@ -8961,7 +8961,7 @@ packages:
       is-extglob: 2.1.1
 
   /is-hex-prefixed@1.0.0:
-    resolution: {integrity: sha1-fY035q135dEnFIkTxXPggtd39VQ=}
+    resolution: {integrity: sha512-WvtOiug1VFrE9v1Cydwm+FnXd3+w9GaeVUss5W4v/SLy3UW00vP+6iNF2SdnfiBoLy4bTqVdkftNGTUeOFVsbA==}
     engines: {node: '>=6.5.0', npm: '>=3'}
     dev: false
 
@@ -14087,7 +14087,7 @@ packages:
     engines: {node: '>=6'}
 
   /strip-hex-prefix@1.0.0:
-    resolution: {integrity: sha1-DF8VX+8RUTczd96du1iNoFUA428=}
+    resolution: {integrity: sha512-q8d4ue7JGEiVcypji1bALTos+0pWtyGlivAWyPuTkHzuTCJqrK9sWxYQZUq6Nq3cuyv3bm734IhHvHtGGURU6A==}
     engines: {node: '>=6.5.0', npm: '>=3'}
     dependencies:
       is-hex-prefixed: 1.0.0
@@ -14520,19 +14520,19 @@ packages:
       - supports-color
     dev: false
 
-  /truffle@5.8.1:
-    resolution: {integrity: sha512-IxKn2urrbM7FVJP/3aQfC4sw2nG2he5tQehYFQ54M6S5yfWpl4PsxMZuRqid7CqnrkoruoYH6tZXypHqcFVc5Q==}
+  /truffle@5.8.2:
+    resolution: {integrity: sha512-W3Onv/Nzd8bbdchkkYB3BMfUnv7VdB6v2EGxeDylSIDxpo1O6xWYtuzHu6eKBYc8oObEatrrjHqkSo1vbVGlfg==}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@truffle/db-loader': 0.2.20
-      '@truffle/debugger': 11.0.31
+      '@truffle/db-loader': 0.2.21
+      '@truffle/debugger': 11.0.32
       app-module-path: 2.2.0
       ganache: 7.7.7
       mocha: 10.1.0
       original-require: 1.0.1
     optionalDependencies:
-      '@truffle/db': 2.0.20
+      '@truffle/db': 2.0.21
     transitivePeerDependencies:
       - bufferutil
       - encoding
