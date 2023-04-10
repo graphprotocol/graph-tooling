@@ -679,7 +679,7 @@ export default class Compiler {
 
   async _uploadToIPFS(file: { path: string; content: Buffer }) {
     try {
-      const hash = (await this.ipfs.add(file));
+      const hash = await this.ipfs.add(file);
       await this.ipfs.pin.add(hash.cid);
       return hash.toString();
     } catch (e) {
