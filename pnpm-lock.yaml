@@ -117,8 +117,8 @@ importers:
         specifier: 55.0.0
         version: 55.0.0(node-fetch@2.6.9)
       jayson:
-        specifier: 3.7.0
-        version: 3.7.0
+        specifier: 4.0.0
+        version: 4.0.0
       js-yaml:
         specifier: 3.14.1
         version: 3.14.1
@@ -9330,8 +9330,8 @@ packages:
       filelist: 1.0.4
       minimatch: 3.1.2
 
-  /jayson@3.7.0:
-    resolution: {integrity: sha512-tfy39KJMrrXJ+mFcMpxwBvFDetS8LAID93+rycFglIQM4kl3uNR3W4lBLE/FFhsoUCEox5Dt2adVpDm/XtebbQ==}
+  /jayson@4.0.0:
+    resolution: {integrity: sha512-v2RNpDCMu45fnLzSk47vx7I+QUaOsox6f5X0CUlabAFwxoP+8MfAY0NQRFwOEYXIxm8Ih5y6OaEa5KYiQMkyAA==}
     engines: {node: '>=8'}
     hasBin: true
     dependencies:
@@ -9345,7 +9345,6 @@ packages:
       eyes: 0.1.8
       isomorphic-ws: 4.0.1(ws@7.5.9)
       json-stringify-safe: 5.0.1
-      lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9
     transitivePeerDependencies:
