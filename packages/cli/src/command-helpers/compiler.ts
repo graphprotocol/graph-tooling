@@ -27,10 +27,9 @@ export function createCompiler(
     protocol,
   }: CreateCompilerOptions,
 ) {
-  // Parse the IPFS URL
-  let url;
+
   try {
-    url = ipfs ? new URL(ipfs) : undefined;
+    new URL(ipfs);
   } catch (e) {
     toolbox.print.error(`Invalid IPFS URL: ${ipfs}
 The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
@@ -38,15 +37,7 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
   }
 
   // Connect to the IPFS node (if a node address was provided)
-  ipfs = ipfs
-    ? create({
-        protocol: url?.protocol.replace(/[:]+$/, ''),
-        host: url?.hostname,
-        port: url?.port ? parseInt(url?.port) : undefined,
-        apiPath: url?.pathname.replace(/\/$/, '') + '/api/v0/',
-        headers,
-      })
-    : undefined;
+  ipfs = ipfs ? create({ url: ipfs, headers }) : undefined;
 
   return new Compiler({
     ipfs,
