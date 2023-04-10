@@ -685,7 +685,7 @@ export default class Compiler {
       const filesIterator = files[Symbol.asyncIterator]();
       // We only care about the first item, since that is the file, rest could be directories
       const { value } = await filesIterator.next();
-      
+
       // we grab the file and pin it
       const uploadedFile = value as Awaited<ReturnType<typeof this.ipfs.add>>;
       await this.ipfs.pin.add(uploadedFile.cid);
