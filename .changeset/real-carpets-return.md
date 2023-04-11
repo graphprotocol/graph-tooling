@@ -1,5 +1,5 @@
 ---
-"@graphprotocol/graph-cli": patch
+"@graphprotocol/graph-cli": minor
 ---
 
 Adding sepolia testnet to the graph-cli
