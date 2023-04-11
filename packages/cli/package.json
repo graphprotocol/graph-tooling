@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
-    "@oclif/core": "2.8.0",
+    "@oclif/core": "2.8.1",
     "@whatwg-node/fetch": "^0.8.4",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
