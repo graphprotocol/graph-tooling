@@ -198,7 +198,6 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://zkevm.polygonscan.com/api`;
     case 'sepolia':
       return `https://api-sepolia.etherscan.io/api`;
-      main;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
