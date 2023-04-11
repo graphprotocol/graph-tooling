@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.46.0
+
+### Minor Changes
+
+- [#1275](https://github.com/graphprotocol/graph-tooling/pull/1275)
+  [`0264c5d`](https://github.com/graphprotocol/graph-tooling/commit/0264c5da27ef3b01008f749f8ccbf19f1cfe4f7d)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - Adding sepolia testnet to the graph-cli
+
 ## 0.45.2
 
 ### Patch Changes
