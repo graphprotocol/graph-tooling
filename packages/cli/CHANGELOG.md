@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.46.1
+
+### Patch Changes
+
+- [#1277](https://github.com/graphprotocol/graph-tooling/pull/1277)
+  [`6d5378d`](https://github.com/graphprotocol/graph-tooling/commit/6d5378d08839a353559aad1c680b74aed0ce69e9)
+  Thanks [@saihaj](https://github.com/saihaj)! - point to correct IPFS URL endpoint
+
 ## 0.46.0
 
 ### Minor Changes
