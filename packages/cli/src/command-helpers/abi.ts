@@ -1,5 +1,5 @@
+import { fetch } from '@whatwg-node/fetch';
 import immutable from 'immutable';
-import fetch from 'node-fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
 
@@ -198,6 +198,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://zkevm.polygonscan.com/api`;
     case 'sepolia':
       return `https://api-sepolia.etherscan.io/api`;
+    main
     default:
       return `https://api-${network}.etherscan.io/api`;
   }

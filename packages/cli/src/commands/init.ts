@@ -815,9 +815,9 @@ async function initSubgraphFromExample(
         const pkgJson = await filesystem.read(pkgJsonFilename, 'json');
 
         pkgJson.name = getSubgraphBasename(subgraphName);
-        Object.keys(pkgJson.scripts).forEach(name => {
+        for (const name of Object.keys(pkgJson.scripts)) {
           pkgJson.scripts[name] = pkgJson.scripts[name].replace('example', subgraphName);
-        });
+        }
         delete pkgJson['license'];
         delete pkgJson['repository'];
 

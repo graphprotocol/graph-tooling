@@ -2,6 +2,7 @@ import immutable from 'immutable';
 import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types';
 import * as util from '../codegen/util';
 import Protocol from '../protocols';
+import { INPUT_NAMES_BLACKLIST, renameInput } from './mapping';
 
 export function abiEvents(abi: { data: immutable.Collection<any, any> }) {
   return util.disambiguateNames({
@@ -57,21 +58,28 @@ export const generateEventFields = ({
         }),
       ];
 
-export const generateEventType = (event: any, protocolName: string) => `type ${
-  event._alias
-} @entity(immutable: true) {
-      id: Bytes!
-      ${event.inputs
-        .reduce(
-          (acc: any[], input: any, index: number) =>
-            acc.concat(generateEventFields({ input, index, protocolName })),
-          [],
-        )
-        .join('\n')}
-      blockNumber: BigInt!
-      blockTimestamp: BigInt!
-      transactionHash: Bytes!
-    }`;
+export const generateEventType = (
+  event: any,
+  protocolName: string,
+  contractName: string | undefined,
+) => {
+  return `type ${
+    event.collision ? `${contractName}${event._alias}` : event._alias
+  } @entity(immutable: true) {
+        id: Bytes!
+        ${event.inputs
+          .reduce((acc: any[], input: any, index: number) => {
+            if (Object.values(INPUT_NAMES_BLACKLIST).includes(input.name)) {
+              input.name = renameInput(input.name, contractName ?? 'contract');
+            }
+            return acc.concat(generateEventFields({ input, index, protocolName }));
+          }, [])
+          .join('\n')}
+        blockNumber: BigInt!
+        blockTimestamp: BigInt!
+        transactionHash: Bytes!
+      }`;
+};
 
 export const generateExampleEntityType = (protocol: Protocol, events: any[]) => {
   if (protocol.hasABIs() && events.length > 0) {

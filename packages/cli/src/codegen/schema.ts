@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-array-for-each */
 import immutable from 'immutable';
 import Schema from '../schema';
 import * as typesCodegen from './types';

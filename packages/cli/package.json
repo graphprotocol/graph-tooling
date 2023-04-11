@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.43.0",
+  "version": "0.45.2",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
@@ -19,59 +19,65 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json && oclif manifest && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
     "test": "jest --verbose",
+    "test:add": "jest tests/cli/add.test.ts --verbose",
     "test:init": "jest tests/cli/init.test.ts --verbose",
     "test:validation": "jest tests/cli/validation.test.ts --verbose",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
-    "@oclif/core": "2.0.7",
+    "@oclif/core": "2.8.0",
+    "@whatwg-node/fetch": "^0.8.4",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
     "chalk": "3.0.0",
-    "chokidar": "3.5.1",
-    "debug": "4.3.1",
-    "docker-compose": "0.23.4",
+    "chokidar": "3.5.3",
+    "debug": "4.3.4",
+    "docker-compose": "0.23.19",
     "dockerode": "2.5.8",
-    "fs-extra": "9.0.0",
-    "glob": "7.1.6",
+    "fs-extra": "9.1.0",
+    "glob": "9.3.4",
     "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
     "graphql": "15.5.0",
     "immutable": "4.2.1",
-    "ipfs-http-client": "34.0.0",
-    "jayson": "3.6.6",
-    "js-yaml": "3.13.1",
-    "node-fetch": "2.6.0",
+    "ipfs-http-client": "55.0.0",
+    "jayson": "4.0.0",
+    "js-yaml": "3.14.1",
     "prettier": "1.19.1",
     "request": "2.88.2",
-    "semver": "7.3.5",
+    "semver": "7.3.8",
     "sync-request": "6.1.0",
-    "tmp-promise": "3.0.2",
+    "tmp-promise": "3.0.3",
     "web3-eth-abi": "1.7.0",
     "which": "2.0.2",
-    "yaml": "1.9.2"
+    "yaml": "1.10.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^26.0.24",
     "@types/js-yaml": "^3.12.7",
-    "@types/node-fetch": "^2.6.2",
     "@types/semver": "^7.3.13",
     "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
-    "jest": "26.0.0",
-    "oclif": "3.6.1",
+    "jest": "26.6.3",
+    "oclif": "3.7.3",
     "spawn-command": "0.0.2-1",
-    "strip-ansi": "6.0.0",
+    "strip-ansi": "6.0.1",
     "tern": "0.24.3",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "oclif": {
     "bin": "graph",
-    "commands": "./dist/commands"
+    "commands": "./dist/commands",
+    "additionalHelpFlags": [
+      "-h"
+    ],
+    "additionalVersionFlags": [
+      "-v"
+    ]
   }
 }

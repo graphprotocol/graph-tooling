@@ -32,6 +32,7 @@ const testEntity = (generatedTypes: any[], expectedEntity: any) => {
   for (const expectedMethod of expectedEntity.methods) {
     const method = methods.find((method: any) => method.name === expectedMethod.name);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expectedMethod.static
       ? expect(method instanceof StaticMethod).toBe(true)
       : expect(method instanceof Method).toBe(true);

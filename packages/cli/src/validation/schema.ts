@@ -210,7 +210,9 @@ const gatherImportedTypes = (defs: readonly graphql.DefinitionNode[]) =>
       (flattened, types_args) =>
         flattened.concat(
           types_args.reduce((flattened: any, types_arg: any[]) => {
-            types_arg.forEach(type => (type ? flattened.push(type) : undefined));
+            for (const type in types_arg) {
+              if (type) flattened.push(type);
+            }
             return flattened;
           }, []),
         ),
@@ -257,7 +259,7 @@ const validateInnerFieldType = (defs: any[], def: any, field: any) => {
           entity: def.name.value,
           message: `\
 Field '${field.name.value}': \
-Unknown type '${typeName}'.${suggestion !== undefined ? ` Did you mean '${suggestion}'?` : ''}`,
+Unknown type '${typeName}'.${suggestion === undefined ? '' : ` Did you mean '${suggestion}'?`}`,
         },
       ]);
 };
@@ -433,16 +435,16 @@ const validateFulltextName = (def: any, directive: any) => {
 };
 
 const validateFulltextArgumentName = (def: any, directive: any, argument: any) => {
-  return argument.value.kind != 'StringValue'
-    ? List([
+  return argument.value.kind == 'StringValue'
+    ? List([])
+    : List([
         immutable.fromJS({
           loc: directive.name.loc,
           entity: def.name.value,
           directive: fulltextDirectiveName(directive),
           message: `@fulltext argument 'name' must be a string`,
         }),
-      ])
-    : List([]);
+      ]);
 };
 
 const fulltextDirectiveName = (directive: any) => {
@@ -911,9 +913,9 @@ const typeDefinitionValidators = {
 };
 
 const validateTypeDefinition = (defs: any, def: { kind: keyof typeof typeDefinitionValidators }) =>
-  typeDefinitionValidators[def.kind] !== undefined
-    ? typeDefinitionValidators[def.kind](defs, def)
-    : List();
+  typeDefinitionValidators[def.kind] === undefined
+    ? List()
+    : typeDefinitionValidators[def.kind](defs, def);
 
 const validateTypeDefinitions = (defs: any) =>
   defs.reduce(

@@ -70,7 +70,7 @@ const assignValue = (type: string): string | number | boolean => {
     }
     default: {
       const value = VARIABLES_VALUES[type as keyof typeof VARIABLES_VALUES];
-      return value ? value : `"${type} Not implemented"`;
+      return value || `"${type} Not implemented"`;
     }
   }
 };
@@ -107,7 +107,7 @@ const expectedValue = (type: string): string | number | boolean => {
     }
     default: {
       const value = VARIABLES_VALUES[type as keyof typeof VARIABLES_VALUES];
-      return value ? value : `${type} Not implemented`;
+      return value || `${type} Not implemented`;
     }
   }
 };

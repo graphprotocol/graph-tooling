@@ -1,5 +1,180 @@
 # @graphprotocol/graph-cli
 
+## 0.45.2
+
+### Patch Changes
+
+- [#1268](https://github.com/graphprotocol/graph-tooling/pull/1268)
+  [`d473997`](https://github.com/graphprotocol/graph-tooling/commit/d473997a9fea02e91649a0e345fd84dbeff54fdf)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+  - Updated dependency
+    [`ipfs-http-client@55.0.0` ↗︎](https://www.npmjs.com/package/ipfs-http-client/v/55.0.0) (from
+    `34.0.0`, in `dependencies`)
+  - Updated dependency [`jayson@4.0.0` ↗︎](https://www.npmjs.com/package/jayson/v/4.0.0) (from
+    `3.7.0`, in `dependencies`)
+
+## 0.45.1
+
+### Patch Changes
+
+- [#1263](https://github.com/graphprotocol/graph-tooling/pull/1263)
+  [`2ba2ba9`](https://github.com/graphprotocol/graph-tooling/commit/2ba2ba96c6cdc10461903b0712f122eb6d245f86)
+  Thanks [@mihirgupta0900](https://github.com/mihirgupta0900)! - Fixes dependency error from
+  `ipfs-http-client` and `concat-stream`. Visit
+  https://github.com/graphprotocol/graph-tooling/issues/1262 for more details.
+
+## 0.45.0
+
+### Minor Changes
+
+- [#1225](https://github.com/graphprotocol/graph-tooling/pull/1225)
+  [`3f9aa1c`](https://github.com/graphprotocol/graph-tooling/commit/3f9aa1ce7dbb8c26da9fc8e3d9801ec412886f1d)
+  Thanks [@saihaj](https://github.com/saihaj)! - When the contract has an `id` event, the CLI
+  renames the `id` entity to `{contractName}_id` and map it to `{contractName}_id` in the mapping.
+
+- [#1209](https://github.com/graphprotocol/graph-tooling/pull/1209)
+  [`f26398e`](https://github.com/graphprotocol/graph-tooling/commit/f26398e054c556f414a1b45e92b7e4007a9b5a79)
+  Thanks [@kalloc](https://github.com/kalloc)! - Support `ts` typing in tests folder
+
+### Patch Changes
+
+- [#1216](https://github.com/graphprotocol/graph-tooling/pull/1216)
+  [`47e683d`](https://github.com/graphprotocol/graph-tooling/commit/47e683da9cd19b1eb6408c84111e1eadad84304d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`yaml@1.10.2` ↗︎](https://www.npmjs.com/package/yaml/v/1.10.2) (from
+    `1.9.2`, in `dependencies`)
+
+- [#1218](https://github.com/graphprotocol/graph-tooling/pull/1218)
+  [`01046d9`](https://github.com/graphprotocol/graph-tooling/commit/01046d946f42f436fb10d54c5c959012cd6fef67)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Added dependency
+    [`@whatwg-node/fetch@^0.8.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.4) (to
+    `dependencies`)
+  - Removed dependency [`node-fetch@2.6.0` ↗︎](https://www.npmjs.com/package/node-fetch/v/2.6.0)
+    (from `dependencies`)
+
+- [#1224](https://github.com/graphprotocol/graph-tooling/pull/1224)
+  [`f82aac9`](https://github.com/graphprotocol/graph-tooling/commit/f82aac9e784c9ab6c2c9185cf1ea54ece0be1085)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`chokidar@3.5.3` ↗︎](https://www.npmjs.com/package/chokidar/v/3.5.3) (from
+    `3.5.1`, in `dependencies`)
+
+- [#1226](https://github.com/graphprotocol/graph-tooling/pull/1226)
+  [`ae76840`](https://github.com/graphprotocol/graph-tooling/commit/ae76840703fa62260d161968abfc461290ecfd22)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`debug@4.3.4` ↗︎](https://www.npmjs.com/package/debug/v/4.3.4) (from
+    `4.3.1`, in `dependencies`)
+
+- [#1227](https://github.com/graphprotocol/graph-tooling/pull/1227)
+  [`7516030`](https://github.com/graphprotocol/graph-tooling/commit/751603045fc5f92d0d4b950f3a0fa263f040c401)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`docker-compose@0.23.19` ↗︎](https://www.npmjs.com/package/docker-compose/v/0.23.19) (from
+    `0.23.4`, in `dependencies`)
+
+- [#1228](https://github.com/graphprotocol/graph-tooling/pull/1228)
+  [`cefbf3a`](https://github.com/graphprotocol/graph-tooling/commit/cefbf3a0d4601d79c4700eed45f1fc3ede35fbd7)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`semver@7.3.8` ↗︎](https://www.npmjs.com/package/semver/v/7.3.8) (from
+    `7.3.5`, in `dependencies`)
+
+- [#1229](https://github.com/graphprotocol/graph-tooling/pull/1229)
+  [`425558f`](https://github.com/graphprotocol/graph-tooling/commit/425558f3211ed79bbfc090d21e39a0eea7cb7cb5)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`tmp-promise@3.0.3` ↗︎](https://www.npmjs.com/package/tmp-promise/v/3.0.3)
+    (from `3.0.2`, in `dependencies`)
+
+- [#1232](https://github.com/graphprotocol/graph-tooling/pull/1232)
+  [`dc1e433`](https://github.com/graphprotocol/graph-tooling/commit/dc1e43304cf382d67bbd4f2f5d9f80e3fe676b47)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@2.8.0` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.0)
+    (from `2.0.7`, in `dependencies`)
+
+- [#1234](https://github.com/graphprotocol/graph-tooling/pull/1234)
+  [`2f6838a`](https://github.com/graphprotocol/graph-tooling/commit/2f6838ac06e0d3b672565594a1acd817d46cb450)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`fs-extra@9.1.0` ↗︎](https://www.npmjs.com/package/fs-extra/v/9.1.0) (from
+    `9.0.0`, in `dependencies`)
+
+- [#1239](https://github.com/graphprotocol/graph-tooling/pull/1239)
+  [`b331905`](https://github.com/graphprotocol/graph-tooling/commit/b331905790c193183fb9cad834f488027cb3fd91)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`jayson@3.7.0` ↗︎](https://www.npmjs.com/package/jayson/v/3.7.0) (from
+    `3.6.6`, in `dependencies`)
+
+- [#1240](https://github.com/graphprotocol/graph-tooling/pull/1240)
+  [`ef99d62`](https://github.com/graphprotocol/graph-tooling/commit/ef99d6234de249a04e9d5f09d1f0909f9261d413)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`js-yaml@3.14.1` ↗︎](https://www.npmjs.com/package/js-yaml/v/3.14.1) (from
+    `3.13.1`, in `dependencies`)
+
+- [#1243](https://github.com/graphprotocol/graph-tooling/pull/1243)
+  [`5682ab5`](https://github.com/graphprotocol/graph-tooling/commit/5682ab5aab38013aa68936d70458962f2927db75)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`yaml@1.10.2` ↗︎](https://www.npmjs.com/package/yaml/v/1.10.2) (from
+    `1.9.2`, in `dependencies`)
+
+- [#1248](https://github.com/graphprotocol/graph-tooling/pull/1248)
+  [`1ecb75a`](https://github.com/graphprotocol/graph-tooling/commit/1ecb75a7e45b120841c799bcb599a1fde757313c)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`glob@9.3.4` ↗︎](https://www.npmjs.com/package/glob/v/9.3.4) (from `7.1.6`,
+    in `dependencies`)
+
+- [#1246](https://github.com/graphprotocol/graph-tooling/pull/1246)
+  [`8e1409f`](https://github.com/graphprotocol/graph-tooling/commit/8e1409fbd04fa9e34fbc7d49160d9888ef74aebb)
+  Thanks [@dimitrovmaksim](https://github.com/dimitrovmaksim)! - Fixes `graph add` overwriting the
+  event names in `subgraph.yaml` and the ABI file when existing contracts have events with the same
+  name.
+
+- [#1207](https://github.com/graphprotocol/graph-tooling/pull/1207)
+  [`ad275b3`](https://github.com/graphprotocol/graph-tooling/commit/ad275b31e635dab03cfefda00617ef9f612b01c0)
+  Thanks [@saihaj](https://github.com/saihaj)! - bring back short hand for version and help
+
+## 0.44.0
+
+### Minor Changes
+
+- [#1210](https://github.com/graphprotocol/graph-tooling/pull/1210)
+  [`17da832`](https://github.com/graphprotocol/graph-tooling/commit/17da8322d23e1632d57d27fa1c4c158e2858b967)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - Added polygon zkevm to cli
+
+### Patch Changes
+
+- [#1201](https://github.com/graphprotocol/graph-tooling/pull/1201)
+  [`f87e54c`](https://github.com/graphprotocol/graph-tooling/commit/f87e54c1615ace99ffc04ad9dc4b21bdcbe381bc)
+  Thanks [@saihaj](https://github.com/saihaj)! - read testsFolder from matchstick yaml and set the
+  paths based on that
+
+- [#1201](https://github.com/graphprotocol/graph-tooling/pull/1201)
+  [`f87e54c`](https://github.com/graphprotocol/graph-tooling/commit/f87e54c1615ace99ffc04ad9dc4b21bdcbe381bc)
+  Thanks [@saihaj](https://github.com/saihaj)! - make datasource and version optional args for test
+  command
+
+- [`876bc52`](https://github.com/graphprotocol/graph-tooling/commit/876bc523e5a53db162d9b5aa79e9de76a9e92ccf)
+  Thanks [@saihaj](https://github.com/saihaj)! - Allow file data sources (with no network) to deploy
+  to the studio. File data sources don't have a network specified.
+
+- [#1197](https://github.com/graphprotocol/graph-tooling/pull/1197)
+  [`b52e3b1`](https://github.com/graphprotocol/graph-tooling/commit/b52e3b1034cf3411a6c1c94aff73633b847256a0)
+  Thanks [@saihaj](https://github.com/saihaj)! - make generated list children non-nullable
+
+- [#1193](https://github.com/graphprotocol/graph-tooling/pull/1193)
+  [`c240588`](https://github.com/graphprotocol/graph-tooling/commit/c2405887fbe3128d530fd76ffd0f97fe195d37f5)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not generate setters for derived fields
+
 ## 0.43.0
 
 ### Minor Changes

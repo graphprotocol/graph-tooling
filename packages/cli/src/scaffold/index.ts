@@ -103,7 +103,9 @@ dataSources:
 
     return prettier.format(
       hasEvents && this.indexEvents
-        ? events.map((event: any) => generateEventType(event, this.protocol.name)).join('\n\n')
+        ? events
+            .map((event: any) => generateEventType(event, this.protocol.name, this.contractName))
+            .join('\n\n')
         : generateExampleEntityType(this.protocol, events),
       {
         parser: 'graphql',
@@ -115,7 +117,7 @@ dataSources:
     return prettier.format(
       JSON.stringify({
         extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
-        include: ['src'],
+        include: ['src', 'tests'],
       }),
       { parser: 'json' },
     );
