@@ -72,8 +72,8 @@ importers:
         specifier: ^0.0.0-alpha.4
         version: 0.0.0-alpha.6
       '@oclif/core':
-        specifier: 2.8.0
-        version: 2.8.0(@types/node@18.11.9)(typescript@5.0.2)
+        specifier: 2.8.1
+        version: 2.8.1(@types/node@18.11.9)(typescript@5.0.2)
       '@whatwg-node/fetch':
         specifier: ^0.8.4
         version: 0.8.4
@@ -2655,8 +2655,8 @@ packages:
       tslib: 2.5.0
     dev: true
 
-  /@oclif/core@2.8.0(@types/node@18.11.9)(typescript@5.0.2):
-    resolution: {integrity: sha512-A2wHItFrD/WOw5bJ6Mtv9MD7If0bsKNR0pwEY0me+fo4HSXlJOtgYGqmzb8t8akX3DUUT7XsjPajsoHLkIJyvg==}
+  /@oclif/core@2.8.1(@types/node@18.11.9)(typescript@5.0.2):
+    resolution: {integrity: sha512-GnJNTR6+TmrvBBHTXFPV7oqhEbJ6Rv+pnG6XVag6MUwzKjIrhotyT2DH2/QkIQ+J2wgsqQvo2hcB9QuoBC3Ipg==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@types/cli-progress': 3.11.0
@@ -2698,7 +2698,7 @@ packages:
     resolution: {integrity: sha512-ok8gS2phqA4MiGkjCrZPFvhNIHIp35WsvNNVUn4GL8WZYQ5mk1cZuu+IIqTZxBFZ4QDUZLVkumrhsqx3oNId9A==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@oclif/core': 2.8.0(@types/node@18.11.9)(typescript@5.0.2)
+      '@oclif/core': 2.8.1(@types/node@18.11.9)(typescript@5.0.2)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -2711,7 +2711,7 @@ packages:
     engines: {node: '>=12.0.0'}
     dependencies:
       '@oclif/color': 1.0.4
-      '@oclif/core': 2.8.0(@types/node@18.11.9)(typescript@5.0.2)
+      '@oclif/core': 2.8.1(@types/node@18.11.9)(typescript@5.0.2)
       fast-levenshtein: 3.0.0
       lodash: 4.17.21
     transitivePeerDependencies:
@@ -2725,7 +2725,7 @@ packages:
     resolution: {integrity: sha512-Rq8/EZ8wQawvPWS6W59Zhf/zSz/umLc3q75I1ybi7pul6YMNwf/E1eDVHytSUEQ6yQV+p3cCs034IItz4CVdjw==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@oclif/core': 2.8.0(@types/node@18.11.9)(typescript@5.0.2)
+      '@oclif/core': 2.8.1(@types/node@18.11.9)(typescript@5.0.2)
       chalk: 4.1.2
       debug: 4.3.4(supports-color@8.1.1)
       fs-extra: 9.1.0
@@ -11892,7 +11892,7 @@ packages:
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
-      '@oclif/core': 2.8.0(@types/node@18.11.9)(typescript@5.0.2)
+      '@oclif/core': 2.8.1(@types/node@18.11.9)(typescript@5.0.2)
       '@oclif/plugin-help': 5.2.2(@types/node@18.11.9)(typescript@5.0.2)
       '@oclif/plugin-not-found': 2.3.17(@types/node@18.11.9)(typescript@5.0.2)
       '@oclif/plugin-warn-if-update-available': 2.0.24(@types/node@18.11.9)(typescript@5.0.2)
