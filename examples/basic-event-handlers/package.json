@@ -12,7 +12,7 @@
   "dependencies": {
     "babel-polyfill": "6.26.0",
     "babel-register": "6.26.0",
-    "truffle": "5.8.1",
+    "truffle": "5.8.2",
     "truffle-hdwallet-provider": "1.0.6"
   },
   "devDependencies": {
