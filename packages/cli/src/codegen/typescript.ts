@@ -1,5 +1,5 @@
 class Param {
-  constructor(public name: string, public type: string | NamedType | NullableType) {
+  constructor(public name: string, public type: string | NamedType | ArrayType | NullableType) {
     this.name = name;
     this.type = type;
   }
@@ -13,7 +13,7 @@ class Method {
   constructor(
     public name: string,
     public params: Param[],
-    public returnType: string | NamedType | null | undefined,
+    public returnType: string | NamedType | ArrayType | NullableType | null | undefined,
     public body: string,
   ) {
     this.name = name;
@@ -175,11 +175,12 @@ class ModuleImports {
 
 const namedType = (name: string) => new NamedType(name);
 const arrayType = (name: NamedType) => new ArrayType(name);
-const param = (name: string, type: string | NamedType) => new Param(name, type);
+const param = (name: string, type: string | NamedType | ArrayType | NullableType) =>
+  new Param(name, type);
 const method = (
   name: string,
   params: Param[],
-  returnType: string | NamedType | null | undefined,
+  returnType: string | NamedType | ArrayType | NullableType | null | undefined,
   body: string,
 ) => new Method(name, params, returnType, body);
 const staticMethod = (

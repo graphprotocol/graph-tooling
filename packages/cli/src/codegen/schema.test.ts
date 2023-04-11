@@ -1,5 +1,4 @@
 import * as graphql from 'graphql/language';
-import immutable from 'immutable';
 import prettier from 'prettier';
 import Schema from '../schema';
 import SchemaCodeGenerator from './schema';
@@ -16,7 +15,7 @@ import {
 const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
 
 const createSchemaCodeGen = (schema: string) =>
-  new SchemaCodeGenerator(new Schema('', schema, immutable.fromJS(graphql.parse(schema))));
+  new SchemaCodeGenerator(new Schema('', schema, graphql.parse(schema)));
 
 const testEntity = (generatedTypes: any[], expectedEntity: any) => {
   const entity = generatedTypes.find(type => type.name === expectedEntity.name);
@@ -57,7 +56,7 @@ describe('Schema code generator', () => {
       }
     `);
 
-    expect(codegen.generateTypes().size).toBe(0);
+    expect(codegen.generateTypes().length).toBe(0);
   });
 
   describe('Should generate correct classes for each entity', () => {
@@ -95,7 +94,7 @@ describe('Schema code generator', () => {
       const foo = generatedTypes.find((type: any) => type.name === 'Foo');
       expect(foo).toBe(undefined);
       // Account and Wallet
-      expect(generatedTypes.size).toBe(2);
+      expect(generatedTypes.length).toBe(2);
     });
 
     test('Account is an entity with the correct methods', () => {
