@@ -101,7 +101,14 @@ export default class Compiler {
     return hash.digest('hex');
   }
 
-  async compile() {
+  async compile({
+    validate = false,
+  }: {
+    /**
+     * Whether to validate the compiled artifacts.
+     */
+    validate: boolean;
+  }) {
     try {
       if (!this.options.skipMigrations) {
         await applyMigrations({
@@ -110,7 +117,7 @@ export default class Compiler {
         });
       }
       const subgraph = await this.loadSubgraph();
-      const compiledSubgraph = await this.compileSubgraph(subgraph);
+      const compiledSubgraph = await this.compileSubgraph(subgraph, validate);
       const localSubgraph = await this.writeSubgraphToOutputDirectory(
         this.options.protocol,
         compiledSubgraph,
@@ -191,7 +198,7 @@ export default class Compiler {
         if (changedFile !== undefined) {
           spinner.info(`File change detected: ${this.displayPath(changedFile)}\n`);
         }
-        const ipfsHash = await compiler.compile();
+        const ipfsHash = await compiler.compile({ validate: false });
         onCompiled?.(ipfsHash);
         spinner.start();
       },
@@ -232,7 +239,7 @@ export default class Compiler {
     return targetFile;
   }
 
-  async compileSubgraph(subgraph: any) {
+  async compileSubgraph(subgraph: any, validate = false) {
     return await withSpinner(
       `Compile subgraph`,
       `Failed to compile subgraph`,
@@ -252,6 +259,7 @@ export default class Compiler {
                 mappingPath,
                 compiledFiles,
                 spinner,
+                validate,
               ),
             ),
           ),
@@ -334,6 +342,7 @@ export default class Compiler {
     mappingPath: string,
     compiledFiles: Map<any, any>,
     spinner: Spinner,
+    validate = false,
   ) {
     if (protocol.name == 'substreams') {
       return;
@@ -389,12 +398,14 @@ export default class Compiler {
         outputFile,
       });
 
-      const missingHandlers = this._validateHandlersInWasm({
-        pathToWasm: outFile,
-        dataSource,
-      });
-      if (missingHandlers.length > 0) {
-        throw Error(`\n\tMissing handlers in WASM: ${missingHandlers.join(', ')}`);
+      if (validate) {
+        const missingHandlers = this._validateHandlersInWasm({
+          pathToWasm: outFile,
+          dataSource,
+        });
+        if (missingHandlers.length > 0) {
+          throw Error(`\n\tMissing handlers in WASM: ${missingHandlers.join(', ')}`);
+        }
       }
 
       // Remember the output file to avoid compiling the same file again
