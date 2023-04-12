@@ -76,6 +76,7 @@ describe('Schema code generator', () => {
         # two primitive types (i32)
         age: Int
         count: Int!
+        isActive: Boolean
 
         # derivedFrom
         wallets: [Wallet!] @derivedFrom(field: "account")
@@ -139,9 +140,12 @@ describe('Schema code generator', () => {
             name: 'get id',
             params: [],
             returnType: new NamedType('string'),
-            body: `
-              let value = this.get('id')
-              return value!.toString()
+            body: `let value = this.get('id')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toString()
+            }
             `,
           },
           {
@@ -181,9 +185,12 @@ describe('Schema code generator', () => {
             name: 'get name',
             params: [],
             returnType: new NamedType('string'),
-            body: `
-              let value = this.get('name')
-              return value!.toString()
+            body: `let value = this.get('name')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toString()
+            }
             `,
           },
           {
@@ -198,9 +205,12 @@ describe('Schema code generator', () => {
             name: 'get age',
             params: [],
             returnType: new NamedType('i32'),
-            body: `
-              let value = this.get('age')
-              return value!.toI32()
+            body: `let value = this.get('age')
+            if (!value || value.kind == ValueKind.NULL) {
+              return 0
+            } else {
+              return value.toI32()
+            } 
             `,
           },
           {
@@ -215,9 +225,12 @@ describe('Schema code generator', () => {
             name: 'get count',
             params: [],
             returnType: new NamedType('i32'),
-            body: `
-              let value = this.get('count')
-              return value!.toI32()
+            body: `let value = this.get('count')
+            if (!value || value.kind == ValueKind.NULL) {
+              return 0
+            } else {
+              return value.toI32()
+            }
             `,
           },
           {
@@ -226,6 +239,26 @@ describe('Schema code generator', () => {
             returnType: undefined,
             body: `
               this.set('count', Value.fromI32(value))
+            `,
+          },
+          {
+            name: 'get isActive',
+            params: [],
+            returnType: new NamedType('boolean'),
+            body: `let value = this.get('isActive')
+            if (!value || value.kind == ValueKind.NULL) {
+              return false
+            } else {
+              return value.toBoolean()
+            }
+            `,
+          },
+          {
+            name: 'set isActive',
+            params: [new Param('value', new NamedType('boolean'))],
+            returnType: undefined,
+            body: `
+              this.set('isActive', Value.fromBoolean(value))
             `,
           },
           {
@@ -287,9 +320,12 @@ describe('Schema code generator', () => {
             name: 'get id',
             params: [],
             returnType: new NamedType('string'),
-            body: `
-              let value = this.get('id')
-              return value!.toString()
+            body: `let value = this.get('id')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toString()
+            }
             `,
           },
           {
@@ -304,9 +340,12 @@ describe('Schema code generator', () => {
             name: 'get amount',
             params: [],
             returnType: new NamedType('BigInt'),
-            body: `
-              let value = this.get('amount')
-              return value!.toBigInt()
+            body: `let value = this.get('amount')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toBigInt()
+            }
             `,
           },
           {
@@ -321,9 +360,12 @@ describe('Schema code generator', () => {
             name: 'get account',
             params: [],
             returnType: new NamedType('string'),
-            body: `
-              let value = this.get('account')
-              return value!.toString()
+            body: `let value = this.get('account')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toString()
+            }
             `,
           },
           {
@@ -398,11 +440,12 @@ describe('Schema code generator', () => {
           name: 'get id',
           params: [],
           returnType: new NamedType('Bytes'),
-          body:
-            '\n' +
-            "       let value = this.get('id')\n" +
-            '       return value!.toBytes()\n' +
-            '      ',
+          body: `let value = this.get("id")
+            if (!value || value.kind == ValueKind.NULL) {
+               throw new Error("Cannot return null for a required field.")
+             } else {
+               return value.toBytes()
+             }`,
         },
         {
           name: 'set id',
@@ -414,11 +457,12 @@ describe('Schema code generator', () => {
           name: 'get employee',
           params: [],
           returnType: new NamedType('Bytes'),
-          body:
-            '\n' +
-            "       let value = this.get('employee')\n" +
-            '       return value!.toBytes()\n' +
-            '      ',
+          body: `let value = this.get('employee')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toBytes()
+            }`,
         },
         {
           name: 'set employee',
@@ -430,11 +474,12 @@ describe('Schema code generator', () => {
           name: 'get worker',
           params: [],
           returnType: new NamedType('Bytes'),
-          body:
-            '\n' +
-            "       let value = this.get('worker')\n" +
-            '       return value!.toBytes()\n' +
-            '      ',
+          body: `let value = this.get('worker')
+          if (!value || value.kind == ValueKind.NULL) {
+            throw new Error("Cannot return null for a required field.")
+          } else {
+            return value.toBytes()
+          }`,
         },
         {
           name: 'set worker',
