@@ -4,6 +4,8 @@ on:
     branches:
       - main
 
+permissions: write-all
+
 jobs:
   stable:
     uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@main

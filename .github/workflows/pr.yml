@@ -1,8 +1,11 @@
+
 name: Snapshot Release
 on:
   pull_request:
     branches:
       - main
+
+permissions: write-all
 
 jobs:
   dependencies:
