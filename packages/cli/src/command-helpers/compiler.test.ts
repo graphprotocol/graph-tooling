@@ -26,9 +26,7 @@ describe('appendApiVersionForGraph', () => {
   });
 
   it('do nothing if Prod URL has no /ipfs', () => {
-    expect(appendApiVersionForGraph('https://api.thegraph.com')).toBe(
-      'https://api.thegraph.com',
-    );
+    expect(appendApiVersionForGraph('https://api.thegraph.com')).toBe('https://api.thegraph.com');
   });
 
   it('do nothing for non-graph endpoint', () => {
