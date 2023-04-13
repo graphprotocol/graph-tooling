@@ -24,9 +24,7 @@ export default class DeployCommand extends Command {
   static description = 'Deploys a subgraph to a Graph node.';
 
   static args = {
-    'subgraph-name': Args.string({
-      required: true,
-    }),
+    'subgraph-name': Args.string({}),
     'subgraph-manifest': Args.string({
       default: 'subgraph.yaml',
     }),
@@ -95,7 +93,7 @@ export default class DeployCommand extends Command {
 
   async run() {
     const {
-      args: { 'subgraph-name': subgraphName, 'subgraph-manifest': manifest },
+      args: { 'subgraph-name': subgraphNameArg, 'subgraph-manifest': manifest },
       flags: {
         product: productFlag,
         studio,
@@ -113,6 +111,12 @@ export default class DeployCommand extends Command {
         'network-file': networkFile,
       },
     } = await this.parse(DeployCommand);
+
+    const subgraphName =
+      subgraphNameArg ||
+      (await ux.prompt('What is the subgraph name?', {
+        required: true,
+      }));
 
     // We are given a node URL, so we prioritize that over the product flag
     const product = nodeFlag
