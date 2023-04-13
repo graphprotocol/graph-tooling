@@ -1,7 +1,7 @@
 import path from 'path';
 import { URL } from 'url';
 import { Args, Command, Flags, ux } from '@oclif/core';
-import { print } from 'gluegun';
+import { print, prompt } from 'gluegun';
 import { identifyDeployKey } from '../command-helpers/auth';
 import { createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
@@ -20,6 +20,8 @@ const headersFlag = Flags.custom<Record<string, string>>({
   default: {},
 });
 
+const productOptions = ['subgraph-studio', 'hosted-service'];
+
 export default class DeployCommand extends Command {
   static description = 'Deploys a subgraph to a Graph node.';
 
@@ -37,7 +39,7 @@ export default class DeployCommand extends Command {
 
     product: Flags.string({
       summary: 'Select a product for which to authenticate.',
-      options: ['subgraph-studio', 'hosted-service'],
+      options: productOptions,
     }),
     studio: Flags.boolean({
       summary: 'Shortcut for "--product subgraph-studio".',
@@ -124,9 +126,17 @@ export default class DeployCommand extends Command {
       : studio
       ? 'subgraph-studio'
       : productFlag ||
-        (await ux.prompt('Which product to deploy for?', {
-          required: true,
-        }));
+        (await prompt
+          .ask([
+            {
+              name: 'product',
+              message: 'Which product to deploy for?',
+              required: true,
+              type: 'select',
+              choices: productOptions,
+            },
+          ])
+          .then(({ product }) => product as string));
 
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
