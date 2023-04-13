@@ -1,0 +1,30 @@
+{
+  "name": "@graphprotocol/hardhat-graph",
+  "version": "0.0.0",
+  "description": "Hardhat plugin for Ethereum developers to build subgraphs alongside their smart contracts",
+  "license": "(Apache-2.0 OR MIT)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/*",
+    "src/*",
+    "README.md"
+  ],
+  "scripts": {},
+  "peerDependencies": {
+    "@graphprotocol/graph-cli": ">= 0.44.0",
+    "@graphprotocol/graph-ts": ">= 0.29.3",
+    "hardhat": ">=2.13.0"
+  },
+  "dependencies": {
+    "@whatwg-node/fetch": "^0.8.4",
+    "ethers": "^5.6.5"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "workspace:*",
+    "@graphprotocol/graph-ts": "workspace:*",
+    "@types/node": "^12.20.50",
+    "hardhat": "^2.13.0",
+    "typescript": "^5.0.0"
+  }
+}
