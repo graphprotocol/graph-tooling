@@ -1,5 +1,6 @@
 const GravatarRegistry = artifacts.require('./GravatarRegistry.sol');
 
-module.exports = async function (deployer) {
-  await deployer.deploy(GravatarRegistry);
+module.exports = async function () {
+  const gravatarRegistry = await GravatarRegistry.new();
+  GravatarRegistry.setAsDeployed(gravatarRegistry);
 };

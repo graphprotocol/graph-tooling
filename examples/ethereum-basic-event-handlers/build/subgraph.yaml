@@ -18,7 +18,7 @@ dataSources:
         - Gravatar
       abis:
         - name: Gravity
-          file: Gravity/abis/Gravity.json
+          file: Gravity/artifacts/contracts/Gravity.sol/GravatarRegistry.json
       eventHandlers:
         - event: NewGravatar(uint256,address,string,string)
           handler: handleNewGravatar

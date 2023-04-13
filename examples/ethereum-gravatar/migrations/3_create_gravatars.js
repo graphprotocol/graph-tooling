@@ -1,6 +1,6 @@
 const GravatarRegistry = artifacts.require('./GravatarRegistry.sol');
 
-module.exports = async function (deployer) {
+module.exports = async function () {
   const registry = await GravatarRegistry.deployed();
 
   console.log('Account address:', registry.address);
