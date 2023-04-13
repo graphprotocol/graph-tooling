@@ -339,11 +339,11 @@ export class TypedMap<K, V> {
 
   set(key: K, value: V): void {
     const entry = this.getEntry(key);
-    if (entry !== null) {
-      entry.value = value;
-    } else {
+    if (entry === null) {
       const entry = new TypedMapEntry<K, V>(key, value);
       this.entries.push(entry);
+    } else {
+      entry.value = value;
     }
   }
 

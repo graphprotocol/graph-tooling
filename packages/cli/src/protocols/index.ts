@@ -106,6 +106,7 @@ export default class Protocol {
         'aurora-testnet',
         'base-testnet',
         'zksync-era',
+        'sepolia',
         'polygon-zkevm-testnet',
         'polygon-zkevm',
       ],
@@ -125,6 +126,7 @@ export default class Protocol {
     >;
 
     const allNetworks: string[] = [];
+    // eslint-disable-next-line unicorn/no-array-for-each
     networks.forEach(value => {
       allNetworks.push(...value);
     });

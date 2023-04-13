@@ -21,6 +21,7 @@ export function testBytesWithByteArray(): void {
   assert((bytes[6] = 0x69));
   assert((bytes[7] = 0x61));
 
+  // eslint-disable-next-line no-self-compare
   assert(ByteArray.fromI32(1) == ByteArray.fromI32(1));
   assert(ByteArray.fromI32(1) != ByteArray.fromI32(2));
 }

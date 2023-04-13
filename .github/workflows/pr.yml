@@ -4,12 +4,14 @@ on:
     branches:
       - main
 
+permissions: write-all
+
 jobs:
   dependencies:
     uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@main
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
     uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
@@ -20,7 +22,7 @@ jobs:
       nodeVersion: 16
       packageManager: pnpm
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NPM_TOKEN }}
 
   release-candidate:
@@ -33,5 +35,5 @@ jobs:
       packageManager: pnpm
       restoreDeletedChangesets: true
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NPM_TOKEN }}

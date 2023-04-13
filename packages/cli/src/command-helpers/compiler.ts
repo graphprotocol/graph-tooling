@@ -1,6 +1,6 @@
 import { URL } from 'url';
 import * as toolbox from 'gluegun';
-import ipfsHttpClient from 'ipfs-http-client';
+import { create } from 'ipfs-http-client';
 import Compiler from '../compiler';
 import Protocol from '../protocols';
 
@@ -27,10 +27,9 @@ export function createCompiler(
     protocol,
   }: CreateCompilerOptions,
 ) {
-  // Parse the IPFS URL
-  let url;
+  // Validate the IPFS URL (if a node address was provided)
   try {
-    url = ipfs ? new URL(ipfs) : undefined;
+    if (ipfs) new URL(ipfs);
   } catch (e) {
     toolbox.print.error(`Invalid IPFS URL: ${ipfs}
 The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
@@ -38,15 +37,7 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
   }
 
   // Connect to the IPFS node (if a node address was provided)
-  ipfs = ipfs
-    ? ipfsHttpClient({
-        protocol: url?.protocol.replace(/[:]+$/, ''),
-        host: url?.hostname,
-        port: url?.port,
-        'api-path': url?.pathname.replace(/\/$/, '') + '/api/v0/',
-        headers,
-      })
-    : undefined;
+  ipfs = ipfs ? create({ url: ipfs, headers }) : undefined;
 
   return new Compiler({
     ipfs,

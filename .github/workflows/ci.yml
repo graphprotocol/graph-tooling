@@ -23,7 +23,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7
+          version: 8
 
       - name: Get pnpm store path
         id: pnpm-store
@@ -66,7 +66,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7
+          version: 8
 
       - name: Setup git user information
         run: |
@@ -116,7 +116,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7
+          version: 8
 
       - name: Get pnpm store path
         id: pnpm-store
@@ -164,7 +164,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7
+          version: 8
 
       - name: Get pnpm store path
         id: pnpm-store

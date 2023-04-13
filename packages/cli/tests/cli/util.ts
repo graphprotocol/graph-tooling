@@ -34,7 +34,7 @@ export function cliTest(
         deleteDir(resolvePath(`./${testPath}`), !!options.deleteDir);
 
         // Use the provided cwd if desired
-        const cwd = options.cwd ? options.cwd : resolvePath(`./${testPath}`);
+        const cwd = options.cwd || resolvePath(`./${testPath}`);
 
         const [exitCode, stdout, stderr] = await runGraphCli(args, cwd);
 
@@ -101,7 +101,7 @@ function runCommand(
   ]
 > {
   // Make sure to set an absolute working directory
-  cwd = cwd[0] !== '/' ? path.resolve(__dirname, cwd) : cwd;
+  cwd = cwd[0] === '/' ? cwd : path.resolve(__dirname, cwd);
 
   return new Promise((resolve, reject) => {
     let stdout = '';
