@@ -172,8 +172,8 @@ importers:
         specifier: 26.6.3
         version: 26.6.3
       oclif:
-        specifier: 3.7.3
-        version: 3.7.3(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2)
+        specifier: 3.8.0
+        version: 3.8.0(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2)
       spawn-command:
         specifier: 0.0.2-1
         version: 0.0.2-1
@@ -11887,8 +11887,8 @@ packages:
       http-https: 1.0.0
     dev: false
 
-  /oclif@3.7.3(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2):
-    resolution: {integrity: sha512-yQ85UkSJAsDIRx0DXrp287GyvsBc2piyk3a8wup8/T+wxmsdEvWW+SaDWIQfpHNzMHYHrGus0hGW2ZwNvcNgjg==}
+  /oclif@3.8.0(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2):
+    resolution: {integrity: sha512-XOPAetRmTzH2FTV+cHMoX7YnXKFzsEK5TMAiyvM/J/qvcUzU2QixEGzlxQtez3Tv9MCPW5W6z/0W3Sb6zULl6w==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
