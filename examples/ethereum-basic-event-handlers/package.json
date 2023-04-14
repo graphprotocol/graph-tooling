@@ -13,7 +13,7 @@
     "codegen": "graph codegen",
     "create-test": "graph create test/basic-event-handlers --node http://127.0.0.1:18020",
     "deploy-test": "graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:15001 --node http://127.0.0.1:18020",
-    "test": "docker compose up -d && sleep 30 && truffle test --network test && docker compose down"
+    "test": "docker compose up -d && sleep 30 && hardhat test && docker compose down"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "workspace:*",

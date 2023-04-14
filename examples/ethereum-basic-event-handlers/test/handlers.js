@@ -1,8 +1,8 @@
 const path = require('node:path');
 const { system, patching } = require('gluegun');
 const { createApolloFetch } = require('apollo-fetch');
-
-const GravatarRegistry = artifacts.require('./GravatarRegistry.sol');
+const { ethers } = require('hardhat');
+const { expect } = require('chai');
 
 const srcDir = path.join(__dirname, '..');
 
@@ -44,11 +44,12 @@ const waitForSubgraphToBeSynced = async () =>
     setTimeout(checkSubgraphSynced, 0);
   });
 
-contract('Basic event handlers', accounts => {
+describe('Basic event handlers', () => {
   // Deploy the subgraph once before all tests
   before(async () => {
-    // Deploy the contract
-    const registry = await GravatarRegistry.deployed();
+    const GravatarRegistry = await hre.ethers.getContractFactory('GravatarRegistry');
+    const registry = await GravatarRegistry.deploy();
+    const accounts = await ethers.getSigners();
 
     // Insert its address into subgraph manifest
     await patching.replace(
@@ -57,6 +58,13 @@ contract('Basic event handlers', accounts => {
       registry.address,
     );
 
+    await registry.setMythicalGravatar();
+    await registry.createGravatar('Carl', 'https://thegraph.com/img/team/team_04.png');
+    await registry
+      .connect(accounts[1])
+      .createGravatar('Lucas', 'https://thegraph.com/img/team/bw_Lucas.jpg');
+    await registry.connect(accounts[0]).updateGravatarName('Nena');
+    await registry.connect(accounts[1]).updateGravatarName('Jorge');
     // Create and deploy the subgraph
     await system.run(`yarn codegen`, { cwd: srcDir });
     await system.run(`yarn create-test`, { cwd: srcDir });
