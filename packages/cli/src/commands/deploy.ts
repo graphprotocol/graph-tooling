@@ -303,7 +303,7 @@ $ graph create --node ${node} ${subgraphName}`;
         }
       });
     } else {
-      const result = await compiler.compile();
+      const result = await compiler.compile({ validate: true });
       if (result === undefined || result === false) {
         // Compilation failed, not deploying.
         process.exitCode = 1;
