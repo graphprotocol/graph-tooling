@@ -12,7 +12,7 @@
     "test": "node test/test.js"
   },
   "dependencies": {
-    "assemblyscript": "0.19.10"
+    "assemblyscript": "0.27.1"
   },
   "devDependencies": {
     "prettier": "^2.4.1"
