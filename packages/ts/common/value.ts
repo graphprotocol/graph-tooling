@@ -14,6 +14,7 @@ export enum ValueKind {
   NULL = 5,
   BYTES = 6,
   BIGINT = 7,
+  INT8 = 8,
 }
 
 const VALUE_KIND_NAMES = [
@@ -25,6 +26,7 @@ const VALUE_KIND_NAMES = [
   'null',
   'Bytes',
   'BigInt',
+  'Int8',
 ];
 
 /**
@@ -64,6 +66,14 @@ export class Value {
     }
     assert(this.kind == ValueKind.INT, 'Value is not an i32.');
     return this.data as i32;
+  }
+
+  toI64(): i64 {
+    if (this.kind == ValueKind.NULL) {
+      return 0;
+    }
+    assert(this.kind == ValueKind.INT8, 'Value is not an i64.');
+    return this.data as i64;
   }
 
   toString(): string {
@@ -125,6 +135,15 @@ export class Value {
   toI32Array(): Array<i32> {
     const values = this.toArray();
     const output = new Array<i32>(values.length);
+    for (let i: i32 = 0; i < values.length; i++) {
+      output[i] = values[i].toI32();
+    }
+    return output;
+  }
+
+  toI64Array(): Array<i64> {
+    const values = this.toArray();
+    const output = new Array<i64>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toI32();
     }
@@ -209,6 +228,19 @@ export class Value {
     return out;
   }
 
+  toI64Matrix(): Array<Array<i64>> {
+    const valueMatrix = this.toMatrix();
+    const out = new Array<Array<i64>>(valueMatrix.length);
+
+    for (let i: i32 = 0; i < valueMatrix.length; i++) {
+      out[i] = new Array<i64>(valueMatrix[i].length);
+      for (let j: i32 = 0; j < valueMatrix[i].length; j++) {
+        out[i][j] = valueMatrix[i][j].toI64();
+      }
+    }
+    return out;
+  }
+
   toBigIntMatrix(): Array<Array<BigInt>> {
     const valueMatrix = this.toMatrix();
     const out = new Array<Array<BigInt>>(valueMatrix.length);
@@ -238,6 +270,8 @@ export class Value {
         return this.toString();
       case ValueKind.INT:
         return this.toI32().toString();
+      case ValueKind.INT8:
+        return this.toI64().toString();
       case ValueKind.BIGDECIMAL:
         return this.toBigDecimal().toString();
       case ValueKind.BOOL:
@@ -338,6 +372,10 @@ export class Value {
     return new Value(ValueKind.INT, n as u64);
   }
 
+  static fromI64(n: i64): Value {
+    return new Value(ValueKind.INT8, n as i64);
+  }
+
   static fromString(s: string): Value {
     return new Value(ValueKind.STRING, changetype<u32>(s));
   }
@@ -408,6 +446,17 @@ export class Value {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
         out[i][j] = Value.fromI32(values[i][j]);
+      }
+    }
+    return Value.fromMatrix(out);
+  }
+
+  static fromI64Matrix(values: Array<Array<i64>>): Value {
+    const out = new Array<Array<Value>>(values.length);
+    for (let i: i32 = 0; i < values.length; i++) {
+      out[i] = new Array<Value>(values[i].length);
+      for (let j: i32 = 0; j < values[i].length; j++) {
+        out[i][j] = Value.fromI64(values[i][j]);
       }
     }
     return Value.fromMatrix(out);

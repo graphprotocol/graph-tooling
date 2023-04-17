@@ -6,7 +6,16 @@ const List = immutable.List;
 const Set = immutable.Set;
 
 // Builtin scalar types
-const BUILTIN_SCALAR_TYPES = ['Boolean', 'Int', 'BigDecimal', 'String', 'BigInt', 'Bytes', 'ID'];
+const BUILTIN_SCALAR_TYPES = [
+  'Boolean',
+  'Int',
+  'BigDecimal',
+  'String',
+  'BigInt',
+  'Bytes',
+  'ID',
+  'Int8',
+];
 
 // Type suggestions for common mistakes
 const TYPE_SUGGESTIONS = [
@@ -26,9 +35,12 @@ const TYPE_SUGGESTIONS = [
   ['float', 'BigDecimal'],
   ['Float', 'BigDecimal'],
   ['int', 'Int'],
+  ['int8', 'Int8'],
   ['uint', 'BigInt'],
   ['owner', 'String'],
   ['Owner', 'String'],
+  [/^(u|uint)8$/, 'Int8'],
+  [/^(i|int)8$/, 'Int8'],
   [/^(u|uint)(8|16|24)$/, 'Int'],
   [/^(i|int)(8|16|24|32)$/, 'Int'],
   [/^(u|uint)32$/, 'BigInt'],

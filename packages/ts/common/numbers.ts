@@ -29,6 +29,8 @@ export declare namespace bigDecimal {
   function fromString(s: string): BigDecimal;
 }
 
+export type Int8 = i64;
+
 /** An Ethereum address (20 bytes). */
 export class Address extends Bytes {
   static fromString(s: string): Address {

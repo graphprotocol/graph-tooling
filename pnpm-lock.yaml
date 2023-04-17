@@ -46,7 +46,7 @@ importers:
   examples/arweave-blocks-transactions:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -62,7 +62,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -81,7 +81,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -100,7 +100,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -119,7 +119,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -171,7 +171,7 @@ importers:
         version: 5.0.4
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -189,7 +189,7 @@ importers:
   examples/ethereum-gravatar:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -210,7 +210,7 @@ importers:
   examples/near-blocks:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
@@ -219,7 +219,7 @@ importers:
   examples/near-receipts:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.49.0
+        specifier: 0.50.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.30.0
