@@ -34,7 +34,7 @@ const waitForSubgraphToBeSynced = async () =>
           `,
       });
 
-      if (JSON.stringify(result.data) === JSON.stringify({ statuses: [{ synced: true }] })) {
+      if (result.data.statuses[0].synced) {
         setTimeout(resolve, 1000);
       } else {
         setTimeout(checkSubgraphSynced, 500);
@@ -54,7 +54,7 @@ describe('Basic event handlers', () => {
     // Insert its address into subgraph manifest
     await patching.replace(
       path.join(srcDir, 'subgraph.yaml'),
-      '0x2E645469f354BB4F5c8a05B3b30A929361cf77eC',
+      '0xCfEB869F69431e42cdB54A4F4f105C19C080A601',
       registry.address,
     );
 

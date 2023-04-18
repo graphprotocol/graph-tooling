@@ -18,13 +18,13 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph
       ipfs: 'ipfs:5001'
-      ethereum: 'test:http://ethereum:8545'
+      ethereum: 'test:http://host.docker.internal:8545'
       GRAPH_LOG: trace
   ethereum:
     image: trufflesuite/ganache-cli:latest
     ports:
-      - '18545:8545'
-      - '18546:8546'
+      - '8545:8545'
+      - '8546:8546'
     command: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
