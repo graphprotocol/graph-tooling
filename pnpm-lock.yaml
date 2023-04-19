@@ -102,8 +102,8 @@ importers:
         specifier: 9.1.0
         version: 9.1.0
       glob:
-        specifier: 9.3.4
-        version: 9.3.4
+        specifier: 9.3.5
+        version: 9.3.5
       gluegun:
         specifier: https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep
         version: github.com/edgeandnode/gluegun/b34b9003d7bf556836da41b57ef36eb21570620a(debug@4.3.4)
@@ -8036,8 +8036,8 @@ packages:
       once: 1.4.0
     dev: true
 
-  /glob@9.3.4:
-    resolution: {integrity: sha512-qaSc49hojMOv1EPM4EuyITjDSgSKI0rthoHnvE81tcOi1SCVndHko7auqxdQ14eiQG2NDBJBE86+2xIrbIvrbA==}
+  /glob@9.3.5:
+    resolution: {integrity: sha512-e1LleDykUz2Iu+MTYdkSsuWX8lvAjAcs0Xef0lNIu0S2wOAzuTxCJtcd9S3cijlwYF18EsU3rzb8jPVobxDh9Q==}
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       fs.realpath: 1.0.0
