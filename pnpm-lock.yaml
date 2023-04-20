@@ -47,8 +47,8 @@ importers:
         specifier: 6.26.0
         version: 6.26.0
       truffle:
-        specifier: 5.8.2
-        version: 5.8.2
+        specifier: 5.8.3
+        version: 5.8.3
       truffle-hdwallet-provider:
         specifier: 1.0.6
         version: 1.0.6
@@ -3101,12 +3101,12 @@ packages:
       colors: 1.4.0
     dev: false
 
-  /@truffle/config@1.3.54:
-    resolution: {integrity: sha512-sCFIRqBkxanuYueMQalp4q/1+wxYq5IdAZSJFUXK5FbvhDGU437bl1MuMxGDxhjztf0ZN49YsELAjYMVzOGpUQ==}
+  /@truffle/config@1.3.55:
+    resolution: {integrity: sha512-18nLgtnkDCwMiTB3fyJxXzRzuO28wtJyY3YIgJBMg4ujKYpAxeI6hOPafhrp9qGqR7tC0Pj1o+ip3wFxEZJtuQ==}
     dependencies:
       '@truffle/error': 0.2.0
       '@truffle/events': 0.1.22
-      '@truffle/provider': 0.3.7
+      '@truffle/provider': 0.3.8
       conf: 10.2.0
       debug: 4.3.4(supports-color@8.1.1)
       find-up: 2.1.0
@@ -3144,10 +3144,10 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/db-loader@0.2.21:
-    resolution: {integrity: sha512-79Fx0FKkP3OtVg2cFxrrncxAzcg+bSjmho+g6dQMxEk7szPh03g2a5STv8vc4DAcHP2Jrf84KNMyAtwJJwoKcg==}
+  /@truffle/db-loader@0.2.22:
+    resolution: {integrity: sha512-Ws5zZQZdemLyc//dJR3w9U+i3TSb+8w/OExsQhadU/rpyZb1EBOazj7Zr8IkDJolhqZgWyVwshoRNULZ56NHhA==}
     optionalDependencies:
-      '@truffle/db': 2.0.21
+      '@truffle/db': 2.0.22
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -3155,15 +3155,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@truffle/db@2.0.21:
-    resolution: {integrity: sha512-mYKxOqhOOXGtUJfYtvF4k7Ihvoj7Asl3YhaSBCB475TEJYNUSmCPwEsIt3WBZQD1sXaTB6x/aFR4YMIKkOYLEA==}
+  /@truffle/db@2.0.22:
+    resolution: {integrity: sha512-Pn6zKfQMTNqYbcz7EEcagBoNOp1ORMVddocr2pIVPnzPyryhAkC/QJGK9HUazQues3QjzmKcCEMQqUfrFfRt1A==}
     requiresBuild: true
     dependencies:
       '@graphql-tools/delegate': 8.8.1(graphql@15.5.0)
       '@graphql-tools/schema': 8.5.1(graphql@15.5.0)
       '@truffle/abi-utils': 0.3.9
       '@truffle/code-utils': 3.0.2
-      '@truffle/config': 1.3.54
+      '@truffle/config': 1.3.55
       abstract-leveldown: 7.2.0
       apollo-server: 3.12.0(graphql@15.5.0)
       debug: 4.3.4(supports-color@8.1.1)
@@ -3186,12 +3186,12 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/debugger@11.0.32:
-    resolution: {integrity: sha512-EcOG4Ts/NtB9u38T4fQJzJKkSnxU2TNAINdDU0ND9GoRULbBjhcb4gpWfOJDTZnBZ/II6T+uY4vRmLUwgFtCqw==}
+  /@truffle/debugger@11.0.33:
+    resolution: {integrity: sha512-4UJCvLRIiAg5jpPm5umCmoK/R50vYkRtZROQVn+spJE5CZFZVbrmwJBU5YvgXMMX4vkw3s77jENpOl6BhIpCUw==}
     dependencies:
       '@truffle/abi-utils': 0.3.9
       '@truffle/codec': 0.14.17
-      '@truffle/source-map-utils': 1.3.109
+      '@truffle/source-map-utils': 1.3.110
       bn.js: 5.2.1
       debug: 4.3.4(supports-color@8.1.1)
       json-pointer: 0.6.2
@@ -3229,8 +3229,8 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/interface-adapter@0.5.31:
-    resolution: {integrity: sha512-f5mOqbptQUUgHhBrBvWie4EUAUqHLN/wCBjFoP2N/QNcyvwGfdC3TSck9kjwIIFIgYgQQyAxQDGBQcjHryvxzg==}
+  /@truffle/interface-adapter@0.5.32:
+    resolution: {integrity: sha512-7Hgmdb4nJUcWtq4vvgWY7Mr2RLOTOp5FZaWyMiFmjkcEEhDlezm2QstALWAXgT0W6q7tDmDBpw3vTIFenRhHBA==}
     dependencies:
       bn.js: 5.2.1
       ethers: 4.0.49
@@ -3248,11 +3248,11 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/provider@0.3.7:
-    resolution: {integrity: sha512-OF4JZe3oIR9epWMMbJgCnJJCnu1Ce6IeLk8lCAuNtSlZ46gGj7INEDCXwB5KrgydUC5KDnGp4knHWnQfk5YWXg==}
+  /@truffle/provider@0.3.8:
+    resolution: {integrity: sha512-qukkmGOZPsbV7WeKlj/bfYWOu/dbHWlF67QHDhV2KHBVardN06VDf40aB8WeeVkONHijb623hkUI/DE4DpHO+Q==}
     dependencies:
       '@truffle/error': 0.2.0
-      '@truffle/interface-adapter': 0.5.31
+      '@truffle/interface-adapter': 0.5.32
       debug: 4.3.4(supports-color@8.1.1)
       web3: 1.8.2
     transitivePeerDependencies:
@@ -3263,8 +3263,8 @@ packages:
     dev: false
     optional: true
 
-  /@truffle/source-map-utils@1.3.109:
-    resolution: {integrity: sha512-7YhlQ3XO2CEr8QypMNNMUfko2EB/QgeR6Uog8g9rfYJPdPPPmz2UpxgdBRKHaHn49ElrljlWsaRh8XVxZ0GNRw==}
+  /@truffle/source-map-utils@1.3.110:
+    resolution: {integrity: sha512-lkKWwLxGfQITRXjH9fWdy95jSIIzyfX+ggUi5rgkjz5rUUEXFaJ/YX3mxQLQJMi18kKn/yv0ZiGju84aMR3qoA==}
     dependencies:
       '@truffle/code-utils': 3.0.2
       '@truffle/codec': 0.14.17
@@ -3283,14 +3283,6 @@ packages:
     dev: false
     optional: true
 
-  /@trufflesuite/bigint-buffer@1.1.10:
-    resolution: {integrity: sha512-pYIQC5EcMmID74t26GCC67946mgTJFiLXOT/BYozgrd4UEY2JHEGLhWi9cMiQCt5BSqFEvKkCHNnoj82SRjiEw==}
-    engines: {node: '>= 14.0.0'}
-    requiresBuild: true
-    dependencies:
-      node-gyp-build: 4.4.0
-    dev: false
-
   /@trufflesuite/spinnies@0.1.1:
     resolution: {integrity: sha512-jltEtmFJj6xmQqr85gP8OqBHCEiId+zw+uAsb3DyLLRD17O6sySW6Afa2Z/jpzSafj+32ssDfLJ+c0of1NLqcA==}
     dependencies:
@@ -3299,6 +3291,15 @@ packages:
       strip-ansi: 6.0.1
     dev: false
     optional: true
+
+  /@trufflesuite/uws-js-unofficial@20.10.0-unofficial.2:
+    resolution: {integrity: sha512-oQQlnS3oNeGsgS4K3KCSSavJgSb0W9D5ktZs4FacX9VbM7b+NlhjH96d6/G4fMrz+bc5MXRyco419on0X0dvRA==}
+    dependencies:
+      ws: 8.2.3(bufferutil@4.0.5)(utf-8-validate@5.0.7)
+    optionalDependencies:
+      bufferutil: 4.0.5
+      utf-8-validate: 5.0.7
+    dev: false
 
   /@tsconfig/node10@1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -5058,7 +5059,6 @@ packages:
     dependencies:
       node-gyp-build: 4.5.0
     dev: false
-    optional: true
 
   /bufferutil@4.0.7:
     resolution: {integrity: sha512-kukuqc39WOHtdxtw4UScxF/WVnMFVSQVKhtx3AjZJzhd0RGZZldcrfSEbVsWWe6KNH253574cq5F+wpv0G9pJw==}
@@ -7525,11 +7525,11 @@ packages:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
     dev: true
 
-  /ganache@7.7.7:
-    resolution: {integrity: sha512-kZUuOcgDQBtbxzs4iB3chg1iAc28s2ffdOdzyTTzo4vr9sb843w4PbWd5v1hsIqtcNjurcpLaW8XRp/cw2u++g==}
+  /ganache@7.8.0:
+    resolution: {integrity: sha512-IrUYvsaE/m2/NaVIZ7D/gCnsmyU/buechnH6MhUipzG1qJcZIwIp/DoP/LZUcHyhy0Bv0NKZD2pGOjpRhn7l7A==}
     hasBin: true
     dependencies:
-      '@trufflesuite/bigint-buffer': 1.1.10
+      '@trufflesuite/uws-js-unofficial': 20.10.0-unofficial.2
       '@types/bn.js': 5.1.1
       '@types/lru-cache': 5.1.1
       '@types/seedrandom': 3.0.1
@@ -7537,9 +7537,6 @@ packages:
       abstract-leveldown: 7.2.0
       async-eventemitter: 0.2.4
       emittery: 0.10.0
-      keccak: 3.0.2
-      leveldown: 6.1.0
-      secp256k1: 4.0.3
     optionalDependencies:
       bufferutil: 4.0.5
       utf-8-validate: 5.0.7
@@ -9612,16 +9609,6 @@ packages:
     dev: false
     optional: true
 
-  /leveldown@6.1.0:
-    resolution: {integrity: sha512-8C7oJDT44JXxh04aSSsfcMI8YiaGRhOFI9/pMEL7nWJLVsWajDPTRxsSHTM2WcTVY5nXM+SuRHzPPi0GbnDX+w==}
-    engines: {node: '>=10.12.0'}
-    requiresBuild: true
-    dependencies:
-      abstract-leveldown: 7.2.0
-      napi-macros: 2.0.0
-      node-gyp-build: 4.5.0
-    dev: false
-
   /levelup@4.4.0:
     resolution: {integrity: sha512-94++VFO3qN95cM/d6eBXvd894oJE0w3cInq9USsyQzzoJxmiYzPAocNcuGCPGGjoXqDVJcr3C1jzt1TSjyaiLQ==}
     engines: {node: '>=6'}
@@ -10783,6 +10770,7 @@ packages:
   /napi-macros@2.0.0:
     resolution: {integrity: sha512-A0xLykHtARfueITVDernsAWdtIMbOJgKgcluwENp3AlsKN/PloyO10HtmoqnFAQAcxPkgZN7wdfPfEd0zNGxbg==}
     dev: false
+    optional: true
 
   /native-abort-controller@1.0.4(abort-controller@3.0.0):
     resolution: {integrity: sha512-zp8yev7nxczDJMoP6pDxyD20IU0T22eX8VwN2ztDccKvSZhRaV33yP1BGwKSZfXuqWUzsXopVFjBdau9OOAwMQ==}
@@ -10872,11 +10860,6 @@ packages:
     hasBin: true
     dev: false
     optional: true
-
-  /node-gyp-build@4.4.0:
-    resolution: {integrity: sha512-amJnQCcgtRVw9SvoebO3BKGESClrfXGCUTX9hSn1OuGQTQBOZmVd0Z0OlecpuRksKvbsUqALE8jls/ErClAPuQ==}
-    hasBin: true
-    dev: false
 
   /node-gyp-build@4.5.0:
     resolution: {integrity: sha512-2iGbaQBV+ITgCz76ZEjmhUKAKVf7xfY1sRl4UiKQspfZMH2h06SyhNsnSVy50cwkFQDGLyif6m/6uFXHkOZ6rg==}
@@ -13567,19 +13550,19 @@ packages:
       - supports-color
     dev: false
 
-  /truffle@5.8.2:
-    resolution: {integrity: sha512-W3Onv/Nzd8bbdchkkYB3BMfUnv7VdB6v2EGxeDylSIDxpo1O6xWYtuzHu6eKBYc8oObEatrrjHqkSo1vbVGlfg==}
+  /truffle@5.8.3:
+    resolution: {integrity: sha512-6P+Z1XjD9I5/2/qPDN4JpQvwW9f+BE6Vqr8F547koDrBVlAojGP3QgAkK92jk4RQ2Ue3BJTcnZg+9ng0k+SJtg==}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@truffle/db-loader': 0.2.21
-      '@truffle/debugger': 11.0.32
+      '@truffle/db-loader': 0.2.22
+      '@truffle/debugger': 11.0.33
       app-module-path: 2.2.0
-      ganache: 7.7.7
+      ganache: 7.8.0
       mocha: 10.1.0
       original-require: 1.0.1
     optionalDependencies:
-      '@truffle/db': 2.0.21
+      '@truffle/db': 2.0.22
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -13972,7 +13955,6 @@ packages:
     dependencies:
       node-gyp-build: 4.5.0
     dev: false
-    optional: true
 
   /utf8@3.0.0:
     resolution: {integrity: sha512-E8VjFIQ/TyQgp+TZfS6l8yp/xWppSAHzidGiRrqe4bK4XP9pTRyKFgGJpO3SN7zdX4DeomTrwaseCHovfpFcqQ==}
@@ -14648,6 +14630,22 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: false
+
+  /ws@8.2.3(bufferutil@4.0.5)(utf-8-validate@5.0.7):
+    resolution: {integrity: sha512-wBuoj1BDpC6ZQ1B7DWQBYVLphPWkm8i9Y0/3YdHjHKHiohOJ1ws+3OccDWtH+PoC9DZD5WOTrJvNbWvjS6JWaA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dependencies:
+      bufferutil: 4.0.5
+      utf-8-validate: 5.0.7
     dev: false
 
   /xhr-request-promise@0.1.3:
