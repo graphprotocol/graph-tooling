@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.47.1
+
+### Patch Changes
+
+- [#1303](https://github.com/graphprotocol/graph-tooling/pull/1303)
+  [`327784f`](https://github.com/graphprotocol/graph-tooling/commit/327784ff79c458c603dbac4b9dfd1f4e5aab6c8c)
+  Thanks [@dimitrovmaksim](https://github.com/dimitrovmaksim)! - Fixes 403 Forbidden response when
+  fetching the latest matchstick tag
+
 ## 0.47.0
 
 ### Minor Changes
