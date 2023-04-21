@@ -92,6 +92,11 @@ export default class TestCommand extends Command {
       this.log('Fetching latest version tag...');
       const result = await fetch(
         'https://api.github.com/repos/LimeChain/matchstick/releases/latest',
+        {
+          headers: {
+            'User-Agent': '@graphprotocol/graph-cli',
+          },
+        },
       );
       const json = await result.json();
       opts.latestVersion = json.tag_name;
