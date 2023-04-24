@@ -70,3 +70,8 @@ jobs:
         run: pnpm --filter=@graphprotocol/graph-cli build
       - name: Pack
         run: pnpm --filter=@graphprotocol/graph-cli oclif:pack
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: cli-packs
+          path: packages/cli/dist/*.tar.gz
