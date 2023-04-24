@@ -1,5 +1,10 @@
 lockfileVersion: '6.0'
 
+patchedDependencies:
+  oclif@3.8.1:
+    hash: rxmtqiusuyruv7tkwux5gvotbm
+    path: patches/oclif@3.8.1.patch
+
 importers:
 
   .:
@@ -173,7 +178,7 @@ importers:
         version: 29.5.0(@types/node@18.11.9)
       oclif:
         specifier: 3.8.1
-        version: 3.8.1(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2)
+        version: 3.8.1(patch_hash=rxmtqiusuyruv7tkwux5gvotbm)(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2)
       spawn-command:
         specifier: 0.0.2-1
         version: 0.0.2-1
@@ -11203,7 +11208,7 @@ packages:
       http-https: 1.0.0
     dev: false
 
-  /oclif@3.8.1(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2):
+  /oclif@3.8.1(patch_hash=rxmtqiusuyruv7tkwux5gvotbm)(@types/node@18.11.9)(mem-fs-editor@9.6.0)(mem-fs@2.2.1)(typescript@5.0.2):
     resolution: {integrity: sha512-1yc1rtsQrou6t21WYM6JM2fUzK3GKhGboB/A6ZeTFyC3VJb39fUWcRrQYE1JEoNlBHk5Z5hok8PEq09Vhm4ZZA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
@@ -11238,6 +11243,7 @@ packages:
       - supports-color
       - typescript
     dev: true
+    patched: true
 
   /on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
