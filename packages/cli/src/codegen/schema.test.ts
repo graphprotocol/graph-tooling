@@ -128,6 +128,15 @@ describe('Schema code generator', () => {
             `,
           },
           {
+            name: 'loadInBlock',
+            static: true,
+            params: [new Param('id', new NamedType('string'))],
+            returnType: new NullableType(new NamedType('Account')),
+            body: `
+              return changetype<Account | null>(store.get_in_block('Account', id))
+            `,
+          },
+          {
             name: 'load',
             static: true,
             params: [new Param('id', new NamedType('string'))],
@@ -308,6 +317,15 @@ describe('Schema code generator', () => {
             `,
           },
           {
+            name: 'loadInBlock',
+            static: true,
+            params: [new Param('id', new NamedType('string'))],
+            returnType: new NullableType(new NamedType('Wallet')),
+            body: `
+              return changetype<Wallet | null>(store.get_in_block('Wallet', id))
+            `,
+          },
+          {
             name: 'load',
             static: true,
             params: [new Param('id', new NamedType('string'))],
@@ -425,6 +443,16 @@ describe('Schema code generator', () => {
             "                 `Entities of type Task must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`)\n" +
             "          store.set('Task', id.toBytes().toHexString(), this)\n" +
             '        }',
+        },
+        {
+          name: 'loadInBlock',
+          static: true,
+          params: [new Param('id', new NamedType('Bytes'))],
+          returnType: new NullableType(new NamedType('Task')),
+          body:
+            '\n' +
+            "        return changetype<Task | null>(store.get_in_block('Task', id.toHexString()))\n" +
+            '        ',
         },
         {
           name: 'load',
