@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.47.2
+
+### Patch Changes
+
+- [#1308](https://github.com/graphprotocol/graph-tooling/pull/1308)
+  [`dd765f4`](https://github.com/graphprotocol/graph-tooling/commit/dd765f4beb9e4964718b03428b39541bc48e6025)
+  Thanks [@saihaj](https://github.com/saihaj)! - allow `fantom` and `matic`
+
 ## 0.47.1
 
 ### Patch Changes
