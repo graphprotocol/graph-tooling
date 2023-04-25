@@ -172,6 +172,15 @@ export default class SchemaCodeGenerator {
       ),
 
       tsCodegen.staticMethod(
+        'loadInBlock',
+        [tsCodegen.param('id', tsCodegen.namedType(idField.typeName()))],
+        tsCodegen.nullableType(tsCodegen.namedType(entityName)),
+        `
+        return changetype<${entityName} | null>(store.get_in_block('${entityName}', ${idField.tsToString()}))
+        `,
+      ),
+
+      tsCodegen.staticMethod(
         'load',
         [tsCodegen.param('id', tsCodegen.namedType(idField.typeName()))],
         tsCodegen.nullableType(tsCodegen.namedType(entityName)),

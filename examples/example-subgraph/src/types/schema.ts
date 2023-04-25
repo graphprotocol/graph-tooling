@@ -29,6 +29,10 @@ export class ExampleEntity extends Entity {
     }
   }
 
+  static loadInBlock(id: string): ExampleEntity | null {
+    return changetype<ExampleEntity | null>(store.get_in_block('ExampleEntity', id));
+  }
+
   static load(id: string): ExampleEntity | null {
     return changetype<ExampleEntity | null>(store.get('ExampleEntity', id));
   }
@@ -415,6 +419,10 @@ export class OtherEntity extends Entity {
       );
       store.set('OtherEntity', id.toString(), this);
     }
+  }
+
+  static loadInBlock(id: string): OtherEntity | null {
+    return changetype<OtherEntity | null>(store.get_in_block('OtherEntity', id));
   }
 
   static load(id: string): OtherEntity | null {

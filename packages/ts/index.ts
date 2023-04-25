@@ -23,6 +23,8 @@ export * from './common/value';
  */
 export declare namespace store {
   function get(entity: string, id: string): Entity | null;
+  /** If the entity was not created in the block, this function will return null. */
+  function get_in_block(entity: string, id: string, block: string): Entity | null;
   function set(entity: string, id: string, data: Entity): void;
   function remove(entity: string, id: string): void;
 }
