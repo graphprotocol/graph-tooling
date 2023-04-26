@@ -128,7 +128,7 @@ function runCommand(
 
 export function runGraphCli(args: string[], cwd: string) {
   // Resolve the path to graph.js
-  const graphCli = path.join(__dirname, '..', '..', 'dist', 'bin.js');
+  const graphCli = path.join(__dirname, '..', '..', 'bin', 'run');
 
   return runCommand(graphCli, args, cwd);
 }
