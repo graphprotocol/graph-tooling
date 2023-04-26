@@ -58,7 +58,7 @@
         DOWNLOAD_DIR=$(mktemp -d)
 
         TARGET="\$OS-\$ARCH"
-        URL="https://example.com/graph-\$TARGET.tar.gz"
+        URL="https://github.com/graphprotocol/graph-tooling/releases/latest/download/graph-\$TARGET.tar.gz"
         echo "Downloading \$URL"
 
         if ! curl --progress-bar --fail -L "\$URL" -o "\$DOWNLOAD_DIR/graph.tar.gz"; then
