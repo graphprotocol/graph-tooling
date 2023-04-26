@@ -7,7 +7,7 @@
     "node": ">=14"
   },
   "bin": {
-    "graph": "dist/bin.js"
+    "graph": "bin/run"
   },
   "main": "dist/index.js",
   "files": [
@@ -18,7 +18,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.build.json && oclif manifest && oclif readme && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
+    "build": "tsc -b tsconfig.build.json && oclif manifest && oclif readme && copyfiles -u 1 src/**/*.graphql dist/",
     "oclif:pack": "npm pack && pnpm oclif pack tarballs --no-xz && node scripts/rename-tarballs.mjs",
     "test": "jest --verbose",
     "test:add": "jest tests/cli/add.test.ts --verbose",
