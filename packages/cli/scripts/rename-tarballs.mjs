@@ -12,7 +12,6 @@ async function main() {
     // in order to simplify the tarball names for easier installation,
     // we remove the version and commit from the name since they'll be
     // uploaded to the GH release notes assets anyway
-    // const [graph, _version, _commit, ...target] = path.basename(tarball).split('-');
     const [graph, _version, _commit, ...target] = tarball.split('-');
     console.log(`Found ${tarball}`);
     if (target.length) {
