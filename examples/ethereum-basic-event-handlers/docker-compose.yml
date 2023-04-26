@@ -1,41 +1,45 @@
 version: '3'
 services:
+  hardhat:
+    build: ./hardhat
+    ports:
+      - '8545:8545'
   graph-node:
     image: graphprotocol/graph-node:latest
     ports:
-      - '18000:8000'
-      - '18001:8001'
-      - '18020:8020'
-      - '18030:8030'
-      - '18040:8040'
+      - '8000:8000'
+      - '8001:8001'
+      - '8020:8020'
+      - '8030:8030'
+      - '8040:8040'
     depends_on:
+      - hardhat
       - ipfs
-      - ethereum
       - postgres
     environment:
       postgres_host: postgres
-      postgres_user: graph
+      postgres_user: graph-node
       postgres_pass: let-me-in
-      postgres_db: graph
+      postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      ethereum: 'test:http://host.docker.internal:8545'
-      GRAPH_LOG: trace
-  ethereum:
-    image: trufflesuite/ganache-cli:latest
-    ports:
-      - '8545:8545'
-      - '8546:8546'
-    command: -d -l 100000000000 -g 1 --noVMErrorsOnRPCResponse
+      ethereum: 'test:http://hardhat:8545'
+      GRAPH_LOG: info
+      GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: 1
   ipfs:
-    image: ipfs/go-ipfs:v0.4.23
+    image: ipfs/kubo:v0.18.1
     ports:
-      - '15001:5001'
+      - '5001:5001'
+    volumes:
+      - ./data/ipfs:/data/ipfs
   postgres:
     image: postgres
     ports:
-      - '15432:5432'
+      - '5432:5432'
+    command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
     environment:
-      POSTGRES_USER: graph
+      POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: let-me-in
-      POSTGRES_DB: graph
+      POSTGRES_DB: graph-node
       POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data

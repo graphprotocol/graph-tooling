@@ -1,0 +1,14 @@
+{
+  "name": "contracts-docker",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "localnode": "hardhat node --hostname 0.0.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hardhat": "^2.11.2"
+  }
+}

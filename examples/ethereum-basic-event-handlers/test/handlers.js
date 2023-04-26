@@ -1,14 +1,14 @@
 const path = require('node:path');
-const { system, patching } = require('gluegun');
+const { system, patching, filesystem } = require('gluegun');
 const { createApolloFetch } = require('apollo-fetch');
 const { ethers } = require('hardhat');
 const { expect } = require('chai');
 
 const srcDir = path.join(__dirname, '..');
 
-const fetchSubgraphs = createApolloFetch({ uri: 'http://localhost:18030/graphql' });
+const fetchSubgraphs = createApolloFetch({ uri: 'http://localhost:8030/graphql' });
 const fetchSubgraph = createApolloFetch({
-  uri: 'http://localhost:18000/subgraphs/name/test/basic-event-handlers',
+  uri: 'http://localhost:8000/subgraphs/name/test/basic-event-handlers',
 });
 
 const waitForSubgraphToBeSynced = async () =>
@@ -51,10 +51,11 @@ describe('Basic event handlers', () => {
     const registry = await GravatarRegistry.deploy();
     const accounts = await ethers.getSigners();
 
+    filesystem.copy('template-subgraph.yaml', 'subgraph.yaml', { overwrite: true });
     // Insert its address into subgraph manifest
     await patching.replace(
       path.join(srcDir, 'subgraph.yaml'),
-      '0xCfEB869F69431e42cdB54A4F4f105C19C080A601',
+      'DEPLOYED_CONTRACT_ADDRESS',
       registry.address,
     );
 

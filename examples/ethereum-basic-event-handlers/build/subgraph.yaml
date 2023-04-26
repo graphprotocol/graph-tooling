@@ -8,7 +8,7 @@ dataSources:
     name: Gravity
     network: test
     source:
-      address: "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
       abi: Gravity
     mapping:
       kind: ethereum/events
