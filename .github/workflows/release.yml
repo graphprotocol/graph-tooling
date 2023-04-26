@@ -30,10 +30,10 @@ jobs:
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "date=$(date +"%B %d, %Y")" >> $GITHUB_OUTPUT
       - name: Build
-        if: startsWith(github.event.head_commit.message, ${{ env.RELEASE_COMMIT_MSG }})
+        if: ${{ startsWith(github.event.head_commit.message, env.RELEASE_COMMIT_MSG) }}
         run: pnpm --filter=@graphprotocol/graph-cli build
       - name: Pack binaries
-        if: startsWith(github.event.head_commit.message, ${{ env.RELEASE_COMMIT_MSG }})
+        if: ${{ startsWith(github.event.head_commit.message, env.RELEASE_COMMIT_MSG) }}
         run: pnpm --filter=@graphprotocol/graph-cli oclif:pack
       - name: Release / pull_request
         uses: dotansimha/changesets-action@v1.4.0
