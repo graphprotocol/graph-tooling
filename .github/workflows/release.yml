@@ -6,6 +6,9 @@ on:
 
 permissions: write-all
 
+env:
+  RELEASE_COMMIT_MSG: 'chore(release): update monorepo packages versions'
+
 jobs:
   stable:
     name: Stable
@@ -27,15 +30,17 @@ jobs:
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "date=$(date +"%B %d, %Y")" >> $GITHUB_OUTPUT
       - name: Build
+        if: startsWith(github.event.head_commit.message, ${{ env.RELEASE_COMMIT_MSG }})
         run: pnpm --filter=@graphprotocol/graph-cli build
       - name: Pack binaries
+        if: startsWith(github.event.head_commit.message, ${{ env.RELEASE_COMMIT_MSG }})
         run: pnpm --filter=@graphprotocol/graph-cli oclif:pack
       - name: Release / pull_request
         uses: dotansimha/changesets-action@v1.4.0
         with:
           publish: pnpm release
           version: pnpm changeset version
-          commit: 'chore(release): update monorepo packages versions'
+          commit: ${{ env.RELEASE_COMMIT_MSG }}
           title: Upcoming Release Changes
           createGithubReleases: true
           githubReleaseName: ${{ steps.vars.outputs.date }}
