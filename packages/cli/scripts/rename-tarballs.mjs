@@ -18,7 +18,7 @@ async function main() {
     if (target.length) {
       // only rename if target part exists (otherwise tarballs was already renamed)
       const newTarball = [graph, ...target].join('-');
-      console.log(`\tRenaming ${tarball} to ${path.basename(newTarball)}...`);
+      console.log(`\tRenaming ${path.basename(tarball)} to ${path.basename(newTarball)}...`);
       await fs.rename(tarball, newTarball);
     } else {
       console.log('\tSkipping rename...');
