@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.48.0
+
+### Minor Changes
+
+- [#1257](https://github.com/graphprotocol/graph-tooling/pull/1257)
+  [`17b90d7`](https://github.com/graphprotocol/graph-tooling/commit/17b90d7e2d4abdd850755adc4630975fd2b957e7)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Bundle CLI as binary
+
 ## 0.47.2
 
 ### Patch Changes
