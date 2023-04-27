@@ -59,7 +59,7 @@ jobs:
           command: pnpm run test:cli -- --forceExit
 
   event-handler:
-    name: Basic Event Handlers
+    name: Ethereum Basic Event Handlers
     needs: [lint]
     runs-on: ubuntu-latest
     steps:
@@ -75,12 +75,15 @@ jobs:
       - name: Build Packages
         run: pnpm build
 
+      - name: Should re-link local workspace deps?
+        run: pnpm i
+
       - name: Run Tests
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: pnpm run --filter="basic-event-handlers" test
+          command: pnpm run --filter="example-ethereum-basic-event-handlers" test
 
   ts:
     name: Graph TS

@@ -1,0 +1,25 @@
+{
+  "name": "example-arweave-blocks-transactions",
+  "version": "0.1.0",
+  "description": "subgraph example for Arweave",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/arweave-blocks-transactions"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "graph build",
+    "codegen": "graph codegen",
+    "create": "graph create arweave-example --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create arweave-example --node http://localhost:8020",
+    "deploy": "graph deploy arweave-example --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy arweave-example -l v0.1.0 --ipfs http://localhost:5001 --node http://localhost:8020",
+    "remove-local": "graph remove arweave-example --node http://localhost:8020"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "workspace:*",
+    "@graphprotocol/graph-ts": "workspace:*"
+  }
+}

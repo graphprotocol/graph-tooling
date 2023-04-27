@@ -1,0 +1,28 @@
+{
+  "name": "example-cosmos-osmosis-token-swaps-",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/cosmos-osmosis-token-swaps"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "graph build",
+    "codegen": "graph codegen",
+    "create": "graph create osmosis-token-swaps --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create osmosis-token-swaps --node http://0.0.0.0:8020",
+    "deploy": "graph deploy osmosis-token-swaps --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy osmosis-token-swaps -l v0.1.0 --ipfs http://0.0.0.0:5001 --node http://0.0.0.0:8020",
+    "remove-local": "graph remove osmosis-token-swaps --node http://0.0.0.0:8020"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "workspace:*",
+    "@graphprotocol/graph-ts": "workspace:*"
+  }
+}

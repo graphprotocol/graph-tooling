@@ -1,0 +1,27 @@
+specVersion: 0.0.5
+description: Gravatar for Ethereum
+repository: https://github.com/graphprotocol/graph-tooling
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Gravity
+    network: test
+    source:
+      address: 'DEPLOYED_CONTRACT_ADDRESS'
+      abi: Gravity
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Gravatar
+      abis:
+        - name: Gravity
+          file: ./artifacts/contracts/Gravity.sol/GravatarRegistry.json
+      eventHandlers:
+        - event: NewGravatar(uint256,address,string,string)
+          handler: handleNewGravatar
+        - event: UpdatedGravatar(uint256,address,string,string)
+          handler: handleUpdatedGravatar
+      file: ./src/mapping.ts
