@@ -6,6 +6,8 @@ export const allowedStudioNetworks = [
   'chapel',
   'optimism-goerli',
   'clover',
+  'fantom',
+  'matic',
   'fantom-testnet',
   'arbitrum-goerli',
   'fuji',

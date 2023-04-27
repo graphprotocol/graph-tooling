@@ -5,13 +5,29 @@ import Compiler from '../compiler';
 import Protocol from '../protocols';
 
 interface CreateCompilerOptions {
-  ipfs: any;
-  headers?: any;
+  ipfs: string | URL | undefined;
+  headers?: Headers | Record<string, string>;
   outputDir: string;
   outputFormat: string;
   skipMigrations: boolean;
   blockIpfsMethods?: RegExpMatchArray;
   protocol: Protocol;
+}
+
+/**
+ * Appends /api/v0 to the end of a The Graph IPFS URL
+ */
+export function appendApiVersionForGraph(inputString: string) {
+  // Check if the input string is a valid The Graph IPFS URL
+  const pattern = /^(https?:\/\/)?([\w-]+\.)+thegraph\.com\/ipfs\/?$/;
+  if (pattern.test(inputString)) {
+    // account for trailing slash
+    if (inputString.endsWith('/')) {
+      return inputString.slice(0, -1) + '/api/v0';
+    }
+    return inputString + '/api/v0';
+  }
+  return inputString;
 }
 
 // Helper function to construct a subgraph compiler
@@ -29,7 +45,7 @@ export function createCompiler(
 ) {
   // Validate the IPFS URL (if a node address was provided)
   try {
-    if (ipfs) new URL(ipfs);
+    if (ipfs && typeof ipfs === 'string') new URL(ipfs);
   } catch (e) {
     toolbox.print.error(`Invalid IPFS URL: ${ipfs}
 The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
@@ -37,10 +53,12 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
   }
 
   // Connect to the IPFS node (if a node address was provided)
-  ipfs = ipfs ? create({ url: ipfs, headers }) : undefined;
+  const ipfsClient = ipfs
+    ? create({ url: appendApiVersionForGraph(ipfs.toString()), headers })
+    : undefined;
 
   return new Compiler({
-    ipfs,
+    ipfs: ipfsClient,
     subgraphManifest: manifest,
     outputDir,
     outputFormat,

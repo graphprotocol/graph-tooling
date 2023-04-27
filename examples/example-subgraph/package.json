@@ -7,10 +7,10 @@
   },
   "private": true,
   "scripts": {
-    "build": "../../packages/cli/dist/bin.js build subgraph.yaml",
-    "build-ipfs": "../../packages/cli/dist/bin.js build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
-    "build-wast": "../../packages/cli/dist/bin.js build -t wast subgraph.yaml",
-    "codegen": "../../packages/cli/dist/bin.js codegen --output-dir src/types/ subgraph.yaml"
+    "build": "../../packages/cli/bin/run build subgraph.yaml",
+    "build-ipfs": "../../packages/cli/bin/run build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
+    "build-wast": "../../packages/cli/bin/run build -t wast subgraph.yaml",
+    "codegen": "../../packages/cli/bin/run codegen --output-dir src/types/ subgraph.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-ts": "workspace:*"

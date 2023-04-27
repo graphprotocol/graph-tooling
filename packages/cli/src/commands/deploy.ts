@@ -1,7 +1,7 @@
 import path from 'path';
 import { URL } from 'url';
 import { Args, Command, Flags, ux } from '@oclif/core';
-import { print } from 'gluegun';
+import { print, prompt } from 'gluegun';
 import { identifyDeployKey } from '../command-helpers/auth';
 import { createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
@@ -20,13 +20,13 @@ const headersFlag = Flags.custom<Record<string, string>>({
   default: {},
 });
 
+const productOptions = ['subgraph-studio', 'hosted-service'];
+
 export default class DeployCommand extends Command {
   static description = 'Deploys a subgraph to a Graph node.';
 
   static args = {
-    'subgraph-name': Args.string({
-      required: true,
-    }),
+    'subgraph-name': Args.string({}),
     'subgraph-manifest': Args.string({
       default: 'subgraph.yaml',
     }),
@@ -39,7 +39,7 @@ export default class DeployCommand extends Command {
 
     product: Flags.string({
       summary: 'Select a product for which to authenticate.',
-      options: ['subgraph-studio', 'hosted-service'],
+      options: productOptions,
     }),
     studio: Flags.boolean({
       summary: 'Shortcut for "--product subgraph-studio".',
@@ -95,7 +95,7 @@ export default class DeployCommand extends Command {
 
   async run() {
     const {
-      args: { 'subgraph-name': subgraphName, 'subgraph-manifest': manifest },
+      args: { 'subgraph-name': subgraphNameArg, 'subgraph-manifest': manifest },
       flags: {
         product: productFlag,
         studio,
@@ -114,15 +114,29 @@ export default class DeployCommand extends Command {
       },
     } = await this.parse(DeployCommand);
 
+    const subgraphName =
+      subgraphNameArg ||
+      (await ux.prompt('What is the subgraph name?', {
+        required: true,
+      }));
+
     // We are given a node URL, so we prioritize that over the product flag
     const product = nodeFlag
       ? productFlag
       : studio
       ? 'subgraph-studio'
       : productFlag ||
-        (await ux.prompt('Which product to deploy for?', {
-          required: true,
-        }));
+        (await prompt
+          .ask([
+            {
+              name: 'product',
+              message: 'Which product to deploy for?',
+              required: true,
+              type: 'select',
+              choices: productOptions,
+            },
+          ])
+          .then(({ product }) => product as string));
 
     try {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
@@ -289,7 +303,7 @@ $ graph create --node ${node} ${subgraphName}`;
         }
       });
     } else {
-      const result = await compiler.compile();
+      const result = await compiler.compile({ validate: true });
       if (result === undefined || result === false) {
         // Compilation failed, not deploying.
         process.exitCode = 1;

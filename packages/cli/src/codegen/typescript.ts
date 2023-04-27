@@ -117,6 +117,37 @@ class NamedType {
     return this;
   }
 
+  /**
+   * Returns the default value for the type, or null if the type is not a primitive
+   *
+   * Learn more: https://www.assemblyscript.org/types.html
+   */
+  getPrimitiveDefault() {
+    const isPrimitive = this.isPrimitive();
+    if (isPrimitive) {
+      switch (this.name) {
+        case 'boolean':
+          return false;
+        case 'u8':
+        case 'i8':
+        case 'u16':
+        case 'i16':
+        case 'u32':
+        case 'i32':
+        case 'u64':
+        case 'i64':
+        case 'f32':
+        case 'f64':
+        case 'usize':
+        case 'isize':
+          return 0;
+        default:
+          throw new Error(`Unknown primitive type: ${this.name}`);
+      }
+    }
+    return null;
+  }
+
   isPrimitive() {
     const primitives = [
       'boolean',
