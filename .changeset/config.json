@@ -11,7 +11,6 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "basic-event-handlers",
     "example-*"
   ],
   "snapshot": {

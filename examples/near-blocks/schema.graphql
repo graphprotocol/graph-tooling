@@ -1,0 +1,7 @@
+type BlockEvent @entity {
+  id: ID!
+  number: BigInt
+  hash: Bytes
+  timestampNanosec: BigInt
+  gasPrice: BigInt
+}

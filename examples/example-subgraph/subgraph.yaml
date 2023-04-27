@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 description: 'example of a subgraph'
-repository: https://github.com/graphprotocol/graph-cli.git
+repository: https://github.com/graphprotocol/graph-tooling.git
 schema:
   file: ./schema.graphql
 dataSources:

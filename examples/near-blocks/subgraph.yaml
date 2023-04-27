@@ -1,0 +1,19 @@
+specVersion: 0.0.4
+description: NEAR Blocks
+repository: https://github.com/graphprotocol/graph-toolings/tree/main/near/blocks-example
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: near
+    name: blocks
+    network: near-mainnet
+    source:
+      startBlock: 0
+    mapping:
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - BlockEvent
+      blockHandlers:
+        - handler: handleBlock

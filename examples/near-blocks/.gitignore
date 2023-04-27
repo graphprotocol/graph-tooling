@@ -42,6 +42,9 @@ typings/
 # Optional npm cache directory
 .npm
 
+# Optional eslint cache
+.eslintcache
+
 # Optional REPL history
 .node_repl_history
 
@@ -57,27 +60,5 @@ typings/
 # next.js build output
 .next
 
-# Example subgraph build
-examples/*/build
-examples/*/generated
-examples/*/node_modules
-examples/*/data
-
-# validation tests output
-*/tests/cli/validation/*/generated
-
-# Ignore Mac DS_Store files
-.DS_Store
-
-# TSC build outputs
-dist
-
-# Generated
-**/tests/**/generated
-
-# Oclif manifest
-oclif.manifest.json
-# Oclif pack
-tmp
-
-*.wasm
+build/*
+generated/*

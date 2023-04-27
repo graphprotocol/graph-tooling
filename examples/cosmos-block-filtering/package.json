@@ -1,0 +1,31 @@
+{
+  "name": "example-cosmos-block-filtering",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/cosmos-block-filtering"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "graph build",
+    "codegen": "graph codegen",
+    "create": "graph create cosmos-block-filtering --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create cosmos-block-filtering --node http://127.0.0.1:8020",
+    "deploy": "graph deploy cosmos-block-filtering --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy cosmos-block-filtering -l v0.1.0 --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
+    "prepare:cosmoshub": "mustache config/cosmoshub.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:osmosis": "mustache config/osmosis.json subgraph.template.yaml > subgraph.yaml",
+    "remove-local": "graph remove cosmos-block-filtering --node http://127.0.0.1:8020"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "workspace:*",
+    "@graphprotocol/graph-ts": "workspace:*",
+    "mustache": "^4.2.0"
+  }
+}

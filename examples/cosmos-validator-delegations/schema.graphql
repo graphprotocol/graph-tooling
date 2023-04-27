@@ -1,0 +1,12 @@
+type Delegation @entity {
+  id: ID!
+  delegatorAddress: String
+  validatorAddress: String
+  amount: Coin
+}
+
+type Coin @entity {
+  id: ID!
+  denom: String
+  amount: String
+}

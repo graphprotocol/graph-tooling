@@ -1,0 +1,11 @@
+type Greeter @entity {
+  id: ID!
+  name: String!
+  greetings: [Greeting!] @derivedFrom(field: "greeter")
+}
+
+type Greeting @entity {
+  id: ID!
+  greeter: Greeter!
+  timestamp: BigInt!
+}
