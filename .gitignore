@@ -77,3 +77,5 @@ dist
 
 # Oclif manifest
 oclif.manifest.json
+
+*.wasm
