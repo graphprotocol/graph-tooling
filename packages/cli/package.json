@@ -1,23 +1,26 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.47.1",
+  "version": "0.48.0",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
     "node": ">=14"
   },
   "bin": {
-    "graph": "dist/bin.js"
+    "graph": "bin/run"
   },
   "main": "dist/index.js",
   "files": [
     "CHANGELOG.md",
+    "bin",
     "dist",
     "oclif.manifest.json",
-    "README.md"
+    "README.md",
+    "!dist/*.tar.gz"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.build.json && oclif manifest && copyfiles -u 1 src/**/*.graphql dist/ && chmod +x ./dist/bin.js",
+    "build": "tsc -b tsconfig.build.json && oclif manifest && oclif readme && copyfiles -u 1 src/**/*.graphql dist/",
+    "oclif:pack": "npm pack && pnpm oclif pack tarballs --no-xz && node scripts/rename-tarballs.mjs",
     "test": "jest --verbose",
     "test:add": "jest tests/cli/add.test.ts --verbose",
     "test:init": "jest tests/cli/init.test.ts --verbose",
