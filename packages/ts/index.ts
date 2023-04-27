@@ -137,3 +137,32 @@ export namespace log {
     log.log(Level.DEBUG, format(msg, args));
   }
 }
+
+/**
+ * Helper functions for Ethereum.
+ */
+export namespace EthereumUtils {
+  /**
+   * Returns the contract address that would result from the given CREATE2 call.
+   * @param from The Ethereum address of the account that is initiating the contract creation.
+   * @param salt A 32-byte value that is used to create a deterministic address for the contract. This can be any arbitrary value, but it should be unique to the contract being created.
+   * @param initCodeHash he compiled code that will be executed when the contract is created. This should be a hex-encoded string that represents the compiled bytecode.
+   * @returns Address of the contract that would be created.
+   */
+  export function getCreate2Address(from: Bytes, salt: Bytes, initCodeHash: Bytes): Bytes {
+    return Bytes.fromHexString(
+      Bytes.fromByteArray(
+        crypto.keccak256(
+          Bytes.fromHexString(
+            '0xff' +
+              from.toHexString().slice(2) +
+              salt.toHexString().slice(2) +
+              initCodeHash.toHexString().slice(2),
+          ),
+        ),
+      )
+        .toHexString()
+        .slice(26),
+    );
+  }
+}
