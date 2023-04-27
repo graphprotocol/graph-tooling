@@ -2,7 +2,11 @@ import { GluegunPrint, print } from 'gluegun';
 
 export type Spinner = ReturnType<GluegunPrint['spin']>;
 
-export const step = (spinner: Spinner, subject: string, text?: string) => {
+export const step: (spinner: Spinner, subject: string, text?: string) => Spinner = (
+  spinner,
+  subject,
+  text,
+) => {
   if (text) {
     spinner.stopAndPersist({
       text: print.colors.muted(`${subject} ${text}`),

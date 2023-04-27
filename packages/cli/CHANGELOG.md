@@ -1,5 +1,93 @@
 # @graphprotocol/graph-cli
 
+## 0.48.0
+
+### Minor Changes
+
+- [#1257](https://github.com/graphprotocol/graph-tooling/pull/1257)
+  [`17b90d7`](https://github.com/graphprotocol/graph-tooling/commit/17b90d7e2d4abdd850755adc4630975fd2b957e7)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Bundle CLI as binary
+
+## 0.47.2
+
+### Patch Changes
+
+- [#1308](https://github.com/graphprotocol/graph-tooling/pull/1308)
+  [`dd765f4`](https://github.com/graphprotocol/graph-tooling/commit/dd765f4beb9e4964718b03428b39541bc48e6025)
+  Thanks [@saihaj](https://github.com/saihaj)! - allow `fantom` and `matic`
+
+## 0.47.1
+
+### Patch Changes
+
+- [#1303](https://github.com/graphprotocol/graph-tooling/pull/1303)
+  [`327784f`](https://github.com/graphprotocol/graph-tooling/commit/327784ff79c458c603dbac4b9dfd1f4e5aab6c8c)
+  Thanks [@dimitrovmaksim](https://github.com/dimitrovmaksim)! - Fixes 403 Forbidden response when
+  fetching the latest matchstick tag
+
+## 0.47.0
+
+### Minor Changes
+
+- [#1284](https://github.com/graphprotocol/graph-tooling/pull/1284)
+  [`b4311d8`](https://github.com/graphprotocol/graph-tooling/commit/b4311d86fbfd8c6cfd7a1c894a7dbdb4942b627c)
+  Thanks [@saihaj](https://github.com/saihaj)! - Changing code generation so we reduce the non-null
+  assertions for primitive types. This way we can return null for primitive types and still have the
+  generated code compile.
+
+- [#1293](https://github.com/graphprotocol/graph-tooling/pull/1293)
+  [`9ae82b5`](https://github.com/graphprotocol/graph-tooling/commit/9ae82b5adbd422ef7ccc13e6e647447a0ec691d5)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Include declaration files
+
+- [#1258](https://github.com/graphprotocol/graph-tooling/pull/1258)
+  [`86e1fda`](https://github.com/graphprotocol/graph-tooling/commit/86e1fdab685d35fc4baa66db62be42eb4a1d9ebf)
+  Thanks [@saihaj](https://github.com/saihaj)! - validate existence for handlers specified in
+  manifest during build
+
+- [#1294](https://github.com/graphprotocol/graph-tooling/pull/1294)
+  [`e5c1fbc`](https://github.com/graphprotocol/graph-tooling/commit/e5c1fbc37e437f3249fd210b0ae7a2b1d6b70e6d)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Prompt deploy command for subgraph name and
+  select product
+
+### Patch Changes
+
+- [#1266](https://github.com/graphprotocol/graph-tooling/pull/1266)
+  [`0bc47bd`](https://github.com/graphprotocol/graph-tooling/commit/0bc47bd92031b3dab48ff87fc9be20ac2ee35d96)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`glob@9.3.5` ↗︎](https://www.npmjs.com/package/glob/v/9.3.5) (from `9.3.4`,
+    in `dependencies`)
+
+- [#1273](https://github.com/graphprotocol/graph-tooling/pull/1273)
+  [`83d7a08`](https://github.com/graphprotocol/graph-tooling/commit/83d7a084e529aa87c6b05b21a35c92c1c8ddb7fc)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`semver@7.4.0` ↗︎](https://www.npmjs.com/package/semver/v/7.4.0) (from
+    `7.3.8`, in `dependencies`)
+
+- [#1279](https://github.com/graphprotocol/graph-tooling/pull/1279)
+  [`1f8b9c9`](https://github.com/graphprotocol/graph-tooling/commit/1f8b9c99456b8be12953ff31cf5c27672a89a90d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@2.8.1` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.1)
+    (from `2.8.0`, in `dependencies`)
+
+- [#1288](https://github.com/graphprotocol/graph-tooling/pull/1288)
+  [`7090159`](https://github.com/graphprotocol/graph-tooling/commit/7090159be5b40ec78702ce9c870536f4fb7e048d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@2.8.2` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.2)
+    (from `2.8.1`, in `dependencies`)
+
+- [#1259](https://github.com/graphprotocol/graph-tooling/pull/1259)
+  [`5ccb466`](https://github.com/graphprotocol/graph-tooling/commit/5ccb466019d4d3de693f5b7a89898b1598c6c4be)
+  Thanks [@saihaj](https://github.com/saihaj)! - refactor out immutable.js usage from schema
+  generation
+
+- [#1291](https://github.com/graphprotocol/graph-tooling/pull/1291)
+  [`2164a20`](https://github.com/graphprotocol/graph-tooling/commit/2164a20aefdc22e3e99021d13b1618c08ad713a2)
+  Thanks [@saihaj](https://github.com/saihaj)! - append /api/v0 automatically to Graph IPFS endpoint
+
 ## 0.46.1
 
 ### Patch Changes
