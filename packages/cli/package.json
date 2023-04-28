@@ -36,7 +36,7 @@
     "chalk": "3.0.0",
     "chokidar": "3.5.3",
     "debug": "4.3.4",
-    "docker-compose": "0.23.19",
+    "docker-compose": "0.24.0",
     "dockerode": "2.5.8",
     "fs-extra": "9.1.0",
     "glob": "9.3.5",

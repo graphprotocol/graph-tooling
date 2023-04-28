@@ -252,8 +252,8 @@ importers:
         specifier: 4.3.4
         version: 4.3.4(supports-color@8.1.1)
       docker-compose:
-        specifier: 0.23.19
-        version: 0.23.19
+        specifier: 0.24.0
+        version: 0.24.0
       dockerode:
         specifier: 2.5.8
         version: 2.5.8
@@ -5919,8 +5919,8 @@ packages:
       - supports-color
     dev: false
 
-  /docker-compose@0.23.19:
-    resolution: {integrity: sha512-v5vNLIdUqwj4my80wxFDkNH+4S85zsRuH29SO7dCWVWPCMt/ohZBsGN6g6KXWifT0pzQ7uOxqEKCYCDPJ8Vz4g==}
+  /docker-compose@0.24.0:
+    resolution: {integrity: sha512-RN/oSPLPa6ZG5e4dHg8tD8EMpd1WJqomNMBQT+d2M5MwcmfrPW/xHTent4TVqX0zZvHemv7qhhNlzXjxCnFaQw==}
     engines: {node: '>= 6.0.0'}
     dependencies:
       yaml: 1.10.2
