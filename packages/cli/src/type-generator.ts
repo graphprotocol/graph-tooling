@@ -51,6 +51,11 @@ export default class TypeGenerator {
   }
 
   async generateTypes() {
+    if(this.protocol.name==="substreams"){
+      toolbox.print.warning("No types generated for Substreams. Use the Substreams CLI for codegen.")
+      return;
+    }
+
     try {
       if (!this.options.skipMigrations && this.options.subgraphManifest) {
         await applyMigrations({
