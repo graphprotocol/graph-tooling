@@ -23,6 +23,9 @@ export * from './common/value';
  */
 export declare namespace store {
   function get(entity: string, id: string): Entity | null;
+  /** If the entity was not created in the block, this function will return null. */
+  // Matches the host function https://github.com/graphprotocol/graph-node/blob/9f4a1821146b18f6f49165305e9a8c0795120fad/runtime/wasm/src/module/mod.rs#L1091-L1099
+  function get_in_block(entity: string, id: string): Entity | null;
   function set(entity: string, id: string, data: Entity): void;
   function remove(entity: string, id: string): void;
 }

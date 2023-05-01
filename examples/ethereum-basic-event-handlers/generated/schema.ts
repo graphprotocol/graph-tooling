@@ -29,6 +29,12 @@ export class NewGravatar extends Entity {
     }
   }
 
+  static loadInBlock(id: string): NewGravatar | null {
+    return changetype<NewGravatar | null>(
+      store.get_in_block("NewGravatar", id)
+    );
+  }
+
   static load(id: string): NewGravatar | null {
     return changetype<NewGravatar | null>(store.get("NewGravatar", id));
   }
@@ -102,6 +108,12 @@ export class UpdatedGravatar extends Entity {
       );
       store.set("UpdatedGravatar", id.toString(), this);
     }
+  }
+
+  static loadInBlock(id: string): UpdatedGravatar | null {
+    return changetype<UpdatedGravatar | null>(
+      store.get_in_block("UpdatedGravatar", id)
+    );
   }
 
   static load(id: string): UpdatedGravatar | null {
