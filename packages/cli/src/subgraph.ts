@@ -100,7 +100,9 @@ export default class Subgraph {
   static validateRepository(manifest: immutable.Collection<any, any>) {
     const repository = manifest.get('repository');
 
-    return /^https:\/\/github\.com\/graphprotocol\/graph-tooling?$/.test(repository)
+    return /^https:\/\/github\.com\/graphprotocol\/graph-tooling?$/.test(repository) ||
+      // For legacy reasons, we should error on example subgraphs
+      /^https:\/\/github\.com\/graphprotocol\/example-subgraphs?$/.test(repository)
       ? immutable.List().push(
           immutable.fromJS({
             path: ['repository'],
