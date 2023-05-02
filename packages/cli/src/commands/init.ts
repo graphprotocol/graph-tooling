@@ -758,7 +758,7 @@ async function initSubgraphFromExample(
       const tmpDir = fs.mkdtempSync(prefix);
 
       try {
-        await system.run(`git clone http://github.com/graphprotocol/example-subgraphs ${tmpDir}`);
+        await system.run(`git clone https://github.com/graphprotocol/graph-tooling ${tmpDir}`);
 
         // If an example is not specified, use the default one
         if (fromExample === undefined || fromExample === true) {
