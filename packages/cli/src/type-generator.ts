@@ -52,8 +52,8 @@ export default class TypeGenerator {
 
   async generateTypes() {
     if (this.protocol.name === 'substreams') {
-      toolbox.print.warning(
-        'No types generated for Substreams. Use the Substreams CLI for codegen.',
+      toolbox.print.success(
+        'Subgraph uses a substream datasource. Codegeneration is not required.',
       );
       return;
     }
