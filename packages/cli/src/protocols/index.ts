@@ -74,7 +74,7 @@ export default class Protocol {
   }
 
   static availableNetworks() {
-    let networks = immutable.fromJS({
+    return immutable.fromJS({
       arweave: ['arweave-mainnet'],
       ethereum: [
         'mainnet',
@@ -124,16 +124,6 @@ export default class Protocol {
       'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams',
       immutable.List<string>
     >;
-
-    const allNetworks: string[] = [];
-    // eslint-disable-next-line unicorn/no-array-for-each
-    networks.forEach(value => {
-      allNetworks.push(...value);
-    });
-
-    networks = networks.set('substreams', immutable.List(allNetworks));
-
-    return networks;
   }
 
   static normalizeName(name: ProtocolName) {
