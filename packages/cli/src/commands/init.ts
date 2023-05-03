@@ -28,7 +28,7 @@ const initDebug = debug('graph-cli:init');
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
 
-const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum/gravatar';
+const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
 
 export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';
@@ -764,9 +764,13 @@ async function initSubgraphFromExample(
         if (fromExample === undefined || fromExample === true) {
           fromExample = DEFAULT_EXAMPLE_SUBGRAPH;
         }
+        // Legacy purposes when everything existed in examples repo
+        if (fromExample === 'ethereum/gravatar') {
+          fromExample = DEFAULT_EXAMPLE_SUBGRAPH;
+        }
 
-        const exampleSubgraphPath = path.join(tmpDir, String(fromExample));
-
+        const exampleSubgraphPath = path.join(tmpDir, 'examples', String(fromExample));
+        console.log('exampleSubgraphPath', exampleSubgraphPath);
         if (!filesystem.exists(exampleSubgraphPath)) {
           return { result: false, error: `Example not found: ${fromExample}` };
         }
