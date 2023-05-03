@@ -13,7 +13,7 @@
     "codegen": "../../packages/cli/bin/run codegen --output-dir src/types/ subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-ts": "workspace:*"
+    "@graphprotocol/graph-ts": "latest"
   },
   "resolutions": {
     "assemblyscript": "0.19.10"
