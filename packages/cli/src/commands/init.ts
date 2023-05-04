@@ -248,6 +248,7 @@ export default class InitCommand extends Command {
       studio,
       node,
       abi,
+      abiPath,
       allowSimpleName,
       directory,
       contract: fromContract,
@@ -314,6 +315,7 @@ async function processInitForm(
     studio: initStudio,
     node: initNode,
     abi: initAbi,
+    abiPath: initAbiPath,
     directory: initDirectory,
     contract: initContract,
     indexEvents: initIndexEvents,
@@ -329,6 +331,7 @@ async function processInitForm(
     studio: boolean;
     node?: string;
     abi: EthereumABI;
+    abiPath?: string;
     allowSimpleName: boolean | undefined;
     directory?: string;
     contract?: string;
@@ -481,7 +484,7 @@ async function processInitForm(
           return valid ? true : error;
         },
         result: async (value: string) => {
-          if (initFromExample !== undefined || isSubstreams) {
+          if (initFromExample !== undefined || isSubstreams || initAbiPath) {
             return value;
           }
 
@@ -524,13 +527,34 @@ async function processInitForm(
           !protocolInstance.hasABIs() ||
           initFromExample !== undefined ||
           abiFromEtherscan !== undefined ||
-          isSubstreams,
+          isSubstreams ||
+          !!initAbiPath,
         validate: async (value: string) => {
           if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
             return true;
           }
 
           const ABI = protocolInstance.getABI();
+          try {
+            loadAbiFromFile(ABI, value);
+            return true;
+          } catch (e) {
+            return false;
+          }
+        },
+        result: async (value: string) => {
+          if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
+            return null;
+          }
+          const ABI = protocolInstance.getABI();
+          if (initAbiPath) {
+            try {
+              return loadAbiFromFile(ABI, initAbiPath);
+            } catch (e) {
+              return e.message;
+            }
+          }
+
           try {
             return loadAbiFromFile(ABI, value);
           } catch (e) {
