@@ -15,6 +15,8 @@ export const allowedStudioNetworks = [
   'mumbai',
   'aurora-testnet',
   'near-testnet',
+  'optimism',
+  'optimism-goerli',
   'theta-testnet-001',
   'osmo-test-4',
   'base-testnet',
