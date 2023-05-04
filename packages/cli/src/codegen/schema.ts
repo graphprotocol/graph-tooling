@@ -109,9 +109,10 @@ export default class SchemaCodeGenerator {
       .filter((def) => this._isEntityTypeDefinition(def))
       .flatMap((def: any) => def.fields)
       .filter((def: any) => this._isDerivedField(def))
-      .map((def: any) => this._getTypeNameForField(def));
+      .map((def: FieldDefinitionNode) => this._getTypeNameForField(def.type));
 
-    return [...new Set(fields)].map((typeName: any) => this._generateDerivedLoader(typeName));
+    return [...new Set(fields)].map((typeName: any) => {
+      return this._generateDerivedLoader(typeName)});
   }
 
   _isEntityTypeDefinition(def: DefinitionNode): def is ObjectTypeDefinitionNode {
@@ -178,15 +179,19 @@ export default class SchemaCodeGenerator {
 
     return klass;
   }
-  _getTypeNameForField(gqlType: any): any {
-    if (gqlType.kind === 'NonNullType') {
-      return this._getTypeNameForField(gqlType.type)
-    } else if (gqlType.kind === 'ListType') {
-      return this._getTypeNameForField(gqlType.type)
-    } else {
-      return gqlType.name.value
-    }
+  
+_getTypeNameForField(gqlType: TypeNode): string {
+
+  if (gqlType.kind === 'NonNullType') {
+    return this._getTypeNameForField(gqlType.type);
+  } if (gqlType.kind === 'ListType') {
+    return this._getTypeNameForField(gqlType.type);
+  } if (gqlType.kind === 'NamedType') {
+    return (gqlType as NamedTypeNode).name.value;
   }
+
+  throw new Error(`Unknown type kind: ${gqlType}`);
+}
   _generateConstructor(_entityName: string, fields: readonly FieldDefinitionNode[] | undefined) {
     const idField = IdField.fromFields(fields);
     return tsCodegen.method(
