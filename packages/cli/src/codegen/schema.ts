@@ -314,10 +314,10 @@ export default class SchemaCodeGenerator {
     );
   }
   _generateDerivedFieldGetter(entityDef: any, fieldDef: FieldDefinitionNode) {
-    let entityName = entityDef.name.value;
-    let name = fieldDef.name.value;
-    let gqlType = fieldDef.type;
-    let returnType = this._returnTypeForDervied(gqlType);
+    const entityName = entityDef.name.value;
+    const name = fieldDef.name.value;
+    const gqlType = fieldDef.type;
+    const returnType = this._returnTypeForDervied(gqlType);
     return tsCodegen.method(
       `get ${name}`,
       [],
@@ -331,12 +331,12 @@ export default class SchemaCodeGenerator {
   _returnTypeForDervied(gqlType: any): any {
     if (gqlType.kind === 'NonNullType') {
       return this._returnTypeForDervied(gqlType.type);
-    } else if (gqlType.kind === 'ListType') {
-      return this._returnTypeForDervied(gqlType.type);
-    } else {
-      const type = tsCodegen.namedType(gqlType.name.value + 'Loader');
-      return type;
     }
+    if (gqlType.kind === 'ListType') {
+      return this._returnTypeForDervied(gqlType.type);
+    }
+    const type = tsCodegen.namedType(gqlType.name.value + 'Loader');
+    return type;
   }
 
   _generatedEntityDerivedFieldGetter(_entityDef: any, fieldDef: FieldDefinitionNode) {
