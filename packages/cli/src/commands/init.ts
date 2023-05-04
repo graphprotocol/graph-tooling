@@ -857,14 +857,14 @@ async function initSubgraphFromExample(
     return;
   }
 
-  if (!isSubstreams) {
-    // Install dependencies
-    const installed = await installDependencies(directory, commands);
-    if (installed !== true) {
-      this.exit(1);
-      return;
-    }
+  // Install dependencies
+  const installed = await installDependencies(directory, commands);
+  if (installed !== true) {
+    this.exit(1);
+    return;
+  }
 
+  if (!isSubstreams) {
     // Run code-generation
     const codegen = await runCodegen(directory, commands.codegen);
     if (codegen !== true) {
@@ -997,15 +997,14 @@ async function initSubgraphFromContract(
     return;
   }
 
+  // Install dependencies
+  const installed = await installDependencies(directory, commands);
+  if (installed !== true) {
+    this.exit(1);
+    return;
+  }
   // Substreams we have nothing to install or generate
   if (!isSubstreams) {
-    // Install dependencies
-    const installed = await installDependencies(directory, commands);
-    if (installed !== true) {
-      this.exit(1);
-      return;
-    }
-
     // Run code-generation
     const codegen = await runCodegen(directory, commands.codegen);
     if (codegen !== true) {
