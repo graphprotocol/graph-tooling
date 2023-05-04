@@ -2,14 +2,7 @@ import * as graphql from 'graphql/language';
 import prettier from 'prettier';
 import Schema from '../schema';
 import SchemaCodeGenerator from './schema';
-import {
-  Class,
-  Method,
-  NamedType,
-  NullableType,
-  Param,
-  StaticMethod,
-} from './typescript';
+import { Class, Method, NamedType, NullableType, Param, StaticMethod } from './typescript';
 
 const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
 
@@ -28,7 +21,6 @@ const testEntity = (generatedTypes: any[], expectedEntity: any) => {
   expect(members).toStrictEqual(expectedEntity.members);
 
   for (const expectedMethod of expectedEntity.methods) {
-
     const method = methods.find((method: any) => method.name === expectedMethod.name);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
