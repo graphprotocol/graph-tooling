@@ -163,11 +163,21 @@ export default class InitCommand extends Command {
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from the example
-    if (fromExample && subgraphName && directory) {
-      return await initSubgraphFromExample.bind(this)(
-        { fromExample, allowSimpleName, directory, subgraphName, studio, product },
+    if (fromExample && subgraphName && directory && protocol) {
+      await initSubgraphFromExample.bind(this)(
+        {
+          fromExample,
+          allowSimpleName,
+          directory,
+          subgraphName,
+          studio,
+          product,
+          protocolInstance: new Protocol(protocol as ProtocolName),
+        },
         { commands },
       );
+      // Exit with success
+      return this.exit(0);
     }
 
     // Will be assigned below if ethereum
@@ -209,7 +219,7 @@ export default class InitCommand extends Command {
         }
       }
 
-      return await initSubgraphFromContract.bind(this)(
+      await initSubgraphFromContract.bind(this)(
         {
           protocolInstance,
           abi,
@@ -227,6 +237,8 @@ export default class InitCommand extends Command {
         },
         { commands, addContract: false },
       );
+      // Exit with success
+      return this.exit(0);
     }
 
     // Otherwise, take the user through the interactive form
@@ -259,6 +271,7 @@ export default class InitCommand extends Command {
           directory: answers.directory,
           studio: answers.studio,
           product: answers.product,
+          protocolInstance: answers.protocolInstance,
         },
         { commands },
       );
@@ -288,6 +301,8 @@ export default class InitCommand extends Command {
         { commands, addContract: true },
       );
     }
+    // Exit with success
+    this.exit(0);
   }
 }
 
@@ -353,6 +368,7 @@ async function processInitForm(
     });
 
     const protocolInstance = new Protocol(protocol);
+    const isSubstreams = protocol === 'substreams';
 
     const { product } = await prompt.ask<{
       product: 'subgraph-studio' | 'hosted-service';
@@ -447,7 +463,8 @@ async function processInitForm(
         type: 'input',
         name: 'contract',
         message: `Contract ${protocolInstance.getContract()?.identifierName()}`,
-        skip: () => initFromExample !== undefined || !protocolInstance.hasContract(),
+        skip: () =>
+          initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
         initial: initContract,
         validate: async (value: string) => {
           if (initFromExample !== undefined || !protocolInstance.hasContract()) {
@@ -464,7 +481,7 @@ async function processInitForm(
           return valid ? true : error;
         },
         result: async (value: string) => {
-          if (initFromExample !== undefined) {
+          if (initFromExample !== undefined || isSubstreams) {
             return value;
           }
 
@@ -506,7 +523,8 @@ async function processInitForm(
         skip: () =>
           !protocolInstance.hasABIs() ||
           initFromExample !== undefined ||
-          abiFromEtherscan !== undefined,
+          abiFromEtherscan !== undefined ||
+          isSubstreams,
         validate: async (value: string) => {
           if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
             return true;
@@ -528,7 +546,7 @@ async function processInitForm(
         name: 'startBlock',
         message: 'Start Block',
         initial: initStartBlock || '0',
-        skip: () => initFromExample !== undefined,
+        skip: () => initFromExample !== undefined || isSubstreams,
         validate: value => parseInt(value) >= 0,
         result(value) {
           if (initStartBlock) return initStartBlock;
@@ -542,7 +560,7 @@ async function processInitForm(
         type: 'input',
         name: 'contractName',
         message: 'Contract Name',
-        initial: initContractName || 'Contract',
+        initial: initContractName || 'Contract' || isSubstreams,
         skip: () => initFromExample !== undefined || !protocolInstance.hasContract(),
         validate: value => value && value.length > 0,
       },
@@ -554,7 +572,7 @@ async function processInitForm(
         name: 'indexEvents',
         message: 'Index contract events as entities',
         initial: true,
-        skip: () => !!initIndexEvents,
+        skip: () => !!initIndexEvents || isSubstreams,
       },
     ]);
 
@@ -699,6 +717,7 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 async function initSubgraphFromExample(
   this: InitCommand,
   {
+    protocolInstance,
     fromExample,
     allowSimpleName,
     subgraphName,
@@ -706,6 +725,7 @@ async function initSubgraphFromExample(
     studio,
     product,
   }: {
+    protocolInstance: Protocol;
     fromExample: string | boolean;
     allowSimpleName?: boolean;
     subgraphName: string;
@@ -724,6 +744,8 @@ async function initSubgraphFromExample(
     };
   },
 ) {
+  const isSubstreams = protocolInstance.name === 'substreams';
+
   // Fail if the subgraph name is invalid
   if (!revalidateSubgraphName.bind(this)(subgraphName, { allowSimpleName })) {
     process.exitCode = 1;
@@ -835,18 +857,20 @@ async function initSubgraphFromExample(
     return;
   }
 
-  // Install dependencies
-  const installed = await installDependencies(directory, commands);
-  if (installed !== true) {
-    this.exit(1);
-    return;
-  }
+  if (!isSubstreams) {
+    // Install dependencies
+    const installed = await installDependencies(directory, commands);
+    if (installed !== true) {
+      this.exit(1);
+      return;
+    }
 
-  // Run code-generation
-  const codegen = await runCodegen(directory, commands.codegen);
-  if (codegen !== true) {
-    this.exit(1);
-    return;
+    // Run code-generation
+    const codegen = await runCodegen(directory, commands.codegen);
+    if (codegen !== true) {
+      this.exit(1);
+      return;
+    }
   }
 
   printNextSteps.bind(this)({ subgraphName, directory }, { commands });
@@ -896,6 +920,8 @@ async function initSubgraphFromContract(
     addContract: boolean;
   },
 ) {
+  const isSubstreams = protocolInstance.name === 'substreams';
+
   // Fail if the subgraph name is invalid
   if (!revalidateSubgraphName.bind(this)(subgraphName, { allowSimpleName })) {
     this.exit(1);
@@ -971,22 +997,25 @@ async function initSubgraphFromContract(
     return;
   }
 
-  // Install dependencies
-  const installed = await installDependencies(directory, commands);
-  if (installed !== true) {
-    this.exit(1);
-    return;
-  }
+  // Substreams we have nothing to install or generate
+  if (!isSubstreams) {
+    // Install dependencies
+    const installed = await installDependencies(directory, commands);
+    if (installed !== true) {
+      this.exit(1);
+      return;
+    }
 
-  // Run code-generation
-  const codegen = await runCodegen(directory, commands.codegen);
-  if (codegen !== true) {
-    this.exit(1);
-    return;
-  }
+    // Run code-generation
+    const codegen = await runCodegen(directory, commands.codegen);
+    if (codegen !== true) {
+      this.exit(1);
+      return;
+    }
 
-  while (addContract) {
-    addContract = await addAnotherContract.bind(this)({ protocolInstance, directory });
+    while (addContract) {
+      addContract = await addAnotherContract.bind(this)({ protocolInstance, directory });
+    }
   }
 
   printNextSteps.bind(this)({ subgraphName, directory }, { commands });
