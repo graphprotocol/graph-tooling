@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/no-array-for-each */
+import debug from 'debug';
 import Schema from '../schema';
 import * as typesCodegen from './types';
 import * as tsCodegen from './typescript';
@@ -280,6 +281,13 @@ export default class SchemaCodeGenerator {
   }
 
   _generateEntityFieldGetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
+    const isDerivedField = this._isDerivedField(fieldDef);
+    const codegenDebug = debug('codegen');
+    if (isDerivedField) {
+      codegenDebug(`Generating derived field getter for ${fieldDef.name.value}`);
+      return this._generateDerivedFieldGetter(_entityDef, fieldDef);
+    }
+
     const name = fieldDef.name.value;
     const gqlType = fieldDef.type;
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
