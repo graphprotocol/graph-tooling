@@ -1,9 +1,8 @@
 name: Snapshot Release
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
 
 permissions: write-all
 
