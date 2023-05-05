@@ -535,11 +535,20 @@ async function processInitForm(
           }
 
           const ABI = protocolInstance.getABI();
+          if (initAbiPath) {
+            try {
+              loadAbiFromFile(ABI, initAbiPath);
+              return true;
+            } catch (e) {
+              this.error(e.message);
+            }
+          }
+
           try {
             loadAbiFromFile(ABI, value);
             return true;
           } catch (e) {
-            return false;
+            this.error(e.message);
           }
         },
         result: async (value: string) => {
