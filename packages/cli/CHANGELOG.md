@@ -1,5 +1,37 @@
 # @graphprotocol/graph-cli
 
+## 0.49.0
+
+### Minor Changes
+
+- [#1327](https://github.com/graphprotocol/graph-tooling/pull/1327)
+  [`a70ac44`](https://github.com/graphprotocol/graph-tooling/commit/a70ac44575a486128fafd3ee9e9e6fbb05bc642e)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not generate types, instead show a message to
+  user to use substreams CLI for codegen.
+
+- [#1306](https://github.com/graphprotocol/graph-tooling/pull/1306)
+  [`f5e4b58`](https://github.com/graphprotocol/graph-tooling/commit/f5e4b58989edc5f3bb8211f1b912449e77832de8)
+  Thanks [@saihaj](https://github.com/saihaj)! - Add loadInBlock function for entities as part of
+  codegen
+
+- [#1339](https://github.com/graphprotocol/graph-tooling/pull/1339)
+  [`214cd71`](https://github.com/graphprotocol/graph-tooling/commit/214cd7153aabd427b52c87f5f3643212cb615913)
+  Thanks [@saihaj](https://github.com/saihaj)! - allow deploy optimism and optimism-goerli on studio
+
+### Patch Changes
+
+- [#1328](https://github.com/graphprotocol/graph-tooling/pull/1328)
+  [`4963215`](https://github.com/graphprotocol/graph-tooling/commit/4963215564797393424c563ea0b51aabbfd8e33e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@2.8.4` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.4)
+    (from `2.8.2`, in `dependencies`)
+
+- [#1331](https://github.com/graphprotocol/graph-tooling/pull/1331)
+  [`b2c8dec`](https://github.com/graphprotocol/graph-tooling/commit/b2c8decb7806d25df6ca4e07f6dfdf7941516435)
+  Thanks [@saihaj](https://github.com/saihaj)! - only allow mainnet for substreams in network
+  selection for init
+
 ## 0.48.0
 
 ### Minor Changes
