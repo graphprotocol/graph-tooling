@@ -106,13 +106,18 @@ export default class SchemaCodeGenerator {
   }
 
   generateDerivedLoaders() {
-    const fields = this.schema.ast.definitions
-      .filter(def => this._isEntityTypeDefinition(def))
-      .flatMap((def: any) => def.fields)
-      .filter((def: any) => this._isDerivedField(def))
-      .map((def: FieldDefinitionNode) => this._getTypeNameForField(def.type));
+    const fields = (
+      (
+        this.schema.ast.definitions.filter(def =>
+          this._isEntityTypeDefinition(def),
+        ) as ObjectTypeDefinitionNode[]
+      )
+        .flatMap((def: ObjectTypeDefinitionNode) => def.fields)
+        .filter(def => this._isDerivedField(def))
+        .filter(def => def?.type !== undefined) as FieldDefinitionNode[]
+    ).map(def => this._getTypeNameForField(def.type));
 
-    return [...new Set(fields)].map((typeName: any) => {
+    return [...new Set(fields)].map(typeName => {
       return this._generateDerivedLoader(typeName);
     });
   }
