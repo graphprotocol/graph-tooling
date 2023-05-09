@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.48.0",
+  "version": "0.49.0",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
-    "@oclif/core": "2.8.2",
+    "@oclif/core": "2.8.4",
     "@whatwg-node/fetch": "^0.8.4",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
