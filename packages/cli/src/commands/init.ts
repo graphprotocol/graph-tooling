@@ -770,7 +770,6 @@ async function initSubgraphFromExample(
         }
 
         const exampleSubgraphPath = path.join(tmpDir, 'examples', String(fromExample));
-        console.log('exampleSubgraphPath', exampleSubgraphPath);
         if (!filesystem.exists(exampleSubgraphPath)) {
           return { result: false, error: `Example not found: ${fromExample}` };
         }
