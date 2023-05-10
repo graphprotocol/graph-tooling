@@ -4,9 +4,8 @@ import path from 'path';
 import { Args, Command, Flags } from '@oclif/core';
 import { fetch } from '@whatwg-node/fetch';
 import { Binary } from 'binary-install-raw';
-import { filesystem, patching, print, system } from 'gluegun';
+import { filesystem, patching, print, system , semver } from 'gluegun';
 import yaml from 'js-yaml';
-import { semver } from 'gluegun';
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
