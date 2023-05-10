@@ -78,6 +78,31 @@ export default class Scaffold {
     );
   }
 
+  generatePackageJsonForSubstreams() {
+    return prettier.format(
+      JSON.stringify({
+        name: getSubgraphBasename(String(this.subgraphName)),
+        license: 'UNLICENSED',
+        scripts: {
+          build: 'graph build',
+          deploy: `graph deploy ` + `--node ${this.node} ` + this.subgraphName,
+          'create-local': `graph create --node http://localhost:8020/ ${this.subgraphName}`,
+          'remove-local': `graph remove --node http://localhost:8020/ ${this.subgraphName}`,
+          'deploy-local':
+            `graph deploy ` +
+            `--node http://localhost:8020/ ` +
+            `--ipfs http://localhost:5001 ` +
+            this.subgraphName,
+          test: 'graph test',
+        },
+        dependencies: {
+          '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
+        },
+      }),
+      { parser: 'json' },
+    );
+  }
+
   generateManifest() {
     const protocolManifest = this.protocol.getManifestScaffold();
 
@@ -165,6 +190,13 @@ dataSources:
   }
 
   generate() {
+    if (this.protocol.name === 'substreams') {
+      return {
+        'subgraph.yaml': this.generateManifest(),
+        'schema.graphql': this.generateSchema(),
+        'package.json': this.generatePackageJsonForSubstreams(),
+      };
+    }
     return {
       'package.json': this.generatePackageJson(),
       'subgraph.yaml': this.generateManifest(),
