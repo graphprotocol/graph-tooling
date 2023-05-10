@@ -51,6 +51,13 @@ export default class TypeGenerator {
   }
 
   async generateTypes() {
+    if (this.protocol.name === 'substreams') {
+      toolbox.print.success(
+        'Subgraph uses a substream datasource. Codegeneration is not required.',
+      );
+      return;
+    }
+
     try {
       if (!this.options.skipMigrations && this.options.subgraphManifest) {
         await applyMigrations({
