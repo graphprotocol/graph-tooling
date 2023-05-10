@@ -287,9 +287,6 @@ importers:
       request:
         specifier: 2.88.2
         version: 2.88.2
-      semver:
-        specifier: 7.4.0
-        version: 7.4.0
       sync-request:
         specifier: 6.1.0
         version: 6.1.0
@@ -318,9 +315,6 @@ importers:
       '@types/js-yaml':
         specifier: ^3.12.7
         version: 3.12.7
-      '@types/semver':
-        specifier: ^7.3.13
-        version: 7.3.13
       '@types/which':
         specifier: ^2.0.1
         version: 2.0.1

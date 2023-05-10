@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import * as toolbox from 'gluegun';
-import semver from 'semver';
+import { semver } from 'gluegun';
 import { loadManifest } from './util/load-manifest';
 import { getGraphTsVersion } from './util/versions';
 

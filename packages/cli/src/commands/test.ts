@@ -6,7 +6,7 @@ import { fetch } from '@whatwg-node/fetch';
 import { Binary } from 'binary-install-raw';
 import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
-import semver from 'semver';
+import { semver } from 'gluegun';
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';

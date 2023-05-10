@@ -1,4 +1,4 @@
-import semver from 'semver';
+import { semver } from 'gluegun';
 import * as manifestUtil from '../migrations/util/load-manifest';
 import * as graphTsUtil from '../migrations/util/versions';
 
