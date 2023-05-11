@@ -2,7 +2,7 @@
 ⚠ Warnings while loading subgraph from subgraph.yaml: Warnings in subgraph.yaml:
 
     Path: repository
-    The repository is still set to https://github.com/graphprotocol/example-subgraph.
+    The repository is still set to https://github.com/graphprotocol/graph-tooling.
     Please replace it with a link to your subgraph source code.
 
     Path: description

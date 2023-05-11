@@ -24,7 +24,7 @@ import AddCommand from './add';
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
 
-const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum/gravatar';
+const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
 
 export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';
@@ -824,15 +824,18 @@ async function initSubgraphFromExample(
       const tmpDir = fs.mkdtempSync(prefix);
 
       try {
-        await system.run(`git clone http://github.com/graphprotocol/example-subgraphs ${tmpDir}`);
+        await system.run(`git clone https://github.com/graphprotocol/graph-tooling ${tmpDir}`);
 
         // If an example is not specified, use the default one
         if (fromExample === undefined || fromExample === true) {
           fromExample = DEFAULT_EXAMPLE_SUBGRAPH;
         }
+        // Legacy purposes when everything existed in examples repo
+        if (fromExample === 'ethereum/gravatar') {
+          fromExample = DEFAULT_EXAMPLE_SUBGRAPH;
+        }
 
-        const exampleSubgraphPath = path.join(tmpDir, String(fromExample));
-
+        const exampleSubgraphPath = path.join(tmpDir, 'examples', String(fromExample));
         if (!filesystem.exists(exampleSubgraphPath)) {
           return { result: false, error: `Example not found: ${fromExample}` };
         }
