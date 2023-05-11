@@ -94,6 +94,9 @@ export default class InitCommand extends Command {
       // default: '*Download from Etherscan*',
       dependsOn: ['from-contract'],
     }),
+    spkg: Flags.string({
+      summary: 'Path to the SPKG file',
+    }),
     network: Flags.string({
       summary: 'Network the contract is deployed to.',
       dependsOn: ['from-contract'],
@@ -121,6 +124,7 @@ export default class InitCommand extends Command {
         network,
         abi: abiPath,
         'start-block': startBlock,
+        spkg: spkgPath,
       },
     } = await this.parse(InitCommand);
 
@@ -234,6 +238,7 @@ export default class InitCommand extends Command {
           studio,
           product,
           startBlock,
+          spkgPath,
         },
         { commands, addContract: false },
       );
@@ -258,6 +263,7 @@ export default class InitCommand extends Command {
       subgraphName,
       contractName,
       startBlock,
+      spkgPath,
     });
     if (!answers) {
       this.exit(1);
@@ -298,6 +304,7 @@ export default class InitCommand extends Command {
           studio: answers.studio,
           product: answers.product,
           startBlock: answers.startBlock,
+          spkgPath: answers.spkgPath,
         },
         { commands, addContract: true },
       );
@@ -325,6 +332,7 @@ async function processInitForm(
     contractName: initContractName,
     startBlock: initStartBlock,
     allowSimpleName: initAllowSimpleName,
+    spkgPath: initSpkgPath,
   }: {
     protocol?: ProtocolName;
     product?: string;
@@ -341,6 +349,7 @@ async function processInitForm(
     subgraphName?: string;
     contractName?: string;
     startBlock?: string;
+    spkgPath?: string;
   },
 ): Promise<
   | {
@@ -356,6 +365,7 @@ async function processInitForm(
       contractName: string;
       startBlock: string;
       fromExample: boolean;
+      spkgPath: string | undefined;
     }
   | undefined
 > {
@@ -517,6 +527,18 @@ async function processInitForm(
       },
     ]);
 
+    const { spkg } = await prompt.ask<{ spkg: string }>([
+      {
+        type: 'input',
+        name: 'spkg',
+        message: 'SPKG file (path)',
+        initial: () => initSpkgPath,
+        skip: () => !isSubstreams || !!initSpkgPath,
+        validate: value =>
+          filesystem.exists(initSpkgPath || value) ? true : 'SPKG file does not exist',
+      },
+    ]);
+
     const { abi: abiFromFile } = await prompt.ask<{ abi: EthereumABI }>([
       {
         type: 'input',
@@ -622,6 +644,7 @@ async function processInitForm(
       contractName,
       contract,
       indexEvents,
+      spkgPath: spkg,
     };
   } catch (e) {
     this.error(e, { exit: 1 });
@@ -925,6 +948,7 @@ async function initSubgraphFromContract(
     studio,
     product,
     startBlock,
+    spkgPath,
   }: {
     protocolInstance: Protocol;
     allowSimpleName: boolean | undefined;
@@ -939,6 +963,7 @@ async function initSubgraphFromContract(
     studio: boolean;
     product?: string;
     startBlock?: string;
+    spkgPath?: string;
   },
   {
     commands,
@@ -1002,6 +1027,7 @@ async function initSubgraphFromContract(
           contractName,
           startBlock,
           node,
+          spkgPath,
         },
         spinner,
       );

@@ -58,6 +58,7 @@ export const generateScaffold = async (
     contractName = 'Contract',
     startBlock,
     node,
+    spkgPath,
   }: {
     protocolInstance: Protocol;
     abi: ABI;
@@ -68,6 +69,7 @@ export const generateScaffold = async (
     contractName?: string;
     startBlock?: string;
     node?: string;
+    spkgPath?: string;
   },
   spinner: Spinner,
 ) => {
@@ -83,6 +85,7 @@ export const generateScaffold = async (
     startBlock,
     subgraphName,
     node,
+    spkgPath,
   });
 
   return scaffold.generate();
