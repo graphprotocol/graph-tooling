@@ -40,7 +40,7 @@
     "dockerode": "2.5.8",
     "fs-extra": "9.1.0",
     "glob": "9.3.5",
-    "gluegun": "https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep",
+    "gluegun": "5.1.2",
     "graphql": "15.5.0",
     "immutable": "4.2.1",
     "ipfs-http-client": "55.0.0",

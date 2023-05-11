@@ -25,6 +25,7 @@ export interface ScaffoldOptions {
   startBlock?: string;
   subgraphName?: string;
   node?: string;
+  spkgPath?: string;
 }
 
 export default class Scaffold {
@@ -37,6 +38,7 @@ export default class Scaffold {
   subgraphName?: string;
   node?: string;
   startBlock?: string;
+  spkgPath?: string;
 
   constructor(options: ScaffoldOptions) {
     this.protocol = options.protocol;
@@ -48,6 +50,7 @@ export default class Scaffold {
     this.subgraphName = options.subgraphName;
     this.startBlock = options.startBlock;
     this.node = options.node;
+    this.spkgPath = options.spkgPath;
   }
 
   generatePackageJson() {
@@ -73,6 +76,31 @@ export default class Scaffold {
           '@graphprotocol/graph-ts': `0.29.1`,
         },
         devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0` } : undefined,
+      }),
+      { parser: 'json' },
+    );
+  }
+
+  generatePackageJsonForSubstreams() {
+    return prettier.format(
+      JSON.stringify({
+        name: getSubgraphBasename(String(this.subgraphName)),
+        license: 'UNLICENSED',
+        scripts: {
+          build: 'graph build',
+          deploy: `graph deploy ` + `--node ${this.node} ` + this.subgraphName,
+          'create-local': `graph create --node http://localhost:8020/ ${this.subgraphName}`,
+          'remove-local': `graph remove --node http://localhost:8020/ ${this.subgraphName}`,
+          'deploy-local':
+            `graph deploy ` +
+            `--node http://localhost:8020/ ` +
+            `--ipfs http://localhost:5001 ` +
+            this.subgraphName,
+          test: 'graph test',
+        },
+        dependencies: {
+          '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
+        },
       }),
       { parser: 'json' },
     );
@@ -165,6 +193,13 @@ dataSources:
   }
 
   generate() {
+    if (this.protocol.name === 'substreams') {
+      return {
+        'subgraph.yaml': this.generateManifest(),
+        'schema.graphql': this.generateSchema(),
+        'package.json': this.generatePackageJsonForSubstreams(),
+      };
+    }
     return {
       'package.json': this.generatePackageJson(),
       'subgraph.yaml': this.generateManifest(),
