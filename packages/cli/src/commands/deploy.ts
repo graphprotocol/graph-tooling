@@ -266,6 +266,12 @@ export default class DeployCommand extends Command {
         manifestFile += chunk.toString();
       }
 
+      if (!manifestFile) {
+        this.error(`Could not find subgraph manifest at IPFS hash ${ipfsHash}`, { exit: 1 });
+      }
+
+      await ipfsClient.pin.add(ipfsHash);
+
       try {
         const dataSourcesAndTemplates = DataSourcesExtractor.fromManifestString(manifestFile);
 
