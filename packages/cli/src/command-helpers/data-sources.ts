@@ -1,3 +1,4 @@
+import yaml from 'js-yaml';
 import immutable from 'immutable';
 import { loadManifest } from '../migrations/util/load-manifest';
 import Protocol from '../protocols';
@@ -11,6 +12,17 @@ export const fromFilePath = async (manifestPath: string) => {
 
   return dataSources.concat(templates);
 };
+
+// Loads manifest from file path and returns all:
+// - data sources
+// - templates
+// In a single list.
+export function fromManifestString(manifest: string) {
+  // TODO: can we make it typesafe?
+  const { dataSources = [], templates = [] } = (yaml.safeLoad(manifest) || {}) as unknown as any;
+
+  return dataSources.concat(templates);
+}
 
 const extractDataSourceByType = (
   manifest: immutable.Map<any, any>,

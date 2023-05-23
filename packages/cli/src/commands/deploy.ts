@@ -3,7 +3,7 @@ import { URL } from 'url';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import { print, prompt } from 'gluegun';
 import { identifyDeployKey } from '../command-helpers/auth';
-import { createCompiler } from '../command-helpers/compiler';
+import { appendApiVersionForGraph, createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
@@ -12,6 +12,7 @@ import { chooseNodeUrl } from '../command-helpers/node';
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import Protocol from '../protocols';
+import { create } from 'ipfs-http-client';
 
 const headersFlag = Flags.custom<Record<string, string>>({
   summary: 'Add custom headers that will be used by the IPFS HTTP client.',
@@ -67,6 +68,10 @@ export default class DeployCommand extends Command {
       char: 'i',
       default: DEFAULT_IPFS_URL,
     }),
+    'ipfs-hash': Flags.string({
+      summary: 'IPFS hash of the subgraph manifest to deploy.',
+      required: false,
+    }),
     headers: headersFlag(),
     'debug-fork': Flags.string({
       summary: 'ID of a remote subgraph whose store will be GraphQL queried.',
@@ -111,6 +116,7 @@ export default class DeployCommand extends Command {
         'debug-fork': debugFork,
         network,
         'network-file': networkFile,
+        'ipfs-hash': ipfsHash,
       },
     } = await this.parse(DeployCommand);
 
@@ -138,16 +144,6 @@ export default class DeployCommand extends Command {
           ])
           .then(({ product }) => product as string));
 
-    try {
-      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
-
-      for (const { network } of dataSourcesAndTemplates) {
-        validateStudioNetwork({ studio, product, network });
-      }
-    } catch (e) {
-      this.error(e, { exit: 1 });
-    }
-
     const { node } = chooseNodeUrl({
       product,
       studio,
@@ -158,55 +154,8 @@ export default class DeployCommand extends Command {
       this.error('No Graph node provided');
     }
 
-    let protocol;
-    try {
-      // Checks to make sure deploy doesn't run against
-      // older subgraphs (both apiVersion and graph-ts version).
-      //
-      // We don't want the deploy to run without these conditions
-      // because that would mean the CLI would try to compile code
-      // using the wrong AssemblyScript compiler.
-      await assertManifestApiVersion(manifest, '0.0.5');
-      await assertGraphTsVersion(path.dirname(manifest), '0.25.0');
-
-      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
-
-      protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
-    } catch (e) {
-      this.error(e, { exit: 1 });
-    }
-
-    if (network) {
-      const identifierName = protocol.getContract()!.identifierName();
-      await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
-    }
-
     const isStudio = node.match(/studio/);
     const isHostedService = node.match(/thegraph.com/) && !isStudio;
-
-    const compiler = createCompiler(manifest, {
-      ipfs,
-      headers,
-      outputDir,
-      outputFormat: 'wasm',
-      skipMigrations,
-      blockIpfsMethods: isStudio || undefined, // Network does not support publishing subgraphs with IPFS methods
-      protocol,
-    });
-
-    // Exit with an error code if the compiler couldn't be created
-    if (!compiler) {
-      this.exit(1);
-      return;
-    }
-
-    // Ask for label if not on hosted service
-    let versionLabel = versionLabelFlag;
-    if (!versionLabel && !isHostedService) {
-      versionLabel = await ux.prompt('Which version label to use? (e.g. "v0.0.1")', {
-        required: true,
-      });
-    }
 
     const requestUrl = new URL(node);
     const client = createJsonRpcClient(requestUrl);
@@ -226,6 +175,14 @@ export default class DeployCommand extends Command {
     if (deployKey !== undefined && deployKey !== null) {
       // @ts-expect-error options property seems to exist
       client.options.headers = { Authorization: 'Bearer ' + deployKey };
+    }
+
+    // Ask for label if not on hosted service
+    let versionLabel = versionLabelFlag;
+    if (!versionLabel && !isHostedService) {
+      versionLabel = await ux.prompt('Which version label to use? (e.g. "v0.0.1")', {
+        required: true,
+      });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias -- request needs it
@@ -259,8 +216,8 @@ export default class DeployCommand extends Command {
                   '\nYou may need to create it at https://thegraph.com/explorer/dashboard.';
               } else {
                 errorMessage += `
-Make sure to create the subgraph first by running the following command:
-$ graph create --node ${node} ${subgraphName}`;
+      Make sure to create the subgraph first by running the following command:
+      $ graph create --node ${node} ${subgraphName}`;
               }
             }
 
@@ -291,10 +248,92 @@ $ graph create --node ${node} ${subgraphName}`;
             print.info('\nSubgraph endpoints:');
             print.info(`Queries (HTTP):     ${queries}`);
             print.info(``);
+            process.exit(0);
           }
         },
       );
     };
+
+    // we are provided the IPFS hash, so we deploy directly
+    if (ipfsHash) {
+      // Connect to the IPFS node (if a node address was provided)
+      const ipfsClient = create({ url: appendApiVersionForGraph(ipfs.toString()), headers });
+
+      // Fetch the manifest from IPFS
+      const manifestBuffer = ipfsClient.cat(ipfsHash);
+      let manifestFile = '';
+      for await (const chunk of manifestBuffer) {
+        manifestFile += chunk.toString();
+      }
+
+      if (!manifestFile) {
+        this.error(`Could not find subgraph manifest at IPFS hash ${ipfsHash}`, { exit: 1 });
+      }
+
+      await ipfsClient.pin.add(ipfsHash);
+
+      try {
+        const dataSourcesAndTemplates = DataSourcesExtractor.fromManifestString(manifestFile);
+
+        for (const { network } of dataSourcesAndTemplates) {
+          validateStudioNetwork({ studio, product, network });
+        }
+      } catch (e) {
+        this.error(e, { exit: 1 });
+      }
+
+      await deploySubgraph(ipfsHash);
+      return;
+    }
+
+    try {
+      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
+
+      for (const { network } of dataSourcesAndTemplates) {
+        validateStudioNetwork({ studio, product, network });
+      }
+    } catch (e) {
+      this.error(e, { exit: 1 });
+    }
+
+    let protocol;
+    try {
+      // Checks to make sure deploy doesn't run against
+      // older subgraphs (both apiVersion and graph-ts version).
+      //
+      // We don't want the deploy to run without these conditions
+      // because that would mean the CLI would try to compile code
+      // using the wrong AssemblyScript compiler.
+      await assertManifestApiVersion(manifest, '0.0.5');
+      await assertGraphTsVersion(path.dirname(manifest), '0.25.0');
+
+      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
+
+      protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
+    } catch (e) {
+      this.error(e, { exit: 1 });
+    }
+
+    if (network) {
+      const identifierName = protocol.getContract()!.identifierName();
+      await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
+    }
+
+    const compiler = createCompiler(manifest, {
+      ipfs,
+      headers,
+      outputDir,
+      outputFormat: 'wasm',
+      skipMigrations,
+      blockIpfsMethods: isStudio || undefined, // Network does not support publishing subgraphs with IPFS methods
+      protocol,
+    });
+
+    // Exit with an error code if the compiler couldn't be created
+    if (!compiler) {
+      this.exit(1);
+      return;
+    }
 
     if (watch) {
       await compiler.watchAndCompile(async ipfsHash => {
