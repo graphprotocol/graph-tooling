@@ -1,5 +1,17 @@
 # @graphprotocol/graph-cli
 
+## 0.50.1
+
+### Patch Changes
+
+- [#1356](https://github.com/graphprotocol/graph-tooling/pull/1356)
+  [`b7f8fba`](https://github.com/graphprotocol/graph-tooling/commit/b7f8fbabbfa36cf2eb817574fa143a58a1e2be33)
+  Thanks [@saihaj](https://github.com/saihaj)! - use bytes array instead of from array
+
+- [#1357](https://github.com/graphprotocol/graph-tooling/pull/1357)
+  [`394d48b`](https://github.com/graphprotocol/graph-tooling/commit/394d48bc67b3f25ae45490d4d26d0a51c2ab08fe)
+  Thanks [@saihaj](https://github.com/saihaj)! - upgrade to latest graph-ts version
+
 ## 0.50.0
 
 ### Minor Changes
