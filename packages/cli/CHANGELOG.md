@@ -1,5 +1,66 @@
 # @graphprotocol/graph-cli
 
+## 0.50.0
+
+### Minor Changes
+
+- [#1353](https://github.com/graphprotocol/graph-tooling/pull/1353)
+  [`125c687`](https://github.com/graphprotocol/graph-tooling/commit/125c6874e9d2fb67bf9f0211e9f9f306bc6fe55c)
+  Thanks [@saihaj](https://github.com/saihaj)! - Add a new `--ipfs-hash` flag to `graph deploy`
+  allowing to deploy a subgraph that is already compiled and uploaded to IPFS.
+
+- [#1335](https://github.com/graphprotocol/graph-tooling/pull/1335)
+  [`7343f50`](https://github.com/graphprotocol/graph-tooling/commit/7343f50c0e2b767de04909e6020b88fea97ae3cd)
+  Thanks [@saihaj](https://github.com/saihaj)! - For substreams generate the directory tree as
+  follows
+
+  ```
+  .
+  ├── package.json
+  ├── schema.graphql
+  └── subgraph.yaml
+  ```
+
+  In the `package.json` we only depend on the CLI since that is what developer will use to deploy
+  the subgraph. The `schema.graphql` is the schema of the subgraph and the `subgraph.yaml` is the
+  manifest file for the subgraph.
+
+- [#1335](https://github.com/graphprotocol/graph-tooling/pull/1335)
+  [`7343f50`](https://github.com/graphprotocol/graph-tooling/commit/7343f50c0e2b767de04909e6020b88fea97ae3cd)
+  Thanks [@saihaj](https://github.com/saihaj)! - respect --abi flag instead of loading from
+  etherscan
+
+- [#1335](https://github.com/graphprotocol/graph-tooling/pull/1335)
+  [`7343f50`](https://github.com/graphprotocol/graph-tooling/commit/7343f50c0e2b767de04909e6020b88fea97ae3cd)
+  Thanks [@saihaj](https://github.com/saihaj)! - remove index events as entities for substreams
+
+- [#1335](https://github.com/graphprotocol/graph-tooling/pull/1335)
+  [`7343f50`](https://github.com/graphprotocol/graph-tooling/commit/7343f50c0e2b767de04909e6020b88fea97ae3cd)
+  Thanks [@saihaj](https://github.com/saihaj)! - remove start block selection for substreams
+
+- [#1343](https://github.com/graphprotocol/graph-tooling/pull/1343)
+  [`032d703`](https://github.com/graphprotocol/graph-tooling/commit/032d7039fbfec7505d9c3bbefe43a76a8f2895de)
+  Thanks [@saihaj](https://github.com/saihaj)! - add SPK input for substreams protocol
+
+### Patch Changes
+
+- [#1335](https://github.com/graphprotocol/graph-tooling/pull/1335)
+  [`7343f50`](https://github.com/graphprotocol/graph-tooling/commit/7343f50c0e2b767de04909e6020b88fea97ae3cd)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@2.8.4` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.4)
+    (from `2.8.2`, in `dependencies`)
+  - Updated dependency [`gluegun@5.1.2` ↗︎](https://www.npmjs.com/package/gluegun/v/5.1.2) (from
+    `https://github.com/edgeandnode/gluegun#v4.3.1-pin-colors-dep`, in `dependencies`)
+
+- [#1351](https://github.com/graphprotocol/graph-tooling/pull/1351)
+  [`c7cf89c`](https://github.com/graphprotocol/graph-tooling/commit/c7cf89c2b7b60b39bd89473d8440ece2acdcb9a3)
+  Thanks [@saihaj](https://github.com/saihaj)! - return tuple arrays as a Bytes array in GraphQL
+
+- [#1329](https://github.com/graphprotocol/graph-tooling/pull/1329)
+  [`308cb8a`](https://github.com/graphprotocol/graph-tooling/commit/308cb8af3fb2cabbad08f409d77481994a95865c)
+  Thanks [@saihaj](https://github.com/saihaj)! - Point to new examples repo instead of old
+
 ## 0.49.0
 
 ### Minor Changes
