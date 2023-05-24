@@ -312,7 +312,7 @@ const ASSEMBLYSCRIPT_TO_VALUE = [
   ],
   ['Array<Array<string>>', /\[\[.*\]\]/, (code: any) => `Value.fromStringMatrix(${code})`],
   ['Array<Array<string | null>>', null, (code: any) => `Value.fromStringMatrix(${code})`], // is this overwriting the Array null below?
-  ['Array<ethereum.Tuple>', '[Bytes]', (code: any) => `Value.fromArray(${code})`],
+  ['Array<ethereum.Tuple>', '[Bytes]', (code: any) => `Value.fromBytesArray(${code})`],
   // Arrays
 
   ['Array<Address>', '[Bytes]', (code: any) => `Value.fromBytesArray(${code})`],
