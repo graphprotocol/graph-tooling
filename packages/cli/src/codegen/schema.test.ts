@@ -2,15 +2,7 @@ import * as graphql from 'graphql/language';
 import prettier from 'prettier';
 import Schema from '../schema';
 import SchemaCodeGenerator from './schema';
-import {
-  ArrayType,
-  Class,
-  Method,
-  NamedType,
-  NullableType,
-  Param,
-  StaticMethod,
-} from './typescript';
+import { Class, Method, NamedType, NullableType, Param, StaticMethod } from './typescript';
 
 const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
 
@@ -273,14 +265,9 @@ describe('Schema code generator', () => {
           {
             name: 'get wallets',
             params: [],
-            returnType: new NullableType(new ArrayType(new NamedType('string'))),
+            returnType: new NamedType('WalletLoader'),
             body: `
-              let value = this.get('wallets')
-              if (!value || value.kind == ValueKind.NULL) {
-                return null
-              } else {
-                return value.toStringArray()
-              }
+              return new WalletLoader("Account", this.get('id')!.toString(), "wallets") 
             `,
           },
         ],
