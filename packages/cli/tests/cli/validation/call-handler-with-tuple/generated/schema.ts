@@ -29,6 +29,10 @@ export class MyEntity extends Entity {
     }
   }
 
+  static loadInBlock(id: string): MyEntity | null {
+    return changetype<MyEntity | null>(store.get_in_block("MyEntity", id));
+  }
+
   static load(id: string): MyEntity | null {
     return changetype<MyEntity | null>(store.get("MyEntity", id));
   }
