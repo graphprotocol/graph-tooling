@@ -14,15 +14,19 @@ describe('Schema validation', () => {
     expect(typeSuggestion(`int`)).toBe('Int');
     expect(typeSuggestion(`uint`)).toBe('BigInt');
     expect(typeSuggestion(`uint32`)).toBe('BigInt');
+    expect(typeSuggestion(`int8`)).toBe('Int8');
+    expect(typeSuggestion(`i8`)).toBe('Int8');
+    expect(typeSuggestion(`u8`)).toBe('Int8');
+    expect(typeSuggestion(`uint8`)).toBe('Int8');
 
-    // Test i8..i32, int8..int32
-    for (let i = 8; i <= 32; i += 8) {
+    // Test i16..i32, int17..int32
+    for (let i = 16; i <= 32; i += 8) {
       expect(typeSuggestion(`i${i}`)).toBe('Int');
       expect(typeSuggestion(`int${i}`)).toBe('Int');
     }
 
-    // Test u8..u24, uint8..uint24
-    for (let i = 8; i <= 24; i += 8) {
+    // Test u16..u24, uint16..uint24
+    for (let i = 16; i <= 24; i += 8) {
       expect(typeSuggestion(`u${i}`)).toBe('Int');
       expect(typeSuggestion(`uint${i}`)).toBe('Int');
     }

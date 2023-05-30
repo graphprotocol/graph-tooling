@@ -72,6 +72,9 @@ describe('Schema code generator', () => {
 
         # derivedFrom
         wallets: [Wallet!] @derivedFrom(field: "account")
+
+        # New scalars
+        int8: Int8!
       }
 
       type Wallet @entity {
@@ -260,6 +263,26 @@ describe('Schema code generator', () => {
             returnType: undefined,
             body: `
               this.set('isActive', Value.fromBoolean(value))
+            `,
+          },
+          {
+            name: 'get int8',
+            params: [],
+            returnType: new NamedType('i64'),
+            body: `let value = this.get('int8')
+            if (!value || value.kind == ValueKind.NULL) {
+              return 0
+            } else {
+              return value.toI64()
+            }
+            `,
+          },
+          {
+            name: 'set int8',
+            params: [new Param('value', new NamedType('i64'))],
+            returnType: undefined,
+            body: `
+              this.set('int8', Value.fromI64(value))
             `,
           },
           {

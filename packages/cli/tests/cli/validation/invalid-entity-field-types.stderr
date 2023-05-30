@@ -13,7 +13,7 @@
   - Field 'int': Unknown type 'int'. Did you mean 'Int'?
   - Field 'uint': Unknown type 'uint'. Did you mean 'BigInt'?
   - Field 'uint32': Unknown type 'uint32'. Did you mean 'BigInt'?
-  - Field 'i8': Unknown type 'i8'. Did you mean 'Int'?
+  - Field 'i8': Unknown type 'i8'. Did you mean 'Int8'?
   - Field 'i16': Unknown type 'i16'. Did you mean 'Int'?
   - Field 'i24': Unknown type 'i24'. Did you mean 'Int'?
   - Field 'i32': Unknown type 'i32'. Did you mean 'Int'?
@@ -46,7 +46,7 @@
   - Field 'i248': Unknown type 'i248'. Did you mean 'BigInt'?
   - Field 'i256': Unknown type 'i256'. Did you mean 'BigInt'?
   - Field 'i256': Unknown type 'i256'. Did you mean 'BigInt'?
-  - Field 'int8': Unknown type 'int8'. Did you mean 'Int'?
+  - Field 'int8': Unknown type 'int8'. Did you mean 'Int8'?
   - Field 'int16': Unknown type 'int16'. Did you mean 'Int'?
   - Field 'int24': Unknown type 'int24'. Did you mean 'Int'?
   - Field 'int32': Unknown type 'int32'. Did you mean 'Int'?
@@ -79,7 +79,7 @@
   - Field 'int248': Unknown type 'int248'. Did you mean 'BigInt'?
   - Field 'int256': Unknown type 'int256'. Did you mean 'BigInt'?
   - Field 'int256': Unknown type 'int256'. Did you mean 'BigInt'?
-  - Field 'u8': Unknown type 'u8'. Did you mean 'Int'?
+  - Field 'u8': Unknown type 'u8'. Did you mean 'Int8'?
   - Field 'u16': Unknown type 'u16'. Did you mean 'Int'?
   - Field 'u24': Unknown type 'u24'. Did you mean 'Int'?
   - Field 'u32': Unknown type 'u32'. Did you mean 'BigInt'?
@@ -112,7 +112,7 @@
   - Field 'u248': Unknown type 'u248'. Did you mean 'BigInt'?
   - Field 'u256': Unknown type 'u256'. Did you mean 'BigInt'?
   - Field 'u256': Unknown type 'u256'. Did you mean 'BigInt'?
-  - Field 'uint8': Unknown type 'uint8'. Did you mean 'Int'?
+  - Field 'uint8': Unknown type 'uint8'. Did you mean 'Int8'?
   - Field 'uint16': Unknown type 'uint16'. Did you mean 'Int'?
   - Field 'uint24': Unknown type 'uint24'. Did you mean 'Int'?
   - Field 'uint32': Unknown type 'uint32'. Did you mean 'BigInt'?
