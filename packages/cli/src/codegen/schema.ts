@@ -129,9 +129,9 @@ export default class SchemaCodeGenerator {
     );
   }
 
-  _isDerivedField(field: any): boolean {
+  _isDerivedField(field: FieldDefinitionNode | undefined): boolean {
     return (
-      field.directives?.find((directive: any) => directive.name.value === 'derivedFrom') !==
+      field?.directives?.find((directive: any) => directive.name.value === 'derivedFrom') !==
       undefined
     );
   }
@@ -302,11 +302,10 @@ export default class SchemaCodeGenerator {
       returnType instanceof tsCodegen.NamedType ? returnType.getPrimitiveDefault() : null;
 
     const getNonNullable = `if (!value || value.kind == ValueKind.NULL) {
-                          ${
-                            primitiveDefault === null
-                              ? "throw new Error('Cannot return null for a required field.')"
-                              : `return ${primitiveDefault}`
-                          }
+                          ${primitiveDefault === null
+        ? "throw new Error('Cannot return null for a required field.')"
+        : `return ${primitiveDefault}`
+      }
                         } else {
                           return ${typesCodegen.valueToAsc('value', fieldValueType)}
                         }`;
@@ -326,7 +325,7 @@ export default class SchemaCodeGenerator {
       `,
     );
   }
-  _generateDerivedFieldGetter(entityDef: any, fieldDef: FieldDefinitionNode) {
+  _generateDerivedFieldGetter(entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const entityName = entityDef.name.value;
     const name = fieldDef.name.value;
     const gqlType = fieldDef.type;
@@ -341,7 +340,7 @@ export default class SchemaCodeGenerator {
     );
   }
 
-  _returnTypeForDervied(gqlType: any): any {
+  _returnTypeForDervied(gqlType: TypeNode): tsCodegen.NamedType {
     if (gqlType.kind === 'NonNullType') {
       return this._returnTypeForDervied(gqlType.type);
     }
@@ -352,7 +351,7 @@ export default class SchemaCodeGenerator {
     return type;
   }
 
-  _generatedEntityDerivedFieldGetter(_entityDef: any, fieldDef: FieldDefinitionNode) {
+  _generatedEntityDerivedFieldGetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const name = fieldDef.name.value;
     const gqlType = fieldDef.type;
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
