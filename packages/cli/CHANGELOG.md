@@ -1,5 +1,24 @@
 # @graphprotocol/graph-cli
 
+## 0.51.0
+
+### Minor Changes
+
+- [#1340](https://github.com/graphprotocol/graph-tooling/pull/1340)
+  [`2375877`](https://github.com/graphprotocol/graph-tooling/commit/23758774b33b5b7c6934f57a3e137870205ca6f0)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for codegen for derived field
+  loaders, This adds getters for derived fields defined in the schema for entities.
+
+- [#1363](https://github.com/graphprotocol/graph-tooling/pull/1363)
+  [`f928262`](https://github.com/graphprotocol/graph-tooling/commit/f9282626d7e906cfdc0fc826bdbc92ff2c907e97)
+  Thanks [@saihaj](https://github.com/saihaj)! - add `graph clean` command to delete generated
+  artifacts
+
+- [#1296](https://github.com/graphprotocol/graph-tooling/pull/1296)
+  [`dab4ca1`](https://github.com/graphprotocol/graph-tooling/commit/dab4ca1f5df7dcd0928bbaa20304f41d23b20ced)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Added support for handling GraphQL `Int8`
+  scalar as `i64` (AssemblyScript)
+
 ## 0.50.1
 
 ### Patch Changes
