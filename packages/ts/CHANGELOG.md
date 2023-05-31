@@ -1,5 +1,18 @@
 # @graphprotocol/graph-ts
 
+## 0.31.0
+
+### Minor Changes
+
+- [#1340](https://github.com/graphprotocol/graph-tooling/pull/1340)
+  [`2375877`](https://github.com/graphprotocol/graph-tooling/commit/23758774b33b5b7c6934f57a3e137870205ca6f0)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - export `loadRelated` host function
+
+- [#1296](https://github.com/graphprotocol/graph-tooling/pull/1296)
+  [`dab4ca1`](https://github.com/graphprotocol/graph-tooling/commit/dab4ca1f5df7dcd0928bbaa20304f41d23b20ced)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Added support for handling GraphQL `Int8`
+  scalar as `i64` (AssemblyScript)
+
 ## 0.30.0
 
 ### Minor Changes

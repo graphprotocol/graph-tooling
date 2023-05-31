@@ -24,8 +24,8 @@
     "babel-register": "^6.26.0"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.50.1",
-    "@graphprotocol/graph-ts": "0.30.0",
+    "@graphprotocol/graph-cli": "0.51.0",
+    "@graphprotocol/graph-ts": "0.31.0",
     "mustache": "^4.2.0"
   }
 }

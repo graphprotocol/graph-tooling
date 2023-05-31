@@ -31,8 +31,8 @@
     "typescript": "^5.0.4"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.50.1",
-    "@graphprotocol/graph-ts": "0.30.0",
+    "@graphprotocol/graph-cli": "0.51.0",
+    "@graphprotocol/graph-ts": "0.31.0",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "apollo-fetch": "^0.7.0",
     "hardhat": "^2.13.1"
