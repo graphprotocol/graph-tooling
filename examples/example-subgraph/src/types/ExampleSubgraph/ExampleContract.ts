@@ -7,8 +7,8 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt,
-} from '@graphprotocol/graph-ts';
+  BigInt
+} from "@graphprotocol/graph-ts";
 
 export class ExampleEvent extends ethereum.Event {
   get params(): ExampleEvent__Params {
@@ -30,21 +30,25 @@ export class ExampleEvent__Params {
 
 export class ExampleContract extends ethereum.SmartContract {
   static bind(address: Address): ExampleContract {
-    return new ExampleContract('ExampleContract', address);
+    return new ExampleContract("ExampleContract", address);
   }
 
   getAndReturnAddress(x: Address): Address {
-    let result = super.call('getAndReturnAddress', 'getAndReturnAddress(address):(address)', [
-      ethereum.Value.fromAddress(x),
-    ]);
+    let result = super.call(
+      "getAndReturnAddress",
+      "getAndReturnAddress(address):(address)",
+      [ethereum.Value.fromAddress(x)]
+    );
 
     return result[0].toAddress();
   }
 
   try_getAndReturnAddress(x: Address): ethereum.CallResult<Address> {
-    let result = super.tryCall('getAndReturnAddress', 'getAndReturnAddress(address):(address)', [
-      ethereum.Value.fromAddress(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnAddress",
+      "getAndReturnAddress(address):(address)",
+      [ethereum.Value.fromAddress(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -53,17 +57,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnString(x: string): string {
-    let result = super.call('getAndReturnString', 'getAndReturnString(string):(string)', [
-      ethereum.Value.fromString(x),
-    ]);
+    let result = super.call(
+      "getAndReturnString",
+      "getAndReturnString(string):(string)",
+      [ethereum.Value.fromString(x)]
+    );
 
     return result[0].toString();
   }
 
   try_getAndReturnString(x: string): ethereum.CallResult<string> {
-    let result = super.tryCall('getAndReturnString', 'getAndReturnString(string):(string)', [
-      ethereum.Value.fromString(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnString",
+      "getAndReturnString(string):(string)",
+      [ethereum.Value.fromString(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -72,17 +80,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnBool(x: boolean): boolean {
-    let result = super.call('getAndReturnBool', 'getAndReturnBool(bool):(bool)', [
-      ethereum.Value.fromBoolean(x),
-    ]);
+    let result = super.call(
+      "getAndReturnBool",
+      "getAndReturnBool(bool):(bool)",
+      [ethereum.Value.fromBoolean(x)]
+    );
 
     return result[0].toBoolean();
   }
 
   try_getAndReturnBool(x: boolean): ethereum.CallResult<boolean> {
-    let result = super.tryCall('getAndReturnBool', 'getAndReturnBool(bool):(bool)', [
-      ethereum.Value.fromBoolean(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnBool",
+      "getAndReturnBool(bool):(bool)",
+      [ethereum.Value.fromBoolean(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -91,17 +103,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnByte(x: Bytes): Bytes {
-    let result = super.call('getAndReturnByte', 'getAndReturnByte(byte):(byte)', [
-      ethereum.Value.fromFixedBytes(x),
-    ]);
+    let result = super.call(
+      "getAndReturnByte",
+      "getAndReturnByte(byte):(byte)",
+      [ethereum.Value.fromFixedBytes(x)]
+    );
 
     return result[0].toBytes();
   }
 
   try_getAndReturnByte(x: Bytes): ethereum.CallResult<Bytes> {
-    let result = super.tryCall('getAndReturnByte', 'getAndReturnByte(byte):(byte)', [
-      ethereum.Value.fromFixedBytes(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnByte",
+      "getAndReturnByte(byte):(byte)",
+      [ethereum.Value.fromFixedBytes(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -110,17 +126,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnBytes1(x: Bytes): Bytes {
-    let result = super.call('getAndReturnBytes1', 'getAndReturnBytes1(bytes1):(bytes1)', [
-      ethereum.Value.fromFixedBytes(x),
-    ]);
+    let result = super.call(
+      "getAndReturnBytes1",
+      "getAndReturnBytes1(bytes1):(bytes1)",
+      [ethereum.Value.fromFixedBytes(x)]
+    );
 
     return result[0].toBytes();
   }
 
   try_getAndReturnBytes1(x: Bytes): ethereum.CallResult<Bytes> {
-    let result = super.tryCall('getAndReturnBytes1', 'getAndReturnBytes1(bytes1):(bytes1)', [
-      ethereum.Value.fromFixedBytes(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnBytes1",
+      "getAndReturnBytes1(bytes1):(bytes1)",
+      [ethereum.Value.fromFixedBytes(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -129,17 +149,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnBytes32(x: Bytes): Bytes {
-    let result = super.call('getAndReturnBytes32', 'getAndReturnBytes32(bytes32):(bytes32)', [
-      ethereum.Value.fromFixedBytes(x),
-    ]);
+    let result = super.call(
+      "getAndReturnBytes32",
+      "getAndReturnBytes32(bytes32):(bytes32)",
+      [ethereum.Value.fromFixedBytes(x)]
+    );
 
     return result[0].toBytes();
   }
 
   try_getAndReturnBytes32(x: Bytes): ethereum.CallResult<Bytes> {
-    let result = super.tryCall('getAndReturnBytes32', 'getAndReturnBytes32(bytes32):(bytes32)', [
-      ethereum.Value.fromFixedBytes(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnBytes32",
+      "getAndReturnBytes32(bytes32):(bytes32)",
+      [ethereum.Value.fromFixedBytes(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -148,17 +172,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt8(x: i32): i32 {
-    let result = super.call('getAndReturnInt8', 'getAndReturnInt8(int8):(int8)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt8",
+      "getAndReturnInt8(int8):(int8)",
+      [ethereum.Value.fromI32(x)]
+    );
 
     return result[0].toI32();
   }
 
   try_getAndReturnInt8(x: i32): ethereum.CallResult<i32> {
-    let result = super.tryCall('getAndReturnInt8', 'getAndReturnInt8(int8):(int8)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt8",
+      "getAndReturnInt8(int8):(int8)",
+      [ethereum.Value.fromI32(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -167,17 +195,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt16(x: i32): i32 {
-    let result = super.call('getAndReturnInt16', 'getAndReturnInt16(int16):(int16)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt16",
+      "getAndReturnInt16(int16):(int16)",
+      [ethereum.Value.fromI32(x)]
+    );
 
     return result[0].toI32();
   }
 
   try_getAndReturnInt16(x: i32): ethereum.CallResult<i32> {
-    let result = super.tryCall('getAndReturnInt16', 'getAndReturnInt16(int16):(int16)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt16",
+      "getAndReturnInt16(int16):(int16)",
+      [ethereum.Value.fromI32(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -186,17 +218,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt24(x: i32): i32 {
-    let result = super.call('getAndReturnInt24', 'getAndReturnInt24(int24):(int24)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt24",
+      "getAndReturnInt24(int24):(int24)",
+      [ethereum.Value.fromI32(x)]
+    );
 
     return result[0].toI32();
   }
 
   try_getAndReturnInt24(x: i32): ethereum.CallResult<i32> {
-    let result = super.tryCall('getAndReturnInt24', 'getAndReturnInt24(int24):(int24)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt24",
+      "getAndReturnInt24(int24):(int24)",
+      [ethereum.Value.fromI32(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -205,17 +241,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt32(x: i32): i32 {
-    let result = super.call('getAndReturnInt32', 'getAndReturnInt32(int32):(int32)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt32",
+      "getAndReturnInt32(int32):(int32)",
+      [ethereum.Value.fromI32(x)]
+    );
 
     return result[0].toI32();
   }
 
   try_getAndReturnInt32(x: i32): ethereum.CallResult<i32> {
-    let result = super.tryCall('getAndReturnInt32', 'getAndReturnInt32(int32):(int32)', [
-      ethereum.Value.fromI32(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt32",
+      "getAndReturnInt32(int32):(int32)",
+      [ethereum.Value.fromI32(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -224,17 +264,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt40(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt40', 'getAndReturnInt40(int40):(int40)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt40",
+      "getAndReturnInt40(int40):(int40)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt40(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt40', 'getAndReturnInt40(int40):(int40)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt40",
+      "getAndReturnInt40(int40):(int40)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -243,17 +287,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt48(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt48', 'getAndReturnInt48(int48):(int48)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt48",
+      "getAndReturnInt48(int48):(int48)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt48(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt48', 'getAndReturnInt48(int48):(int48)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt48",
+      "getAndReturnInt48(int48):(int48)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -262,17 +310,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt56(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt56', 'getAndReturnInt56(int56):(int56)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt56",
+      "getAndReturnInt56(int56):(int56)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt56(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt56', 'getAndReturnInt56(int56):(int56)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt56",
+      "getAndReturnInt56(int56):(int56)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -281,17 +333,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt64(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt64', 'getAndReturnInt64(int64):(int64)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt64",
+      "getAndReturnInt64(int64):(int64)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt64(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt64', 'getAndReturnInt64(int64):(int64)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt64",
+      "getAndReturnInt64(int64):(int64)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -300,17 +356,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt72(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt72', 'getAndReturnInt72(int72):(int72)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt72",
+      "getAndReturnInt72(int72):(int72)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt72(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt72', 'getAndReturnInt72(int72):(int72)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt72",
+      "getAndReturnInt72(int72):(int72)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -319,17 +379,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt80(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt80', 'getAndReturnInt80(int80):(int80)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt80",
+      "getAndReturnInt80(int80):(int80)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt80(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt80', 'getAndReturnInt80(int80):(int80)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt80",
+      "getAndReturnInt80(int80):(int80)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -338,17 +402,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt88(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt88', 'getAndReturnInt88(int88):(int88)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt88",
+      "getAndReturnInt88(int88):(int88)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt88(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt88', 'getAndReturnInt88(int88):(int88)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt88",
+      "getAndReturnInt88(int88):(int88)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -357,17 +425,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt96(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt96', 'getAndReturnInt96(int96):(int96)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt96",
+      "getAndReturnInt96(int96):(int96)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt96(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt96', 'getAndReturnInt96(int96):(int96)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt96",
+      "getAndReturnInt96(int96):(int96)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -376,17 +448,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt104(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt104', 'getAndReturnInt104(int104):(int104)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt104",
+      "getAndReturnInt104(int104):(int104)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt104(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt104', 'getAndReturnInt104(int104):(int104)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt104",
+      "getAndReturnInt104(int104):(int104)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -395,17 +471,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt112(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt112', 'getAndReturnInt112(int112):(int112)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt112",
+      "getAndReturnInt112(int112):(int112)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt112(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt112', 'getAndReturnInt112(int112):(int112)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt112",
+      "getAndReturnInt112(int112):(int112)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -414,17 +494,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt120(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt120', 'getAndReturnInt120(int120):(int120)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt120",
+      "getAndReturnInt120(int120):(int120)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt120(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt120', 'getAndReturnInt120(int120):(int120)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt120",
+      "getAndReturnInt120(int120):(int120)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -433,17 +517,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt128(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt128', 'getAndReturnInt128(int128):(int128)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt128",
+      "getAndReturnInt128(int128):(int128)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt128(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt128', 'getAndReturnInt128(int128):(int128)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt128",
+      "getAndReturnInt128(int128):(int128)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -452,17 +540,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt136(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt136', 'getAndReturnInt136(int136):(int136)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt136",
+      "getAndReturnInt136(int136):(int136)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt136(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt136', 'getAndReturnInt136(int136):(int136)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt136",
+      "getAndReturnInt136(int136):(int136)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -471,17 +563,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt144(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt144', 'getAndReturnInt144(int144):(int144)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt144",
+      "getAndReturnInt144(int144):(int144)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt144(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt144', 'getAndReturnInt144(int144):(int144)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt144",
+      "getAndReturnInt144(int144):(int144)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -490,17 +586,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt152(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt152', 'getAndReturnInt152(int152):(int152)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt152",
+      "getAndReturnInt152(int152):(int152)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt152(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt152', 'getAndReturnInt152(int152):(int152)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt152",
+      "getAndReturnInt152(int152):(int152)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -509,17 +609,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt160(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt160', 'getAndReturnInt160(int160):(int160)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt160",
+      "getAndReturnInt160(int160):(int160)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt160(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt160', 'getAndReturnInt160(int160):(int160)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt160",
+      "getAndReturnInt160(int160):(int160)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -528,17 +632,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt168(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt168', 'getAndReturnInt168(int168):(int168)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt168",
+      "getAndReturnInt168(int168):(int168)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt168(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt168', 'getAndReturnInt168(int168):(int168)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt168",
+      "getAndReturnInt168(int168):(int168)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -547,17 +655,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt176(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt176', 'getAndReturnInt176(int176):(int176)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt176",
+      "getAndReturnInt176(int176):(int176)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt176(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt176', 'getAndReturnInt176(int176):(int176)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt176",
+      "getAndReturnInt176(int176):(int176)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -566,17 +678,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt184(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt184', 'getAndReturnInt184(int184):(int184)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt184",
+      "getAndReturnInt184(int184):(int184)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt184(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt184', 'getAndReturnInt184(int184):(int184)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt184",
+      "getAndReturnInt184(int184):(int184)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -585,17 +701,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt192(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt192', 'getAndReturnInt192(int192):(int192)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt192",
+      "getAndReturnInt192(int192):(int192)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt192(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt192', 'getAndReturnInt192(int192):(int192)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt192",
+      "getAndReturnInt192(int192):(int192)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -604,17 +724,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt200(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt200', 'getAndReturnInt200(int200):(int200)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt200",
+      "getAndReturnInt200(int200):(int200)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt200(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt200', 'getAndReturnInt200(int200):(int200)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt200",
+      "getAndReturnInt200(int200):(int200)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -623,17 +747,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt208(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt208', 'getAndReturnInt208(int208):(int208)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt208",
+      "getAndReturnInt208(int208):(int208)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt208(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt208', 'getAndReturnInt208(int208):(int208)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt208",
+      "getAndReturnInt208(int208):(int208)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -642,17 +770,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt216(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt216', 'getAndReturnInt216(int216):(int216)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt216",
+      "getAndReturnInt216(int216):(int216)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt216(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt216', 'getAndReturnInt216(int216):(int216)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt216",
+      "getAndReturnInt216(int216):(int216)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -661,17 +793,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt224(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt224', 'getAndReturnInt224(int224):(int224)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt224",
+      "getAndReturnInt224(int224):(int224)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt224(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt224', 'getAndReturnInt224(int224):(int224)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt224",
+      "getAndReturnInt224(int224):(int224)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -680,17 +816,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt232(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt232', 'getAndReturnInt232(int232):(int232)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt232",
+      "getAndReturnInt232(int232):(int232)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt232(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt232', 'getAndReturnInt232(int232):(int232)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt232",
+      "getAndReturnInt232(int232):(int232)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -699,17 +839,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt240(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt240', 'getAndReturnInt240(int240):(int240)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt240",
+      "getAndReturnInt240(int240):(int240)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt240(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt240', 'getAndReturnInt240(int240):(int240)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt240",
+      "getAndReturnInt240(int240):(int240)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -718,17 +862,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt248(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt248', 'getAndReturnInt248(int248):(int248)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt248",
+      "getAndReturnInt248(int248):(int248)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt248(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt248', 'getAndReturnInt248(int248):(int248)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt248",
+      "getAndReturnInt248(int248):(int248)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -737,17 +885,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt256(x: BigInt): BigInt {
-    let result = super.call('getAndReturnInt256', 'getAndReturnInt256(int256):(int256)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt256",
+      "getAndReturnInt256(int256):(int256)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnInt256(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnInt256', 'getAndReturnInt256(int256):(int256)', [
-      ethereum.Value.fromSignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt256",
+      "getAndReturnInt256(int256):(int256)",
+      [ethereum.Value.fromSignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -756,17 +908,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint8(x: i32): i32 {
-    let result = super.call('getAndReturnUint8', 'getAndReturnUint8(uint8):(uint8)', [
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x)),
-    ]);
+    let result = super.call(
+      "getAndReturnUint8",
+      "getAndReturnUint8(uint8):(uint8)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x))]
+    );
 
     return result[0].toI32();
   }
 
   try_getAndReturnUint8(x: i32): ethereum.CallResult<i32> {
-    let result = super.tryCall('getAndReturnUint8', 'getAndReturnUint8(uint8):(uint8)', [
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x)),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint8",
+      "getAndReturnUint8(uint8):(uint8)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x))]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -775,17 +931,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint16(x: i32): i32 {
-    let result = super.call('getAndReturnUint16', 'getAndReturnUint16(uint16):(uint16)', [
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x)),
-    ]);
+    let result = super.call(
+      "getAndReturnUint16",
+      "getAndReturnUint16(uint16):(uint16)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x))]
+    );
 
     return result[0].toI32();
   }
 
   try_getAndReturnUint16(x: i32): ethereum.CallResult<i32> {
-    let result = super.tryCall('getAndReturnUint16', 'getAndReturnUint16(uint16):(uint16)', [
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x)),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint16",
+      "getAndReturnUint16(uint16):(uint16)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x))]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -794,17 +954,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint24(x: i32): i32 {
-    let result = super.call('getAndReturnUint24', 'getAndReturnUint24(uint24):(uint24)', [
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x)),
-    ]);
+    let result = super.call(
+      "getAndReturnUint24",
+      "getAndReturnUint24(uint24):(uint24)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x))]
+    );
 
     return result[0].toI32();
   }
 
   try_getAndReturnUint24(x: i32): ethereum.CallResult<i32> {
-    let result = super.tryCall('getAndReturnUint24', 'getAndReturnUint24(uint24):(uint24)', [
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x)),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint24",
+      "getAndReturnUint24(uint24):(uint24)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(x))]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -813,17 +977,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint32(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint32', 'getAndReturnUint32(uint32):(uint32)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint32",
+      "getAndReturnUint32(uint32):(uint32)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint32(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint32', 'getAndReturnUint32(uint32):(uint32)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint32",
+      "getAndReturnUint32(uint32):(uint32)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -832,17 +1000,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint40(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint40', 'getAndReturnUint40(uint40):(uint40)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint40",
+      "getAndReturnUint40(uint40):(uint40)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint40(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint40', 'getAndReturnUint40(uint40):(uint40)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint40",
+      "getAndReturnUint40(uint40):(uint40)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -851,17 +1023,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint48(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint48', 'getAndReturnUint48(uint48):(uint48)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint48",
+      "getAndReturnUint48(uint48):(uint48)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint48(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint48', 'getAndReturnUint48(uint48):(uint48)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint48",
+      "getAndReturnUint48(uint48):(uint48)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -870,17 +1046,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint56(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint56', 'getAndReturnUint56(uint56):(uint56)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint56",
+      "getAndReturnUint56(uint56):(uint56)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint56(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint56', 'getAndReturnUint56(uint56):(uint56)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint56",
+      "getAndReturnUint56(uint56):(uint56)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -889,17 +1069,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint64(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint64', 'getAndReturnUint64(uint64):(uint64)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint64",
+      "getAndReturnUint64(uint64):(uint64)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint64(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint64', 'getAndReturnUint64(uint64):(uint64)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint64",
+      "getAndReturnUint64(uint64):(uint64)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -908,17 +1092,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint72(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint72', 'getAndReturnUint72(uint72):(uint72)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint72",
+      "getAndReturnUint72(uint72):(uint72)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint72(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint72', 'getAndReturnUint72(uint72):(uint72)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint72",
+      "getAndReturnUint72(uint72):(uint72)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -927,17 +1115,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint80(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint80', 'getAndReturnUint80(uint80):(uint80)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint80",
+      "getAndReturnUint80(uint80):(uint80)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint80(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint80', 'getAndReturnUint80(uint80):(uint80)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint80",
+      "getAndReturnUint80(uint80):(uint80)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -946,17 +1138,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint88(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint88', 'getAndReturnUint88(uint88):(uint88)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint88",
+      "getAndReturnUint88(uint88):(uint88)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint88(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint88', 'getAndReturnUint88(uint88):(uint88)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint88",
+      "getAndReturnUint88(uint88):(uint88)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -965,17 +1161,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint96(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint96', 'getAndReturnUint96(uint96):(uint96)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint96",
+      "getAndReturnUint96(uint96):(uint96)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint96(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint96', 'getAndReturnUint96(uint96):(uint96)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint96",
+      "getAndReturnUint96(uint96):(uint96)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -984,17 +1184,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint104(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint104', 'getAndReturnUint104(uint104):(uint104)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint104",
+      "getAndReturnUint104(uint104):(uint104)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint104(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint104', 'getAndReturnUint104(uint104):(uint104)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint104",
+      "getAndReturnUint104(uint104):(uint104)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1003,17 +1207,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint112(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint112', 'getAndReturnUint112(uint112):(uint112)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint112",
+      "getAndReturnUint112(uint112):(uint112)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint112(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint112', 'getAndReturnUint112(uint112):(uint112)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint112",
+      "getAndReturnUint112(uint112):(uint112)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1022,17 +1230,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint120(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint120', 'getAndReturnUint120(uint120):(uint120)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint120",
+      "getAndReturnUint120(uint120):(uint120)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint120(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint120', 'getAndReturnUint120(uint120):(uint120)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint120",
+      "getAndReturnUint120(uint120):(uint120)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1041,17 +1253,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint128(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint128', 'getAndReturnUint128(uint128):(uint128)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint128",
+      "getAndReturnUint128(uint128):(uint128)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint128(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint128', 'getAndReturnUint128(uint128):(uint128)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint128",
+      "getAndReturnUint128(uint128):(uint128)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1060,17 +1276,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint136(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint136', 'getAndReturnUint136(uint136):(uint136)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint136",
+      "getAndReturnUint136(uint136):(uint136)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint136(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint136', 'getAndReturnUint136(uint136):(uint136)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint136",
+      "getAndReturnUint136(uint136):(uint136)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1079,17 +1299,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint144(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint144', 'getAndReturnUint144(uint144):(uint144)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint144",
+      "getAndReturnUint144(uint144):(uint144)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint144(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint144', 'getAndReturnUint144(uint144):(uint144)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint144",
+      "getAndReturnUint144(uint144):(uint144)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1098,17 +1322,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint152(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint152', 'getAndReturnUint152(uint152):(uint152)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint152",
+      "getAndReturnUint152(uint152):(uint152)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint152(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint152', 'getAndReturnUint152(uint152):(uint152)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint152",
+      "getAndReturnUint152(uint152):(uint152)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1117,17 +1345,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint160(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint160', 'getAndReturnUint160(uint160):(uint160)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint160",
+      "getAndReturnUint160(uint160):(uint160)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint160(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint160', 'getAndReturnUint160(uint160):(uint160)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint160",
+      "getAndReturnUint160(uint160):(uint160)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1136,17 +1368,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint168(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint168', 'getAndReturnUint168(uint168):(uint168)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint168",
+      "getAndReturnUint168(uint168):(uint168)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint168(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint168', 'getAndReturnUint168(uint168):(uint168)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint168",
+      "getAndReturnUint168(uint168):(uint168)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1155,17 +1391,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint176(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint176', 'getAndReturnUint176(uint176):(uint176)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint176",
+      "getAndReturnUint176(uint176):(uint176)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint176(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint176', 'getAndReturnUint176(uint176):(uint176)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint176",
+      "getAndReturnUint176(uint176):(uint176)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1174,17 +1414,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint184(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint184', 'getAndReturnUint184(uint184):(uint184)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint184",
+      "getAndReturnUint184(uint184):(uint184)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint184(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint184', 'getAndReturnUint184(uint184):(uint184)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint184",
+      "getAndReturnUint184(uint184):(uint184)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1193,17 +1437,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint192(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint192', 'getAndReturnUint192(uint192):(uint192)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint192",
+      "getAndReturnUint192(uint192):(uint192)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint192(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint192', 'getAndReturnUint192(uint192):(uint192)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint192",
+      "getAndReturnUint192(uint192):(uint192)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1212,17 +1460,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint200(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint200', 'getAndReturnUint200(uint200):(uint200)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint200",
+      "getAndReturnUint200(uint200):(uint200)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint200(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint200', 'getAndReturnUint200(uint200):(uint200)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint200",
+      "getAndReturnUint200(uint200):(uint200)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1231,17 +1483,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint208(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint208', 'getAndReturnUint208(uint208):(uint208)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint208",
+      "getAndReturnUint208(uint208):(uint208)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint208(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint208', 'getAndReturnUint208(uint208):(uint208)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint208",
+      "getAndReturnUint208(uint208):(uint208)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1250,17 +1506,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint216(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint216', 'getAndReturnUint216(uint216):(uint216)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint216",
+      "getAndReturnUint216(uint216):(uint216)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint216(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint216', 'getAndReturnUint216(uint216):(uint216)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint216",
+      "getAndReturnUint216(uint216):(uint216)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1269,17 +1529,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint224(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint224', 'getAndReturnUint224(uint224):(uint224)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint224",
+      "getAndReturnUint224(uint224):(uint224)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint224(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint224', 'getAndReturnUint224(uint224):(uint224)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint224",
+      "getAndReturnUint224(uint224):(uint224)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1288,17 +1552,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint232(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint232', 'getAndReturnUint232(uint232):(uint232)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint232",
+      "getAndReturnUint232(uint232):(uint232)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint232(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint232', 'getAndReturnUint232(uint232):(uint232)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint232",
+      "getAndReturnUint232(uint232):(uint232)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1307,17 +1575,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint240(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint240', 'getAndReturnUint240(uint240):(uint240)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint240",
+      "getAndReturnUint240(uint240):(uint240)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint240(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint240', 'getAndReturnUint240(uint240):(uint240)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint240",
+      "getAndReturnUint240(uint240):(uint240)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1326,17 +1598,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint248(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint248', 'getAndReturnUint248(uint248):(uint248)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint248",
+      "getAndReturnUint248(uint248):(uint248)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint248(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint248', 'getAndReturnUint248(uint248):(uint248)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint248",
+      "getAndReturnUint248(uint248):(uint248)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1345,17 +1621,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint256(x: BigInt): BigInt {
-    let result = super.call('getAndReturnUint256', 'getAndReturnUint256(uint256):(uint256)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint256",
+      "getAndReturnUint256(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
 
     return result[0].toBigInt();
   }
 
   try_getAndReturnUint256(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall('getAndReturnUint256', 'getAndReturnUint256(uint256):(uint256)', [
-      ethereum.Value.fromUnsignedBigInt(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnUint256",
+      "getAndReturnUint256(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1365,19 +1645,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnAddressArray(x: Array<Address>): Array<Address> {
     let result = super.call(
-      'getAndReturnAddressArray',
-      'getAndReturnAddressArray(address[]):(address[])',
-      [ethereum.Value.fromAddressArray(x)],
+      "getAndReturnAddressArray",
+      "getAndReturnAddressArray(address[]):(address[])",
+      [ethereum.Value.fromAddressArray(x)]
     );
 
     return result[0].toAddressArray();
   }
 
-  try_getAndReturnAddressArray(x: Array<Address>): ethereum.CallResult<Array<Address>> {
+  try_getAndReturnAddressArray(
+    x: Array<Address>
+  ): ethereum.CallResult<Array<Address>> {
     let result = super.tryCall(
-      'getAndReturnAddressArray',
-      'getAndReturnAddressArray(address[]):(address[])',
-      [ethereum.Value.fromAddressArray(x)],
+      "getAndReturnAddressArray",
+      "getAndReturnAddressArray(address[]):(address[])",
+      [ethereum.Value.fromAddressArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1388,19 +1670,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnStringArray(x: Array<string>): Array<string> {
     let result = super.call(
-      'getAndReturnStringArray',
-      'getAndReturnStringArray(string[]):(string[])',
-      [ethereum.Value.fromStringArray(x)],
+      "getAndReturnStringArray",
+      "getAndReturnStringArray(string[]):(string[])",
+      [ethereum.Value.fromStringArray(x)]
     );
 
     return result[0].toStringArray();
   }
 
-  try_getAndReturnStringArray(x: Array<string>): ethereum.CallResult<Array<string>> {
+  try_getAndReturnStringArray(
+    x: Array<string>
+  ): ethereum.CallResult<Array<string>> {
     let result = super.tryCall(
-      'getAndReturnStringArray',
-      'getAndReturnStringArray(string[]):(string[])',
-      [ethereum.Value.fromStringArray(x)],
+      "getAndReturnStringArray",
+      "getAndReturnStringArray(string[]):(string[])",
+      [ethereum.Value.fromStringArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1410,17 +1694,23 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnBoolArray(x: Array<boolean>): Array<boolean> {
-    let result = super.call('getAndReturnBoolArray', 'getAndReturnBoolArray(bool[]):(bool[])', [
-      ethereum.Value.fromBooleanArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnBoolArray",
+      "getAndReturnBoolArray(bool[]):(bool[])",
+      [ethereum.Value.fromBooleanArray(x)]
+    );
 
     return result[0].toBooleanArray();
   }
 
-  try_getAndReturnBoolArray(x: Array<boolean>): ethereum.CallResult<Array<boolean>> {
-    let result = super.tryCall('getAndReturnBoolArray', 'getAndReturnBoolArray(bool[]):(bool[])', [
-      ethereum.Value.fromBooleanArray(x),
-    ]);
+  try_getAndReturnBoolArray(
+    x: Array<boolean>
+  ): ethereum.CallResult<Array<boolean>> {
+    let result = super.tryCall(
+      "getAndReturnBoolArray",
+      "getAndReturnBoolArray(bool[]):(bool[])",
+      [ethereum.Value.fromBooleanArray(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1429,17 +1719,23 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnByteArray(x: Array<Bytes>): Array<Bytes> {
-    let result = super.call('getAndReturnByteArray', 'getAndReturnByteArray(byte[]):(byte[])', [
-      ethereum.Value.fromFixedBytesArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnByteArray",
+      "getAndReturnByteArray(byte[]):(byte[])",
+      [ethereum.Value.fromFixedBytesArray(x)]
+    );
 
     return result[0].toBytesArray();
   }
 
-  try_getAndReturnByteArray(x: Array<Bytes>): ethereum.CallResult<Array<Bytes>> {
-    let result = super.tryCall('getAndReturnByteArray', 'getAndReturnByteArray(byte[]):(byte[])', [
-      ethereum.Value.fromFixedBytesArray(x),
-    ]);
+  try_getAndReturnByteArray(
+    x: Array<Bytes>
+  ): ethereum.CallResult<Array<Bytes>> {
+    let result = super.tryCall(
+      "getAndReturnByteArray",
+      "getAndReturnByteArray(byte[]):(byte[])",
+      [ethereum.Value.fromFixedBytesArray(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1449,19 +1745,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnBytes1Array(x: Array<Bytes>): Array<Bytes> {
     let result = super.call(
-      'getAndReturnBytes1Array',
-      'getAndReturnBytes1Array(bytes1[]):(bytes1[])',
-      [ethereum.Value.fromFixedBytesArray(x)],
+      "getAndReturnBytes1Array",
+      "getAndReturnBytes1Array(bytes1[]):(bytes1[])",
+      [ethereum.Value.fromFixedBytesArray(x)]
     );
 
     return result[0].toBytesArray();
   }
 
-  try_getAndReturnBytes1Array(x: Array<Bytes>): ethereum.CallResult<Array<Bytes>> {
+  try_getAndReturnBytes1Array(
+    x: Array<Bytes>
+  ): ethereum.CallResult<Array<Bytes>> {
     let result = super.tryCall(
-      'getAndReturnBytes1Array',
-      'getAndReturnBytes1Array(bytes1[]):(bytes1[])',
-      [ethereum.Value.fromFixedBytesArray(x)],
+      "getAndReturnBytes1Array",
+      "getAndReturnBytes1Array(bytes1[]):(bytes1[])",
+      [ethereum.Value.fromFixedBytesArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1472,19 +1770,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnBytes32Array(x: Array<Bytes>): Array<Bytes> {
     let result = super.call(
-      'getAndReturnBytes32Array',
-      'getAndReturnBytes32Array(bytes32[]):(bytes32[])',
-      [ethereum.Value.fromFixedBytesArray(x)],
+      "getAndReturnBytes32Array",
+      "getAndReturnBytes32Array(bytes32[]):(bytes32[])",
+      [ethereum.Value.fromFixedBytesArray(x)]
     );
 
     return result[0].toBytesArray();
   }
 
-  try_getAndReturnBytes32Array(x: Array<Bytes>): ethereum.CallResult<Array<Bytes>> {
+  try_getAndReturnBytes32Array(
+    x: Array<Bytes>
+  ): ethereum.CallResult<Array<Bytes>> {
     let result = super.tryCall(
-      'getAndReturnBytes32Array',
-      'getAndReturnBytes32Array(bytes32[]):(bytes32[])',
-      [ethereum.Value.fromFixedBytesArray(x)],
+      "getAndReturnBytes32Array",
+      "getAndReturnBytes32Array(bytes32[]):(bytes32[])",
+      [ethereum.Value.fromFixedBytesArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1494,17 +1794,21 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt8Array(x: Array<i32>): Array<i32> {
-    let result = super.call('getAndReturnInt8Array', 'getAndReturnInt8Array(int8[]):(int8[])', [
-      ethereum.Value.fromI32Array(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt8Array",
+      "getAndReturnInt8Array(int8[]):(int8[])",
+      [ethereum.Value.fromI32Array(x)]
+    );
 
     return result[0].toI32Array();
   }
 
   try_getAndReturnInt8Array(x: Array<i32>): ethereum.CallResult<Array<i32>> {
-    let result = super.tryCall('getAndReturnInt8Array', 'getAndReturnInt8Array(int8[]):(int8[])', [
-      ethereum.Value.fromI32Array(x),
-    ]);
+    let result = super.tryCall(
+      "getAndReturnInt8Array",
+      "getAndReturnInt8Array(int8[]):(int8[])",
+      [ethereum.Value.fromI32Array(x)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -1513,18 +1817,20 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt16Array(x: Array<i32>): Array<i32> {
-    let result = super.call('getAndReturnInt16Array', 'getAndReturnInt16Array(int16[]):(int16[])', [
-      ethereum.Value.fromI32Array(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt16Array",
+      "getAndReturnInt16Array(int16[]):(int16[])",
+      [ethereum.Value.fromI32Array(x)]
+    );
 
     return result[0].toI32Array();
   }
 
   try_getAndReturnInt16Array(x: Array<i32>): ethereum.CallResult<Array<i32>> {
     let result = super.tryCall(
-      'getAndReturnInt16Array',
-      'getAndReturnInt16Array(int16[]):(int16[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnInt16Array",
+      "getAndReturnInt16Array(int16[]):(int16[])",
+      [ethereum.Value.fromI32Array(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1534,18 +1840,20 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt24Array(x: Array<i32>): Array<i32> {
-    let result = super.call('getAndReturnInt24Array', 'getAndReturnInt24Array(int24[]):(int24[])', [
-      ethereum.Value.fromI32Array(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt24Array",
+      "getAndReturnInt24Array(int24[]):(int24[])",
+      [ethereum.Value.fromI32Array(x)]
+    );
 
     return result[0].toI32Array();
   }
 
   try_getAndReturnInt24Array(x: Array<i32>): ethereum.CallResult<Array<i32>> {
     let result = super.tryCall(
-      'getAndReturnInt24Array',
-      'getAndReturnInt24Array(int24[]):(int24[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnInt24Array",
+      "getAndReturnInt24Array(int24[]):(int24[])",
+      [ethereum.Value.fromI32Array(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1555,18 +1863,20 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt32Array(x: Array<i32>): Array<i32> {
-    let result = super.call('getAndReturnInt32Array', 'getAndReturnInt32Array(int32[]):(int32[])', [
-      ethereum.Value.fromI32Array(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt32Array",
+      "getAndReturnInt32Array(int32[]):(int32[])",
+      [ethereum.Value.fromI32Array(x)]
+    );
 
     return result[0].toI32Array();
   }
 
   try_getAndReturnInt32Array(x: Array<i32>): ethereum.CallResult<Array<i32>> {
     let result = super.tryCall(
-      'getAndReturnInt32Array',
-      'getAndReturnInt32Array(int32[]):(int32[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnInt32Array",
+      "getAndReturnInt32Array(int32[]):(int32[])",
+      [ethereum.Value.fromI32Array(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1576,18 +1886,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt40Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt40Array', 'getAndReturnInt40Array(int40[]):(int40[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt40Array",
+      "getAndReturnInt40Array(int40[]):(int40[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt40Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt40Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt40Array',
-      'getAndReturnInt40Array(int40[]):(int40[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt40Array",
+      "getAndReturnInt40Array(int40[]):(int40[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1597,18 +1911,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt48Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt48Array', 'getAndReturnInt48Array(int48[]):(int48[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt48Array",
+      "getAndReturnInt48Array(int48[]):(int48[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt48Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt48Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt48Array',
-      'getAndReturnInt48Array(int48[]):(int48[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt48Array",
+      "getAndReturnInt48Array(int48[]):(int48[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1618,18 +1936,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt56Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt56Array', 'getAndReturnInt56Array(int56[]):(int56[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt56Array",
+      "getAndReturnInt56Array(int56[]):(int56[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt56Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt56Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt56Array',
-      'getAndReturnInt56Array(int56[]):(int56[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt56Array",
+      "getAndReturnInt56Array(int56[]):(int56[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1639,18 +1961,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt64Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt64Array', 'getAndReturnInt64Array(int64[]):(int64[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt64Array",
+      "getAndReturnInt64Array(int64[]):(int64[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt64Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt64Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt64Array',
-      'getAndReturnInt64Array(int64[]):(int64[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt64Array",
+      "getAndReturnInt64Array(int64[]):(int64[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1660,18 +1986,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt72Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt72Array', 'getAndReturnInt72Array(int72[]):(int72[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt72Array",
+      "getAndReturnInt72Array(int72[]):(int72[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt72Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt72Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt72Array',
-      'getAndReturnInt72Array(int72[]):(int72[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt72Array",
+      "getAndReturnInt72Array(int72[]):(int72[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1681,18 +2011,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt80Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt80Array', 'getAndReturnInt80Array(int80[]):(int80[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt80Array",
+      "getAndReturnInt80Array(int80[]):(int80[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt80Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt80Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt80Array',
-      'getAndReturnInt80Array(int80[]):(int80[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt80Array",
+      "getAndReturnInt80Array(int80[]):(int80[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1702,18 +2036,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt88Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt88Array', 'getAndReturnInt88Array(int88[]):(int88[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt88Array",
+      "getAndReturnInt88Array(int88[]):(int88[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt88Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt88Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt88Array',
-      'getAndReturnInt88Array(int88[]):(int88[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt88Array",
+      "getAndReturnInt88Array(int88[]):(int88[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1723,18 +2061,22 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnInt96Array(x: Array<BigInt>): Array<BigInt> {
-    let result = super.call('getAndReturnInt96Array', 'getAndReturnInt96Array(int96[]):(int96[])', [
-      ethereum.Value.fromSignedBigIntArray(x),
-    ]);
+    let result = super.call(
+      "getAndReturnInt96Array",
+      "getAndReturnInt96Array(int96[]):(int96[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
+    );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt96Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt96Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt96Array',
-      'getAndReturnInt96Array(int96[]):(int96[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt96Array",
+      "getAndReturnInt96Array(int96[]):(int96[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1745,19 +2087,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt104Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt104Array',
-      'getAndReturnInt104Array(int104[]):(int104[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt104Array",
+      "getAndReturnInt104Array(int104[]):(int104[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt104Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt104Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt104Array',
-      'getAndReturnInt104Array(int104[]):(int104[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt104Array",
+      "getAndReturnInt104Array(int104[]):(int104[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1768,19 +2112,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt112Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt112Array',
-      'getAndReturnInt112Array(int112[]):(int112[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt112Array",
+      "getAndReturnInt112Array(int112[]):(int112[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt112Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt112Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt112Array',
-      'getAndReturnInt112Array(int112[]):(int112[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt112Array",
+      "getAndReturnInt112Array(int112[]):(int112[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1791,19 +2137,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt120Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt120Array',
-      'getAndReturnInt120Array(int120[]):(int120[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt120Array",
+      "getAndReturnInt120Array(int120[]):(int120[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt120Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt120Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt120Array',
-      'getAndReturnInt120Array(int120[]):(int120[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt120Array",
+      "getAndReturnInt120Array(int120[]):(int120[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1814,19 +2162,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt128Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt128Array',
-      'getAndReturnInt128Array(int128[]):(int128[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt128Array",
+      "getAndReturnInt128Array(int128[]):(int128[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt128Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt128Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt128Array',
-      'getAndReturnInt128Array(int128[]):(int128[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt128Array",
+      "getAndReturnInt128Array(int128[]):(int128[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1837,19 +2187,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt136Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt136Array',
-      'getAndReturnInt136Array(int136[]):(int136[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt136Array",
+      "getAndReturnInt136Array(int136[]):(int136[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt136Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt136Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt136Array',
-      'getAndReturnInt136Array(int136[]):(int136[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt136Array",
+      "getAndReturnInt136Array(int136[]):(int136[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1860,19 +2212,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt144Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt144Array',
-      'getAndReturnInt144Array(int144[]):(int144[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt144Array",
+      "getAndReturnInt144Array(int144[]):(int144[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt144Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt144Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt144Array',
-      'getAndReturnInt144Array(int144[]):(int144[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt144Array",
+      "getAndReturnInt144Array(int144[]):(int144[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1883,19 +2237,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt152Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt152Array',
-      'getAndReturnInt152Array(int152[]):(int152[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt152Array",
+      "getAndReturnInt152Array(int152[]):(int152[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt152Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt152Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt152Array',
-      'getAndReturnInt152Array(int152[]):(int152[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt152Array",
+      "getAndReturnInt152Array(int152[]):(int152[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1906,19 +2262,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt160Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt160Array',
-      'getAndReturnInt160Array(int160[]):(int160[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt160Array",
+      "getAndReturnInt160Array(int160[]):(int160[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt160Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt160Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt160Array',
-      'getAndReturnInt160Array(int160[]):(int160[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt160Array",
+      "getAndReturnInt160Array(int160[]):(int160[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1929,19 +2287,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt168Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt168Array',
-      'getAndReturnInt168Array(int168[]):(int168[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt168Array",
+      "getAndReturnInt168Array(int168[]):(int168[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt168Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt168Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt168Array',
-      'getAndReturnInt168Array(int168[]):(int168[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt168Array",
+      "getAndReturnInt168Array(int168[]):(int168[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1952,19 +2312,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt176Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt176Array',
-      'getAndReturnInt176Array(int176[]):(int176[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt176Array",
+      "getAndReturnInt176Array(int176[]):(int176[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt176Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt176Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt176Array',
-      'getAndReturnInt176Array(int176[]):(int176[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt176Array",
+      "getAndReturnInt176Array(int176[]):(int176[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1975,19 +2337,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt184Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt184Array',
-      'getAndReturnInt184Array(int184[]):(int184[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt184Array",
+      "getAndReturnInt184Array(int184[]):(int184[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt184Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt184Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt184Array',
-      'getAndReturnInt184Array(int184[]):(int184[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt184Array",
+      "getAndReturnInt184Array(int184[]):(int184[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1998,19 +2362,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt192Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt192Array',
-      'getAndReturnInt192Array(int192[]):(int192[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt192Array",
+      "getAndReturnInt192Array(int192[]):(int192[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt192Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt192Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt192Array',
-      'getAndReturnInt192Array(int192[]):(int192[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt192Array",
+      "getAndReturnInt192Array(int192[]):(int192[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2021,19 +2387,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt200Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt200Array',
-      'getAndReturnInt200Array(int200[]):(int200[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt200Array",
+      "getAndReturnInt200Array(int200[]):(int200[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt200Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt200Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt200Array',
-      'getAndReturnInt200Array(int200[]):(int200[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt200Array",
+      "getAndReturnInt200Array(int200[]):(int200[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2044,19 +2412,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt208Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt208Array',
-      'getAndReturnInt208Array(int208[]):(int208[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt208Array",
+      "getAndReturnInt208Array(int208[]):(int208[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt208Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt208Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt208Array',
-      'getAndReturnInt208Array(int208[]):(int208[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt208Array",
+      "getAndReturnInt208Array(int208[]):(int208[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2067,19 +2437,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt216Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt216Array',
-      'getAndReturnInt216Array(int216[]):(int216[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt216Array",
+      "getAndReturnInt216Array(int216[]):(int216[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt216Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt216Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt216Array',
-      'getAndReturnInt216Array(int216[]):(int216[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt216Array",
+      "getAndReturnInt216Array(int216[]):(int216[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2090,19 +2462,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt224Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt224Array',
-      'getAndReturnInt224Array(int224[]):(int224[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt224Array",
+      "getAndReturnInt224Array(int224[]):(int224[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt224Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt224Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt224Array',
-      'getAndReturnInt224Array(int224[]):(int224[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt224Array",
+      "getAndReturnInt224Array(int224[]):(int224[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2113,19 +2487,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt232Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt232Array',
-      'getAndReturnInt232Array(int232[]):(int232[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt232Array",
+      "getAndReturnInt232Array(int232[]):(int232[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt232Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt232Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt232Array',
-      'getAndReturnInt232Array(int232[]):(int232[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt232Array",
+      "getAndReturnInt232Array(int232[]):(int232[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2136,19 +2512,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt240Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt240Array',
-      'getAndReturnInt240Array(int240[]):(int240[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt240Array",
+      "getAndReturnInt240Array(int240[]):(int240[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt240Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt240Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt240Array',
-      'getAndReturnInt240Array(int240[]):(int240[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt240Array",
+      "getAndReturnInt240Array(int240[]):(int240[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2159,19 +2537,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt248Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt248Array',
-      'getAndReturnInt248Array(int248[]):(int248[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt248Array",
+      "getAndReturnInt248Array(int248[]):(int248[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt248Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt248Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt248Array',
-      'getAndReturnInt248Array(int248[]):(int248[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt248Array",
+      "getAndReturnInt248Array(int248[]):(int248[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2182,19 +2562,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnInt256Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnInt256Array',
-      'getAndReturnInt256Array(int256[]):(int256[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt256Array",
+      "getAndReturnInt256Array(int256[]):(int256[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnInt256Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnInt256Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnInt256Array',
-      'getAndReturnInt256Array(int256[]):(int256[])',
-      [ethereum.Value.fromSignedBigIntArray(x)],
+      "getAndReturnInt256Array",
+      "getAndReturnInt256Array(int256[]):(int256[])",
+      [ethereum.Value.fromSignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2204,18 +2586,20 @@ export class ExampleContract extends ethereum.SmartContract {
   }
 
   getAndReturnUint8Array(x: Array<i32>): Array<i32> {
-    let result = super.call('getAndReturnUint8Array', 'getAndReturnUint8Array(uint8[]):(uint8[])', [
-      ethereum.Value.fromI32Array(x),
-    ]);
+    let result = super.call(
+      "getAndReturnUint8Array",
+      "getAndReturnUint8Array(uint8[]):(uint8[])",
+      [ethereum.Value.fromI32Array(x)]
+    );
 
     return result[0].toI32Array();
   }
 
   try_getAndReturnUint8Array(x: Array<i32>): ethereum.CallResult<Array<i32>> {
     let result = super.tryCall(
-      'getAndReturnUint8Array',
-      'getAndReturnUint8Array(uint8[]):(uint8[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnUint8Array",
+      "getAndReturnUint8Array(uint8[]):(uint8[])",
+      [ethereum.Value.fromI32Array(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2226,9 +2610,9 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint16Array(x: Array<i32>): Array<i32> {
     let result = super.call(
-      'getAndReturnUint16Array',
-      'getAndReturnUint16Array(uint16[]):(uint16[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnUint16Array",
+      "getAndReturnUint16Array(uint16[]):(uint16[])",
+      [ethereum.Value.fromI32Array(x)]
     );
 
     return result[0].toI32Array();
@@ -2236,9 +2620,9 @@ export class ExampleContract extends ethereum.SmartContract {
 
   try_getAndReturnUint16Array(x: Array<i32>): ethereum.CallResult<Array<i32>> {
     let result = super.tryCall(
-      'getAndReturnUint16Array',
-      'getAndReturnUint16Array(uint16[]):(uint16[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnUint16Array",
+      "getAndReturnUint16Array(uint16[]):(uint16[])",
+      [ethereum.Value.fromI32Array(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2249,9 +2633,9 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint24Array(x: Array<i32>): Array<i32> {
     let result = super.call(
-      'getAndReturnUint24Array',
-      'getAndReturnUint24Array(uint24[]):(uint24[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnUint24Array",
+      "getAndReturnUint24Array(uint24[]):(uint24[])",
+      [ethereum.Value.fromI32Array(x)]
     );
 
     return result[0].toI32Array();
@@ -2259,9 +2643,9 @@ export class ExampleContract extends ethereum.SmartContract {
 
   try_getAndReturnUint24Array(x: Array<i32>): ethereum.CallResult<Array<i32>> {
     let result = super.tryCall(
-      'getAndReturnUint24Array',
-      'getAndReturnUint24Array(uint24[]):(uint24[])',
-      [ethereum.Value.fromI32Array(x)],
+      "getAndReturnUint24Array",
+      "getAndReturnUint24Array(uint24[]):(uint24[])",
+      [ethereum.Value.fromI32Array(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2272,19 +2656,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint32Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint32Array',
-      'getAndReturnUint32Array(uint32[]):(uint32[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint32Array",
+      "getAndReturnUint32Array(uint32[]):(uint32[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint32Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint32Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint32Array',
-      'getAndReturnUint32Array(uint32[]):(uint32[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint32Array",
+      "getAndReturnUint32Array(uint32[]):(uint32[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2295,19 +2681,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint40Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint40Array',
-      'getAndReturnUint40Array(uint40[]):(uint40[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint40Array",
+      "getAndReturnUint40Array(uint40[]):(uint40[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint40Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint40Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint40Array',
-      'getAndReturnUint40Array(uint40[]):(uint40[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint40Array",
+      "getAndReturnUint40Array(uint40[]):(uint40[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2318,19 +2706,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint48Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint48Array',
-      'getAndReturnUint48Array(uint48[]):(uint48[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint48Array",
+      "getAndReturnUint48Array(uint48[]):(uint48[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint48Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint48Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint48Array',
-      'getAndReturnUint48Array(uint48[]):(uint48[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint48Array",
+      "getAndReturnUint48Array(uint48[]):(uint48[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2341,19 +2731,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint56Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint56Array',
-      'getAndReturnUint56Array(uint56[]):(uint56[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint56Array",
+      "getAndReturnUint56Array(uint56[]):(uint56[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint56Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint56Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint56Array',
-      'getAndReturnUint56Array(uint56[]):(uint56[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint56Array",
+      "getAndReturnUint56Array(uint56[]):(uint56[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2364,19 +2756,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint64Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint64Array',
-      'getAndReturnUint64Array(uint64[]):(uint64[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint64Array",
+      "getAndReturnUint64Array(uint64[]):(uint64[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint64Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint64Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint64Array',
-      'getAndReturnUint64Array(uint64[]):(uint64[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint64Array",
+      "getAndReturnUint64Array(uint64[]):(uint64[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2387,19 +2781,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint72Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint72Array',
-      'getAndReturnUint72Array(uint72[]):(uint72[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint72Array",
+      "getAndReturnUint72Array(uint72[]):(uint72[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint72Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint72Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint72Array',
-      'getAndReturnUint72Array(uint72[]):(uint72[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint72Array",
+      "getAndReturnUint72Array(uint72[]):(uint72[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2410,19 +2806,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint80Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint80Array',
-      'getAndReturnUint80Array(uint80[]):(uint80[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint80Array",
+      "getAndReturnUint80Array(uint80[]):(uint80[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint80Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint80Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint80Array',
-      'getAndReturnUint80Array(uint80[]):(uint80[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint80Array",
+      "getAndReturnUint80Array(uint80[]):(uint80[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2433,19 +2831,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint88Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint88Array',
-      'getAndReturnUint88Array(uint88[]):(uint88[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint88Array",
+      "getAndReturnUint88Array(uint88[]):(uint88[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint88Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint88Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint88Array',
-      'getAndReturnUint88Array(uint88[]):(uint88[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint88Array",
+      "getAndReturnUint88Array(uint88[]):(uint88[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2456,19 +2856,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint96Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint96Array',
-      'getAndReturnUint96Array(uint96[]):(uint96[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint96Array",
+      "getAndReturnUint96Array(uint96[]):(uint96[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint96Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint96Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint96Array',
-      'getAndReturnUint96Array(uint96[]):(uint96[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint96Array",
+      "getAndReturnUint96Array(uint96[]):(uint96[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2479,19 +2881,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint104Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint104Array',
-      'getAndReturnUint104Array(uint104[]):(uint104[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint104Array",
+      "getAndReturnUint104Array(uint104[]):(uint104[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint104Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint104Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint104Array',
-      'getAndReturnUint104Array(uint104[]):(uint104[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint104Array",
+      "getAndReturnUint104Array(uint104[]):(uint104[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2502,19 +2906,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint112Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint112Array',
-      'getAndReturnUint112Array(uint112[]):(uint112[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint112Array",
+      "getAndReturnUint112Array(uint112[]):(uint112[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint112Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint112Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint112Array',
-      'getAndReturnUint112Array(uint112[]):(uint112[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint112Array",
+      "getAndReturnUint112Array(uint112[]):(uint112[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2525,19 +2931,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint120Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint120Array',
-      'getAndReturnUint120Array(uint120[]):(uint120[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint120Array",
+      "getAndReturnUint120Array(uint120[]):(uint120[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint120Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint120Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint120Array',
-      'getAndReturnUint120Array(uint120[]):(uint120[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint120Array",
+      "getAndReturnUint120Array(uint120[]):(uint120[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2548,19 +2956,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint128Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint128Array',
-      'getAndReturnUint128Array(uint128[]):(uint128[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint128Array",
+      "getAndReturnUint128Array(uint128[]):(uint128[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint128Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint128Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint128Array',
-      'getAndReturnUint128Array(uint128[]):(uint128[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint128Array",
+      "getAndReturnUint128Array(uint128[]):(uint128[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2571,19 +2981,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint136Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint136Array',
-      'getAndReturnUint136Array(uint136[]):(uint136[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint136Array",
+      "getAndReturnUint136Array(uint136[]):(uint136[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint136Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint136Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint136Array',
-      'getAndReturnUint136Array(uint136[]):(uint136[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint136Array",
+      "getAndReturnUint136Array(uint136[]):(uint136[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2594,19 +3006,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint144Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint144Array',
-      'getAndReturnUint144Array(uint144[]):(uint144[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint144Array",
+      "getAndReturnUint144Array(uint144[]):(uint144[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint144Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint144Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint144Array',
-      'getAndReturnUint144Array(uint144[]):(uint144[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint144Array",
+      "getAndReturnUint144Array(uint144[]):(uint144[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2617,19 +3031,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint152Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint152Array',
-      'getAndReturnUint152Array(uint152[]):(uint152[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint152Array",
+      "getAndReturnUint152Array(uint152[]):(uint152[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint152Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint152Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint152Array',
-      'getAndReturnUint152Array(uint152[]):(uint152[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint152Array",
+      "getAndReturnUint152Array(uint152[]):(uint152[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2640,19 +3056,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint160Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint160Array',
-      'getAndReturnUint160Array(uint160[]):(uint160[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint160Array",
+      "getAndReturnUint160Array(uint160[]):(uint160[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint160Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint160Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint160Array',
-      'getAndReturnUint160Array(uint160[]):(uint160[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint160Array",
+      "getAndReturnUint160Array(uint160[]):(uint160[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2663,19 +3081,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint168Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint168Array',
-      'getAndReturnUint168Array(uint168[]):(uint168[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint168Array",
+      "getAndReturnUint168Array(uint168[]):(uint168[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint168Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint168Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint168Array',
-      'getAndReturnUint168Array(uint168[]):(uint168[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint168Array",
+      "getAndReturnUint168Array(uint168[]):(uint168[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2686,19 +3106,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint176Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint176Array',
-      'getAndReturnUint176Array(uint176[]):(uint176[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint176Array",
+      "getAndReturnUint176Array(uint176[]):(uint176[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint176Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint176Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint176Array',
-      'getAndReturnUint176Array(uint176[]):(uint176[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint176Array",
+      "getAndReturnUint176Array(uint176[]):(uint176[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2709,19 +3131,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint184Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint184Array',
-      'getAndReturnUint184Array(uint184[]):(uint184[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint184Array",
+      "getAndReturnUint184Array(uint184[]):(uint184[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint184Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint184Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint184Array',
-      'getAndReturnUint184Array(uint184[]):(uint184[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint184Array",
+      "getAndReturnUint184Array(uint184[]):(uint184[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2732,19 +3156,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint192Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint192Array',
-      'getAndReturnUint192Array(uint192[]):(uint192[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint192Array",
+      "getAndReturnUint192Array(uint192[]):(uint192[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint192Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint192Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint192Array',
-      'getAndReturnUint192Array(uint192[]):(uint192[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint192Array",
+      "getAndReturnUint192Array(uint192[]):(uint192[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2755,19 +3181,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint200Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint200Array',
-      'getAndReturnUint200Array(uint200[]):(uint200[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint200Array",
+      "getAndReturnUint200Array(uint200[]):(uint200[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint200Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint200Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint200Array',
-      'getAndReturnUint200Array(uint200[]):(uint200[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint200Array",
+      "getAndReturnUint200Array(uint200[]):(uint200[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2778,19 +3206,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint208Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint208Array',
-      'getAndReturnUint208Array(uint208[]):(uint208[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint208Array",
+      "getAndReturnUint208Array(uint208[]):(uint208[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint208Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint208Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint208Array',
-      'getAndReturnUint208Array(uint208[]):(uint208[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint208Array",
+      "getAndReturnUint208Array(uint208[]):(uint208[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2801,19 +3231,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint216Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint216Array',
-      'getAndReturnUint216Array(uint216[]):(uint216[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint216Array",
+      "getAndReturnUint216Array(uint216[]):(uint216[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint216Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint216Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint216Array',
-      'getAndReturnUint216Array(uint216[]):(uint216[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint216Array",
+      "getAndReturnUint216Array(uint216[]):(uint216[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2824,19 +3256,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint224Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint224Array',
-      'getAndReturnUint224Array(uint224[]):(uint224[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint224Array",
+      "getAndReturnUint224Array(uint224[]):(uint224[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint224Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint224Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint224Array',
-      'getAndReturnUint224Array(uint224[]):(uint224[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint224Array",
+      "getAndReturnUint224Array(uint224[]):(uint224[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2847,19 +3281,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint232Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint232Array',
-      'getAndReturnUint232Array(uint232[]):(uint232[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint232Array",
+      "getAndReturnUint232Array(uint232[]):(uint232[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint232Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint232Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint232Array',
-      'getAndReturnUint232Array(uint232[]):(uint232[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint232Array",
+      "getAndReturnUint232Array(uint232[]):(uint232[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2870,19 +3306,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint240Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint240Array',
-      'getAndReturnUint240Array(uint240[]):(uint240[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint240Array",
+      "getAndReturnUint240Array(uint240[]):(uint240[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint240Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint240Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint240Array',
-      'getAndReturnUint240Array(uint240[]):(uint240[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint240Array",
+      "getAndReturnUint240Array(uint240[]):(uint240[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2893,19 +3331,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint248Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint248Array',
-      'getAndReturnUint248Array(uint248[]):(uint248[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint248Array",
+      "getAndReturnUint248Array(uint248[]):(uint248[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint248Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint248Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint248Array',
-      'getAndReturnUint248Array(uint248[]):(uint248[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint248Array",
+      "getAndReturnUint248Array(uint248[]):(uint248[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -2916,19 +3356,21 @@ export class ExampleContract extends ethereum.SmartContract {
 
   getAndReturnUint256Array(x: Array<BigInt>): Array<BigInt> {
     let result = super.call(
-      'getAndReturnUint256Array',
-      'getAndReturnUint256Array(uint256[]):(uint256[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint256Array",
+      "getAndReturnUint256Array(uint256[]):(uint256[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getAndReturnUint256Array(x: Array<BigInt>): ethereum.CallResult<Array<BigInt>> {
+  try_getAndReturnUint256Array(
+    x: Array<BigInt>
+  ): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
-      'getAndReturnUint256Array',
-      'getAndReturnUint256Array(uint256[]):(uint256[])',
-      [ethereum.Value.fromUnsignedBigIntArray(x)],
+      "getAndReturnUint256Array",
+      "getAndReturnUint256Array(uint256[]):(uint256[])",
+      [ethereum.Value.fromUnsignedBigIntArray(x)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();

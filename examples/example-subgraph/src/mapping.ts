@@ -1,6 +1,6 @@
-import { Address, BigInt, Bytes, crypto, Entity, log, store } from '@graphprotocol/graph-ts';
-import { ExampleContract, ExampleEvent } from './../generated/ExampleSubgraph/ExampleContract';
-import { ExampleEntity } from './../generated/schema';
+import { Address, BigInt, Bytes, log, store } from '@graphprotocol/graph-ts';
+import { ExampleContract, ExampleEvent } from './types/ExampleSubgraph/ExampleContract';
+import { ExampleEntity } from './types/schema';
 
 export function handleExampleEvent(event: ExampleEvent): void {
   const entity = new ExampleEntity('example id');
@@ -57,14 +57,14 @@ export function handleExampleEvent(event: ExampleEvent): void {
   entity.optionalBigIntList = [new BigInt(0), new BigInt(0)];
   entity.optionalBigIntList = null;
 
-  const optionalBigInt: bigint | null = entity.optionalBigInt;
-  const optionalBigIntList: Array<bigint> | null = entity.optionalBigIntList;
+  const optionalBigInt: BigInt | null = entity.optionalBigInt;
+  const optionalBigIntList: Array<BigInt> | null = entity.optionalBigIntList;
 
   entity.requiredBigInt = new BigInt(0);
   entity.requiredBigIntList = [new BigInt(0), new BigInt(0)];
 
-  const requiredBigInt: bigint = entity.requiredBigInt;
-  const requiredBigIntList: Array<bigint> = entity.requiredBigIntList;
+  const requiredBigInt: BigInt = entity.requiredBigInt;
+  const requiredBigIntList: Array<BigInt> = entity.requiredBigIntList;
 
   entity.optionalBytes = new Bytes(0);
   entity.optionalBytes = null;
@@ -212,7 +212,7 @@ export function handleExampleEvent(event: ExampleEvent): void {
   const u8Array: Array<i32> = contract.getAndReturnUint8Array([1 as i32, 100 as i32]);
   const u16Array: Array<i32> = contract.getAndReturnUint16Array([1 as i32, 100 as i32]);
   const u24Array: Array<i32> = contract.getAndReturnUint24Array([1 as i32, 100 as i32]);
-  const u32Array: Array<bigint> = contract.getAndReturnUint32Array([new BigInt(0), new BigInt(0)]);
+  const u32Array: Array<BigInt> = contract.getAndReturnUint32Array([new BigInt(0), new BigInt(0)]);
   entity.requiredBigIntList = contract.getAndReturnUint40Array(entity.requiredBigIntList);
   entity.requiredBigIntList = contract.getAndReturnUint56Array(entity.requiredBigIntList);
   entity.requiredBigIntList = contract.getAndReturnUint64Array(entity.requiredBigIntList);
@@ -251,7 +251,9 @@ export function handleExampleEvent(event: ExampleEvent): void {
   // Entity load and save (using the store behind the scenes)
   entity.save();
   let other = ExampleEntity.load('other example id');
-  other ??= new ExampleEntity('other example id');
+  if (other == null) {
+    other = new ExampleEntity('other example id');
+  }
   other.save();
 
   // BigInt math
