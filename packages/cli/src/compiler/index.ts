@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
 import immutable from 'immutable';
+import type { IPFSHTTPClient } from 'ipfs-http-client';
 import yaml from 'js-yaml';
 import { Spinner, step, withSpinner } from '../command-helpers/spinner';
 import debug from '../debug';
@@ -12,7 +13,6 @@ import Protocol from '../protocols';
 import Subgraph from '../subgraph';
 import Watcher from '../watcher';
 import * as asc from './asc';
-import type { IPFSHTTPClient } from 'ipfs-http-client';
 
 const compilerDebug = debug('graph-cli:compiler');
 
@@ -501,6 +501,9 @@ export default class Compiler {
 
   async writeSubgraphToOutputDirectory(protocol: Protocol, subgraph: immutable.Map<any, any>) {
     const displayDir = `${this.displayPath(this.options.outputDir)}${toolbox.filesystem.separator}`;
+
+    // ensure that the output directory exists
+    fs.mkdirsSync(this.options.outputDir);
 
     return await withSpinner(
       `Write compiled subgraph to ${displayDir}`,
