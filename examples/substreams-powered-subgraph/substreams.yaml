@@ -1,0 +1,33 @@
+specVersion: v0.1.0
+package:
+  name: 'substreams_test'
+  version: v1.0.1
+
+imports:
+  entity: https://github.com/streamingfast/substreams-entity-change/releases/download/v0.2.1/substreams-entity-change-v0.2.1.spkg
+
+protobuf:
+  files:
+    - example.proto
+  importPaths:
+    - ./proto
+
+binaries:
+  default:
+    type: wasm/rust-v1
+    file: ./target/wasm32-unknown-unknown/release/substreams.wasm
+
+modules:
+  - name: map_contract
+    kind: map
+    inputs:
+      - source: sf.ethereum.type.v2.Block
+    output:
+      type: proto:test.Contracts
+
+  - name: graph_out
+    kind: map
+    inputs:
+      - map: map_contract
+    output:
+      type: proto:substreams.entity.v1.EntityChanges
