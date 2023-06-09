@@ -1,4 +1,4 @@
-/* eslint-disable no-self-compare */
+ 
 import { BigInt, ByteArray, Bytes } from 'temp_lib/index';
 
 // Test some BigInt methods.

@@ -1,8 +1,5 @@
-/* eslint-disable unicorn/no-array-for-each */
+ 
 import debug from 'debug';
-import Schema from '../schema';
-import * as typesCodegen from './types';
-import * as tsCodegen from './typescript';
 import type {
   DefinitionNode,
   FieldDefinitionNode,
@@ -11,6 +8,9 @@ import type {
   ObjectTypeDefinitionNode,
   TypeNode,
 } from 'graphql/language';
+import Schema from '../schema';
+import * as typesCodegen from './types';
+import * as tsCodegen from './typescript';
 
 class IdField {
   static BYTES = Symbol('Bytes');

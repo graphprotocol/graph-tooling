@@ -1,5 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import { print, filesystem } from 'gluegun';
+import { filesystem,print } from 'gluegun';
 
 export default class CleanCommand extends Command {
   static description = 'Clean the cache and generated files.';

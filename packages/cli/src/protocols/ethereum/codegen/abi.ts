@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/no-array-for-each */
+ 
 import fs from 'fs';
 import immutable from 'immutable';
 import request from 'sync-request';

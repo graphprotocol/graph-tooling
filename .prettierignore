@@ -5,4 +5,5 @@ generated
 packages/cli/tests/cli/init
 packages/cli/tests/cli/validation
 packages/cli/tests/cli/add
+examples/substreams-powered-subgraph/target
 pnpm-lock.yaml

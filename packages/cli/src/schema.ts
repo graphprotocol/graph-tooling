@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
+import type { DocumentNode } from 'graphql/language';
 import * as graphql from 'graphql/language';
 import SchemaCodeGenerator from './codegen/schema';
-import type { DocumentNode } from 'graphql/language';
 
 export default class Schema {
   constructor(public filename: string, public document: string, public ast: DocumentNode) {
