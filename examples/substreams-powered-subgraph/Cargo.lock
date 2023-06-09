@@ -742,8 +742,9 @@ dependencies = [
 
 [[package]]
 name = "substreams-entity-change"
-version = "1.0.0"
-source = "git+https://github.com/streamingfast/substreams-entity-change/?branch=develop#8f8282ffa9c7fee69610302c93aedc5f156af419"
+version = "1.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf7ee258bd00c0e4fa1d8d4ecd87b7232284ea55a75baf4112cf5d26235c14bb"
 dependencies = [
  "base64",
  "prost",

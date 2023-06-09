@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 substreams = "0.5.0"
 substreams-ethereum = "0.9.0"
-substreams-entity-change = {git = "https://github.com/streamingfast/substreams-entity-change/", branch = "develop"}
+substreams-entity-change = "1.2.2"
 prost = "0.11"
 prost-types = "0.11.8"
 base64 = "0.13.0"

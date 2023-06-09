@@ -1,13 +1,11 @@
 mod pb;
-mod tables;
 
 use pb::example::{Contract, Contracts};
 
 use substreams::Hex;
 use substreams_entity_change::pb::entity::EntityChanges;
+use substreams_entity_change::tables::Tables;
 use substreams_ethereum::pb::eth;
-
-use tables::Tables;
 
 #[substreams::handlers::map]
 fn map_contract(block: eth::v2::Block) -> Result<Contracts, substreams::errors::Error> {
@@ -37,7 +35,7 @@ pub fn graph_out(contracts: Contracts) -> Result<EntityChanges, substreams::erro
         tables
             .create_row("Contract", &contract.address)
             .set("timestamp", &contract.timestamp)
-            .set("blockNumber", &contract.block_number);
+            .set("blockNumber", contract.block_number);
     }
 
     Ok(tables.to_entity_changes())
