@@ -1,5 +1,5 @@
-import immutable from 'immutable';
 import yaml from 'js-yaml';
+import immutable from 'immutable';
 import { loadManifest } from '../migrations/util/load-manifest';
 import Protocol from '../protocols';
 
