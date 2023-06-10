@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.51.1
+
+### Patch Changes
+
+- [#1369](https://github.com/graphprotocol/graph-tooling/pull/1369)
+  [`18e5c29`](https://github.com/graphprotocol/graph-tooling/commit/18e5c29fdd83d17614d2ce2207299b8d78c7949f)
+  Thanks [@azf20](https://github.com/azf20)! - fix: always create output directory on building a
+  subgraph
+
 ## 0.51.0
 
 ### Minor Changes
