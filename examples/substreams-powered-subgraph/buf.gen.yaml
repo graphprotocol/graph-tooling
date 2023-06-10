@@ -1,8 +1,9 @@
 version: v1
 plugins:
-  - remote: buf.build/prost/plugins/prost:v0.1.3-2
+  - plugin: buf.build/community/neoeinstein-prost:v0.2.2
     out: src/pb
     opt:
+      - file_descriptor_set=false
 
   - remote: buf.build/prost/plugins/crate:v0.3.1-1
     out: src/pb
