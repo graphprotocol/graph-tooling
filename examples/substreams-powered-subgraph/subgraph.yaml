@@ -1,6 +1,6 @@
 specVersion: 0.0.4
-description: Ethereum Uniswap V3 Subgraph (powered by StreamingFast Substreams)
-repository: https://github.com/streamingfast/substreams-uniswap-v3.git
+description: Ethereum Contract Tracking Subgraph (powered by Substreams)
+repository: https://github.com/graphprotocol/graph-tooling
 schema:
   file: schema.graphql
 dataSources:
