@@ -1,8 +1,7 @@
 # Substreams-powered subgraph: tracking contract creation
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
-A basic Substreams
+A basic Substreams-powered subgraph, including the Substreams definition. This detects new contract
+deployments on Ethereum, tracking the creation block and timestamp.
 
 ## Prerequisites
 
