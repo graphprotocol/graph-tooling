@@ -11,7 +11,7 @@ This
 as well as Graph CLI >=0.51.1:
 
 ```
-yarn global add @graphprotocol/graph-cli
+npm install -g @graphprotocol/graph-cli
 ```
 
 ## Quickstart

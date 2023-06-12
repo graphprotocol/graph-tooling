@@ -2,10 +2,6 @@ syntax = "proto3";
 
 package example;
 
-message BigInt {
-  bytes bytes = 1;
-}
-
 message Contracts {
   repeated Contract contracts = 1;
 }
