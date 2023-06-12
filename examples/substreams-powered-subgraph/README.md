@@ -1,7 +1,8 @@
 # Substreams-powered subgraph: tracking contract creation
 
-A basic Substreams-powered subgraph, including the Substreams definition. This detects new contract
-deployments on Ethereum, tracking the creation block and timestamp.
+A basic Substreams-powered subgraph, including the Substreams definition. This example detects new
+contract deployments on Ethereum, tracking the creation block and timestamp. There is a
+demonstration of the Graph Node integration, using `substreams_entity_change` types and helpers.
 
 ## Prerequisites
 
