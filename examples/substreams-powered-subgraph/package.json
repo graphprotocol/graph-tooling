@@ -1,0 +1,23 @@
+{
+  "name": "example-substreams-powered-subgraph",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/substreams-powered-subgraph"
+  },
+  "private": true,
+  "scripts": {
+    "subgraph:build": "graph build",
+    "subgraph:deploy": "graph deploy",
+    "substreams:build": "cargo build --target wasm32-unknown-unknown --release",
+    "substreams:clean": "rm -rf ./target && rm -rf ./src/pb",
+    "substreams:package": "substreams pack ./substreams.yaml",
+    "substreams:prepare": "yarn substreams:protogen && yarn substreams:build && yarn substreams:package",
+    "substreams:protogen": "substreams protogen ./substreams.yaml --exclude-paths='sf/substreams,google'",
+    "substreams:stream": "substreams run -e mainnet.eth.streamingfast.io:443 substreams.yaml graph_out -s 12292922 -t +10"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "0.51.1"
+  }
+}
