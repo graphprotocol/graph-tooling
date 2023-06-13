@@ -7,19 +7,13 @@ demonstration of the Graph Node integration, using `substreams_entity_change` ty
 ## Prerequisites
 
 This
-[requires the dependencies necessary for local Substreams development](https://substreams.streamingfast.io/developers-guide/installation-requirements),
-as well as Graph CLI >=0.51.1:
-
-```
-npm install -g @graphprotocol/graph-cli
-```
+[requires the dependencies necessary for local Substreams development](https://substreams.streamingfast.io/developers-guide/installation-requirements).
 
 ## Quickstart
 
 ```
-make protogen # create protobufs in /src/pb
-make build # build substream
-make package # pack substream
-graph build # build subgraph
-graph deploy # deploy subgraph
+yarn install # install graph-cli
+yarn substreams:prepare # build and package the substreams module
+yarn subgraph:build # build the subgraph
+yarn subgraph:deploy # deploy the subgraph
 ```
