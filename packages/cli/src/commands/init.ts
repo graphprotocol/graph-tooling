@@ -8,7 +8,6 @@ import {
   loadAbiFromEtherscan,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
@@ -174,8 +173,6 @@ export default class InitCommand extends Command {
           allowSimpleName,
           directory,
           subgraphName,
-          studio,
-          product,
         },
         { commands },
       );
@@ -262,8 +259,6 @@ export default class InitCommand extends Command {
           fromExample,
           subgraphName: answers.subgraphName,
           directory: answers.directory,
-          studio: true,
-          product: 'subgraph-studio',
         },
         { commands },
       );
@@ -851,16 +846,12 @@ async function initSubgraphFromExample(
     allowSimpleName,
     subgraphName,
     directory,
-    studio,
-    product,
   }: {
     // protocolInstance: Protocol;
     fromExample: string | boolean;
     allowSimpleName?: boolean;
     subgraphName: string;
     directory: string;
-    studio: boolean;
-    product?: string;
   },
   {
     commands,
@@ -921,20 +912,6 @@ async function initSubgraphFromExample(
   if (!cloned) {
     this.exit(1);
     return;
-  }
-
-  try {
-    // It doesn't matter if we changed the URL we clone the YAML,
-    // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
-    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(
-      path.join(directory, 'subgraph.yaml'),
-    );
-
-    for (const { network } of dataSourcesAndTemplates) {
-      validateStudioNetwork({ studio, product, network });
-    }
-  } catch (e) {
-    this.error(e.message, { exit: 1 });
   }
 
   const networkConf = await initNetworksConfig(directory, 'address');
