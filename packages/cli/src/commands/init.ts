@@ -160,8 +160,7 @@ export default class InitCommand extends Command {
     const commands = {
       link: yarn ? 'yarn link @graphprotocol/graph-cli' : 'npm link @graphprotocol/graph-cli',
       install: yarn ? 'yarn' : 'npm install',
-      // this ensure we run code-generation from our CLI instead of some script in package.json
-      codegen: yarn ? 'yarn graph codegen' : 'npx graph codegen',
+      codegen: yarn ? 'yarn codegen' : 'npm run codegen',
       deploy: yarn ? 'yarn deploy' : 'npm run deploy',
     };
 
