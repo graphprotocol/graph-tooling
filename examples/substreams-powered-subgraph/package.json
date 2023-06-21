@@ -9,7 +9,8 @@
   "private": true,
   "scripts": {
     "subgraph:build": "graph build",
-    "subgraph:deploy": "graph deploy",
+    "deploy": "graph deploy",
+    "codegen": "graph codegen",
     "substreams:build": "cargo build --target wasm32-unknown-unknown --release",
     "substreams:clean": "rm -rf ./target && rm -rf ./src/pb",
     "substreams:package": "substreams pack ./substreams.yaml",
