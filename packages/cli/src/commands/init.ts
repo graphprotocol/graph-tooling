@@ -8,7 +8,6 @@ import {
   loadAbiFromEtherscan,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
@@ -167,16 +166,13 @@ export default class InitCommand extends Command {
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from the example
-    if (fromExample && subgraphName && directory && protocol) {
+    if (fromExample && subgraphName && directory) {
       await initSubgraphFromExample.bind(this)(
         {
           fromExample,
           allowSimpleName,
           directory,
           subgraphName,
-          studio,
-          product,
-          protocolInstance: new Protocol(protocol as ProtocolName),
         },
         { commands },
       );
@@ -246,43 +242,51 @@ export default class InitCommand extends Command {
       return this.exit(0);
     }
 
-    // Otherwise, take the user through the interactive form
-    const answers = await processInitForm.bind(this)({
-      protocol: protocol as ProtocolName | undefined,
-      product,
-      studio,
-      node,
-      abi,
-      abiPath,
-      allowSimpleName,
-      directory,
-      contract: fromContract,
-      indexEvents,
-      fromExample,
-      network,
-      subgraphName,
-      contractName,
-      startBlock,
-      spkgPath,
-    });
-    if (!answers) {
-      this.exit(1);
-      return;
-    }
-
     if (fromExample) {
+      const answers = await processFromExampleInitForm.bind(this)({
+        allowSimpleName,
+        subgraphName,
+        directory,
+      });
+
+      if (!answers) {
+        this.exit(1);
+        return;
+      }
+
       await initSubgraphFromExample.bind(this)(
         {
           fromExample,
           subgraphName: answers.subgraphName,
           directory: answers.directory,
-          studio: answers.studio,
-          product: answers.product,
-          protocolInstance: answers.protocolInstance,
         },
         { commands },
       );
     } else {
+      // Otherwise, take the user through the interactive form
+      const answers = await processInitForm.bind(this)({
+        protocol: protocol as ProtocolName | undefined,
+        product,
+        studio,
+        node,
+        abi,
+        abiPath,
+        allowSimpleName,
+        directory,
+        contract: fromContract,
+        indexEvents,
+        fromExample,
+        network,
+        subgraphName,
+        contractName,
+        startBlock,
+        spkgPath,
+      });
+      if (!answers) {
+        this.exit(1);
+        return;
+      }
+
       ({ node, allowSimpleName } = chooseNodeUrl({
         product: answers.product,
         studio: answers.studio,
@@ -311,6 +315,70 @@ export default class InitCommand extends Command {
     }
     // Exit with success
     this.exit(0);
+  }
+}
+
+async function processFromExampleInitForm(
+  this: InitCommand,
+  {
+    directory: initDirectory,
+    subgraphName: initSubgraphName,
+    allowSimpleName: initAllowSimpleName,
+  }: {
+    directory?: string;
+    subgraphName?: string;
+    allowSimpleName: boolean | undefined;
+  },
+): Promise<
+  | {
+      subgraphName: string;
+      directory: string;
+    }
+  | undefined
+> {
+  try {
+    const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
+      {
+        type: 'input',
+        name: 'subgraphName',
+        // TODO: is defaulting to studio ok?
+        message: () => 'Subgraph slug',
+        initial: initSubgraphName,
+        validate: name => {
+          try {
+            validateSubgraphName(name, { allowSimpleName: initAllowSimpleName });
+            return true;
+          } catch (e) {
+            return `${e.message}
+
+    Examples:
+
+      $ graph init ${os.userInfo().username}/${name}
+      $ graph init ${name} --allow-simple-name`;
+          }
+        },
+      },
+    ]);
+
+    const { directory } = await prompt.ask<{ directory: string }>([
+      {
+        type: 'input',
+        name: 'directory',
+        message: 'Directory to create the subgraph in',
+        initial: () => initDirectory || getSubgraphBasename(subgraphName),
+        validate: value =>
+          filesystem.exists(value || initDirectory || getSubgraphBasename(subgraphName))
+            ? 'Directory already exists'
+            : true,
+      },
+    ]);
+
+    return {
+      subgraphName,
+      directory,
+    };
+  } catch (e) {
+    this.error(e, { exit: 1 });
   }
 }
 
@@ -773,21 +841,15 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 async function initSubgraphFromExample(
   this: InitCommand,
   {
-    protocolInstance,
     fromExample,
     allowSimpleName,
     subgraphName,
     directory,
-    studio,
-    product,
   }: {
-    protocolInstance: Protocol;
     fromExample: string | boolean;
     allowSimpleName?: boolean;
     subgraphName: string;
     directory: string;
-    studio: boolean;
-    product?: string;
   },
   {
     commands,
@@ -800,8 +862,6 @@ async function initSubgraphFromExample(
     };
   },
 ) {
-  const isSubstreams = protocolInstance.name === 'substreams';
-
   // Fail if the subgraph name is invalid
   if (!revalidateSubgraphName.bind(this)(subgraphName, { allowSimpleName })) {
     process.exitCode = 1;
@@ -850,20 +910,6 @@ async function initSubgraphFromExample(
   if (!cloned) {
     this.exit(1);
     return;
-  }
-
-  try {
-    // It doesn't matter if we changed the URL we clone the YAML,
-    // we'll check it's network anyway. If it's a studio subgraph we're dealing with.
-    const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(
-      path.join(directory, 'subgraph.yaml'),
-    );
-
-    for (const { network } of dataSourcesAndTemplates) {
-      validateStudioNetwork({ studio, product, network });
-    }
-  } catch (e) {
-    this.error(e.message, { exit: 1 });
   }
 
   const networkConf = await initNetworksConfig(directory, 'address');
@@ -923,13 +969,11 @@ async function initSubgraphFromExample(
     return;
   }
 
-  if (!isSubstreams) {
-    // Run code-generation
-    const codegen = await runCodegen(directory, commands.codegen);
-    if (codegen !== true) {
-      this.exit(1);
-      return;
-    }
+  // Run code-generation
+  const codegen = await runCodegen(directory, commands.codegen);
+  if (codegen !== true) {
+    this.exit(1);
+    return;
   }
 
   printNextSteps.bind(this)({ subgraphName, directory }, { commands });
