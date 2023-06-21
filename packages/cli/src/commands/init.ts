@@ -160,7 +160,8 @@ export default class InitCommand extends Command {
     const commands = {
       link: yarn ? 'yarn link @graphprotocol/graph-cli' : 'npm link @graphprotocol/graph-cli',
       install: yarn ? 'yarn' : 'npm install',
-      codegen: yarn ? 'yarn codegen' : 'npm run codegen',
+      // this ensure we run code-generation from our CLI instead of some script in package.json
+      codegen: yarn ? 'yarn graph codegen' : 'npx graph codegen',
       deploy: yarn ? 'yarn deploy' : 'npm run deploy',
     };
 
@@ -841,13 +842,11 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 async function initSubgraphFromExample(
   this: InitCommand,
   {
-    // protocolInstance,
     fromExample,
     allowSimpleName,
     subgraphName,
     directory,
   }: {
-    // protocolInstance: Protocol;
     fromExample: string | boolean;
     allowSimpleName?: boolean;
     subgraphName: string;
@@ -971,14 +970,12 @@ async function initSubgraphFromExample(
     return;
   }
 
-  // if (!isSubstreams) {
-  //   // Run code-generation
-  //   const codegen = await runCodegen(directory, commands.codegen);
-  //   if (codegen !== true) {
-  //     this.exit(1);
-  //     return;
-  //   }
-  // }
+  // Run code-generation
+  const codegen = await runCodegen(directory, commands.codegen);
+  if (codegen !== true) {
+    this.exit(1);
+    return;
+  }
 
   printNextSteps.bind(this)({ subgraphName, directory }, { commands });
 }
