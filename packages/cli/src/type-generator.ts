@@ -55,6 +55,7 @@ export default class TypeGenerator {
       toolbox.print.success(
         'Subgraph uses a substream datasource. Codegeneration is not required.',
       );
+      process.exit(0);
       return;
     }
 
