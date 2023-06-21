@@ -1,5 +1,25 @@
 # @graphprotocol/graph-cli
 
+## 0.51.2
+
+### Patch Changes
+
+- [#1347](https://github.com/graphprotocol/graph-tooling/pull/1347)
+  [`b442a11`](https://github.com/graphprotocol/graph-tooling/commit/b442a111fa2b00df59faf655e5199a8b5248b518)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@2.8.6` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.6)
+    (from `2.8.4`, in `dependencies`)
+
+- [#1384](https://github.com/graphprotocol/graph-tooling/pull/1384)
+  [`16252be`](https://github.com/graphprotocol/graph-tooling/commit/16252bedd46dd7e421b32c6b7e7a0019692fc8a4)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not crash for codegen when it is substreams
+
+- [#1382](https://github.com/graphprotocol/graph-tooling/pull/1382)
+  [`d2a1aa6`](https://github.com/graphprotocol/graph-tooling/commit/d2a1aa6faec41a1b08035caf58113669963f5919)
+  Thanks [@saihaj](https://github.com/saihaj)! - Only ask directory and subgraph name when using
+  `graph init --from-example ...`
+
 ## 0.51.1
 
 ### Patch Changes
