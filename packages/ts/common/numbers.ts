@@ -115,7 +115,7 @@ export class BigInt extends Uint8Array {
   }
 
   toHexString(): string {
-    return typeConversion.bigIntToHex(this);
+    return "0x" + typeConversion.bigIntToHex(this);
   }
 
   toString(): string {
