@@ -46,7 +46,7 @@ importers:
   examples/arweave-blocks-transactions:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -62,7 +62,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -81,7 +81,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -100,7 +100,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -119,7 +119,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -171,7 +171,7 @@ importers:
         version: 5.0.4
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -189,7 +189,7 @@ importers:
   examples/ethereum-gravatar:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -210,7 +210,7 @@ importers:
   examples/near-blocks:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -219,7 +219,7 @@ importers:
   examples/near-receipts:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -228,7 +228,7 @@ importers:
   examples/substreams-powered-subgraph:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
 
   packages/cli:
@@ -294,8 +294,8 @@ importers:
         specifier: 2.88.2
         version: 2.88.2
       semver:
-        specifier: 7.4.0
-        version: 7.4.0
+        specifier: 7.5.2
+        version: 7.5.2
       sync-request:
         specifier: 6.1.0
         version: 6.1.0
@@ -2884,7 +2884,7 @@ packages:
       read-package-json-fast: 2.0.3
       readdir-scoped-modules: 1.1.0
       rimraf: 3.0.2
-      semver: 7.4.0
+      semver: 7.5.2
       ssri: 8.0.1
       treeverse: 1.0.4
       walk-up-path: 1.0.0
@@ -2897,7 +2897,7 @@ packages:
     resolution: {integrity: sha512-8KG5RD0GVP4ydEzRn/I4BNDuxDtqVbOdm8675T49OIG/NGhaK0pjPX7ZcDlvKYbA+ulvVK3ztfcF4uBdOxuJbQ==}
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.4.0
+      semver: 7.5.2
     dev: true
 
   /@npmcli/fs@2.1.2:
@@ -2905,7 +2905,7 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.4.0
+      semver: 7.5.2
     dev: true
 
   /@npmcli/git@2.1.0:
@@ -2917,7 +2917,7 @@ packages:
       npm-pick-manifest: 6.1.1
       promise-inflight: 1.0.1
       promise-retry: 2.0.1
-      semver: 7.4.0
+      semver: 7.5.2
       which: 2.0.2
     transitivePeerDependencies:
       - bluebird
@@ -2949,7 +2949,7 @@ packages:
       cacache: 15.3.0
       json-parse-even-better-errors: 2.3.1
       pacote: 12.0.3
-      semver: 7.4.0
+      semver: 7.5.2
     transitivePeerDependencies:
       - bluebird
       - supports-color
@@ -3039,7 +3039,7 @@ packages:
       natural-orderby: 2.0.3
       object-treeify: 1.1.33
       password-prompt: 1.1.2
-      semver: 7.4.0
+      semver: 7.5.2
       string-width: 4.2.3
       strip-ansi: 6.0.1
       supports-color: 8.1.1
@@ -3092,7 +3092,7 @@ packages:
       fs-extra: 9.1.0
       http-call: 5.3.0
       lodash: 4.17.21
-      semver: 7.4.0
+      semver: 7.5.2
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -3811,7 +3811,7 @@ packages:
       ignore: 5.2.1
       natural-compare-lite: 1.4.0
       regexpp: 3.2.0
-      semver: 7.4.0
+      semver: 7.5.2
       tsutils: 3.21.0(typescript@5.0.4)
       typescript: 5.0.4
     transitivePeerDependencies:
@@ -3885,7 +3885,7 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.4.0
+      semver: 7.5.2
       tsutils: 3.21.0(typescript@5.0.4)
       typescript: 5.0.4
     transitivePeerDependencies:
@@ -3906,7 +3906,7 @@ packages:
       eslint: 8.31.0
       eslint-scope: 5.1.1
       eslint-utils: 3.0.0(eslint@8.31.0)
-      semver: 7.4.0
+      semver: 7.5.2
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -4932,7 +4932,7 @@ packages:
   /builtins@5.0.1:
     resolution: {integrity: sha512-qwVpFEHNfhYJIzNRBvd2C1kyo6jz3ZSMPyyuR47OPdiKWlbYnZNyDWuyR175qDnAJLiCo5fBBqPb3RiXgWlkOQ==}
     dependencies:
-      semver: 7.4.0
+      semver: 7.5.2
     dev: true
 
   /busboy@1.6.0:
@@ -6421,7 +6421,7 @@ packages:
       is-core-module: 2.11.0
       minimatch: 3.1.2
       resolve: 1.22.1
-      semver: 7.4.0
+      semver: 7.5.2
     dev: true
 
   /eslint-plugin-promise@6.1.1(eslint@8.31.0):
@@ -6496,7 +6496,7 @@ packages:
       regexp-tree: 0.1.24
       regjsparser: 0.9.1
       safe-regex: 2.1.1
-      semver: 7.4.0
+      semver: 7.5.2
       strip-indent: 3.0.0
     dev: true
 
@@ -8901,7 +8901,7 @@ packages:
       jest-util: 29.5.0
       natural-compare: 1.4.0
       pretty-format: 29.5.0
-      semver: 7.4.0
+      semver: 7.5.2
     transitivePeerDependencies:
       - supports-color
 
@@ -9110,7 +9110,7 @@ packages:
       acorn: 8.8.1
       eslint-visitor-keys: 3.3.0
       espree: 9.4.1
-      semver: 7.4.0
+      semver: 7.5.2
     dev: true
 
   /jsonfile@2.4.0:
@@ -10414,7 +10414,7 @@ packages:
       nopt: 5.0.0
       npmlog: 6.0.2
       rimraf: 3.0.2
-      semver: 7.4.0
+      semver: 7.5.2
       tar: 6.1.12
       which: 2.0.2
     transitivePeerDependencies:
@@ -10468,7 +10468,7 @@ packages:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.11.0
-      semver: 7.4.0
+      semver: 7.5.2
       validate-npm-package-license: 3.0.4
     dev: true
 
@@ -10491,7 +10491,7 @@ packages:
     resolution: {integrity: sha512-09OmyDkNLYwqKPOnbI8exiOZU2GVVmQp7tgez2BPi5OZC8M82elDAps7sxC4l//uSUtotWqoEIDwjRvWH4qz8w==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.4.0
+      semver: 7.5.2
     dev: true
 
   /npm-normalize-package-bin@1.0.1:
@@ -10508,7 +10508,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       hosted-git-info: 4.1.0
-      semver: 7.4.0
+      semver: 7.5.2
       validate-npm-package-name: 3.0.0
     dev: true
 
@@ -10529,7 +10529,7 @@ packages:
       npm-install-checks: 4.0.0
       npm-normalize-package-bin: 1.0.1
       npm-package-arg: 8.1.5
-      semver: 7.4.0
+      semver: 7.5.2
     dev: true
 
   /npm-registry-fetch@12.0.2:
@@ -10695,7 +10695,7 @@ packages:
       got: 11.8.6
       lodash: 4.17.21
       normalize-package-data: 3.0.3
-      semver: 7.4.0
+      semver: 7.5.2
       shelljs: 0.8.5
       tslib: 2.5.0
       yeoman-environment: 3.13.0(mem-fs-editor@9.6.0)(mem-fs@2.2.1)
@@ -11871,6 +11871,13 @@ packages:
 
   /semver@7.4.0:
     resolution: {integrity: sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+
+  /semver@7.5.2:
+    resolution: {integrity: sha512-SoftuTROv/cRjCze/scjGyiDtcUyxw1rgYQSZY7XTmtR5hX+dm76iDbTH8TkLPHCQmlbQVSSbNZCPM2hb0knnQ==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
@@ -13646,7 +13653,7 @@ packages:
       pacote: 12.0.3
       preferred-pm: 3.0.3
       pretty-bytes: 5.6.0
-      semver: 7.4.0
+      semver: 7.5.2
       slash: 3.0.0
       strip-ansi: 6.0.1
       text-table: 0.2.0
@@ -13675,7 +13682,7 @@ packages:
       minimist: 1.2.7
       read-pkg-up: 7.0.1
       run-async: 2.4.1
-      semver: 7.4.0
+      semver: 7.5.2
       shelljs: 0.8.5
       sort-keys: 4.2.0
       text-table: 0.2.0
