@@ -120,7 +120,7 @@ export class BigInt extends Uint8Array {
    */
   toHexString(prefix: string = ''): string {
     if (prefix !== '') {
-    return prefix + typeConversion.bigIntToHex(this)
+      return prefix + typeConversion.bigIntToHex(this)
     }
     return typeConversion.bigIntToHex(this);
   }
