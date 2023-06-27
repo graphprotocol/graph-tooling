@@ -114,8 +114,15 @@ export class BigInt extends Uint8Array {
     return typeConversion.bigIntToHex(this);
   }
 
-  toHexString(): string {
-    return "0x" + typeConversion.bigIntToHex(this);
+  /**
+   * Converts `BigInt` to a hexadecimal string representation, with an optional
+   * prefix (for example, '0x').
+   */
+  toHexString(prefix: string = ''): string {
+    if (prefix !== '') {
+    return prefix + typeConversion.bigIntToHex(this)
+    }
+    return typeConversion.bigIntToHex(this);
   }
 
   toString(): string {
