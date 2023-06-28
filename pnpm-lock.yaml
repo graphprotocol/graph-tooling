@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 patchedDependencies:
   oclif@3.8.1:
@@ -46,7 +50,7 @@ importers:
   examples/arweave-blocks-transactions:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -62,7 +66,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -81,7 +85,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -100,7 +104,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -119,7 +123,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -171,7 +175,7 @@ importers:
         version: 5.0.4
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -189,7 +193,7 @@ importers:
   examples/ethereum-gravatar:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -210,7 +214,7 @@ importers:
   examples/near-blocks:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -219,7 +223,7 @@ importers:
   examples/near-receipts:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -228,7 +232,7 @@ importers:
   examples/substreams-powered-subgraph:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.51.1
+        specifier: 0.51.2
         version: link:../../packages/cli
 
   packages/cli:
@@ -311,6 +315,9 @@ importers:
       yaml:
         specifier: 1.10.2
         version: 1.10.2
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
     devDependencies:
       '@types/debug':
         specifier: ^4.1.7
@@ -13708,6 +13715,10 @@ packages:
       taketalk: 1.0.0
       wrap-ansi: 2.1.0
     dev: true
+
+  /zod@3.21.4:
+    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

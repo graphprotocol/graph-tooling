@@ -7,6 +7,7 @@ import { strOptions } from 'yaml/types';
 import debug from './debug';
 import { Subgraph as ISubgraph } from './protocols/subgraph';
 import * as validation from './validation';
+import { Manifest } from './manifest';
 
 const subgraphDebug = debug('graph-cli:subgraph');
 
@@ -258,8 +259,11 @@ More than one template named '${name}', template names must be unique.`,
         throwCombinedError(filename, manifestErrors);
       }
     }
-
-    const manifest = immutable.fromJS(data) as immutable.Map<any, any>;
+    const manifestSchema = Manifest.safeParse(data);
+    if (!manifestSchema.success) {
+      throw new Error(manifestSchema.error.message);
+    }
+    const manifest = manifestSchema.data;
 
     // Validate the schema
     Subgraph.validateSchema(manifest, { resolveFile });
