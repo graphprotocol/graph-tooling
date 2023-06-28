@@ -129,7 +129,8 @@ export default class InitCommand extends Command {
 
     let { node, allowSimpleName } = chooseNodeUrl({
       product,
-      studio,
+      // if we are loading example, we want to ensure we are using studio
+      studio: studio || fromExample !== undefined,
       node: nodeFlag,
       allowSimpleName: allowSimpleNameFlag,
     });
@@ -256,6 +257,7 @@ export default class InitCommand extends Command {
 
       await initSubgraphFromExample.bind(this)(
         {
+          allowSimpleName,
           fromExample,
           subgraphName: answers.subgraphName,
           directory: answers.directory,
