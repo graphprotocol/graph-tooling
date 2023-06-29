@@ -1,0 +1,268 @@
+{
+  "$ref": "#/definitions/Subgraph Manifest",
+  "definitions": {
+    "Subgraph Manifest": {
+      "type": "object",
+      "properties": {
+        "specVersion": {
+          "type": "string",
+          "description": "A Semver version indicating which version of this API is being used."
+        },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "description": "The path of the GraphQL IDL file, either local or on IPFS."
+            }
+          },
+          "required": ["file"],
+          "additionalProperties": false,
+          "description": "The GraphQL schema of this subgraph."
+        },
+        "description": {
+          "type": "string",
+          "description": "An optional description of the subgraph's purpose."
+        },
+        "repository": {
+          "type": "string",
+          "description": "An optional link to where the subgraph lives."
+        },
+        "graft": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "string",
+              "description": "The subgraph ID of the base subgraph"
+            },
+            "block": {
+              "type": "integer",
+              "format": "int64",
+              "description": "The block number up to which to use data from the base subgraph"
+            }
+          },
+          "required": ["base", "block"],
+          "additionalProperties": false,
+          "description": "An optional base to graft onto."
+        },
+        "dataSources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "description": "The type of data source. Possible values: ethereum/contract."
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the source data. Will be used to generate APIs in the mapping and also for self-documentation purposes."
+              },
+              "network": {
+                "type": "string",
+                "description": "For blockchains, this describes which network the subgraph targets"
+              },
+              "source": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string"
+                  },
+                  "abi": {
+                    "type": "string"
+                  },
+                  "startBlock": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                },
+                "required": ["address", "abi"],
+                "additionalProperties": false,
+                "description": "The source data on a blockchain such as Ethereum."
+              },
+              "mapping": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "ethereum/events",
+                    "description": "Must be \"ethereum/events\" for Ethereum Events Mapping."
+                  },
+                  "apiVersion": {
+                    "type": "string",
+                    "description": "Semver string of the version of the Mappings API that will be used by the mapping script."
+                  },
+                  "language": {
+                    "type": "string",
+                    "const": "wasm/assemblyscript",
+                    "description": "The language of the runtime for the Mapping API."
+                  },
+                  "entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "A list of entities that will be ingested as part of this mapping. Must correspond to names of entities in the GraphQL IDL."
+                  },
+                  "eventHandlers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "string",
+                          "description": "An identifier for an event that will be handled in the mapping script. For Ethereum contracts, this must be the full event signature to distinguish from events that may share the same name. No alias types can be used."
+                        },
+                        "handler": {
+                          "type": "string",
+                          "description": "The name of an exported function in the mapping script that should handle the specified event."
+                        },
+                        "topic0": {
+                          "type": "string",
+                          "description": "A 0x prefixed hex string. If provided, events whose topic0 is equal to this value will be processed by the given handler. When topic0 is provided, only the topic0 value will be matched, and not the hash of the event signature. This is useful for processing anonymous events in Solidity, which can have their topic0 set to anything. By default, topic0 is equal to the hash of the event signature."
+                        }
+                      },
+                      "required": ["event", "handler"],
+                      "additionalProperties": false
+                    },
+                    "description": "Handlers for specific events, which will be defined in the mapping script."
+                  },
+                  "callHandlers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "function": {
+                          "type": "string",
+                          "description": "An identifier for a function that will be handled in the mapping script. For Ethereum contracts, this is the normalized function signature to filter calls by."
+                        },
+                        "handler": {
+                          "type": "string",
+                          "description": "The name of an exported function in the mapping script that should handle the specified event."
+                        }
+                      },
+                      "required": ["function", "handler"],
+                      "additionalProperties": false
+                    },
+                    "description": "A list of functions that will trigger a handler and the name of the corresponding handlers in the mapping."
+                  },
+                  "blockHandlers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "handler": {
+                          "type": "string",
+                          "description": "The name of an exported function in the mapping script that should handle the specified event."
+                        },
+                        "filter": {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "call",
+                              "description": "The selected block handler filter."
+                            }
+                          },
+                          "required": ["kind"],
+                          "additionalProperties": false,
+                          "description": "Definition of the filter to apply. If none is supplied, the handler will be called on every block."
+                        }
+                      },
+                      "required": ["handler"],
+                      "additionalProperties": false
+                    },
+                    "description": "Defines block filters and handlers to process matching blocks."
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "The path of the mapping script."
+                  }
+                },
+                "required": ["kind", "apiVersion", "language", "entities", "file"],
+                "additionalProperties": false,
+                "description": "The mapping that defines how to ingest the data."
+              }
+            },
+            "required": ["kind", "name", "network", "source", "mapping"],
+            "additionalProperties": false
+          },
+          "description": "Each data source spec defines the data that will be ingested as well as the transformation logic to derive the state of the subgraph's entities based on the source data."
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "description": "The type of data source. Possible values: ethereum/contract."
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the source data. Will be used to generate APIs in the mapping and also for self-documentation purposes."
+              },
+              "network": {
+                "type": "string",
+                "description": "For blockchains, this describes which network the subgraph targets"
+              },
+              "source": {
+                "type": "object",
+                "properties": {
+                  "abi": {
+                    "type": "string"
+                  },
+                  "startBlock": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                },
+                "required": ["abi"],
+                "additionalProperties": false,
+                "description": "The source data on a blockchain such as Ethereum."
+              },
+              "mapping": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/kind"
+                  },
+                  "apiVersion": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/apiVersion"
+                  },
+                  "language": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/language"
+                  },
+                  "entities": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/entities"
+                  },
+                  "eventHandlers": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/eventHandlers"
+                  },
+                  "callHandlers": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/callHandlers"
+                  },
+                  "blockHandlers": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/blockHandlers"
+                  },
+                  "file": {
+                    "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/file"
+                  }
+                },
+                "required": ["kind", "apiVersion", "language", "entities", "file"],
+                "additionalProperties": false,
+                "description": "The mapping that defines how to ingest the data."
+              }
+            },
+            "required": ["kind", "name", "network", "source", "mapping"],
+            "additionalProperties": false
+          },
+          "description": "Each data source template defines a data source that can be created dynamically from the mappings."
+        }
+      },
+      "required": ["specVersion", "schema", "dataSources"],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

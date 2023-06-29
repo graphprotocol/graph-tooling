@@ -19,7 +19,7 @@
     "!dist/*.tar.gz"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.build.json && oclif manifest && oclif readme && copyfiles -u 1 src/**/*.graphql dist/",
+    "build": "tsc -b tsconfig.build.json && oclif manifest && oclif readme && copyfiles -u 1 src/**/*.graphql dist/ && node scripts/generate-json-schema.mjs",
     "oclif:pack": "npm pack && pnpm oclif pack tarballs --no-xz && node scripts/rename-tarballs.mjs",
     "test": "jest --verbose",
     "test:add": "jest tests/cli/add.test.ts --verbose",
@@ -61,6 +61,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.0.0",
     "@types/js-yaml": "^3.12.7",
+    "@types/node": "^20.3.2",
     "@types/semver": "^7.3.13",
     "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
@@ -69,7 +70,8 @@
     "spawn-command": "0.0.2-1",
     "strip-ansi": "6.0.1",
     "tern": "0.24.3",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "zod-to-json-schema": "^3.21.3"
   },
   "publishConfig": {
     "access": "public"

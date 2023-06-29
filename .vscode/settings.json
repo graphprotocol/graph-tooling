@@ -1,7 +1,8 @@
 {
   "yaml.schemas": {
     "https://json.schemastore.org/github-issue-config.json": ".github/ISSUE_TEMPLATE/config.yml",
-    "https://json.schemastore.org/github-workflow.json": ".github/workflows/**/*.yml"
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/**/*.yml",
+    "cf-pages/subgraph-manifest-schema.json": "**/subgraph.yaml"
   },
   "eslint.format.enable": true,
   "editor.formatOnSave": true,
