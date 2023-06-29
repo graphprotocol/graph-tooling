@@ -12,6 +12,12 @@ const EthereumContractSource = z.object({
   startBlock: z.bigint().optional(),
 });
 
+// https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#151-ethereumcontractsource
+const EthereumTemplateContractSource = z.object({
+  abi: z.string(),
+  startBlock: z.bigint().optional(),
+});
+
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#1522-eventhandler
 const EventHandler = z.object({
   event: z
@@ -116,6 +122,23 @@ const DataSource = z.object({
   mapping: Mapping.describe('The mapping that defines how to ingest the data.'),
 });
 
+// https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#17-data-source-templates
+const TemplateSource = z.object({
+  kind: z.string().describe('The type of data source. Possible values: ethereum/contract.'),
+  name: z
+    .string()
+    .describe(
+      'The name of the source data. Will be used to generate APIs in the mapping and also for self-documentation purposes.',
+    ),
+  network: z
+    .string()
+    .describe('For blockchains, this describes which network the subgraph targets'),
+  source: EthereumTemplateContractSource.describe(
+    'The source data on a blockchain such as Ethereum.',
+  ),
+  mapping: Mapping.describe('The mapping that defines how to ingest the data.'),
+});
+
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#18-graft-base
 const GraftBase = z.object({
   base: z.string().describe('The subgraph ID of the base subgraph'),
@@ -136,4 +159,12 @@ export const Manifest = z.object({
     .describe(
       "Each data source spec defines the data that will be ingested as well as the transformation logic to derive the state of the subgraph's entities based on the source data.",
     ),
+  templates: z
+    .array(TemplateSource)
+    .optional()
+    .describe(
+      'Each data source template defines a data source that can be created dynamically from the mappings.',
+    ),
 });
+
+export type ManifestZodSchema = z.infer<typeof Manifest>;

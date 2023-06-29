@@ -7,31 +7,34 @@ import { strOptions } from 'yaml/types';
 import debug from './debug';
 import { Subgraph as ISubgraph } from './protocols/subgraph';
 import * as validation from './validation';
-import { Manifest } from './manifest';
+import { Manifest, ManifestZodSchema } from './manifest';
 
 const subgraphDebug = debug('graph-cli:subgraph');
 
-const throwCombinedError = (filename: string, errors: immutable.List<any>) => {
+const throwCombinedError = (filename: string, errors: Array<{ path: any[]; message: string }>) => {
   throw new Error(
     errors.reduce(
       (msg, e) =>
         `${msg}
 
-  Path: ${e.get('path').size === 0 ? '/' : e.get('path').join(' > ')}
-  ${e.get('message').split('\n').join('\n  ')}`,
+  Path: ${e.path.length === 0 ? '/' : e.path.join(' > ')}
+  ${e.message.split('\n').join('\n  ')}`,
       `Error in ${path.relative(process.cwd(), filename)}:`,
     ),
   );
 };
 
-const buildCombinedWarning = (filename: string, warnings: immutable.List<any>) =>
-  warnings.size > 0
+const buildCombinedWarning = (
+  filename: string,
+  warnings: Array<{ path: any[]; message: string }>,
+) =>
+  warnings.length > 0
     ? warnings.reduce(
         (msg, w) =>
           `${msg}
 
-    Path: ${w.get('path').size === 0 ? '/' : w.get('path').join(' > ')}
-    ${w.get('message').split('\n').join('\n    ')}`,
+    Path: ${w.path.length === 0 ? '/' : w.path.join(' > ')}
+    ${w.message.split('\n').join('\n    ')}`,
         `Warnings in ${path.relative(process.cwd(), filename)}:`,
       ) + '\n'
     : null;
@@ -98,53 +101,51 @@ export default class Subgraph {
     }
   }
 
-  static validateRepository(manifest: immutable.Collection<any, any>) {
-    const repository = manifest.get('repository');
+  static validateRepository(manifest: ManifestZodSchema) {
+    const repository = manifest.repository;
+
+    // repository is optional, so no need to throw error if it's not set
+    if (!repository) return [];
 
     return /^https:\/\/github\.com\/graphprotocol\/graph-tooling?$/.test(repository) ||
       // For legacy reasons, we should error on example subgraphs
       /^https:\/\/github\.com\/graphprotocol\/example-subgraphs?$/.test(repository)
-      ? immutable.List().push(
-          immutable.fromJS({
+      ? [
+          {
             path: ['repository'],
             message: `\
 The repository is still set to ${repository}.
 Please replace it with a link to your subgraph source code.`,
-          }),
-        )
-      : immutable.List();
+          },
+        ]
+      : [];
   }
 
-  static validateDescription(manifest: immutable.Collection<any, any>) {
+  static validateDescription(manifest: ManifestZodSchema) {
     // TODO: Maybe implement this in the future for each protocol example description
-    return manifest.get('description', '').startsWith('Gravatar for ')
-      ? immutable.List().push(
-          immutable.fromJS({
+    return (manifest?.description || '').startsWith('Gravatar for ')
+      ? [
+          {
             path: ['description'],
             message: `\
 The description is still the one from the example subgraph.
 Please update it to tell users more about your subgraph.`,
-          }),
-        )
-      : immutable.List();
+          },
+        ]
+      : [];
   }
 
-  static validateHandlers(
-    manifest: immutable.Collection<any, any>,
-    protocol: any,
-    protocolSubgraph: ISubgraph,
-  ) {
-    return manifest
-      .get('dataSources')
-      .filter((dataSource: any) => protocol.isValidKindName(dataSource.get('kind')))
-      .reduce((errors: any, dataSource: any, dataSourceIndex: any) => {
+  static validateHandlers(manifest: ManifestZodSchema, protocol: any, protocolSubgraph: ISubgraph) {
+    return manifest.dataSources
+      .filter(dataSource => protocol.isValidKindName(dataSource.kind))
+      .reduce((errors: any, dataSource, dataSourceIndex: number) => {
         const path = ['dataSources', dataSourceIndex, 'mapping'];
-        const mapping = dataSource.get('mapping');
+        const mapping = dataSource.mapping;
         const handlerTypes = protocolSubgraph.handlerTypes();
 
         subgraphDebug(
           'Validating dataSource "%s" handlers with %d handlers types defined for protocol',
-          dataSource.get('name'),
+          dataSource.name,
           handlerTypes.size,
         );
 
@@ -153,81 +154,74 @@ Please update it to tell users more about your subgraph.`,
         }
 
         const areAllHandlersEmpty = handlerTypes
-          .map((handlerType: any) => mapping.get(handlerType, immutable.List()))
-          .every((handlers: immutable.List<any>) => handlers.isEmpty());
+          // @ts-expect-error TODO: handlerTypes needs to be improved
+          .map(handlerType => mapping?.[handlerType] || [])
+          .every(handlers => handlers.length === 0);
 
         const handlerNamesWithoutLast = handlerTypes.pop().join(', ');
 
         return areAllHandlersEmpty
-          ? errors.push(
-              immutable.fromJS({
-                path,
-                message: `\
+          ? errors.push({
+              path,
+              message: `\
 Mapping has no ${handlerNamesWithoutLast} or ${handlerTypes.get(-1)}.
 At least one such handler must be defined.`,
-              }),
-            )
+            })
           : errors;
-      }, immutable.List());
+      }, []);
   }
 
-  static validateContractValues(manifest: any, protocol: any) {
+  static validateContractValues(manifest: ManifestZodSchema, protocol: any) {
     if (!protocol.hasContract()) {
-      return immutable.List();
+      return [];
     }
 
     return validation.validateContractValues(manifest, protocol);
   }
 
   // Validate that data source names are unique, so they don't overwrite each other.
-  static validateUniqueDataSourceNames(manifest: any) {
-    const names: any[] = [];
-    return manifest
-      .get('dataSources')
-      .reduce((errors: immutable.List<any>, dataSource: any, dataSourceIndex: number) => {
-        const path = ['dataSources', dataSourceIndex, 'name'];
-        const name = dataSource.get('name');
-        if (names.includes(name)) {
-          errors = errors.push(
-            immutable.fromJS({
-              path,
-              message: `\
+  static validateUniqueDataSourceNames(manifest: ManifestZodSchema) {
+    const names: string[] = [];
+    return manifest.dataSources.reduce((errors: any, dataSource, dataSourceIndex) => {
+      const path = ['dataSources', dataSourceIndex, 'name'];
+      const name = dataSource.name;
+      if (names.includes(name)) {
+        errors = errors.push({
+          path,
+          message: `\
 More than one data source named '${name}', data source names must be unique.`,
-            }),
-          );
-        }
-        names.push(name);
-        return errors;
-      }, immutable.List());
+        });
+      }
+      names.push(name);
+      return errors;
+    }, []);
   }
 
-  static validateUniqueTemplateNames(manifest: any) {
-    const names: any[] = [];
-    return manifest
-      .get('templates', immutable.List())
-      .reduce((errors: immutable.List<any>, template: any, templateIndex: number) => {
-        const path = ['templates', templateIndex, 'name'];
-        const name = template.get('name');
-        if (names.includes(name)) {
-          errors = errors.push(
-            immutable.fromJS({
-              path,
-              message: `\
+  static validateUniqueTemplateNames(manifest: ManifestZodSchema) {
+    const names: string[] = [];
+    return (manifest?.templates || []).reduce((errors: any, template, templateIndex) => {
+      const path = ['templates', templateIndex, 'name'];
+      const name = template.name;
+
+      if (names.includes(name)) {
+        errors = errors.push({
+          path,
+          message: `\
 More than one template named '${name}', template names must be unique.`,
-            }),
-          );
-        }
-        names.push(name);
-        return errors;
-      }, immutable.List());
+        });
+      }
+      names.push(name);
+
+      return errors;
+    }, []);
   }
 
-  static dump(manifest: any) {
+  static dump(manifest: ManifestZodSchema) {
     strOptions.fold.lineWidth = 90;
     // @ts-expect-error TODO: plain is the value behind the TS constant
     strOptions.defaultType = 'PLAIN';
 
-    return yaml.stringify(manifest.toJS());
+    return yaml.stringify(manifest);
   }
 
   static async load(
@@ -275,30 +269,27 @@ More than one template named '${name}', template names must be unique.`,
     });
 
     const errors = skipValidation
-      ? immutable.List()
-      : immutable.List.of(
+      ? []
+      : [
           ...protocolSubgraph.validateManifest(),
           ...Subgraph.validateContractValues(manifest, protocol),
           ...Subgraph.validateUniqueDataSourceNames(manifest),
           ...Subgraph.validateUniqueTemplateNames(manifest),
           ...Subgraph.validateHandlers(manifest, protocol, protocolSubgraph),
-        );
+        ];
 
-    if (errors.size > 0) {
+    if (errors.length > 0) {
       throwCombinedError(filename, errors);
     }
 
     // Perform warning validations
     const warnings = skipValidation
-      ? immutable.List()
-      : immutable.List.of(
-          ...Subgraph.validateRepository(manifest),
-          ...Subgraph.validateDescription(manifest),
-        );
+      ? []
+      : [...Subgraph.validateRepository(manifest), ...Subgraph.validateDescription(manifest)];
 
     return {
       result: manifest,
-      warning: warnings.size > 0 ? buildCombinedWarning(filename, warnings) : null,
+      warning: warnings.length > 0 ? buildCombinedWarning(filename, warnings) : null,
     };
   }
 

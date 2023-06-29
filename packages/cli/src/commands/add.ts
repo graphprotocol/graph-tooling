@@ -1,7 +1,6 @@
 import { Args, Command, Flags } from '@oclif/core';
 import { CLIError } from '@oclif/core/lib/errors';
 import { system } from 'gluegun';
-import immutable from 'immutable';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
@@ -74,8 +73,8 @@ export default class AddCommand extends Command {
     const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifestPath);
     const protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
     const manifest = await Subgraph.load(manifestPath, { protocol });
-    const network = manifest.result.getIn(['dataSources', 0, 'network']) as any;
-    const result = manifest.result.asMutable();
+    const network = manifest.result.dataSources?.[0].network;
+    const result = manifest.result;
 
     let startBlock = startBlockFlag;
 
@@ -115,17 +114,11 @@ export default class AddCommand extends Command {
 
     ethabi.data = abiData;
 
-    await writeSchema(
-      ethabi,
-      protocol,
-      result.getIn(['schema', 'file']) as any,
-      collisionEntities,
-      contractName,
-    );
+    await writeSchema(ethabi, protocol, result.schema.file, collisionEntities, contractName);
     await writeMapping(ethabi, protocol, contractName, collisionEntities);
     await writeTestsFiles(ethabi, protocol, contractName);
 
-    const dataSources = result.get('dataSources');
+    const dataSources = result.dataSources;
     const dataSource = await generateDataSource(
       protocol,
       contractName,
@@ -137,20 +130,18 @@ export default class AddCommand extends Command {
 
     // Handle the collisions edge case by copying another data source yaml data
     if (mergeEntities && onlyCollisions) {
-      const firstDataSource = dataSources.get(0);
+      const firstDataSource = dataSources?.[0];
       const source = dataSource.get('source') as any;
-      const mapping = firstDataSource.get('mapping').asMutable();
+      const mapping = firstDataSource.mapping;
 
       // Save the address of the new data source
-      source.abi = firstDataSource.get('source').get('abi');
+      source.abi = firstDataSource.source.abi;
 
       dataSource.set('mapping', mapping);
       dataSource.set('source', source);
     }
 
-    result.set('dataSources', dataSources.push(dataSource));
-
-    await Subgraph.write(result, manifestPath);
+    await Subgraph.write({ ...result, dataSources: [...dataSources, dataSource] }, manifestPath);
 
     // Update networks.json
     await updateNetworksFile(network, contractName, address, networksFile);
@@ -170,21 +161,21 @@ export default class AddCommand extends Command {
   }
 }
 
-const getEntities = (manifest: any) => {
-  const dataSources = manifest.result.get('dataSources', immutable.List());
-  const templates = manifest.result.get('templates', immutable.List());
+const getEntities = (manifest: Awaited<ReturnType<typeof Subgraph.load>>) => {
+  const dataSources = manifest.result?.dataSources || [];
+  const templates = manifest.result?.templates || [];
 
-  return dataSources
-    .concat(templates)
-    .map((dataSource: any) => dataSource.getIn(['mapping', 'entities']))
-    .flatten();
+  return [
+    ...dataSources.map(source => source.mapping.entities),
+    ...templates.map(template => template.mapping.entities),
+  ].flat();
 };
 
-const getContractNames = (manifest: any) => {
-  const dataSources = manifest.result.get('dataSources', immutable.List());
-  const templates = manifest.result.get('templates', immutable.List());
+const getContractNames = (manifest: Awaited<ReturnType<typeof Subgraph.load>>) => {
+  const dataSources = manifest.result?.dataSources || [];
+  const templates = manifest.result?.templates || [];
 
-  return dataSources.concat(templates).map((dataSource: any) => dataSource.get('name'));
+  return [...dataSources.map(source => source.name), templates.map(template => template.name)];
 };
 
 const updateEventNamesOnCollision = (
