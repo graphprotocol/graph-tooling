@@ -105,6 +105,7 @@ export default class Protocol {
         'aurora',
         'aurora-testnet',
         'base-testnet',
+        'base',
         'zksync-era',
         'sepolia',
         'polygon-zkevm-testnet',

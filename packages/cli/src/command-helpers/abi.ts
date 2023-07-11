@@ -156,6 +156,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.bscscan.com/api`;
     case 'base-testnet':
       return `https://api-goerli.basescan.org/api`;
+    case 'base':
+      return `https://api.basescan.org/api`;
     case 'chapel':
       return `https://api-testnet.bscscan.com/api`;
     case 'matic':
@@ -216,6 +218,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://api.avax.network/ext/bc/C/rpc';
     case 'base-testnet':
       return 'https://goerli.base.org';
+    case 'base':
+      return 'https://rpc.base.org';
     case 'bsc':
       return 'https://bsc-dataseed.binance.org';
     case 'celo':
