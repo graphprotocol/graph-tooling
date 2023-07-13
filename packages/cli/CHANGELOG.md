@@ -1,5 +1,24 @@
 # @graphprotocol/graph-cli
 
+## 0.52.0
+
+### Minor Changes
+
+- [#1398](https://github.com/graphprotocol/graph-tooling/pull/1398)
+  [`3e71375`](https://github.com/graphprotocol/graph-tooling/commit/3e713756dbe71185cdc5f9e222a6892d20f977ed)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - Adding base mainnet to staging
+
+### Patch Changes
+
+- [#1393](https://github.com/graphprotocol/graph-tooling/pull/1393)
+  [`609954d`](https://github.com/graphprotocol/graph-tooling/commit/609954dc57114a42add6ef6d5db006b22d5e98bb)
+  Thanks [@saihaj](https://github.com/saihaj)! - ensure we use studio when loading from example
+
+- [#1393](https://github.com/graphprotocol/graph-tooling/pull/1393)
+  [`609954d`](https://github.com/graphprotocol/graph-tooling/commit/609954dc57114a42add6ef6d5db006b22d5e98bb)
+  Thanks [@saihaj](https://github.com/saihaj)! - skip validation for subgraph name when creating an
+  example
+
 ## 0.51.2
 
 ### Patch Changes
