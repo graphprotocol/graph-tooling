@@ -1,6 +1,6 @@
 import { Args, Command, Flags } from '@oclif/core';
 import { CLIError } from '@oclif/core/lib/errors';
-import { system } from 'gluegun';
+import { system, prompt, filesystem } from 'gluegun';
 import immutable from 'immutable';
 import {
   loadAbiFromBlockScout,
@@ -101,7 +101,19 @@ export default class AddCommand extends Command {
       startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
     } catch (error) {
       // If we can't get the start block, we'll just leave it out of the manifest
-      // TODO: Ask the user for the start block
+      const { startBlock: userInputStartBlock } = await prompt.ask<{ startBlock: string }>([
+        {
+          type: 'input',
+          name: 'startBlock',
+          message: 'Start Block',
+          initial: '0',
+          validate: value => parseInt(value) >= 0,
+          result(value) {
+            return value;
+          },
+        },
+      ]);
+      startBlock = userInputStartBlock;
     }
 
     await writeABI(ethabi, contractName);
@@ -153,7 +165,9 @@ export default class AddCommand extends Command {
     await Subgraph.write(result, manifestPath);
 
     // Update networks.json
-    await updateNetworksFile(network, contractName, address, networksFile);
+    if (filesystem.exists(networksFile)) {
+      await updateNetworksFile(network, contractName, address, networksFile);
+    }
 
     // Detect Yarn and/or NPM
     const yarn = system.which('yarn');
