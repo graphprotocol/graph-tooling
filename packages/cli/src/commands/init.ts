@@ -348,7 +348,9 @@ async function processFromExampleInitForm(
         initial: initSubgraphName,
         validate: name => {
           try {
-            validateSubgraphName(name, { allowSimpleName: initAllowSimpleName });
+            validateSubgraphName(name, {
+              allowSimpleName: initAllowSimpleName,
+            });
             return true;
           } catch (e) {
             return `${e.message}
@@ -494,7 +496,9 @@ async function processInitForm(
         initial: initSubgraphName,
         validate: name => {
           try {
-            validateSubgraphName(name, { allowSimpleName: initAllowSimpleName });
+            validateSubgraphName(name, {
+              allowSimpleName: initAllowSimpleName,
+            });
             return true;
           } catch (e) {
             return `${e.message}
@@ -1121,7 +1125,10 @@ async function initSubgraphFromContract(
     }
 
     while (addContract) {
-      addContract = await addAnotherContract.bind(this)({ protocolInstance, directory });
+      addContract = await addAnotherContract.bind(this)({
+        protocolInstance,
+        directory,
+      });
     }
   }
 
@@ -1145,7 +1152,6 @@ async function addAnotherContract(
   const addContractConfirmation = addContractAnswer.toLowerCase() === 'y';
 
   if (addContractConfirmation) {
-    let abiFromFile = false;
     const ProtocolContract = protocolInstance.getContract()!;
 
     let contract = '';
@@ -1158,17 +1164,6 @@ async function addAnotherContract(
         break;
       }
       this.log(`✖ ${error}`);
-    }
-
-    const localAbi = await ux.prompt('\nProvide local ABI path? (y/n)', {
-      required: true,
-      type: 'single',
-    });
-    abiFromFile = localAbi.toLowerCase() === 'y';
-
-    let abiPath = '';
-    if (abiFromFile) {
-      abiPath = await ux.prompt('\nABI file (path)', { required: true });
     }
 
     const contractName = await ux.prompt('\nContract Name', {
@@ -1185,14 +1180,6 @@ async function addAnotherContract(
       }
 
       const commandLine = [contract, '--contract-name', contractName];
-
-      if (abiFromFile) {
-        if (abiPath.includes(directory)) {
-          commandLine.push('--abi', path.normalize(abiPath.replace(directory, '')));
-        } else {
-          commandLine.push('--abi', abiPath);
-        }
-      }
 
       await AddCommand.run(commandLine);
     } catch (e) {
