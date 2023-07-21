@@ -424,7 +424,8 @@ describe('Schema code generator', () => {
 
     type Task @entity {
       id: Bytes!
-      employees: [Worker!] @derivedFrom(field: "tasks")
+      employee: Employee!
+      workers: [Worker!] @derivedFrom(field: "tasks")
       worker: Worker!
    }
 `);
@@ -493,6 +494,23 @@ describe('Schema code generator', () => {
           body: "\n      this.set('id', Value.fromBytes(value))\n    ",
         },
         {
+          name: 'get employee',
+          params: [],
+          returnType: new NamedType('Bytes'),
+          body: `let value = this.get('employee')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toBytes()
+            }`,
+        },
+        {
+          name: 'set employee',
+          params: [new Param('value', new NamedType('Bytes'))],
+          returnType: undefined,
+          body: "\n      this.set('employee', Value.fromBytes(value))\n    ",
+        },
+        {
           name: 'get worker',
           params: [],
           returnType: new NamedType('Bytes'),
@@ -510,10 +528,10 @@ describe('Schema code generator', () => {
           body: "\n      this.set('worker', Value.fromBytes(value))\n    ",
         },
         {
-          name: 'get employees',
+          name: 'get workers',
           params: [],
           returnType: new NamedType('WorkerLoader'),
-          body: "\n      return new WorkerLoader('Task', this.get('id')!.toBytes().toHexString(), 'employees')\n    ",
+          body: "\n      return new WorkerLoader('Task', this.get('id')!.toBytes().toHexString(), 'workers')\n    ",
         },
       ],
     });

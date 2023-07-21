@@ -332,7 +332,7 @@ export default class SchemaCodeGenerator {
     const gqlType = fieldDef.type;
     const returnType = this._returnTypeForDervied(gqlType);
     const obj = this.schema.ast.definitions.find(def => {
-      if (def.kind == 'ObjectTypeDefinition') {
+      if (def.kind === 'ObjectTypeDefinition') {
         const defobj = def as ObjectTypeDefinitionNode;
         return defobj.name.value == this._baseType(gqlType);
       }
