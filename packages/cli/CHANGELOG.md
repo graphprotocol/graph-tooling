@@ -1,5 +1,36 @@
 # @graphprotocol/graph-cli
 
+## 0.53.0
+
+### Minor Changes
+
+- [#1406](https://github.com/graphprotocol/graph-tooling/pull/1406)
+  [`faefa94`](https://github.com/graphprotocol/graph-tooling/commit/faefa94b6d4ff48de444b3ed33cc3d4b01d2eccc)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Fix derived loaders not working failing for
+  entities with Bytes as ID's
+
+### Patch Changes
+
+- [#1400](https://github.com/graphprotocol/graph-tooling/pull/1400)
+  [`e7423aa`](https://github.com/graphprotocol/graph-tooling/commit/e7423aa5a73a5b8a7919f92c558c49fe61be9c23)
+  Thanks [@saihaj](https://github.com/saihaj)! - only update `network.json` file during `graph add`
+  if it exists
+
+- [#1402](https://github.com/graphprotocol/graph-tooling/pull/1402)
+  [`f0ce6c0`](https://github.com/graphprotocol/graph-tooling/commit/f0ce6c00e8adab94847ee3f9fde187513583b86c)
+  Thanks [@saihaj](https://github.com/saihaj)! - show a descriptive error message and do not hang if
+  there is a deploy key issue
+
+- [#1403](https://github.com/graphprotocol/graph-tooling/pull/1403)
+  [`dfa9ee1`](https://github.com/graphprotocol/graph-tooling/commit/dfa9ee1184bb1af499289baa92eb8c3b3cf37f85)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not ask for local path when trying to add more
+  contracts during init
+
+- [#1400](https://github.com/graphprotocol/graph-tooling/pull/1400)
+  [`e7423aa`](https://github.com/graphprotocol/graph-tooling/commit/e7423aa5a73a5b8a7919f92c558c49fe61be9c23)
+  Thanks [@saihaj](https://github.com/saihaj)! - ask for start block in `graph add` if we cannot
+  fetch the start block from etherscan
+
 ## 0.52.0
 
 ### Minor Changes
