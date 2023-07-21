@@ -331,12 +331,24 @@ export default class SchemaCodeGenerator {
     const name = fieldDef.name.value;
     const gqlType = fieldDef.type;
     const returnType = this._returnTypeForDervied(gqlType);
+    const obj = this.schema.ast.definitions.find(def => {
+      if (def.kind === 'ObjectTypeDefinition') {
+        const defobj = def as ObjectTypeDefinitionNode;
+        return defobj.name.value == this._baseType(gqlType);
+      }
+      return false;
+    }) as ObjectTypeDefinitionNode;
+
+    const idf = IdField.fromTypeDef(obj);
+    const idIsBytes = idf.typeName() == 'Bytes';
+    const toValueString = idIsBytes ? '.toBytes().toHexString()' : '.toString()';
+
     return tsCodegen.method(
       `get ${name}`,
       [],
       returnType,
       `
-        return new ${returnType}('${entityName}', this.get('id')!.toString(), '${name}')
+        return new ${returnType}('${entityName}', this.get('id')!${toValueString}, '${name}')
       `,
     );
   }

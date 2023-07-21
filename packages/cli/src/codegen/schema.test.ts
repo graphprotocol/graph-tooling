@@ -419,11 +419,13 @@ describe('Schema code generator', () => {
     type Worker implements Employee @entity {
       id: Bytes!
       name: String!
+      tasks: [Task!]
    }
 
     type Task @entity {
       id: Bytes!
       employee: Employee!
+      workers: [Worker!] @derivedFrom(field: "tasks")
       worker: Worker!
    }
 `);
@@ -524,6 +526,12 @@ describe('Schema code generator', () => {
           params: [new Param('value', new NamedType('Bytes'))],
           returnType: undefined,
           body: "\n      this.set('worker', Value.fromBytes(value))\n    ",
+        },
+        {
+          name: 'get workers',
+          params: [],
+          returnType: new NamedType('WorkerLoader'),
+          body: "\n      return new WorkerLoader('Task', this.get('id')!.toBytes().toHexString(), 'workers')\n    ",
         },
       ],
     });
