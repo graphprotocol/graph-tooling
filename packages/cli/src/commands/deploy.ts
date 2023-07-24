@@ -185,9 +185,6 @@ export default class DeployCommand extends Command {
       });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-this-alias -- request needs it
-    const self = this;
-
     const deploySubgraph = async (ipfsHash: string) => {
       const spinner = print.spin(`Deploying to Graph node ${requestUrl}`);
       client.request(
@@ -220,8 +217,11 @@ export default class DeployCommand extends Command {
       $ graph create --node ${node} ${subgraphName}`;
               }
             }
-
-            self.error(errorMessage, { exit: 1 });
+            if (jsonRpcError.message.match(/auth failure/)) {
+              errorMessage += '\nYou may need to authenticate first.';
+            }
+            spinner.fail(errorMessage);
+            this.exit(1);
           } else if (requestError) {
             spinner.fail(`HTTP error deploying the subgraph ${requestError.code}`);
             this.exit(1);
@@ -257,7 +257,10 @@ export default class DeployCommand extends Command {
     // we are provided the IPFS hash, so we deploy directly
     if (ipfsHash) {
       // Connect to the IPFS node (if a node address was provided)
-      const ipfsClient = create({ url: appendApiVersionForGraph(ipfs.toString()), headers });
+      const ipfsClient = create({
+        url: appendApiVersionForGraph(ipfs.toString()),
+        headers,
+      });
 
       // Fetch the manifest from IPFS
       const manifestBuffer = ipfsClient.cat(ipfsHash);

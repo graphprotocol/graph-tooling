@@ -20,6 +20,7 @@ export const allowedStudioNetworks = [
   'theta-testnet-001',
   'osmo-test-4',
   'base-testnet',
+  'base',
   'celo',
   'arbitrum-one',
   'avalanche',

@@ -79,6 +79,10 @@ export default class InitCommand extends Command {
       description: 'Index contract events as entities.',
       dependsOn: ['from-contract'],
     }),
+    'skip-install': Flags.boolean({
+      summary: 'Skip installing dependencies.',
+      default: false,
+    }),
     'start-block': Flags.string({
       helpGroup: 'Scaffold from contract',
       description: 'Block number to start indexing from.',
@@ -120,6 +124,7 @@ export default class InitCommand extends Command {
         'contract-name': contractName,
         'from-example': fromExample,
         'index-events': indexEvents,
+        'skip-install': skipInstall,
         network,
         abi: abiPath,
         'start-block': startBlock,
@@ -174,6 +179,7 @@ export default class InitCommand extends Command {
           allowSimpleName,
           directory,
           subgraphName,
+          skipInstall,
         },
         { commands },
       );
@@ -236,6 +242,7 @@ export default class InitCommand extends Command {
           product,
           startBlock,
           spkgPath,
+          skipInstall,
         },
         { commands, addContract: false },
       );
@@ -261,6 +268,7 @@ export default class InitCommand extends Command {
           fromExample,
           subgraphName: answers.subgraphName,
           directory: answers.directory,
+          skipInstall,
         },
         { commands },
       );
@@ -311,6 +319,7 @@ export default class InitCommand extends Command {
           product: answers.product,
           startBlock: answers.startBlock,
           spkgPath: answers.spkgPath,
+          skipInstall,
         },
         { commands, addContract: true },
       );
@@ -348,7 +357,9 @@ async function processFromExampleInitForm(
         initial: initSubgraphName,
         validate: name => {
           try {
-            validateSubgraphName(name, { allowSimpleName: initAllowSimpleName });
+            validateSubgraphName(name, {
+              allowSimpleName: initAllowSimpleName,
+            });
             return true;
           } catch (e) {
             return `${e.message}
@@ -494,7 +505,9 @@ async function processInitForm(
         initial: initSubgraphName,
         validate: name => {
           try {
-            validateSubgraphName(name, { allowSimpleName: initAllowSimpleName });
+            validateSubgraphName(name, {
+              allowSimpleName: initAllowSimpleName,
+            });
             return true;
           } catch (e) {
             return `${e.message}
@@ -847,11 +860,13 @@ async function initSubgraphFromExample(
     allowSimpleName,
     subgraphName,
     directory,
+    skipInstall,
   }: {
     fromExample: string | boolean;
     allowSimpleName?: boolean;
     subgraphName: string;
     directory: string;
+    skipInstall: boolean;
   },
   {
     commands,
@@ -965,10 +980,12 @@ async function initSubgraphFromExample(
   }
 
   // Install dependencies
-  const installed = await installDependencies(directory, commands);
-  if (installed !== true) {
-    this.exit(1);
-    return;
+  if (!skipInstall) {
+    const installed = await installDependencies(directory, commands);
+    if (installed !== true) {
+      this.exit(1);
+      return;
+    }
   }
 
   // Run code-generation
@@ -998,6 +1015,7 @@ async function initSubgraphFromContract(
     product,
     startBlock,
     spkgPath,
+    skipInstall,
   }: {
     protocolInstance: Protocol;
     allowSimpleName: boolean | undefined;
@@ -1013,6 +1031,7 @@ async function initSubgraphFromContract(
     product?: string;
     startBlock?: string;
     spkgPath?: string;
+    skipInstall: boolean;
   },
   {
     commands,
@@ -1105,12 +1124,15 @@ async function initSubgraphFromContract(
     return;
   }
 
-  // Install dependencies
-  const installed = await installDependencies(directory, commands);
-  if (installed !== true) {
-    this.exit(1);
-    return;
+  if (!skipInstall) {
+    // Install dependencies
+    const installed = await installDependencies(directory, commands);
+    if (installed !== true) {
+      this.exit(1);
+      return;
+    }
   }
+
   // Substreams we have nothing to install or generate
   if (!isSubstreams) {
     // Run code-generation
@@ -1121,7 +1143,10 @@ async function initSubgraphFromContract(
     }
 
     while (addContract) {
-      addContract = await addAnotherContract.bind(this)({ protocolInstance, directory });
+      addContract = await addAnotherContract.bind(this)({
+        protocolInstance,
+        directory,
+      });
     }
   }
 
@@ -1145,7 +1170,6 @@ async function addAnotherContract(
   const addContractConfirmation = addContractAnswer.toLowerCase() === 'y';
 
   if (addContractConfirmation) {
-    let abiFromFile = false;
     const ProtocolContract = protocolInstance.getContract()!;
 
     let contract = '';
@@ -1158,17 +1182,6 @@ async function addAnotherContract(
         break;
       }
       this.log(`✖ ${error}`);
-    }
-
-    const localAbi = await ux.prompt('\nProvide local ABI path? (y/n)', {
-      required: true,
-      type: 'single',
-    });
-    abiFromFile = localAbi.toLowerCase() === 'y';
-
-    let abiPath = '';
-    if (abiFromFile) {
-      abiPath = await ux.prompt('\nABI file (path)', { required: true });
     }
 
     const contractName = await ux.prompt('\nContract Name', {
@@ -1185,14 +1198,6 @@ async function addAnotherContract(
       }
 
       const commandLine = [contract, '--contract-name', contractName];
-
-      if (abiFromFile) {
-        if (abiPath.includes(directory)) {
-          commandLine.push('--abi', path.normalize(abiPath.replace(directory, '')));
-        } else {
-          commandLine.push('--abi', abiPath);
-        }
-      }
 
       await AddCommand.run(commandLine);
     } catch (e) {
