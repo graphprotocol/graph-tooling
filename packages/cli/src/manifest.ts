@@ -9,13 +9,13 @@ const Schema = z.object({
 const EthereumContractSource = z.object({
   address: z.string(),
   abi: z.string(),
-  startBlock: z.bigint().optional(),
+  startBlock: z.union([z.bigint(), z.number()]).optional(),
 });
 
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#151-ethereumcontractsource
 const EthereumTemplateContractSource = z.object({
   abi: z.string(),
-  startBlock: z.bigint().optional(),
+  startBlock: z.union([z.bigint(), z.number()]).optional(),
 });
 
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#1522-eventhandler

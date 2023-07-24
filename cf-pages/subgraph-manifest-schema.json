@@ -72,8 +72,7 @@
                     "type": "string"
                   },
                   "startBlock": {
-                    "type": "integer",
-                    "format": "int64"
+                    "type": ["integer", "number"]
                   }
                 },
                 "required": ["address", "abi"],
@@ -213,8 +212,7 @@
                     "type": "string"
                   },
                   "startBlock": {
-                    "type": "integer",
-                    "format": "int64"
+                    "type": ["integer", "number"]
                   }
                 },
                 "required": ["abi"],
