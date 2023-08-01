@@ -12,8 +12,10 @@ export default class DataSourceTemplateCodeGenerator {
 
     if (kind.split('/')[0] == protocol.name) {
       this.protocolTemplateCodeGen = protocol.getTemplateCodeGen(template);
-    } else if (kind == 'file/ipfs') {
+    } else if (kind == 'file/ipfs' || kind == 'file/arweave') {
       this.protocolTemplateCodeGen = new IpfsFileTemplateCodeGen(template);
+    } else {
+      throw new Error(`DataSourceTemplate kind not supported: ${kind}`);
     }
   }
 
@@ -37,7 +39,10 @@ export default class DataSourceTemplateCodeGenerator {
   _generateTemplateType() {
     const name = this.template.get('name');
 
-    const klass = tsCodegen.klass(name, { export: true, extends: 'DataSourceTemplate' });
+    const klass = tsCodegen.klass(name, {
+      export: true,
+      extends: 'DataSourceTemplate',
+    });
     klass.addMethod(this.protocolTemplateCodeGen.generateCreateMethod());
     klass.addMethod(this.protocolTemplateCodeGen.generateCreateWithContextMethod());
     return klass;
