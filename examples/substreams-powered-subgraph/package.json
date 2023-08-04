@@ -19,6 +19,6 @@
     "substreams:stream": "substreams run -e mainnet.eth.streamingfast.io:443 substreams.yaml graph_out -s 12292922 -t +10"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.53.0"
+    "@graphprotocol/graph-cli": "0.54.0"
   }
 }
