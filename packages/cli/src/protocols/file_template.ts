@@ -1,9 +1,9 @@
 /* eslint-disable */
 
 import immutable from 'immutable';
-import * as tsCodegen from '../../../codegen/typescript';
+import * as tsCodegen from '../codegen/typescript';
 
-export default class IpfsFileTemplateCodeGen {
+export default class FileTemplateCodeGen {
   constructor(private template: immutable.Map<any, any>) {
     this.template = template;
   }

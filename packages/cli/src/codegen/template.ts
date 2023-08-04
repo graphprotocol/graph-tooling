@@ -1,6 +1,6 @@
 import immutable from 'immutable';
 import Protocol from '../protocols';
-import IpfsFileTemplateCodeGen from '../protocols/ipfs/codegen/file_template';
+import FileTemplateCodeGen from '../protocols/file_template';
 import * as tsCodegen from './typescript';
 
 export default class DataSourceTemplateCodeGenerator {
@@ -13,7 +13,7 @@ export default class DataSourceTemplateCodeGenerator {
     if (kind.split('/')[0] == protocol.name) {
       this.protocolTemplateCodeGen = protocol.getTemplateCodeGen(template);
     } else if (kind == 'file/ipfs' || kind == 'file/arweave') {
-      this.protocolTemplateCodeGen = new IpfsFileTemplateCodeGen(template);
+      this.protocolTemplateCodeGen = new FileTemplateCodeGen(template);
     } else {
       throw new Error(`DataSourceTemplate kind not supported: ${kind}`);
     }
