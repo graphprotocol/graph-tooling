@@ -1,5 +1,23 @@
 # @graphprotocol/graph-cli
 
+## 0.54.0
+
+### Minor Changes
+
+- [#1411](https://github.com/graphprotocol/graph-tooling/pull/1411)
+  [`0ae0625`](https://github.com/graphprotocol/graph-tooling/commit/0ae06258b31c979c8e83922be77021bc004a0d12)
+  Thanks [@saihaj](https://github.com/saihaj)! - add support for arweave file datasource
+
+- [#1407](https://github.com/graphprotocol/graph-tooling/pull/1407)
+  [`d388127`](https://github.com/graphprotocol/graph-tooling/commit/d388127aa46a47feaab5024d0a2f2da49c9cabac)
+  Thanks [@saihaj](https://github.com/saihaj)! - add skipInstall flag for init
+
+### Patch Changes
+
+- [#1410](https://github.com/graphprotocol/graph-tooling/pull/1410)
+  [`c1eed12`](https://github.com/graphprotocol/graph-tooling/commit/c1eed1219b015145bd428c201577659c61ab64bc)
+  Thanks [@uF4No](https://github.com/uF4No)! - fix ABI api endpoint zksync mainnet
+
 ## 0.53.0
 
 ### Minor Changes
