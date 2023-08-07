@@ -1,0 +1,16 @@
+{
+  "name": "migrate",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "main": "index.js",
+  "keywords": [],
+  "scripts": {
+    "m": "jscodeshift -t ./transforms/index.js /Users/saihaj/Desktop/poap-subgraph/src/mapping.ts"
+  },
+  "dependencies": {
+    "jscodeshift": "^0.15.0"
+  }
+}
