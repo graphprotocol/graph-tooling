@@ -193,7 +193,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'fantom-testnet':
       return `https://api-testnet.ftmscan.com/api`;
     case 'zksync-era':
-      return `https://explorer.zksync.io/api`;
+      return `https://block-explorer-api.mainnet.zksync.io/api`;
     case 'polygon-zkevm-testnet':
       return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
