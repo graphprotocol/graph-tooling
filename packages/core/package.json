@@ -1,0 +1,19 @@
+{
+  "name": "@graphprotocol/graph-cli-core",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Saihajpreet Singh <saihajpreet.singh@gmail.com> (https://saihaj.dev)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "js-yaml": "3.14.1",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^3.12.7",
+    "vitest": "^0.34.1"
+  }
+}
