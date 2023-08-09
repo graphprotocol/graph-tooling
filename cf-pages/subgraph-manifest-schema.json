@@ -16,7 +16,9 @@
               "description": "The path of the GraphQL IDL file, either local or on IPFS."
             }
           },
-          "required": ["file"],
+          "required": [
+            "file"
+          ],
           "additionalProperties": false,
           "description": "The GraphQL schema of this subgraph."
         },
@@ -41,7 +43,10 @@
               "description": "The block number up to which to use data from the base subgraph"
             }
           },
-          "required": ["base", "block"],
+          "required": [
+            "base",
+            "block"
+          ],
           "additionalProperties": false,
           "description": "An optional base to graft onto."
         },
@@ -72,10 +77,16 @@
                     "type": "string"
                   },
                   "startBlock": {
-                    "type": ["integer", "number"]
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   }
                 },
-                "required": ["address", "abi"],
+                "required": [
+                  "address",
+                  "abi"
+                ],
                 "additionalProperties": false,
                 "description": "The source data on a blockchain such as Ethereum."
               },
@@ -121,7 +132,10 @@
                           "description": "A 0x prefixed hex string. If provided, events whose topic0 is equal to this value will be processed by the given handler. When topic0 is provided, only the topic0 value will be matched, and not the hash of the event signature. This is useful for processing anonymous events in Solidity, which can have their topic0 set to anything. By default, topic0 is equal to the hash of the event signature."
                         }
                       },
-                      "required": ["event", "handler"],
+                      "required": [
+                        "event",
+                        "handler"
+                      ],
                       "additionalProperties": false
                     },
                     "description": "Handlers for specific events, which will be defined in the mapping script."
@@ -140,7 +154,10 @@
                           "description": "The name of an exported function in the mapping script that should handle the specified event."
                         }
                       },
-                      "required": ["function", "handler"],
+                      "required": [
+                        "function",
+                        "handler"
+                      ],
                       "additionalProperties": false
                     },
                     "description": "A list of functions that will trigger a handler and the name of the corresponding handlers in the mapping."
@@ -163,12 +180,16 @@
                               "description": "The selected block handler filter."
                             }
                           },
-                          "required": ["kind"],
+                          "required": [
+                            "kind"
+                          ],
                           "additionalProperties": false,
                           "description": "Definition of the filter to apply. If none is supplied, the handler will be called on every block."
                         }
                       },
-                      "required": ["handler"],
+                      "required": [
+                        "handler"
+                      ],
                       "additionalProperties": false
                     },
                     "description": "Defines block filters and handlers to process matching blocks."
@@ -178,12 +199,24 @@
                     "description": "The path of the mapping script."
                   }
                 },
-                "required": ["kind", "apiVersion", "language", "entities", "file"],
+                "required": [
+                  "kind",
+                  "apiVersion",
+                  "language",
+                  "entities",
+                  "file"
+                ],
                 "additionalProperties": false,
                 "description": "The mapping that defines how to ingest the data."
               }
             },
-            "required": ["kind", "name", "network", "source", "mapping"],
+            "required": [
+              "kind",
+              "name",
+              "network",
+              "source",
+              "mapping"
+            ],
             "additionalProperties": false
           },
           "description": "Each data source spec defines the data that will be ingested as well as the transformation logic to derive the state of the subgraph's entities based on the source data."
@@ -200,24 +233,6 @@
               "name": {
                 "type": "string",
                 "description": "The name of the source data. Will be used to generate APIs in the mapping and also for self-documentation purposes."
-              },
-              "network": {
-                "type": "string",
-                "description": "For blockchains, this describes which network the subgraph targets"
-              },
-              "source": {
-                "type": "object",
-                "properties": {
-                  "abi": {
-                    "type": "string"
-                  },
-                  "startBlock": {
-                    "type": ["integer", "number"]
-                  }
-                },
-                "required": ["abi"],
-                "additionalProperties": false,
-                "description": "The source data on a blockchain such as Ethereum."
               },
               "mapping": {
                 "type": "object",
@@ -247,18 +262,32 @@
                     "$ref": "#/definitions/Subgraph Manifest/properties/dataSources/items/properties/mapping/properties/file"
                   }
                 },
-                "required": ["kind", "apiVersion", "language", "entities", "file"],
+                "required": [
+                  "kind",
+                  "apiVersion",
+                  "language",
+                  "entities",
+                  "file"
+                ],
                 "additionalProperties": false,
                 "description": "The mapping that defines how to ingest the data."
               }
             },
-            "required": ["kind", "name", "network", "source", "mapping"],
+            "required": [
+              "kind",
+              "name",
+              "mapping"
+            ],
             "additionalProperties": false
           },
           "description": "Each data source template defines a data source that can be created dynamically from the mappings."
         }
       },
-      "required": ["specVersion", "schema", "dataSources"],
+      "required": [
+        "specVersion",
+        "schema",
+        "dataSources"
+      ],
       "additionalProperties": false
     }
   },

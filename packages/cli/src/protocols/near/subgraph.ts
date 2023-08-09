@@ -1,10 +1,10 @@
-import immutable from 'immutable';
-import { Subgraph, SubgraphOptions } from '../subgraph';
+import immutable from "immutable";
+import { Subgraph, SubgraphOptions } from "../subgraph";
 
 export default class NearSubgraph implements Subgraph {
-  public manifest: SubgraphOptions['manifest'];
-  public resolveFile: SubgraphOptions['resolveFile'];
-  public protocol: SubgraphOptions['protocol'];
+  public manifest: SubgraphOptions["manifest"];
+  public resolveFile: SubgraphOptions["resolveFile"];
+  public protocol: SubgraphOptions["protocol"];
 
   constructor(options: SubgraphOptions) {
     this.manifest = options.manifest;
@@ -13,10 +13,10 @@ export default class NearSubgraph implements Subgraph {
   }
 
   validateManifest() {
-    return immutable.List();
+    return [];
   }
 
   handlerTypes() {
-    return immutable.List(['blockHandlers', 'receiptHandlers']);
+    return immutable.List(["blockHandlers", "receiptHandlers"]);
   }
 }

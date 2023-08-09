@@ -1,10 +1,10 @@
-import immutable from 'immutable';
-import { Subgraph, SubgraphOptions } from '../subgraph';
+import immutable from "immutable";
+import { Subgraph, SubgraphOptions } from "../subgraph";
 
 export default class ArweaveSubgraph implements Subgraph {
-  manifest: SubgraphOptions['manifest'];
-  resolveFile: SubgraphOptions['resolveFile'];
-  protocol: SubgraphOptions['protocol'];
+  manifest: SubgraphOptions["manifest"];
+  resolveFile: SubgraphOptions["resolveFile"];
+  protocol: SubgraphOptions["protocol"];
 
   constructor(options: SubgraphOptions) {
     this.manifest = options.manifest;
@@ -13,10 +13,10 @@ export default class ArweaveSubgraph implements Subgraph {
   }
 
   validateManifest() {
-    return immutable.List();
+    return [];
   }
 
   handlerTypes() {
-    return immutable.List(['blockHandlers', 'transactionHandlers']);
+    return immutable.List(["blockHandlers", "transactionHandlers"]);
   }
 }

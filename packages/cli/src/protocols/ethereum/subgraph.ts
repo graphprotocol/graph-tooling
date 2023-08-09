@@ -1,12 +1,13 @@
-import immutable from 'immutable';
-import * as DataSourcesExtractor from '../../command-helpers/data-sources';
-import { Subgraph, SubgraphOptions } from '../subgraph';
-import ABI from './abi';
+import immutable from "immutable";
+import * as DataSourcesExtractor from "../../command-helpers/data-sources";
+import { Subgraph, SubgraphOptions } from "../subgraph";
+import ABI from "./abi";
+import { ManifestZodSchema } from "../../manifest";
 
 export default class EthereumSubgraph implements Subgraph {
-  public manifest: SubgraphOptions['manifest'];
-  public resolveFile: SubgraphOptions['resolveFile'];
-  public protocol: SubgraphOptions['protocol'];
+  public manifest: SubgraphOptions["manifest"];
+  public resolveFile: SubgraphOptions["resolveFile"];
+  public protocol: SubgraphOptions["protocol"];
 
   constructor(options: SubgraphOptions) {
     this.manifest = options.manifest;
@@ -15,86 +16,96 @@ export default class EthereumSubgraph implements Subgraph {
   }
 
   validateManifest() {
-    return this.validateAbis().concat(this.validateEvents()).concat(this.validateCallFunctions());
+    return this.validateAbis()
+      .concat(this.validateEvents())
+      .concat(this.validateCallFunctions());
   }
 
   validateAbis() {
-    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol);
-
-    return dataSourcesAndTemplates.reduce(
-      (errors: any[], dataSourceOrTemplate: any) =>
-        errors.concat(
-          this.validateDataSourceAbis(
-            dataSourceOrTemplate.get('dataSource'),
-            dataSourceOrTemplate.get('path'),
-          ),
-        ),
-      immutable.List(),
+    /**
+     * Validate that the the "source > abi" reference of all data sources
+     * points to an existing ABI in the data source ABIs
+     */
+    const abiNames = this.manifest.dataSources.map(({ source }) => source.abi);
+    const mappingAbis = new Set(
+      this.manifest.dataSources
+        .map(({ mapping }) => mapping.abis.map(({ name }) => name))
+        .flat()
     );
-  }
 
-  validateDataSourceAbis(dataSource: any, path: string) {
-    // Validate that the the "source > abi" reference of all data sources
-    // points to an existing ABI in the data source ABIs
-    const abiName = dataSource.getIn(['source', 'abi']);
-    const abiNames = dataSource.getIn(['mapping', 'abis']).map((abi: any) => abi.get('name'));
-    const nameErrors = abiNames.includes(abiName)
-      ? immutable.List()
-      : immutable.fromJS([
-          {
-            path: [...path, 'source', 'abi'],
-            message: `\
-ABI name '${abiName}' not found in mapping > abis.
-Available ABIs:
-${abiNames
-  .sort()
-  .map((name: string) => `- ${name}`)
-  .join('\n')}`,
-          },
-        ]);
+    const missingAbis = abiNames.filter((abiName) => !mappingAbis.has(abiName));
+    const nameErrors = missingAbis.map((abiName) => ({
+      path: ["dataSources", "source", "abi"],
+      message: `ABI name '${abiName}' not found in mapping > abis.\n Available ABIs: ${Array.from(
+        mappingAbis
+      )
+        .map((name) => `- ${name}`)
+        .join("\n")}`,
+    }));
 
-    // Validate that all ABI files are valid
-    const fileErrors = dataSource
-      .getIn(['mapping', 'abis'])
-      .reduce((errors: any[], abi: any, abiIndex: number) => {
-        try {
-          ABI.load(abi.get('name'), this.resolveFile(abi.get('file')));
-          return errors;
-        } catch (e) {
-          return errors.push(
-            immutable.fromJS({
-              path: [...path, 'mapping', 'abis', abiIndex, 'file'],
-              message: e.message,
-            }),
-          );
-        }
-      }, immutable.List());
+    /**
+     * Validate that all ABI files are valid
+     */
+    const fileErrors = this.manifest.dataSources
+      .map(({ mapping }) => {
+        return mapping.abis
+          .map((abi, abiIndex) => {
+            try {
+              ABI.load(abi.name, this.resolveFile(abi.file));
+              return [];
+            } catch (e) {
+              return [
+                {
+                  path: [
+                    "dataSources",
+                    "mapping",
+                    "abis",
+                    abiIndex.toString(),
+                    "file",
+                  ],
+                  message: e.message,
+                },
+              ];
+            }
+          })
+          .flat();
+      })
+      .flat();
 
     return nameErrors.concat(fileErrors);
   }
 
   validateEvents() {
-    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(this.manifest, this.protocol);
+    const dataSourcesAndTemplates = DataSourcesExtractor.fromManifest(
+      this.manifest,
+      this.protocol
+    );
 
-    return dataSourcesAndTemplates.reduce((errors: any[], dataSourceOrTemplate: any) => {
-      return errors.concat(
-        this.validateDataSourceEvents(
-          dataSourceOrTemplate.get('dataSource'),
-          dataSourceOrTemplate.get('path'),
-        ),
-      );
-    }, immutable.List());
+    return dataSourcesAndTemplates.reduce(
+      (errors: any[], dataSourceOrTemplate: any) => {
+        return errors.concat(
+          this.validateDataSourceEvents(
+            dataSourceOrTemplate.get("dataSource"),
+            dataSourceOrTemplate.get("path")
+          )
+        );
+      },
+      immutable.List()
+    );
   }
 
   validateDataSourceEvents(dataSource: any, path: string) {
     let abi: ABI;
     try {
       // Resolve the source ABI name into a real ABI object
-      const abiName = dataSource.getIn(['source', 'abi']);
+      const abiName = dataSource.getIn(["source", "abi"]);
       const abiEntry = dataSource
-        .getIn(['mapping', 'abis'])
-        .find((abi: any) => abi.get('name') === abiName);
-      abi = ABI.load(abiEntry.get('name'), this.resolveFile(abiEntry.get('file')));
+        .getIn(["mapping", "abis"])
+        .find((abi: any) => abi.get("name") === abiName);
+      abi = ABI.load(
+        abiEntry.get("name"),
+        this.resolveFile(abiEntry.get("file"))
+      );
     } catch (_) {
       // Ignore errors silently; we can't really say anything about
       // the events if the ABI can't even be loaded
@@ -103,8 +114,8 @@ ${abiNames
 
     // Obtain event signatures from the mapping
     const manifestEvents = dataSource
-      .getIn(['mapping', 'eventHandlers'], immutable.List())
-      .map((handler: any) => handler.get('event'));
+      .getIn(["mapping", "eventHandlers"], immutable.List())
+      .map((handler: any) => handler.get("event"));
 
     // Obtain event signatures from the ABI
     const abiEvents = abi.eventSignatures();
@@ -117,35 +128,40 @@ ${abiNames
           ? errors
           : errors.push(
               immutable.fromJS({
-                path: [...path, 'eventHandlers', index],
+                path: [...path, "eventHandlers", index],
                 message: `\
 Event with signature '${manifestEvent}' not present in ABI '${abi.name}'.
 Available events:
 ${abiEvents
   .sort()
-  .map(event => `- ${event}`)
-  .join('\n')}`,
-              }),
+  .map((event) => `- ${event}`)
+  .join("\n")}`,
+              })
             ),
-      immutable.List(),
+      immutable.List()
     );
   }
 
   validateCallFunctions() {
     return this.manifest
-      .get('dataSources')
-      .filter((dataSource: any) => this.protocol.isValidKindName(dataSource.get('kind')))
+      .get("dataSources")
+      .filter((dataSource: any) =>
+        this.protocol.isValidKindName(dataSource.get("kind"))
+      )
       .reduce((errors: any[], dataSource: any, dataSourceIndex: string) => {
-        const path = ['dataSources', dataSourceIndex, 'callHandlers'];
+        const path = ["dataSources", dataSourceIndex, "callHandlers"];
 
         let abi: ABI;
         try {
           // Resolve the source ABI name into a real ABI object
-          const abiName = dataSource.getIn(['source', 'abi']);
+          const abiName = dataSource.getIn(["source", "abi"]);
           const abiEntry = dataSource
-            .getIn(['mapping', 'abis'])
-            .find((abi: any) => abi.get('name') === abiName);
-          abi = ABI.load(abiEntry.get('name'), this.resolveFile(abiEntry.get('file')));
+            .getIn(["mapping", "abis"])
+            .find((abi: any) => abi.get("name") === abiName);
+          abi = ABI.load(
+            abiEntry.get("name"),
+            this.resolveFile(abiEntry.get("file"))
+          );
         } catch (e) {
           // Ignore errors silently; we can't really say anything about
           // the call functions if the ABI can't even be loaded
@@ -154,8 +170,8 @@ ${abiEvents
 
         // Obtain event signatures from the mapping
         const manifestFunctions = dataSource
-          .getIn(['mapping', 'callHandlers'], immutable.List())
-          .map((handler: any) => handler.get('function'));
+          .getIn(["mapping", "callHandlers"], immutable.List())
+          .map((handler: any) => handler.get("function"));
 
         // Obtain event signatures from the ABI
         const abiFunctions = abi.callFunctionSignatures();
@@ -170,20 +186,22 @@ ${abiEvents
                   immutable.fromJS({
                     path: [...path, index],
                     message: `\
-Call function with signature '${manifestFunction}' not present in ABI '${abi.name}'.
+Call function with signature '${manifestFunction}' not present in ABI '${
+                      abi.name
+                    }'.
 Available call functions:
 ${abiFunctions
   .sort()
-  .map(tx => `- ${tx}`)
-  .join('\n')}`,
-                  }),
+  .map((tx) => `- ${tx}`)
+  .join("\n")}`,
+                  })
                 ),
-          errors,
+          errors
         );
       }, immutable.List());
   }
 
   handlerTypes() {
-    return immutable.List(['blockHandlers', 'callHandlers', 'eventHandlers']);
+    return immutable.List(["blockHandlers", "callHandlers", "eventHandlers"]);
   }
 }
