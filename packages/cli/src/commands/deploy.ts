@@ -8,7 +8,7 @@ import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { updateSubgraphNetwork } from '../command-helpers/network';
-import { chooseNodeUrl } from '../command-helpers/node';
+import { chooseNodeUrl, getHostedServiceSubgraphId } from '../command-helpers/node';
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import Protocol from '../protocols';
@@ -96,6 +96,9 @@ export default class DeployCommand extends Command {
       summary: 'Networks config file path.',
       default: 'networks.json',
     }),
+    'from-hosted-service': Flags.string({
+      summary: 'Hosted service Subgraph Name to deploy to studio.',
+    }),
   };
 
   async run() {
@@ -117,8 +120,130 @@ export default class DeployCommand extends Command {
         network,
         'network-file': networkFile,
         'ipfs-hash': ipfsHash,
+        'from-hosted-service': hostedServiceSubgraphName,
       },
     } = await this.parse(DeployCommand);
+    if (hostedServiceSubgraphName) {
+      const { health, subgraph: subgraphIpfsHash } = await getHostedServiceSubgraphId({
+        subgraphName: hostedServiceSubgraphName,
+      });
+
+      const safeToDeployFailedSubgraph =
+        health === 'failed'
+          ? await ux.confirm(
+              'This subgraph has failed indexing on hosted service. Do you wish to continue the deploy?',
+            )
+          : true;
+      if (!safeToDeployFailedSubgraph) return;
+
+      const safeToDeployUnhealthySubgraph =
+        health === 'unhealthy'
+          ? await ux.confirm(
+              'This subgraph is not healthy on hosted service. Do you wish to continue the deploy?',
+            )
+          : true;
+      if (!safeToDeployUnhealthySubgraph) return;
+
+      const { node } = chooseNodeUrl({ studio: true, product: undefined });
+
+      // shouldn't happen, but we need to satisfy the compiler
+      if (!node) {
+        this.error('No node URL available');
+      }
+
+      const requestUrl = new URL(node);
+      const client = createJsonRpcClient(requestUrl);
+
+      // Exit with an error code if the client couldn't be created
+      if (!client) {
+        this.error('Failed to create RPC client');
+      }
+
+      // Use the deploy key, if one is set
+      let deployKey = deployKeyFlag;
+      if (!deployKey && accessToken) {
+        deployKey = accessToken; // backwards compatibility
+      }
+      deployKey = await identifyDeployKey(node, deployKey);
+      if (!deployKey) {
+        this.error('No deploy key available');
+      }
+
+      // @ts-expect-error options property seems to exist
+      client.options.headers = { Authorization: 'Bearer ' + deployKey };
+
+      const subgraphName = await ux.prompt('What is the name of the subgraph you want to deploy?', {
+        required: true,
+      });
+
+      // Ask for label if not on hosted service
+      const versionLabel =
+        versionLabelFlag ||
+        (await ux.prompt('Which version label to use? (e.g. "v0.0.1")', {
+          required: true,
+        }));
+
+      const spinner = print.spin(`Deploying to Graph node ${requestUrl}`);
+      client.request(
+        'subgraph_deploy',
+        {
+          name: subgraphName,
+          ipfs_hash: subgraphIpfsHash,
+          version_label: versionLabel,
+          debug_fork: debugFork,
+        },
+        async (
+          // @ts-expect-error TODO: why are the arguments not typed?
+          requestError,
+          // @ts-expect-error TODO: why are the arguments not typed?
+          jsonRpcError,
+          // @ts-expect-error TODO: why are the arguments not typed?
+          res,
+        ) => {
+          if (jsonRpcError) {
+            let errorMessage = `Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`;
+
+            // Provide helpful advice when the subgraph has not been created yet
+            if (jsonRpcError.message.match(/subgraph name not found/)) {
+              errorMessage += `
+        Make sure to create the subgraph first by running the following command:
+        $ graph create --node ${node} ${subgraphName}`;
+            }
+
+            if (jsonRpcError.message.match(/auth failure/)) {
+              errorMessage += '\nYou may need to authenticate first.';
+            }
+
+            spinner.fail(errorMessage);
+            process.exit(1);
+          } else if (requestError) {
+            spinner.fail(`HTTP error deploying the subgraph ${requestError.code}`);
+            process.exit(1);
+          } else {
+            spinner.stop();
+
+            const base = requestUrl.protocol + '//' + requestUrl.hostname;
+            let playground = res.playground;
+            let queries = res.queries;
+
+            // Add a base URL if graph-node did not return the full URL
+            if (playground.charAt(0) === ':') {
+              playground = base + playground;
+            }
+            if (queries.charAt(0) === ':') {
+              queries = base + queries;
+            }
+
+            print.success(`Deployed to ${playground}`);
+            print.info('\nSubgraph endpoints:');
+            print.info(`Queries (HTTP):     ${queries}`);
+            print.info(``);
+            process.exit(0);
+          }
+        },
+      );
+      return;
+    }
 
     const subgraphName =
       subgraphNameArg ||
