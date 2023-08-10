@@ -107,6 +107,7 @@ export default class Protocol {
         'base-testnet',
         'base',
         'zksync-era',
+        'zksync-era-testnet',
         'sepolia',
         'polygon-zkevm-testnet',
         'polygon-zkevm',
@@ -128,7 +129,7 @@ export default class Protocol {
   }
 
   static normalizeName(name: ProtocolName) {
-    return Protocol.availableProtocols().findKey(possibleNames => {
+    return Protocol.availableProtocols().findKey((possibleNames) => {
       return possibleNames.includes(name);
     })!;
   }
@@ -140,7 +141,9 @@ export default class Protocol {
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind: string) {
-    return Protocol.availableProtocols().get(this.name, immutable.List()).includes(kind);
+    return Protocol.availableProtocols()
+      .get(this.name, immutable.List())
+      .includes(kind);
   }
 
   hasABIs() {
