@@ -107,6 +107,7 @@ export default class Protocol {
         'base-testnet',
         'base',
         'zksync-era',
+        'zksync-era-testnet',
         'sepolia',
         'polygon-zkevm-testnet',
         'polygon-zkevm',

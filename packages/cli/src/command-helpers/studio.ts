@@ -25,6 +25,7 @@ export const allowedStudioNetworks = [
   'arbitrum-one',
   'avalanche',
   'zksync-era',
+  'zksync-era-testnet',
   'sepolia',
   'polygon-zkevm-testnet',
   'polygon-zkevm',

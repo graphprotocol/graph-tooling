@@ -194,6 +194,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-testnet.ftmscan.com/api`;
     case 'zksync-era':
       return `https://block-explorer-api.mainnet.zksync.io/api`;
+    case 'zksync-era-testnet':
+      return `https://block-explorer-api.testnets.zksync.dev/api`;
     case 'polygon-zkevm-testnet':
       return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
@@ -269,7 +271,9 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'rinkeby':
       return 'https://rpc.ankr.com/eth_rinkeby';
     case 'zksync-era':
-      return 'https://zksync2-mainnet.zksync.io';
+      return 'https://mainnet.era.zksync.io';
+    case 'zksync-era-testnet':
+      return 'https://testnet.era.zksync.dev';
     case 'sepolia':
       return 'https://rpc.ankr.com/eth_sepolia';
     default:
