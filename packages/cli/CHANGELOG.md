@@ -1,5 +1,18 @@
 # @graphprotocol/graph-cli
 
+## 0.55.0
+
+### Minor Changes
+
+- [#1419](https://github.com/graphprotocol/graph-tooling/pull/1419)
+  [`e88ff02`](https://github.com/graphprotocol/graph-tooling/commit/e88ff02cd236f6c556afd99cecb00b6cffd738ed)
+  Thanks [@saihaj](https://github.com/saihaj)! - Introduce `--from-hosted-service` flag which will
+  make it easier to deploy subgraphs from hosted service to Studio.
+
+- [#1418](https://github.com/graphprotocol/graph-tooling/pull/1418)
+  [`38c16be`](https://github.com/graphprotocol/graph-tooling/commit/38c16be4ed865bec12a4db63b219dba058f06e72)
+  Thanks [@uF4No](https://github.com/uF4No)! - feat: adds zksync era testnet
+
 ## 0.54.0
 
 ### Minor Changes
