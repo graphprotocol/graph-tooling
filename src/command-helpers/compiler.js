@@ -3,12 +3,27 @@ const ipfsHttpClient = require('ipfs-http-client')
 const toolbox = require('gluegun/toolbox')
 const Compiler = require('../compiler')
 
+/**
+ * Appends /api/v0 to the end of a The Graph IPFS URL
+ */
+function appendApiVersionForGraph(inputString) {
+  // Check if the input string is a valid The Graph IPFS URL
+  const pattern = /^(https?:\/\/)?([\w-]+\.)+thegraph\.com\/ipfs\/?$/
+  if (pattern.test(inputString)) {
+    // account for trailing slash
+    if (inputString.endsWith('/')) {
+      return inputString.slice(0, -1) + '/api/v0'
+    }
+    return inputString + '/api/v0'
+  }
+  return inputString
+}
+
 // Helper function to construct a subgraph compiler
 const createCompiler = (manifest, { ipfs, outputDir, outputFormat, skipMigrations }) => {
   // Parse the IPFS URL
-  let url
   try {
-    url = ipfs ? new URL(ipfs) : undefined
+    if (ipfs && typeof ipfs === 'string') new URL(ipfs)
   } catch (e) {
     toolbox.print.error(`Invalid IPFS URL: ${ipfs}
 The IPFS URL must be of the following format: http(s)://host[:port]/[path]`)
@@ -16,17 +31,12 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`)
   }
 
   // Connect to the IPFS node (if a node address was provided)
-  ipfs = ipfs
-    ? ipfsHttpClient({
-        protocol: url.protocol.replace(/[:]+$/, ''),
-        host: url.hostname,
-        port: url.port,
-        'api-path': url.pathname.replace(/\/$/, '') + '/api/v0/',
-      })
+  const ipfsClient = ipfs
+    ? ipfsHttpClient.create({ url: appendApiVersionForGraph(ipfs.toString()) })
     : undefined
 
   return new Compiler({
-    ipfs,
+    ipfs: ipfsClient,
     subgraphManifest: manifest,
     outputDir: outputDir,
     outputFormat: outputFormat,

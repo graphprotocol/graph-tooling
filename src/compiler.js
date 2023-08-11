@@ -613,9 +613,18 @@ class Compiler {
 
   async _uploadToIPFS(file) {
     try {
-      let hash = (await this.ipfs.add([file]))[0].hash
-      await this.ipfs.pin.add(hash)
-      return hash
+      const files = this.ipfs.addAll([file])
+
+      // We get back async iterable
+      const filesIterator = files[Symbol.asyncIterator]()
+      // We only care about the first item, since that is the file, rest could be directories
+      const { value } = await filesIterator.next()
+
+      // we grab the file and pin it
+      const uploadedFile = value
+      await this.ipfs.pin.add(uploadedFile.cid)
+
+      return uploadedFile.cid.toString()
     } catch (e) {
       throw Error(`Failed to upload file to IPFS: ${e.message}`)
     }
