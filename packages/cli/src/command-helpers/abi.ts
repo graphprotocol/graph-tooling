@@ -200,6 +200,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://zkevm.polygonscan.com/api`;
     case 'sepolia':
       return `https://api-sepolia.etherscan.io/api`;
+    case 'scroll-sepolia':
+      return `https://sepolia-blockscout.scroll.io/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -272,6 +274,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://zksync2-mainnet.zksync.io';
     case 'sepolia':
       return 'https://rpc.ankr.com/eth_sepolia';
+    case 'scroll-sepolia':
+      return 'https://rpc.ankr.com/scroll_sepolia_testnet';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
