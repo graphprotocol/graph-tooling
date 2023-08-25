@@ -55,13 +55,26 @@ type ContractAbi {
   file: File!
 }
 
-type BlockHandler {
-  handler: String!
-  filter: BlockFilter
+enum BlockFilterKind {
+  polling
+  once
+  call
 }
 
 type BlockFilter {
-  kind: String!
+  kind: BlockFilterKind!
+}
+
+type PollingBlockFilter {
+  kind: BlockFilterKind!
+  every: BigInt!
+}
+
+union BlockFilterType = BlockFilter | PollingBlockFilter
+
+type BlockHandler {
+  handler: String!
+  filter: BlockFilterType
 }
 
 type CallHandler {

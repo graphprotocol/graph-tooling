@@ -2,6 +2,14 @@ import { cliTest } from './util';
 
 describe('Validation', () => {
   cliTest(
+    'Block handler filters',
+    ['codegen', '--skip-migrations'],
+    'validation/block-handler-filters',
+    {
+      exitCode: 0,
+    },
+  );
+  cliTest(
     'Invalid subgraph manifest',
     ['codegen', '--skip-migrations'],
     'validation/invalid-manifest',
