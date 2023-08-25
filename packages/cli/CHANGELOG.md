@@ -1,5 +1,18 @@
 # @graphprotocol/graph-cli
 
+## 0.56.0
+
+### Minor Changes
+
+- [#1421](https://github.com/graphprotocol/graph-tooling/pull/1421)
+  [`d4d5c90`](https://github.com/graphprotocol/graph-tooling/commit/d4d5c904bdec451001f058598527895dee0a5b4c)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - Add Scroll testnet to graph-cli
+
+- [#1392](https://github.com/graphprotocol/graph-tooling/pull/1392)
+  [`7bc5e4e`](https://github.com/graphprotocol/graph-tooling/commit/7bc5e4e5139100e26b36df607f0b847e8a0b5f96)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for polling block handlers in
+  the manifest for ethereum
+
 ## 0.55.0
 
 ### Minor Changes
