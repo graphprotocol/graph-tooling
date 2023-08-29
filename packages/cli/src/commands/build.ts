@@ -6,7 +6,7 @@ import { updateSubgraphNetwork } from '../command-helpers/network';
 import debug from '../debug';
 import Protocol from '../protocols';
 
-const buildDebug = debug('graph-cli:build');
+const buildDebug = debug.extend('build');
 
 export default class BuildCommand extends Command {
   static description = 'Builds a subgraph and (optionally) uploads it to IPFS.';

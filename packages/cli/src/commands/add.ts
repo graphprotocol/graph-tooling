@@ -20,6 +20,9 @@ import { withSpinner } from '../command-helpers/spinner';
 import Protocol from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import Subgraph from '../subgraph';
+import debug from '../debug';
+
+const debugLog = debug.extend('add');
 
 export default class AddCommand extends Command {
   static description = 'Adds a new datasource to a subgraph.';
@@ -82,6 +85,7 @@ export default class AddCommand extends Command {
     const entities = getEntities(manifest);
     const contractNames = getContractNames(manifest);
     if (contractNames.includes(contractName)) {
+      debugLog(`contractNames: %L`, contractNames, 'contractName: ', contractName);
       this.error(
         `Datasource or template with name ${contractName} already exists, please choose a different name.`,
         { exit: 1 },
@@ -102,6 +106,7 @@ export default class AddCommand extends Command {
     } catch (error) {
       // we cannot ask user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
+        debugLog(`error: %O`, error);
         // If we can't get the start block, we'll just leave it out of the manifest
         const { startBlock: userInputStartBlock } = await prompt.ask<{ startBlock: string }>([
           {
@@ -119,6 +124,7 @@ export default class AddCommand extends Command {
       }
     }
 
+    debugLog('writing abi to file');
     await writeABI(ethabi, contractName);
 
     const { collisionEntities, onlyCollisions, abiData } = updateEventNamesOnCollision(
@@ -130,6 +136,7 @@ export default class AddCommand extends Command {
 
     ethabi.data = abiData;
 
+    debugLog('writing schema to file');
     await writeSchema(
       ethabi,
       protocol,
@@ -137,10 +144,13 @@ export default class AddCommand extends Command {
       collisionEntities,
       contractName,
     );
+    debugLog('writing mapping to file');
     await writeMapping(ethabi, protocol, contractName, collisionEntities);
+    debugLog('writing tests to file');
     await writeTestsFiles(ethabi, protocol, contractName);
 
     const dataSources = result.get('dataSources');
+    debugLog('dataSources: %L', dataSources);
     const dataSource = await generateDataSource(
       protocol,
       contractName,
