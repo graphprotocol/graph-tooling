@@ -23,7 +23,7 @@ import { SubgraphOptions } from './subgraph';
 import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest';
 import SubstreamsSubgraph from './substreams/subgraph';
 
-const protocolDebug = debug('graph-cli:protocol');
+const protocolDebug = debug.extend('protocol');
 
 export default class Protocol {
   static fromDataSources(dataSourcesAndTemplates: any) {

@@ -14,7 +14,7 @@ import Subgraph from '../subgraph';
 import Watcher from '../watcher';
 import * as asc from './asc';
 
-const compilerDebug = debug('graph-cli:compiler');
+const compilerDebug = debug.extend('compiler');
 
 interface CompilerOptions {
   ipfs: any;

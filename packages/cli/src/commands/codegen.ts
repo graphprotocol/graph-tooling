@@ -6,7 +6,7 @@ import debug from '../debug';
 import Protocol from '../protocols';
 import TypeGenerator from '../type-generator';
 
-const codegenDebug = debug('graph-cli:codegen');
+const codegenDebug = debug.extend('codegen');
 
 export default class CodegenCommand extends Command {
   static description = 'Generates AssemblyScript types for a subgraph.';

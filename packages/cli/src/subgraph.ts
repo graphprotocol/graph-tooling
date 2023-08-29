@@ -8,7 +8,7 @@ import debug from './debug';
 import { Subgraph as ISubgraph } from './protocols/subgraph';
 import * as validation from './validation';
 
-const subgraphDebug = debug('graph-cli:subgraph');
+const subgraphDebug = debug.extend('subgraph');
 
 const throwCombinedError = (filename: string, errors: immutable.List<any>) => {
   throw new Error(
@@ -64,7 +64,9 @@ export default class Subgraph {
     });
 
     // Validate the subgraph manifest using this schema
-    return validation.validateManifest(data, rootType, schema, protocol, { resolveFile });
+    return validation.validateManifest(data, rootType, schema, protocol, {
+      resolveFile,
+    });
   }
 
   static validateSchema(manifest: any, { resolveFile }: { resolveFile: ResolveFile }) {
@@ -253,7 +255,9 @@ More than one template named '${name}', template names must be unique.`,
 
     // TODO: Validation for file data sources
     if (!has_file_data_sources) {
-      const manifestErrors = await Subgraph.validate(data, protocol, { resolveFile });
+      const manifestErrors = await Subgraph.validate(data, protocol, {
+        resolveFile,
+      });
       if (manifestErrors.size > 0) {
         throwCombinedError(filename, manifestErrors);
       }

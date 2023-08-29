@@ -12,4 +12,4 @@ debugFactory.formatters.M = immutableMap => {
   return immutableMap;
 };
 
-export default debugFactory;
+export default debugFactory('graph-cli');
