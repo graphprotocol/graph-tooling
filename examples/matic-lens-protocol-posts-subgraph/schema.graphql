@@ -1,0 +1,12 @@
+type PostCreated @entity(immutable: true) {
+  id: Bytes!
+  ownerId: BigInt! 
+  contentURI: String!
+  timestamp: BigInt!
+}
+
+type PostContent @entity(immutable: true) {
+  id: Bytes!
+  hash: String!
+  content: String!
+}

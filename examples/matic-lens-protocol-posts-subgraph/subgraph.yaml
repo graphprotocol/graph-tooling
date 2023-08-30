@@ -1,0 +1,51 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Contract
+    network: matic
+    source:
+      address: "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d"
+      abi: Contract
+      startBlock: 29735286
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - PostCreated
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      eventHandlers:
+        - event: PostCreated(indexed uint256,indexed uint256,string,address,bytes,address,bytes,uint256)
+          handler: handlePostCreated
+      file: ./src/contract.ts
+templates:
+  - kind: file/arweave
+    name: ArweaveContent
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - PostContent
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      handler: handlePostContent
+      file: ./src/contract.ts
+  - kind: file/ipfs
+    name: IpfsContent
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - PostContent
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      handler: handlePostContent
+      file: ./src/contract.ts
