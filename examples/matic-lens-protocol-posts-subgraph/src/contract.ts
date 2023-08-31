@@ -3,18 +3,16 @@ import {
   dataSource,
   DataSourceContext,
   DataSourceTemplate,
-  ipfs
-} from "@graphprotocol/graph-ts";
-import { PostCreated as PostCreatedEvent } from "../generated/Contract/Contract";
-import { PostContent, PostCreated } from "../generated/schema";
+  ipfs,
+} from '@graphprotocol/graph-ts';
+import { PostCreated as PostCreatedEvent } from '../generated/Contract/Contract';
+import { PostContent, PostCreated } from '../generated/schema';
 
-const POST_ID_KEY = "postID";
+const POST_ID_KEY = 'postID';
 
 export function handlePostCreated(event: PostCreatedEvent): void {
   let entity = new PostCreated(
-    Bytes.fromUTF8(
-      event.params.profileId.toString() + "-" + event.params.pubId.toString()
-    )
+    Bytes.fromUTF8(event.params.profileId.toString() + '-' + event.params.pubId.toString()),
   );
 
   entity.ownerId = event.params.profileId;
@@ -23,8 +21,8 @@ export function handlePostCreated(event: PostCreatedEvent): void {
 
   entity.save();
 
-  let arweaveIndex = entity.contentURI.indexOf("arweave.net/");
-  let ipfsIndex = entity.contentURI.indexOf("/ipfs/");
+  let arweaveIndex = entity.contentURI.indexOf('arweave.net/');
+  let ipfsIndex = entity.contentURI.indexOf('/ipfs/');
 
   if (arweaveIndex == -1 && ipfsIndex == -1) return;
 
@@ -33,14 +31,14 @@ export function handlePostCreated(event: PostCreatedEvent): void {
 
   if (arweaveIndex != -1) {
     let hash = entity.contentURI.substr(arweaveIndex + 12);
-    DataSourceTemplate.createWithContext("ArweaveContent", [hash], context);
+    DataSourceTemplate.createWithContext('ArweaveContent', [hash], context);
 
     return;
   }
 
   if (ipfsIndex != -1) {
     let hash = entity.contentURI.substr(ipfsIndex + 6);
-    DataSourceTemplate.createWithContext("IpfsContent", [hash], context);
+    DataSourceTemplate.createWithContext('IpfsContent', [hash], context);
   }
 }
 
