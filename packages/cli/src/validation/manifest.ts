@@ -207,6 +207,20 @@ const validators = immutable.fromJS({
           },
         ]),
 
+  JSON: (value: any, ctx: immutable.Map<any, any>) => {
+    try {
+      JSON.parse(JSON.stringify(value));
+      return List();
+    } catch (e) {
+      return immutable.fromJS([
+        {
+          path: ctx.get('path'),
+          message: `Invalid JSON value: ${e.message}`,
+        },
+      ]);
+    }
+  },
+
   Boolean: (value: any, ctx: immutable.Map<any, any>) =>
     typeof value === 'boolean'
       ? List()
