@@ -2,6 +2,7 @@
 import './common/eager_offset';
 import { ByteArray, Bytes, Entity } from './common/collections';
 import { Value } from './common/value';
+
 // Arweave support
 export * from './chain/arweave';
 // Ethereum support
