@@ -1,8 +1,8 @@
 /* eslint-disable */
 // eslint is just straight up wrong here
 
-import path from 'path';
 import fs from 'fs/promises';
+import path from 'path';
 import { globIterate } from 'glob';
 
 async function main() {

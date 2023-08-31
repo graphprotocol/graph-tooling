@@ -1,5 +1,5 @@
-import { Args, Command, Flags } from '@oclif/core';
 import { filesystem } from 'gluegun';
+import { Args, Command, Flags } from '@oclif/core';
 import { createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { updateSubgraphNetwork } from '../command-helpers/network';

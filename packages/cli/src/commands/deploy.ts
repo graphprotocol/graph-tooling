@@ -1,7 +1,8 @@
 import path from 'path';
 import { URL } from 'url';
-import { Args, Command, Flags, ux } from '@oclif/core';
 import { print, prompt } from 'gluegun';
+import { create } from 'ipfs-http-client';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import { identifyDeployKey } from '../command-helpers/auth';
 import { appendApiVersionForGraph, createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
@@ -12,7 +13,6 @@ import { chooseNodeUrl, getHostedServiceSubgraphId } from '../command-helpers/no
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import Protocol from '../protocols';
-import { create } from 'ipfs-http-client';
 
 const headersFlag = Flags.custom<Record<string, string>>({
   summary: 'Add custom headers that will be used by the IPFS HTTP client.',

@@ -6,7 +6,10 @@ import * as tsCodegen from './typescript';
 export default class DataSourceTemplateCodeGenerator {
   protocolTemplateCodeGen: any;
 
-  constructor(public template: immutable.Map<any, any>, protocol: Protocol) {
+  constructor(
+    public template: immutable.Map<any, any>,
+    protocol: Protocol,
+  ) {
     this.template = template;
     const kind = template.get('kind');
 

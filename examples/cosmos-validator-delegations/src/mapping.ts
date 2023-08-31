@@ -1,6 +1,6 @@
 import { cosmos } from '@graphprotocol/graph-ts';
-import { MsgDelegate, MsgCoin, decodeMsgDelegate } from './decoding';
-import { Delegation, Coin } from '../generated/schema';
+import { Coin, Delegation } from '../generated/schema';
+import { decodeMsgDelegate, MsgCoin, MsgDelegate } from './decoding';
 
 export function handleTx(data: cosmos.TransactionData): void {
   const id = `${data.block.header.hash.toHexString()}-${data.tx.index}`;

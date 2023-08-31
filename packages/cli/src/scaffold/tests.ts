@@ -150,8 +150,8 @@ const generateExampleTest = (
     beforeAll(() => {
       ${generateArguments(eventInputs)}
       let new${eventName}Event = create${eventName}Event(${eventInputs
-    .map((input: any, index: number) => input.name || `param${index}`)
-    .join(', ')});
+        .map((input: any, index: number) => input.name || `param${index}`)
+        .join(', ')});
       handle${eventName}(new${eventName}Event)
     })
 

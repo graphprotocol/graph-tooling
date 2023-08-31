@@ -74,24 +74,27 @@ export default class Subgraph {
 
     if (validationErrors.size > 0) {
       errors = validationErrors.groupBy(error => error.get('entity')).sort();
-      const msg = errors.reduce((msg, errors, entity) => {
-        errors = errors.groupBy((error: any) => error.get('directive'));
-        const inner_msgs = errors.reduce((msg: string, errors: any[], directive: string) => {
-          return `${msg}${
-            directive
-              ? `
+      const msg = errors.reduce(
+        (msg, errors, entity) => {
+          errors = errors.groupBy((error: any) => error.get('directive'));
+          const inner_msgs = errors.reduce((msg: string, errors: any[], directive: string) => {
+            return `${msg}${
+              directive
+                ? `
     ${directive}:`
-              : ''
-          }
+                : ''
+            }
   ${errors
     .map(error => error.get('message').split('\n').join('\n  '))
     .map(msg => `${directive ? '  ' : ''}- ${msg}`)
     .join('\n  ')}`;
-        }, ``);
-        return `${msg}
+          }, ``);
+          return `${msg}
 
   ${entity}:${inner_msgs}`;
-      }, `Error in ${path.relative(process.cwd(), filename)}:`);
+        },
+        `Error in ${path.relative(process.cwd(), filename)}:`,
+      );
 
       throw new Error(msg);
     }
