@@ -35,7 +35,7 @@ export const generateDataSource = async (
         protocolManifest.source({ contract: contractAddress, contractName, startBlock }),
         {
           parser: 'yaml',
-        }
+        },
       ),
     ),
     'mapping',
