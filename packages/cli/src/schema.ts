@@ -1,10 +1,14 @@
 import fs from 'fs-extra';
 import * as graphql from 'graphql/language';
-import SchemaCodeGenerator from './codegen/schema';
 import type { DocumentNode } from 'graphql/language';
+import SchemaCodeGenerator from './codegen/schema';
 
 export default class Schema {
-  constructor(public filename: string, public document: string, public ast: DocumentNode) {
+  constructor(
+    public filename: string,
+    public document: string,
+    public ast: DocumentNode,
+  ) {
     this.filename = filename;
     this.document = document;
     this.ast = ast;

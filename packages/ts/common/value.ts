@@ -40,7 +40,10 @@ export type ValuePayload = u64;
  * A dynamically typed value.
  */
 export class Value {
-  constructor(public kind: ValueKind, public data: ValuePayload) {}
+  constructor(
+    public kind: ValueKind,
+    public data: ValuePayload,
+  ) {}
 
   toAddress(): Address {
     assert(this.kind == ValueKind.BYTES, 'Value is not an address.');

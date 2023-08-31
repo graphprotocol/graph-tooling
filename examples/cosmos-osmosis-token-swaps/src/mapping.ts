@@ -1,5 +1,5 @@
 import { cosmos } from '@graphprotocol/graph-ts';
-import { TokenSwap, Token } from '../generated/schema';
+import { Token, TokenSwap } from '../generated/schema';
 
 export function handleSwaps(data: cosmos.EventData): void {
   const height = data.block.header.height;

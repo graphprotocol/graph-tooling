@@ -1,5 +1,8 @@
 class Param {
-  constructor(public name: string, public type: string | NamedType | ArrayType | NullableType) {
+  constructor(
+    public name: string,
+    public type: string | NamedType | ArrayType | NullableType,
+  ) {
     this.name = name;
     this.type = type;
   }
@@ -25,8 +28,8 @@ class Method {
   toString() {
     return `
   ${this.name}(${this.params.map(param => param.toString()).join(', ')})${
-      this.returnType ? `: ${this.returnType.toString()}` : ''
-    } {${this.body}
+    this.returnType ? `: ${this.returnType.toString()}` : ''
+  } {${this.body}
   }
 `;
   }
@@ -48,8 +51,8 @@ class StaticMethod {
   toString() {
     return `
   static ${this.name}(${this.params.map(param => param.toString()).join(', ')})${
-      this.returnType ? `: ${this.returnType.toString()}` : ''
-    } {${this.body}
+    this.returnType ? `: ${this.returnType.toString()}` : ''
+  } {${this.body}
   }
 `;
   }
@@ -66,7 +69,10 @@ class Class {
   public members: any[];
   public export: boolean;
 
-  constructor(public name: string, options: ClassOptions) {
+  constructor(
+    public name: string,
+    options: ClassOptions,
+  ) {
     this.name = name;
     this.extends = options.extends;
     this.methods = [];
@@ -93,7 +99,10 @@ ${this.methods.map(method => method.toString()).join('')}
 }
 
 class ClassMember {
-  constructor(public name: string, public type: string) {
+  constructor(
+    public name: string,
+    public type: string,
+  ) {
     this.name = name;
     this.type = type;
   }
@@ -192,7 +201,10 @@ class NullableType {
 }
 
 class ModuleImports {
-  constructor(public nameOrNames: string | string[], public module: string) {
+  constructor(
+    public nameOrNames: string | string[],
+    public module: string,
+  ) {
     this.nameOrNames = nameOrNames;
     this.module = module;
   }

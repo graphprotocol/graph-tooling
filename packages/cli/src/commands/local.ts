@@ -2,11 +2,11 @@ import { ChildProcess, spawn } from 'child_process';
 import http from 'http';
 import net from 'net';
 import path from 'path';
-import { Args, Command, Flags } from '@oclif/core';
 import compose from 'docker-compose';
 import { filesystem, patching } from 'gluegun';
 import stripAnsi from 'strip-ansi';
 import tmp from 'tmp-promise';
+import { Args, Command, Flags } from '@oclif/core';
 import { step, withSpinner } from '../command-helpers/spinner';
 
 // Clean up temporary files even when an uncaught exception occurs

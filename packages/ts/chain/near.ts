@@ -29,11 +29,17 @@ export namespace near {
   }
 
   export class Signature {
-    constructor(public kind: CurveKind, public bytes: Bytes) {}
+    constructor(
+      public kind: CurveKind,
+      public bytes: Bytes,
+    ) {}
   }
 
   export class PublicKey {
-    constructor(public kind: CurveKind, public bytes: Bytes) {}
+    constructor(
+      public kind: CurveKind,
+      public bytes: Bytes,
+    ) {}
   }
 
   export enum AccessKeyPermissionKind {
@@ -52,7 +58,10 @@ export namespace near {
   export class FullAccessPermission {}
 
   export class AccessKeyPermissionValue {
-    constructor(public kind: AccessKeyPermissionKind, public data: Payload) {}
+    constructor(
+      public kind: AccessKeyPermissionKind,
+      public data: Payload,
+    ) {}
 
     toFunctionCall(): FunctionCallPermission {
       assert(
@@ -86,11 +95,17 @@ export namespace near {
   }
 
   export class AccessKey {
-    constructor(public nonce: u64, public permission: AccessKeyPermissionValue) {}
+    constructor(
+      public nonce: u64,
+      public permission: AccessKeyPermissionValue,
+    ) {}
   }
 
   export class DataReceiver {
-    constructor(public dataId: CryptoHash, public receiverId: string) {}
+    constructor(
+      public dataId: CryptoHash,
+      public receiverId: string,
+    ) {}
   }
 
   export enum ActionKind {
@@ -124,11 +139,17 @@ export namespace near {
   }
 
   export class StakeAction {
-    constructor(public stake: Balance, public publicKey: PublicKey) {}
+    constructor(
+      public stake: Balance,
+      public publicKey: PublicKey,
+    ) {}
   }
 
   export class AddKeyAction {
-    constructor(public publicKey: PublicKey, public accessKey: AccessKey) {}
+    constructor(
+      public publicKey: PublicKey,
+      public accessKey: AccessKey,
+    ) {}
   }
 
   export class DeleteKeyAction {
@@ -140,7 +161,10 @@ export namespace near {
   }
 
   export class ActionValue {
-    constructor(public kind: ActionKind, public data: Payload) {}
+    constructor(
+      public kind: ActionKind,
+      public data: Payload,
+    ) {}
 
     toCreateAccount(): CreateAccountAction {
       assert(this.kind == ActionKind.CREATE_ACCOUNT, "ActionValue is not a 'CreateAccount'.");
@@ -241,7 +265,10 @@ export namespace near {
   // Doesn't have Value suffix because it has
   // VALUE variant/kind, that would be confusing.
   export class SuccessStatus {
-    constructor(public kind: SuccessStatusKind, public data: Payload) {}
+    constructor(
+      public kind: SuccessStatusKind,
+      public data: Payload,
+    ) {}
 
     toValue(): Bytes {
       assert(this.kind == SuccessStatusKind.VALUE, "SuccessStatus is not a 'Value'.");
@@ -268,7 +295,10 @@ export namespace near {
   }
 
   export class MerklePathItem {
-    constructor(public hash: CryptoHash, public direction: Direction) {}
+    constructor(
+      public hash: CryptoHash,
+      public direction: Direction,
+    ) {}
 
     @operator('<')
     lt(_: MerklePathItem): boolean {
@@ -304,7 +334,10 @@ export namespace near {
   }
 
   export class SlashedValidator {
-    constructor(public account: Account, public isDoubleSign: bool) {}
+    constructor(
+      public account: Account,
+      public isDoubleSign: bool,
+    ) {}
   }
 
   export class BlockHeader {
@@ -342,7 +375,11 @@ export namespace near {
   }
 
   export class ValidatorStake {
-    constructor(public account: Account, public publicKey: PublicKey, public stake: Balance) {}
+    constructor(
+      public account: Account,
+      public publicKey: PublicKey,
+      public stake: Balance,
+    ) {}
   }
 
   export class ChunkHeader {

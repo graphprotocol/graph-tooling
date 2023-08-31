@@ -628,8 +628,8 @@
   [`044cd92`](https://github.com/graphprotocol/graph-tooling/commit/044cd92d0ceb9628c7f7fbe3627a09b867710247)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
 
-  - Added dependency [`@oclif/core@2.0.7` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.0.7) (to
-    `dependencies`)
+  - Added dependency [`@oclif/core@2.0.7` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.0.7)
+    (to `dependencies`)
 
 - [#1074](https://github.com/graphprotocol/graph-tooling/pull/1074)
   [`e84d1e8`](https://github.com/graphprotocol/graph-tooling/commit/e84d1e873d9b2a8967c5fe2a85fce48b2caeb75f)
@@ -725,8 +725,8 @@
   [`4c5e452`](https://github.com/graphprotocol/graph-cli/commit/4c5e452cbc2eceb75db29019fb3b4c769c9618f4)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
 
-  - Updated dependency [`immutable@4.2.1` ↗︎](https://www.npmjs.com/package/immutable/v/4.2.1) (from
-    `3.8.2`, in `dependencies`)
+  - Updated dependency [`immutable@4.2.1` ↗︎](https://www.npmjs.com/package/immutable/v/4.2.1)
+    (from `3.8.2`, in `dependencies`)
 
 - [`d42f199`](https://github.com/graphprotocol/graph-cli/commit/d42f199502df7bac79e8cafc667d5c712f5a3599)
   Thanks [@darienmh](https://github.com/darienmh)! - fix `chapel` network etherscan URL
