@@ -165,11 +165,19 @@ Reason: Lists with null elements are not supported.`,
 
 const unwrapType = (type: any) => {
   validateDebugger.extend('definition')('Unwrapping type %M', type);
+
   const innerTypeFromList = (listType: any): any => {
     validateDebugger.extend('unwrapType').extend('definition')('Unwrapping list type %M', listType);
-    return listType.type.kind === 'NonNullType'
-      ? innerTypeFromNonNull(listType.type)
-      : listType.type;
+
+    if (listType.type.kind === 'NonNullType') {
+      validateDebugger.extend('unwrapType').extend('innerTypeFromList')(
+        'Returning non-null list type',
+      );
+      return innerTypeFromNonNull(listType.type);
+    }
+
+    validateDebugger.extend('unwrapType').extend('innerTypeFromList')('Returning list type');
+    return unwrapType(listType.type);
   };
 
   const innerTypeFromNonNull = (nonNullType: any): any => {
@@ -177,17 +185,29 @@ const unwrapType = (type: any) => {
       'Unwrapping non-null type %M',
       nonNullType,
     );
-    return nonNullType.type.kind === 'ListType'
-      ? innerTypeFromList(nonNullType.type)
-      : nonNullType.type;
+
+    if (nonNullType.type.kind === 'ListType') {
+      validateDebugger.extend('unwrapType').extend('innerTypeFromNonNull')(
+        'Returning non-null list type',
+      );
+      return innerTypeFromList(nonNullType.type);
+    }
+
+    validateDebugger.extend('unwrapType').extend('innerTypeFromNonNull')('Returning non-null type');
+    return unwrapType(nonNullType.type);
   };
 
   // Obtain the inner-most type from the field
-  return type.kind === 'NonNullType'
-    ? innerTypeFromNonNull(type)
-    : type.kind === 'ListType'
-    ? innerTypeFromList(type)
-    : type;
+  if (type.kind === 'NonNullType') {
+    validateDebugger('Returning inner type from non-null type');
+    return innerTypeFromNonNull(type);
+  }
+  if (type.kind === 'ListType') {
+    validateDebugger('Returning inner type from list type');
+    return innerTypeFromList(type);
+  }
+  validateDebugger('Returning inner type');
+  return type;
 };
 
 const gatherLocalTypes = (defs: readonly graphql.DefinitionNode[]) => {
@@ -269,7 +289,10 @@ const entityTypeByName = (defs: any[], name: string) => {
     .find(def => def.name.value === name);
 };
 
-const fieldTargetEntityName = (field: any) => unwrapType(field.type).name.value;
+const fieldTargetEntityName = (field: any) => {
+  validateDebugger('Looking up field target entity name for %s', field?.name?.value);
+  return unwrapType(field.type).name.value;
+};
 
 const fieldTargetEntity = (defs: any[], field: any) =>
   entityTypeByName(defs, fieldTargetEntityName(field));
@@ -376,6 +399,7 @@ does not exist on type '${targetEntity.name.value}'`,
   }
 
   const backrefTypeName = unwrapType(derivedFromField.type);
+  validateDebugger.extend('definition')('Backref type name: %M', backrefTypeName);
   const backRefEntity = entityTypeByName(defs, backrefTypeName.name.value);
 
   // The field we are deriving from must either have type 'def' or one of the
