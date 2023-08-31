@@ -1,6 +1,6 @@
 import { URL } from 'url';
-import { Args, Command, Flags } from '@oclif/core';
 import { print } from 'gluegun';
+import { Args, Command, Flags } from '@oclif/core';
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { validateNodeUrl } from '../command-helpers/node';

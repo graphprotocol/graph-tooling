@@ -1,7 +1,7 @@
+import { filesystem, prompt, system } from 'gluegun';
+import immutable from 'immutable';
 import { Args, Command, Flags } from '@oclif/core';
 import { CLIError } from '@oclif/core/lib/errors';
-import { system, prompt, filesystem } from 'gluegun';
-import immutable from 'immutable';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,

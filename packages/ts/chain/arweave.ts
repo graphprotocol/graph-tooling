@@ -8,7 +8,10 @@ export namespace arweave {
    * A key-value pair for arbitrary metadata
    */
   export class Tag {
-    constructor(public name: Bytes, public value: Bytes) {}
+    constructor(
+      public name: Bytes,
+      public value: Bytes,
+    ) {}
   }
 
   export class ProofOfAccess {
@@ -71,6 +74,9 @@ export namespace arweave {
    * An Arweave transaction with block ptr
    */
   export class TransactionWithBlockPtr {
-    constructor(public tx: Transaction, public block: Block) {}
+    constructor(
+      public tx: Transaction,
+      public block: Block,
+    ) {}
   }
 }
