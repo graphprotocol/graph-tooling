@@ -1,6 +1,6 @@
 type PostCreated @entity(immutable: true) {
   id: Bytes!
-  ownerId: BigInt! 
+  ownerId: BigInt!
   contentURI: String!
   timestamp: BigInt!
 }
