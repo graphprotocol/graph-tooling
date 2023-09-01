@@ -1,5 +1,5 @@
 ---
-'@graphprotocol/graph-cli': patch
+'@graphprotocol/graph-cli': minor
 ---
 
-update prettier
+Added Decimal Mainnet and Testnet network to cli
