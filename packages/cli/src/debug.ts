@@ -9,6 +9,13 @@ debugFactory.formatters.M = immutableMap => {
     return JSON.stringify(immutableMap.toMap());
   }
 
+  if (typeof immutableMap.toJS === 'function') {
+    return JSON.stringify(immutableMap.toJS());
+  }
+
+  if (typeof immutableMap === 'object') {
+    return JSON.stringify(immutableMap);
+  }
   return immutableMap;
 };
 

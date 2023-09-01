@@ -60,6 +60,12 @@ describe('Validation', () => {
       exitCode: 0,
     },
   );
+  cliTest('2D arrays are valid', ['codegen', '--skip-migrations'], 'validation/2d-array-is-valid', {
+    exitCode: 0,
+  });
+  cliTest('3D arrays are valid', ['codegen', '--skip-migrations'], 'validation/3d-array-is-valid', {
+    exitCode: 0,
+  });
   cliTest(
     'Missing entity "id" field',
     ['codegen', '--skip-migrations'],
