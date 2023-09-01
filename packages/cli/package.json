@@ -46,7 +46,7 @@
     "ipfs-http-client": "55.0.0",
     "jayson": "4.0.0",
     "js-yaml": "3.14.1",
-    "prettier": "3.0.3",
+    "prettier": "1.19.1",
     "request": "2.88.2",
     "semver": "7.4.0",
     "sync-request": "6.1.0",

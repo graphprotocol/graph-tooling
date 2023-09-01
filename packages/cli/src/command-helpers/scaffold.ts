@@ -31,7 +31,7 @@ export const generateDataSource = async (
     network,
     'source',
     yaml.parse(
-      await prettier.format(
+      prettier.format(
         protocolManifest.source({ contract: contractAddress, contractName, startBlock }),
         {
           parser: 'yaml',
@@ -40,7 +40,7 @@ export const generateDataSource = async (
     ),
     'mapping',
     yaml.parse(
-      await prettier.format(protocolManifest.mapping({ abi, contractName }), {
+      prettier.format(protocolManifest.mapping({ abi, contractName }), {
         parser: 'yaml',
       }),
     ),
