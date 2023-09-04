@@ -1,5 +1,55 @@
 # @graphprotocol/graph-cli
 
+## 0.57.0
+
+### Minor Changes
+
+- [#1439](https://github.com/graphprotocol/graph-tooling/pull/1439)
+  [`b583097`](https://github.com/graphprotocol/graph-tooling/commit/b583097f464a478151068d96d668334602bed3ba)
+  Thanks [@saihaj](https://github.com/saihaj)! - Enable autocomplete for CLI commands. To configure
+  run
+
+  ```bash
+  graph autocomplete
+  ```
+
+  and follow the steps in the prompt.
+
+- [#1441](https://github.com/graphprotocol/graph-tooling/pull/1441)
+  [`2e656e9`](https://github.com/graphprotocol/graph-tooling/commit/2e656e9cdaaea6d87866adaa142da597fcd7ce65)
+  Thanks [@saihaj](https://github.com/saihaj)! - show suggestions when an invalid command is entered
+
+### Patch Changes
+
+- [#1439](https://github.com/graphprotocol/graph-tooling/pull/1439)
+  [`b583097`](https://github.com/graphprotocol/graph-tooling/commit/b583097f464a478151068d96d668334602bed3ba)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Added dependency
+    [`@oclif/plugin-autocomplete@^2.3.6` ↗︎](https://www.npmjs.com/package/@oclif/plugin-autocomplete/v/2.3.6)
+    (to `dependencies`)
+
+- [#1441](https://github.com/graphprotocol/graph-tooling/pull/1441)
+  [`2e656e9`](https://github.com/graphprotocol/graph-tooling/commit/2e656e9cdaaea6d87866adaa142da597fcd7ce65)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Added dependency
+    [`@oclif/plugin-not-found@^2.4.0` ↗︎](https://www.npmjs.com/package/@oclif/plugin-not-found/v/2.4.0)
+    (to `dependencies`)
+
+- [#1435](https://github.com/graphprotocol/graph-tooling/pull/1435)
+  [`f05b47c`](https://github.com/graphprotocol/graph-tooling/commit/f05b47cf64912d0c66255c9f0076f1696a708ff2)
+  Thanks [@saihaj](https://github.com/saihaj)! - update prettier
+
+- [#1433](https://github.com/graphprotocol/graph-tooling/pull/1433)
+  [`4492e4f`](https://github.com/graphprotocol/graph-tooling/commit/4492e4fdefb48407ef89df82eeef4d92bb0747e9)
+  Thanks [@saihaj](https://github.com/saihaj)! - when generating nested tuples make sure they are
+  non-nullable
+
+- [#1433](https://github.com/graphprotocol/graph-tooling/pull/1433)
+  [`4492e4f`](https://github.com/graphprotocol/graph-tooling/commit/4492e4fdefb48407ef89df82eeef4d92bb0747e9)
+  Thanks [@saihaj](https://github.com/saihaj)! - 2D arrays are valid entities
+
 ## 0.56.0
 
 ### Minor Changes
