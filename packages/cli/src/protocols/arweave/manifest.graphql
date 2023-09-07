@@ -7,6 +7,7 @@
 scalar String
 scalar File
 scalar BigInt
+scalar JSON
 
 type SubgraphManifest {
   specVersion: String!
@@ -25,6 +26,7 @@ type DataSource {
   kind: String!
   name: String!
   network: String
+  context: JSON
   source: ContractSource!
   mapping: ContractMapping!
 }
