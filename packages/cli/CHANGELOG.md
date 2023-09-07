@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.58.0
+
+### Minor Changes
+
+- [#1434](https://github.com/graphprotocol/graph-tooling/pull/1434)
+  [`e54883b`](https://github.com/graphprotocol/graph-tooling/commit/e54883b41997eee408d66fd2bc835c67cb3c7e40)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add data source context support in ethereum
+  manifest
+
 ## 0.57.0
 
 ### Minor Changes
