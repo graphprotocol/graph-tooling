@@ -280,6 +280,14 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.ankr.com/eth_sepolia';
     case 'scroll-sepolia':
       return 'https://rpc.ankr.com/scroll_sepolia_testnet';
+    case 'darwinia':
+      return 'https://rpc.darwinia.network';
+    case 'crab':
+      return 'https://crab-rpc.darwinia.network';
+    case 'pangolin':
+      return 'https://pangolin-rpc.darwinia.network';
+    case 'pangoro':
+      return 'https://pangoro-rpc.darwinia.network';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
