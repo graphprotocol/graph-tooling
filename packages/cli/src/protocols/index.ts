@@ -1,29 +1,29 @@
-import immutable from "immutable";
-import debug from "../debug";
-import Subgraph from "../subgraph";
-import * as ArweaveManifestScaffold from "./arweave/scaffold/manifest";
-import * as ArweaveMappingScaffold from "./arweave/scaffold/mapping";
-import ArweaveSubgraph from "./arweave/subgraph";
-import { ContractCtor } from "./contract";
-import * as CosmosManifestScaffold from "./cosmos/scaffold/manifest";
-import * as CosmosMappingScaffold from "./cosmos/scaffold/mapping";
-import CosmosSubgraph from "./cosmos/subgraph";
-import EthereumABI from "./ethereum/abi";
-import EthereumTemplateCodeGen from "./ethereum/codegen/template";
-import EthereumContract from "./ethereum/contract";
-import * as EthereumManifestScaffold from "./ethereum/scaffold/manifest";
-import * as EthereumMappingScaffold from "./ethereum/scaffold/mapping";
-import EthereumSubgraph from "./ethereum/subgraph";
-import EthereumTypeGenerator from "./ethereum/type-generator";
-import NearContract from "./near/contract";
-import * as NearManifestScaffold from "./near/scaffold/manifest";
-import * as NearMappingScaffold from "./near/scaffold/mapping";
-import NearSubgraph from "./near/subgraph";
-import { SubgraphOptions } from "./subgraph";
-import * as SubstreamsManifestScaffold from "./substreams/scaffold/manifest";
-import SubstreamsSubgraph from "./substreams/subgraph";
+import immutable from 'immutable';
+import debug from '../debug';
+import Subgraph from '../subgraph';
+import * as ArweaveManifestScaffold from './arweave/scaffold/manifest';
+import * as ArweaveMappingScaffold from './arweave/scaffold/mapping';
+import ArweaveSubgraph from './arweave/subgraph';
+import { ContractCtor } from './contract';
+import * as CosmosManifestScaffold from './cosmos/scaffold/manifest';
+import * as CosmosMappingScaffold from './cosmos/scaffold/mapping';
+import CosmosSubgraph from './cosmos/subgraph';
+import EthereumABI from './ethereum/abi';
+import EthereumTemplateCodeGen from './ethereum/codegen/template';
+import EthereumContract from './ethereum/contract';
+import * as EthereumManifestScaffold from './ethereum/scaffold/manifest';
+import * as EthereumMappingScaffold from './ethereum/scaffold/mapping';
+import EthereumSubgraph from './ethereum/subgraph';
+import EthereumTypeGenerator from './ethereum/type-generator';
+import NearContract from './near/contract';
+import * as NearManifestScaffold from './near/scaffold/manifest';
+import * as NearMappingScaffold from './near/scaffold/mapping';
+import NearSubgraph from './near/subgraph';
+import { SubgraphOptions } from './subgraph';
+import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest';
+import SubstreamsSubgraph from './substreams/subgraph';
 
-const protocolDebug = debug("graph-cli:protocol");
+const protocolDebug = debug('graph-cli:protocol');
 
 export default class Protocol {
   static fromDataSources(dataSourcesAndTemplates: any) {
@@ -40,19 +40,19 @@ export default class Protocol {
     this.name = Protocol.normalizeName(name)!;
 
     switch (this.name) {
-      case "arweave":
+      case 'arweave':
         this.config = arweaveProtocol;
         break;
-      case "cosmos":
+      case 'cosmos':
         this.config = cosmosProtocol;
         break;
-      case "ethereum":
+      case 'ethereum':
         this.config = ethereumProtocol;
         break;
-      case "near":
+      case 'near':
         this.config = nearProtocol;
         break;
-      case "substreams":
+      case 'substreams':
         this.config = substreamsProtocol;
         break;
       default:
@@ -65,72 +65,72 @@ export default class Protocol {
     return immutable.fromJS({
       // `ethereum/contract` is kept for backwards compatibility.
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
-      arweave: ["arweave"],
-      ethereum: ["ethereum", "ethereum/contract"],
-      near: ["near"],
-      cosmos: ["cosmos"],
-      substreams: ["substreams"],
+      arweave: ['arweave'],
+      ethereum: ['ethereum', 'ethereum/contract'],
+      near: ['near'],
+      cosmos: ['cosmos'],
+      substreams: ['substreams'],
     }) as immutable.Collection<ProtocolName, string[]>;
   }
 
   static availableNetworks() {
     return immutable.fromJS({
-      arweave: ["arweave-mainnet"],
+      arweave: ['arweave-mainnet'],
       ethereum: [
-        "mainnet",
-        "rinkeby",
-        "goerli",
-        "poa-core",
-        "poa-sokol",
-        "gnosis",
-        "matic",
-        "mumbai",
-        "fantom",
-        "fantom-testnet",
-        "bsc",
-        "chapel",
-        "clover",
-        "avalanche",
-        "fuji",
-        "celo",
-        "celo-alfajores",
-        "fuse",
-        "moonbeam",
-        "moonriver",
-        "mbase",
-        "arbitrum-one",
-        "arbitrum-goerli",
-        "optimism",
-        "optimism-goerli",
-        "aurora",
-        "aurora-testnet",
-        "base-testnet",
-        "base",
-        "zksync-era",
-        "zksync-era-testnet",
-        "sepolia",
-        "polygon-zkevm-testnet",
-        "polygon-zkevm",
-        "scroll-sepolia",
+        'mainnet',
+        'rinkeby',
+        'goerli',
+        'poa-core',
+        'poa-sokol',
+        'gnosis',
+        'matic',
+        'mumbai',
+        'fantom',
+        'fantom-testnet',
+        'bsc',
+        'chapel',
+        'clover',
+        'avalanche',
+        'fuji',
+        'celo',
+        'celo-alfajores',
+        'fuse',
+        'moonbeam',
+        'moonriver',
+        'mbase',
+        'arbitrum-one',
+        'arbitrum-goerli',
+        'optimism',
+        'optimism-goerli',
+        'aurora',
+        'aurora-testnet',
+        'base-testnet',
+        'base',
+        'zksync-era',
+        'zksync-era-testnet',
+        'sepolia',
+        'polygon-zkevm-testnet',
+        'polygon-zkevm',
+        'scroll-sepolia',
       ],
-      near: ["near-mainnet", "near-testnet"],
+      near: ['near-mainnet', 'near-testnet'],
       cosmos: [
-        "cosmoshub-4",
-        "theta-testnet-001", // CosmosHub testnet
-        "osmosis-1",
-        "osmo-test-4", // Osmosis testnet
-        "juno-1",
-        "uni-3", // Juno testnet
+        'cosmoshub-4',
+        'theta-testnet-001', // CosmosHub testnet
+        'osmosis-1',
+        'osmo-test-4', // Osmosis testnet
+        'juno-1',
+        'uni-3', // Juno testnet
       ],
-      substreams: ["mainnet"],
+      substreams: ['mainnet'],
     }) as immutable.Map<
-      "arweave" | "ethereum" | "near" | "cosmos" | "substreams",
+      'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams',
       immutable.List<string>
     >;
   }
 
   static normalizeName(name: ProtocolName) {
-    return Protocol.availableProtocols().findKey((possibleNames) => {
+    return Protocol.availableProtocols().findKey(possibleNames => {
       return possibleNames.includes(name);
     })!;
   }
@@ -142,9 +142,7 @@ export default class Protocol {
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind: string) {
-    return Protocol.availableProtocols()
-      .get(this.name, immutable.List())
-      .includes(kind);
+    return Protocol.availableProtocols().get(this.name, immutable.List()).includes(kind);
   }
 
   hasABIs() {
@@ -180,9 +178,7 @@ export default class Protocol {
 
   getTemplateCodeGen(template: any) {
     if (!this.hasTemplates()) {
-      throw new Error(
-        `Template data sources with kind '${this.name}' are not supported yet`
-      );
+      throw new Error(`Template data sources with kind '${this.name}' are not supported yet`);
     }
 
     return this.config.getTemplateCodeGen?.(template);
@@ -209,12 +205,7 @@ export default class Protocol {
   }
 }
 
-export type ProtocolName =
-  | "arweave"
-  | "ethereum"
-  | "near"
-  | "cosmos"
-  | "substreams";
+export type ProtocolName = 'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams';
 
 export interface ProtocolConfig {
   displayName: string;
@@ -228,7 +219,7 @@ export interface ProtocolConfig {
 }
 
 const arweaveProtocol: ProtocolConfig = {
-  displayName: "Arweave",
+  displayName: 'Arweave',
   abi: undefined,
   contract: undefined,
   getTemplateCodeGen: undefined,
@@ -241,7 +232,7 @@ const arweaveProtocol: ProtocolConfig = {
 };
 
 const cosmosProtocol: ProtocolConfig = {
-  displayName: "Cosmos",
+  displayName: 'Cosmos',
   abi: undefined,
   contract: undefined,
   getTemplateCodeGen: undefined,
@@ -254,7 +245,7 @@ const cosmosProtocol: ProtocolConfig = {
 };
 
 const ethereumProtocol: ProtocolConfig = {
-  displayName: "Ethereum",
+  displayName: 'Ethereum',
   abi: EthereumABI,
   contract: EthereumContract,
   getTemplateCodeGen(template) {
@@ -271,7 +262,7 @@ const ethereumProtocol: ProtocolConfig = {
 };
 
 const nearProtocol: ProtocolConfig = {
-  displayName: "NEAR",
+  displayName: 'NEAR',
   abi: undefined,
   contract: NearContract,
   getTypeGenerator: undefined,
@@ -284,7 +275,7 @@ const nearProtocol: ProtocolConfig = {
 };
 
 const substreamsProtocol: ProtocolConfig = {
-  displayName: "Substreams",
+  displayName: 'Substreams',
   abi: undefined,
   contract: undefined,
   getTypeGenerator: undefined,
@@ -296,4 +287,4 @@ const substreamsProtocol: ProtocolConfig = {
   mappingScaffold: undefined,
 };
 
-protocolDebug("Available networks %M", Protocol.availableNetworks());
+protocolDebug('Available networks %M', Protocol.availableNetworks());
