@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/no-array-for-each */
-import debug from 'debug';
 import type {
   DefinitionNode,
   FieldDefinitionNode,
@@ -8,6 +7,7 @@ import type {
   ObjectTypeDefinitionNode,
   TypeNode,
 } from 'graphql/language';
+import debug from '../debug';
 import Schema from '../schema';
 import * as typesCodegen from './types';
 import * as tsCodegen from './typescript';
@@ -67,6 +67,8 @@ class IdField {
   }
 }
 
+const schemaCodeGeneratorDebug = debug('graph-cli:SchemaCodeGenerator');
+
 export default class SchemaCodeGenerator {
   constructor(private schema: Schema) {
     this.schema = schema;
@@ -99,6 +101,9 @@ export default class SchemaCodeGenerator {
     return this.schema.ast.definitions
       .map(def => {
         if (this._isEntityTypeDefinition(def)) {
+          schemaCodeGeneratorDebug.extend('generateTypes')(
+            `Generating entity type for ${def.name.value}`,
+          );
           return this._generateEntityType(def);
         }
       })
@@ -116,7 +121,9 @@ export default class SchemaCodeGenerator {
         .filter(def => this._isDerivedField(def))
         .filter(def => def?.type !== undefined) as FieldDefinitionNode[]
     ).map(def => this._getTypeNameForField(def.type));
-
+    schemaCodeGeneratorDebug.extend('generateDerivedLoaders')(
+      `Generating derived loaders for ${fields}`,
+    );
     return [...new Set(fields)].map(typeName => {
       return this._generateDerivedLoader(typeName);
     });
@@ -131,8 +138,7 @@ export default class SchemaCodeGenerator {
 
   _isDerivedField(field: FieldDefinitionNode | undefined): boolean {
     return (
-      field?.directives?.find((directive: any) => directive.name.value === 'derivedFrom') !==
-      undefined
+      field?.directives?.find(directive => directive.name.value === 'derivedFrom') !== undefined
     );
   }
   _isInterfaceDefinition(def: DefinitionNode): def is InterfaceTypeDefinitionNode {
@@ -287,13 +293,15 @@ export default class SchemaCodeGenerator {
 
   _generateEntityFieldGetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const isDerivedField = this._isDerivedField(fieldDef);
-    const codegenDebug = debug('codegen');
+    const name = fieldDef.name.value;
+
     if (isDerivedField) {
-      codegenDebug(`Generating derived field getter for ${fieldDef.name.value}`);
+      schemaCodeGeneratorDebug.extend('_generateEntityFieldGetter')(
+        `Generating derived field getter for ${name}`,
+      );
       return this._generateDerivedFieldGetter(_entityDef, fieldDef);
     }
 
-    const name = fieldDef.name.value;
     const gqlType = fieldDef.type;
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
     const returnType = this._typeFromGraphQl(gqlType);
@@ -329,15 +337,39 @@ export default class SchemaCodeGenerator {
   _generateDerivedFieldGetter(entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const entityName = entityDef.name.value;
     const name = fieldDef.name.value;
+    schemaCodeGeneratorDebug.extend('_generateDerivedFieldGetter')(
+      `Generating derived field '${name}' getter for Entity '${entityName}'`,
+    );
     const gqlType = fieldDef.type;
+    schemaCodeGeneratorDebug.extend('_generateDerivedFieldGetter')(
+      "Derived field's type: %M",
+      gqlType,
+    );
     const returnType = this._returnTypeForDervied(gqlType);
+    schemaCodeGeneratorDebug.extend('_generateDerivedFieldGetter')(
+      "Derived field's return type: %M",
+      returnType,
+    );
     const obj = this.schema.ast.definitions.find(def => {
-      if (def.kind === 'ObjectTypeDefinition') {
+      if (def.kind === 'ObjectTypeDefinition' || def.kind === 'InterfaceTypeDefinition') {
         const defobj = def as ObjectTypeDefinitionNode;
         return defobj.name.value == this._baseType(gqlType);
       }
       return false;
     }) as ObjectTypeDefinitionNode;
+
+    if (!obj) {
+      schemaCodeGeneratorDebug.extend('_generateDerivedFieldGetter')(
+        "Could not find object type definition for derived field's base type: %M",
+        obj,
+      );
+      return null;
+    }
+
+    schemaCodeGeneratorDebug.extend('_generateDerivedFieldGetter')(
+      "Found object type definition for derived field's base type: %M",
+      obj,
+    );
 
     const idf = IdField.fromTypeDef(obj);
     const idIsBytes = idf.typeName() == 'Bytes';

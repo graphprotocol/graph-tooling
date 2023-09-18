@@ -5,11 +5,11 @@ debugFactory.formatters.L = immutableList => {
 };
 
 debugFactory.formatters.M = immutableMap => {
-  if (immutableMap.toMap != null) {
+  if (immutableMap?.toMap != null) {
     return JSON.stringify(immutableMap.toMap());
   }
 
-  if (typeof immutableMap.toJS === 'function') {
+  if (typeof immutableMap?.toJS === 'function') {
     return JSON.stringify(immutableMap.toJS());
   }
 
