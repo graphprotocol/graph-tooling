@@ -767,6 +767,19 @@ function revalidateSubgraphName(
   }
 }
 
+// source: https://github.com/graphprotocol/graph-tooling/issues/1450#issuecomment-1713992618
+async function isInRepo() {
+  try {
+    const result = await system.run('git rev-parse --is-inside-work-tree');
+    return result === 'true';
+  } catch (err) {
+    if (err.stderr.includes('not a git repository')) {
+      return false;
+    }
+    throw Error(err.stderr);
+  }
+}
+
 const initRepository = async (directory: string) =>
   await withSpinner(
     `Initialize subgraph repository`,
@@ -779,11 +792,18 @@ const initRepository = async (directory: string) =>
       if (filesystem.exists(gitDir)) {
         filesystem.remove(gitDir);
       }
-      await system.run('git init', { cwd: directory });
-      await system.run('git add --all', { cwd: directory });
-      await system.run('git commit -m "Initial commit"', {
-        cwd: directory,
-      });
+      if (await isInRepo()) {
+        await system.run('git init', { cwd: directory });
+        await system.run('git add --all', { cwd: directory });
+        await system.run('git commit -m "Initial commit"', {
+          cwd: directory,
+        });
+      } else {
+        await system.run('git add --all', { cwd: directory });
+        await system.run('git commit -m "Initialize subgraph"', {
+          cwd: directory,
+        });
+      }
       return true;
     },
   );
