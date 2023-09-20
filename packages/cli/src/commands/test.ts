@@ -6,7 +6,7 @@ import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
 import semver from 'semver';
 import { Args, Command, Flags } from '@oclif/core';
-import { fetch } from '@whatwg-node/fetch';
+import fetch from '../fetch';
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';

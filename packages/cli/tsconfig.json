@@ -12,7 +12,8 @@
     "useUnknownInCatchVariables": false,
     "declaration": true,
     "skipLibCheck": true,
-    "allowJs": true
+    "allowJs": true,
+    "resolveJsonModule": true
   },
   "include": ["./src", "./tests"],
   "exclude": ["./tests/cli/init", "./tests/cli/validation"]
