@@ -4,6 +4,7 @@ import { Args, Command, Flags } from '@oclif/core';
 import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { validateNodeUrl } from '../command-helpers/node';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 
 export default class RemoveCommand extends Command {
   static description = 'Unregisters a subgraph name';
@@ -54,7 +55,10 @@ export default class RemoveCommand extends Command {
     const accessToken = await identifyAccessToken(node, accessTokenFlag);
     if (accessToken !== undefined && accessToken !== null) {
       // @ts-expect-error options property seems to exist
-      client.options.headers = { Authorization: `Bearer ${accessToken}` };
+      client.options.headers = {
+        ...GRAPH_CLI_SHARED_HEADERS,
+        Authorization: `Bearer ${accessToken}`,
+      };
     }
 
     const spinner = print.spin(`Creating subgraph in Graph node: ${requestUrl}`);
