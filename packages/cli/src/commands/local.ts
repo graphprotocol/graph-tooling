@@ -50,7 +50,7 @@ export default class LocalCommand extends Command {
     'skip-wait-for-ipfs': Flags.boolean({
       summary: "Don't wait for IPFS to be up at localhost:15001",
     }),
-    'skip-wait-for-etherium': Flags.boolean({
+    'skip-wait-for-ethereum': Flags.boolean({
       summary: "Don't wait for Ethereum to be up at localhost:18545",
     }),
     'skip-wait-for-postgres': Flags.boolean({
@@ -70,7 +70,7 @@ export default class LocalCommand extends Command {
         'ethereum-logs': ethereumLogsFlag,
         'node-image': nodeImage,
         'node-logs': nodeLogsFlag,
-        'skip-wait-for-etherium': skipWaitForEthereum,
+        'skip-wait-for-ethereum': skipWaitForEthereum,
         'skip-wait-for-ipfs': skipWaitForIpfs,
         'skip-wait-for-postgres': skipWaitForPostgres,
         'standalone-node': standaloneNode,
