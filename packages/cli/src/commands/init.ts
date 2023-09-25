@@ -793,14 +793,14 @@ const initRepository = async (directory: string) =>
         filesystem.remove(gitDir);
       }
       if (await isInRepo()) {
-        await system.run('git init', { cwd: directory });
         await system.run('git add --all', { cwd: directory });
-        await system.run('git commit -m "Initial commit"', {
+        await system.run('git commit -m "Initialize subgraph"', {
           cwd: directory,
         });
       } else {
+        await system.run('git init', { cwd: directory });
         await system.run('git add --all', { cwd: directory });
-        await system.run('git commit -m "Initialize subgraph"', {
+        await system.run('git commit -m "Initial commit"', {
           cwd: directory,
         });
       }
