@@ -165,9 +165,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'mumbai':
       return `https://api-testnet.polygonscan.com/api`;
     case 'aurora':
-      return `https://api.aurorascan.dev/api`;
+      return `https://explorer.mainnet.aurora.dev/api`;
     case 'aurora-testnet':
-      return `https://api-testnet.aurorascan.dev/api`;
+      return `https://explorer.testnet.aurora.dev/api`;
     case 'optimism-goerli':
       return `https://api-goerli-optimistic.etherscan.io/api`;
     case 'optimism':

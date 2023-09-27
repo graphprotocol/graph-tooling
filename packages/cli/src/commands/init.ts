@@ -767,6 +767,22 @@ function revalidateSubgraphName(
   }
 }
 
+// Inspired from: https://github.com/graphprotocol/graph-tooling/issues/1450#issuecomment-1713992618
+async function isInRepo() {
+  try {
+    const result = await system.run('git rev-parse --is-inside-work-tree');
+    // It seems like we are returning "true\n" instead of "true".
+    // Don't think it is great idea to check for new line character here.
+    // So best to just check if the result includes "true".
+    return result.includes('true');
+  } catch (err) {
+    if (err.stderr.includes('not a git repository')) {
+      return false;
+    }
+    throw Error(err.stderr);
+  }
+}
+
 const initRepository = async (directory: string) =>
   await withSpinner(
     `Initialize subgraph repository`,
@@ -779,11 +795,18 @@ const initRepository = async (directory: string) =>
       if (filesystem.exists(gitDir)) {
         filesystem.remove(gitDir);
       }
-      await system.run('git init', { cwd: directory });
-      await system.run('git add --all', { cwd: directory });
-      await system.run('git commit -m "Initial commit"', {
-        cwd: directory,
-      });
+      if (await isInRepo()) {
+        await system.run('git add --all', { cwd: directory });
+        await system.run('git commit -m "Initialize subgraph"', {
+          cwd: directory,
+        });
+      } else {
+        await system.run('git init', { cwd: directory });
+        await system.run('git add --all', { cwd: directory });
+        await system.run('git commit -m "Initial commit"', {
+          cwd: directory,
+        });
+      }
       return true;
     },
   );
