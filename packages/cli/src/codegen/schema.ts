@@ -111,11 +111,19 @@ export default class SchemaCodeGenerator {
   }
 
   generateDerivedLoaders() {
+    // This gets all the interfaces in the schema
+    // We can think of more optimized ways to do this
+    const interfaces = (
+      this.schema.ast.definitions.filter(def =>
+        this._isInterfaceDefinition(def),
+      ) as InterfaceTypeDefinitionNode[]
+    ).map(def => def.name.value);
+
     const fields = (
       (
-        this.schema.ast.definitions.filter(def =>
-          this._isEntityTypeDefinition(def),
-        ) as ObjectTypeDefinitionNode[]
+        this.schema.ast.definitions.filter(def => {
+          return this._isEntityTypeDefinition(def);
+        }) as ObjectTypeDefinitionNode[]
       )
         .flatMap((def: ObjectTypeDefinitionNode) => def.fields)
         .filter(def => this._isDerivedField(def))
@@ -124,8 +132,12 @@ export default class SchemaCodeGenerator {
     schemaCodeGeneratorDebug.extend('generateDerivedLoaders')(
       `Generating derived loaders for ${fields}`,
     );
+
     return [...new Set(fields)].map(typeName => {
-      return this._generateDerivedLoader(typeName);
+      // do not support interfaces
+      if (!interfaces.includes(typeName)) {
+        return this._generateDerivedLoader(typeName);
+      }
     });
   }
 
@@ -351,7 +363,7 @@ export default class SchemaCodeGenerator {
       returnType,
     );
     const obj = this.schema.ast.definitions.find(def => {
-      if (def.kind === 'ObjectTypeDefinition' || def.kind === 'InterfaceTypeDefinition') {
+      if (def.kind === 'ObjectTypeDefinition') {
         const defobj = def as ObjectTypeDefinitionNode;
         return defobj.name.value == this._baseType(gqlType);
       }
