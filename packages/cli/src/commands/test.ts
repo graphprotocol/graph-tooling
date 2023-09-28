@@ -150,7 +150,7 @@ async function runBinary(
   const latestVersion = opts.latestVersion;
   const recompileOpt = opts.recompile;
 
-  const platform = await getPlatform.bind(this)(logsOpt);
+  const platform = await getPlatform.bind(this)(versionOpt || latestVersion, logsOpt);
 
   const url = `https://github.com/LimeChain/matchstick/releases/download/${
     versionOpt || latestVersion
@@ -172,7 +172,11 @@ async function runBinary(
   args.length > 0 ? binary.run(...args) : binary.run();
 }
 
-async function getPlatform(this: TestCommand, logsOpt: boolean | undefined) {
+async function getPlatform(
+  this: TestCommand,
+  matchstickVersion: string | null,
+  logsOpt: boolean | undefined,
+) {
   const type = os.type();
   const arch = os.arch();
   const cpuCore = os.cpus()[0];
@@ -193,23 +197,33 @@ async function getPlatform(this: TestCommand, logsOpt: boolean | undefined) {
   }
 
   if (arch === 'x64' || isAppleSilicon) {
-    if (type === 'Darwin') {
-      if (majorVersion === 18 || majorVersion === 19) {
-        return 'binary-macos-10.15'; // GitHub dropped support for macOS 10.14 in Actions, but it seems 10.15 binary works on 10.14 too
+    if (semver.gt(matchstickVersion!, '0.5.4')) {
+      if (type === 'Darwin') {
+        if (isAppleSilicon) {
+          return 'binary-macos-12-m1';
+        }
+        return 'binary-macos-12';
       }
-      if (isAppleSilicon) {
-        return 'binary-macos-11-m1';
-      }
-      return 'binary-macos-11';
-    }
-    if (type === 'Linux') {
-      if (majorVersion === 18) {
-        return 'binary-linux-18';
-      }
-      if (majorVersion === 22) {
+      if (type === 'Linux' && majorVersion === 22) {
         return 'binary-linux-22';
       }
-      return 'binary-linux-20';
+    } else {
+      if (type === 'Darwin') {
+        if (majorVersion === 18 || majorVersion === 19) {
+          return 'binary-macos-10.15';
+        }
+        if (isAppleSilicon) {
+          return 'binary-macos-11-m1';
+        }
+        return 'binary-macos-11';
+      }
+      if (type === 'Linux') {
+        return majorVersion === 18
+          ? 'binary-linux-18'
+          : majorVersion === 22
+          ? 'binary-linux-22'
+          : 'binary-linux-20';
+      }
     }
   }
 
