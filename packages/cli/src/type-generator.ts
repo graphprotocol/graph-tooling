@@ -10,11 +10,14 @@ import DataSourceTemplateCodeGenerator from './codegen/template';
 import { GENERATED_FILE_NOTE } from './codegen/typescript';
 import { displayPath } from './command-helpers/fs';
 import { Spinner, step, withSpinner } from './command-helpers/spinner';
+import debug from './debug';
 import { applyMigrations } from './migrations';
 import Protocol from './protocols';
 import Schema from './schema';
 import Subgraph from './subgraph';
 import Watcher from './watcher';
+
+const typeGenDebug = debug('graph-cli:type-generator');
 
 export interface TypeGeneratorOptions {
   sourceDir?: string;
@@ -52,6 +55,9 @@ export default class TypeGenerator {
 
   async generateTypes() {
     if (this.protocol.name === 'substreams') {
+      typeGenDebug.extend('generateTypes')(
+        'Subgraph uses a substream datasource. Skipping code generation.',
+      );
       toolbox.print.success(
         'Subgraph uses a substream datasource. Codegeneration is not required.',
       );
@@ -70,10 +76,12 @@ export default class TypeGenerator {
 
       // Not all protocols support/have ABIs.
       if (this.protocol.hasABIs()) {
+        typeGenDebug.extend('generateTypes')('Generating types for ABIs');
         const abis = await this.protocolTypeGenerator.loadABIs(subgraph);
         await this.protocolTypeGenerator.generateTypesForABIs(abis);
       }
 
+      typeGenDebug.extend('generateTypes')('Generating types for templates');
       await this.generateTypesForDataSourceTemplates(subgraph);
 
       // Not all protocols support/have ABIs.
@@ -83,6 +91,7 @@ export default class TypeGenerator {
       }
 
       const schema = await this.loadSchema(subgraph);
+      typeGenDebug.extend('generateTypes')('Generating types for schema');
       await this.generateTypesForSchema(schema);
 
       toolbox.print.success('\nTypes generated successfully\n');
@@ -113,7 +122,10 @@ export default class TypeGenerator {
   }
 
   async loadSubgraph({ quiet } = { quiet: false }) {
-    const subgraphLoadOptions = { protocol: this.protocol, skipValidation: false };
+    const subgraphLoadOptions = {
+      protocol: this.protocol,
+      skipValidation: false,
+    };
 
     if (quiet) {
       return (

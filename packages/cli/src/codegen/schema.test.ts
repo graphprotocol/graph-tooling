@@ -1,3 +1,4 @@
+import assert from 'assert';
 import * as graphql from 'graphql/language';
 import prettier from 'prettier';
 import Schema from '../schema';
@@ -27,7 +28,6 @@ const testEntity = (generatedTypes: any[], expectedEntity: any) => {
     expectedMethod.static
       ? expect(method instanceof StaticMethod).toBe(true)
       : expect(method instanceof Method).toBe(true);
-
     expect(method.params).toStrictEqual(expectedMethod.params);
     expect(method.returnType).toStrictEqual(expectedMethod.returnType);
     expect(formatTS(method.body)).toBe(formatTS(expectedMethod.body));
@@ -535,5 +535,29 @@ describe('Schema code generator', () => {
         },
       ],
     });
+  });
+
+  test('no derived loader for interface', () => {
+    const codegen = createSchemaCodeGen(`
+    interface IExample {
+      id: ID! 
+      main: Main!
+      num: Int!
+    }
+    
+    type Example1 implements IExample @entity {
+      id: ID! 
+      main: Main!
+      num: Int!
+    }
+    
+    type Main @entity {
+      id: ID!
+      examples: [IExample!]! @derivedFrom(field: "main")
+    }
+`);
+
+    const generateDerivedLoaders = codegen.generateDerivedLoaders().filter(Boolean);
+    assert(generateDerivedLoaders.length === 0);
   });
 });
