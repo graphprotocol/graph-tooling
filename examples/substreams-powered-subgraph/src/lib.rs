@@ -10,20 +10,17 @@ use substreams_ethereum::pb::eth;
 #[substreams::handlers::map]
 fn map_contract(block: eth::v2::Block) -> Result<Contracts, substreams::errors::Error> {
     let contracts = block
-        .transactions()
-        .flat_map(|tx| {
-            tx.calls
-                .iter()
-                .filter(|call| !call.state_reverted)
-                .filter(|call| call.call_type == eth::v2::CallType::Create as i32)
-                .map(|call| Contract {
-                    address: format!("0x{}", Hex(&call.address)),
-                    block_number: block.number,
-                    timestamp: block.timestamp_seconds().to_string(),
-                    ordinal: tx.begin_ordinal,
-                })
+        .calls()
+        .filter(|view| !view.call.state_reverted)
+        .filter(|view| view.call.call_type == eth::v2::CallType::Create as i32)
+        .map(|view| Contract {
+            address: format!("0x{}", Hex(&view.call.address)),
+            block_number: block.number,
+            timestamp: block.timestamp_seconds().to_string(),
+            ordinal: view.call.begin_ordinal,
         })
         .collect();
+
     Ok(Contracts { contracts })
 }
 
