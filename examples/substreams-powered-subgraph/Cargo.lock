@@ -93,12 +93,6 @@ checksum = "dfb24e866b15a1af2a1b663f10c6b6b8f397a84aadb828f12e5b289ec23a3a3c"
 
 [[package]]
 name = "cfg-if"
-version = "0.1.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
-
-[[package]]
-name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
@@ -237,7 +231,7 @@ version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c05aeb6a22b8f62540c194aac980f2115af067bfe15a0734d7277a768d396b31"
 dependencies = [
- "cfg-if 1.0.0",
+ "cfg-if",
  "libc",
  "wasi",
 ]
@@ -320,7 +314,7 @@ version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
- "cfg-if 1.0.0",
+ "cfg-if",
 ]
 
 [[package]]
@@ -365,7 +359,7 @@ version = "0.4.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
 dependencies = [
- "cfg-if 1.0.0",
+ "cfg-if",
 ]
 
 [[package]]
@@ -373,12 +367,6 @@ name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
-
-[[package]]
-name = "memory_units"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8452105ba047068f40ff7093dd1d9da90898e63dd61736462e9cdda6a90ad3c3"
 
 [[package]]
 name = "multimap"
@@ -721,9 +709,9 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "substreams"
-version = "0.5.1"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67c01921ed54c4afb29a45b6cd484541a084f660216ac0c4b8d29734e1f93552"
+checksum = "af972e374502cdfc9998132f5343848d1c58f27a295dc061a89804371f408a46"
 dependencies = [
  "anyhow",
  "bigdecimal",
@@ -737,14 +725,13 @@ dependencies = [
  "prost-types",
  "substreams-macro",
  "thiserror",
- "wee_alloc",
 ]
 
 [[package]]
 name = "substreams-entity-change"
-version = "1.2.2"
+version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf7ee258bd00c0e4fa1d8d4ecd87b7232284ea55a75baf4112cf5d26235c14bb"
+checksum = "d423d0c12a9284a3d6d4ec288dbc9bfec3d55f9056098ba91a6dcfa64fb3889e"
 dependencies = [
  "base64",
  "prost",
@@ -754,9 +741,9 @@ dependencies = [
 
 [[package]]
 name = "substreams-ethereum"
-version = "0.9.0"
+version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4862e038da50f36912a34af4c9e89a689f8837967d088e8ce8f0b097661a01a"
+checksum = "78effc18ed321399fe15ec082806e96a58d213f79741d078c1cd26dd6dd53025"
 dependencies = [
  "getrandom",
  "num-bigint",
@@ -768,9 +755,9 @@ dependencies = [
 
 [[package]]
 name = "substreams-ethereum-abigen"
-version = "0.9.0"
+version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42913439f396916f3234e18f0182d4b26a3e74ee74d3d3ee37e21fccea6140fd"
+checksum = "97a176f39a6e09553c17a287edacd1854e5686fd20ffea3c9655dfc44d94b35e"
 dependencies = [
  "anyhow",
  "ethabi",
@@ -785,9 +772,9 @@ dependencies = [
 
 [[package]]
 name = "substreams-ethereum-core"
-version = "0.9.0"
+version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "851b9196c2bea38c8e6f60d405214564d0d0afb03b19016783f5a1f4aea1ebe7"
+checksum = "db4700cfe408b75634a3c6b3a0caf7bddba4879601d2085c811485ea54cbde2d"
 dependencies = [
  "bigdecimal",
  "ethabi",
@@ -801,13 +788,14 @@ dependencies = [
 
 [[package]]
 name = "substreams-ethereum-derive"
-version = "0.9.0"
+version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a75b6f046753349b3c7fc6081efc9e9a1638338c0f0cf50e51ded4d809713061"
+checksum = "40d6d278d926fe3f0775d996ee2b5e1dc822c1b4bf4f7bf07c7fbb5bce6c79a9"
 dependencies = [
  "ethabi",
  "heck",
  "hex",
+ "num-bigint",
  "proc-macro2",
  "quote",
  "substreams-ethereum-abigen",
@@ -828,9 +816,9 @@ dependencies = [
 
 [[package]]
 name = "substreams-macro"
-version = "0.5.1"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c516462ddb71cf5c6b22dca3f0a444edf2559fda764a44a89e60cd129eb10561"
+checksum = "6521ccd011a4c3f52cd3c31fc7400733e4feba2094e0e0e6354adca25b2b3f37"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -861,7 +849,7 @@ version = "3.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5cdb1ef4eaeeaddc8fbd371e5017057064af0911902ef36b39801f67cc6d79e4"
 dependencies = [
- "cfg-if 1.0.0",
+ "cfg-if",
  "fastrand",
  "libc",
  "redox_syscall",
@@ -948,18 +936,6 @@ name = "wasi"
 version = "0.11.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
-
-[[package]]
-name = "wee_alloc"
-version = "0.4.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dbb3b5a6b2bb17cb6ad44a2e68a43e8d2722c997da10e928665c72ec6c0a0b8e"
-dependencies = [
- "cfg-if 0.1.10",
- "libc",
- "memory_units",
- "winapi",
-]
 
 [[package]]
 name = "which"
