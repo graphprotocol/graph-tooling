@@ -112,6 +112,7 @@ export default class Protocol {
         'polygon-zkevm-testnet',
         'polygon-zkevm',
         'scroll-sepolia',
+        'scroll'
       ],
       near: ['near-mainnet', 'near-testnet'],
       cosmos: [

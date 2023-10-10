@@ -30,6 +30,7 @@ export const allowedStudioNetworks = [
   'polygon-zkevm-testnet',
   'polygon-zkevm',
   'scroll-sepolia',
+  'scroll'
 ] as const;
 
 export const validateStudioNetwork = ({
