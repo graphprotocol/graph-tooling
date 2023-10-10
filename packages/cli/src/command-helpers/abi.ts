@@ -283,7 +283,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'scroll-sepolia':
       return 'https://rpc.ankr.com/scroll_sepolia_testnet';
     case 'scroll':
-        return 'https://rpc.ankr.com/scroll';
+      return 'https://rpc.ankr.com/scroll';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
