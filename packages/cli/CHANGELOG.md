@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.60.0
+
+### Minor Changes
+
+- [#1474](https://github.com/graphprotocol/graph-tooling/pull/1474)
+  [`6aacb7c`](https://github.com/graphprotocol/graph-tooling/commit/6aacb7c68e72817dea642e19c03159076e42d289)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - add scroll mainnet support
+
 ## 0.59.0
 
 ### Minor Changes
