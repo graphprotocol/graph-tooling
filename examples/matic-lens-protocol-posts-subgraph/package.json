@@ -1,5 +1,6 @@
 {
   "name": "lens-protocol-posts-sg",
+  "version": "0.0.1",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
