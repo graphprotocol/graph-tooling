@@ -17,6 +17,5 @@
   },
   "devDependencies": {
     "matchstick-as": "0.5.2"
-  },
-  "version": null
+  }
 }
