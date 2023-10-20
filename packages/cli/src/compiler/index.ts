@@ -49,9 +49,9 @@ export default class Compiler {
     this.protocol = this.options.protocol;
     this.ABI = this.protocol.getABI();
 
-    if (options.protocol.name === 'substreams') {
-      return;
-    }
+    // if (options.protocol.name === 'substreams') {
+    //   return;
+    // }
 
     for (
       let dir: string | undefined = path.resolve(this.sourceDir);
@@ -269,10 +269,10 @@ export default class Compiler {
           templates === undefined
             ? templates
             : templates.map((template: any) =>
-                template.updateIn(['mapping', 'file'], (mappingPath: string) =>
-                  this._compileTemplateMapping(template, mappingPath, compiledFiles, spinner),
-                ),
+              template.updateIn(['mapping', 'file'], (mappingPath: string) =>
+                this._compileTemplateMapping(template, mappingPath, compiledFiles, spinner),
               ),
+            ),
         );
 
         return subgraph;
@@ -344,7 +344,7 @@ export default class Compiler {
     spinner: Spinner,
     validate = false,
   ) {
-    if (protocol.name == 'substreams') {
+    if (protocol.name == 'substreams' && !dataSource.getIn(["mapping", "file"])) {
       return;
     }
 
@@ -569,6 +569,12 @@ export default class Compiler {
                   }),
                 );
 
+              if (updatedDataSource.getIn(["mapping", "file"])) {
+                updatedDataSource = updatedDataSource.updateIn(['mapping', 'file'], (mappingFile: string) =>
+                  path.relative(this.options.outputDir, path.resolve(this.sourceDir, mappingFile)),
+                );
+              }
+
               return updatedDataSource;
             }
 
@@ -585,37 +591,37 @@ export default class Compiler {
           templates === undefined
             ? templates
             : templates.map((template: any) => {
-                let updatedTemplate = template;
+              let updatedTemplate = template;
 
-                if (this.protocol.hasABIs()) {
-                  updatedTemplate = updatedTemplate
-                    // Write template ABIs to the output directory
-                    .updateIn(['mapping', 'abis'], (abis: any[]) =>
-                      abis.map(abi =>
-                        abi.update('file', (abiFile: string) => {
-                          abiFile = path.resolve(this.sourceDir, abiFile);
-                          const abiData = this.ABI.load(abi.get('name'), abiFile);
-                          return path.relative(
-                            this.options.outputDir,
-                            this._writeSubgraphFile(
-                              abiFile,
-                              JSON.stringify(abiData.data.toJS(), null, 2),
-                              this.sourceDir,
-                              this.subgraphDir(this.options.outputDir, template),
-                              spinner,
-                            ),
-                          );
-                        }),
-                      ),
-                    );
-                }
+              if (this.protocol.hasABIs()) {
+                updatedTemplate = updatedTemplate
+                  // Write template ABIs to the output directory
+                  .updateIn(['mapping', 'abis'], (abis: any[]) =>
+                    abis.map(abi =>
+                      abi.update('file', (abiFile: string) => {
+                        abiFile = path.resolve(this.sourceDir, abiFile);
+                        const abiData = this.ABI.load(abi.get('name'), abiFile);
+                        return path.relative(
+                          this.options.outputDir,
+                          this._writeSubgraphFile(
+                            abiFile,
+                            JSON.stringify(abiData.data.toJS(), null, 2),
+                            this.sourceDir,
+                            this.subgraphDir(this.options.outputDir, template),
+                            spinner,
+                          ),
+                        );
+                      }),
+                    ),
+                  );
+              }
 
-                // The mapping file is already being written to the output
-                // directory by the AssemblyScript compiler
-                return updatedTemplate.updateIn(['mapping', 'file'], (mappingFile: string) =>
-                  path.relative(this.options.outputDir, path.resolve(this.sourceDir, mappingFile)),
-                );
-              }),
+              // The mapping file is already being written to the output
+              // directory by the AssemblyScript compiler
+              return updatedTemplate.updateIn(['mapping', 'file'], (mappingFile: string) =>
+                path.relative(this.options.outputDir, path.resolve(this.sourceDir, mappingFile)),
+              );
+            }),
         );
 
         // Write the subgraph manifest itself
@@ -672,6 +678,20 @@ export default class Compiler {
                 spinner,
               ),
             });
+            console.log(dataSource.getIn(["mapping", "file"]));
+            console.log(dataSource.toJS());
+            if (dataSource.getIn(["mapping", "file"])) {
+              updates.push({
+                keyPath: ['dataSources', i, 'mapping', 'file'],
+                value: await this._uploadFileToIPFS(
+                  dataSource.getIn(['mapping', 'file']),
+                  uploadedFiles,
+                  spinner,
+                ),
+              });
+            }
+
+
           }
         } else {
           for (const [i, dataSource] of subgraph.get('dataSources').entries()) {

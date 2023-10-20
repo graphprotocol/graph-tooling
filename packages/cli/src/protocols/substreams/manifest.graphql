@@ -32,14 +32,18 @@ type DataSource {
 
 type SubstreamsSource {
   package: SubstreamsPackage!
+  startBlock: BigInt
 }
 
 type SubstreamsPackage {
   moduleName: String!
   file: String!
+  params: String
 }
 
 type SubstreamMapping {
   apiVersion: String!
   kind: String!
+  file: File
+  handler: String
 }
