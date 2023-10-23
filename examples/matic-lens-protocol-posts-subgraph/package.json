@@ -17,6 +17,6 @@
     "@graphprotocol/graph-ts": "0.31.0"
   },
   "devDependencies": {
-    "matchstick-as": "0.5.2"
+    "matchstick-as": "0.6.0"
   }
 }
