@@ -20,7 +20,7 @@
   "devDependencies": {
     "@graphprotocol/graph-cli": "0.60.0",
     "@graphprotocol/graph-ts": "0.31.0",
-    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "hardhat": "^2.13.1"
   }
 }
