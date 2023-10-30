@@ -331,8 +331,8 @@ importers:
         specifier: 2.0.2
         version: 2.0.2
       yaml:
-        specifier: 1.10.2
-        version: 1.10.2
+        specifier: 2.2.1
+        version: 2.2.1
     devDependencies:
       '@types/debug':
         specifier: ^4.1.7
@@ -14627,7 +14627,6 @@ packages:
   /yaml@2.2.1:
     resolution: {integrity: sha512-e0WHiYql7+9wr4cWMx3TVQrNwejKaEe7/rHNmQmqRjazfOP5W8PB6Jpebb5o6fIapbz9o9+2ipcaTM2ZwDI6lw==}
     engines: {node: '>= 14'}
-    dev: true
 
   /yargs-parser@13.1.2:
     resolution: {integrity: sha512-3lbsNRf/j+A4QuSZfDRA7HRSfWrzO0YjqTJd5kjAq37Zep1CEgaYmrH9Q3GwPiB9cHyd1Y1UwggGhJGoxipbzg==}
