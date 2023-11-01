@@ -152,6 +152,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.arbiscan.io/api`;
     case 'arbitrum-goerli':
       return `https://api-goerli.arbiscan.io/api`;
+    case 'arbitrum-sepolia':
+      return `https://api-sepolia.arbiscan.io/api`;
     case 'bsc':
       return `https://api.bscscan.com/api`;
     case 'base-testnet':
@@ -216,6 +218,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://goerli-rollup.arbitrum.io/rpc';
     case 'arbitrum-one':
       return 'https://arb1.arbitrum.io/rpc';
+    case 'arbitrum-sepolia':
+      return `https://sepolia-rollup.arbitrum.io/rpc`;
     case 'aurora':
       return 'https://rpc.mainnet.aurora.dev';
     case 'aurora-testnet':
