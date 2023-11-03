@@ -2,6 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { filesystem, prompt, system } from 'gluegun';
+import * as toolbox from 'gluegun';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
@@ -19,7 +20,6 @@ import EthereumABI from '../protocols/ethereum/abi';
 import { abiEvents } from '../scaffold/schema';
 import { validateContract } from '../validation';
 import AddCommand from './add';
-import * as toolbox from 'gluegun';
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
@@ -397,7 +397,7 @@ async function processFromExampleInitForm(
 }
 
 async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined> {
-  for(;;) {
+  for (;;) {
     try {
       return await func();
     } catch (_) {
@@ -607,16 +607,21 @@ async function processInitForm(
           // Try loading the ABI from Etherscan, if none was provided
           if (protocolInstance.hasABIs() && !initAbi) {
             if (network === 'poa-core') {
-              abiFromEtherscan = await retryWithPrompt(() => loadAbiFromBlockScout(ABI, network, value));
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromBlockScout(ABI, network, value),
+              );
             } else {
-              abiFromEtherscan = await retryWithPrompt(() => loadAbiFromEtherscan(ABI, network, value));
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromEtherscan(ABI, network, value),
+              );
             }
-
           }
           // If startBlock is not set, try to load it.
           if (!initStartBlock) {
             // Load startBlock for this contract
-            const startBlock = await retryWithPrompt(() => loadStartBlockForContract(network, value));
+            const startBlock = await retryWithPrompt(() =>
+              loadStartBlockForContract(network, value),
+            );
             if (startBlock) {
               initStartBlock = Number(startBlock).toString();
             }
