@@ -2,6 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { filesystem, prompt, system } from 'gluegun';
+import * as toolbox from 'gluegun';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
@@ -395,6 +396,26 @@ async function processFromExampleInitForm(
   }
 }
 
+async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined> {
+  for (;;) {
+    try {
+      return await func();
+    } catch (_) {
+      const { retry } = await toolbox.prompt.ask({
+        type: 'confirm',
+        name: 'retry',
+        message: 'Do you want to retry?',
+        initial: true,
+      });
+
+      if (!retry) {
+        break;
+      }
+    }
+  }
+  return undefined;
+}
+
 async function processInitForm(
   this: InitCommand,
   {
@@ -585,24 +606,24 @@ async function processInitForm(
 
           // Try loading the ABI from Etherscan, if none was provided
           if (protocolInstance.hasABIs() && !initAbi) {
-            try {
-              if (network === 'poa-core') {
-                // TODO: this variable is never used anywhere, what happens?
-                // abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
-              } else {
-                abiFromEtherscan = await loadAbiFromEtherscan(ABI, network, value);
-              }
-            } catch (e) {
-              // noop
+            if (network === 'poa-core') {
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromBlockScout(ABI, network, value),
+              );
+            } else {
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromEtherscan(ABI, network, value),
+              );
             }
           }
           // If startBlock is not set, try to load it.
           if (!initStartBlock) {
-            try {
-              // Load startBlock for this contract
-              initStartBlock = Number(await loadStartBlockForContract(network, value)).toString();
-            } catch (error) {
-              // noop
+            // Load startBlock for this contract
+            const startBlock = await retryWithPrompt(() =>
+              loadStartBlockForContract(network, value),
+            );
+            if (startBlock) {
+              initStartBlock = Number(startBlock).toString();
             }
           }
           return value;

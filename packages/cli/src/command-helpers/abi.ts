@@ -72,8 +72,7 @@ export const fetchContractCreationHashWithRetry = async (
       /* empty */
     }
   }
-  throw new Error(`Failed to fetch contract creation transaction hash
-  `);
+  throw new Error(`Failed to fetch contract creation transaction hash`);
 };
 
 export const fetchTransactionByHashFromRPC = async (
