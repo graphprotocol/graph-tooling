@@ -1,8 +1,8 @@
 import immutable from 'immutable';
 import { fetch } from '@whatwg-node/fetch';
 import ABI from '../protocols/ethereum/abi';
-import { withSpinner } from './spinner';
 import { networks } from './chains';
+import { withSpinner } from './spinner';
 
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
@@ -148,14 +148,14 @@ export const sleepForChain = async (network: string) => {
   const rateLimit = getEtherscanLikeAPIRateLimit(network);
   if (rateLimit === 0) return;
   await withSpinner(
-    `Sleeping for ${rateLimit/1000}s`,
+    `Sleeping for ${rateLimit / 1000}s`,
     `Failed to sleep`,
     `Warnings while sleep`,
     async () => {
-      await new Promise((resolve) => setTimeout(resolve, rateLimit));
+      await new Promise(resolve => setTimeout(resolve, rateLimit));
     },
-  )
-}
+  );
+};
 
 const getEtherscanLikeAPIUrl = (network: string) => {
   if (networks[network]?.etherscanUrl) {
