@@ -8,6 +8,7 @@ import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
   loadStartBlockForContract,
+  sleepForChain,
 } from '../command-helpers/abi';
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl } from '../command-helpers/node';
@@ -618,6 +619,8 @@ async function processInitForm(
           }
           // If startBlock is not set, try to load it.
           if (!initStartBlock) {
+            // Sleep for rate limit
+            await sleepForChain(network);
             // Load startBlock for this contract
             const startBlock = await retryWithPrompt(() =>
               loadStartBlockForContract(network, value),

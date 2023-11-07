@@ -2,6 +2,7 @@ import immutable from 'immutable';
 import { fetch } from '@whatwg-node/fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
+import { networks } from './chains';
 
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
@@ -143,151 +144,33 @@ export const loadAbiFromBlockScout = async (
     },
   );
 
+export const sleepForChain = async (network: string) => {
+  const rateLimit = getEtherscanLikeAPIRateLimit(network);
+  if (rateLimit === 0) return;
+  await withSpinner(
+    `Sleeping for ${rateLimit/1000}s`,
+    `Failed to sleep`,
+    `Warnings while sleep`,
+    async () => {
+      await new Promise((resolve) => setTimeout(resolve, rateLimit));
+    },
+  )
+}
+
 const getEtherscanLikeAPIUrl = (network: string) => {
-  switch (network) {
-    case 'mainnet':
-      return `https://api.etherscan.io/api`;
-    case 'arbitrum-one':
-      return `https://api.arbiscan.io/api`;
-    case 'arbitrum-goerli':
-      return `https://api-goerli.arbiscan.io/api`;
-    case 'arbitrum-sepolia':
-      return `https://api-sepolia.arbiscan.io/api`;
-    case 'bsc':
-      return `https://api.bscscan.com/api`;
-    case 'base-testnet':
-      return `https://api-goerli.basescan.org/api`;
-    case 'base':
-      return `https://api.basescan.org/api`;
-    case 'chapel':
-      return `https://api-testnet.bscscan.com/api`;
-    case 'matic':
-      return `https://api.polygonscan.com/api`;
-    case 'mumbai':
-      return `https://api-testnet.polygonscan.com/api`;
-    case 'aurora':
-      return `https://explorer.mainnet.aurora.dev/api`;
-    case 'aurora-testnet':
-      return `https://explorer.testnet.aurora.dev/api`;
-    case 'optimism-goerli':
-      return `https://api-goerli-optimistic.etherscan.io/api`;
-    case 'optimism':
-      return `https://api-optimistic.etherscan.io/api`;
-    case 'moonbeam':
-      return `https://api-moonbeam.moonscan.io/api`;
-    case 'moonriver':
-      return `https://api-moonriver.moonscan.io/api`;
-    case 'mbase':
-      return `https://api-moonbase.moonscan.io/api`;
-    case 'avalanche':
-      return `https://api.snowtrace.io/api`;
-    case 'fuji':
-      return `https://api-testnet.snowtrace.io/api`;
-    case 'celo':
-      return `https://api.celoscan.io/api`;
-    case 'celo-alfajores':
-      return `https://alfajores.celoscan.io/api`;
-    case 'gnosis':
-      return `https://api.gnosisscan.io/api`;
-    case 'fantom':
-      return `https://api.ftmscan.com/api`;
-    case 'fantom-testnet':
-      return `https://api-testnet.ftmscan.com/api`;
-    case 'zksync-era':
-      return `https://block-explorer-api.mainnet.zksync.io/api`;
-    case 'zksync-era-testnet':
-      return `https://block-explorer-api.testnets.zksync.dev/api`;
-    case 'polygon-zkevm-testnet':
-      return `https://testnet-zkevm.polygonscan.com/api`;
-    case 'polygon-zkevm':
-      return `https://zkevm.polygonscan.com/api`;
-    case 'sepolia':
-      return `https://api-sepolia.etherscan.io/api`;
-    case 'scroll-sepolia':
-      return `https://api-sepolia.scrollscan.dev/api`;
-    case 'scroll':
-      return `https://blockscout.scroll.io/api`;
-    default:
-      return `https://api-${network}.etherscan.io/api`;
+  if (networks[network]?.etherscanUrl) {
+    return networks[network].etherscanUrl;
   }
+  throw new Error(`Unknown network: ${network}`);
 };
+
 const getPublicRPCEndpoint = (network: string) => {
-  switch (network) {
-    case 'arbitrum-goerli':
-      return 'https://goerli-rollup.arbitrum.io/rpc';
-    case 'arbitrum-one':
-      return 'https://arb1.arbitrum.io/rpc';
-    case 'arbitrum-sepolia':
-      return `https://sepolia-rollup.arbitrum.io/rpc`;
-    case 'aurora':
-      return 'https://rpc.mainnet.aurora.dev';
-    case 'aurora-testnet':
-      return 'https://rpc.testnet.aurora.dev';
-    case 'avalanche':
-      return 'https://api.avax.network/ext/bc/C/rpc';
-    case 'base-testnet':
-      return 'https://goerli.base.org';
-    case 'base':
-      return 'https://rpc.base.org';
-    case 'bsc':
-      return 'https://bsc-dataseed.binance.org';
-    case 'celo':
-      return 'https://forno.celo.org';
-    case 'celo-alfajores':
-      return 'https://alfajores-forno.celo-testnet.org';
-    case 'chapel':
-      return 'https://rpc.chapel.dev';
-    case 'clover':
-      return 'https://rpc.clover.finance';
-    case 'fantom':
-      return 'https://rpcapi.fantom.network';
-    case 'fantom-testnet':
-      return 'https://rpc.testnet.fantom.network';
-    case 'fuji':
-      return 'https://api.avax-test.network/ext/bc/C/rpc';
-    case 'fuse':
-      return 'https://rpc.fuse.io';
-    case 'goerli':
-      return 'https://rpc.ankr.com/eth_goerli';
-    case 'gnosis':
-      return 'https://safe-transaction.gnosis.io';
-    case 'mainnet':
-      return 'https://rpc.ankr.com/eth';
-    case 'matic':
-      return 'https://rpc-mainnet.maticvigil.com';
-    case 'mbase':
-      return 'https://rpc.moonbase.moonbeam.network';
-    case 'mumbai':
-      return 'https://rpc-mumbai.maticvigil.com';
-    case 'moonbeam':
-      return 'https://rpc.api.moonbeam.network';
-    case 'moonriver':
-      return 'https://moonriver.public.blastapi.io';
-    case 'optimism':
-      return 'https://mainnet.optimism.io';
-    case 'optimism-goerli':
-      return 'https://goerli.optimism.io';
-    case 'poa-core':
-      return 'https://core.poa.network';
-    case 'poa-sokol':
-      return 'https://sokol.poa.network';
-    case 'polygon-zkevm-testnet':
-      return 'https://rpc.public.zkevm-test.net';
-    case 'polygon-zkevm':
-      return 'https://zkevm-rpc.com';
-    case 'rinkeby':
-      return 'https://rpc.ankr.com/eth_rinkeby';
-    case 'zksync-era':
-      return 'https://mainnet.era.zksync.io';
-    case 'zksync-era-testnet':
-      return 'https://testnet.era.zksync.dev';
-    case 'sepolia':
-      return 'https://rpc.ankr.com/eth_sepolia';
-    case 'scroll-sepolia':
-      return 'https://rpc.ankr.com/scroll_sepolia_testnet';
-    case 'scroll':
-      return 'https://rpc.ankr.com/scroll';
-    default:
-      throw new Error(`Unknown network: ${network}`);
+  if (networks[network]?.publicRpcEndpoint) {
+    return networks[network].publicRpcEndpoint;
   }
+  throw new Error(`Unknown network: ${network}`);
+};
+
+const getEtherscanLikeAPIRateLimit = (network: string) => {
+  return networks[network]?.rateLimit ?? 0;
 };
