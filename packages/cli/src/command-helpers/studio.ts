@@ -23,6 +23,7 @@ export const allowedStudioNetworks = [
   'base',
   'celo',
   'arbitrum-one',
+  'arbitrum-sepolia',
   'avalanche',
   'zksync-era',
   'zksync-era-testnet',

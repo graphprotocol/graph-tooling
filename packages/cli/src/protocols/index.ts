@@ -100,6 +100,7 @@ export default class Protocol {
         'mbase',
         'arbitrum-one',
         'arbitrum-goerli',
+        'arbitrum-sepolia',
         'optimism',
         'optimism-goerli',
         'aurora',
