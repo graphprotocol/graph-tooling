@@ -10,6 +10,7 @@ export const allowedStudioNetworks = [
   'matic',
   'fantom-testnet',
   'arbitrum-goerli',
+  'arbitrum-sepolia',
   'fuji',
   'celo-alfajores',
   'mumbai',
