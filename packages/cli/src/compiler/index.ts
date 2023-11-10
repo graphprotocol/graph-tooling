@@ -49,9 +49,9 @@ export default class Compiler {
     this.protocol = this.options.protocol;
     this.ABI = this.protocol.getABI();
 
-    // if (options.protocol.name === 'substreams') {
-    //   return;
-    // }
+    if (options.protocol.name === 'substreams') {
+      return;
+    }
 
     for (
       let dir: string | undefined = path.resolve(this.sourceDir);
@@ -344,7 +344,7 @@ export default class Compiler {
     spinner: Spinner,
     validate = false,
   ) {
-    if (protocol.name == 'substreams' && !dataSource.getIn(['mapping', 'file'])) {
+    if (protocol.name == 'substreams') {
       return;
     }
 
@@ -548,7 +548,7 @@ export default class Compiler {
                 );
             }
 
-            if (protocol.name == 'substreams') {
+            if (protocol.name == 'substreams' || protocol.name == 'substreams/triggers') {
               updatedDataSource = updatedDataSource
                 // Write data source ABIs to the output directory
                 .updateIn(['source', 'package'], (substreamsPackage: any) =>
@@ -683,8 +683,7 @@ export default class Compiler {
                 spinner,
               ),
             });
-            console.log(dataSource.getIn(['mapping', 'file']));
-            console.log(dataSource.toJS());
+
             if (dataSource.getIn(['mapping', 'file'])) {
               updates.push({
                 keyPath: ['dataSources', i, 'mapping', 'file'],
