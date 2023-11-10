@@ -1,5 +1,23 @@
 # @graphprotocol/graph-cli
 
+## 0.61.0
+
+### Minor Changes
+
+- [#1491](https://github.com/graphprotocol/graph-tooling/pull/1491)
+  [`326b303`](https://github.com/graphprotocol/graph-tooling/commit/326b30340ed5d922bfde995c9ff68e0899ac4cb3)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - add etherscan api retries to
+  `graph init` wizard
+
+- [#1489](https://github.com/graphprotocol/graph-tooling/pull/1489)
+  [`031fca8`](https://github.com/graphprotocol/graph-tooling/commit/031fca87fb163a69a06653f7822f4738452a91aa)
+  Thanks [@saihaj](https://github.com/saihaj)! - Arbitrum Sepolia support
+
+- [#1493](https://github.com/graphprotocol/graph-tooling/pull/1493)
+  [`f5f974d`](https://github.com/graphprotocol/graph-tooling/commit/f5f974d63416ba845c45c50b2931c9beffcca3a1)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Fix codegen issues when using derived
+  loaders with Bytes as ID's
+
 ## 0.60.0
 
 ### Minor Changes
