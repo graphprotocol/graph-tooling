@@ -19,6 +19,10 @@ export const networks: Record<string, NetworkInfo> = {
     etherscanUrl: 'https://api-goerli.arbiscan.io/api',
     publicRpcEndpoint: 'https://goerli-rollup.arbitrum.io/rpc',
   },
+  arbitrumSepolia: {
+    etherscanUrl: 'https://api-sepolia.arbiscan.io/api',
+    publicRpcEndpoint: 'https://sepolia-rollup.arbitrum.io/rpc',
+  },
   bsc: {
     etherscanUrl: 'https://api.bscscan.com/api',
     publicRpcEndpoint: 'https://bsc-dataseed.binance.org',
