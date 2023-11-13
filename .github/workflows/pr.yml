@@ -19,7 +19,7 @@ jobs:
     with:
       npmTag: alpha
       buildScript: build
-      nodeVersion: 16
+      nodeVersion: 20
       packageManager: pnpm
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
     with:
       npmTag: rc
       buildScript: build
-      nodeVersion: 16
+      nodeVersion: 20
       packageManager: pnpm
       restoreDeletedChangesets: true
     secrets:
