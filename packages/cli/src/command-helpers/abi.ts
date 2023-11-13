@@ -1,5 +1,5 @@
-import { fetch } from '@whatwg-node/fetch';
 import immutable from 'immutable';
+import { fetch } from '@whatwg-node/fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
 
@@ -72,8 +72,7 @@ export const fetchContractCreationHashWithRetry = async (
       /* empty */
     }
   }
-  throw new Error(`Failed to fetch contract creation transaction hash
-  `);
+  throw new Error(`Failed to fetch contract creation transaction hash`);
 };
 
 export const fetchTransactionByHashFromRPC = async (
@@ -152,6 +151,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.arbiscan.io/api`;
     case 'arbitrum-goerli':
       return `https://api-goerli.arbiscan.io/api`;
+    case 'arbitrum-sepolia':
+      return `https://api-sepolia.arbiscan.io/api`;
     case 'bsc':
       return `https://api.bscscan.com/api`;
     case 'base-testnet':
@@ -165,9 +166,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'mumbai':
       return `https://api-testnet.polygonscan.com/api`;
     case 'aurora':
-      return `https://api.aurorascan.dev/api`;
+      return `https://explorer.mainnet.aurora.dev/api`;
     case 'aurora-testnet':
-      return `https://api-testnet.aurorascan.dev/api`;
+      return `https://explorer.testnet.aurora.dev/api`;
     case 'optimism-goerli':
       return `https://api-goerli-optimistic.etherscan.io/api`;
     case 'optimism':
@@ -194,12 +195,18 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-testnet.ftmscan.com/api`;
     case 'zksync-era':
       return `https://block-explorer-api.mainnet.zksync.io/api`;
+    case 'zksync-era-testnet':
+      return `https://block-explorer-api.testnets.zksync.dev/api`;
     case 'polygon-zkevm-testnet':
       return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
       return `https://zkevm.polygonscan.com/api`;
     case 'sepolia':
       return `https://api-sepolia.etherscan.io/api`;
+    case 'scroll-sepolia':
+      return `https://api-sepolia.scrollscan.dev/api`;
+    case 'scroll':
+      return `https://blockscout.scroll.io/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -210,6 +217,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://goerli-rollup.arbitrum.io/rpc';
     case 'arbitrum-one':
       return 'https://arb1.arbitrum.io/rpc';
+    case 'arbitrum-sepolia':
+      return `https://sepolia-rollup.arbitrum.io/rpc`;
     case 'aurora':
       return 'https://rpc.mainnet.aurora.dev';
     case 'aurora-testnet':
@@ -269,9 +278,15 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'rinkeby':
       return 'https://rpc.ankr.com/eth_rinkeby';
     case 'zksync-era':
-      return 'https://zksync2-mainnet.zksync.io';
+      return 'https://mainnet.era.zksync.io';
+    case 'zksync-era-testnet':
+      return 'https://testnet.era.zksync.dev';
     case 'sepolia':
       return 'https://rpc.ankr.com/eth_sepolia';
+    case 'scroll-sepolia':
+      return 'https://rpc.ankr.com/scroll_sepolia_testnet';
+    case 'scroll':
+      return 'https://rpc.ankr.com/scroll';
     default:
       throw new Error(`Unknown network: ${network}`);
   }

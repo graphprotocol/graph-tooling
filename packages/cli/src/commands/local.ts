@@ -2,11 +2,11 @@ import { ChildProcess, spawn } from 'child_process';
 import http from 'http';
 import net from 'net';
 import path from 'path';
-import { Args, Command, Flags } from '@oclif/core';
 import compose from 'docker-compose';
 import { filesystem, patching } from 'gluegun';
 import stripAnsi from 'strip-ansi';
 import tmp from 'tmp-promise';
+import { Args, Command, Flags } from '@oclif/core';
 import { step, withSpinner } from '../command-helpers/spinner';
 
 // Clean up temporary files even when an uncaught exception occurs
@@ -50,8 +50,15 @@ export default class LocalCommand extends Command {
     'skip-wait-for-ipfs': Flags.boolean({
       summary: "Don't wait for IPFS to be up at localhost:15001",
     }),
+    'skip-wait-for-ethereum': Flags.boolean({
+      summary: "Don't wait for Ethereum to be up at localhost:18545",
+    }),
+    // TODO: Remove in next major release
     'skip-wait-for-etherium': Flags.boolean({
       summary: "Don't wait for Ethereum to be up at localhost:18545",
+      deprecated: {
+        message: 'Use --skip-wait-for-ethereum instead',
+      },
     }),
     'skip-wait-for-postgres': Flags.boolean({
       summary: "Don't wait for Postgres to be up at localhost:15432",
@@ -70,7 +77,8 @@ export default class LocalCommand extends Command {
         'ethereum-logs': ethereumLogsFlag,
         'node-image': nodeImage,
         'node-logs': nodeLogsFlag,
-        'skip-wait-for-etherium': skipWaitForEthereum,
+        'skip-wait-for-etherium': skipWaitForEthereumTypo,
+        'skip-wait-for-ethereum': skipWaitForEthereumGood,
         'skip-wait-for-ipfs': skipWaitForIpfs,
         'skip-wait-for-postgres': skipWaitForPostgres,
         'standalone-node': standaloneNode,
@@ -78,6 +86,8 @@ export default class LocalCommand extends Command {
         timeout,
       },
     } = await this.parse(LocalCommand);
+
+    const skipWaitForEthereum = skipWaitForEthereumTypo || skipWaitForEthereumGood;
 
     // Obtain the Docker Compose file for services that the tests run against
     const composeFile =
@@ -96,7 +106,10 @@ export default class LocalCommand extends Command {
     }
 
     // Create temporary directory to operate in
-    const { path: tempdir } = await tmp.dir({ prefix: 'graph-test', unsafeCleanup: true });
+    const { path: tempdir } = await tmp.dir({
+      prefix: 'graph-test',
+      unsafeCleanup: true,
+    });
     try {
       await configureTestEnvironment(tempdir, composeFile, nodeImage);
     } catch (e) {

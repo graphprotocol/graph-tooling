@@ -8,6 +8,7 @@ scalar String
 scalar File
 scalar BigInt
 scalar Boolean
+scalar JSON
 
 type SubgraphManifest {
   specVersion: String!
@@ -28,6 +29,7 @@ type DataSource {
   kind: String!
   name: String!
   network: String
+  context: JSON
   source: ContractSource!
   mapping: ContractMapping!
 }
@@ -55,13 +57,26 @@ type ContractAbi {
   file: File!
 }
 
-type BlockHandler {
-  handler: String!
-  filter: BlockFilter
+enum BlockFilterKind {
+  polling
+  once
+  call
 }
 
 type BlockFilter {
-  kind: String!
+  kind: BlockFilterKind!
+}
+
+type PollingBlockFilter {
+  kind: BlockFilterKind!
+  every: BigInt!
+}
+
+union BlockFilterType = BlockFilter | PollingBlockFilter
+
+type BlockHandler {
+  handler: String!
+  filter: BlockFilterType
 }
 
 type CallHandler {

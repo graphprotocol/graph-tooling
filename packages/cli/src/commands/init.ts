@@ -1,8 +1,9 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { Args, Command, Flags, ux } from '@oclif/core';
 import { filesystem, prompt, system } from 'gluegun';
+import * as toolbox from 'gluegun';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
@@ -395,6 +396,26 @@ async function processFromExampleInitForm(
   }
 }
 
+async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined> {
+  for (;;) {
+    try {
+      return await func();
+    } catch (_) {
+      const { retry } = await toolbox.prompt.ask({
+        type: 'confirm',
+        name: 'retry',
+        message: 'Do you want to retry?',
+        initial: true,
+      });
+
+      if (!retry) {
+        break;
+      }
+    }
+  }
+  return undefined;
+}
+
 async function processInitForm(
   this: InitCommand,
   {
@@ -585,24 +606,24 @@ async function processInitForm(
 
           // Try loading the ABI from Etherscan, if none was provided
           if (protocolInstance.hasABIs() && !initAbi) {
-            try {
-              if (network === 'poa-core') {
-                // TODO: this variable is never used anywhere, what happens?
-                // abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
-              } else {
-                abiFromEtherscan = await loadAbiFromEtherscan(ABI, network, value);
-              }
-            } catch (e) {
-              // noop
+            if (network === 'poa-core') {
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromBlockScout(ABI, network, value),
+              );
+            } else {
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromEtherscan(ABI, network, value),
+              );
             }
           }
           // If startBlock is not set, try to load it.
           if (!initStartBlock) {
-            try {
-              // Load startBlock for this contract
-              initStartBlock = Number(await loadStartBlockForContract(network, value)).toString();
-            } catch (error) {
-              // noop
+            // Load startBlock for this contract
+            const startBlock = await retryWithPrompt(() =>
+              loadStartBlockForContract(network, value),
+            );
+            if (startBlock) {
+              initStartBlock = Number(startBlock).toString();
             }
           }
           return value;
@@ -767,6 +788,22 @@ function revalidateSubgraphName(
   }
 }
 
+// Inspired from: https://github.com/graphprotocol/graph-tooling/issues/1450#issuecomment-1713992618
+async function isInRepo() {
+  try {
+    const result = await system.run('git rev-parse --is-inside-work-tree');
+    // It seems like we are returning "true\n" instead of "true".
+    // Don't think it is great idea to check for new line character here.
+    // So best to just check if the result includes "true".
+    return result.includes('true');
+  } catch (err) {
+    if (err.stderr.includes('not a git repository')) {
+      return false;
+    }
+    throw Error(err.stderr);
+  }
+}
+
 const initRepository = async (directory: string) =>
   await withSpinner(
     `Initialize subgraph repository`,
@@ -779,11 +816,18 @@ const initRepository = async (directory: string) =>
       if (filesystem.exists(gitDir)) {
         filesystem.remove(gitDir);
       }
-      await system.run('git init', { cwd: directory });
-      await system.run('git add --all', { cwd: directory });
-      await system.run('git commit -m "Initial commit"', {
-        cwd: directory,
-      });
+      if (await isInRepo()) {
+        await system.run('git add --all', { cwd: directory });
+        await system.run('git commit -m "Initialize subgraph"', {
+          cwd: directory,
+        });
+      } else {
+        await system.run('git init', { cwd: directory });
+        await system.run('git add --all', { cwd: directory });
+        await system.run('git commit -m "Initial commit"', {
+          cwd: directory,
+        });
+      }
       return true;
     },
   );

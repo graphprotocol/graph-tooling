@@ -3,6 +3,7 @@ import { print } from 'gluegun';
 
 const SUBGRAPH_STUDIO_URL = 'https://api.studio.thegraph.com/deploy/';
 const HOSTED_SERVICE_URL = 'https://api.thegraph.com/deploy/';
+const HOSTED_SERVICE_INDEX_NODE_URL = 'https://api.thegraph.com/index-node/graphql';
 
 export const validateNodeUrl = (node: string) => new URL(node);
 
@@ -43,4 +44,48 @@ export function chooseNodeUrl({
     allowSimpleName = true;
   }
   return { node, allowSimpleName };
+}
+
+export async function getHostedServiceSubgraphId({
+  subgraphName,
+}: {
+  subgraphName: string;
+}): Promise<{
+  subgraph: string;
+  synced: boolean;
+  health: 'healthy' | 'unhealthy' | 'failed';
+}> {
+  const response = await fetch(HOSTED_SERVICE_INDEX_NODE_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      query: /* GraphQL */ `
+        query GraphCli_getSubgraphId($subgraphName: String!) {
+          indexingStatusForCurrentVersion(subgraphName: $subgraphName) {
+            subgraph
+            synced
+            health
+          }
+        }
+      `,
+      variables: {
+        subgraphName,
+      },
+    }),
+    headers: {
+      'content-type': 'application/json',
+      'User-Agent': '@graphprotocol/graph-cli',
+    },
+  });
+
+  const { data, errors } = await response.json();
+
+  if (errors) {
+    throw new Error(errors[0].message);
+  }
+
+  if (!data.indexingStatusForCurrentVersion) {
+    throw new Error(`Subgraph "${subgraphName}" not found on the hosted service`);
+  }
+
+  return data.indexingStatusForCurrentVersion;
 }

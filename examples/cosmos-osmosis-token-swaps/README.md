@@ -1,6 +1,6 @@
 # Osmosis Token Swaps Example
 
-This example subgraph stores `TokenSwap` objects that represents token swaps made using the
+This example subgraph stores `TokenSwap` objects that represent token swaps made using the
 [GAMM](https://docs.osmosis.zone/developing/osmosis-core/modules/spec-gamm.html) (Generalized
 Automated Market Maker) in the Osmosis chain. In order to do that, an event handler is used to
 filter

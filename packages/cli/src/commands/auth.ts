@@ -1,5 +1,5 @@
-import { Args, Command, Flags, ux } from '@oclif/core';
 import { print } from 'gluegun';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import { saveDeployKey } from '../command-helpers/auth';
 import { chooseNodeUrl } from '../command-helpers/node';
 

@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Feature Request
+    url: https://github.com/graphprotocol/graph-tooling/discussions/new?category=ideas
+    about: Have an idea for a new feature? Please share it with us here.
   - name: Have a question?
     url: https://discord.gg/vtvv7FP
     about:

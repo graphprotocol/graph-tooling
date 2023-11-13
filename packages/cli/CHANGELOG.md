@@ -1,5 +1,144 @@
 # @graphprotocol/graph-cli
 
+## 0.61.0
+
+### Minor Changes
+
+- [#1491](https://github.com/graphprotocol/graph-tooling/pull/1491)
+  [`326b303`](https://github.com/graphprotocol/graph-tooling/commit/326b30340ed5d922bfde995c9ff68e0899ac4cb3)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - add etherscan api retries to
+  `graph init` wizard
+
+- [#1489](https://github.com/graphprotocol/graph-tooling/pull/1489)
+  [`031fca8`](https://github.com/graphprotocol/graph-tooling/commit/031fca87fb163a69a06653f7822f4738452a91aa)
+  Thanks [@saihaj](https://github.com/saihaj)! - Arbitrum Sepolia support
+
+- [#1493](https://github.com/graphprotocol/graph-tooling/pull/1493)
+  [`f5f974d`](https://github.com/graphprotocol/graph-tooling/commit/f5f974d63416ba845c45c50b2931c9beffcca3a1)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Fix codegen issues when using derived
+  loaders with Bytes as ID's
+
+## 0.60.0
+
+### Minor Changes
+
+- [#1474](https://github.com/graphprotocol/graph-tooling/pull/1474)
+  [`6aacb7c`](https://github.com/graphprotocol/graph-tooling/commit/6aacb7c68e72817dea642e19c03159076e42d289)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - add scroll mainnet support
+
+## 0.59.0
+
+### Minor Changes
+
+- [#1457](https://github.com/graphprotocol/graph-tooling/pull/1457)
+  [`b7dc8a5`](https://github.com/graphprotocol/graph-tooling/commit/b7dc8a5fe32d0241f2bef5f118a9e1de819b61a9)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not generate loader for interfaces
+
+### Patch Changes
+
+- [#1470](https://github.com/graphprotocol/graph-tooling/pull/1470)
+  [`4c1ca35`](https://github.com/graphprotocol/graph-tooling/commit/4c1ca35d7c5cf6ee3aae119d578978e55074f5e9)
+  Thanks [@axiomatic-aardvark](https://github.com/axiomatic-aardvark)! - Update 'test' command to
+  reflect new matchstick version
+
+- [#1458](https://github.com/graphprotocol/graph-tooling/pull/1458)
+  [`05e61d2`](https://github.com/graphprotocol/graph-tooling/commit/05e61d212caf8bdb735e8527dbbab6a0beca516d)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not init a git repo if a repo already exists
+
+- [#1462](https://github.com/graphprotocol/graph-tooling/pull/1462)
+  [`b5f28bc`](https://github.com/graphprotocol/graph-tooling/commit/b5f28bc33a43b84ce4b6fe004c553e4de5e896a6)
+  Thanks [@omahs](https://github.com/omahs)! - deprecate `--skip-wait-for-etherium` for
+  `graph local`
+
+- [#1459](https://github.com/graphprotocol/graph-tooling/pull/1459)
+  [`129d003`](https://github.com/graphprotocol/graph-tooling/commit/129d003838b9b138391835f5a03b21aa05c34e15)
+  Thanks [@pustovalov](https://github.com/pustovalov)! - fix ABI api endpoint aurora networks
+
+## 0.58.0
+
+### Minor Changes
+
+- [#1434](https://github.com/graphprotocol/graph-tooling/pull/1434)
+  [`e54883b`](https://github.com/graphprotocol/graph-tooling/commit/e54883b41997eee408d66fd2bc835c67cb3c7e40)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add data source context support in ethereum
+  manifest
+
+## 0.57.0
+
+### Minor Changes
+
+- [#1439](https://github.com/graphprotocol/graph-tooling/pull/1439)
+  [`b583097`](https://github.com/graphprotocol/graph-tooling/commit/b583097f464a478151068d96d668334602bed3ba)
+  Thanks [@saihaj](https://github.com/saihaj)! - Enable autocomplete for CLI commands. To configure
+  run
+
+  ```bash
+  graph autocomplete
+  ```
+
+  and follow the steps in the prompt.
+
+- [#1441](https://github.com/graphprotocol/graph-tooling/pull/1441)
+  [`2e656e9`](https://github.com/graphprotocol/graph-tooling/commit/2e656e9cdaaea6d87866adaa142da597fcd7ce65)
+  Thanks [@saihaj](https://github.com/saihaj)! - show suggestions when an invalid command is entered
+
+### Patch Changes
+
+- [#1439](https://github.com/graphprotocol/graph-tooling/pull/1439)
+  [`b583097`](https://github.com/graphprotocol/graph-tooling/commit/b583097f464a478151068d96d668334602bed3ba)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Added dependency
+    [`@oclif/plugin-autocomplete@^2.3.6` ↗︎](https://www.npmjs.com/package/@oclif/plugin-autocomplete/v/2.3.6)
+    (to `dependencies`)
+
+- [#1441](https://github.com/graphprotocol/graph-tooling/pull/1441)
+  [`2e656e9`](https://github.com/graphprotocol/graph-tooling/commit/2e656e9cdaaea6d87866adaa142da597fcd7ce65)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Added dependency
+    [`@oclif/plugin-not-found@^2.4.0` ↗︎](https://www.npmjs.com/package/@oclif/plugin-not-found/v/2.4.0)
+    (to `dependencies`)
+
+- [#1435](https://github.com/graphprotocol/graph-tooling/pull/1435)
+  [`f05b47c`](https://github.com/graphprotocol/graph-tooling/commit/f05b47cf64912d0c66255c9f0076f1696a708ff2)
+  Thanks [@saihaj](https://github.com/saihaj)! - update prettier
+
+- [#1433](https://github.com/graphprotocol/graph-tooling/pull/1433)
+  [`4492e4f`](https://github.com/graphprotocol/graph-tooling/commit/4492e4fdefb48407ef89df82eeef4d92bb0747e9)
+  Thanks [@saihaj](https://github.com/saihaj)! - when generating nested tuples make sure they are
+  non-nullable
+
+- [#1433](https://github.com/graphprotocol/graph-tooling/pull/1433)
+  [`4492e4f`](https://github.com/graphprotocol/graph-tooling/commit/4492e4fdefb48407ef89df82eeef4d92bb0747e9)
+  Thanks [@saihaj](https://github.com/saihaj)! - 2D arrays are valid entities
+
+## 0.56.0
+
+### Minor Changes
+
+- [#1421](https://github.com/graphprotocol/graph-tooling/pull/1421)
+  [`d4d5c90`](https://github.com/graphprotocol/graph-tooling/commit/d4d5c904bdec451001f058598527895dee0a5b4c)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - Add Scroll testnet to graph-cli
+
+- [#1392](https://github.com/graphprotocol/graph-tooling/pull/1392)
+  [`7bc5e4e`](https://github.com/graphprotocol/graph-tooling/commit/7bc5e4e5139100e26b36df607f0b847e8a0b5f96)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for polling block handlers in
+  the manifest for ethereum
+
+## 0.55.0
+
+### Minor Changes
+
+- [#1419](https://github.com/graphprotocol/graph-tooling/pull/1419)
+  [`e88ff02`](https://github.com/graphprotocol/graph-tooling/commit/e88ff02cd236f6c556afd99cecb00b6cffd738ed)
+  Thanks [@saihaj](https://github.com/saihaj)! - Introduce `--from-hosted-service` flag which will
+  make it easier to deploy subgraphs from hosted service to Studio.
+
+- [#1418](https://github.com/graphprotocol/graph-tooling/pull/1418)
+  [`38c16be`](https://github.com/graphprotocol/graph-tooling/commit/38c16be4ed865bec12a4db63b219dba058f06e72)
+  Thanks [@uF4No](https://github.com/uF4No)! - feat: adds zksync era testnet
+
 ## 0.54.0
 
 ### Minor Changes
@@ -536,7 +675,7 @@
 
 - [#1132](https://github.com/graphprotocol/graph-tooling/pull/1132)
   [`719c8f5`](https://github.com/graphprotocol/graph-tooling/commit/719c8f5e890cc2392fb15cdb318b8f55570f9419)
-  Thanks [@cmwhited](https://github.com/cmwhited)! - enable deployment of celo, avalance and
+  Thanks [@cmwhited](https://github.com/cmwhited)! - enable deployment of celo, avalanche and
   arbitrum-one in studio
 
 ## 0.42.1
@@ -602,8 +741,8 @@
   [`044cd92`](https://github.com/graphprotocol/graph-tooling/commit/044cd92d0ceb9628c7f7fbe3627a09b867710247)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
 
-  - Added dependency [`@oclif/core@2.0.7` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.0.7) (to
-    `dependencies`)
+  - Added dependency [`@oclif/core@2.0.7` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.0.7)
+    (to `dependencies`)
 
 - [#1074](https://github.com/graphprotocol/graph-tooling/pull/1074)
   [`e84d1e8`](https://github.com/graphprotocol/graph-tooling/commit/e84d1e873d9b2a8967c5fe2a85fce48b2caeb75f)
@@ -699,8 +838,8 @@
   [`4c5e452`](https://github.com/graphprotocol/graph-cli/commit/4c5e452cbc2eceb75db29019fb3b4c769c9618f4)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
 
-  - Updated dependency [`immutable@4.2.1` ↗︎](https://www.npmjs.com/package/immutable/v/4.2.1) (from
-    `3.8.2`, in `dependencies`)
+  - Updated dependency [`immutable@4.2.1` ↗︎](https://www.npmjs.com/package/immutable/v/4.2.1)
+    (from `3.8.2`, in `dependencies`)
 
 - [`d42f199`](https://github.com/graphprotocol/graph-cli/commit/d42f199502df7bac79e8cafc667d5c712f5a3599)
   Thanks [@darienmh](https://github.com/darienmh)! - fix `chapel` network etherscan URL

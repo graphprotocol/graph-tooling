@@ -62,7 +62,7 @@ export function parseCSV(csv: string): Array<string> {
 }
 
 /**
- * Adds 0x1220 to the front of a ByteArray. This can be used when an IPFS hash is stored in an Etherum Bytes32 type.
+ * Adds 0x1220 to the front of a ByteArray. This can be used when an IPFS hash is stored in an Ethereum Bytes32 type.
  * The IPFS hash will fit in a Bytes32 when 0x1220 is removed. Since 0x1220 is currently in front of every single IPFS
  * hash, this works. But it is possible in the future that IPFS will update their spec.
  * @param a - The ByteArray without 0x1220 prefixed

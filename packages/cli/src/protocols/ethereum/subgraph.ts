@@ -34,7 +34,7 @@ export default class EthereumSubgraph implements Subgraph {
   }
 
   validateDataSourceAbis(dataSource: any, path: string) {
-    // Validate that the the "source > abi" reference of all data sources
+    // Validate that the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
     const abiName = dataSource.getIn(['source', 'abi']);
     const abiNames = dataSource.getIn(['mapping', 'abis']).map((abi: any) => abi.get('name'));

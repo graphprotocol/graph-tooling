@@ -23,11 +23,15 @@ export const allowedStudioNetworks = [
   'base',
   'celo',
   'arbitrum-one',
+  'arbitrum-sepolia',
   'avalanche',
   'zksync-era',
+  'zksync-era-testnet',
   'sepolia',
   'polygon-zkevm-testnet',
   'polygon-zkevm',
+  'scroll-sepolia',
+  'scroll',
 ] as const;
 
 export const validateStudioNetwork = ({

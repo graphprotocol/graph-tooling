@@ -27,7 +27,10 @@ export namespace cosmos {
   }
 
   export class TransactionData {
-    constructor(public tx: TxResult, public block: HeaderOnlyBlock) {}
+    constructor(
+      public tx: TxResult,
+      public block: HeaderOnlyBlock,
+    ) {}
   }
 
   export class MessageData {
@@ -69,19 +72,31 @@ export namespace cosmos {
   }
 
   export class Consensus {
-    constructor(public block: u64, public app: u64) {}
+    constructor(
+      public block: u64,
+      public app: u64,
+    ) {}
   }
 
   export class Timestamp {
-    constructor(public seconds: i64, public nanos: i32) {}
+    constructor(
+      public seconds: i64,
+      public nanos: i32,
+    ) {}
   }
 
   export class BlockID {
-    constructor(public hash: Bytes, public partSetHeader: PartSetHeader) {}
+    constructor(
+      public hash: Bytes,
+      public partSetHeader: PartSetHeader,
+    ) {}
   }
 
   export class PartSetHeader {
-    constructor(public total: u32, public hash: Bytes) {}
+    constructor(
+      public total: u32,
+      public hash: Bytes,
+    ) {}
   }
 
   export class EvidenceList {
@@ -136,11 +151,17 @@ export namespace cosmos {
   }
 
   export class LightBlock {
-    constructor(public signedHeader: SignedHeader, public validatorSet: ValidatorSet) {}
+    constructor(
+      public signedHeader: SignedHeader,
+      public validatorSet: ValidatorSet,
+    ) {}
   }
 
   export class SignedHeader {
-    constructor(public header: Header, public commit: Commit) {}
+    constructor(
+      public header: Header,
+      public commit: Commit,
+    ) {}
   }
 
   export class Commit {
@@ -186,7 +207,10 @@ export namespace cosmos {
   }
 
   export class PublicKey {
-    constructor(public ed25519: Bytes, public secp256k1: Bytes) {}
+    constructor(
+      public ed25519: Bytes,
+      public secp256k1: Bytes,
+    ) {}
   }
 
   export class ResponseBeginBlock {
@@ -194,7 +218,10 @@ export namespace cosmos {
   }
 
   export class Event {
-    constructor(public eventType: string, public attributes: Array<EventAttribute>) {}
+    constructor(
+      public eventType: string,
+      public attributes: Array<EventAttribute>,
+    ) {}
 
     getAttribute(key: string): EventAttribute | null {
       for (let i = 0; i < this.attributes.length; i++) {
@@ -212,7 +239,11 @@ export namespace cosmos {
   }
 
   export class EventAttribute {
-    constructor(public key: string, public value: string, public index: bool) {}
+    constructor(
+      public key: string,
+      public value: string,
+      public index: bool,
+    ) {}
   }
 
   export class ResponseEndBlock {
@@ -224,7 +255,11 @@ export namespace cosmos {
   }
 
   export class ValidatorUpdate {
-    constructor(public address: Bytes, public pubKey: PublicKey, public power: i64) {}
+    constructor(
+      public address: Bytes,
+      public pubKey: PublicKey,
+      public power: i64,
+    ) {}
   }
 
   export class ConsensusParams {
@@ -237,7 +272,10 @@ export namespace cosmos {
   }
 
   export class BlockParams {
-    constructor(public maxBytes: i64, public maxGas: i64) {}
+    constructor(
+      public maxBytes: i64,
+      public maxGas: i64,
+    ) {}
   }
 
   export class EvidenceParams {
@@ -249,7 +287,10 @@ export namespace cosmos {
   }
 
   export class Duration {
-    constructor(public seconds: i64, public nanos: i32) {}
+    constructor(
+      public seconds: i64,
+      public nanos: i32,
+    ) {}
   }
 
   export class ValidatorParams {
@@ -271,7 +312,11 @@ export namespace cosmos {
   }
 
   export class Tx {
-    constructor(public body: TxBody, public authInfo: AuthInfo, public signatures: Array<Bytes>) {}
+    constructor(
+      public body: TxBody,
+      public authInfo: AuthInfo,
+      public signatures: Array<Bytes>,
+    ) {}
   }
 
   export class TxBody {
@@ -285,19 +330,33 @@ export namespace cosmos {
   }
 
   export class Any {
-    constructor(public typeUrl: string, public value: Bytes) {}
+    constructor(
+      public typeUrl: string,
+      public value: Bytes,
+    ) {}
   }
 
   export class AuthInfo {
-    constructor(public signerInfos: Array<SignerInfo>, public fee: Fee, public tip: Tip) {}
+    constructor(
+      public signerInfos: Array<SignerInfo>,
+      public fee: Fee,
+      public tip: Tip,
+    ) {}
   }
 
   export class SignerInfo {
-    constructor(public publicKey: Any, public modeInfo: ModeInfo, public sequence: u64) {}
+    constructor(
+      public publicKey: Any,
+      public modeInfo: ModeInfo,
+      public sequence: u64,
+    ) {}
   }
 
   export class ModeInfo {
-    constructor(public single: ModeInfoSingle, public multi: ModeInfoMulti) {}
+    constructor(
+      public single: ModeInfoSingle,
+      public multi: ModeInfoMulti,
+    ) {}
   }
 
   export class ModeInfoSingle {
@@ -312,11 +371,17 @@ export namespace cosmos {
   }
 
   export class ModeInfoMulti {
-    constructor(public bitarray: CompactBitArray, public modeInfos: Array<ModeInfo>) {}
+    constructor(
+      public bitarray: CompactBitArray,
+      public modeInfos: Array<ModeInfo>,
+    ) {}
   }
 
   export class CompactBitArray {
-    constructor(public extraBitsStored: u32, public elems: Bytes) {}
+    constructor(
+      public extraBitsStored: u32,
+      public elems: Bytes,
+    ) {}
   }
 
   export class Fee {
@@ -329,11 +394,17 @@ export namespace cosmos {
   }
 
   export class Coin {
-    constructor(public denom: string, public amount: string) {}
+    constructor(
+      public denom: string,
+      public amount: string,
+    ) {}
   }
 
   export class Tip {
-    constructor(public amount: Array<Coin>, public tipper: string) {}
+    constructor(
+      public amount: Array<Coin>,
+      public tipper: string,
+    ) {}
   }
 
   export class ResponseDeliverTx {
