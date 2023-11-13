@@ -6,7 +6,7 @@ import * as toolbox from 'gluegun';
 import immutable from 'immutable';
 import type { IPFSHTTPClient } from 'ipfs-http-client';
 import yaml from 'js-yaml';
-import { Spinner, step, withSpinner } from '../command-helpers/spinner';
+import withSpinner, { Spinner, step } from '../command-helpers/spinner';
 import debug from '../debug';
 import { applyMigrations } from '../migrations';
 import Protocol from '../protocols';
