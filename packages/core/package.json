@@ -1,10 +1,11 @@
 {
   "name": "@graphprotocol/graph-cli-core",
   "version": "0.0.1",
-  "description": "",
+  "description": "Core helpers for the Graph CLI",
   "author": "Saihajpreet Singh <saihajpreet.singh@gmail.com> (https://saihaj.dev)",
   "license": "MIT",
   "private": true,
+  "main": "src/index.ts",
   "scripts": {
     "test": "vitest"
   },
