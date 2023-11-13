@@ -12,6 +12,14 @@ const EthereumContractSource = z.object({
   startBlock: z.union([z.bigint(), z.number()]).optional(),
 });
 
+const SubstreamSource = z.object({
+  package: z.object({
+    moduleName: z.string(),
+    file: z.string(),
+    params: z.union([z.string(), z.array(z.union([z.string(), z.number()]))]).optional(),
+  }),
+});
+
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#1522-eventhandler
 const EventHandler = z.object({
   event: z
@@ -108,12 +116,21 @@ const EthereumMapping = z.object({
     ),
 });
 
-// https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#152-mapping
-const Mapping = EthereumMapping;
-
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#15-data-source
-const DataSource = z.object({
-  kind: z.string().describe('The type of data source. Possible values: ethereum/contract.'),
+const EthereumDataSource = z.object({
+  kind: z
+    .enum([
+      // https://github.com/graphprotocol/graph-node/blob/79703bad55dd905cef1aa38ba9fae6ab389746e2/chain/arweave/src/data_source.rs#L21-L22
+      'arweave',
+      // https://github.com/graphprotocol/graph-node/blob/79703bad55dd905cef1aa38ba9fae6ab389746e2/chain/cosmos/src/data_source.rs#L20-L21
+      'cosmos',
+      // https://github.com/graphprotocol/graph-node/blob/79703bad55dd905cef1aa38ba9fae6ab389746e2/chain/ethereum/src/data_source.rs#L38-L39
+      'ethereum/contract', // for backwards compatibility
+      'ethereum', // preferred
+      // https://github.com/graphprotocol/graph-node/blob/79703bad55dd905cef1aa38ba9fae6ab389746e2/chain/near/src/data_source.rs#L21-L22
+      'near',
+    ])
+    .describe('The type of data source'),
   name: z
     .string()
     .describe(
@@ -123,8 +140,40 @@ const DataSource = z.object({
     .string()
     .describe('For blockchains, this describes which network the subgraph targets'),
   source: EthereumContractSource.describe('The source data on a blockchain such as Ethereum.'),
-  mapping: Mapping.describe('The mapping that defines how to ingest the data.'),
+  mapping: EthereumMapping.describe('The mapping that defines how to ingest the data.'),
 });
+
+const SubstreamMapping = z.object({
+  kind: z
+    .literal('substreams/graph-entities')
+    .describe('Must be "ethereum/events" for Ethereum Events Mapping.'),
+  apiVersion: z
+    .string()
+    .describe(
+      'Semver string of the version of the Mappings API that will be used by the mapping script.',
+    ),
+});
+
+const SubstreamDataSource = z.object({
+  kind: z
+    .enum([
+      // https://github.com/graphprotocol/graph-node/blob/79703bad55dd905cef1aa38ba9fae6ab389746e2/chain/substreams/src/data_source.rs#L17
+      'substreams',
+    ])
+    .describe('The type of data source'),
+  name: z
+    .string()
+    .describe(
+      'The name of the source data. Will be used to generate APIs in the mapping and also for self-documentation purposes.',
+    ),
+  network: z
+    .string()
+    .describe('For blockchains, this describes which network the subgraph targets'),
+  source: SubstreamSource.describe('The source data on a blockchain such as Ethereum.'),
+  mapping: SubstreamMapping.describe('The mapping that defines how to ingest the data.'),
+});
+
+const DataSource = z.union([EthereumDataSource, SubstreamDataSource]);
 
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#17-data-source-templates
 const TemplateSource = z.object({
@@ -134,7 +183,7 @@ const TemplateSource = z.object({
     .describe(
       'The name of the source data. Will be used to generate APIs in the mapping and also for self-documentation purposes.',
     ),
-  mapping: Mapping.describe('The mapping that defines how to ingest the data.'),
+  mapping: EthereumMapping.describe('The mapping that defines how to ingest the data.'),
 });
 
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#18-graft-base
