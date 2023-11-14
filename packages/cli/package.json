@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
+    "@graphprotocol/graph-ts": "^0.31.0",
     "@oclif/core": "2.8.6",
     "@oclif/plugin-autocomplete": "^2.3.6",
     "@oclif/plugin-not-found": "^2.4.0",
