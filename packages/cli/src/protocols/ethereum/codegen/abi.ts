@@ -14,6 +14,8 @@ const doFixtureCodegen = fs.existsSync('./fixtures.yaml');
 export default class AbiCodeGenerator {
   constructor(private abi: ABI) {
     this.abi = abi;
+    // Sanitize the name of the ABI to make it a valid class name
+    this.abi.name = abi.name.replace(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/g, '_');
   }
 
   generateModuleImports() {
