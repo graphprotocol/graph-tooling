@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 patchedDependencies:
   oclif@3.8.1:
     hash: rxmtqiusuyruv7tkwux5gvotbm
@@ -49,7 +53,7 @@ importers:
   examples/arweave-blocks-transactions:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -65,7 +69,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -84,7 +88,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -103,7 +107,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -122,7 +126,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -174,7 +178,7 @@ importers:
         version: 5.0.4
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -192,7 +196,7 @@ importers:
   examples/ethereum-gravatar:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -213,7 +217,7 @@ importers:
   examples/matic-lens-protocol-posts-subgraph:
     dependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -226,7 +230,7 @@ importers:
   examples/near-blocks:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -235,7 +239,7 @@ importers:
   examples/near-receipts:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.31.0
@@ -244,7 +248,7 @@ importers:
   examples/substreams-powered-subgraph:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.60.0
+        specifier: 0.61.0
         version: link:../../packages/cli
 
   packages/cli:
@@ -310,8 +314,8 @@ importers:
         specifier: 3.14.1
         version: 3.14.1
       prettier:
-        specifier: 1.19.1
-        version: 1.19.1
+        specifier: 3.0.3
+        version: 3.0.3
       request:
         specifier: 2.88.2
         version: 2.88.2
@@ -11990,12 +11994,6 @@ packages:
       sh-syntax: 0.4.1
     dev: true
 
-  /prettier@1.19.1:
-    resolution: {integrity: sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==}
-    engines: {node: '>=4'}
-    hasBin: true
-    dev: false
-
   /prettier@2.8.2:
     resolution: {integrity: sha512-BtRV9BcncDyI2tsuS19zzhzoxD8Dh8LiCx7j7tHzrkz8GFXAexeWFdi22mjE1d16dftH2qNaytVxqiRTGlMfpw==}
     engines: {node: '>=10.13.0'}
@@ -12005,7 +12003,6 @@ packages:
     resolution: {integrity: sha512-L/4pUDMxcNa8R/EthV08Zt42WBO4h1rarVtK0K+QJG0X187OLo7l699jWw0GKuwzkPQ//jMFA/8Xm6Fh3J/DAg==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
 
   /pretty-bytes@5.6.0:
     resolution: {integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==}
@@ -14831,7 +14828,3 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false

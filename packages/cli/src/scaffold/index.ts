@@ -53,7 +53,7 @@ export default class Scaffold {
     this.spkgPath = options.spkgPath;
   }
 
-  generatePackageJson() {
+  async generatePackageJson() {
     return prettier.format(
       JSON.stringify({
         name: getSubgraphBasename(String(this.subgraphName)),
@@ -81,7 +81,7 @@ export default class Scaffold {
     );
   }
 
-  generatePackageJsonForSubstreams() {
+  async generatePackageJsonForSubstreams() {
     return prettier.format(
       JSON.stringify({
         name: getSubgraphBasename(String(this.subgraphName)),
@@ -106,7 +106,7 @@ export default class Scaffold {
     );
   }
 
-  generateManifest() {
+  async generateManifest() {
     const protocolManifest = this.protocol.getManifestScaffold();
 
     return prettier.format(
@@ -125,7 +125,7 @@ dataSources:
     );
   }
 
-  generateSchema() {
+  async generateSchema() {
     const hasEvents = this.protocol.hasEvents();
     const events = hasEvents ? abiEvents(this.abi!).toJS() : [];
 
@@ -141,7 +141,7 @@ dataSources:
     );
   }
 
-  generateTsConfig() {
+  async generateTsConfig() {
     return prettier.format(
       JSON.stringify({
         extends: '@graphprotocol/graph-ts/types/tsconfig.base.json',
@@ -157,7 +157,7 @@ dataSources:
       : undefined;
   }
 
-  generateMapping() {
+  async generateMapping() {
     const hasEvents = this.protocol.hasEvents();
     const events = hasEvents ? abiEvents(this.abi!).toJS() : [];
     const protocolMapping = this.protocol.getMappingScaffold();
@@ -173,7 +173,7 @@ dataSources:
     );
   }
 
-  generateABIs() {
+  async generateABIs() {
     return this.protocol.hasABIs()
       ? {
           [`${this.contractName}.json`]: prettier.format(JSON.stringify(this.abi?.data), {
@@ -183,31 +183,31 @@ dataSources:
       : undefined;
   }
 
-  generateTests() {
+  async generateTests() {
     const hasEvents = this.protocol.hasEvents();
     const events = hasEvents ? abiEvents(this.abi!).toJS() : [];
 
     return events.length > 0
-      ? generateTestsFiles(this.contractName, events, this.indexEvents)
+      ? await generateTestsFiles(this.contractName, events, this.indexEvents)
       : undefined;
   }
 
-  generate() {
+  async generate() {
     if (this.protocol.name === 'substreams') {
       return {
-        'subgraph.yaml': this.generateManifest(),
-        'schema.graphql': this.generateSchema(),
-        'package.json': this.generatePackageJsonForSubstreams(),
+        'subgraph.yaml': await this.generateManifest(),
+        'schema.graphql': await this.generateSchema(),
+        'package.json': await this.generatePackageJsonForSubstreams(),
       };
     }
     return {
-      'package.json': this.generatePackageJson(),
-      'subgraph.yaml': this.generateManifest(),
-      'schema.graphql': this.generateSchema(),
-      'tsconfig.json': this.generateTsConfig(),
-      src: this.generateMappings(),
-      abis: this.generateABIs(),
-      tests: this.generateTests(),
+      'package.json': await this.generatePackageJson(),
+      'subgraph.yaml': await this.generateManifest(),
+      'schema.graphql': await this.generateSchema(),
+      'tsconfig.json': await this.generateTsConfig(),
+      src: await this.generateMappings(),
+      abis: await this.generateABIs(),
+      tests: await this.generateTests(),
     };
   }
 }

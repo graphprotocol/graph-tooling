@@ -169,7 +169,7 @@ export default class TypeGenerator {
       async spinner => {
         // Generate TypeScript module from schema
         const codeGenerator = schema.codeGenerator();
-        const code = prettier.format(
+        const code = await prettier.format(
           [
             GENERATED_FILE_NOTE,
             ...codeGenerator.generateModuleImports(),
@@ -213,7 +213,7 @@ export default class TypeGenerator {
           }, immutable.List());
 
         if (!codeSegments.isEmpty()) {
-          const code = prettier.format([GENERATED_FILE_NOTE, ...codeSegments].join('\n'), {
+          const code = await prettier.format([GENERATED_FILE_NOTE, ...codeSegments].join('\n'), {
             parser: 'typescript',
           });
 
