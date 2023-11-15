@@ -22,7 +22,7 @@ jobs:
       - name: Setup environment
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 16
+          nodeVersion: 20
           packageManager: pnpm
       - name: Set variables
         id: vars
