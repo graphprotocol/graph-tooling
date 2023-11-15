@@ -1,5 +1,6 @@
 import immutable from 'immutable';
-import { fetch } from '@whatwg-node/fetch';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import fetch from '../fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
 
@@ -87,6 +88,7 @@ export const fetchTransactionByHashFromRPC = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...GRAPH_CLI_SHARED_HEADERS,
       },
       body: JSON.stringify({
         jsonrpc: '2.0',

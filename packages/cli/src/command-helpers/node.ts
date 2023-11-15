@@ -1,5 +1,6 @@
 import { URL } from 'url';
 import { print } from 'gluegun';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 
 const SUBGRAPH_STUDIO_URL = 'https://api.studio.thegraph.com/deploy/';
 const HOSTED_SERVICE_URL = 'https://api.thegraph.com/deploy/';
@@ -73,7 +74,7 @@ export async function getHostedServiceSubgraphId({
     }),
     headers: {
       'content-type': 'application/json',
-      'User-Agent': '@graphprotocol/graph-cli',
+      ...GRAPH_CLI_SHARED_HEADERS,
     },
   });
 

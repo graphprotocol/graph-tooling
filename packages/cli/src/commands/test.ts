@@ -6,7 +6,8 @@ import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
 import semver from 'semver';
 import { Args, Command, Flags } from '@oclif/core';
-import { fetch } from '@whatwg-node/fetch';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import fetch from '../fetch';
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
@@ -94,7 +95,7 @@ export default class TestCommand extends Command {
         'https://api.github.com/repos/LimeChain/matchstick/releases/latest',
         {
           headers: {
-            'User-Agent': '@graphprotocol/graph-cli',
+            ...GRAPH_CLI_SHARED_HEADERS,
           },
         },
       );

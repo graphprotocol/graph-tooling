@@ -2,6 +2,7 @@ import { URL } from 'url';
 import * as toolbox from 'gluegun';
 import { create } from 'ipfs-http-client';
 import Compiler from '../compiler';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 import Protocol from '../protocols';
 
 interface CreateCompilerOptions {
@@ -54,7 +55,13 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
 
   // Connect to the IPFS node (if a node address was provided)
   const ipfsClient = ipfs
-    ? create({ url: appendApiVersionForGraph(ipfs.toString()), headers })
+    ? create({
+        url: appendApiVersionForGraph(ipfs.toString()),
+        headers: {
+          ...headers,
+          ...GRAPH_CLI_SHARED_HEADERS,
+        },
+      })
     : undefined;
 
   return new Compiler({
