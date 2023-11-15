@@ -1,5 +1,59 @@
 # @graphprotocol/graph-cli
 
+## 0.61.0
+
+### Minor Changes
+
+- [#1491](https://github.com/graphprotocol/graph-tooling/pull/1491)
+  [`326b303`](https://github.com/graphprotocol/graph-tooling/commit/326b30340ed5d922bfde995c9ff68e0899ac4cb3)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - add etherscan api retries to
+  `graph init` wizard
+
+- [#1489](https://github.com/graphprotocol/graph-tooling/pull/1489)
+  [`031fca8`](https://github.com/graphprotocol/graph-tooling/commit/031fca87fb163a69a06653f7822f4738452a91aa)
+  Thanks [@saihaj](https://github.com/saihaj)! - Arbitrum Sepolia support
+
+- [#1493](https://github.com/graphprotocol/graph-tooling/pull/1493)
+  [`f5f974d`](https://github.com/graphprotocol/graph-tooling/commit/f5f974d63416ba845c45c50b2931c9beffcca3a1)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Fix codegen issues when using derived
+  loaders with Bytes as ID's
+
+## 0.60.0
+
+### Minor Changes
+
+- [#1474](https://github.com/graphprotocol/graph-tooling/pull/1474)
+  [`6aacb7c`](https://github.com/graphprotocol/graph-tooling/commit/6aacb7c68e72817dea642e19c03159076e42d289)
+  Thanks [@pranavdaa](https://github.com/pranavdaa)! - add scroll mainnet support
+
+## 0.59.0
+
+### Minor Changes
+
+- [#1457](https://github.com/graphprotocol/graph-tooling/pull/1457)
+  [`b7dc8a5`](https://github.com/graphprotocol/graph-tooling/commit/b7dc8a5fe32d0241f2bef5f118a9e1de819b61a9)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not generate loader for interfaces
+
+### Patch Changes
+
+- [#1470](https://github.com/graphprotocol/graph-tooling/pull/1470)
+  [`4c1ca35`](https://github.com/graphprotocol/graph-tooling/commit/4c1ca35d7c5cf6ee3aae119d578978e55074f5e9)
+  Thanks [@axiomatic-aardvark](https://github.com/axiomatic-aardvark)! - Update 'test' command to
+  reflect new matchstick version
+
+- [#1458](https://github.com/graphprotocol/graph-tooling/pull/1458)
+  [`05e61d2`](https://github.com/graphprotocol/graph-tooling/commit/05e61d212caf8bdb735e8527dbbab6a0beca516d)
+  Thanks [@saihaj](https://github.com/saihaj)! - do not init a git repo if a repo already exists
+
+- [#1462](https://github.com/graphprotocol/graph-tooling/pull/1462)
+  [`b5f28bc`](https://github.com/graphprotocol/graph-tooling/commit/b5f28bc33a43b84ce4b6fe004c553e4de5e896a6)
+  Thanks [@omahs](https://github.com/omahs)! - deprecate `--skip-wait-for-etherium` for
+  `graph local`
+
+- [#1459](https://github.com/graphprotocol/graph-tooling/pull/1459)
+  [`129d003`](https://github.com/graphprotocol/graph-tooling/commit/129d003838b9b138391835f5a03b21aa05c34e15)
+  Thanks [@pustovalov](https://github.com/pustovalov)! - fix ABI api endpoint aurora networks
+
 ## 0.58.0
 
 ### Minor Changes
@@ -621,7 +675,7 @@
 
 - [#1132](https://github.com/graphprotocol/graph-tooling/pull/1132)
   [`719c8f5`](https://github.com/graphprotocol/graph-tooling/commit/719c8f5e890cc2392fb15cdb318b8f55570f9419)
-  Thanks [@cmwhited](https://github.com/cmwhited)! - enable deployment of celo, avalance and
+  Thanks [@cmwhited](https://github.com/cmwhited)! - enable deployment of celo, avalanche and
   arbitrum-one in studio
 
 ## 0.42.1

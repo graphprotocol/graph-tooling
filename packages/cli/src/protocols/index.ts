@@ -100,6 +100,7 @@ export default class Protocol {
         'mbase',
         'arbitrum-one',
         'arbitrum-goerli',
+        'arbitrum-sepolia',
         'optimism',
         'optimism-goerli',
         'aurora',
@@ -112,6 +113,7 @@ export default class Protocol {
         'polygon-zkevm-testnet',
         'polygon-zkevm',
         'scroll-sepolia',
+        'scroll',
       ],
       near: ['near-mainnet', 'near-testnet'],
       cosmos: [

@@ -537,6 +537,90 @@ describe('Schema code generator', () => {
     });
   });
 
+  test('get related method for WithBytes entity', () => {
+    const codegen = createSchemaCodeGen(`
+      type WithBytes @entity {
+        id: Bytes!
+        related: [RelatedBytes!]! @derivedFrom(field: "related")
+      }
+      
+      type RelatedBytes @entity {
+        id: ID!
+        related: WithBytes!
+      }
+    `);
+
+    const generatedTypes = codegen.generateTypes();
+
+    testEntity(generatedTypes, {
+      name: 'WithBytes',
+      members: [],
+      methods: [
+        {
+          name: 'constructor',
+          params: [new Param('id', new NamedType('Bytes'))],
+          returnType: undefined,
+          body: `
+          super()
+          this.set('id', Value.fromBytes(id));`,
+        },
+        {
+          name: 'save',
+          params: [],
+          returnType: new NamedType('void'),
+          body: `
+            let id = this.get('id');
+            assert(id != null, 'Cannot save WithBytes entity without an ID');
+            if (id) {
+              assert(id.kind == ValueKind.BYTES, \`Entities of type WithBytes must have an ID of type Bytes but the id '\${id.displayData()}' is of type \${id.displayKind()}\`);
+              store.set('WithBytes', id.toBytes().toHexString(), this);
+            }
+          `,
+        },
+
+        {
+          name: 'load',
+          static: true,
+          params: [new Param('id', new NamedType('Bytes'))],
+          returnType: new NullableType(new NamedType('WithBytes')),
+          body: `return changetype<WithBytes | null>(store.get('WithBytes', id.toHexString()));`,
+        },
+        {
+          name: 'loadInBlock',
+          static: true,
+          params: [new Param('id', new NamedType('Bytes'))],
+          returnType: new NullableType(new NamedType('WithBytes')),
+          body: `return changetype<WithBytes | null>(store.get_in_block('WithBytes', id.toHexString()));`,
+        },
+        {
+          name: 'get id',
+          params: [],
+          returnType: new NamedType('Bytes'),
+          body: `let value = this.get("id")
+          if (!value || value.kind == ValueKind.NULL) {
+            throw new Error("Cannot return null for a required field.")
+          } else {
+            return value.toBytes()
+          }
+          `,
+        },
+        {
+          name: 'set id',
+          params: [new Param('value', new NamedType('Bytes'))],
+          returnType: undefined,
+          body: `this.set('id', Value.fromBytes(value));`,
+        },
+        {
+          name: 'get related',
+          params: [],
+          returnType: new NamedType('RelatedBytesLoader'),
+          body: `return new RelatedBytesLoader('WithBytes', this.get('id')!.toBytes().toHexString(), 'related');`,
+        },
+        // Add any additional getters and setters for other fields if necessary
+      ],
+    });
+  });
+
   test('no derived loader for interface', () => {
     const codegen = createSchemaCodeGen(`
     interface IExample {
