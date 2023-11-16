@@ -15,6 +15,7 @@ import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { withSpinner } from '../command-helpers/spinner';
 import { validateStudioNetwork } from '../command-helpers/studio';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
+import debugFactory from '../debug';
 import Protocol, { ProtocolName } from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import { abiEvents } from '../scaffold/schema';
@@ -25,6 +26,8 @@ const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
 
 const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
+
+const initDebugger = debugFactory('graph-cli:commands:init');
 
 export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';
@@ -115,24 +118,27 @@ export default class InitCommand extends Command {
   async run() {
     const {
       args: { subgraphName, directory },
-      flags: {
-        protocol,
-        product,
-        studio,
-        node: nodeFlag,
-        'allow-simple-name': allowSimpleNameFlag,
-        'from-contract': fromContract,
-        'contract-name': contractName,
-        'from-example': fromExample,
-        'index-events': indexEvents,
-        'skip-install': skipInstall,
-        network,
-        abi: abiPath,
-        'start-block': startBlock,
-        spkg: spkgPath,
-      },
+      flags,
     } = await this.parse(InitCommand);
 
+    const {
+      protocol,
+      product,
+      studio,
+      node: nodeFlag,
+      'allow-simple-name': allowSimpleNameFlag,
+      'from-contract': fromContract,
+      'contract-name': contractName,
+      'from-example': fromExample,
+      'index-events': indexEvents,
+      'skip-install': skipInstall,
+      network,
+      abi: abiPath,
+      'start-block': startBlock,
+      spkg: spkgPath,
+    } = flags;
+
+    initDebugger('Flags: %O', flags);
     let { node, allowSimpleName } = chooseNodeUrl({
       product,
       // if we are loading example, we want to ensure we are using studio
@@ -480,10 +486,19 @@ async function processInitForm(
       message: 'Protocol',
       choices: protocolChoices,
       skip: protocolChoices.includes(String(initProtocol) as ProtocolName),
+      result: value => {
+        if (initProtocol) {
+          initDebugger.extend('processInitForm')('initProtocol: %O', initProtocol);
+          return initProtocol;
+        }
+        initDebugger.extend('processInitForm')('protocol: %O', value);
+        return value;
+      },
     });
 
     const protocolInstance = new Protocol(protocol);
     const isSubstreams = protocol === 'substreams';
+    initDebugger.extend('processInitForm')('isSubstreams: %O', isSubstreams);
 
     const { product } = await prompt.ask<{
       product: 'subgraph-studio' | 'hosted-service';
@@ -563,9 +578,13 @@ async function processInitForm(
         choices: availableNetworks
           .get(protocol as ProtocolName) // Get networks related to the chosen protocol.
           ?.toArray() || ['mainnet'],
-        skip: initFromExample !== undefined,
+        skip: initNetwork !== undefined,
         result: value => {
-          if (initNetwork) return initNetwork;
+          if (initNetwork) {
+            initDebugger.extend('processInitForm')('initNetwork: %O', initNetwork);
+            return initNetwork;
+          }
+          initDebugger.extend('processInitForm')('network: %O', value);
           return value;
         },
       },
