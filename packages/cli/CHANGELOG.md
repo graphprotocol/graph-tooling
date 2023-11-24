@@ -1,5 +1,42 @@
 # @graphprotocol/graph-cli
 
+## 0.62.0
+
+### Minor Changes
+
+- [#1500](https://github.com/graphprotocol/graph-tooling/pull/1500)
+  [`4b92a5e`](https://github.com/graphprotocol/graph-tooling/commit/4b92a5ef87661a39021d5945a427d32d3a2873b2)
+  Thanks [@saihaj](https://github.com/saihaj)! - upgrade to Node 20
+
+### Patch Changes
+
+- [#1461](https://github.com/graphprotocol/graph-tooling/pull/1461)
+  [`cbbb0fc`](https://github.com/graphprotocol/graph-tooling/commit/cbbb0fc2050019c705f25f59a2bbb6a8ff9b7c32)
+  Thanks [@saihaj](https://github.com/saihaj)! - include user agent for CLI fetch calls
+
+- [#1508](https://github.com/graphprotocol/graph-tooling/pull/1508)
+  [`f5ffcf1`](https://github.com/graphprotocol/graph-tooling/commit/f5ffcf12bf9241c948b8d0b0d023416f66b68d7f)
+  Thanks [@saihaj](https://github.com/saihaj)! - respect `--protocol` and `--network` provided from
+  flags of `graph init`
+
+- [#1461](https://github.com/graphprotocol/graph-tooling/pull/1461)
+  [`cbbb0fc`](https://github.com/graphprotocol/graph-tooling/commit/cbbb0fc2050019c705f25f59a2bbb6a8ff9b7c32)
+  Thanks [@saihaj](https://github.com/saihaj)! - send graph cli version as user agent for all third
+  party API calls
+
+- [#1461](https://github.com/graphprotocol/graph-tooling/pull/1461)
+  [`cbbb0fc`](https://github.com/graphprotocol/graph-tooling/commit/cbbb0fc2050019c705f25f59a2bbb6a8ff9b7c32)
+  Thanks [@saihaj](https://github.com/saihaj)! - send graph cli version as user agent for all ipfs
+  requests
+
+- [#1503](https://github.com/graphprotocol/graph-tooling/pull/1503)
+  [`4fa0ace`](https://github.com/graphprotocol/graph-tooling/commit/4fa0ace140b5d03cae9419c8b9eba529bb33cb41)
+  Thanks [@saihaj](https://github.com/saihaj)! - sanitize special characters in codegeneration
+
+- [#1504](https://github.com/graphprotocol/graph-tooling/pull/1504)
+  [`8b509ec`](https://github.com/graphprotocol/graph-tooling/commit/8b509ecd6d7cc28888eb054c03ae7de56ba8c288)
+  Thanks [@saihaj](https://github.com/saihaj)! - dedupe imports in codegen
+
 ## 0.61.0
 
 ### Minor Changes
