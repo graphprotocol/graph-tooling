@@ -244,8 +244,6 @@ export default class InitCommand extends Command {
           subgraphName,
           contractName,
           node,
-          studio,
-          product,
           startBlock,
           spkgPath,
           skipInstall,
@@ -321,8 +319,6 @@ export default class InitCommand extends Command {
           indexEvents: answers.indexEvents,
           contractName: answers.contractName,
           node,
-          studio: answers.studio,
-          product: answers.product,
           startBlock: answers.startBlock,
           spkgPath: answers.spkgPath,
           skipInstall,
@@ -1073,8 +1069,6 @@ async function initSubgraphFromContract(
     indexEvents,
     contractName,
     node,
-    studio,
-    product,
     startBlock,
     spkgPath,
     skipInstall,
@@ -1089,8 +1083,6 @@ async function initSubgraphFromContract(
     indexEvents: boolean;
     contractName?: string;
     node?: string;
-    studio: boolean;
-    product?: string;
     startBlock?: string;
     spkgPath?: string;
     skipInstall: boolean;
