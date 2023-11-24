@@ -13,7 +13,6 @@ import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { withSpinner } from '../command-helpers/spinner';
-import { validateStudioNetwork } from '../command-helpers/studio';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
 import debugFactory from '../debug';
 import Protocol, { ProtocolName } from '../protocols';
@@ -1130,15 +1129,6 @@ async function initSubgraphFromContract(
   ) {
     // Fail if the ABI does not contain any events
     this.error(`ABI does not contain any events`, { exit: 1 });
-  }
-
-  // We can validate this before the scaffold because we receive
-  // the network from the form or via command line argument.
-  // We don't need to read the manifest in this case.
-  try {
-    validateStudioNetwork({ studio, product, network });
-  } catch (e) {
-    this.error(e, { exit: 1 });
   }
 
   // Scaffold subgraph
