@@ -77,6 +77,7 @@ describe.concurrent('Schema code generator', () => {
 
         # New scalars
         int8: Int8!
+        timestamp: Timestamp!
       }
 
       type Wallet @entity {
@@ -285,6 +286,26 @@ describe.concurrent('Schema code generator', () => {
             returnType: undefined,
             body: `
               this.set('int8', Value.fromI64(value))
+            `,
+          },
+          {
+            name: 'get timestamp',
+            params: [],
+            returnType: new NamedType('i64'),
+            body: `let value = this.get('timestamp')
+            if (!value || value.kind == ValueKind.NULL) {
+              return 0
+            } else {
+              return value.toI64()
+            }
+            `,
+          },
+          {
+            name: 'set timestamp',
+            params: [new Param('value', new NamedType('i64'))],
+            returnType: undefined,
+            body: `
+              this.set('timestamp', Value.fromI64(value))
             `,
           },
           {

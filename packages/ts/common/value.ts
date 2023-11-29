@@ -15,6 +15,7 @@ export enum ValueKind {
   BYTES = 6,
   BIGINT = 7,
   INT8 = 8,
+  TIMESTAMP = 9,
 }
 
 const VALUE_KIND_NAMES = [
@@ -27,6 +28,7 @@ const VALUE_KIND_NAMES = [
   'Bytes',
   'BigInt',
   'Int8',
+  'Timestamp',
 ];
 
 /**
@@ -274,6 +276,7 @@ export class Value {
       case ValueKind.INT:
         return this.toI32().toString();
       case ValueKind.INT8:
+      case ValueKind.TIMESTAMP:
         return this.toI64().toString();
       case ValueKind.BIGDECIMAL:
         return this.toBigDecimal().toString();

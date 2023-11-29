@@ -18,6 +18,7 @@ const BUILTIN_SCALAR_TYPES = [
   'Bytes',
   'ID',
   'Int8',
+  'Timestamp',
 ];
 
 // Type suggestions for common mistakes
@@ -39,6 +40,8 @@ const TYPE_SUGGESTIONS = [
   ['Float', 'BigDecimal'],
   ['int', 'Int'],
   ['int8', 'Int8'],
+  ['timestamp', 'Timestamp'],
+  ['ts', 'Timestamp'],
   ['uint', 'BigInt'],
   ['owner', 'String'],
   ['Owner', 'String'],
