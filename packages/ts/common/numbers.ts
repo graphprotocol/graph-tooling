@@ -438,3 +438,13 @@ export class BigDecimal {
     return diff.digits > BigInt.fromI32(0) ? 1 : -1;
   }
 }
+
+/** A type representing Starknet's field element type. */
+export class Felt extends Bytes {
+  /**
+   * Modifies and transforms the object IN-PLACE into `BigInt`.
+   */
+  intoBigInt(): BigInt {
+    return BigInt.fromUnsignedBytes(changetype<ByteArray>(this.reverse()));
+  }
+}
