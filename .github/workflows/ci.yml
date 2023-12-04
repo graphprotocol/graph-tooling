@@ -19,7 +19,7 @@ jobs:
         name: Setup Env
         with:
           nodeVersion: 20
-          packageManager: pnpm@8
+          packageManager: pnpm
 
       - name: Lint
         run: pnpm lint
@@ -40,7 +40,7 @@ jobs:
         name: Setup Env
         with:
           nodeVersion: 20
-          packageManager: pnpm@8
+          packageManager: pnpm
 
       - name: Setup git user information
         run: |
@@ -69,7 +69,7 @@ jobs:
         name: Setup Env
         with:
           nodeVersion: 20
-          packageManager: pnpm@8
+          packageManager: pnpm
 
       - name: Build Packages
         run: pnpm build
@@ -96,7 +96,7 @@ jobs:
         name: Setup Env
         with:
           nodeVersion: 20
-          packageManager: pnpm@8
+          packageManager: pnpm
 
       - name: Build Packages
         run: pnpm build # will also check types

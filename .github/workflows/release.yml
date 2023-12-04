@@ -23,7 +23,7 @@ jobs:
         uses: the-guild-org/shared-config/setup@main
         with:
           nodeVersion: 20
-          packageManager: pnpm@8
+          packageManager: pnpm
       - name: Set variables
         id: vars
         run: |
