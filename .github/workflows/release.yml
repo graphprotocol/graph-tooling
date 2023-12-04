@@ -20,10 +20,12 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup environment
-        uses: the-guild-org/shared-config/setup@main
+        uses: the-guild-org/shared-config/setup@saihaj/311
         with:
           nodeVersion: 20
           packageManager: pnpm
+          packageManagerVersion: 8.10.4
+
       - name: Set variables
         id: vars
         run: |

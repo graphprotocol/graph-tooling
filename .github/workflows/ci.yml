@@ -15,11 +15,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: the-guild-org/shared-config/setup@saihaj/311
         name: Setup Env
         with:
           nodeVersion: 20
           packageManager: pnpm
+          packageManagerVersion: 8.10.4
 
       - name: Lint
         run: pnpm lint
@@ -36,11 +37,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: the-guild-org/shared-config/setup@saihaj/311
         name: Setup Env
         with:
           nodeVersion: 20
           packageManager: pnpm
+          packageManagerVersion: 8.10.4
 
       - name: Setup git user information
         run: |
@@ -65,11 +67,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: the-guild-org/shared-config/setup@saihaj/311
         name: Setup Env
         with:
           nodeVersion: 20
           packageManager: pnpm
+          packageManagerVersion: 8.10.4
 
       - name: Build Packages
         run: pnpm build
@@ -92,11 +95,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: the-guild-org/shared-config/setup@saihaj/311
         name: Setup Env
         with:
           nodeVersion: 20
           packageManager: pnpm
+          packageManagerVersion: 8.10.4
 
       - name: Build Packages
         run: pnpm build # will also check types
