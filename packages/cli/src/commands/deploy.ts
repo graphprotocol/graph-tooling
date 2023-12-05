@@ -10,7 +10,6 @@ import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc';
 import { updateSubgraphNetwork } from '../command-helpers/network';
 import { chooseNodeUrl, getHostedServiceSubgraphId } from '../command-helpers/node';
-import { validateStudioNetwork } from '../command-helpers/studio';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 import Protocol from '../protocols';
@@ -410,28 +409,8 @@ export default class DeployCommand extends Command {
 
       await ipfsClient.pin.add(ipfsHash);
 
-      try {
-        const dataSourcesAndTemplates = DataSourcesExtractor.fromManifestString(manifestFile);
-
-        for (const { network } of dataSourcesAndTemplates) {
-          validateStudioNetwork({ studio, product, network });
-        }
-      } catch (e) {
-        this.error(e, { exit: 1 });
-      }
-
       await deploySubgraph(ipfsHash);
       return;
-    }
-
-    try {
-      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
-
-      for (const { network } of dataSourcesAndTemplates) {
-        validateStudioNetwork({ studio, product, network });
-      }
-    } catch (e) {
-      this.error(e, { exit: 1 });
     }
 
     let protocol;
