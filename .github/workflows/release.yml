@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup environment
-        uses: the-guild-org/shared-config/setup@saihaj/311
+        uses: the-guild-org/shared-config/setup@main
         with:
           nodeVersion: 20
           packageManager: pnpm
