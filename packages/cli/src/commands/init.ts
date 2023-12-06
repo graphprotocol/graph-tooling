@@ -86,6 +86,10 @@ export default class InitCommand extends Command {
       summary: 'Skip installing dependencies.',
       default: false,
     }),
+    'skip-git': Flags.boolean({
+      summary: 'Skip initializing a Git repository.',
+      default: false,
+    }),
     'start-block': Flags.string({
       helpGroup: 'Scaffold from contract',
       description: 'Block number to start indexing from.',
@@ -131,6 +135,7 @@ export default class InitCommand extends Command {
       'from-example': fromExample,
       'index-events': indexEvents,
       'skip-install': skipInstall,
+      'skip-git': skipGit,
       network,
       abi: abiPath,
       'start-block': startBlock,
@@ -186,6 +191,7 @@ export default class InitCommand extends Command {
           directory,
           subgraphName,
           skipInstall,
+          skipGit,
         },
         { commands },
       );
@@ -247,6 +253,7 @@ export default class InitCommand extends Command {
           startBlock,
           spkgPath,
           skipInstall,
+          skipGit,
         },
         { commands, addContract: false },
       );
@@ -273,6 +280,7 @@ export default class InitCommand extends Command {
           subgraphName: answers.subgraphName,
           directory: answers.directory,
           skipInstall,
+          skipGit,
         },
         { commands },
       );
@@ -322,6 +330,7 @@ export default class InitCommand extends Command {
           startBlock: answers.startBlock,
           spkgPath: answers.spkgPath,
           skipInstall,
+          skipGit,
         },
         { commands, addContract: true },
       );
@@ -919,12 +928,14 @@ async function initSubgraphFromExample(
     subgraphName,
     directory,
     skipInstall,
+    skipGit,
   }: {
     fromExample: string | boolean;
     allowSimpleName?: boolean;
     subgraphName: string;
     directory: string;
     skipInstall: boolean;
+    skipGit: boolean;
   },
   {
     commands,
@@ -1031,10 +1042,12 @@ async function initSubgraphFromExample(
   }
 
   // Initialize a fresh Git repository
-  const repo = await initRepository(directory);
-  if (repo !== true) {
-    this.exit(1);
-    return;
+  if (!skipGit) {
+    const repo = await initRepository(directory);
+    if (repo !== true) {
+      this.exit(1);
+      return;
+    }
   }
 
   // Install dependencies
@@ -1072,6 +1085,7 @@ async function initSubgraphFromContract(
     startBlock,
     spkgPath,
     skipInstall,
+    skipGit,
   }: {
     protocolInstance: Protocol;
     allowSimpleName: boolean | undefined;
@@ -1086,6 +1100,7 @@ async function initSubgraphFromContract(
     startBlock?: string;
     spkgPath?: string;
     skipInstall: boolean;
+    skipGit: boolean;
   },
   {
     commands,
@@ -1163,10 +1178,12 @@ async function initSubgraphFromContract(
   }
 
   // Initialize a fresh Git repository
-  const repo = await initRepository(directory);
-  if (repo !== true) {
-    this.exit(1);
-    return;
+  if (!skipGit) {
+    const repo = await initRepository(directory);
+    if (repo !== true) {
+      this.exit(1);
+      return;
+    }
   }
 
   if (!skipInstall) {
