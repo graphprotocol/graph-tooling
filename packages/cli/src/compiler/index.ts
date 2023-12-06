@@ -673,7 +673,7 @@ export default class Compiler {
         }
 
         // Upload all mappings
-        if (this.protocol.name === 'substreams') {
+        if (this.protocol.name === 'substreams' || this.protocol.name === 'substreams/triggers') {
           for (const [i, dataSource] of subgraph.get('dataSources').entries()) {
             updates.push({
               keyPath: ['dataSources', i, 'source', 'package', 'file'],
