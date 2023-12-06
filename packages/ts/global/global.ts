@@ -2,6 +2,7 @@ import { arweave } from '../chain/arweave';
 import { cosmos } from '../chain/cosmos';
 import { ethereum } from '../chain/ethereum';
 import { near } from '../chain/near';
+import { starknet } from '../chain/starknet';
 import { Bytes, Entity, Result, TypedMap, TypedMapEntry, Wrapped } from '../common/collections';
 import { BigDecimal } from '../common/numbers';
 import { JSONValue, Value } from '../common/value';
@@ -230,7 +231,23 @@ export enum TypeId {
   ```
   */
 
-  // Reserved discriminant space for a future blockchain type IDs: [3,500, 4,499]
+  // Reserved discriminant space for Starknet type IDs: [3,500, 4,499]
+  StarknetBlock = 3500,
+  StarknetTransaction = 3501,
+  StarknetTransactionTypeEnum = 3502,
+  StarknetEvent = 3503,
+  StarknetArrayBytes = 3504,
+  /*
+  Continue to add more Starknet type IDs here. e.g.:
+  ```
+  NextStarknetType = 3505,
+  AnotherStarknetType = 3506,
+  ...
+  LastStarknetType = 4499,
+  ```
+  */
+
+  // Reserved discriminant space for a future blockchain type IDs: [4,500, 5,499]
 }
 
 export function id_of_type(typeId: TypeId): usize {
@@ -563,6 +580,19 @@ export function id_of_type(typeId: TypeId): usize {
       return idof<Array<arweave.Transaction>>();
     case TypeId.ArweaveTransactionWithBlockPtr:
       return idof<arweave.TransactionWithBlockPtr>();
+    /**
+     * Starknet type ids
+     */
+    case TypeId.StarknetBlock:
+      return idof<starknet.Block>();
+    case TypeId.StarknetTransaction:
+      return idof<starknet.Transaction>();
+    case TypeId.StarknetTransactionTypeEnum:
+      return idof<Array<starknet.TransactionType>>();
+    case TypeId.StarknetEvent:
+      return idof<starknet.Event>();
+    case TypeId.StarknetArrayBytes:
+      return idof<Array<Bytes>>();
     default:
       return 0;
   }
