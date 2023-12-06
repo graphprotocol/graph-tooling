@@ -2,6 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { filesystem, prompt, system } from 'gluegun';
+import * as toolbox from 'gluegun';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
@@ -12,8 +13,8 @@ import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { withSpinner } from '../command-helpers/spinner';
-import { validateStudioNetwork } from '../command-helpers/studio';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
+import debugFactory from '../debug';
 import Protocol, { ProtocolName } from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import { abiEvents } from '../scaffold/schema';
@@ -24,6 +25,8 @@ const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
 
 const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
+
+const initDebugger = debugFactory('graph-cli:commands:init');
 
 export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';
@@ -114,24 +117,27 @@ export default class InitCommand extends Command {
   async run() {
     const {
       args: { subgraphName, directory },
-      flags: {
-        protocol,
-        product,
-        studio,
-        node: nodeFlag,
-        'allow-simple-name': allowSimpleNameFlag,
-        'from-contract': fromContract,
-        'contract-name': contractName,
-        'from-example': fromExample,
-        'index-events': indexEvents,
-        'skip-install': skipInstall,
-        network,
-        abi: abiPath,
-        'start-block': startBlock,
-        spkg: spkgPath,
-      },
+      flags,
     } = await this.parse(InitCommand);
 
+    const {
+      protocol,
+      product,
+      studio,
+      node: nodeFlag,
+      'allow-simple-name': allowSimpleNameFlag,
+      'from-contract': fromContract,
+      'contract-name': contractName,
+      'from-example': fromExample,
+      'index-events': indexEvents,
+      'skip-install': skipInstall,
+      network,
+      abi: abiPath,
+      'start-block': startBlock,
+      spkg: spkgPath,
+    } = flags;
+
+    initDebugger('Flags: %O', flags);
     let { node, allowSimpleName } = chooseNodeUrl({
       product,
       // if we are loading example, we want to ensure we are using studio
@@ -238,8 +244,6 @@ export default class InitCommand extends Command {
           subgraphName,
           contractName,
           node,
-          studio,
-          product,
           startBlock,
           spkgPath,
           skipInstall,
@@ -315,8 +319,6 @@ export default class InitCommand extends Command {
           indexEvents: answers.indexEvents,
           contractName: answers.contractName,
           node,
-          studio: answers.studio,
-          product: answers.product,
           startBlock: answers.startBlock,
           spkgPath: answers.spkgPath,
           skipInstall,
@@ -395,6 +397,26 @@ async function processFromExampleInitForm(
   }
 }
 
+async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined> {
+  for (;;) {
+    try {
+      return await func();
+    } catch (_) {
+      const { retry } = await toolbox.prompt.ask({
+        type: 'confirm',
+        name: 'retry',
+        message: 'Do you want to retry?',
+        initial: true,
+      });
+
+      if (!retry) {
+        break;
+      }
+    }
+  }
+  return undefined;
+}
+
 async function processInitForm(
   this: InitCommand,
   {
@@ -459,10 +481,19 @@ async function processInitForm(
       message: 'Protocol',
       choices: protocolChoices,
       skip: protocolChoices.includes(String(initProtocol) as ProtocolName),
+      result: value => {
+        if (initProtocol) {
+          initDebugger.extend('processInitForm')('initProtocol: %O', initProtocol);
+          return initProtocol;
+        }
+        initDebugger.extend('processInitForm')('protocol: %O', value);
+        return value;
+      },
     });
 
     const protocolInstance = new Protocol(protocol);
     const isSubstreams = protocol === 'substreams';
+    initDebugger.extend('processInitForm')('isSubstreams: %O', isSubstreams);
 
     const { product } = await prompt.ask<{
       product: 'subgraph-studio' | 'hosted-service';
@@ -542,9 +573,13 @@ async function processInitForm(
         choices: availableNetworks
           .get(protocol as ProtocolName) // Get networks related to the chosen protocol.
           ?.toArray() || ['mainnet'],
-        skip: initFromExample !== undefined,
+        skip: initNetwork !== undefined,
         result: value => {
-          if (initNetwork) return initNetwork;
+          if (initNetwork) {
+            initDebugger.extend('processInitForm')('initNetwork: %O', initNetwork);
+            return initNetwork;
+          }
+          initDebugger.extend('processInitForm')('network: %O', value);
           return value;
         },
       },
@@ -585,24 +620,24 @@ async function processInitForm(
 
           // Try loading the ABI from Etherscan, if none was provided
           if (protocolInstance.hasABIs() && !initAbi) {
-            try {
-              if (network === 'poa-core') {
-                // TODO: this variable is never used anywhere, what happens?
-                // abiFromBlockScout = await loadAbiFromBlockScout(ABI, network, value)
-              } else {
-                abiFromEtherscan = await loadAbiFromEtherscan(ABI, network, value);
-              }
-            } catch (e) {
-              // noop
+            if (network === 'poa-core') {
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromBlockScout(ABI, network, value),
+              );
+            } else {
+              abiFromEtherscan = await retryWithPrompt(() =>
+                loadAbiFromEtherscan(ABI, network, value),
+              );
             }
           }
           // If startBlock is not set, try to load it.
           if (!initStartBlock) {
-            try {
-              // Load startBlock for this contract
-              initStartBlock = Number(await loadStartBlockForContract(network, value)).toString();
-            } catch (error) {
-              // noop
+            // Load startBlock for this contract
+            const startBlock = await retryWithPrompt(() =>
+              loadStartBlockForContract(network, value),
+            );
+            if (startBlock) {
+              initStartBlock = Number(startBlock).toString();
             }
           }
           return value;
@@ -1034,8 +1069,6 @@ async function initSubgraphFromContract(
     indexEvents,
     contractName,
     node,
-    studio,
-    product,
     startBlock,
     spkgPath,
     skipInstall,
@@ -1050,8 +1083,6 @@ async function initSubgraphFromContract(
     indexEvents: boolean;
     contractName?: string;
     node?: string;
-    studio: boolean;
-    product?: string;
     startBlock?: string;
     spkgPath?: string;
     skipInstall: boolean;
@@ -1090,15 +1121,6 @@ async function initSubgraphFromContract(
   ) {
     // Fail if the ABI does not contain any events
     this.error(`ABI does not contain any events`, { exit: 1 });
-  }
-
-  // We can validate this before the scaffold because we receive
-  // the network from the form or via command line argument.
-  // We don't need to read the manifest in this case.
-  try {
-    validateStudioNetwork({ studio, product, network });
-  } catch (e) {
-    this.error(e, { exit: 1 });
   }
 
   // Scaffold subgraph

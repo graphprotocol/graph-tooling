@@ -7,7 +7,7 @@ import prettier from 'prettier';
 // @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
 import DataSourceTemplateCodeGenerator from './codegen/template';
-import { GENERATED_FILE_NOTE } from './codegen/typescript';
+import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript';
 import { displayPath } from './command-helpers/fs';
 import { Spinner, step, withSpinner } from './command-helpers/spinner';
 import debug from './debug';
@@ -190,6 +190,7 @@ export default class TypeGenerator {
   }
 
   async generateTypesForDataSourceTemplates(subgraph: immutable.Map<any, any>) {
+    const moduleImports: ModuleImports[] = [];
     return await withSpinner(
       `Generate types for data source templates`,
       `Failed to generate types for data source templates`,
@@ -200,22 +201,42 @@ export default class TypeGenerator {
           .get('templates', immutable.List())
           .reduce((codeSegments: any, template: any) => {
             step(spinner, 'Generate types for data source template', String(template.get('name')));
-
             const codeGenerator = new DataSourceTemplateCodeGenerator(template, this.protocol);
 
-            // Only generate module imports once, because they are identical for
-            // all types generated for data source templates.
-            if (codeSegments.isEmpty()) {
-              codeSegments = codeSegments.concat(codeGenerator.generateModuleImports());
-            }
+            // we want to get all the imports from the templates
+            moduleImports.push(...codeGenerator.generateModuleImports());
 
             return codeSegments.concat(codeGenerator.generateTypes());
           }, immutable.List());
 
+        // we want to dedupe the imports from the templates
+        const dedupeModulesImports = moduleImports.reduce(
+          (acc: ModuleImports[], curr: ModuleImports) => {
+            const found = acc.find(item => item.module === curr.module);
+            if (found) {
+              const foundNames = Array.isArray(found.nameOrNames)
+                ? found.nameOrNames
+                : [found.nameOrNames];
+              const currNames = Array.isArray(curr.nameOrNames)
+                ? curr.nameOrNames
+                : [curr.nameOrNames];
+              const names = new Set([...foundNames, ...currNames]);
+              found.nameOrNames = Array.from(names);
+            } else {
+              acc.push(curr);
+            }
+            return acc;
+          },
+          [],
+        );
+
         if (!codeSegments.isEmpty()) {
-          const code = prettier.format([GENERATED_FILE_NOTE, ...codeSegments].join('\n'), {
-            parser: 'typescript',
-          });
+          const code = prettier.format(
+            [GENERATED_FILE_NOTE, ...dedupeModulesImports, ...codeSegments].join('\n'),
+            {
+              parser: 'typescript',
+            },
+          );
 
           const outputFile = path.join(this.options.outputDir, 'templates.ts');
           step(spinner, `Write types for templates to`, displayPath(outputFile));

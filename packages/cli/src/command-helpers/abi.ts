@@ -1,5 +1,6 @@
 import immutable from 'immutable';
-import { fetch } from '@whatwg-node/fetch';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import fetch from '../fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
 
@@ -72,8 +73,7 @@ export const fetchContractCreationHashWithRetry = async (
       /* empty */
     }
   }
-  throw new Error(`Failed to fetch contract creation transaction hash
-  `);
+  throw new Error(`Failed to fetch contract creation transaction hash`);
 };
 
 export const fetchTransactionByHashFromRPC = async (
@@ -88,6 +88,7 @@ export const fetchTransactionByHashFromRPC = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...GRAPH_CLI_SHARED_HEADERS,
       },
       body: JSON.stringify({
         jsonrpc: '2.0',
@@ -152,6 +153,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.arbiscan.io/api`;
     case 'arbitrum-goerli':
       return `https://api-goerli.arbiscan.io/api`;
+    case 'arbitrum-sepolia':
+      return `https://api-sepolia.arbiscan.io/api`;
     case 'bsc':
       return `https://api.bscscan.com/api`;
     case 'base-testnet':
@@ -216,6 +219,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://goerli-rollup.arbitrum.io/rpc';
     case 'arbitrum-one':
       return 'https://arb1.arbitrum.io/rpc';
+    case 'arbitrum-sepolia':
+      return `https://sepolia-rollup.arbitrum.io/rpc`;
     case 'aurora':
       return 'https://rpc.mainnet.aurora.dev';
     case 'aurora-testnet':

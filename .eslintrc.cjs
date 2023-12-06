@@ -29,7 +29,23 @@ module.exports = {
         'sonarjs/no-inverted-boolean-check': 'warn',
         // TODO: warning for now, clean up
         '@typescript-eslint/no-loss-of-precision': 'warn',
-        // AssemblyScript types are different from TS and in cases we want to use what TS may think we should not
+        // AssemblyScript types are different from TS and in cases we want to use what TS may think we should not,
+      },
+    },
+    {
+      files: ['packages/cli/**'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: ['@whatwg-node/fetch'],
+                message: 'Please use `fetch` from `./packages/cli/src/fetch.ts`.',
+              },
+            ],
+          },
+        ],
       },
     },
   ],

@@ -14,25 +14,27 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@saihaj/311
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     with:
       npmTag: alpha
       buildScript: build
-      nodeVersion: 16
+      nodeVersion: 20
       packageManager: pnpm
+      packageManagerVersion: 8.10.4
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NPM_TOKEN }}
 
   release-candidate:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@saihaj/311
     if: ${{ github.event.pull_request.title == 'Upcoming Release Changes' }}
     with:
       npmTag: rc
       buildScript: build
-      nodeVersion: 16
+      nodeVersion: 20
       packageManager: pnpm
+      packageManagerVersion: 8.10.4
       restoreDeletedChangesets: true
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}

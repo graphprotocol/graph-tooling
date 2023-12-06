@@ -383,7 +383,7 @@ export default class SchemaCodeGenerator {
       obj,
     );
 
-    const idf = IdField.fromTypeDef(obj);
+    const idf = IdField.fromTypeDef(entityDef);
     const idIsBytes = idf.typeName() == 'Bytes';
     const toValueString = idIsBytes ? '.toBytes().toHexString()' : '.toString()';
 

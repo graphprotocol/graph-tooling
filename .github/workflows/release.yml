@@ -22,8 +22,10 @@ jobs:
       - name: Setup environment
         uses: the-guild-org/shared-config/setup@main
         with:
-          nodeVersion: 16
+          nodeVersion: 20
           packageManager: pnpm
+          packageManagerVersion: 8.10.4
+
       - name: Set variables
         id: vars
         run: |
