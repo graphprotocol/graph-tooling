@@ -37,7 +37,12 @@ export default class Protocol {
   config!: ProtocolConfig;
 
   constructor(datasource: any) {
-    const name = datasource.kind;
+    /**
+     * TODO: we should improve this `any` type, because some places
+     * we can initiate a Protocol with just a string (the name) and
+     * some other places use datasource object
+     */
+    const name = typeof datasource === 'string' ? datasource : datasource.kind;
     this.name = Protocol.normalizeName(name)!;
     protocolDebug('Initializing protocol %s', this.name);
 
