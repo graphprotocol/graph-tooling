@@ -53,7 +53,13 @@ export default class Subgraph {
     // Parse the default subgraph schema
     const schema = graphql.parse(
       await fs.readFile(
-        path.join(__dirname, 'protocols', protocol.name, `manifest.graphql`),
+        path.join(
+          __dirname,
+          'protocols',
+          // TODO: substreams/triggers is a special case, should be handled better
+          protocol.name === 'substreams/triggers' ? 'substreams' : protocol.name,
+          `manifest.graphql`,
+        ),
         'utf-8',
       ),
     );
