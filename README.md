@@ -12,6 +12,18 @@ This repository houses the following tools:
 
 <!-- prettier-ignore-end -->
 
+## Contributing
+
+We welcome contributions to this repository. Please see the
+[contribution guidelines](CONTRIBUTING.md). For running the project locally,
+
+1. Clone the repository
+2. Make sure you have Node.js `>=20.x` installed
+3. Make sure you have [`pnpm`] installed:
+   [https://pnpm.io/installation](https://pnpm.io/installation)
+4. Run `pnpm install` to install dependencies
+5. Run `pnpm build` to build the packages
+
 ## Release process
 
 We use `changeset` to manage releases. Every PR should include a changeset file. The release process
