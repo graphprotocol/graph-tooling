@@ -25,7 +25,8 @@
     "test:add": "jest tests/cli/add.test.ts --verbose",
     "test:init": "jest tests/cli/init.test.ts --verbose",
     "test:validation": "jest tests/cli/validation.test.ts --verbose",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "vitest:validation": "vitest tests/cli/validation.test.ts"
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
@@ -70,7 +71,8 @@
     "spawn-command": "0.0.2-1",
     "strip-ansi": "6.0.1",
     "tern": "0.24.3",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.2"
   },
   "publishConfig": {
     "access": "public"

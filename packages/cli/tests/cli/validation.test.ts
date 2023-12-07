@@ -1,6 +1,7 @@
 import { cliTest } from './util';
+import { describe } from "vitest"
 
-describe('Validation', () => {
+describe.concurrent('Validation', () => {
   cliTest(
     'Block handler filters',
     ['codegen', '--skip-migrations'],
