@@ -28,6 +28,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@babel/core": "^7.20.5",
+    "@babel/preset-typescript": "^7.18.6",
     "@float-capital/float-subgraph-uncrashable": "^0.0.0-alpha.4",
     "@oclif/core": "2.8.6",
     "@oclif/plugin-autocomplete": "^2.3.6",
@@ -48,6 +50,7 @@
     "ipfs-http-client": "55.0.0",
     "jayson": "4.0.0",
     "js-yaml": "3.14.1",
+    "memoizee": "^0.4.15",
     "prettier": "1.19.1",
     "request": "2.88.2",
     "semver": "7.4.0",
@@ -58,10 +61,12 @@
     "yaml": "1.10.2"
   },
   "devDependencies": {
+    "@types/babel__core": "^7.20.5",
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.0.0",
     "@types/js-yaml": "^3.12.7",
+    "@types/memoizee": "^0.4.11",
     "@types/semver": "^7.3.13",
     "@types/which": "^2.0.1",
     "copyfiles": "^2.4.1",
