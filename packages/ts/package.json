@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-ts",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "TypeScript/AssemblyScript library for writing subgraph mappings for The Graph",
   "main": "index.ts",
   "module": "index.ts",
