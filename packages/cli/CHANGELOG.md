@@ -1,5 +1,44 @@
 # @graphprotocol/graph-cli
 
+## 0.63.0
+
+### Minor Changes
+
+- [#1531](https://github.com/graphprotocol/graph-tooling/pull/1531)
+  [`b168be1`](https://github.com/graphprotocol/graph-tooling/commit/b168be1526376fbb386b2ef650813b6696ab59f1)
+  Thanks [@travs](https://github.com/travs)! - Add `--skip-git` option to `init` cli command
+
+- [#1490](https://github.com/graphprotocol/graph-tooling/pull/1490)
+  [`95eb9d0`](https://github.com/graphprotocol/graph-tooling/commit/95eb9d0244a99fdfb7a4750963c1a982d024dd87)
+  Thanks [@mangas](https://github.com/mangas)! - substreams based triggers support
+
+- [#1535](https://github.com/graphprotocol/graph-tooling/pull/1535)
+  [`7d5c818`](https://github.com/graphprotocol/graph-tooling/commit/7d5c818fc832cf824421957b02ff3198bcf25a22)
+  Thanks [@saihaj](https://github.com/saihaj)! - add validation for handlers from subgraph manifest
+
+- [#1524](https://github.com/graphprotocol/graph-tooling/pull/1524)
+  [`086a2da`](https://github.com/graphprotocol/graph-tooling/commit/086a2da03a4388277b69b6db541a0673dc9505bb)
+  Thanks [@pedropregueiro](https://github.com/pedropregueiro)! - Add support for M3 apple silicon
+  for `graph test`
+
+### Patch Changes
+
+- [#1535](https://github.com/graphprotocol/graph-tooling/pull/1535)
+  [`7d5c818`](https://github.com/graphprotocol/graph-tooling/commit/7d5c818fc832cf824421957b02ff3198bcf25a22)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Added dependency [`@babel/core@^7.20.5` ↗︎](https://www.npmjs.com/package/@babel/core/v/7.20.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@babel/preset-typescript@^7.18.6` ↗︎](https://www.npmjs.com/package/@babel/preset-typescript/v/7.18.6)
+    (to `dependencies`)
+  - Added dependency [`memoizee@^0.4.15` ↗︎](https://www.npmjs.com/package/memoizee/v/0.4.15) (to
+    `dependencies`)
+
+- [#1521](https://github.com/graphprotocol/graph-tooling/pull/1521)
+  [`3571a57`](https://github.com/graphprotocol/graph-tooling/commit/3571a571b2a094f41932e7cbc91b605c7ba0962c)
+  Thanks [@saihaj](https://github.com/saihaj)! - remove studio network validation checks
+
 ## 0.62.0
 
 ### Minor Changes
