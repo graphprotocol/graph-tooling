@@ -6,6 +6,8 @@ import * as toolbox from 'gluegun';
 import immutable from 'immutable';
 import type { IPFSHTTPClient } from 'ipfs-http-client';
 import yaml from 'js-yaml';
+import memo from 'memoizee';
+import { parseSync } from '@babel/core';
 import { Spinner, step, withSpinner } from '../command-helpers/spinner';
 import debug from '../debug';
 import { applyMigrations } from '../migrations';
@@ -15,6 +17,18 @@ import Watcher from '../watcher';
 import * as asc from './asc';
 
 const compilerDebug = debug('graph-cli:compiler');
+
+/** memoize the reading of the file so we don't have to read it every time */
+const readFile = memo((filename: string) => fs.readFileSync(filename, 'utf-8'));
+
+/** Memoized parser for Babel, so we can simply just read from cache  */
+const babelAst = memo((filename: string) => {
+  const data = readFile(filename);
+  return parseSync(data, {
+    presets: ['@babel/preset-typescript'],
+    filename,
+  });
+});
 
 interface CompilerOptions {
   ipfs: any;
@@ -350,11 +364,18 @@ export default class Compiler {
 
     try {
       const dataSourceName = dataSource.getIn(['name']);
-
       const baseDir = this.sourceDir;
       const absoluteMappingPath = path.resolve(baseDir, mappingPath);
       const inputFile = path.relative(baseDir, absoluteMappingPath);
+
       this._validateMappingContent(absoluteMappingPath);
+
+      const eventHandlers = dataSource.getIn(['mapping', 'eventHandlers']);
+      // TODO: improve the types
+      for (const eventHandler of (eventHandlers as any).toJS()) {
+        compilerDebug('Validating Event Handler %s', eventHandler.handler);
+        this._validateHandler(absoluteMappingPath, eventHandler.handler);
+      }
 
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
@@ -431,6 +452,13 @@ export default class Compiler {
       const inputFile = path.relative(baseDir, absoluteMappingPath);
       this._validateMappingContent(absoluteMappingPath);
 
+      const eventHandlers = templateName.getIn(['mapping', 'eventHandlers']);
+      // TODO: improve the types
+      for (const eventHandler of (eventHandlers as any).toJS()) {
+        compilerDebug('Validating Template handler %s', eventHandler.handler);
+        this._validateHandler(absoluteMappingPath, eventHandler.handler);
+      }
+
       // If the file has already been compiled elsewhere, just use that output
       // file and return early
       const inputCacheKey = this.cacheKeyForFile(absoluteMappingPath);
@@ -489,13 +517,38 @@ export default class Compiler {
   }
 
   _validateMappingContent(filePath: string) {
-    const data = fs.readFileSync(filePath);
+    const data = readFile(filePath);
     if (this.blockIpfsMethods && (data.includes('ipfs.cat') || data.includes('ipfs.map'))) {
       throw Error(`
       Subgraph Studio does not support mappings with ipfs methods.
       Please remove all instances of ipfs.cat and ipfs.map from
       ${filePath}
       `);
+    }
+  }
+
+  _validateHandler(filePath: string, handlerName: string) {
+    const baselAst = babelAst(filePath);
+
+    const body = baselAst?.program.body;
+
+    if (!body) {
+      throw Error(`Could not parse ${filePath}`);
+    }
+
+    const exportedFunctionNames = body
+      .map(statement => {
+        if (
+          statement.type === 'ExportNamedDeclaration' &&
+          statement?.declaration?.type === 'FunctionDeclaration'
+        ) {
+          return statement.declaration.id?.name;
+        }
+      })
+      .filter(Boolean);
+
+    if (!exportedFunctionNames.includes(handlerName)) {
+      throw Error(`Could not find handler '${handlerName}' in ${filePath}`);
     }
   }
 
