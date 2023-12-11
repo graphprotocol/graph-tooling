@@ -1,5 +1,13 @@
 # @graphprotocol/graph-ts
 
+## 0.32.0
+
+### Minor Changes
+
+- [#1523](https://github.com/graphprotocol/graph-tooling/pull/1523)
+  [`167696e`](https://github.com/graphprotocol/graph-tooling/commit/167696eb611db0da27a6cf92a7390e72c74672ca)
+  Thanks [@xJonathanLEI](https://github.com/xJonathanLEI)! - add starknet data types
+
 ## 0.31.0
 
 ### Minor Changes
