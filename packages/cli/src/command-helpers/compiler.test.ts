@@ -1,5 +1,5 @@
+import { describe, expect, it } from 'vitest';
 import { appendApiVersionForGraph } from './compiler';
-import { describe, it, expect } from "vitest"
 
 describe.concurrent('appendApiVersionForGraph', () => {
   it('append /api/v0 to Prod URL with trailing slash', () => {

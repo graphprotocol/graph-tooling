@@ -1,6 +1,6 @@
 import path from 'path';
+import { describe } from 'vitest';
 import { cliTest } from './util';
-import { describe } from "vitest"
 
 describe.concurrent('Init', () => {
   const baseDir = path.join(__dirname, 'init');

@@ -1,5 +1,5 @@
+import { describe } from 'vitest';
 import { cliTest } from './util';
-import { describe } from "vitest"
 
 describe.concurrent('Validation', () => {
   cliTest(

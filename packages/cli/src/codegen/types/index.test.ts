@@ -1,5 +1,5 @@
+import { describe, expect, test } from 'vitest';
 import * as codegen from '.';
-import { describe, test, expect } from "vitest"
 
 describe.concurrent('ethereum.Value -> AssemblyScript', () => {
   // Scalar values

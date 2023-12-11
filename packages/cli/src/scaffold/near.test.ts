@@ -1,6 +1,6 @@
+import { describe, expect, test } from 'vitest';
 import Protocol from '../protocols';
 import Scaffold from './index';
-import { describe, test, expect } from "vitest"
 
 const protocol = new Protocol('near');
 

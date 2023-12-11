@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import { system } from 'gluegun';
 import spawn from 'spawn-command';
 import stripAnsi from 'strip-ansi';
-import { test, expect } from "vitest"
+import { expect, test } from 'vitest';
 
 // Deletes folder if:
 // - flag is true

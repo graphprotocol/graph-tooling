@@ -1,10 +1,10 @@
 import path from 'path';
 import fs from 'fs-extra';
 import immutable from 'immutable';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import * as ts from '../../../codegen/typescript';
 import ABI from '../abi';
 import AbiCodeGenerator from './abi';
-import { describe, beforeAll, afterAll, expect, test } from "vitest"
 
 let tempdir: string;
 let abi: ABI;

@@ -1,8 +1,8 @@
 import path from 'path';
 import * as toolbox from 'gluegun';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import yaml from 'yaml';
 import { initNetworksConfig, updateSubgraphNetwork } from './network';
-import { describe, test, beforeAll, afterAll, expect } from 'vitest'
 
 const SUBGRAPH_PATH_BASE = path.join(
   __dirname,

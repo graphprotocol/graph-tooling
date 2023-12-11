@@ -1,5 +1,5 @@
+import { describe, expect, test } from 'vitest';
 import { getStartBlockForContract } from './abi';
-import { describe, test, expect } from "vitest"
 
 // An object with some test cases for contract deployment block numbers
 const TEST_CONTRACT_START_BLOCKS = {

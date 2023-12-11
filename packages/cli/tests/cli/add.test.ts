@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import * as toolbox from 'gluegun';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { runGraphCli } from './util';
-import { describe, beforeAll, afterAll, it, expect } from "vitest"
 
 const EXAMPLE_SUBGRAPH_PATH = path.join(__dirname, 'add', 'subgraph');
 
@@ -24,7 +24,6 @@ describe('Add command', () => {
       ],
       TEMP_SUBGRAPH_PATH,
     );
-
   });
 
   afterAll(async () => {
