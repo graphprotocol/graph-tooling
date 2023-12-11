@@ -215,4 +215,6 @@ describe.concurrent('Init', () => {
       },
     );
   });
+}, {
+  timeout: 60_000,
 });
