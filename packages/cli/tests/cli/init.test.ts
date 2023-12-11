@@ -11,6 +11,7 @@ describe('Init', () => {
       'From example',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'ethereum',
         '--studio',
@@ -32,6 +33,7 @@ describe('Init', () => {
       'From contract',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'ethereum',
         '--studio',
@@ -55,6 +57,7 @@ describe('Init', () => {
       'From contract with abi',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'ethereum',
         '--studio',
@@ -80,6 +83,7 @@ describe('Init', () => {
       'From contract with abi and structs',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'ethereum',
         '--studio',
@@ -105,6 +109,7 @@ describe('Init', () => {
       'From contract with list items in abi',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'ethereum',
         '--studio',
@@ -130,6 +135,7 @@ describe('Init', () => {
       'From contract with overloaded elements',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'ethereum',
         '--studio',
@@ -155,6 +161,7 @@ describe('Init', () => {
       'From contract with index events and abi with ID in events',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'ethereum',
         '--studio',
@@ -186,6 +193,7 @@ describe('Init', () => {
       'From contract',
       [
         'init',
+        '--skip-git',
         '--protocol',
         'near',
         '--product',
