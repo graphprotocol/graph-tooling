@@ -283,10 +283,10 @@ export default class Compiler {
           templates === undefined
             ? templates
             : templates.map((template: any) =>
-              template.updateIn(['mapping', 'file'], (mappingPath: string) =>
-                this._compileTemplateMapping(template, mappingPath, compiledFiles, spinner),
+                template.updateIn(['mapping', 'file'], (mappingPath: string) =>
+                  this._compileTemplateMapping(template, mappingPath, compiledFiles, spinner),
+                ),
               ),
-            ),
         );
 
         return subgraph;
@@ -649,37 +649,37 @@ export default class Compiler {
           templates === undefined
             ? templates
             : templates.map((template: any) => {
-              let updatedTemplate = template;
+                let updatedTemplate = template;
 
-              if (this.protocol.hasABIs()) {
-                updatedTemplate = updatedTemplate
-                  // Write template ABIs to the output directory
-                  .updateIn(['mapping', 'abis'], (abis: any[]) =>
-                    abis.map(abi =>
-                      abi.update('file', (abiFile: string) => {
-                        abiFile = path.resolve(this.sourceDir, abiFile);
-                        const abiData = this.ABI.load(abi.get('name'), abiFile);
-                        return path.relative(
-                          this.options.outputDir,
-                          this._writeSubgraphFile(
-                            abiFile,
-                            JSON.stringify(abiData.data.toJS(), null, 2),
-                            this.sourceDir,
-                            this.subgraphDir(this.options.outputDir, template),
-                            spinner,
-                          ),
-                        );
-                      }),
-                    ),
-                  );
-              }
+                if (this.protocol.hasABIs()) {
+                  updatedTemplate = updatedTemplate
+                    // Write template ABIs to the output directory
+                    .updateIn(['mapping', 'abis'], (abis: any[]) =>
+                      abis.map(abi =>
+                        abi.update('file', (abiFile: string) => {
+                          abiFile = path.resolve(this.sourceDir, abiFile);
+                          const abiData = this.ABI.load(abi.get('name'), abiFile);
+                          return path.relative(
+                            this.options.outputDir,
+                            this._writeSubgraphFile(
+                              abiFile,
+                              JSON.stringify(abiData.data.toJS(), null, 2),
+                              this.sourceDir,
+                              this.subgraphDir(this.options.outputDir, template),
+                              spinner,
+                            ),
+                          );
+                        }),
+                      ),
+                    );
+                }
 
-              // The mapping file is already being written to the output
-              // directory by the AssemblyScript compiler
-              return updatedTemplate.updateIn(['mapping', 'file'], (mappingFile: string) =>
-                path.relative(this.options.outputDir, path.resolve(this.sourceDir, mappingFile)),
-              );
-            }),
+                // The mapping file is already being written to the output
+                // directory by the AssemblyScript compiler
+                return updatedTemplate.updateIn(['mapping', 'file'], (mappingFile: string) =>
+                  path.relative(this.options.outputDir, path.resolve(this.sourceDir, mappingFile)),
+                );
+              }),
         );
 
         // Write the subgraph manifest itself
