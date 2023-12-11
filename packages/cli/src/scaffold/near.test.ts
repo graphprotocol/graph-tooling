@@ -1,5 +1,6 @@
 import Protocol from '../protocols';
 import Scaffold from './index';
+import { describe, test, expect } from "vitest"
 
 const protocol = new Protocol('near');
 
@@ -12,7 +13,7 @@ const scaffoldOptions = {
 
 const scaffold = new Scaffold(scaffoldOptions);
 
-describe('NEAR subgraph scaffolding', () => {
+describe.concurrent('NEAR subgraph scaffolding', () => {
   test('Manifest', () => {
     expect(scaffold.generateManifest()).toEqual(`\
 specVersion: 0.0.5

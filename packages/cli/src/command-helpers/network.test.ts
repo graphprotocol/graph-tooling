@@ -2,6 +2,7 @@ import path from 'path';
 import * as toolbox from 'gluegun';
 import yaml from 'yaml';
 import { initNetworksConfig, updateSubgraphNetwork } from './network';
+import { describe, test, beforeAll, afterAll, expect } from 'vitest'
 
 const SUBGRAPH_PATH_BASE = path.join(
   __dirname,
@@ -13,7 +14,7 @@ const SUBGRAPH_PATH_BASE = path.join(
   'example-subgraph',
 );
 
-describe('initNetworksConfig', () => {
+describe.concurrent('initNetworksConfig', () => {
   beforeAll(async () => {
     await initNetworksConfig(SUBGRAPH_PATH_BASE, 'address');
   });
@@ -39,7 +40,7 @@ describe('initNetworksConfig', () => {
   });
 });
 
-describe('updateSubgraphNetwork', () => {
+describe.concurrent('updateSubgraphNetwork', () => {
   beforeAll(async () => {
     const content = {
       optimism: {

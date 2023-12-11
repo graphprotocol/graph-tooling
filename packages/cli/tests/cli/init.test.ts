@@ -1,7 +1,8 @@
 import path from 'path';
 import { cliTest } from './util';
+import { describe } from "vitest"
 
-describe('Init', () => {
+describe.concurrent('Init', () => {
   const baseDir = path.join(__dirname, 'init');
 
   describe('Ethereum', () => {

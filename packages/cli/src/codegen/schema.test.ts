@@ -4,6 +4,8 @@ import prettier from 'prettier';
 import Schema from '../schema';
 import SchemaCodeGenerator from './schema';
 import { Class, Method, NamedType, NullableType, Param, StaticMethod } from './typescript';
+import { describe, expect, test } from "vitest"
+
 
 const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
 
@@ -36,7 +38,7 @@ const testEntity = (generatedTypes: any[], expectedEntity: any) => {
   expect(methods.length).toBe(expectedEntity.methods.length);
 };
 
-describe('Schema code generator', () => {
+describe.concurrent('Schema code generator', () => {
   test('Should generate nothing for non entity types', () => {
     const codegen = createSchemaCodeGen(`
       type Foo {

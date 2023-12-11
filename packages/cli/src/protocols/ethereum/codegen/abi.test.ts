@@ -4,12 +4,13 @@ import immutable from 'immutable';
 import * as ts from '../../../codegen/typescript';
 import ABI from '../abi';
 import AbiCodeGenerator from './abi';
+import { describe, beforeAll, afterAll, expect, test } from "vitest"
 
 let tempdir: string;
 let abi: ABI;
 let generatedTypes: any[];
 
-describe('ABI code generation', () => {
+describe.concurrent('ABI code generation', () => {
   beforeAll(async () => {
     tempdir = await fs.mkdtemp('abi-codegen');
 

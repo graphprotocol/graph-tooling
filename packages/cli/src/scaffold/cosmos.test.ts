@@ -1,5 +1,6 @@
 import Protocol from '../protocols';
 import Scaffold from './index';
+import { describe, test, expect } from "vitest"
 
 const protocol = new Protocol('cosmos');
 
@@ -11,7 +12,7 @@ const scaffoldOptions = {
 
 const scaffold = new Scaffold(scaffoldOptions);
 
-describe('Cosmos subgraph scaffolding', () => {
+describe.concurrent('Cosmos subgraph scaffolding', () => {
   test('Manifest', () => {
     expect(scaffold.generateManifest()).toEqual(`\
 specVersion: 0.0.5

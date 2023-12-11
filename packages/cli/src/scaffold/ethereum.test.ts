@@ -2,6 +2,7 @@ import immutable from 'immutable';
 import Protocol from '../protocols';
 import ABI from '../protocols/ethereum/abi';
 import Scaffold from './index';
+import { expect, describe, test } from "vitest"
 
 const TEST_EVENT = {
   name: 'ExampleEvent',
@@ -78,7 +79,7 @@ const scaffoldWithIndexEvents = new Scaffold({
   indexEvents: true,
 });
 
-describe('Ethereum subgraph scaffolding', () => {
+describe.concurrent('Ethereum subgraph scaffolding', () => {
   test('Manifest', () => {
     expect(scaffold.generateManifest()).toEqual(`\
 specVersion: 0.0.5
