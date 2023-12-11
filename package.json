@@ -33,9 +33,7 @@
     "@theguild/eslint-config": "0.11.0",
     "@theguild/prettier-config": "2.0.1",
     "@types/node": "^20.6.2",
-    "babel-jest": "^29.3.1",
     "eslint": "8.52.0",
-    "jest": "29.7.0",
     "prettier": "3.0.3"
   },
   "pnpm": {
