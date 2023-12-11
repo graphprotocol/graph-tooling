@@ -19,10 +19,18 @@ export default class AuthCommand extends Command {
     product: Flags.string({
       summary: 'Select a product for which to authenticate.',
       options: ['subgraph-studio', 'hosted-service'],
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
+      },
     }),
     studio: Flags.boolean({
       summary: 'Shortcut for "--product subgraph-studio".',
       exclusive: ['product'],
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
+      },
     }),
   };
 

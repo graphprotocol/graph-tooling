@@ -55,9 +55,11 @@ export default class DeployCommand extends Command {
       exclusive: ['access-token'],
     }),
     'access-token': Flags.string({
-      deprecated: true,
-      summary: 'Graph access key. DEPRECATED: Use "--deploy-key" instead.',
       exclusive: ['deploy-key'],
+      deprecated: {
+        to: 'deploy-key',
+        message: "In next version, we are removing this flag in favor of '--deploy-key'",
+      },
     }),
     'version-label': Flags.string({
       summary: 'Version label used for the deployment.',

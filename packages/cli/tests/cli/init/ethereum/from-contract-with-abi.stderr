@@ -1,3 +1,13 @@
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Create subgraph scaffold
   Generate subgraph
 - Create subgraph scaffold
@@ -6,8 +16,6 @@
 ✔ Create subgraph scaffold
 - Initialize networks config
 ✔ Initialize networks config
-- Initialize subgraph repository
-✔ Initialize subgraph repository
 - Install dependencies with yarn
 ✔ Install dependencies with yarn
 - Generate ABI and schema types with yarn codegen
