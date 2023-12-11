@@ -10,10 +10,10 @@ import { generateTestsFiles } from './tests';
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   ? // JSON.stringify should remove this key, we will install the local
-    // graph-cli for the tests using `npm link` instead of fetching from npm.
-    undefined
+  // graph-cli for the tests using `npm link` instead of fetching from npm.
+  undefined
   : // For scaffolding real subgraphs
-    version;
+  version;
 
 export interface ScaffoldOptions {
   protocol: Protocol;
@@ -73,7 +73,7 @@ export default class Scaffold {
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
-          '@graphprotocol/graph-ts': `0.30.0`,
+          '@graphprotocol/graph-ts': `0.32.0`,
         },
         devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0` } : undefined,
       }),
@@ -132,8 +132,8 @@ dataSources:
     return prettier.format(
       hasEvents && this.indexEvents
         ? events
-            .map((event: any) => generateEventType(event, this.protocol.name, this.contractName))
-            .join('\n\n')
+          .map((event: any) => generateEventType(event, this.protocol.name, this.contractName))
+          .join('\n\n')
         : generateExampleEntityType(this.protocol, events),
       {
         parser: 'graphql',
@@ -166,9 +166,9 @@ dataSources:
       hasEvents && this.indexEvents
         ? generateEventIndexingHandlers(events, this.contractName)
         : protocolMapping.generatePlaceholderHandlers({
-            ...this,
-            events,
-          }),
+          ...this,
+          events,
+        }),
       { parser: 'typescript', semi: false },
     );
   }
@@ -176,10 +176,10 @@ dataSources:
   generateABIs() {
     return this.protocol.hasABIs()
       ? {
-          [`${this.contractName}.json`]: prettier.format(JSON.stringify(this.abi?.data), {
-            parser: 'json',
-          }),
-        }
+        [`${this.contractName}.json`]: prettier.format(JSON.stringify(this.abi?.data), {
+          parser: 'json',
+        }),
+      }
       : undefined;
   }
 
