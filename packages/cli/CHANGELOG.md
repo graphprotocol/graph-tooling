@@ -1,5 +1,18 @@
 # @graphprotocol/graph-cli
 
+## 0.63.1
+
+### Patch Changes
+
+- [#1539](https://github.com/graphprotocol/graph-tooling/pull/1539)
+  [`3e29dfd`](https://github.com/graphprotocol/graph-tooling/commit/3e29dfdf0175634246aca5d2b57328cdd32ea45a)
+  Thanks [@saihaj](https://github.com/saihaj)! - upgrade `graph init` to use latest version of
+  `graph-ts`
+
+- [#1540](https://github.com/graphprotocol/graph-tooling/pull/1540)
+  [`8a79d05`](https://github.com/graphprotocol/graph-tooling/commit/8a79d0501dfb95452f198b6744c459716d112275)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix graph build for templates
+
 ## 0.63.0
 
 ### Minor Changes
