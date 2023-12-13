@@ -106,7 +106,7 @@ export default class BuildCommand extends Command {
     if (watch) {
       await compiler.watchAndCompile();
     } else {
-      const result = await compiler.compile({ validate: false });
+      const result = await compiler.compile({ validate: true });
       if (result === false) {
         this.exit(1);
       }
