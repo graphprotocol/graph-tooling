@@ -452,7 +452,7 @@ export default class Compiler {
       const inputFile = path.relative(baseDir, absoluteMappingPath);
       this._validateMappingContent(absoluteMappingPath);
 
-      const eventHandlers = template.getIn(['mapping', 'eventHandlers']);
+      const eventHandlers = templateName.getIn(['mapping', 'eventHandlers']);
       // TODO: improve the types
       for (const eventHandler of (eventHandlers as any).toJS()) {
         compilerDebug('Validating Template handler %s', eventHandler.handler);
