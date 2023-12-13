@@ -1,0 +1,40 @@
+name: Release Linux
+
+on:
+  release:
+    types:
+      - created
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  deploy:
+    name: Deploy for ${{ matrix.os }}
+    if: startsWith(github.ref, 'refs/tags')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        name: [linux-22]
+
+        include:
+          - name: linux-22
+            os: ubuntu-22.04
+            artifact_name: matchstick
+            asset_name: binary-linux-22
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.68.0
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install libpq-dev protobuf-compiler
+
+      - name: Build
+        run: cargo build --release && mv target/release/${{ matrix.artifact_name }} target/release/${{ matrix.asset_name }}
+
+      - name: Upload binaries to release
+        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token && gh release upload ${GITHUB_REF##*/} target/release/${{ matrix.asset_name }}

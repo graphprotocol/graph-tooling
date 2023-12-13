@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "imageUrl": "https://example.com/image1.jpg",
+    "owner": "0x0000000000000000000000000000000000000001"
+  },
+  {
+    "id": "2",
+    "imageUrl": "https://example.com/image2.jpg",
+    "owner": "0x0000000000000000000000000000000000000002"
+  },
+  {
+    "id": "3",
+    "imageUrl": "https://example.com/image3.jpg",
+    "owner": "0x0000000000000000000000000000000000000003"
+  }
+]
