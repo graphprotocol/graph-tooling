@@ -1,5 +1,33 @@
 # @graphprotocol/graph-cli
 
+## 0.64.0
+
+### Minor Changes
+
+- [#1533](https://github.com/graphprotocol/graph-tooling/pull/1533)
+  [`45f3197`](https://github.com/graphprotocol/graph-tooling/commit/45f319773276ba14efb0623f7b22232ef76b685a)
+  Thanks [@saihaj](https://github.com/saihaj)! - adding deprecation notices for commands we plan to
+  change in the next major. See https://github.com/graphprotocol/graph-tooling/issues/1487
+
+### Patch Changes
+
+- [#1545](https://github.com/graphprotocol/graph-tooling/pull/1545)
+  [`1cfc8ce`](https://github.com/graphprotocol/graph-tooling/commit/1cfc8ce67388ebb9c6dcb1195119959ecd9be325)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Removed dependency
+    [`@babel/core@^7.20.5` ↗︎](https://www.npmjs.com/package/@babel/core/v/7.20.5) (from
+    `dependencies`)
+  - Removed dependency
+    [`@babel/preset-typescript@^7.18.6` ↗︎](https://www.npmjs.com/package/@babel/preset-typescript/v/7.18.6)
+    (from `dependencies`)
+  - Removed dependency [`memoizee@^0.4.15` ↗︎](https://www.npmjs.com/package/memoizee/v/0.4.15)
+    (from `dependencies`)
+
+- [#1545](https://github.com/graphprotocol/graph-tooling/pull/1545)
+  [`1cfc8ce`](https://github.com/graphprotocol/graph-tooling/commit/1cfc8ce67388ebb9c6dcb1195119959ecd9be325)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix call handler validation
+
 ## 0.63.1
 
 ### Patch Changes
