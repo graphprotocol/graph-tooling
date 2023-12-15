@@ -11,7 +11,7 @@ const VARIABLES_VALUES = {
   bool: true,
 };
 
-export const generateTestsFiles = (contract: any, events: any[], indexEvents?: boolean) => {
+export const generateTestsFiles = async (contract: any, events: any[], indexEvents?: boolean) => {
   const eventsTypes = events
     .flatMap(event =>
       event.inputs.map((input: any) => {
@@ -26,13 +26,13 @@ export const generateTestsFiles = (contract: any, events: any[], indexEvents?: b
   const importTypes = [...new Set(eventsTypes)].join(', ');
 
   return {
-    [`${strings.kebabCase(contract)}.test.ts`]: prettier.format(
+    [`${strings.kebabCase(contract)}.test.ts`]: await prettier.format(
       generateExampleTest(contract, events[0], indexEvents, importTypes),
-      { parser: 'typescript', semi: false },
+      { parser: 'typescript', semi: false, trailingComma: 'none' },
     ),
-    [`${strings.kebabCase(contract)}-utils.ts`]: prettier.format(
+    [`${strings.kebabCase(contract)}-utils.ts`]: await prettier.format(
       generateTestHelper(contract, events, importTypes),
-      { parser: 'typescript', semi: false },
+      { parser: 'typescript', semi: false, trailingComma: 'none' },
     ),
   };
 };

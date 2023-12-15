@@ -96,7 +96,7 @@ export default class EthereumTypeGenerator {
     }
   }
 
-  generateTypesForABIs(abis: any[]) {
+  async generateTypesForABIs(abis: any[]) {
     return withSpinner(
       `Generate types for contract ABIs`,
       `Failed to generate types for contract ABIs`,
@@ -118,7 +118,7 @@ export default class EthereumTypeGenerator {
       );
 
       const codeGenerator = abi.abi.codeGenerator();
-      const code = prettier.format(
+      const code = await prettier.format(
         [
           GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
@@ -164,7 +164,7 @@ export default class EthereumTypeGenerator {
       );
 
       const codeGenerator = abi.abi.codeGenerator();
-      const code = prettier.format(
+      const code = await prettier.format(
         [
           GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
