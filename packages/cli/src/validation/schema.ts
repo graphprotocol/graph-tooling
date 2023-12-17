@@ -1,7 +1,12 @@
-import fs from 'fs';
+import * as fs from 'node:fs';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadSchema as toolsLoadSchema } from '@graphql-tools/load';
+import { mergeSchemas } from '@graphql-tools/schema';
+import { UrlLoader } from '@graphql-tools/url-loader';
 import debugFactory from '../debug';
+import fetchWrapper from '../fetch';
 
 const validateDebugger = debugFactory('graph-cli:validation');
 
@@ -1041,11 +1046,38 @@ const validateNamingCollisions = (local: any[], imported: any) => {
   return validateNamingCollisionsInTypes(local.concat(imported));
 };
 
-export const validateSchema = (filename: string) => {
+// TODO - temporarily not using `master` see https://github.com/graphprotocol/graph-node/pull/5069
+// const META_SCHEMA_GRAPH_NODE= "https://raw.githubusercontent.com/graphprotocol/graph-node/master/graph/src/schema/meta.graphql"
+const META_SCHEMA_GRAPH_NODE =
+  'https://raw.githubusercontent.com/graphprotocol/graph-node/saihaj/fix-meta-schema/graph/src/schema/meta.graphql';
+
+export const validateSchema = async (filename: string) => {
   validateDebugger('Validating schema: %s', filename);
-  const doc = loadSchema(filename);
-  validateDebugger('Loaded schema: %s', filename);
-  const schema = parseSchema(doc);
+
+  try {
+    const [doc, metaSchema] = await Promise.all([
+      toolsLoadSchema(filename, {
+        loaders: [new GraphQLFileLoader()],
+        assumeValid: true,
+        assumeValidSDL: true,
+      }),
+      toolsLoadSchema(META_SCHEMA_GRAPH_NODE, {
+        loaders: [new UrlLoader()],
+        fetch: fetchWrapper,
+      }),
+    ]);
+    console.log('doc', doc);
+    validateDebugger('Loaded schema: %s', filename);
+
+    const b = mergeSchemas({
+      schemas: [metaSchema],
+    });
+    console.log(b);
+  } catch (e) {
+    console.trace('Error', e);
+  }
+
+  const schema = parseSchema(loadSchema(filename));
   validateDebugger.extend('schema')('Parsed schema: %M', schema);
 
   return List.of(

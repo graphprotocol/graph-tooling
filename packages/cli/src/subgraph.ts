@@ -76,11 +76,11 @@ export default class Subgraph {
     });
   }
 
-  static validateSchema(manifest: any, { resolveFile }: { resolveFile: ResolveFile }) {
+  static async validateSchema(manifest: any, { resolveFile }: { resolveFile: ResolveFile }) {
     subgraphDebug.extend('validate')('Validating schema in manifest');
     const filename = resolveFile(manifest.getIn(['schema', 'file']));
     subgraphDebug.extend('validate')('Loaded schema from %s', filename);
-    const validationErrors = validation.validateSchema(filename);
+    const validationErrors = await validation.validateSchema(filename);
     let errors: immutable.Collection<any, any>;
 
     if (validationErrors.size > 0) {
@@ -296,7 +296,7 @@ More than one template named '${name}', template names must be unique.`,
 
     // Validate the schema
     subgraphDebug.extend('manifest')('Validating schema');
-    Subgraph.validateSchema(manifest, { resolveFile });
+    await Subgraph.validateSchema(manifest, { resolveFile });
 
     // Perform other validations
     const protocolSubgraph = protocol.getSubgraph({
