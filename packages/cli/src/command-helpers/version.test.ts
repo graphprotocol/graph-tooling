@@ -1,16 +1,20 @@
-import * as loadManifestUtil from '../migrations/util/load-manifest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import * as loadManifestUtils from '../migrations/util/load-manifest';
 import * as graphTsUtil from '../migrations/util/versions';
 import { assertGraphTsVersion, assertManifestApiVersion } from './version';
 
-describe('Version Command Helpers', () => {
+describe.concurrent('Version Command Helpers', () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
   describe('assertManifestApiVersion', () => {
     const fakeManifestPath = 'fake/manifest/path';
     const minimumApiVersion = '0.0.5';
 
     describe('With just dataSources', () => {
       test('When all of them are less than minimum apiVersion', async () => {
-        // @ts-expect-error TODO: dont pollute the globals
-        loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+        vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
           Promise.resolve({
             dataSources: [
               { mapping: { apiVersion: '0.0.1' } },
@@ -27,8 +31,7 @@ describe('Version Command Helpers', () => {
         );
       });
       test('When one of them is less than minimum apiVersion', async () => {
-        // @ts-expect-error TODO: dont pollute the globals
-        loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+        vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
           Promise.resolve({
             dataSources: [
               { mapping: { apiVersion: '0.0.5' } },
@@ -45,8 +48,7 @@ describe('Version Command Helpers', () => {
         );
       });
       test('When none of them are less than minimum apiVersion', async () => {
-        // @ts-expect-error TODO: dont pollute the globals
-        loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+        vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
           Promise.resolve({
             dataSources: [
               { mapping: { apiVersion: '0.0.5' } },
@@ -64,8 +66,7 @@ describe('Version Command Helpers', () => {
     describe('With dataSources and templates', () => {
       describe('And the dataSources have a lower apiVersion', () => {
         test('When all of the templates are less than minimum apiVersion', async () => {
-          // @ts-expect-error TODO: dont pollute the globals
-          loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+          vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
             Promise.resolve({
               dataSources: [
                 { mapping: { apiVersion: '0.0.5' } },
@@ -89,8 +90,7 @@ describe('Version Command Helpers', () => {
           );
         });
         test('When one of the templates is less than minimum apiVersion', async () => {
-          // @ts-expect-error TODO: dont pollute the globals
-          loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+          vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
             Promise.resolve({
               dataSources: [
                 { mapping: { apiVersion: '0.0.5' } },
@@ -114,8 +114,7 @@ describe('Version Command Helpers', () => {
           );
         });
         test('When none of the templates are less than minimum apiVersion', async () => {
-          // @ts-expect-error TODO: dont pollute the globals
-          loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+          vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
             Promise.resolve({
               dataSources: [
                 { mapping: { apiVersion: '0.0.5' } },
@@ -141,8 +140,7 @@ describe('Version Command Helpers', () => {
       });
       describe('And the dataSources do NOT have a lower apiVersion', () => {
         test('When all of the templates are less than minimum apiVersion', async () => {
-          // @ts-expect-error TODO: dont pollute the globals
-          loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+          vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
             Promise.resolve({
               dataSources: [
                 { mapping: { apiVersion: '0.0.5' } },
@@ -166,8 +164,7 @@ describe('Version Command Helpers', () => {
           );
         });
         test('When one of the templates is less than minimum apiVersion', async () => {
-          // @ts-expect-error TODO: dont pollute the globals
-          loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+          vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
             Promise.resolve({
               dataSources: [
                 { mapping: { apiVersion: '0.0.5' } },
@@ -191,8 +188,7 @@ describe('Version Command Helpers', () => {
           );
         });
         test('When none of the templates are less than minimum apiVersion', async () => {
-          // @ts-expect-error TODO: dont pollute the globals
-          loadManifestUtil.loadManifest = jest.fn().mockImplementation(() =>
+          vi.spyOn(loadManifestUtils, 'loadManifest').mockImplementation(() =>
             Promise.resolve({
               dataSources: [
                 { mapping: { apiVersion: '0.0.5' } },
@@ -219,8 +215,9 @@ describe('Version Command Helpers', () => {
     const minimumGraphTsVersion = '0.22.0';
 
     test("When the installed graph-ts version is less than what's supported", async () => {
-      // @ts-expect-error TODO: dont pollute the globals
-      graphTsUtil.getGraphTsVersion = jest.fn().mockImplementation(() => Promise.resolve('0.19.0'));
+      vi.spyOn(graphTsUtil, 'getGraphTsVersion').mockImplementation(() =>
+        Promise.resolve('0.19.0'),
+      );
 
       await expect(assertGraphTsVersion(fakeNodeModulesDir, minimumGraphTsVersion)).rejects.toThrow(
         new Error(
@@ -230,8 +227,9 @@ Also, you'll probably need to take a look at our AssemblyScript migration guide 
       );
     });
     test('When the installed graph-ts version is a supported one', async () => {
-      // @ts-expect-error TODO: dont pollute the globals
-      graphTsUtil.getGraphTsVersion = jest.fn().mockImplementation(() => Promise.resolve('0.22.0'));
+      vi.spyOn(graphTsUtil, 'getGraphTsVersion').mockImplementation(() =>
+        Promise.resolve('0.22.0'),
+      );
 
       await expect(assertGraphTsVersion(fakeNodeModulesDir, minimumGraphTsVersion)).resolves.toBe(
         undefined,

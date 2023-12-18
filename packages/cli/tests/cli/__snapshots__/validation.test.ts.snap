@@ -1,0 +1,970 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Validation > @derivedFrom target type missing 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  Foo:
+  - Field 'bars': Unknown type 'Bars'.
+"
+`;
+
+exports[`Validation > @derivedFrom target type missing 2`] = `1`;
+
+exports[`Validation > @derivedFrom target type missing 3`] = `""`;
+
+exports[`Validation > 2D arrays are valid 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > 2D arrays are valid 2`] = `0`;
+
+exports[`Validation > 2D arrays are valid 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > 3D arrays are valid 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > 3D arrays are valid 2`] = `0`;
+
+exports[`Validation > 3D arrays are valid 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > ABI not found in data source 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > source > abi
+  ABI name 'NonExistentAbi' not found in mapping > abis.
+  Available ABIs:
+  - FirstAbi
+  - SecondAbi
+
+  Path: templates > 0 > eventHandlers > 0
+  Event with signature 'ExampleEvent(string,uint256)' not present in ABI 'ExampleContract'.
+  Available events:
+  - ExampleEvent(string)
+"
+`;
+
+exports[`Validation > ABI not found in data source 2`] = `1`;
+
+exports[`Validation > ABI not found in data source 3`] = `""`;
+
+exports[`Validation > BigDecimal is a valid type 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > BigDecimal is a valid type 2`] = `0`;
+
+exports[`Validation > BigDecimal is a valid type 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > Block handler filters 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/DataSource/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > Block handler filters 2`] = `0`;
+
+exports[`Validation > Block handler filters 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > Call function not found in the ABI 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > callHandlers > 0
+  Call function with signature 'doSomething(uint256)' not present in ABI 'ExampleContract'.
+  Available call functions:
+  - <default>()
+  - owner()
+  - transferOwnership(address)
+  - upgrade(address,bytes)
+"
+`;
+
+exports[`Validation > Call function not found in the ABI 2`] = `1`;
+
+exports[`Validation > Call function not found in the ABI 3`] = `""`;
+
+exports[`Validation > Call handler with tuple 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > Call handler with tuple 2`] = `0`;
+
+exports[`Validation > Call handler with tuple 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > Conflicting network names 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: /
+  Conflicting networks used in data sources and templates:
+    Data sources and templates using 'mainnet':
+      - ExampleSubgraph
+    Data sources and templates having no network set:
+      - ExampleTemplate
+  Recommendation: Make all data sources and templates use the same network name.
+"
+`;
+
+exports[`Validation > Conflicting network names 2`] = `1`;
+
+exports[`Validation > Conflicting network names 3`] = `""`;
+
+exports[`Validation > Conflicting protocol names 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: /
+  Conflicting protocol kinds used in data sources and templates:
+    Data sources and templates using 'ethereum':
+      - ExampleSubgraph
+    Data sources and templates using 'near':
+      - ExampleTemplate
+  Recommendation: Make all data sources and templates use the same protocol kind.
+"
+`;
+
+exports[`Validation > Conflicting protocol names 2`] = `1`;
+
+exports[`Validation > Conflicting protocol names 3`] = `""`;
+
+exports[`Validation > Deprecated template format gives nice error 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > mapping
+  The way to declare data source templates has changed, please move the templates from inside data sources to a \`templates:\` field at the top level of the manifest.
+"
+`;
+
+exports[`Validation > Deprecated template format gives nice error 2`] = `1`;
+
+exports[`Validation > Deprecated template format gives nice error 3`] = `""`;
+
+exports[`Validation > Deriving from interface-typed fields is allowed 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Gravity.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: Gravity (Gravity.json)
+- Generate types for contract ABIs
+  Write types to generated/Gravity/Gravity.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > Deriving from interface-typed fields is allowed 2`] = `0`;
+
+exports[`Validation > Deriving from interface-typed fields is allowed 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > Duplicate data source name 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 1 > name
+  More than one data source named 'ExampleSubgraph', data source names must be unique.
+"
+`;
+
+exports[`Validation > Duplicate data source name 2`] = `1`;
+
+exports[`Validation > Duplicate data source name 3`] = `""`;
+
+exports[`Validation > Duplicate template name 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: templates > 1 > name
+  More than one template named 'ExampleSubgraph', template names must be unique.
+"
+`;
+
+exports[`Validation > Duplicate template name 2`] = `1`;
+
+exports[`Validation > Duplicate template name 3`] = `""`;
+
+exports[`Validation > Entity field arguments 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  MyEntity:
+  - Field 'foo': Field arguments are not supported.
+"
+`;
+
+exports[`Validation > Entity field arguments 2`] = `1`;
+
+exports[`Validation > Entity field arguments 3`] = `""`;
+
+exports[`Validation > Ethereum contract data source without handlers 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > mapping
+  Mapping has no blockHandlers, callHandlers or eventHandlers.
+  At least one such handler must be defined.
+"
+`;
+
+exports[`Validation > Ethereum contract data source without handlers 2`] = `1`;
+
+exports[`Validation > Ethereum contract data source without handlers 3`] = `""`;
+
+exports[`Validation > Event not found in ABI 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > eventHandlers > 0
+  Event with signature 'ExampleEvent(string,uint256)' not present in ABI 'ExampleContract'.
+  Available events:
+  - ExampleEvent(string)
+
+  Path: templates > 0 > eventHandlers > 0
+  Event with signature 'ExampleEvent(string,uint256)' not present in ABI 'ExampleContract'.
+  Available events:
+  - ExampleEvent(string)
+"
+`;
+
+exports[`Validation > Event not found in ABI 2`] = `1`;
+
+exports[`Validation > Event not found in ABI 3`] = `""`;
+
+exports[`Validation > Example values found in manifest 1`] = `
+"- Load subgraph from subgraph.yaml
+⚠ Warnings while loading subgraph from subgraph.yaml: Warnings in subgraph.yaml:
+
+    Path: repository
+    The repository is still set to https://github.com/graphprotocol/graph-tooling.
+    Please replace it with a link to your subgraph source code.
+
+    Path: description
+    The description is still the one from the example subgraph.
+    Please update it to tell users more about your subgraph.
+
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > Example values found in manifest 2`] = `0`;
+
+exports[`Validation > Example values found in manifest 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > Invalid @fulltext directive 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  A:
+  - @fulltext directive only allowed on '_Schema_' type
+
+  _Schema_:
+    BadValuesProvided:
+    - @fulltext argument 'name' must be a string
+    - @fulltext directive 'language' value must be one of: simple, da, nl, en, fi, fr, de, hu, it, no, pt, ro, ru, es, sv, tr
+    - @fulltext 'algorithm' value, 'ranked', must be one of: rank, proximityRank
+    InvalidField:
+    - @fulltext directive 'language' value must be one of: simple, da, nl, en, fi, fr, de, hu, it, no, pt, ro, ru, es, sv, tr
+    - @fulltext argument 'include > fields' must have the form '[{ name: "fieldName" }, ...]
+    InvalidArgument:
+    - found invalid argument: 'style', @fulltext directives only allow 'name', 'language', 'algorithm', and 'includes' arguments
+    IncludeMustBeList:
+    - @fulltext argument 'include' must be a list
+    MissingLanguageAlgorithmInclude:
+    - @fulltext argument 'language' must be specified
+    - @fulltext argument 'algorithm' must be specified
+    - @fulltext argument 'include' must be specified
+    IncludeItemNotObject:
+    - @fulltext argument 'include' must have the form '[{entity: "entityName", fields: [{name: "fieldName"}, ...]} ...]
+    IncludeMissingEntityField:
+    - @fulltext argument include must have two fields, 'entity' and 'fields'
+    InvalidIncludeArgumentOther:
+    - @fulltext argument 'include > other' must be be one of: entity, fields
+    IncludeFieldsMustBeList:
+    - @fulltext argument 'include > fields' must be a list
+    Other:
+    - @fulltext argument 'name' must be specified
+"
+`;
+
+exports[`Validation > Invalid @fulltext directive 2`] = `1`;
+
+exports[`Validation > Invalid @fulltext directive 3`] = `""`;
+
+exports[`Validation > Invalid ABI files 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > mapping > abis > 0 > file
+  No valid ABI in file: InvalidAbi.json
+"
+`;
+
+exports[`Validation > Invalid ABI files 2`] = `1`;
+
+exports[`Validation > Invalid ABI files 3`] = `""`;
+
+exports[`Validation > Invalid GraphQL schema 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+✖ Failed to generate types for GraphQL schema: 
+GraphQL schema can't have List's with Nullable members.
+Error in 'invalidField' field of type '[Something]'.
+Suggestion: add an '!' to the member type of the List, change from '[Something]' to '[Something!]'
+"
+`;
+
+exports[`Validation > Invalid GraphQL schema 2`] = `1`;
+
+exports[`Validation > Invalid GraphQL schema 3`] = `""`;
+
+exports[`Validation > Invalid contract addresses 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > source > address
+  Contract address is invalid: 22843e74c59580b3eaf6c233fa67d8b7c561a835a
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.
+
+  Path: dataSources > 1 > source > address
+  Contract address is invalid: 22843e74c59580b3eaf6c233fa67d8b7c561axyz
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.
+
+  Path: dataSources > 2 > source > address
+  Contract address is invalid: 0x22843e74c59580b3eaf6c233fa67d8b7c561a835a
+  Must be 40 hexadecimal characters, with an optional '0x' prefix.
+"
+`;
+
+exports[`Validation > Invalid contract addresses 2`] = `1`;
+
+exports[`Validation > Invalid contract addresses 3`] = `""`;
+
+exports[`Validation > Invalid data source template 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > mapping > abis > 0 > file
+  File does not exist: Abi.json
+
+  Path: templates > 0 > kind
+  No value provided
+
+  Path: templates > 0 > name
+  Expected string, found number:
+  5
+
+  Path: templates > 0 > source
+  Unexpected key in map: address
+
+  Path: templates > 0 > mapping > entities
+  No value provided
+
+  Path: templates > 0 > mapping > abis > 0 > file
+  File does not exist: NonexistentAbi.json
+
+  Path: templates > 0 > mapping > language
+  No value provided
+
+  Path: templates > 0 > mapping > file
+  No value provided
+
+  Path: templates > 0 > mapping > apiVersion
+  No value provided
+"
+`;
+
+exports[`Validation > Invalid data source template 2`] = `1`;
+
+exports[`Validation > Invalid data source template 3`] = `""`;
+
+exports[`Validation > Invalid entity field types 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  MyEntity:
+  - Field 'isSet1': Unknown type 'bool'. Did you mean 'Boolean'?
+  - Field 'isSet2': Unknown type 'boolean'. Did you mean 'Boolean'?
+  - Field 'isSet3': Unknown type 'Bool'. Did you mean 'Boolean'?
+  - Field 'address1': Unknown type 'Address'. Did you mean 'Bytes'?
+  - Field 'address2': Unknown type 'address'. Did you mean 'Bytes'?
+  - Field 'float1': Unknown type 'float'. Did you mean 'BigDecimal'?
+  - Field 'float2': Unknown type 'Float'. Did you mean 'BigDecimal'?
+  - Field 'string1': Unknown type 'string'. Did you mean 'String'?
+  - Field 'int': Unknown type 'int'. Did you mean 'Int'?
+  - Field 'uint': Unknown type 'uint'. Did you mean 'BigInt'?
+  - Field 'uint32': Unknown type 'uint32'. Did you mean 'BigInt'?
+  - Field 'i8': Unknown type 'i8'. Did you mean 'Int8'?
+  - Field 'i16': Unknown type 'i16'. Did you mean 'Int'?
+  - Field 'i24': Unknown type 'i24'. Did you mean 'Int'?
+  - Field 'i32': Unknown type 'i32'. Did you mean 'Int'?
+  - Field 'i40': Unknown type 'i40'. Did you mean 'BigInt'?
+  - Field 'i48': Unknown type 'i48'. Did you mean 'BigInt'?
+  - Field 'i56': Unknown type 'i56'. Did you mean 'BigInt'?
+  - Field 'i64': Unknown type 'i64'. Did you mean 'BigInt'?
+  - Field 'i72': Unknown type 'i72'. Did you mean 'BigInt'?
+  - Field 'i80': Unknown type 'i80'. Did you mean 'BigInt'?
+  - Field 'i88': Unknown type 'i88'. Did you mean 'BigInt'?
+  - Field 'i96': Unknown type 'i96'. Did you mean 'BigInt'?
+  - Field 'i104': Unknown type 'i104'. Did you mean 'BigInt'?
+  - Field 'i112': Unknown type 'i112'. Did you mean 'BigInt'?
+  - Field 'i120': Unknown type 'i120'. Did you mean 'BigInt'?
+  - Field 'i128': Unknown type 'i128'. Did you mean 'BigInt'?
+  - Field 'i136': Unknown type 'i136'. Did you mean 'BigInt'?
+  - Field 'i144': Unknown type 'i144'. Did you mean 'BigInt'?
+  - Field 'i152': Unknown type 'i152'. Did you mean 'BigInt'?
+  - Field 'i160': Unknown type 'i160'. Did you mean 'BigInt'?
+  - Field 'i168': Unknown type 'i168'. Did you mean 'BigInt'?
+  - Field 'i176': Unknown type 'i176'. Did you mean 'BigInt'?
+  - Field 'i184': Unknown type 'i184'. Did you mean 'BigInt'?
+  - Field 'i192': Unknown type 'i192'. Did you mean 'BigInt'?
+  - Field 'i200': Unknown type 'i200'. Did you mean 'BigInt'?
+  - Field 'i208': Unknown type 'i208'. Did you mean 'BigInt'?
+  - Field 'i216': Unknown type 'i216'. Did you mean 'BigInt'?
+  - Field 'i224': Unknown type 'i224'. Did you mean 'BigInt'?
+  - Field 'i232': Unknown type 'i232'. Did you mean 'BigInt'?
+  - Field 'i240': Unknown type 'i240'. Did you mean 'BigInt'?
+  - Field 'i248': Unknown type 'i248'. Did you mean 'BigInt'?
+  - Field 'i256': Unknown type 'i256'. Did you mean 'BigInt'?
+  - Field 'i256': Unknown type 'i256'. Did you mean 'BigInt'?
+  - Field 'int8': Unknown type 'int8'. Did you mean 'Int8'?
+  - Field 'int16': Unknown type 'int16'. Did you mean 'Int'?
+  - Field 'int24': Unknown type 'int24'. Did you mean 'Int'?
+  - Field 'int32': Unknown type 'int32'. Did you mean 'Int'?
+  - Field 'int40': Unknown type 'int40'. Did you mean 'BigInt'?
+  - Field 'int48': Unknown type 'int48'. Did you mean 'BigInt'?
+  - Field 'int56': Unknown type 'int56'. Did you mean 'BigInt'?
+  - Field 'int64': Unknown type 'int64'. Did you mean 'BigInt'?
+  - Field 'int72': Unknown type 'int72'. Did you mean 'BigInt'?
+  - Field 'int80': Unknown type 'int80'. Did you mean 'BigInt'?
+  - Field 'int88': Unknown type 'int88'. Did you mean 'BigInt'?
+  - Field 'int96': Unknown type 'int96'. Did you mean 'BigInt'?
+  - Field 'int104': Unknown type 'int104'. Did you mean 'BigInt'?
+  - Field 'int112': Unknown type 'int112'. Did you mean 'BigInt'?
+  - Field 'int120': Unknown type 'int120'. Did you mean 'BigInt'?
+  - Field 'int128': Unknown type 'int128'. Did you mean 'BigInt'?
+  - Field 'int136': Unknown type 'int136'. Did you mean 'BigInt'?
+  - Field 'int144': Unknown type 'int144'. Did you mean 'BigInt'?
+  - Field 'int152': Unknown type 'int152'. Did you mean 'BigInt'?
+  - Field 'int160': Unknown type 'int160'. Did you mean 'BigInt'?
+  - Field 'int168': Unknown type 'int168'. Did you mean 'BigInt'?
+  - Field 'int176': Unknown type 'int176'. Did you mean 'BigInt'?
+  - Field 'int184': Unknown type 'int184'. Did you mean 'BigInt'?
+  - Field 'int192': Unknown type 'int192'. Did you mean 'BigInt'?
+  - Field 'int200': Unknown type 'int200'. Did you mean 'BigInt'?
+  - Field 'int208': Unknown type 'int208'. Did you mean 'BigInt'?
+  - Field 'int216': Unknown type 'int216'. Did you mean 'BigInt'?
+  - Field 'int224': Unknown type 'int224'. Did you mean 'BigInt'?
+  - Field 'int232': Unknown type 'int232'. Did you mean 'BigInt'?
+  - Field 'int240': Unknown type 'int240'. Did you mean 'BigInt'?
+  - Field 'int248': Unknown type 'int248'. Did you mean 'BigInt'?
+  - Field 'int256': Unknown type 'int256'. Did you mean 'BigInt'?
+  - Field 'int256': Unknown type 'int256'. Did you mean 'BigInt'?
+  - Field 'u8': Unknown type 'u8'. Did you mean 'Int8'?
+  - Field 'u16': Unknown type 'u16'. Did you mean 'Int'?
+  - Field 'u24': Unknown type 'u24'. Did you mean 'Int'?
+  - Field 'u32': Unknown type 'u32'. Did you mean 'BigInt'?
+  - Field 'u40': Unknown type 'u40'. Did you mean 'BigInt'?
+  - Field 'u48': Unknown type 'u48'. Did you mean 'BigInt'?
+  - Field 'u56': Unknown type 'u56'. Did you mean 'BigInt'?
+  - Field 'u64': Unknown type 'u64'. Did you mean 'BigInt'?
+  - Field 'u72': Unknown type 'u72'. Did you mean 'BigInt'?
+  - Field 'u80': Unknown type 'u80'. Did you mean 'BigInt'?
+  - Field 'u88': Unknown type 'u88'. Did you mean 'BigInt'?
+  - Field 'u96': Unknown type 'u96'. Did you mean 'BigInt'?
+  - Field 'u104': Unknown type 'u104'. Did you mean 'BigInt'?
+  - Field 'u112': Unknown type 'u112'. Did you mean 'BigInt'?
+  - Field 'u120': Unknown type 'u120'. Did you mean 'BigInt'?
+  - Field 'u128': Unknown type 'u128'. Did you mean 'BigInt'?
+  - Field 'u136': Unknown type 'u136'. Did you mean 'BigInt'?
+  - Field 'u144': Unknown type 'u144'. Did you mean 'BigInt'?
+  - Field 'u152': Unknown type 'u152'. Did you mean 'BigInt'?
+  - Field 'u160': Unknown type 'u160'. Did you mean 'BigInt'?
+  - Field 'u168': Unknown type 'u168'. Did you mean 'BigInt'?
+  - Field 'u176': Unknown type 'u176'. Did you mean 'BigInt'?
+  - Field 'u184': Unknown type 'u184'. Did you mean 'BigInt'?
+  - Field 'u192': Unknown type 'u192'. Did you mean 'BigInt'?
+  - Field 'u200': Unknown type 'u200'. Did you mean 'BigInt'?
+  - Field 'u208': Unknown type 'u208'. Did you mean 'BigInt'?
+  - Field 'u216': Unknown type 'u216'. Did you mean 'BigInt'?
+  - Field 'u224': Unknown type 'u224'. Did you mean 'BigInt'?
+  - Field 'u232': Unknown type 'u232'. Did you mean 'BigInt'?
+  - Field 'u240': Unknown type 'u240'. Did you mean 'BigInt'?
+  - Field 'u248': Unknown type 'u248'. Did you mean 'BigInt'?
+  - Field 'u256': Unknown type 'u256'. Did you mean 'BigInt'?
+  - Field 'u256': Unknown type 'u256'. Did you mean 'BigInt'?
+  - Field 'uint8': Unknown type 'uint8'. Did you mean 'Int8'?
+  - Field 'uint16': Unknown type 'uint16'. Did you mean 'Int'?
+  - Field 'uint24': Unknown type 'uint24'. Did you mean 'Int'?
+  - Field 'uint32': Unknown type 'uint32'. Did you mean 'BigInt'?
+  - Field 'uint40': Unknown type 'uint40'. Did you mean 'BigInt'?
+  - Field 'uint48': Unknown type 'uint48'. Did you mean 'BigInt'?
+  - Field 'uint56': Unknown type 'uint56'. Did you mean 'BigInt'?
+  - Field 'uint64': Unknown type 'uint64'. Did you mean 'BigInt'?
+  - Field 'uint72': Unknown type 'uint72'. Did you mean 'BigInt'?
+  - Field 'uint80': Unknown type 'uint80'. Did you mean 'BigInt'?
+  - Field 'uint88': Unknown type 'uint88'. Did you mean 'BigInt'?
+  - Field 'uint96': Unknown type 'uint96'. Did you mean 'BigInt'?
+  - Field 'uint104': Unknown type 'uint104'. Did you mean 'BigInt'?
+  - Field 'uint112': Unknown type 'uint112'. Did you mean 'BigInt'?
+  - Field 'uint120': Unknown type 'uint120'. Did you mean 'BigInt'?
+  - Field 'uint128': Unknown type 'uint128'. Did you mean 'BigInt'?
+  - Field 'uint136': Unknown type 'uint136'. Did you mean 'BigInt'?
+  - Field 'uint144': Unknown type 'uint144'. Did you mean 'BigInt'?
+  - Field 'uint152': Unknown type 'uint152'. Did you mean 'BigInt'?
+  - Field 'uint160': Unknown type 'uint160'. Did you mean 'BigInt'?
+  - Field 'uint168': Unknown type 'uint168'. Did you mean 'BigInt'?
+  - Field 'uint176': Unknown type 'uint176'. Did you mean 'BigInt'?
+  - Field 'uint184': Unknown type 'uint184'. Did you mean 'BigInt'?
+  - Field 'uint192': Unknown type 'uint192'. Did you mean 'BigInt'?
+  - Field 'uint200': Unknown type 'uint200'. Did you mean 'BigInt'?
+  - Field 'uint208': Unknown type 'uint208'. Did you mean 'BigInt'?
+  - Field 'uint216': Unknown type 'uint216'. Did you mean 'BigInt'?
+  - Field 'uint224': Unknown type 'uint224'. Did you mean 'BigInt'?
+  - Field 'uint232': Unknown type 'uint232'. Did you mean 'BigInt'?
+  - Field 'uint240': Unknown type 'uint240'. Did you mean 'BigInt'?
+  - Field 'uint248': Unknown type 'uint248'. Did you mean 'BigInt'?
+  - Field 'uint256': Unknown type 'uint256'. Did you mean 'BigInt'?
+  - Field 'uint256': Unknown type 'uint256'. Did you mean 'BigInt'?
+  - Field 'references': Unknown type 'Foo'.
+"
+`;
+
+exports[`Validation > Invalid entity field types 2`] = `1`;
+
+exports[`Validation > Invalid entity field types 3`] = `""`;
+
+exports[`Validation > Invalid subgraph manifest (cannot infer protocol) 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: /
+  Unable to determine for which protocol manifest file is built for. Ensure you have at least one 'dataSources' and/or 'templates' elements defined in your subgraph.
+"
+`;
+
+exports[`Validation > Invalid subgraph manifest (cannot infer protocol) 2`] = `1`;
+
+exports[`Validation > Invalid subgraph manifest (cannot infer protocol) 3`] = `""`;
+
+exports[`Validation > Invalid subgraph manifest 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: specVersion
+  No value provided
+
+  Path: schema > file
+  File does not exist: non-existent.grapqhl
+
+  Path: dataSources > 0 > name
+  Expected string, found number:
+  5
+
+  Path: dataSources > 0 > source
+  No value provided
+
+  Path: dataSources > 0 > mapping
+  Expected map, found list:
+  - 12
+  - 13
+  - 14
+
+  Path: dataSources > 0
+  Unexpected key in map: abis
+
+  Path: templates
+  Expected list, found map:
+  field: foo
+"
+`;
+
+exports[`Validation > Invalid subgraph manifest 2`] = `1`;
+
+exports[`Validation > Invalid subgraph manifest 3`] = `""`;
+
+exports[`Validation > Missing entity "id" field 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  MyEntity:
+  - Missing field: id: ID!
+"
+`;
+
+exports[`Validation > Missing entity "id" field 2`] = `1`;
+
+exports[`Validation > Missing entity "id" field 3`] = `""`;
+
+exports[`Validation > Missing or invalid @derivedFrom fields 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  A:
+  - Field 'b': @derivedFrom field 'a' does not exist on type 'B'
+  - Field 'c': @derivedFrom field 'a' does not exist on type 'C'
+  - Field 'd': @derivedFrom directive must have a 'field' argument
+  - Field 'e': @derivedFrom directive must have a 'field' argument
+  - Field 'f': Value of the @derivedFrom 'field' argument must be a string
+  - Field 'g': @derivedFrom field 'a' on type 'G' must have the type 'A', 'A!', '[A!]!', or one of the interface types that 'A' implements
+"
+`;
+
+exports[`Validation > Missing or invalid @derivedFrom fields 2`] = `1`;
+
+exports[`Validation > Missing or invalid @derivedFrom fields 3`] = `""`;
+
+exports[`Validation > NEAR is a valid chain 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > NEAR is a valid chain 2`] = `0`;
+
+exports[`Validation > NEAR is a valid chain 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > No network names (valid) 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+  Generate types for data source template ExampleTemplate
+- Generate types for data source templates
+  Write types for templates to generated/templates.ts
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+  Load data source template ABI from Abi.json
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+  Generate types for data source template ABI: ExampleTemplate > ExampleContract (Abi.json)
+- Generate types for data source template ABIs
+  Write types to generated/templates/ExampleTemplate/ExampleContract.ts
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > No network names (valid) 2`] = `0`;
+
+exports[`Validation > No network names (valid) 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > Source without address is valid 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > Source without address is valid 2`] = `0`;
+
+exports[`Validation > Source without address is valid 3`] = `
+"
+Types generated successfully
+
+"
+`;
+
+exports[`Validation > topic0 is valid in an event handler 1`] = `
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+"
+`;
+
+exports[`Validation > topic0 is valid in an event handler 2`] = `0`;
+
+exports[`Validation > topic0 is valid in an event handler 3`] = `
+"
+Types generated successfully
+
+"
+`;

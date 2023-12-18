@@ -1,16 +1,18 @@
 import assert from 'assert';
 import * as graphql from 'graphql/language';
 import prettier from 'prettier';
+import { describe, expect, test } from 'vitest';
 import Schema from '../schema';
 import SchemaCodeGenerator from './schema';
 import { Class, Method, NamedType, NullableType, Param, StaticMethod } from './typescript';
 
-const formatTS = (code: string) => prettier.format(code, { parser: 'typescript', semi: false });
+const formatTS = async (code: string) =>
+  await prettier.format(code, { parser: 'typescript', semi: false });
 
 const createSchemaCodeGen = (schema: string) =>
   new SchemaCodeGenerator(new Schema('', schema, graphql.parse(schema)));
 
-const testEntity = (generatedTypes: any[], expectedEntity: any) => {
+const testEntity = async (generatedTypes: any[], expectedEntity: any) => {
   const entity = generatedTypes.find(type => type.name === expectedEntity.name);
 
   expect(entity instanceof Class).toBe(true);
@@ -30,13 +32,13 @@ const testEntity = (generatedTypes: any[], expectedEntity: any) => {
       : expect(method instanceof Method).toBe(true);
     expect(method.params).toStrictEqual(expectedMethod.params);
     expect(method.returnType).toStrictEqual(expectedMethod.returnType);
-    expect(formatTS(method.body)).toBe(formatTS(expectedMethod.body));
+    expect(await formatTS(method.body)).toBe(await formatTS(expectedMethod.body));
   }
 
   expect(methods.length).toBe(expectedEntity.methods.length);
 };
 
-describe('Schema code generator', () => {
+describe.concurrent('Schema code generator', () => {
   test('Should generate nothing for non entity types', () => {
     const codegen = createSchemaCodeGen(`
       type Foo {
@@ -93,8 +95,8 @@ describe('Schema code generator', () => {
       expect(generatedTypes.length).toBe(2);
     });
 
-    test('Account is an entity with the correct methods', () => {
-      testEntity(generatedTypes, {
+    test('Account is an entity with the correct methods', async () => {
+      await testEntity(generatedTypes, {
         name: 'Account',
         members: [],
         methods: [
@@ -297,8 +299,8 @@ describe('Schema code generator', () => {
       });
     });
 
-    test('Wallet is an entity with the correct methods', () => {
-      testEntity(generatedTypes, {
+    test('Wallet is an entity with the correct methods', async () => {
+      await testEntity(generatedTypes, {
         name: 'Wallet',
         members: [],
         methods: [
@@ -409,7 +411,7 @@ describe('Schema code generator', () => {
     });
   });
 
-  test('Should handle references with Bytes id types', () => {
+  test('Should handle references with Bytes id types', async () => {
     const codegen = createSchemaCodeGen(`
     interface Employee {
       id: Bytes!
@@ -431,7 +433,7 @@ describe('Schema code generator', () => {
 `);
 
     const generatedTypes = codegen.generateTypes();
-    testEntity(generatedTypes, {
+    await testEntity(generatedTypes, {
       name: 'Task',
       members: [],
       methods: [
@@ -537,7 +539,7 @@ describe('Schema code generator', () => {
     });
   });
 
-  test('get related method for WithBytes entity', () => {
+  test('get related method for WithBytes entity', async () => {
     const codegen = createSchemaCodeGen(`
       type WithBytes @entity {
         id: Bytes!
@@ -552,7 +554,7 @@ describe('Schema code generator', () => {
 
     const generatedTypes = codegen.generateTypes();
 
-    testEntity(generatedTypes, {
+    await testEntity(generatedTypes, {
       name: 'WithBytes',
       members: [],
       methods: [

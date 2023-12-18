@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import * as toolbox from 'gluegun';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { runGraphCli } from './util';
 
 const EXAMPLE_SUBGRAPH_PATH = path.join(__dirname, 'add', 'subgraph');
@@ -12,9 +13,6 @@ describe('Add command', () => {
     toolbox.filesystem.remove(TEMP_SUBGRAPH_PATH); // If the tests fail before AfterAll is called
     toolbox.filesystem.copy(EXAMPLE_SUBGRAPH_PATH, TEMP_SUBGRAPH_PATH);
 
-    // The add command expects to be run from the root of the subgraph
-    // so we need to change the working directory
-    process.chdir(TEMP_SUBGRAPH_PATH);
     await runGraphCli(
       [
         'add',
@@ -26,9 +24,6 @@ describe('Add command', () => {
       ],
       TEMP_SUBGRAPH_PATH,
     );
-
-    // Change the working directory back to the root of the tests
-    process.chdir(String(__dirname));
   });
 
   afterAll(async () => {

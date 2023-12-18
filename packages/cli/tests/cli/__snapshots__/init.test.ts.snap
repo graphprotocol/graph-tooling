@@ -1,0 +1,353 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Init > Ethereum > From contract 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Fetching ABI from Etherscan
+✔ Fetching ABI from Etherscan
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > Ethereum > From contract 2`] = `0`;
+
+exports[`Init > Ethereum > From contract 3`] = `
+"
+Subgraph user/subgraph-from-contract created in from-contract
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-contract\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with abi 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > Ethereum > From contract with abi 2`] = `0`;
+
+exports[`Init > Ethereum > From contract with abi 3`] = `
+"
+Subgraph user/subgraph-from-contract-with-abi created in from-contract-with-abi
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-contract-with-abi\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with abi and structs 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > Ethereum > From contract with abi and structs 2`] = `0`;
+
+exports[`Init > Ethereum > From contract with abi and structs 3`] = `
+"
+Subgraph user/subgraph-from-contract-with-abi-and-structs created in from-contract-with-abi-and-structs
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-contract-with-abi-and-structs\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with index events and abi with ID in events 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > Ethereum > From contract with index events and abi with ID in events 2`] = `0`;
+
+exports[`Init > Ethereum > From contract with index events and abi with ID in events 3`] = `
+"
+Subgraph user/subgraph-from-contract-with-index-events-and-abi-with-id created in duplicate-ids
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd duplicate-ids\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with list items in abi 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > Ethereum > From contract with list items in abi 2`] = `0`;
+
+exports[`Init > Ethereum > From contract with list items in abi 3`] = `
+"
+Subgraph user/subgraph-from-contract-with-lists-in-abi created in from-contract-with-lists-in-abi
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-contract-with-lists-in-abi\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with overloaded elements 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > Ethereum > From contract with overloaded elements 2`] = `0`;
+
+exports[`Init > Ethereum > From contract with overloaded elements 3`] = `
+"
+Subgraph user/subgraph-from-contract-with-overloaded-elements created in from-contract-with-overloaded-elements
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-contract-with-overloaded-elements\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From example 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Cloning example subgraph
+✔ Cloning example subgraph
+- Initialize networks config
+✔ Initialize networks config
+- Update subgraph name and commands in package.json
+✔ Update subgraph name and commands in package.json
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > Ethereum > From example 2`] = `0`;
+
+exports[`Init > Ethereum > From example 3`] = `
+"
+Subgraph user/example-subgraph created in from-example
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-example\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > NEAR > From contract 1`] = `
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+ ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
+ ›    Data 
+ ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
+"
+`;
+
+exports[`Init > NEAR > From contract 2`] = `0`;
+
+exports[`Init > NEAR > From contract 3`] = `
+"
+Subgraph user/near-from-contract created in from-contract
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-contract\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;

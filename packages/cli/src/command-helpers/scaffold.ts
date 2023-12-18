@@ -92,7 +92,7 @@ export const generateScaffold = async (
     spkgPath,
   });
 
-  return scaffold.generate();
+  return await scaffold.generate();
 };
 
 const writeScaffoldDirectory = async (scaffold: any, directory: string, spinner: Spinner) => {
@@ -122,7 +122,7 @@ export const writeScaffold = async (scaffold: any, directory: string, spinner: S
 };
 
 export const writeABI = async (abi: ABI, contractName: string) => {
-  const data = prettier.format(JSON.stringify(abi.data), {
+  const data = await prettier.format(JSON.stringify(abi.data), {
     parser: 'json',
   });
 
@@ -142,7 +142,7 @@ export const writeSchema = async (
         .toJS()
     : [];
 
-  const data = prettier.format(
+  const data = await prettier.format(
     events.map(event => generateEventType(event, protocol.name, contractName)).join('\n\n'),
     {
       parser: 'graphql',
@@ -164,7 +164,7 @@ export const writeMapping = async (
         .toJS()
     : [];
 
-  const mapping = prettier.format(generateEventIndexingHandlers(events, contractName), {
+  const mapping = await prettier.format(generateEventIndexingHandlers(events, contractName), {
     parser: 'typescript',
     semi: false,
   });
@@ -180,7 +180,7 @@ export const writeTestsFiles = async (abi: ABI, protocol: Protocol, contractName
     // If a contract is added to a subgraph that has no tests folder
     await fs.ensureDir('./tests/');
 
-    const testsFiles = generateTestsFiles(contractName, events, true);
+    const testsFiles = await generateTestsFiles(contractName, events, true);
 
     for (const [fileName, content] of Object.entries(testsFiles)) {
       await fs.writeFile(`./tests/${fileName}`, content, 'utf-8');

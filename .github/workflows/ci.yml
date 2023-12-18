@@ -40,7 +40,7 @@ jobs:
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
         with:
-          nodeVersion: 20
+          nodeVersion: ${{ matrix.node-version }}
           packageManager: pnpm
           packageManagerVersion: 8.10.4
 
@@ -57,7 +57,7 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: pnpm run test:cli -- --forceExit
+          command: pnpm run test:cli
 
   event-handler:
     name: Ethereum Basic Event Handlers
@@ -110,4 +110,4 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: pnpm run test:ts -- --forceExit
+          command: pnpm run test:ts

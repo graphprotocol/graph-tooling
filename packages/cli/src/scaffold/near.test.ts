@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import Protocol from '../protocols';
 import Scaffold from './index';
 
@@ -12,9 +13,9 @@ const scaffoldOptions = {
 
 const scaffold = new Scaffold(scaffoldOptions);
 
-describe('NEAR subgraph scaffolding', () => {
-  test('Manifest', () => {
-    expect(scaffold.generateManifest()).toEqual(`\
+describe.concurrent('NEAR subgraph scaffolding', () => {
+  test('Manifest', async () => {
+    expect(await scaffold.generateManifest()).toEqual(`\
 specVersion: 0.0.5
 schema:
   file: ./schema.graphql
@@ -35,8 +36,8 @@ dataSources:
 `);
   });
 
-  test('Schema (default)', () => {
-    expect(scaffold.generateSchema()).toEqual(`\
+  test('Schema (default)', async () => {
+    expect(await scaffold.generateSchema()).toEqual(`\
 type ExampleEntity @entity {
   id: ID!
   block: Bytes!
@@ -45,8 +46,8 @@ type ExampleEntity @entity {
 `);
   });
 
-  test('Mapping (default)', () => {
-    expect(scaffold.generateMapping()).toEqual(`\
+  test('Mapping (default)', async () => {
+    expect(await scaffold.generateMapping()).toEqual(`\
 import { near, BigInt } from "@graphprotocol/graph-ts"
 import { ExampleEntity } from "../generated/schema"
 
