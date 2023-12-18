@@ -31,41 +31,18 @@ jobs:
     needs: [lint]
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix:
         node-version: [18, 20, 21]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - uses: the-guild-org/shared-config/setup@main
+        name: Setup Env
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.4.0
-        with:
-          version: 8.10.4
-          run_install: false
-
-      # - name: Get pnpm store directory
-      #   id: pnpm_store
-      #   run: echo "path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-
-      # - name: Setup pnpm cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ steps.pnpm_store.outputs.path }}
-      #     key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Diff
-        run: git diff --minimal
+          nodeVersion: ${{ matrix.node-version }}
+          packageManager: pnpm
+          packageManagerVersion: 8.10.4
 
       - name: Setup git user information
         run: |
