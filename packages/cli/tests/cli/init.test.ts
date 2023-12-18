@@ -2,7 +2,7 @@ import path from 'path';
 import { describe } from 'vitest';
 import { cliTest } from './util';
 
-describe.concurrent(
+describe.sequential(
   'Init',
   () => {
     const baseDir = path.join(__dirname, 'init');
