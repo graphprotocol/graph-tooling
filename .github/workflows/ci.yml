@@ -107,9 +107,6 @@ jobs:
 
       - name: Run Tests
         uses: nick-fields/retry@v2
-        env:
-          # node v21 has warnings about the deprecation of punycode which can break test snapshots
-          NODE_NO_WARNINGS: 1
         with:
           timeout_minutes: 10
           max_attempts: 3
