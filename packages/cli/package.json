@@ -21,7 +21,7 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json && oclif manifest && oclif readme && copyfiles -u 1 src/**/*.graphql dist/",
     "oclif:pack": "npm pack && pnpm oclif pack tarballs --no-xz && node scripts/rename-tarballs.mjs",
-    "test": "NODE_NO_WARNINGS=1 vitest run --bail=1",
+    "test": "vitest run --bail=1",
     "test:add": "vitest run tests/cli/add.test.ts",
     "test:init": "vitest run tests/cli/init.test.ts",
     "test:validation": "vitest run tests/cli/validation.test.ts",
