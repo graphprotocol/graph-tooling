@@ -2,6 +2,8 @@ import path from 'path';
 import { describe } from 'vitest';
 import { cliTest } from './util';
 
+// we run the tests sequentially because each init command installs deps with the
+// same package manager and we want to avoid race conditions on the deps cache
 describe.sequential(
   'Init',
   () => {
