@@ -48,17 +48,17 @@ jobs:
           version: 8.10.4
           run_install: false
 
-      - name: Get pnpm store directory
-        id: pnpm_store
-        run: echo "path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+      # - name: Get pnpm store directory
+      #   id: pnpm_store
+      #   run: echo "path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
 
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm_store.outputs.path }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+      # - name: Setup pnpm cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ steps.pnpm_store.outputs.path }}
+      #     key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install
