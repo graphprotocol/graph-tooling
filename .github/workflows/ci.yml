@@ -37,12 +37,26 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - uses: the-guild-org/shared-config/setup@main
-        name: Setup Env
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.4.0
         with:
-          nodeVersion: 20
-          packageManager: pnpm
-          packageManagerVersion: 8.10.4
+          version: 8.10.4
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm_store
+        run: echo "path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm_store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Setup git user information
         run: |
