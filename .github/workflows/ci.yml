@@ -110,4 +110,5 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: pnpm run test:ts
+          # node v21 has warnings about the deprecation of punycode which can break test snapshots
+          command: NODE_NO_WARNINGS=1 pnpm run test:ts
