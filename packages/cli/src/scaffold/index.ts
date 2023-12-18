@@ -153,7 +153,9 @@ dataSources:
 
   generateMappings() {
     return this.protocol.getMappingScaffold()
-      ? { [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping() }
+      ? {
+          [`${strings.kebabCase(this.contractName)}.ts`]: this.generateMapping(),
+        }
       : undefined;
   }
 
