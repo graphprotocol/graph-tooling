@@ -1,5 +1,15 @@
 # @graphprotocol/graph-cli
 
+## 0.64.1
+
+### Patch Changes
+
+- [#1536](https://github.com/graphprotocol/graph-tooling/pull/1536)
+  [`fbce626`](https://github.com/graphprotocol/graph-tooling/commit/fbce626ddd9206f9887576b1a023d9b98914e6a9)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+  - Updated dependency [`prettier@3.0.3` ↗︎](https://www.npmjs.com/package/prettier/v/3.0.3) (from
+    `1.19.1`, in `dependencies`)
+
 ## 0.64.0
 
 ### Minor Changes
