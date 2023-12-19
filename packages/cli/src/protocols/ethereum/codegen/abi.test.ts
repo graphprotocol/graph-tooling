@@ -1,8 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import immutable from 'immutable';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import * as ts from '../../../codegen/typescript';
 import ABI from '../abi';
 import AbiCodeGenerator from './abi';
 
@@ -180,14 +178,7 @@ describe.concurrent('ABI code generation', () => {
 
   describe('Generated types', () => {
     test('All expected types are generated', () => {
-      expect(generatedTypes.map(type => type.name)).toEqual([
-        'Contract__getProposalResultValue0Struct',
-        'Contract__getProposalInputParam1Struct',
-        'Contract__getProposalInputParam1BarStruct',
-        'Contract__getProposalsResultValue1Struct',
-        'Contract__getProposalsResult',
-        'Contract',
-      ]);
+      expect(generatedTypes.map(type => type.name)).toMatchSnapshot()
     });
   });
 
@@ -215,52 +206,12 @@ describe.concurrent('ABI code generation', () => {
   describe('Methods for callable functions', () => {
     test('Have correct parameters', () => {
       const contract = generatedTypes.find(type => type.name === 'Contract');
-      expect(contract.methods.map((method: any) => [method.name, method.params])).toEqual([
-        ['bind', immutable.List([ts.param('address', 'Address')])],
-        ['read', immutable.List()],
-        ['try_read', immutable.List()],
-        [
-          'getProposal',
-          immutable.List([
-            ts.param('proposalId', 'BigInt'),
-            ts.param('param1', 'Contract__getProposalInputParam1Struct'),
-          ]),
-        ],
-        [
-          'try_getProposal',
-          immutable.List([
-            ts.param('proposalId', 'BigInt'),
-            ts.param('param1', 'Contract__getProposalInputParam1Struct'),
-          ]),
-        ],
-        ['getProposals', immutable.List()],
-        ['try_getProposals', immutable.List()],
-        ['overloaded', immutable.List([ts.param('param0', 'string')])],
-        ['try_overloaded', immutable.List([ts.param('param0', 'string')])],
-        ['overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
-        ['try_overloaded1', immutable.List([ts.param('param0', 'BigInt')])],
-        ['overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
-        ['try_overloaded2', immutable.List([ts.param('param0', 'Bytes')])],
-      ]);
+      expect(contract.methods.map((method: any) => [method.name, method.params])).toMatchSnapshot()
     });
 
     test('Have correct return types', () => {
       const contract = generatedTypes.find(type => type.name === 'Contract');
-      expect(contract.methods.map((method: any) => [method.name, method.returnType])).toEqual([
-        ['bind', ts.namedType('Contract')],
-        ['read', ts.namedType('Bytes')],
-        ['try_read', 'ethereum.CallResult<Bytes>'],
-        ['getProposal', ts.namedType('Contract__getProposalResultValue0Struct')],
-        ['try_getProposal', 'ethereum.CallResult<Contract__getProposalResultValue0Struct>'],
-        ['getProposals', ts.namedType('Contract__getProposalsResult')],
-        ['try_getProposals', 'ethereum.CallResult<Contract__getProposalsResult>'],
-        ['overloaded', ts.namedType('string')],
-        ['try_overloaded', 'ethereum.CallResult<string>'],
-        ['overloaded1', ts.namedType('string')],
-        ['try_overloaded1', 'ethereum.CallResult<string>'],
-        ['overloaded2', ts.namedType('string')],
-        ['try_overloaded2', 'ethereum.CallResult<string>'],
-      ]);
+      expect(contract.methods.map((method: any) => [method.name, method.returnType])).toMatchSnapshot()
     });
   });
 
@@ -275,10 +226,7 @@ describe.concurrent('ABI code generation', () => {
 
       // Verify that the tuple type has getters for all tuple fields with
       // the right return types
-      expect(tupleType.methods.map((method: any) => [method.name, method.returnType])).toEqual([
-        ['get foo', 'i32'],
-        ['get bar', 'Contract__getProposalInputParam1BarStruct'],
-      ]);
+      expect(tupleType.methods.map((method: any) => [method.name, method.returnType])).toMatchSnapshot()
 
       // Inner tuple:
       tupleType = generatedTypes.find(
@@ -290,9 +238,7 @@ describe.concurrent('ABI code generation', () => {
 
       // Verify that the tuple type has getters for all tuple fields with
       // the right return types
-      expect(tupleType.methods.map((method: any) => [method.name, method.returnType])).toEqual([
-        ['get baz', 'Address'],
-      ]);
+      expect(tupleType.methods.map((method: any) => [method.name, method.returnType])).toMatchSnapshot()
     });
 
     test('Tuple types exist for function return values', () => {
@@ -305,17 +251,7 @@ describe.concurrent('ABI code generation', () => {
 
       // Verify that the tuple type has getters for all tuple fields with
       // the right return types
-      expect(tupleType.methods.map((method: any) => [method.name, method.returnType])).toEqual([
-        ['get result', 'i32'],
-        ['get target', 'Address'],
-        ['get data', 'Bytes'],
-        ['get proposer', 'Address'],
-        ['get feeRecipient', 'Address'],
-        ['get fee', 'BigInt'],
-        ['get startTime', 'BigInt'],
-        ['get yesCount', 'BigInt'],
-        ['get noCount', 'BigInt'],
-      ]);
+      expect(tupleType.methods.map((method: any) => [method.name, method.returnType])).toMatchSnapshot()
     });
 
     test('Function bodies are generated correctly for tuple arrays', () => {
