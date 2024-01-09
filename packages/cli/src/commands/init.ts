@@ -10,10 +10,11 @@ import {
   loadStartBlockForContract,
 } from '../command-helpers/abi';
 import { initNetworksConfig } from '../command-helpers/network';
-import { chooseNodeUrl } from '../command-helpers/node';
+import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { withSpinner } from '../command-helpers/spinner';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 import debugFactory from '../debug';
 import Protocol, { ProtocolName } from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
@@ -24,9 +25,47 @@ import AddCommand from './add';
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const availableNetworks = Protocol.availableNetworks();
 
-const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
-
 const initDebugger = debugFactory('graph-cli:commands:init');
+
+const AVAILABLE_NETWORKS = (async () => {
+  const logger = initDebugger.extend('AVAILABLE_NETWORKS');
+  try {
+    const res = await fetch(SUBGRAPH_STUDIO_URL, {
+      method: 'POST',
+      headers: {
+        ...GRAPH_CLI_SHARED_HEADERS,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'chain_list',
+        params: [],
+      }),
+    });
+
+    if (!res.ok) {
+      logger(
+        "Something went wrong while fetching 'chain_list' from studio HTTP code: %o",
+        res.status,
+      );
+      return null;
+    }
+
+    const result = await res.json();
+    if (result?.result) {
+      return result.result as { studio: Array<string>; hostedService: Array<string> };
+    }
+
+    logger("Unable to get result for 'chain_list' from studio: %O", result);
+    return null;
+  } catch (e) {
+    logger('error: %O', e);
+    return null;
+  }
+})();
+
+const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
 
 export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';

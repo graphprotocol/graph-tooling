@@ -2,7 +2,7 @@ import { URL } from 'url';
 import { print } from 'gluegun';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 
-const SUBGRAPH_STUDIO_URL = 'https://api.studio.thegraph.com/deploy/';
+export const SUBGRAPH_STUDIO_URL = 'https://api.studio.thegraph.com/deploy/';
 const HOSTED_SERVICE_URL = 'https://api.thegraph.com/deploy/';
 const HOSTED_SERVICE_INDEX_NODE_URL = 'https://api.thegraph.com/index-node/graphql';
 
