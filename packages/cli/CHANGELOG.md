@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.65.0
+
+### Minor Changes
+
+- [#1557](https://github.com/graphprotocol/graph-tooling/pull/1557)
+  [`e84f233`](https://github.com/graphprotocol/graph-tooling/commit/e84f233ee156863136b120a79a91ec692a6f5677)
+  Thanks [@saihaj](https://github.com/saihaj)! - fetch supported networks from API
+
 ## 0.64.1
 
 ### Patch Changes
