@@ -32,7 +32,7 @@ const initDebugger = debugFactory('graph-cli:commands:init');
 const AVAILABLE_NETWORKS = async () => {
   const logger = initDebugger.extend('AVAILABLE_NETWORKS');
   try {
-    logger('fetching chain_list from studio')
+    logger('fetching chain_list from studio');
     const res = await fetch(SUBGRAPH_STUDIO_URL, {
       method: 'POST',
       headers: {
@@ -633,6 +633,14 @@ async function processInitForm(
     const choices = (await AVAILABLE_NETWORKS())?.[
       product === 'subgraph-studio' ? 'studio' : 'hostedService'
     ];
+
+    if (!choices) {
+      this.error(
+        'Unable to fetch available networks from API. Please report this issue. As a workaround you can pass `--network` flag from the available networks: https://thegraph.com/docs/en/developing/supported-networks',
+        { exit: 1 },
+      );
+    }
+
     const { network } = await prompt.ask<{ network: string }>([
       {
         type: 'select',
