@@ -23,11 +23,13 @@ import { validateContract } from '../validation';
 import AddCommand from './add';
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
-const availableNetworks = Protocol.availableNetworks();
 
 const initDebugger = debugFactory('graph-cli:commands:init');
 
-const AVAILABLE_NETWORKS = (async () => {
+/**
+ * a dynamic list of available networks supported by the studio
+ */
+const AVAILABLE_NETWORKS = async () => {
   const logger = initDebugger.extend('AVAILABLE_NETWORKS');
   try {
     const res = await fetch(SUBGRAPH_STUDIO_URL, {
@@ -63,7 +65,7 @@ const AVAILABLE_NETWORKS = (async () => {
     logger('error: %O', e);
     return null;
   }
-})();
+};
 
 const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
 
@@ -164,12 +166,9 @@ export default class InitCommand extends Command {
     }),
     network: Flags.string({
       summary: 'Network the contract is deployed to.',
+      description:
+        'Check https://thegraph.com/docs/en/developing/supported-networks/ for supported networks',
       dependsOn: ['from-contract'],
-      options: [
-        ...availableNetworks.get('ethereum')!,
-        ...availableNetworks.get('near')!,
-        ...availableNetworks.get('cosmos')!,
-      ],
     }),
   };
 
@@ -629,14 +628,15 @@ async function processInitForm(
       },
     ]);
 
+    const choices = (await AVAILABLE_NETWORKS())?.[
+      product === 'subgraph-studio' ? 'studio' : 'hostedService'
+    ];
     const { network } = await prompt.ask<{ network: string }>([
       {
         type: 'select',
         name: 'network',
         message: () => `${protocolInstance.displayName()} network`,
-        choices: availableNetworks
-          .get(protocol as ProtocolName) // Get networks related to the chosen protocol.
-          ?.toArray() || ['mainnet'],
+        choices,
         skip: initNetwork !== undefined,
         result: value => {
           if (initNetwork) {
