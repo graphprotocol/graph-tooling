@@ -32,6 +32,7 @@ const initDebugger = debugFactory('graph-cli:commands:init');
 const AVAILABLE_NETWORKS = async () => {
   const logger = initDebugger.extend('AVAILABLE_NETWORKS');
   try {
+    logger('fetching chain_list from studio')
     const res = await fetch(SUBGRAPH_STUDIO_URL, {
       method: 'POST',
       headers: {
@@ -56,6 +57,7 @@ const AVAILABLE_NETWORKS = async () => {
 
     const result = await res.json();
     if (result?.result) {
+      logger('chain_list result: %o', result.result);
       return result.result as { studio: Array<string>; hostedService: Array<string> };
     }
 
