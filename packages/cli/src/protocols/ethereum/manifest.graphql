@@ -19,10 +19,15 @@ type SubgraphManifest {
   graft: Graft
   dataSources: [DataSource!]!
   templates: [DataSourceTemplate!]
+  indexerHints: IndexerHints
 }
 
 type Schema {
   file: File!
+}
+
+type IndexerHints {
+  prune: String
 }
 
 type DataSource {

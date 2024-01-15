@@ -17,10 +17,15 @@ type SubgraphManifest {
   repository: String
   graft: Graft
   dataSources: [DataSource!]!
+  indexerHints: IndexerHints
 }
 
 type Schema {
   file: File!
+}
+
+type IndexerHints {
+  prune: String
 }
 
 type DataSource {

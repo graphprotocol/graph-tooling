@@ -36,9 +36,14 @@ describe.concurrent(
         exitCode: 1,
       },
     );
-    cliTest('Invalid ABI files', ['codegen', '--skip-migrations'], 'validation/invalid-abis', {
-      exitCode: 1,
-    });
+    cliTest(
+      'Invalid ABI files',
+      ['codegen', '--skip-migrations'],
+      'validation/invalid-abis',
+      {
+        exitCode: 1,
+      },
+    );
     cliTest(
       'Event not found in ABI',
       ['codegen', '--skip-migrations'],
@@ -176,9 +181,14 @@ describe.concurrent(
         exitCode: 1,
       },
     );
-    cliTest('NEAR is a valid chain', ['codegen', '--skip-migrations'], 'validation/near-is-valid', {
-      exitCode: 0,
-    });
+    cliTest(
+      'NEAR is a valid chain',
+      ['codegen', '--skip-migrations'],
+      'validation/near-is-valid',
+      {
+        exitCode: 0,
+      },
+    );
     cliTest(
       'Deprecated template format gives nice error',
       ['codegen', '--skip-migrations'],
@@ -246,6 +256,15 @@ describe.concurrent(
       'Invalid GraphQL schema',
       ['codegen', '--skip-migrations'],
       'validation/invalid-graphql-schema',
+      {
+        exitCode: 1,
+      },
+    );
+
+    cliTest(
+      'Should parse indexerHints',
+      ['codegen', '--skip-migrations'],
+      'validation/indexer-hints',
       {
         exitCode: 1,
       },

@@ -16,6 +16,7 @@ type SubgraphManifest {
   repository: String
   graft: Graft
   dataSources: [DataSource!]!
+  indexerHints: IndexerHints
 }
 
 type Schema {

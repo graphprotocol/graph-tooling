@@ -895,6 +895,19 @@ Types generated successfully
 "
 `;
 
+exports[`Validation > Should parse indexerHints 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: /
+  Unexpected key in map: indexerHints
+"
+`;
+
+exports[`Validation > Should parse indexerHints 2`] = `1`;
+
+exports[`Validation > Should parse indexerHints 3`] = `""`;
+
 exports[`Validation > Source without address is valid 1`] = `
 "- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
