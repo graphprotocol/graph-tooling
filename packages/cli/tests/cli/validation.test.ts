@@ -256,7 +256,7 @@ describe.concurrent(
       ['codegen', '--skip-migrations'],
       'validation/indexer-hints',
       {
-        exitCode: 1,
+        exitCode: 0,
       },
     );
   },

@@ -897,16 +897,40 @@ Types generated successfully
 
 exports[`Validation > Should parse indexerHints 1`] = `
 "- Load subgraph from subgraph.yaml
-✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
-
-  Path: /
-  Unexpected key in map: indexerHints
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
 "
 `;
 
-exports[`Validation > Should parse indexerHints 2`] = `1`;
+exports[`Validation > Should parse indexerHints 2`] = `0`;
 
-exports[`Validation > Should parse indexerHints 3`] = `""`;
+exports[`Validation > Should parse indexerHints 3`] = `
+"
+Types generated successfully
+
+"
+`;
 
 exports[`Validation > Source without address is valid 1`] = `
 "- Load subgraph from subgraph.yaml

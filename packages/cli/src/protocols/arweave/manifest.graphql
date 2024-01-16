@@ -23,6 +23,10 @@ type Schema {
   file: File!
 }
 
+type IndexerHints {
+  prune: String
+}
+
 type DataSource {
   kind: String!
   name: String!

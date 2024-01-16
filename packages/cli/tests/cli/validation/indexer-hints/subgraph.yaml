@@ -3,7 +3,8 @@ repository: https://github.com/graphprotocol/test-subgraph
 description: Test subgraph
 schema:
   file: ./schema.graphql
-indexerHints: min
+indexerHints:
+  prune: auto
 dataSources:
   - kind: ethereum/contract
     name: ExampleSubgraph
