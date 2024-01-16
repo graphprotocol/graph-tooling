@@ -762,9 +762,6 @@ exports[`Validation > Invalid subgraph manifest 1`] = `
 "- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
-  Path: specVersion
-  No value provided
-
   Path: schema > file
   File does not exist: non-existent.grapqhl
 
@@ -787,6 +784,9 @@ exports[`Validation > Invalid subgraph manifest 1`] = `
   Path: templates
   Expected list, found map:
   field: foo
+
+  Path: specVersion
+  No value provided
 "
 `;
 
