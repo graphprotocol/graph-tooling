@@ -15,7 +15,9 @@ const scaffold = new Scaffold(scaffoldOptions);
 describe.concurrent('Cosmos subgraph scaffolding', () => {
   test('Manifest', async () => {
     expect(await scaffold.generateManifest()).toEqual(`\
-specVersion: 0.0.5
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
 schema:
   file: ./schema.graphql
 dataSources:

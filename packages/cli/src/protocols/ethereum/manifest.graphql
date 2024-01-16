@@ -10,6 +10,8 @@ scalar BigInt
 scalar Boolean
 scalar JSON
 
+union StringOrBigInt = String | BigInt
+
 type SubgraphManifest {
   specVersion: String!
   features: [String!]
@@ -19,10 +21,15 @@ type SubgraphManifest {
   graft: Graft
   dataSources: [DataSource!]!
   templates: [DataSourceTemplate!]
+  indexerHints: IndexerHints
 }
 
 type Schema {
   file: File!
+}
+
+type IndexerHints {
+  prune: StringOrBigInt
 }
 
 type DataSource {

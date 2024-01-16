@@ -111,7 +111,9 @@ export default class Scaffold {
 
     return await prettier.format(
       `
-specVersion: 0.0.5
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
 schema:
   file: ./schema.graphql
 dataSources:
