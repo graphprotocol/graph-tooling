@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.66.0
+
+### Minor Changes
+
+- [#1561](https://github.com/graphprotocol/graph-tooling/pull/1561)
+  [`39d5dbf`](https://github.com/graphprotocol/graph-tooling/commit/39d5dbf091222921044f1044b7a94935fda46236)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for indexerHints in manifest
+
 ## 0.65.0
 
 ### Minor Changes
