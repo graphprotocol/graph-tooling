@@ -4,7 +4,7 @@ description: Test subgraph
 schema:
   file: ./schema.graphql
 indexerHints:
-  prune: auto
+  prune: 100
 dataSources:
   - kind: ethereum/contract
     name: ExampleSubgraph
