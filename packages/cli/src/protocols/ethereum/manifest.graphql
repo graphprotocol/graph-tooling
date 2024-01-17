@@ -45,6 +45,7 @@ type ContractSource {
   address: String
   abi: String!
   startBlock: BigInt
+  endBlock: BigInt
 }
 
 type ContractMapping {
