@@ -1,5 +1,20 @@
 # @graphprotocol/graph-cli
 
+## 0.67.0
+
+### Minor Changes
+
+- [#1409](https://github.com/graphprotocol/graph-tooling/pull/1409)
+  [`e15e036`](https://github.com/graphprotocol/graph-tooling/commit/e15e0361c38348f2ca20a89ab7a49ed2235922e7)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for endBlock in subgraph
+  manifest
+
+### Patch Changes
+
+- [#1566](https://github.com/graphprotocol/graph-tooling/pull/1566)
+  [`82bca91`](https://github.com/graphprotocol/graph-tooling/commit/82bca91aa0ca12af087f470b4637b92c3ee486c2)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix zksync-era-sepolia etherscan url
+
 ## 0.66.0
 
 ### Minor Changes
