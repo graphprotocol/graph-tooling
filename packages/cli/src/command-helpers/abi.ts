@@ -199,6 +199,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://block-explorer-api.mainnet.zksync.io/api`;
     case 'zksync-era-testnet':
       return `https://block-explorer-api.testnets.zksync.dev/api`;
+    case 'zksync-era-sepolia':
+      return 'https://block-explorer-api.sepolia.zksync.dev/api';
     case 'polygon-zkevm-testnet':
       return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
