@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.67.1
+
+### Patch Changes
+
+- [#1568](https://github.com/graphprotocol/graph-tooling/pull/1568)
+  [`efa9444`](https://github.com/graphprotocol/graph-tooling/commit/efa94446d97b4137e942e3b9c138d83b2b8cf561)
+  Thanks [@saihaj](https://github.com/saihaj)! - add zk sync sepolia RPC url
+
 ## 0.67.0
 
 ### Minor Changes
