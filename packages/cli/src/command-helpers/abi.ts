@@ -1,8 +1,11 @@
 import immutable from 'immutable';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import debugFactory from '../debug';
 import fetch from '../fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
+
+const logger = debugFactory('graph-cli:abi-helpers');
 
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
@@ -51,7 +54,9 @@ export const fetchDeployContractTransactionFromEtherscan = async (
     5,
   );
   if (json.status === '1') {
-    return json.result[0].txHash;
+    const hash = json.result[0].txHash;
+    logger('Successfully fetchDeployContractTransactionFromEtherscan. txHash: %s', hash);
+    return hash;
   }
 
   throw new Error(`Failed to fetch deploy contract transaction`);
@@ -70,6 +75,7 @@ export const fetchContractCreationHashWithRetry = async (
         return json;
       }
     } catch (error) {
+      logger('Failed to fetchContractCreationHashWithRetry: %O', error);
       /* empty */
     }
   }
@@ -100,6 +106,7 @@ export const fetchTransactionByHashFromRPC = async (
     json = await result.json();
     return json;
   } catch (error) {
+    logger('Failed to fetchTransactionByHashFromRPC: %O', error);
     throw new Error('Failed to fetch contract creation transaction');
   }
 };
@@ -111,8 +118,11 @@ export const getStartBlockForContract = async (
   try {
     const transactionHash = await fetchDeployContractTransactionFromEtherscan(network, address);
     const txn = await fetchTransactionByHashFromRPC(network, transactionHash);
-    return parseInt(txn.result.blockNumber, 16);
+    const blockNumber = parseInt(txn.result.blockNumber, 16);
+    logger('Successfully getStartBlockForContract. blockNumber: %s', blockNumber);
+    return blockNumber;
   } catch (error) {
+    logger('Failed to fetch getStartBlockForContract: %O', error);
     throw new Error(error?.message);
   }
 };
@@ -139,8 +149,10 @@ export const loadAbiFromBlockScout = async (
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
+        logger('Successfully loadAbiFromBlockScout. address: %s', address);
         return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
       }
+      logger('Failed to loadAbiFromBlockScout. address: %s', address);
       throw new Error('ABI not found, try loading it from a local file');
     },
   );
@@ -285,6 +297,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://mainnet.era.zksync.io';
     case 'zksync-era-testnet':
       return 'https://testnet.era.zksync.dev';
+    case 'zksync-era-sepolia':
+      return 'https://sepolia.era.zksync.dev';
     case 'sepolia':
       return 'https://rpc.ankr.com/eth_sepolia';
     case 'scroll-sepolia':
