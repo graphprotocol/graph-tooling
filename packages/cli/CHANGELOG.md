@@ -1,5 +1,22 @@
 # @graphprotocol/graph-cli
 
+## 0.67.2
+
+### Patch Changes
+
+- [#1571](https://github.com/graphprotocol/graph-tooling/pull/1571)
+  [`76279ab`](https://github.com/graphprotocol/graph-tooling/commit/76279ab7afda5280a202818d64668c9e0873bb91)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Updated dependency [`gluegun@5.1.6` ↗︎](https://www.npmjs.com/package/gluegun/v/5.1.6) (from
+    `5.1.2`, in `dependencies`)
+
+- [#1572](https://github.com/graphprotocol/graph-tooling/pull/1572)
+  [`d5ca0a6`](https://github.com/graphprotocol/graph-tooling/commit/d5ca0a61cb17fc17cbf18dbf0faf33cee5250a24)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+  - Removed dependency [`request@2.88.2` ↗︎](https://www.npmjs.com/package/request/v/2.88.2) (from
+    `dependencies`)
+
 ## 0.67.1
 
 ### Patch Changes
