@@ -91,8 +91,8 @@ importers:
   examples/cosmos-validator-delegations:
     dependencies:
       as-proto:
-        specifier: ^0.2.3
-        version: 0.2.3
+        specifier: ^1.0.0
+        version: 1.0.0
       babel-polyfill:
         specifier: ^6.26.0
         version: 6.26.0
@@ -4748,8 +4748,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /as-proto@0.2.3:
-    resolution: {integrity: sha512-JwWFcTBYVTOzJEMqXtZfU/L9bYzR6rrLFJBA1DC4kRs0zE12titZtWhpnBAAmV27dhMSWauqOBJgbt5OrK2rcw==}
+  /as-proto@1.0.0:
+    resolution: {integrity: sha512-1XsecxlDwI93gKa/oCBi28oC1YgvcI8Ns2PqgwXi7wygfuOLnt9VGCyo8mLbSktA3mTPFiPfCusLmQe+RrhSjA==}
     dev: false
 
   /asap@2.0.6:
