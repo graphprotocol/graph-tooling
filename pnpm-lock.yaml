@@ -47,7 +47,7 @@ importers:
   examples/arweave-blocks-transactions:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -63,7 +63,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -82,7 +82,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -101,7 +101,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -120,7 +120,7 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -172,7 +172,7 @@ importers:
         version: 5.0.4
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -190,7 +190,7 @@ importers:
   examples/ethereum-gravatar:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -211,7 +211,7 @@ importers:
   examples/matic-lens-protocol-posts-subgraph:
     dependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -224,7 +224,7 @@ importers:
   examples/near-blocks:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -233,7 +233,7 @@ importers:
   examples/near-receipts:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
         specifier: 0.32.0
@@ -242,7 +242,7 @@ importers:
   examples/substreams-powered-subgraph:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.66.0
+        specifier: 0.67.1
         version: link:../../packages/cli
 
   packages/cli:
@@ -290,8 +290,8 @@ importers:
         specifier: 9.3.5
         version: 9.3.5
       gluegun:
-        specifier: 5.1.2
-        version: 5.1.2(debug@4.3.4)
+        specifier: 5.1.6
+        version: 5.1.6(debug@4.3.4)
       graphql:
         specifier: 15.5.0
         version: 15.5.0
@@ -6347,14 +6347,6 @@ packages:
       jsbn: 0.1.1
       safer-buffer: 2.1.2
 
-  /ejs@3.1.6:
-    resolution: {integrity: sha512-9lt9Zse4hPucPkoP7FHDF0LQAlGyF9JVpnClFLFH3aSSbxmyoqINRpp/9wePWJTUl4KOQwRL72Iw3InHPDkoGw==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
-    dependencies:
-      jake: 10.8.5
-    dev: false
-
   /ejs@3.1.8:
     resolution: {integrity: sha512-/sXZeMlhS0ArkfX2Aw780gJzXSMPnKjtspYZv+f3NiKLlubezAHDU5+9xz6gd3/NhG3txQCo6xlglmTS+oTGEQ==}
     engines: {node: '>=0.10.0'}
@@ -7965,8 +7957,8 @@ packages:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
     dev: true
 
-  /gluegun@5.1.2(debug@4.3.4):
-    resolution: {integrity: sha512-Cwx/8S8Z4YQg07a6AFsaGnnnmd8mN17414NcPS3OoDtZRwxgsvwRNJNg69niD6fDa8oNwslCG0xH7rEpRNNE/g==}
+  /gluegun@5.1.6(debug@4.3.4):
+    resolution: {integrity: sha512-9zbi4EQWIVvSOftJWquWzr9gLX2kaDgPkNR5dYWbM53eVvCI3iKuxLlnKoHC0v4uPoq+Kr/+F569tjoFbA4DSA==}
     hasBin: true
     dependencies:
       apisauce: 2.1.6(debug@4.3.4)
@@ -7975,7 +7967,7 @@ packages:
       colors: 1.4.0
       cosmiconfig: 7.0.1
       cross-spawn: 7.0.3
-      ejs: 3.1.6
+      ejs: 3.1.8
       enquirer: 2.3.6
       execa: 5.1.1
       fs-jetpack: 4.3.1
