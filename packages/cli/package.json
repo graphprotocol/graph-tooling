@@ -49,7 +49,6 @@
     "jayson": "4.0.0",
     "js-yaml": "3.14.1",
     "prettier": "3.0.3",
-    "request": "2.88.2",
     "semver": "7.4.0",
     "sync-request": "6.1.0",
     "tmp-promise": "3.0.3",
