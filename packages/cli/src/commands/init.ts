@@ -904,19 +904,25 @@ const initRepository = async (directory: string) =>
       if (filesystem.exists(gitDir)) {
         filesystem.remove(gitDir);
       }
-      if (await isInRepo()) {
-        await system.run('git add --all', { cwd: directory });
-        await system.run('git commit -m "Initialize subgraph"', {
-          cwd: directory,
-        });
-      } else {
-        await system.run('git init', { cwd: directory });
-        await system.run('git add --all', { cwd: directory });
-        await system.run('git commit -m "Initial commit"', {
-          cwd: directory,
-        });
+
+      try {
+        if (await isInRepo()) {
+          await system.run('git add --all', { cwd: directory });
+          await system.run('git commit -m "Initialize subgraph"', {
+            cwd: directory,
+          });
+        } else {
+          await system.run('git init', { cwd: directory });
+          await system.run('git add --all', { cwd: directory });
+          await system.run('git commit -m "Initial commit"', {
+            cwd: directory,
+          });
+        }
+        return true;
+      } catch (e) {
+        initDebugger.extend('initRepository')('error: %O', e);
+        throw e;
       }
-      return true;
     },
   );
 
