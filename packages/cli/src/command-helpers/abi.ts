@@ -223,6 +223,10 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-sepolia.scrollscan.dev/api`;
     case 'scroll':
       return `https://blockscout.scroll.io/api`;
+    case 'linea':
+      return `https://api.lineascan.build/api`;
+    case 'linea-goerli':
+      return `https://api.linea-goerli.build/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -305,6 +309,10 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.ankr.com/scroll_sepolia_testnet';
     case 'scroll':
       return 'https://rpc.ankr.com/scroll';
+    case 'linea':
+      return 'https://linea-mainnet.public.blastapi.io';
+    case 'linea-goerli':
+      return 'https://linea-goerli.public.blastapi.io';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
