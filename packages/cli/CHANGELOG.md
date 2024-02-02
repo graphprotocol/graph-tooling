@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.67.3
+
+### Patch Changes
+
+- [#1579](https://github.com/graphprotocol/graph-tooling/pull/1579)
+  [`bc61adb`](https://github.com/graphprotocol/graph-tooling/commit/bc61adb8ae4f6ba8b467e98ed390a96029b702d8)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix line and linea-goerli API URLs
+
 ## 0.67.2
 
 ### Patch Changes
