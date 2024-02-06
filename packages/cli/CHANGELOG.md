@@ -1,5 +1,12 @@
 # @graphprotocol/graph-cli
 
+## 0.67.4
+
+### Patch Changes
+
+- [`f49aab9`](https://github.com/graphprotocol/graph-tooling/commit/f49aab98d643ba6d8c3708772bed8318825effed)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix blast testnet etherscan and RPC URL
+
 ## 0.67.3
 
 ### Patch Changes
