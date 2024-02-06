@@ -227,6 +227,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.lineascan.build/api`;
     case 'linea-goerli':
       return `https://api.linea-goerli.build/api`;
+    case 'blast-testnet':
+      return `https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -313,6 +315,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://linea-mainnet.public.blastapi.io';
     case 'linea-goerli':
       return 'https://linea-goerli.public.blastapi.io';
+    case 'blast-testnet':
+      return 'https://sepolia.blast.io';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
