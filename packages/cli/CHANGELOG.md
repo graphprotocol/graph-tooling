@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.68.0
+
+### Minor Changes
+
+- [#1548](https://github.com/graphprotocol/graph-tooling/pull/1548)
+  [`b3f6a99`](https://github.com/graphprotocol/graph-tooling/commit/b3f6a9979bcac9610807f19d41fc0548a5342828)
+  Thanks [@lutter](https://github.com/lutter)! - Make validations more lenient to allow aggregations
+  and Int8 ids
+
 ## 0.67.4
 
 ### Patch Changes
