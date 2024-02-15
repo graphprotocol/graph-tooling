@@ -1,5 +1,13 @@
 # @graphprotocol/graph-ts
 
+## 0.33.0
+
+### Minor Changes
+
+- [#1584](https://github.com/graphprotocol/graph-tooling/pull/1584)
+  [`0075f06`](https://github.com/graphprotocol/graph-tooling/commit/0075f06ddaa6d37606e42e1c12d11d19674d00ad)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Added getBalance call to ethereum API
+
 ## 0.32.0
 
 ### Minor Changes
