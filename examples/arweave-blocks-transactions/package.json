@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "0.68.0",
-    "@graphprotocol/graph-ts": "0.32.0"
+    "@graphprotocol/graph-ts": "0.33.0"
   }
 }
