@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.68.1
+
+### Patch Changes
+
+- [#1589](https://github.com/graphprotocol/graph-tooling/pull/1589)
+  [`7f0e8ab`](https://github.com/graphprotocol/graph-tooling/commit/7f0e8ab70bcd2279b54a040031de2795e7346b1a)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix optimism sepolia url
+
 ## 0.68.0
 
 ### Minor Changes
