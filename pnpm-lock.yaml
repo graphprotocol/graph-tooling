@@ -47,10 +47,10 @@ importers:
   examples/arweave-blocks-transactions:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
 
   examples/cosmos-block-filtering:
@@ -63,10 +63,10 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
       mustache:
         specifier: ^4.2.0
@@ -82,10 +82,10 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
 
   examples/cosmos-validator-delegations:
@@ -101,10 +101,10 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
       mustache:
         specifier: ^4.2.0
@@ -120,10 +120,10 @@ importers:
         version: 6.26.0
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
       mustache:
         specifier: ^4.2.0
@@ -172,10 +172,10 @@ importers:
         version: 5.0.4
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^2.0.2
@@ -190,10 +190,10 @@ importers:
   examples/ethereum-gravatar:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^2.0.2
@@ -205,16 +205,16 @@ importers:
   examples/example-subgraph:
     devDependencies:
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
 
   examples/matic-lens-protocol-posts-subgraph:
     dependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
     devDependencies:
       matchstick-as:
@@ -224,25 +224,25 @@ importers:
   examples/near-blocks:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
 
   examples/near-receipts:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
       '@graphprotocol/graph-ts':
-        specifier: 0.32.0
+        specifier: 0.33.0
         version: link:../../packages/ts
 
   examples/substreams-powered-subgraph:
     devDependencies:
       '@graphprotocol/graph-cli':
-        specifier: 0.67.2
+        specifier: 0.68.0
         version: link:../../packages/cli
 
   packages/cli:
