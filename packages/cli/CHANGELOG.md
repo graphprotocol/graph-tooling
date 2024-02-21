@@ -1,5 +1,12 @@
 # @graphprotocol/graph-cli
 
+## 0.68.2
+
+### Patch Changes
+
+- [`5d39c18`](https://github.com/graphprotocol/graph-tooling/commit/5d39c180c3825bc4e7b869dc4ae10ebb4ac91f76)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix base sepolia url
+
 ## 0.68.1
 
 ### Patch Changes
