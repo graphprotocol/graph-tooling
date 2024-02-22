@@ -22,7 +22,14 @@ import { abiEvents } from '../scaffold/schema';
 import { validateContract } from '../validation';
 import AddCommand from './add';
 
-const protocolChoices = Array.from(Protocol.availableProtocols().keys());
+/**
+ * Today we have protocol -> data source -> kind
+ * Not the best but it is too deeply rooted to change now
+ * So simpler just add a new protocol and hide from the `init` command
+ */
+const protocolChoices = Array.from(Protocol.availableProtocols().keys()).filter(
+  n => n !== 'dataset',
+);
 
 const initDebugger = debugFactory('graph-cli:commands:init');
 

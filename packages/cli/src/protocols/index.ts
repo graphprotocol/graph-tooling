@@ -8,6 +8,7 @@ import { ContractCtor } from './contract';
 import * as CosmosManifestScaffold from './cosmos/scaffold/manifest';
 import * as CosmosMappingScaffold from './cosmos/scaffold/mapping';
 import CosmosSubgraph from './cosmos/subgraph';
+import DatasetSubgraph from './dataset/subgraph';
 import EthereumABI from './ethereum/abi';
 import EthereumTemplateCodeGen from './ethereum/codegen/template';
 import EthereumContract from './ethereum/contract';
@@ -59,6 +60,9 @@ export default class Protocol {
       case 'near':
         this.config = nearProtocol;
         break;
+      case 'dataset':
+        this.config = datasetProtocol;
+        break;
       case 'substreams':
         this.config = substreamsProtocol;
 
@@ -85,6 +89,7 @@ export default class Protocol {
       near: ['near'],
       cosmos: ['cosmos'],
       substreams: ['substreams'],
+      dataset: ['dataset'],
     }) as immutable.Collection<ProtocolName, string[]>;
   }
 
@@ -234,7 +239,8 @@ export type ProtocolName =
   | 'near'
   | 'cosmos'
   | 'substreams'
-  | 'substreams/triggers';
+  | 'substreams/triggers'
+  | 'dataset';
 
 export interface ProtocolConfig {
   displayName: string;
@@ -313,6 +319,19 @@ const substreamsProtocol: ProtocolConfig = {
     return new SubstreamsSubgraph(options);
   },
   manifestScaffold: SubstreamsManifestScaffold,
+  mappingScaffold: undefined,
+};
+
+const datasetProtocol: ProtocolConfig = {
+  displayName: 'Dataset',
+  abi: undefined,
+  contract: undefined,
+  getTypeGenerator: undefined,
+  getTemplateCodeGen: undefined,
+  getSubgraph(options) {
+    return new DatasetSubgraph(options);
+  },
+  manifestScaffold: undefined,
   mappingScaffold: undefined,
 };
 
