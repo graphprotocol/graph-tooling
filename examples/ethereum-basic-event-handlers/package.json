@@ -33,7 +33,7 @@
   "devDependencies": {
     "@graphprotocol/graph-cli": "0.68.3",
     "@graphprotocol/graph-ts": "0.33.0",
-    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "apollo-fetch": "^0.7.0",
     "hardhat": "^2.13.1"
   }
