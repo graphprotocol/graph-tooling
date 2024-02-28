@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.68.4
+
+### Patch Changes
+
+- [#1595](https://github.com/graphprotocol/graph-tooling/pull/1595)
+  [`decff14`](https://github.com/graphprotocol/graph-tooling/commit/decff1435bdd3b4e459ffa83d881f23d26e2ee5f)
+  Thanks [@saihaj](https://github.com/saihaj)! - improve error handling for `graph deploy`
+
 ## 0.68.3
 
 ### Patch Changes
