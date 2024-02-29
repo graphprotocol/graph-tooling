@@ -95,6 +95,9 @@ type CallHandler {
 type ContractEventHandler {
   event: String!
   topic0: String
+  topic1: String
+  topic2: String
+  topic3: String
   handler: String!
   receipt: Boolean
 }
