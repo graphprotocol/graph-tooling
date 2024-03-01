@@ -1,5 +1,12 @@
 # @graphprotocol/graph-cli
 
+## 0.68.5
+
+### Patch Changes
+
+- [`4525b0c`](https://github.com/graphprotocol/graph-tooling/commit/4525b0c3bbabe89561d5d908f23a8f5652f0df88)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix blast mainnet etherscan url
+
 ## 0.68.4
 
 ### Patch Changes
