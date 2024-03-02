@@ -84,6 +84,13 @@ describe.concurrent('Schema code generator', () => {
         amount: BigInt!
         account: Account!
       }
+      
+      type Transfer @entity(immutable: true) {
+        id: ID!
+        from: Account!
+        to: Account!
+        amount: BigInt!
+      }
     `);
 
     const generatedTypes = codegen.generateTypes();
@@ -92,7 +99,7 @@ describe.concurrent('Schema code generator', () => {
       const foo = generatedTypes.find((type: any) => type.name === 'Foo');
       expect(foo).toBe(undefined);
       // Account and Wallet
-      expect(generatedTypes.length).toBe(2);
+      expect(generatedTypes.length).toBe(3);
     });
 
     test('Account is an entity with the correct methods', async () => {
@@ -121,6 +128,21 @@ describe.concurrent('Schema code generator', () => {
                   id.kind == ValueKind.STRING,
                   \`Entities of type Account must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
                 store.set('Account', id.toString(), this)
+              }
+            `,
+          },
+          {
+            name: 'remove',
+            params: [],
+            returnType: new NamedType('void'),
+            body: `
+              let id = this.get('id')
+              assert(id != null, 'Cannot remove Account entity without an ID')
+              if (id) {
+                assert(
+                  id.kind == ValueKind.STRING,
+                  \`Entities of type Account must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
+                store.remove('Account', id.toString())
               }
             `,
           },
@@ -329,6 +351,21 @@ describe.concurrent('Schema code generator', () => {
             `,
           },
           {
+            name: 'remove',
+            params: [],
+            returnType: new NamedType('void'),
+            body: `
+              let id = this.get('id')
+              assert(id != null, 'Cannot remove Wallet entity without an ID')
+              if (id) {
+                assert(
+                  id.kind == ValueKind.STRING,
+                  \`Entities of type Wallet must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
+                store.remove('Wallet', id.toString())
+              }
+            `,
+          },
+          {
             name: 'loadInBlock',
             static: true,
             params: [new Param('id', new NamedType('string'))],
@@ -409,6 +446,137 @@ describe.concurrent('Schema code generator', () => {
         ],
       });
     });
+
+    test('Transfer is an immutable entity with the correct methods', async () => {
+      await testEntity(generatedTypes, {
+        name: 'Transfer',
+        members: [],
+        methods: [
+          {
+            name: 'constructor',
+            params: [new Param('id', new NamedType('string'))],
+            returnType: undefined,
+            body: `
+              super()
+              this.set('id', Value.fromString(id))
+            `,
+          },
+          {
+            name: 'save',
+            params: [],
+            returnType: new NamedType('void'),
+            body: `
+              let id = this.get('id')
+              assert(id != null, 'Cannot save Transfer entity without an ID')
+              if (id) {
+                assert(
+                  id.kind == ValueKind.STRING,
+                  \`Entities of type Transfer must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
+                store.set('Transfer', id.toString(), this)
+              }
+            `,
+          },
+          {
+            name: 'loadInBlock',
+            static: true,
+            params: [new Param('id', new NamedType('string'))],
+            returnType: new NullableType(new NamedType('Transfer')),
+            body: `
+              return changetype<Transfer | null>(store.get_in_block('Transfer', id))
+            `,
+          },
+          {
+            name: 'load',
+            static: true,
+            params: [new Param('id', new NamedType('string'))],
+            returnType: new NullableType(new NamedType('Transfer')),
+            body: `
+              return changetype<Transfer | null>(store.get('Transfer', id))
+            `,
+          },
+          {
+            name: 'get id',
+            params: [],
+            returnType: new NamedType('string'),
+            body: `let value = this.get('id')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toString()
+            }
+            `,
+          },
+          {
+            name: 'set id',
+            params: [new Param('value', new NamedType('string'))],
+            returnType: undefined,
+            body: `
+              this.set('id', Value.fromString(value))
+            `,
+          },
+          {
+            name: 'get from',
+            params: [],
+            returnType: new NamedType('string'),
+            body: `let value = this.get('from')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toString()
+            }
+            `,
+          },
+          {
+            name: 'set from',
+            params: [new Param('value', new NamedType('string'))],
+            returnType: undefined,
+            body: `
+              this.set('from', Value.fromString(value))
+            `,
+          },
+          {
+            name: 'get to',
+            params: [],
+            returnType: new NamedType('string'),
+            body: `let value = this.get('to')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toString()
+            }
+            `,
+          },
+          {
+            name: 'set to',
+            params: [new Param('value', new NamedType('string'))],
+            returnType: undefined,
+            body: `
+              this.set('to', Value.fromString(value))
+            `,
+          },
+          {
+            name: 'get amount',
+            params: [],
+            returnType: new NamedType('BigInt'),
+            body: `let value = this.get('amount')
+            if (!value || value.kind == ValueKind.NULL) {
+              throw new Error("Cannot return null for a required field.")
+            } else {
+              return value.toBigInt()
+            }
+            `,
+          },
+          {
+            name: 'set amount',
+            params: [new Param('value', new NamedType('BigInt'))],
+            returnType: undefined,
+            body: `
+              this.set('amount', Value.fromBigInt(value))
+            `,
+          },
+        ],
+      });
+    });
   });
 
   test('Should handle references with Bytes id types', async () => {
@@ -457,6 +625,21 @@ describe.concurrent('Schema code generator', () => {
             "                 `Entities of type Task must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`)\n" +
             "          store.set('Task', id.toBytes().toHexString(), this)\n" +
             '        }',
+        },
+        {
+          name: 'remove',
+          params: [],
+          returnType: new NamedType('void'),
+          body: `
+              let id = this.get('id')
+              assert(id != null, 'Cannot remove Task entity without an ID')
+              if (id) {
+                assert(
+                  id.kind == ValueKind.STRING,
+                  \`Entities of type Task must have an ID of type String but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
+                store.remove('Task', id.toString())
+              }
+            `,
         },
         {
           name: 'loadInBlock',
@@ -579,7 +762,19 @@ describe.concurrent('Schema code generator', () => {
             }
           `,
         },
-
+        {
+          name: 'remove',
+          params: [],
+          returnType: new NamedType('void'),
+          body: `
+            let id = this.get('id');
+            assert(id != null, 'Cannot remove WithBytes entity without an ID');
+            if (id) {
+              assert(id.kind == ValueKind.BYTES, \`Entities of type WithBytes must have an ID of type Bytes but the id '\${id.displayData()}' is of type \${id.displayKind()}\`);
+              store.remove('WithBytes', id.toBytes().toHexString());
+            }
+          `,
+        },
         {
           name: 'load',
           static: true,
