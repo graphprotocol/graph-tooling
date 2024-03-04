@@ -12,6 +12,7 @@ import { updateSubgraphNetwork } from '../command-helpers/network';
 import { chooseNodeUrl, getHostedServiceSubgraphId } from '../command-helpers/node';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import debugFactory from '../debug';
 import Protocol from '../protocols';
 
 const headersFlag = Flags.custom<Record<string, string>>({
@@ -22,6 +23,8 @@ const headersFlag = Flags.custom<Record<string, string>>({
 });
 
 const productOptions = ['subgraph-studio', 'hosted-service'];
+
+const deployDebugger = debugFactory('graph-cli:deploy');
 
 export default class DeployCommand extends Command {
   static description = 'Deploys a subgraph to a Graph node.';
@@ -205,17 +208,21 @@ export default class DeployCommand extends Command {
           // @ts-expect-error TODO: why are the arguments not typed?
           res,
         ) => {
+          deployDebugger('requestError: %O', requestError);
+          deployDebugger('jsonRpcError: %O', jsonRpcError);
           if (jsonRpcError) {
-            let errorMessage = `Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`;
+            const message = jsonRpcError?.message || jsonRpcError?.code?.toString();
+            deployDebugger('message: %O', message);
+            let errorMessage = `Failed to deploy to Graph node ${requestUrl}: ${message}`;
 
             // Provide helpful advice when the subgraph has not been created yet
-            if (jsonRpcError.message.match(/subgraph name not found/)) {
+            if (message?.match(/subgraph name not found/)) {
               errorMessage += `
         Make sure to create the subgraph first by running the following command:
         $ graph create --node ${node} ${subgraphName}`;
             }
 
-            if (jsonRpcError.message.match(/auth failure/)) {
+            if (message?.match(/auth failure/)) {
               errorMessage += '\nYou may need to authenticate first.';
             }
 
@@ -336,11 +343,15 @@ export default class DeployCommand extends Command {
           // @ts-expect-error TODO: why are the arguments not typed?
           res,
         ) => {
+          deployDebugger('requestError: %O', requestError);
+          deployDebugger('jsonRpcError: %O', jsonRpcError);
           if (jsonRpcError) {
-            let errorMessage = `Failed to deploy to Graph node ${requestUrl}: ${jsonRpcError.message}`;
+            const message = jsonRpcError?.message || jsonRpcError?.code?.toString();
+            deployDebugger('message: %O', message);
+            let errorMessage = `Failed to deploy to Graph node ${requestUrl}: ${message}`;
 
             // Provide helpful advice when the subgraph has not been created yet
-            if (jsonRpcError.message.match(/subgraph name not found/)) {
+            if (message?.match(/subgraph name not found/)) {
               if (isHostedService) {
                 errorMessage +=
                   '\nYou may need to create it at https://thegraph.com/explorer/dashboard.';
@@ -350,7 +361,7 @@ export default class DeployCommand extends Command {
       $ graph create --node ${node} ${subgraphName}`;
               }
             }
-            if (jsonRpcError.message.match(/auth failure/)) {
+            if (message?.match(/auth failure/)) {
               errorMessage += '\nYou may need to authenticate first.';
             }
             spinner.fail(errorMessage);

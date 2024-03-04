@@ -1,5 +1,21 @@
 # @graphprotocol/graph-cli
 
+## 0.68.4
+
+### Patch Changes
+
+- [#1595](https://github.com/graphprotocol/graph-tooling/pull/1595)
+  [`decff14`](https://github.com/graphprotocol/graph-tooling/commit/decff1435bdd3b4e459ffa83d881f23d26e2ee5f)
+  Thanks [@saihaj](https://github.com/saihaj)! - improve error handling for `graph deploy`
+
+## 0.68.3
+
+### Patch Changes
+
+- [#1593](https://github.com/graphprotocol/graph-tooling/pull/1593)
+  [`5f78825`](https://github.com/graphprotocol/graph-tooling/commit/5f788250bbd50406b59b75cc82fee4b197b88e18)
+  Thanks [@saihaj](https://github.com/saihaj)! - increase jayson client timeout
+
 ## 0.68.2
 
 ### Patch Changes

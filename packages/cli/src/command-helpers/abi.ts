@@ -233,6 +233,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.linea-goerli.build/api`;
     case 'blast-testnet':
       return `https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan/api`;
+    case 'blast-mainnet':
+      return `https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -323,6 +325,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://linea-goerli.public.blastapi.io';
     case 'blast-testnet':
       return 'https://sepolia.blast.io';
+    case 'blast-mainnet':
+      return 'https://rpc.blast.io';
     case 'optimism-sepolia':
       return 'https://sepolia.optimism.io';
     default:
