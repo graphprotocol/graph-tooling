@@ -519,6 +519,7 @@ export default class Compiler {
           fs.copyFileSync(schemaFilePath, targetFile);
           return path.relative(this.options.outputDir, targetFile);
         });
+        compilerDebug('Has ABIs: %s', protocol.hasABIs());
 
         // Copy data source files and update their paths
         subgraph = subgraph.update('dataSources', (dataSources: any[]) =>

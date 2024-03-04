@@ -324,7 +324,7 @@ const substreamsProtocol: ProtocolConfig = {
 
 const datasetProtocol: ProtocolConfig = {
   displayName: 'Dataset',
-  abi: undefined,
+  abi: EthereumABI,
   contract: undefined,
   getTypeGenerator: undefined,
   getTemplateCodeGen: undefined,
