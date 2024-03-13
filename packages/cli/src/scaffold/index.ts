@@ -4,6 +4,7 @@ import { getSubgraphBasename } from '../command-helpers/subgraph';
 import Protocol from '../protocols';
 import ABI from '../protocols/ethereum/abi';
 import { version } from '../version';
+import { getDockerFile } from './get-docker-file';
 import { generateEventIndexingHandlers } from './mapping';
 import { abiEvents, generateEventType, generateExampleEntityType } from './schema';
 import { generateTestsFiles } from './tests';
@@ -154,6 +155,10 @@ dataSources:
     );
   }
 
+  async generateDockerFileConfig() {
+    return await prettier.format(getDockerFile(), { parser: 'yaml' });
+  }
+
   async generateMappings() {
     return this.protocol.getMappingScaffold()
       ? { [`${strings.kebabCase(this.contractName)}.ts`]: await this.generateMapping() }
@@ -208,6 +213,7 @@ dataSources:
       'subgraph.yaml': await this.generateManifest(),
       'schema.graphql': await this.generateSchema(),
       'tsconfig.json': await this.generateTsConfig(),
+      'docker-compose.yml': await this.generateDockerFileConfig(),
       src: await this.generateMappings(),
       abis: await this.generateABIs(),
       tests: await this.generateTests(),
