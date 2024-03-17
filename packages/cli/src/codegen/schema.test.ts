@@ -296,7 +296,7 @@ describe.concurrent('Schema code generator', () => {
             if (!value || value.kind == ValueKind.NULL) {
               return 0
             } else {
-              return value.toI64()
+              return value.toTimestamp()
             }
             `,
           },
@@ -305,7 +305,7 @@ describe.concurrent('Schema code generator', () => {
             params: [new Param('value', new NamedType('i64'))],
             returnType: undefined,
             body: `
-              this.set('timestamp', Value.fromI64(value))
+              this.set('timestamp', Value.fromTimestamp(value))
             `,
           },
           {

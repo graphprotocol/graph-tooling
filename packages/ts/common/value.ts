@@ -81,6 +81,14 @@ export class Value {
     return this.data as i64;
   }
 
+  toTimestamp(): i64 {
+    if (this.kind == ValueKind.NULL) {
+      return 0;
+    }
+    assert(this.kind == ValueKind.TIMESTAMP, 'Value is not an i64.');
+    return this.data as i64;
+  }
+
   toString(): string {
     assert(this.kind == ValueKind.STRING, 'Value is not a string.');
     return changetype<string>(this.data as u32);
@@ -151,6 +159,15 @@ export class Value {
     const output = new Array<i64>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
       output[i] = values[i].toI32();
+    }
+    return output;
+  }
+
+  toTimestampArray(): Array<i64> {
+    const values = this.toArray();
+    const output = new Array<i64>(values.length);
+    for (let i: i32 = 0; i < values.length; i++) {
+      output[i] = values[i].toTimestamp();
     }
     return output;
   }
@@ -382,6 +399,10 @@ export class Value {
     return new Value(ValueKind.INT8, n as i64);
   }
 
+  static fromTimestamp(n: i64): Value {
+    return new Value(ValueKind.TIMESTAMP, n as i64);
+  }
+
   static fromString(s: string): Value {
     return new Value(ValueKind.STRING, changetype<u32>(s));
   }
@@ -463,6 +484,17 @@ export class Value {
       out[i] = new Array<Value>(values[i].length);
       for (let j: i32 = 0; j < values[i].length; j++) {
         out[i][j] = Value.fromI64(values[i][j]);
+      }
+    }
+    return Value.fromMatrix(out);
+  }
+
+  static fromTimestampMatrix(values: Array<Array<i64>>): Value {
+    const out = new Array<Array<Value>>(values.length);
+    for (let i: i32 = 0; i < values.length; i++) {
+      out[i] = new Array<Value>(values[i].length);
+      for (let j: i32 = 0; j < values[i].length; j++) {
+        out[i][j] = Value.fromTimestamp(values[i][j]);
       }
     }
     return Value.fromMatrix(out);
