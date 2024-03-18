@@ -35,6 +35,6 @@
     "@graphprotocol/graph-ts": "0.33.0",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "apollo-fetch": "^0.7.0",
-    "hardhat": "^2.13.1"
+    "hardhat": "^2.22.1"
   }
 }
