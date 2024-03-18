@@ -17,7 +17,7 @@
     "deploy-local": "graph deploy example --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.68.5",
-    "@graphprotocol/graph-ts": "0.33.0"
+    "@graphprotocol/graph-cli": "0.69.0",
+    "@graphprotocol/graph-ts": "0.34.0"
   }
 }

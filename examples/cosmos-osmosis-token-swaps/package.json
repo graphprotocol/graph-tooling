@@ -22,7 +22,7 @@
     "babel-register": "^6.26.0"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.68.5",
-    "@graphprotocol/graph-ts": "0.33.0"
+    "@graphprotocol/graph-cli": "0.69.0",
+    "@graphprotocol/graph-ts": "0.34.0"
   }
 }
