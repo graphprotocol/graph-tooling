@@ -1,5 +1,19 @@
 # @graphprotocol/graph-cli
 
+## 0.69.0
+
+### Minor Changes
+
+- [#1522](https://github.com/graphprotocol/graph-tooling/pull/1522)
+  [`d132f9c`](https://github.com/graphprotocol/graph-tooling/commit/d132f9c9f6ea5283e40a8d913f3abefe5a8ad5f8)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Added support for handling GraphQL
+  `Timestamp` scalar as `i64` (AssemblyScript)
+
+- [#1610](https://github.com/graphprotocol/graph-tooling/pull/1610)
+  [`fc03add`](https://github.com/graphprotocol/graph-tooling/commit/fc03add1a8510afa49110481b486c8fa56f8c19f)
+  Thanks [@yehia67](https://github.com/yehia67)! - Generate `docker-compose.yml` with `graph init`
+  command
+
 ## 0.68.5
 
 ### Patch Changes

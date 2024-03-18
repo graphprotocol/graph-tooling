@@ -1,5 +1,14 @@
 # @graphprotocol/graph-ts
 
+## 0.34.0
+
+### Minor Changes
+
+- [#1522](https://github.com/graphprotocol/graph-tooling/pull/1522)
+  [`d132f9c`](https://github.com/graphprotocol/graph-tooling/commit/d132f9c9f6ea5283e40a8d913f3abefe5a8ad5f8)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Added support for handling GraphQL
+  `Timestamp` scalar as `i64` (AssemblyScript)
+
 ## 0.33.0
 
 ### Minor Changes
