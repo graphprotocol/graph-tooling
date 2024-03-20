@@ -97,6 +97,8 @@ type ContractEventHandler {
   topic0: String
   handler: String!
   receipt: Boolean
+  # This should really be just a Map<String, String>
+  calls: JSON
 }
 
 type Graft {
