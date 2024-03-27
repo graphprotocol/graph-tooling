@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.69.1
+
+### Patch Changes
+
+- [#1619](https://github.com/graphprotocol/graph-tooling/pull/1619)
+  [`fb18ecf`](https://github.com/graphprotocol/graph-tooling/commit/fb18ecf657f77ab6d7325e264c4a6c66d237201d)
+  Thanks [@saihaj](https://github.com/saihaj)! - increase jayson client timeout
+
 ## 0.69.0
 
 ### Minor Changes
