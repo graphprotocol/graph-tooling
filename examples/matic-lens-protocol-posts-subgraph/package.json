@@ -13,7 +13,7 @@
     "test": "graph test"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.69.0",
+    "@graphprotocol/graph-cli": "0.69.1",
     "@graphprotocol/graph-ts": "0.34.0"
   },
   "devDependencies": {
