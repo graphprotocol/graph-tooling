@@ -8,7 +8,7 @@ export function createJsonRpcClient(url: URL): jayson.Client | null {
     path: url.pathname,
     // username may be empty
     auth: url.password ? `${url.username}:${url.password}` : undefined,
-    timeout: 60_000, // 60 seconds
+    timeout: 120_000, // 120 seconds
   };
 
   if (url.protocol === 'https:') {
