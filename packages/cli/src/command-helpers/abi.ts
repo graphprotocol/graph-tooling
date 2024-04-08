@@ -235,6 +235,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan/api`;
     case 'blast-mainnet':
       return `https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan/api`;
+    case 'etherlink-testnet':
+      return `https://testnet-explorer.etherlink.com/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
