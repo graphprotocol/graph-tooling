@@ -235,6 +235,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan/api`;
     case 'blast-mainnet':
       return `https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan/api`;
+    case 'etherlink-testnet':
+      return `https://testnet-explorer.etherlink.com/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -329,6 +331,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.blast.io';
     case 'optimism-sepolia':
       return 'https://sepolia.optimism.io';
+    case 'etherlink-testnet':
+      return `https://node.ghostnet.etherlink.com`;
     default:
       throw new Error(`Unknown network: ${network}`);
   }
