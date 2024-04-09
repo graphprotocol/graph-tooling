@@ -331,6 +331,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.blast.io';
     case 'optimism-sepolia':
       return 'https://sepolia.optimism.io';
+    case 'etherlink-testnet':
+      return `https://node.ghostnet.etherlink.com`;
     default:
       throw new Error(`Unknown network: ${network}`);
   }
