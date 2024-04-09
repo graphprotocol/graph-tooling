@@ -343,7 +343,7 @@ importers:
         version: 7.3.13
       '@types/which':
         specifier: ^2.0.1
-        version: 2.0.1
+        version: 2.0.2
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
@@ -4426,8 +4426,8 @@ packages:
       '@types/node': 20.12.6
     dev: true
 
-  /@types/which@2.0.1:
-    resolution: {integrity: sha512-Jjakcv8Roqtio6w1gr0D7y6twbhx6gGgFGF5BLwajPpnOIOxFkakFhCq+LmyyeAz7BX6ULrjBOxdKaCDy+4+dQ==}
+  /@types/which@2.0.2:
+    resolution: {integrity: sha512-113D3mDkZDjo+EeUEHCFy0qniNc1ZpecGiAU7WSo7YDoSzolZIQKpYFHrPpjkB2nuyahcKfrmLXeQlh7gqJYdw==}
     dev: true
 
   /@types/ws@7.4.7:
