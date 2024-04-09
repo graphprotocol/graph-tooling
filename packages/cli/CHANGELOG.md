@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.69.2
+
+### Patch Changes
+
+- [#1623](https://github.com/graphprotocol/graph-tooling/pull/1623)
+  [`121843e`](https://github.com/graphprotocol/graph-tooling/commit/121843e982c69ffb31aae911431a68a2349ea062)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - cli: added etherscan API URL & public RPC
+  endpoint for etherlink-testnet
+
 ## 0.69.1
 
 ### Patch Changes
