@@ -5,6 +5,7 @@ import Protocol from '../protocols';
 import ABI from '../protocols/ethereum/abi';
 import { version } from '../version';
 import { getDockerFile } from './get-docker-file';
+import { getGitIgnore } from './get-git-ignore';
 import { generateEventIndexingHandlers } from './mapping';
 import { abiEvents, generateEventType, generateExampleEntityType } from './schema';
 import { generateTestsFiles } from './tests';
@@ -159,6 +160,10 @@ dataSources:
     return await prettier.format(getDockerFile(), { parser: 'yaml' });
   }
 
+  generateGitIgnoreFile() {
+    return getGitIgnore();
+  }
+
   async generateMappings() {
     return this.protocol.getMappingScaffold()
       ? { [`${strings.kebabCase(this.contractName)}.ts`]: await this.generateMapping() }
@@ -206,6 +211,7 @@ dataSources:
         'subgraph.yaml': await this.generateManifest(),
         'schema.graphql': await this.generateSchema(),
         'package.json': await this.generatePackageJsonForSubstreams(),
+        '.gitignore': await this.generateGitIgnoreFile(),
       };
     }
     return {
@@ -214,6 +220,7 @@ dataSources:
       'schema.graphql': await this.generateSchema(),
       'tsconfig.json': await this.generateTsConfig(),
       'docker-compose.yml': await this.generateDockerFileConfig(),
+      '.gitignore': await this.generateGitIgnoreFile(),
       src: await this.generateMappings(),
       abis: await this.generateABIs(),
       tests: await this.generateTests(),
