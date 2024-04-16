@@ -1,7 +1,7 @@
 /**
  * Sorts an array with specified elements given priority.
- * Elements can be prioritized through a predicate function or by explicitly specifying them as an array.
- * If no compare function is provided, default JS sorting behaviour prevails (ascending order).
+ * Use a predicate function, or provide an array to prioritise elements.
+ * If no compare function is provided, default JS sorting (ascending) behaviour prevails.
  *
  * @param {T[]} array - The array to be sorted.
  * @param {((element: T) => boolean) | T[]} prioritySpecifier - A function that returns true if an element should be prioritized, or an array of elements to be prioritized.
