@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.70.0
+
+### Minor Changes
+
+- [#1629](https://github.com/graphprotocol/graph-tooling/pull/1629)
+  [`3801671`](https://github.com/graphprotocol/graph-tooling/commit/3801671a79875cdd8653b8603b1a2e89426268f5)
+  Thanks [@saihaj](https://github.com/saihaj)! - generate gitignore file
+
 ## 0.69.2
 
 ### Patch Changes
