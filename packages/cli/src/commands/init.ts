@@ -1,17 +1,18 @@
+import { Args, Command, Flags, ux } from '@oclif/core';
 import fs from 'fs';
+import * as toolbox from 'gluegun';
+import { filesystem, prompt, system } from 'gluegun';
 import os from 'os';
 import path from 'path';
-import { filesystem, prompt, system } from 'gluegun';
-import * as toolbox from 'gluegun';
-import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
 import { initNetworksConfig } from '../command-helpers/network';
-import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
+import { SUBGRAPH_STUDIO_URL, chooseNodeUrl } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
+import { sortWithPriority } from '../command-helpers/sort';
 import { withSpinner } from '../command-helpers/spinner';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
