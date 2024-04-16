@@ -631,7 +631,7 @@ async function processInitForm(
       },
     ]);
 
-    const choices = (await AVAILABLE_NETWORKS())?.[
+    let choices = (await AVAILABLE_NETWORKS())?.[
       product === 'subgraph-studio' ? 'studio' : 'hostedService'
     ];
 
@@ -641,6 +641,8 @@ async function processInitForm(
         { exit: 1 },
       );
     }
+
+    choices = sortWithPriority(choices, ['mainnet'])
 
     const { network } = await prompt.ask<{ network: string }>([
       {
