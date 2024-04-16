@@ -1,16 +1,16 @@
-import { Args, Command, Flags, ux } from '@oclif/core';
 import fs from 'fs';
-import * as toolbox from 'gluegun';
-import { filesystem, prompt, system } from 'gluegun';
 import os from 'os';
 import path from 'path';
+import * as toolbox from 'gluegun';
+import { filesystem, prompt, system } from 'gluegun';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
 import { initNetworksConfig } from '../command-helpers/network';
-import { SUBGRAPH_STUDIO_URL, chooseNodeUrl } from '../command-helpers/node';
+import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { sortWithPriority } from '../command-helpers/sort';
 import { withSpinner } from '../command-helpers/spinner';
@@ -642,7 +642,7 @@ async function processInitForm(
       );
     }
 
-    choices = sortWithPriority(choices, ['mainnet'])
+    choices = sortWithPriority(choices, ['mainnet']);
 
     const { network } = await prompt.ask<{ network: string }>([
       {

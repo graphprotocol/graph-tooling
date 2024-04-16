@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { sortWithPriority } from './sort';  // adjust the import based on your file structure
+import { describe, expect, it } from 'vitest';
+import { sortWithPriority } from './sort'; // adjust the import based on your file structure
 
 describe('sortWithPriority', () => {
   it('should sort numbers with specific priority elements', () => {
@@ -23,7 +23,7 @@ describe('sortWithPriority', () => {
 
   it('should handle an empty array', () => {
     const emptyArray: never[] = [];
-    const result = sortWithPriority(emptyArray, (x) => x > 3);
+    const result = sortWithPriority(emptyArray, x => x > 3);
     expect(result).toEqual([]);
   });
 

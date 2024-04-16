@@ -16,7 +16,7 @@
 function sortWithPriority<T>(
   array: T[],
   prioritySpecifier?: ((element: T) => boolean) | T[],
-  compareFunction?: (a: T, b: T) => number
+  compareFunction?: (a: T, b: T) => number,
 ): T[] {
   // prioritySpecifier can be an array or a function so handle each case
   let isPriorityElement: (element: T) => boolean;
@@ -42,4 +42,4 @@ function sortWithPriority<T>(
   return priorityArray.concat(regularArray);
 }
 
-export { sortWithPriority }
+export { sortWithPriority };
