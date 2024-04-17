@@ -12,14 +12,11 @@ This example requires [pnpm](https://pnpm.io/), the latest version of [Graph CLI
 # Install dependencies
 pnpm install
 
-# Generate AssemblyScript types from Protobuf definitions in Substreams package
+# Generate AssemblyScript types from Substreams protocol buffer definitions
 pnpm run protoc
 
-#### Generate AssemblyScript types from GraphQL schema and contract ABIs
+# Generate AssemblyScript types from GraphQL schema and contract ABIs
 pnpm run codegen
-
-# Note: Might be worth modifying package.json to allow doing both with one command
-# i,e, `pnpm run generate_types`
 
 # Build the subgraph
 pnpm run build
