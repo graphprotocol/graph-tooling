@@ -1,0 +1,19 @@
+specVersion: 0.0.4
+description: NEAR Blocks, Substreams triggers as subgraph mappings
+repository: https://github.com/graphprotocol/graph-tooling
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: substreams
+    name: blocks
+    network: near-mainnet
+    source:
+      package:
+        moduleName: near_filter
+        file: https://spkg.io/graphprotocol/substreams-trigger-filter-v0.1.0.spkg
+        params: "0,0\n\n"
+    mapping:
+      kind: substreams/graph-entities
+      apiVersion: 0.0.7
+      file: ./src/mapping.ts
+      handler: handleBlock
