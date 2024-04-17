@@ -4,7 +4,7 @@ A subgraph that uses a pre-existing [Substreams package](https://substreams.dev/
 
 ## Prerequisites
 
-This example requires the latest version of [Graph CLI](https://github.com/graphprotocol/graph-tooling) and a Protobuf AssemblyScript compiler such as [protobuf-as](https://github.com/gravitational/protobuf-as).
+This example requires [pnpm](https://pnpm.io/), the latest version of [Graph CLI](https://github.com/graphprotocol/graph-tooling), and a Protobuf AssemblyScript compiler such as [protobuf-as](https://github.com/gravitational/protobuf-as).
 
 ## Quickstart
 
@@ -12,8 +12,14 @@ This example requires the latest version of [Graph CLI](https://github.com/graph
 # Install dependencies
 pnpm install
 
-# Generate AssemblyScript types from Substreams package
+# Generate AssemblyScript types from Protobuf definitions in Substreams package
+pnpm run protoc
+
+#### Generate AssemblyScript types from GraphQL schema and contract ABIs
 pnpm run codegen
+
+# Note: Might be worth modifying package.json to allow doing both with one command
+# i,e, `pnpm run generate_types`
 
 # Build the subgraph
 pnpm run build
