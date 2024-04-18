@@ -1,0 +1,18 @@
+type PunkBought @entity(timeseries: true) {
+  id: Int8!
+  timestamp: Timestamp!
+  punkIndex: BigInt!
+  value: BigInt!
+  fromAddress: Bytes!
+  toAddress: Bytes!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PunkBoughtStats @aggregation(intervals: ["hour", "day"], source: "PunkBought") {
+  id: Int8!
+  timestamp: Timestamp!
+  volumeWei: BigInt! @aggregate(fn: "sum", arg: "value")
+  maxPriceWei: BigInt! @aggregate(fn: "max", arg: "value")
+}
