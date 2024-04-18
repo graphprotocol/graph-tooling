@@ -4,7 +4,7 @@ A subgraph that uses a pre-existing [Substreams package](https://substreams.dev/
 
 ## Prerequisites
 
-This example requires a Protobuf AssemblyScript compiler such as [protobuf-as](https://github.com/gravitational/protobuf-as).
+This example requires [protobuf-as](https://github.com/gravitational/protobuf-as), a Protobuf AssemblyScript compiler.
 
 ## Quickstart
 
