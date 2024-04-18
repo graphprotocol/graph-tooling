@@ -4,26 +4,30 @@ A subgraph that uses a pre-existing [Substreams package](https://substreams.dev/
 
 ## Prerequisites
 
-This example requires [pnpm](https://pnpm.io/), the latest version of [Graph CLI](https://github.com/graphprotocol/graph-tooling), and a Protobuf AssemblyScript compiler such as [protobuf-as](https://github.com/gravitational/protobuf-as).
+This example requires a Protobuf AssemblyScript compiler such as [protobuf-as](https://github.com/gravitational/protobuf-as).
 
 ## Quickstart
 
 ``` bash
 # Install dependencies
-pnpm install
+npm install
 
-# Generate AssemblyScript types from Substreams protocol buffer definitions
-pnpm run protoc
+# Generate AssemblyScript types from GraphQL schema and smart contract ABI
+graph codegen
 
-# Generate AssemblyScript types from GraphQL schema and contract ABIs
-pnpm run codegen
+# Download Substreams package
+wget https://spkg.io/graphprotocol/substreams-trigger-filter-v0.1.0.spkg
+
+# Download protobuf definitions for the Substreams package
+wget https://raw.githubusercontent.com/mangas/near-wasm-block/main/proto/near.proto -P ./proto/
+wget https://raw.githubusercontent.com/mangas/near-wasm-block/main/proto/receipts.proto -P ./proto/
+
+# Note: protobuf-as required node 16
+# Generate AssemblyScript types from protobuf definitions 
+mkdir ./src/pb/
+protoc --plugin=./node_modules/protobuf-as/bin/protoc-gen-as --as_out=./src/pb/ ./proto/*.proto
 
 # Build the subgraph
-pnpm run build
+graph build
 
-# Create a subgraph in Subgraph Studio
-pnpm run create
-
-# Deploy the subgraph to Subgraph Studio
-pnpm run deploy
 ```
