@@ -1,194 +1,151 @@
-import { newMockEvent } from "matchstick-as"
-import { ethereum, Address, BigInt } from "@graphprotocol/graph-ts"
+import { newMockEvent } from 'matchstick-as';
+import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
 import {
   Assign,
-  Transfer,
-  PunkTransfer,
-  PunkOffered,
   PunkBidEntered,
   PunkBidWithdrawn,
   PunkBought,
-  PunkNoLongerForSale
-} from "../generated/CryptoPunks/CryptoPunks"
+  PunkNoLongerForSale,
+  PunkOffered,
+  PunkTransfer,
+  Transfer,
+} from '../generated/CryptoPunks/CryptoPunks';
 
 export function createAssignEvent(to: Address, punkIndex: BigInt): Assign {
-  let assignEvent = changetype<Assign>(newMockEvent())
+  let assignEvent = changetype<Assign>(newMockEvent());
 
-  assignEvent.parameters = new Array()
+  assignEvent.parameters = new Array();
 
+  assignEvent.parameters.push(new ethereum.EventParam('to', ethereum.Value.fromAddress(to)));
   assignEvent.parameters.push(
-    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
-  )
-  assignEvent.parameters.push(
-    new ethereum.EventParam(
-      "punkIndex",
-      ethereum.Value.fromUnsignedBigInt(punkIndex)
-    )
-  )
+    new ethereum.EventParam('punkIndex', ethereum.Value.fromUnsignedBigInt(punkIndex)),
+  );
 
-  return assignEvent
+  return assignEvent;
 }
 
-export function createTransferEvent(
-  from: Address,
-  to: Address,
-  value: BigInt
-): Transfer {
-  let transferEvent = changetype<Transfer>(newMockEvent())
+export function createTransferEvent(from: Address, to: Address, value: BigInt): Transfer {
+  let transferEvent = changetype<Transfer>(newMockEvent());
 
-  transferEvent.parameters = new Array()
+  transferEvent.parameters = new Array();
 
+  transferEvent.parameters.push(new ethereum.EventParam('from', ethereum.Value.fromAddress(from)));
+  transferEvent.parameters.push(new ethereum.EventParam('to', ethereum.Value.fromAddress(to)));
   transferEvent.parameters.push(
-    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
-  )
-  transferEvent.parameters.push(
-    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
-  )
-  transferEvent.parameters.push(
-    new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
-  )
+    new ethereum.EventParam('value', ethereum.Value.fromUnsignedBigInt(value)),
+  );
 
-  return transferEvent
+  return transferEvent;
 }
 
 export function createPunkTransferEvent(
   from: Address,
   to: Address,
-  punkIndex: BigInt
+  punkIndex: BigInt,
 ): PunkTransfer {
-  let punkTransferEvent = changetype<PunkTransfer>(newMockEvent())
+  let punkTransferEvent = changetype<PunkTransfer>(newMockEvent());
 
-  punkTransferEvent.parameters = new Array()
+  punkTransferEvent.parameters = new Array();
 
   punkTransferEvent.parameters.push(
-    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
-  )
+    new ethereum.EventParam('from', ethereum.Value.fromAddress(from)),
+  );
+  punkTransferEvent.parameters.push(new ethereum.EventParam('to', ethereum.Value.fromAddress(to)));
   punkTransferEvent.parameters.push(
-    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
-  )
-  punkTransferEvent.parameters.push(
-    new ethereum.EventParam(
-      "punkIndex",
-      ethereum.Value.fromUnsignedBigInt(punkIndex)
-    )
-  )
+    new ethereum.EventParam('punkIndex', ethereum.Value.fromUnsignedBigInt(punkIndex)),
+  );
 
-  return punkTransferEvent
+  return punkTransferEvent;
 }
 
 export function createPunkOfferedEvent(
   punkIndex: BigInt,
   minValue: BigInt,
-  toAddress: Address
+  toAddress: Address,
 ): PunkOffered {
-  let punkOfferedEvent = changetype<PunkOffered>(newMockEvent())
+  let punkOfferedEvent = changetype<PunkOffered>(newMockEvent());
 
-  punkOfferedEvent.parameters = new Array()
+  punkOfferedEvent.parameters = new Array();
 
   punkOfferedEvent.parameters.push(
-    new ethereum.EventParam(
-      "punkIndex",
-      ethereum.Value.fromUnsignedBigInt(punkIndex)
-    )
-  )
+    new ethereum.EventParam('punkIndex', ethereum.Value.fromUnsignedBigInt(punkIndex)),
+  );
   punkOfferedEvent.parameters.push(
-    new ethereum.EventParam(
-      "minValue",
-      ethereum.Value.fromUnsignedBigInt(minValue)
-    )
-  )
+    new ethereum.EventParam('minValue', ethereum.Value.fromUnsignedBigInt(minValue)),
+  );
   punkOfferedEvent.parameters.push(
-    new ethereum.EventParam("toAddress", ethereum.Value.fromAddress(toAddress))
-  )
+    new ethereum.EventParam('toAddress', ethereum.Value.fromAddress(toAddress)),
+  );
 
-  return punkOfferedEvent
+  return punkOfferedEvent;
 }
 
 export function createPunkBidEnteredEvent(
   punkIndex: BigInt,
   value: BigInt,
-  fromAddress: Address
+  fromAddress: Address,
 ): PunkBidEntered {
-  let punkBidEnteredEvent = changetype<PunkBidEntered>(newMockEvent())
+  let punkBidEnteredEvent = changetype<PunkBidEntered>(newMockEvent());
 
-  punkBidEnteredEvent.parameters = new Array()
+  punkBidEnteredEvent.parameters = new Array();
 
   punkBidEnteredEvent.parameters.push(
-    new ethereum.EventParam(
-      "punkIndex",
-      ethereum.Value.fromUnsignedBigInt(punkIndex)
-    )
-  )
+    new ethereum.EventParam('punkIndex', ethereum.Value.fromUnsignedBigInt(punkIndex)),
+  );
   punkBidEnteredEvent.parameters.push(
-    new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
-  )
+    new ethereum.EventParam('value', ethereum.Value.fromUnsignedBigInt(value)),
+  );
   punkBidEnteredEvent.parameters.push(
-    new ethereum.EventParam(
-      "fromAddress",
-      ethereum.Value.fromAddress(fromAddress)
-    )
-  )
+    new ethereum.EventParam('fromAddress', ethereum.Value.fromAddress(fromAddress)),
+  );
 
-  return punkBidEnteredEvent
+  return punkBidEnteredEvent;
 }
 
 export function createPunkBidWithdrawnEvent(
   punkIndex: BigInt,
   value: BigInt,
-  fromAddress: Address
+  fromAddress: Address,
 ): PunkBidWithdrawn {
-  let punkBidWithdrawnEvent = changetype<PunkBidWithdrawn>(newMockEvent())
+  let punkBidWithdrawnEvent = changetype<PunkBidWithdrawn>(newMockEvent());
 
-  punkBidWithdrawnEvent.parameters = new Array()
+  punkBidWithdrawnEvent.parameters = new Array();
 
   punkBidWithdrawnEvent.parameters.push(
-    new ethereum.EventParam(
-      "punkIndex",
-      ethereum.Value.fromUnsignedBigInt(punkIndex)
-    )
-  )
+    new ethereum.EventParam('punkIndex', ethereum.Value.fromUnsignedBigInt(punkIndex)),
+  );
   punkBidWithdrawnEvent.parameters.push(
-    new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
-  )
+    new ethereum.EventParam('value', ethereum.Value.fromUnsignedBigInt(value)),
+  );
   punkBidWithdrawnEvent.parameters.push(
-    new ethereum.EventParam(
-      "fromAddress",
-      ethereum.Value.fromAddress(fromAddress)
-    )
-  )
+    new ethereum.EventParam('fromAddress', ethereum.Value.fromAddress(fromAddress)),
+  );
 
-  return punkBidWithdrawnEvent
+  return punkBidWithdrawnEvent;
 }
 
 export function createPunkBoughtEvent(
   punkIndex: BigInt,
   value: BigInt,
   fromAddress: Address,
-  toAddress: Address
+  toAddress: Address,
 ): PunkBought {
-  let punkBoughtEvent = changetype<PunkBought>(newMockEvent())
+  let punkBoughtEvent = changetype<PunkBought>(newMockEvent());
 
-  punkBoughtEvent.parameters = new Array()
+  punkBoughtEvent.parameters = new Array();
 
   punkBoughtEvent.parameters.push(
-    new ethereum.EventParam(
-      "punkIndex",
-      ethereum.Value.fromUnsignedBigInt(punkIndex)
-    )
-  )
+    new ethereum.EventParam('punkIndex', ethereum.Value.fromUnsignedBigInt(punkIndex)),
+  );
   punkBoughtEvent.parameters.push(
-    new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
-  )
+    new ethereum.EventParam('value', ethereum.Value.fromUnsignedBigInt(value)),
+  );
   punkBoughtEvent.parameters.push(
-    new ethereum.EventParam(
-      "fromAddress",
-      ethereum.Value.fromAddress(fromAddress)
-    )
-  )
+    new ethereum.EventParam('fromAddress', ethereum.Value.fromAddress(fromAddress)),
+  );
   punkBoughtEvent.parameters.push(
-    new ethereum.EventParam("toAddress", ethereum.Value.fromAddress(toAddress))
-  )
+    new ethereum.EventParam('toAddress', ethereum.Value.fromAddress(toAddress)),
+  );
 
-  return punkBoughtEvent
+  return punkBoughtEvent;
 }
-

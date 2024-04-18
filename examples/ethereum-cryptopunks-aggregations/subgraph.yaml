@@ -8,7 +8,7 @@ dataSources:
     name: CryptoPunks
     network: mainnet
     source:
-      address: "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB"
+      address: '0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB'
       abi: CryptoPunks
       startBlock: 3914495
     mapping:
