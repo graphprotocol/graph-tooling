@@ -1,0 +1,26 @@
+specVersion: 1.1.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CryptoPunks
+    network: mainnet
+    source:
+      address: "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB"
+      abi: CryptoPunks
+      startBlock: 3914495
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - PunkBought
+      abis:
+        - name: CryptoPunks
+          file: ./abis/CryptoPunks.json
+      eventHandlers:
+        - event: PunkBought(indexed uint256,uint256,indexed address,indexed address)
+          handler: handlePunkBought
+      file: ./src/crypto-punks.ts
