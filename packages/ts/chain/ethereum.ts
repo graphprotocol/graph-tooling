@@ -6,7 +6,7 @@ import { Address, BigInt } from '../common/numbers';
 export declare namespace ethereum {
   function call(call: SmartContractCall): Array<Value> | null;
   function getBalance(address: Address): BigInt;
-  function hasCode(address: Address): bool;
+  function hasCode(address: Address): Wrapped<bool>;
   function encode(token: Value): Bytes | null;
   function decode(types: String, data: Bytes): Value | null;
 }
