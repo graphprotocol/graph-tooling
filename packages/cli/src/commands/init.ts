@@ -1,8 +1,8 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { filesystem, prompt, system } from 'gluegun';
 import * as toolbox from 'gluegun';
+import { filesystem, prompt, system } from 'gluegun';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
@@ -12,6 +12,7 @@ import {
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
+import { sortWithPriority } from '../command-helpers/sort';
 import { withSpinner } from '../command-helpers/spinner';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
@@ -630,7 +631,7 @@ async function processInitForm(
       },
     ]);
 
-    const choices = (await AVAILABLE_NETWORKS())?.[
+    let choices = (await AVAILABLE_NETWORKS())?.[
       product === 'subgraph-studio' ? 'studio' : 'hostedService'
     ];
 
@@ -640,6 +641,8 @@ async function processInitForm(
         { exit: 1 },
       );
     }
+
+    choices = sortWithPriority(choices, ['mainnet']);
 
     const { network } = await prompt.ask<{ network: string }>([
       {
