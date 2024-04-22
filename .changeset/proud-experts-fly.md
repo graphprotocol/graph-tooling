@@ -1,5 +1,5 @@
 ---
-'@graphprotocol/graph-ts': minor
+'@graphprotocol/graph-ts': patch
 ---
 
 Update return type for ethereum.hasCode
