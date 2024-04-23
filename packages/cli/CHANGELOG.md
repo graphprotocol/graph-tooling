@@ -1,5 +1,26 @@
 # @graphprotocol/graph-cli
 
+## 0.71.0
+
+### Minor Changes
+
+- [#1598](https://github.com/graphprotocol/graph-tooling/pull/1598)
+  [`7d4208a`](https://github.com/graphprotocol/graph-tooling/commit/7d4208aa1a1d376d7b230df7d86d9ec5864e18a8)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Allow topic filters in event handlers
+
+### Patch Changes
+
+- [#1634](https://github.com/graphprotocol/graph-tooling/pull/1634)
+  [`f256475`](https://github.com/graphprotocol/graph-tooling/commit/f2564757ba8007025f8745c9162ba4143ff58548)
+  Thanks [@joshuanazareth97](https://github.com/joshuanazareth97)! - Order list of evm chains in
+  graph init command
+
+- [#1640](https://github.com/graphprotocol/graph-tooling/pull/1640)
+  [`1fb675c`](https://github.com/graphprotocol/graph-tooling/commit/1fb675ce51076c5edbdb64c116b0d7feed0d939a)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - Added Etherscan like API url and Public RPC
+  endpoints for Polygon Amoy,Gnosis Chiado,Mode Mainnet, Mode Sepolia chains for fetching startBlock
+  and ABI
+
 ## 0.70.0
 
 ### Minor Changes
