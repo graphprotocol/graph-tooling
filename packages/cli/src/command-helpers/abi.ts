@@ -238,13 +238,13 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'etherlink-testnet':
       return `https://testnet-explorer.etherlink.com/api`;
     case 'polygon-amoy':
-      return `https://api-amoy.polygonscan.com/api`
+      return `https://api-amoy.polygonscan.com/api`;
     case 'gnosis-chiado':
-      return `https://gnosis-chiado.blockscout.com/api`
+      return `https://gnosis-chiado.blockscout.com/api`;
     case 'mode-mainnet':
-      return `https://explorer.mode.network/api`
+      return `https://explorer.mode.network/api`;
     case 'mode-sepolia':
-      return `https://sepolia.explorer.mode.network/api`
+      return `https://sepolia.explorer.mode.network/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -344,11 +344,11 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'polygon-amoy':
       return `https://rpc-amoy.polygon.technology`;
     case 'gnosis-chiado':
-      return `https://rpc.chiadochain.net`
+      return `https://rpc.chiadochain.net`;
     case 'mode-mainnet':
-      return `https://mainnet.mode.network`
+      return `https://mainnet.mode.network`;
     case 'mode-sepolia':
-      return `https://sepolia.mode.network`
+      return `https://sepolia.mode.network`;
     default:
       throw new Error(`Unknown network: ${network}`);
   }
