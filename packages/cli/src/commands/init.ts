@@ -9,11 +9,13 @@ import {
   loadAbiFromEtherscan,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
+import { downloadFile } from '../command-helpers/download';
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { sortWithPriority } from '../command-helpers/sort';
 import { withSpinner } from '../command-helpers/spinner';
+import { getSpkgFilePath, isSpkgUrl, validateSpkg } from '../command-helpers/spkg';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 import debugFactory from '../debug';
