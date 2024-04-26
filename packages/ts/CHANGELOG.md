@@ -1,5 +1,21 @@
 # @graphprotocol/graph-ts
 
+## 0.35.1
+
+### Patch Changes
+
+- [#1637](https://github.com/graphprotocol/graph-tooling/pull/1637)
+  [`f0c583f`](https://github.com/graphprotocol/graph-tooling/commit/f0c583f00c90e917d87b707b5b7a892ad0da916f)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Update return type for ethereum.hasCode
+
+## 0.35.0
+
+### Minor Changes
+
+- [#1609](https://github.com/graphprotocol/graph-tooling/pull/1609)
+  [`e299f6c`](https://github.com/graphprotocol/graph-tooling/commit/e299f6ce5cf1ad74cab993f6df3feb7ca9993254)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for eth.hasCode method
+
 ## 0.34.0
 
 ### Minor Changes
