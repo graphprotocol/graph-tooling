@@ -726,11 +726,10 @@ async function processInitForm(
       {
         type: 'input',
         name: 'spkg',
-        message: 'SPKG file (path)',
+        message: 'SPKG file (path or spkg.io url)',
         initial: () => initSpkgPath,
         skip: () => !isSubstreams || !!initSpkgPath,
-        validate: value =>
-          filesystem.exists(initSpkgPath || value) ? true : 'SPKG file does not exist',
+        validate: value => validateSpkg(value) || 'Invalid SPKG file',
       },
     ]);
 
