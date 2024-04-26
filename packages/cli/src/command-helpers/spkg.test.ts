@@ -25,17 +25,17 @@ describe('isSpkgUrl', () => {
   it('should return true for valid spkg url', () => {
     const spkgUrl = 'https://spkg.io/streamingfast/package.spkg';
     const result = isSpkgUrl(spkgUrl);
-    expect(result).to.be.true;
+    expect(result).toBe(true);
   });
 
   it('should return false for invalid spkg url', () => {
     const spkgUrl = 'https://example.com/package.spkg';
     const result = isSpkgUrl(spkgUrl);
-    expect(result).to.be.false;
+    expect(result).toBe(false);
   });
   it('should return false for non-url string', () => {
     const spkgUrl = 'streamingfast/package.spkg';
     const result = isSpkgUrl(spkgUrl);
-    expect(result).to.be.false;
+    expect(result).toBe(false);
   });
 });
