@@ -1206,6 +1206,16 @@ async function initSubgraphFromContract(
     this.error(`ABI does not contain any events`, { exit: 1 });
   }
 
+  let spkgFilePath = spkgPath;
+  // if url let's overwrite with the file path
+  if (spkgPath && isSpkgUrl(spkgPath)) {
+    try {
+      spkgFilePath = await getSpkgFilePath(spkgPath, directory);
+    } catch (e) {
+      this.error(e.message, { exit: 1 });
+    }
+  }
+
   // Scaffold subgraph
   const scaffold = await withSpinner(
     `Create subgraph scaffold`,
@@ -1223,11 +1233,14 @@ async function initSubgraphFromContract(
           contractName,
           startBlock,
           node,
-          spkgPath,
+          spkgPath: spkgFilePath,
         },
         spinner,
       );
       await writeScaffold(scaffold, directory, spinner);
+      if (spkgPath && spkgFilePath && isSpkgUrl(spkgPath)) {
+        await downloadFile(spkgPath, spkgFilePath);
+      }
       return true;
     },
   );
