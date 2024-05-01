@@ -1,8 +1,11 @@
 import immutable from 'immutable';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import debugFactory from '../debug';
 import fetch from '../fetch';
 import ABI from '../protocols/ethereum/abi';
 import { withSpinner } from './spinner';
+
+const logger = debugFactory('graph-cli:abi-helpers');
 
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
@@ -51,7 +54,9 @@ export const fetchDeployContractTransactionFromEtherscan = async (
     5,
   );
   if (json.status === '1') {
-    return json.result[0].txHash;
+    const hash = json.result[0].txHash;
+    logger('Successfully fetchDeployContractTransactionFromEtherscan. txHash: %s', hash);
+    return hash;
   }
 
   throw new Error(`Failed to fetch deploy contract transaction`);
@@ -70,6 +75,7 @@ export const fetchContractCreationHashWithRetry = async (
         return json;
       }
     } catch (error) {
+      logger('Failed to fetchContractCreationHashWithRetry: %O', error);
       /* empty */
     }
   }
@@ -100,6 +106,7 @@ export const fetchTransactionByHashFromRPC = async (
     json = await result.json();
     return json;
   } catch (error) {
+    logger('Failed to fetchTransactionByHashFromRPC: %O', error);
     throw new Error('Failed to fetch contract creation transaction');
   }
 };
@@ -111,8 +118,11 @@ export const getStartBlockForContract = async (
   try {
     const transactionHash = await fetchDeployContractTransactionFromEtherscan(network, address);
     const txn = await fetchTransactionByHashFromRPC(network, transactionHash);
-    return parseInt(txn.result.blockNumber, 16);
+    const blockNumber = parseInt(txn.result.blockNumber, 16);
+    logger('Successfully getStartBlockForContract. blockNumber: %s', blockNumber);
+    return blockNumber;
   } catch (error) {
+    logger('Failed to fetch getStartBlockForContract: %O', error);
     throw new Error(error?.message);
   }
 };
@@ -139,8 +149,10 @@ export const loadAbiFromBlockScout = async (
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
       if (json.status === '1') {
+        logger('Successfully loadAbiFromBlockScout. address: %s', address);
         return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
       }
+      logger('Failed to loadAbiFromBlockScout. address: %s', address);
       throw new Error('ABI not found, try loading it from a local file');
     },
   );
@@ -159,6 +171,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api.bscscan.com/api`;
     case 'base-testnet':
       return `https://api-goerli.basescan.org/api`;
+    case 'base-sepolia':
+      return `https://api-sepolia.basescan.org/api`;
     case 'base':
       return `https://api.basescan.org/api`;
     case 'chapel':
@@ -199,6 +213,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://block-explorer-api.mainnet.zksync.io/api`;
     case 'zksync-era-testnet':
       return `https://block-explorer-api.testnets.zksync.dev/api`;
+    case 'zksync-era-sepolia':
+      return 'https://block-explorer-api.sepolia.zksync.dev/api';
     case 'polygon-zkevm-testnet':
       return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
@@ -207,8 +223,28 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-sepolia.etherscan.io/api`;
     case 'scroll-sepolia':
       return `https://api-sepolia.scrollscan.dev/api`;
+    case 'optimism-sepolia':
+      return `https://sepolia-optimism.etherscan.io/api`;
     case 'scroll':
       return `https://blockscout.scroll.io/api`;
+    case 'linea':
+      return `https://api.lineascan.build/api`;
+    case 'linea-goerli':
+      return `https://api.linea-goerli.build/api`;
+    case 'blast-testnet':
+      return `https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan/api`;
+    case 'blast-mainnet':
+      return `https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan/api`;
+    case 'etherlink-testnet':
+      return `https://testnet-explorer.etherlink.com/api`;
+    case 'polygon-amoy':
+      return `https://api-amoy.polygonscan.com/api`;
+    case 'gnosis-chiado':
+      return `https://gnosis-chiado.blockscout.com/api`;
+    case 'mode-mainnet':
+      return `https://explorer.mode.network/api`;
+    case 'mode-sepolia':
+      return `https://sepolia.explorer.mode.network/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -229,6 +265,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://api.avax.network/ext/bc/C/rpc';
     case 'base-testnet':
       return 'https://goerli.base.org';
+    case 'base-sepolia':
+      return 'https://sepolia.base.org';
     case 'base':
       return 'https://rpc.base.org';
     case 'bsc':
@@ -283,12 +321,34 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://mainnet.era.zksync.io';
     case 'zksync-era-testnet':
       return 'https://testnet.era.zksync.dev';
+    case 'zksync-era-sepolia':
+      return 'https://sepolia.era.zksync.dev';
     case 'sepolia':
       return 'https://rpc.ankr.com/eth_sepolia';
     case 'scroll-sepolia':
       return 'https://rpc.ankr.com/scroll_sepolia_testnet';
     case 'scroll':
       return 'https://rpc.ankr.com/scroll';
+    case 'linea':
+      return 'https://linea-mainnet.public.blastapi.io';
+    case 'linea-goerli':
+      return 'https://linea-goerli.public.blastapi.io';
+    case 'blast-testnet':
+      return 'https://sepolia.blast.io';
+    case 'blast-mainnet':
+      return 'https://rpc.blast.io';
+    case 'optimism-sepolia':
+      return 'https://sepolia.optimism.io';
+    case 'etherlink-testnet':
+      return `https://node.ghostnet.etherlink.com`;
+    case 'polygon-amoy':
+      return `https://rpc-amoy.polygon.technology`;
+    case 'gnosis-chiado':
+      return `https://rpc.chiadochain.net`;
+    case 'mode-mainnet':
+      return `https://mainnet.mode.network`;
+    case 'mode-sepolia':
+      return `https://sepolia.mode.network`;
     default:
       throw new Error(`Unknown network: ${network}`);
   }

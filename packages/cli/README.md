@@ -37,14 +37,26 @@ or a local directory for debugging, and deploys the subgraph to a
 
 ## Installation
 
-The Graph CLI can be installed with `npm` or `yarn`:
+We recommend install the CLI using package manager `npm` or `yarn` or `pnpm` when developing
+subgraphs locally:
 
 ```sh
 # NPM
-npm install -g @graphprotocol/graph-cli
+npm install @graphprotocol/graph-cli
 
 # Yarn
-yarn global add @graphprotocol/graph-cli
+yarn add @graphprotocol/graph-cli
+
+# pnpm
+pnpm install @graphprotocol/graph-cli
+```
+
+You can install the CLI globally using a binary. Eventually this will become the default mechanism
+for installing the CLI and building subgraphs because users do not need to install `Node.js` or any
+other external dependencies.
+
+```sh
+curl -LS https://cli.thegraph.com/install.sh | sudo sh
 ```
 
 ### On Linux

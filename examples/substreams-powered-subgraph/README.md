@@ -15,5 +15,5 @@ This
 yarn install # install graph-cli
 yarn substreams:prepare # build and package the substreams module
 yarn subgraph:build # build the subgraph
-yarn subgraph:deploy # deploy the subgraph
+yarn deploy # deploy the subgraph
 ```

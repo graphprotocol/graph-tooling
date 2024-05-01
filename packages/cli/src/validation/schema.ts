@@ -18,6 +18,7 @@ const BUILTIN_SCALAR_TYPES = [
   'Bytes',
   'ID',
   'Int8',
+  'Timestamp',
 ];
 
 // Type suggestions for common mistakes
@@ -39,6 +40,8 @@ const TYPE_SUGGESTIONS = [
   ['Float', 'BigDecimal'],
   ['int', 'Int'],
   ['int8', 'Int8'],
+  ['timestamp', 'Timestamp'],
+  ['ts', 'Timestamp'],
   ['uint', 'BigInt'],
   ['owner', 'String'],
   ['Owner', 'String'],
@@ -83,13 +86,15 @@ const parseSchema = (doc: string) => {
 
 const validateEntityDirective = (def: any) => {
   validateDebugger('Validating entity directive for %s', def?.name?.value);
-  return def.directives.find((directive: any) => directive.name.value === 'entity')
+  return def.directives.find(
+    (directive: any) => directive.name.value === 'entity' || directive.name.value === 'aggregation',
+  )
     ? List()
     : immutable.fromJS([
         {
           loc: def.loc,
           entity: def.name.value,
-          message: `Defined without @entity directive`,
+          message: `Defined without @entity or @aggregation directive`,
         },
       ]);
 };
@@ -114,7 +119,8 @@ const validateEntityID = (def: any) => {
     idField.type.type.kind === 'NamedType' &&
     (idField.type.type.name.value === 'ID' ||
       idField.type.type.name.value === 'Bytes' ||
-      idField.type.type.name.value === 'String')
+      idField.type.type.name.value === 'String' ||
+      idField.type.type.name.value === 'Int8')
   ) {
     validateDebugger('Entity %s has valid id field', def?.name?.value);
     return List();
@@ -125,7 +131,7 @@ const validateEntityID = (def: any) => {
     {
       loc: idField.loc,
       entity: def.name.value,
-      message: `Field 'id': Entity ids must be of type Bytes! or String!`,
+      message: `Field 'id': Entity ids must be of type Int8!, Bytes! or String!`,
     },
   ]);
 };

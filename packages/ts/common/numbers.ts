@@ -30,6 +30,7 @@ export declare namespace bigDecimal {
 }
 
 export type Int8 = i64;
+export type Timestamp = i64;
 
 /** An Ethereum address (20 bytes). */
 export class Address extends Bytes {

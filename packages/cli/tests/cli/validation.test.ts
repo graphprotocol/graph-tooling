@@ -250,6 +250,15 @@ describe.concurrent(
         exitCode: 1,
       },
     );
+
+    cliTest(
+      'Should parse indexerHints',
+      ['codegen', '--skip-migrations'],
+      'validation/indexer-hints',
+      {
+        exitCode: 0,
+      },
+    );
   },
   {
     timeout: 60_000,

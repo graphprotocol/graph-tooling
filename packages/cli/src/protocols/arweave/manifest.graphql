@@ -9,6 +9,8 @@ scalar File
 scalar BigInt
 scalar JSON
 
+union StringOrBigInt = String | BigInt
+
 type SubgraphManifest {
   specVersion: String!
   schema: Schema!
@@ -16,10 +18,15 @@ type SubgraphManifest {
   repository: String
   graft: Graft
   dataSources: [DataSource!]!
+  indexerHints: IndexerHints
 }
 
 type Schema {
   file: File!
+}
+
+type IndexerHints {
+  prune: StringOrBigInt
 }
 
 type DataSource {
@@ -34,6 +41,7 @@ type DataSource {
 type ContractSource {
   owner: String
   startBlock: BigInt
+  endBlock: BigInt
 }
 
 type ContractMapping {

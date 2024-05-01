@@ -4,6 +4,8 @@ import { getSubgraphBasename } from '../command-helpers/subgraph';
 import Protocol from '../protocols';
 import ABI from '../protocols/ethereum/abi';
 import { version } from '../version';
+import { getDockerFile } from './get-docker-file';
+import { getGitIgnore } from './get-git-ignore';
 import { generateEventIndexingHandlers } from './mapping';
 import { abiEvents, generateEventType, generateExampleEntityType } from './schema';
 import { generateTestsFiles } from './tests';
@@ -111,7 +113,9 @@ export default class Scaffold {
 
     return await prettier.format(
       `
-specVersion: 0.0.5
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
 schema:
   file: ./schema.graphql
 dataSources:
@@ -150,6 +154,14 @@ dataSources:
       }),
       { parser: 'json' },
     );
+  }
+
+  async generateDockerFileConfig() {
+    return await prettier.format(getDockerFile(), { parser: 'yaml' });
+  }
+
+  generateGitIgnoreFile() {
+    return getGitIgnore();
   }
 
   async generateMappings() {
@@ -199,6 +211,7 @@ dataSources:
         'subgraph.yaml': await this.generateManifest(),
         'schema.graphql': await this.generateSchema(),
         'package.json': await this.generatePackageJsonForSubstreams(),
+        '.gitignore': await this.generateGitIgnoreFile(),
       };
     }
     return {
@@ -206,6 +219,8 @@ dataSources:
       'subgraph.yaml': await this.generateManifest(),
       'schema.graphql': await this.generateSchema(),
       'tsconfig.json': await this.generateTsConfig(),
+      'docker-compose.yml': await this.generateDockerFileConfig(),
+      '.gitignore': await this.generateGitIgnoreFile(),
       src: await this.generateMappings(),
       abis: await this.generateABIs(),
       tests: await this.generateTests(),

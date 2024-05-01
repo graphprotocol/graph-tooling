@@ -8,6 +8,7 @@ scalar String
 scalar File
 scalar BigInt
 
+union StringOrBigInt = String | BigInt
 type SubgraphManifest {
   specVersion: String!
   features: [String!]
@@ -16,10 +17,15 @@ type SubgraphManifest {
   repository: String
   graft: Graft
   dataSources: [DataSource!]!
+  indexerHints: IndexerHints
 }
 
 type Schema {
   file: File!
+}
+
+type IndexerHints {
+  prune: StringOrBigInt
 }
 
 type DataSource {

@@ -1,5 +1,193 @@
 # @graphprotocol/graph-cli
 
+## 0.71.0
+
+### Minor Changes
+
+- [#1598](https://github.com/graphprotocol/graph-tooling/pull/1598)
+  [`7d4208a`](https://github.com/graphprotocol/graph-tooling/commit/7d4208aa1a1d376d7b230df7d86d9ec5864e18a8)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Allow topic filters in event handlers
+
+### Patch Changes
+
+- [#1634](https://github.com/graphprotocol/graph-tooling/pull/1634)
+  [`f256475`](https://github.com/graphprotocol/graph-tooling/commit/f2564757ba8007025f8745c9162ba4143ff58548)
+  Thanks [@joshuanazareth97](https://github.com/joshuanazareth97)! - Order list of evm chains in
+  graph init command
+
+- [#1640](https://github.com/graphprotocol/graph-tooling/pull/1640)
+  [`1fb675c`](https://github.com/graphprotocol/graph-tooling/commit/1fb675ce51076c5edbdb64c116b0d7feed0d939a)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - Added Etherscan like API url and Public RPC
+  endpoints for Polygon Amoy,Gnosis Chiado,Mode Mainnet, Mode Sepolia chains for fetching startBlock
+  and ABI
+
+## 0.70.0
+
+### Minor Changes
+
+- [#1629](https://github.com/graphprotocol/graph-tooling/pull/1629)
+  [`3801671`](https://github.com/graphprotocol/graph-tooling/commit/3801671a79875cdd8653b8603b1a2e89426268f5)
+  Thanks [@saihaj](https://github.com/saihaj)! - generate gitignore file
+
+## 0.69.2
+
+### Patch Changes
+
+- [#1623](https://github.com/graphprotocol/graph-tooling/pull/1623)
+  [`121843e`](https://github.com/graphprotocol/graph-tooling/commit/121843e982c69ffb31aae911431a68a2349ea062)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - cli: added etherscan API URL & public RPC
+  endpoint for etherlink-testnet
+
+## 0.69.1
+
+### Patch Changes
+
+- [#1619](https://github.com/graphprotocol/graph-tooling/pull/1619)
+  [`fb18ecf`](https://github.com/graphprotocol/graph-tooling/commit/fb18ecf657f77ab6d7325e264c4a6c66d237201d)
+  Thanks [@saihaj](https://github.com/saihaj)! - increase jayson client timeout
+
+## 0.69.0
+
+### Minor Changes
+
+- [#1522](https://github.com/graphprotocol/graph-tooling/pull/1522)
+  [`d132f9c`](https://github.com/graphprotocol/graph-tooling/commit/d132f9c9f6ea5283e40a8d913f3abefe5a8ad5f8)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Added support for handling GraphQL
+  `Timestamp` scalar as `i64` (AssemblyScript)
+
+- [#1610](https://github.com/graphprotocol/graph-tooling/pull/1610)
+  [`fc03add`](https://github.com/graphprotocol/graph-tooling/commit/fc03add1a8510afa49110481b486c8fa56f8c19f)
+  Thanks [@yehia67](https://github.com/yehia67)! - Generate `docker-compose.yml` with `graph init`
+  command
+
+## 0.68.5
+
+### Patch Changes
+
+- [`4525b0c`](https://github.com/graphprotocol/graph-tooling/commit/4525b0c3bbabe89561d5d908f23a8f5652f0df88)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix blast mainnet etherscan url
+
+## 0.68.4
+
+### Patch Changes
+
+- [#1595](https://github.com/graphprotocol/graph-tooling/pull/1595)
+  [`decff14`](https://github.com/graphprotocol/graph-tooling/commit/decff1435bdd3b4e459ffa83d881f23d26e2ee5f)
+  Thanks [@saihaj](https://github.com/saihaj)! - improve error handling for `graph deploy`
+
+## 0.68.3
+
+### Patch Changes
+
+- [#1593](https://github.com/graphprotocol/graph-tooling/pull/1593)
+  [`5f78825`](https://github.com/graphprotocol/graph-tooling/commit/5f788250bbd50406b59b75cc82fee4b197b88e18)
+  Thanks [@saihaj](https://github.com/saihaj)! - increase jayson client timeout
+
+## 0.68.2
+
+### Patch Changes
+
+- [`5d39c18`](https://github.com/graphprotocol/graph-tooling/commit/5d39c180c3825bc4e7b869dc4ae10ebb4ac91f76)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix base sepolia url
+
+## 0.68.1
+
+### Patch Changes
+
+- [#1589](https://github.com/graphprotocol/graph-tooling/pull/1589)
+  [`7f0e8ab`](https://github.com/graphprotocol/graph-tooling/commit/7f0e8ab70bcd2279b54a040031de2795e7346b1a)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix optimism sepolia url
+
+## 0.68.0
+
+### Minor Changes
+
+- [#1548](https://github.com/graphprotocol/graph-tooling/pull/1548)
+  [`b3f6a99`](https://github.com/graphprotocol/graph-tooling/commit/b3f6a9979bcac9610807f19d41fc0548a5342828)
+  Thanks [@lutter](https://github.com/lutter)! - Make validations more lenient to allow aggregations
+  and Int8 ids
+
+## 0.67.4
+
+### Patch Changes
+
+- [`f49aab9`](https://github.com/graphprotocol/graph-tooling/commit/f49aab98d643ba6d8c3708772bed8318825effed)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix blast testnet etherscan and RPC URL
+
+## 0.67.3
+
+### Patch Changes
+
+- [#1579](https://github.com/graphprotocol/graph-tooling/pull/1579)
+  [`bc61adb`](https://github.com/graphprotocol/graph-tooling/commit/bc61adb8ae4f6ba8b467e98ed390a96029b702d8)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix line and linea-goerli API URLs
+
+## 0.67.2
+
+### Patch Changes
+
+- [#1571](https://github.com/graphprotocol/graph-tooling/pull/1571)
+  [`76279ab`](https://github.com/graphprotocol/graph-tooling/commit/76279ab7afda5280a202818d64668c9e0873bb91)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+
+  - Updated dependency [`gluegun@5.1.6` ↗︎](https://www.npmjs.com/package/gluegun/v/5.1.6) (from
+    `5.1.2`, in `dependencies`)
+
+- [#1572](https://github.com/graphprotocol/graph-tooling/pull/1572)
+  [`d5ca0a6`](https://github.com/graphprotocol/graph-tooling/commit/d5ca0a61cb17fc17cbf18dbf0faf33cee5250a24)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+  - Removed dependency [`request@2.88.2` ↗︎](https://www.npmjs.com/package/request/v/2.88.2) (from
+    `dependencies`)
+
+## 0.67.1
+
+### Patch Changes
+
+- [#1568](https://github.com/graphprotocol/graph-tooling/pull/1568)
+  [`efa9444`](https://github.com/graphprotocol/graph-tooling/commit/efa94446d97b4137e942e3b9c138d83b2b8cf561)
+  Thanks [@saihaj](https://github.com/saihaj)! - add zk sync sepolia RPC url
+
+## 0.67.0
+
+### Minor Changes
+
+- [#1409](https://github.com/graphprotocol/graph-tooling/pull/1409)
+  [`e15e036`](https://github.com/graphprotocol/graph-tooling/commit/e15e0361c38348f2ca20a89ab7a49ed2235922e7)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for endBlock in subgraph
+  manifest
+
+### Patch Changes
+
+- [#1566](https://github.com/graphprotocol/graph-tooling/pull/1566)
+  [`82bca91`](https://github.com/graphprotocol/graph-tooling/commit/82bca91aa0ca12af087f470b4637b92c3ee486c2)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix zksync-era-sepolia etherscan url
+
+## 0.66.0
+
+### Minor Changes
+
+- [#1561](https://github.com/graphprotocol/graph-tooling/pull/1561)
+  [`39d5dbf`](https://github.com/graphprotocol/graph-tooling/commit/39d5dbf091222921044f1044b7a94935fda46236)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for indexerHints in manifest
+
+## 0.65.0
+
+### Minor Changes
+
+- [#1557](https://github.com/graphprotocol/graph-tooling/pull/1557)
+  [`e84f233`](https://github.com/graphprotocol/graph-tooling/commit/e84f233ee156863136b120a79a91ec692a6f5677)
+  Thanks [@saihaj](https://github.com/saihaj)! - fetch supported networks from API
+
+## 0.64.1
+
+### Patch Changes
+
+- [#1536](https://github.com/graphprotocol/graph-tooling/pull/1536)
+  [`fbce626`](https://github.com/graphprotocol/graph-tooling/commit/fbce626ddd9206f9887576b1a023d9b98914e6a9)
+  Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
+  - Updated dependency [`prettier@3.0.3` ↗︎](https://www.npmjs.com/package/prettier/v/3.0.3) (from
+    `1.19.1`, in `dependencies`)
+
 ## 0.64.0
 
 ### Minor Changes

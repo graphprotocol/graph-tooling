@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "version": "0.64.0",
+  "version": "0.71.0",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
@@ -42,14 +42,13 @@
     "dockerode": "2.5.8",
     "fs-extra": "9.1.0",
     "glob": "9.3.5",
-    "gluegun": "5.1.2",
+    "gluegun": "5.1.6",
     "graphql": "15.5.0",
     "immutable": "4.2.1",
     "ipfs-http-client": "55.0.0",
     "jayson": "4.0.0",
     "js-yaml": "3.14.1",
     "prettier": "3.0.3",
-    "request": "2.88.2",
     "semver": "7.4.0",
     "sync-request": "6.1.0",
     "tmp-promise": "3.0.3",

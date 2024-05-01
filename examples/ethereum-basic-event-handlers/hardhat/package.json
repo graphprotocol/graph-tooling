@@ -9,6 +9,6 @@
     "localnode": "hardhat node --hostname 0.0.0.0"
   },
   "dependencies": {
-    "hardhat": "^2.11.2"
+    "hardhat": "^2.22.1"
   }
 }
