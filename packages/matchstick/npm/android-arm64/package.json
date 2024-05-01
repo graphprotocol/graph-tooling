@@ -1,18 +1,18 @@
 {
   "name": "matchstick-android-arm64",
   "version": "0.0.0",
-  "os": [
-    "android"
-  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
   "cpu": [
     "arm64"
+  ],
+  "os": [
+    "android"
   ],
   "main": "matchstick.android-arm64.node",
   "files": [
     "matchstick.android-arm64.node"
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">= 10"
-  }
+  ]
 }

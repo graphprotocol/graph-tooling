@@ -1,18 +1,18 @@
 {
   "name": "matchstick-android-arm-eabi",
   "version": "0.0.0",
-  "os": [
-    "android"
-  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
   "cpu": [
     "arm"
+  ],
+  "os": [
+    "android"
   ],
   "main": "matchstick.android-arm-eabi.node",
   "files": [
     "matchstick.android-arm-eabi.node"
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">= 10"
-  }
+  ]
 }

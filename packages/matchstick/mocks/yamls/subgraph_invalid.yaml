@@ -3,7 +3,6 @@ description: Demo Subgraph showcasing unit testing with Matchstick!
 repository: https://github.com/LimeChain/demo-subgraph
 schema:
   file: ./schema.graphql
-invalid
 dataSources:
   - kind: ethereum/contract
     name: Gravity

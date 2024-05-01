@@ -1,18 +1,18 @@
 {
   "name": "matchstick-freebsd-x64",
   "version": "0.0.0",
-  "os": [
-    "freebsd"
-  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
   "cpu": [
     "x64"
+  ],
+  "os": [
+    "freebsd"
   ],
   "main": "matchstick.freebsd-x64.node",
   "files": [
     "matchstick.freebsd-x64.node"
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">= 10"
-  }
+  ]
 }

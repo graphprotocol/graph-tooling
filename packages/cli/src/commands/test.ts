@@ -1,5 +1,10 @@
-import { Args, Command, Flags } from '@oclif/core'
-import { Matchstick, loadYamlConfig, checkForMatchstickBinary, downloadLatestBinary } from '@graph-tooling/matchstick'
+import {
+  checkForMatchstickBinary,
+  downloadLatestBinary,
+  loadYamlConfig,
+  Matchstick,
+} from '@graph-tooling/matchstick';
+import { Args, Command, Flags } from '@oclif/core';
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
@@ -35,11 +40,14 @@ export default class TestCommand extends Command {
   };
 
   async run() {
-    const { args: { datasource }, flags } = await this.parse(TestCommand)
+    const {
+      args: { datasource },
+      flags,
+    } = await this.parse(TestCommand);
 
     // Load configuration from YAML file
-    const config = loadYamlConfig('./matchstick.yaml')
-    const testsDir = config.testsFolder || './tests'
+    const config = loadYamlConfig('./matchstick.yaml');
+    const testsDir = config.testsFolder || './tests';
 
     // Matchstick binary setup
     const matchstick = new Matchstick({
@@ -49,15 +57,14 @@ export default class TestCommand extends Command {
       enableCoverage: flags.coverage,
       enableRecompile: flags.recompile,
       logs: flags.logs,
-    })
+    });
 
     // Ensure binary is ready
     if (!checkForMatchstickBinary(testsDir) || flags.force) {
-      await downloadLatestBinary(testsDir)
+      await downloadLatestBinary(testsDir);
     }
 
     // Execute tests
-    matchstick.run(datasource)
+    matchstick.run(datasource);
   }
 }
-
