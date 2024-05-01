@@ -1,11 +1,5 @@
-import { log, test } from 'matchstick-as/assembly/index';
-import { handleCreateGravatar, handleNewGravatar } from '../src/gravity';
-import {
-  createNewGravatarEvent,
-  handleNewGravatars,
-  saveGravatarFromContract,
-  trySaveGravatarFromContract,
-} from './utils';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { test } from 'matchstick-as/assembly/index';
 
 test('0', () => {});
 
