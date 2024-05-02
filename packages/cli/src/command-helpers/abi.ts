@@ -245,6 +245,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://explorer.mode.network/api`;
     case 'mode-sepolia':
       return `https://sepolia.explorer.mode.network/api`;
+    case 'fuse':
+      return 'https://explorer.fuse.io/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
