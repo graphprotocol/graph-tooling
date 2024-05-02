@@ -1,5 +1,12 @@
 # @graphprotocol/graph-cli
 
+## 0.71.1
+
+### Patch Changes
+
+- [`4d63b25`](https://github.com/graphprotocol/graph-tooling/commit/4d63b255b6bd0db5b79036bdf45596095dd8625b)
+  Thanks [@saihaj](https://github.com/saihaj)! - fix etherscan like url for fuse
+
 ## 0.71.0
 
 ### Minor Changes
