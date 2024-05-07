@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.71.2
+
+### Patch Changes
+
+- [#1611](https://github.com/graphprotocol/graph-tooling/pull/1611)
+  [`951c2ed`](https://github.com/graphprotocol/graph-tooling/commit/951c2ed7db2f0650105c9b9059e0ccd8fd9102a0)
+  Thanks [@lutter](https://github.com/lutter)! - Accept declared calls in subgraph manifests
+
 ## 0.71.1
 
 ### Patch Changes
