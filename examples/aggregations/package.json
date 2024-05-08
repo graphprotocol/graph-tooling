@@ -1,0 +1,20 @@
+{
+    "name": "aggregation",
+    "license": "MIT",
+    "scripts": {
+      "codegen": "graph codegen",
+      "build": "graph build",
+      "test": "graph test",
+      "create": "graph create example --node https://api.thegraph.com/deploy/",
+      "create-local": "graph create example --node http://127.0.0.1:8020",
+      "deploy": "graph deploy example --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+      "deploy-local": "graph deploy example --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020"
+    },
+    "dependencies": {
+      "@graphprotocol/graph-cli": "^0.68.0",
+      "@graphprotocol/graph-ts": "^0.32.0"
+    },
+    "devDependencies": {
+      "matchstick-as": "0.5.0"
+    }
+  }

@@ -1,0 +1,143 @@
+# Store basic block information as a timeseries. That implies that the
+# entity is immutable
+type BlockTime @entity(timeseries: true) {
+  # Timeseries must have an id of type Int8
+  id: Int8!
+  # Timeseries must have a timestamp field
+  timestamp: Timestamp!
+  # The block hash
+  hash: Bytes!
+  # The block number
+  number: Int!
+}
+
+# More complete information about a block as another timeseries. Timeseries
+# can be queried like any other entity, and you can query, e.g., the gasUsed
+# of a certain block with a given hash with GraphQL via
+#   'query { blocks(hash: "0x..") { gasUsed }}'
+type Block @entity(timeseries: true) {
+  id: Int8!
+  timestamp: Timestamp!
+  hash: Bytes!
+  number: Int!
+  # Artifical grouping keys; groupN is number % 10^N. In a real subgraph,
+  # this might be something like a reference to a `Token`
+  group1: Int!
+  group2: Int!
+  group3: Int!
+  parentHash: Bytes
+  author: Bytes
+  difficulty: BigInt
+  totalDifficulty: BigInt
+  gasUsed: BigInt
+  gasLimit: BigInt
+  receiptsRoot: Bytes
+  transactionsRoot: Bytes
+  stateRoot: Bytes
+  size: BigInt
+  unclesHash: Bytes
+}
+
+# Aggregate across all blocks. Aggregations use a timeseries as their
+# source. They can be over an hour or a day, or both. By default,
+# aggregates are 'bucketed' which means that each aggregate in each
+# interval starts at 0; by adding `cumulative: true` to the aggregate, they
+# are calculated over the lifetime of the aggregation, i.e., in each
+# interval we start the aggregate at the value from the previous interval.
+#
+# Aggregations are never written by the mappings; instead, graph-node
+# triggers a rollup and creates aggregations whenever it notices that a time
+# interval has finished. For example, when it processes a block whose time
+# is 4:01, it triggers the rollup for the hour from 3:00 to 4:00. Times are
+# always in UTC
+#
+# Like timeseries, aggregations must have an `id` and a `timestamp`
+# attribute. They are filled automatically by `graph-node`
+type Stats @aggregation(intervals: ["hour", "day"], source: "Block") {
+  # The id; it is the id of one of the data points that were aggregated into
+  # this bucket, but which one is undefined and should not be relied on
+  id: Int8!
+  # The timestamp of the bucket is always the timestamp of the beginning of
+  # the interval
+  timestamp: Timestamp!
+
+  # The aggregates
+
+  # A count of the number of data points that went into this bucket
+  count: Int! @aggregate(fn: "count")
+  # The max(number) of the data points for this bucket
+  max: BigDecimal! @aggregate(fn: "max", arg: "number")
+  min: BigDecimal! @aggregate(fn: "min", arg: "number")
+  # sum_{i=n}^m i = (m - n + 1) * (n + m) / 2
+  sum: BigInt! @aggregate(fn: "sum", arg: "number")
+  first: Int! @aggregate(fn: "first", arg: "number")
+  last: Int! @aggregate(fn: "last", arg: "number")
+  maxGas: BigInt! @aggregate(fn: "max", arg: "gasUsed")
+  maxDifficulty: BigInt! @aggregate(fn: "max", arg: "difficulty")
+}
+
+# Aggregate in groups by block number mod 10, i.e., for each interval create
+# 10 different aggregates
+type Group1 @aggregation(intervals: ["hour", "day"], source: "Block") {
+  id: Int8!
+  timestamp: Timestamp!
+  group1: Int!
+  count: Int! @aggregate(fn: "count")
+  max: BigDecimal! @aggregate(fn: "max", arg: "number")
+  min: BigDecimal! @aggregate(fn: "min", arg: "number")
+  sum: BigInt! @aggregate(fn: "sum", arg: "number")
+  first: Int! @aggregate(fn: "first", arg: "number")
+  last: Int! @aggregate(fn: "last", arg: "number")
+}
+
+# Aggregate in groups by block number mod 100, i.e., for each interval
+# create 100 different aggregates
+type Group2 @aggregation(intervals: ["hour", "day"], source: "Block") {
+  id: Int8!
+  timestamp: Timestamp!
+  group2: Int!
+  count: Int! @aggregate(fn: "count")
+  max: BigDecimal! @aggregate(fn: "max", arg: "number")
+  min: BigDecimal! @aggregate(fn: "min", arg: "number")
+  sum: BigInt! @aggregate(fn: "sum", arg: "number")
+  first: Int! @aggregate(fn: "first", arg: "number")
+  last: Int! @aggregate(fn: "last", arg: "number")
+}
+
+# Aggregate in groups by block number mod 1000, i.e., for each interval
+# create 1000 different aggregates. Since mainnet has fewer than 1000 blocks
+# in an hour, the count for each group should be 1
+type Group3 @aggregation(intervals: ["hour", "day"], source: "Block") {
+  id: Int8!
+  timestamp: Timestamp!
+  group3: Int!
+  count: Int! @aggregate(fn: "count")
+  max: BigDecimal! @aggregate(fn: "max", arg: "number")
+  min: BigDecimal! @aggregate(fn: "min", arg: "number")
+  sum: BigInt! @aggregate(fn: "sum", arg: "number")
+  first: Int! @aggregate(fn: "first", arg: "number")
+  last: Int! @aggregate(fn: "last", arg: "number")
+}
+
+# Aggregate across all group fields. This effectively leads to the same
+# aggregates as Group3. Since mainnet has fewer than 1000 blocks
+# in an hour, the count for each group should be 1
+type Groups @aggregation(intervals: ["hour", "day"], source: "Block") {
+  id: Int8!
+  timestamp: Timestamp!
+  group1: Int!
+  group2: Int!
+  group3: Int!
+  count: Int! @aggregate(fn: "count")
+  max: BigDecimal! @aggregate(fn: "max", arg: "number")
+  min: BigDecimal! @aggregate(fn: "min", arg: "number")
+  sum: BigInt! @aggregate(fn: "sum", arg: "number")
+  first: Int! @aggregate(fn: "first", arg: "number")
+  last: Int! @aggregate(fn: "last", arg: "number")
+  total_count: Int! @aggregate(fn: "count", cumulative: true)
+  total_max: BigDecimal! @aggregate(fn: "max", arg: "number", cumulative: true)
+  total_min: BigDecimal! @aggregate(fn: "min", arg: "number", cumulative: true)
+  total_sum: BigInt! @aggregate(fn: "sum", arg: "number", cumulative: true)
+  total_first: Int! @aggregate(fn: "first", arg: "number", cumulative: true)
+  total_last: Int! @aggregate(fn: "last", arg: "number", cumulative: true)
+}

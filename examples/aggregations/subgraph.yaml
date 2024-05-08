@@ -1,0 +1,32 @@
+# Enable aggregations by using a spec version >= 1.1.0
+#
+# The graph-node to which this is deployed must have GRAPH_MAX_SPEC_VERSION
+# also set to at least 1.1.0
+#
+specVersion: 1.1.0
+description: "Information about Ethereum Mainnet Blocks (run #3)"
+repository: https://github.com/graphprotocol/common-subgraphs/blocks/ethereum
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Contract
+    network: mainnet
+    source:
+      # We don't realy need a contract, just use Gravatar to have something
+      # here
+      address: "0x2E645469f354BB4F5c8a05B3b30A929361cf77eC"
+      abi: Contract
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Block
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      blockHandlers:
+        - handler: handleBlock
+      file: ./src/mappings/blocks.ts
