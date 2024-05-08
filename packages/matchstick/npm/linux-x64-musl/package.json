@@ -1,0 +1,21 @@
+{
+  "name": "matchstick-linux-x64-musl",
+  "version": "0.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "cpu": [
+    "x64"
+  ],
+  "os": [
+    "linux"
+  ],
+  "main": "matchstick.linux-x64-musl.node",
+  "files": [
+    "matchstick.linux-x64-musl.node"
+  ],
+  "libc": [
+    "musl"
+  ]
+}
