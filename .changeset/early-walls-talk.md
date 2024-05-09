@@ -1,5 +1,5 @@
 ---
-'@graphprotocol/graph-cli': patch
+'@graphprotocol/graph-cli': minor
 ---
 
-Order list of evm chains in graph init command
+`graph init` to allow downloading `spkg.io` files 
