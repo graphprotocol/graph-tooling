@@ -12,7 +12,7 @@
   "private": true,
   "engines": {
     "node": ">=20.0.0",
-    "pnpm": ">=8"
+    "pnpm": ">=9"
   },
   "scripts": {
     "build": "pnpm --filter=@graphprotocol/graph-* build",

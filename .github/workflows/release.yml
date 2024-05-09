@@ -24,7 +24,7 @@ jobs:
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 8.10.4
+          packageManagerVersion: 9.1.0
 
       - name: Set variables
         id: vars

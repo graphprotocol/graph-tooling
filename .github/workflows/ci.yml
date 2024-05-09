@@ -20,7 +20,7 @@ jobs:
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 8.10.4
+          packageManagerVersion: 9.1.0
 
       - name: Lint
         run: pnpm lint
@@ -42,7 +42,7 @@ jobs:
         with:
           nodeVersion: ${{ matrix.node-version }}
           packageManager: pnpm
-          packageManagerVersion: 8.10.4
+          packageManagerVersion: 9.1.0
 
       - name: Setup git user information
         run: |
@@ -72,7 +72,7 @@ jobs:
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 8.10.4
+          packageManagerVersion: 9.1.0
 
       - name: Build Packages
         run: pnpm build
@@ -100,7 +100,7 @@ jobs:
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 8.10.4
+          packageManagerVersion: 9.1.0
 
       - name: Build Packages
         run: pnpm build # will also check types
