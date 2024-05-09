@@ -32,8 +32,8 @@ importers:
         specifier: 0.11.0
         version: 0.11.0(eslint@8.57.0)(typescript@5.4.5)
       '@theguild/prettier-config':
-        specifier: 2.0.1
-        version: 2.0.1(prettier@3.0.3)
+        specifier: 2.0.6
+        version: 2.0.6(prettier@3.2.5)
       '@types/node':
         specifier: ^20.6.2
         version: 20.12.11
@@ -41,8 +41,8 @@ importers:
         specifier: 8.57.0
         version: 8.57.0
       prettier:
-        specifier: 3.0.3
-        version: 3.0.3
+        specifier: 3.2.5
+        version: 3.2.5
 
   examples/aggregations:
     dependencies:
@@ -321,8 +321,8 @@ importers:
         specifier: 3.14.1
         version: 3.14.1
       prettier:
-        specifier: 3.0.3
-        version: 3.0.3
+        specifier: 3.2.5
+        version: 3.2.5
       semver:
         specifier: 7.4.0
         version: 7.4.0
@@ -1389,11 +1389,11 @@ packages:
   '@humanwhocodes/object-schema@2.0.3':
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
 
-  '@ianvs/prettier-plugin-sort-imports@4.0.2':
-    resolution: {integrity: sha512-VnsTzyb9aSWpc3v6HvZKD6eolZRvofIYjhda+6IbW1GYwr2byWqK0KhLPbYNkit9MAgShad5bhZ1hgBn867A1A==}
+  '@ianvs/prettier-plugin-sort-imports@4.2.1':
+    resolution: {integrity: sha512-NKN1LVFWUDGDGr3vt+6Ey3qPeN/163uR1pOPAlkWpgvAqgxQ6kSdUf1F0it8aHUtKRUzEGcK38Wxd07O61d7+Q==}
     peerDependencies:
-      '@vue/compiler-sfc': '>=3.0.0'
-      prettier: 2.x
+      '@vue/compiler-sfc': 2.7.x || 3.x
+      prettier: 2 || 3
     peerDependenciesMeta:
       '@vue/compiler-sfc':
         optional: true
@@ -2015,8 +2015,8 @@ packages:
     peerDependencies:
       eslint: ^8.24.0
 
-  '@theguild/prettier-config@2.0.1':
-    resolution: {integrity: sha512-I2rwFhQv8/nuepfbPwpja5Ia+ONs6DIvV3W6DLzO4609sDiOG4FUaNBiryo7mYbWKN8XBLUNLwOUT2GaOBC2Iw==}
+  '@theguild/prettier-config@2.0.6':
+    resolution: {integrity: sha512-aEWJ422Ro9IIC+2FGEO8kgJdq6DiwafgCOLVjW6b0mgWKHgdH6VReGck6Jv+9jsa4CBh/rpRuu40uIf0KGDtEg==}
     peerDependencies:
       prettier: ^3
 
@@ -6175,11 +6175,11 @@ packages:
     peerDependencies:
       prettier: ^3.0.0
 
-  prettier-plugin-sh@0.13.1:
-    resolution: {integrity: sha512-ytMcl1qK4s4BOFGvsc9b0+k9dYECal7U29bL/ke08FEUsF/JLN0j6Peo0wUkFDG4y2UHLMhvpyd6Sd3zDXe/eg==}
+  prettier-plugin-sh@0.14.0:
+    resolution: {integrity: sha512-hfXulj5+zEl/ulrO5kMuuTPKmXvOg0bnLHY1hKFNN/N+/903iZbNp8NyZBTsgI8dtkSgFfAEIQq0IQTyP1ZVFQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
-      prettier: ^3.0.0
+      prettier: ^3.0.3
 
   prettier@2.8.2:
     resolution: {integrity: sha512-BtRV9BcncDyI2tsuS19zzhzoxD8Dh8LiCx7j7tHzrkz8GFXAexeWFdi22mjE1d16dftH2qNaytVxqiRTGlMfpw==}
@@ -6193,6 +6193,11 @@ packages:
 
   prettier@3.0.3:
     resolution: {integrity: sha512-L/4pUDMxcNa8R/EthV08Zt42WBO4h1rarVtK0K+QJG0X187OLo7l699jWw0GKuwzkPQ//jMFA/8Xm6Fh3J/DAg==}
+    engines: {node: '>=14'}
+    hasBin: true
+
+  prettier@3.2.5:
+    resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -9353,14 +9358,14 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.3': {}
 
-  '@ianvs/prettier-plugin-sort-imports@4.0.2(prettier@3.0.3)':
+  '@ianvs/prettier-plugin-sort-imports@4.2.1(prettier@3.2.5)':
     dependencies:
       '@babel/core': 7.24.5
       '@babel/generator': 7.24.5
       '@babel/parser': 7.24.5
       '@babel/traverse': 7.24.5
       '@babel/types': 7.24.5
-      prettier: 3.0.3
+      prettier: 3.2.5
       semver: 7.6.2
     transitivePeerDependencies:
       - supports-color
@@ -9730,7 +9735,7 @@ snapshots:
       nopt: 7.2.0
       proc-log: 3.0.0
       read-package-json-fast: 3.0.2
-      semver: 7.6.2
+      semver: 7.4.0
       walk-up-path: 3.0.1
 
   '@npmcli/fs@1.1.1':
@@ -10491,12 +10496,12 @@ snapshots:
       - supports-color
       - typescript
 
-  '@theguild/prettier-config@2.0.1(prettier@3.0.3)':
+  '@theguild/prettier-config@2.0.6(prettier@3.2.5)':
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports': 4.0.2(prettier@3.0.3)
-      prettier: 3.0.3
-      prettier-plugin-pkg: 0.18.0(prettier@3.0.3)
-      prettier-plugin-sh: 0.13.1(prettier@3.0.3)
+      '@ianvs/prettier-plugin-sort-imports': 4.2.1(prettier@3.2.5)
+      prettier: 3.2.5
+      prettier-plugin-pkg: 0.18.0(prettier@3.2.5)
+      prettier-plugin-sh: 0.14.0(prettier@3.2.5)
     transitivePeerDependencies:
       - '@vue/compiler-sfc'
       - supports-color
@@ -10786,7 +10791,7 @@ snapshots:
       debug: 4.3.4(supports-color@8.1.1)
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.6.2
+      semver: 7.4.0
       tsutils: 3.21.0(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
@@ -10803,7 +10808,7 @@ snapshots:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.5)
       eslint: 8.57.0
       eslint-scope: 5.1.1
-      semver: 7.6.2
+      semver: 7.4.0
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -11521,7 +11526,7 @@ snapshots:
 
   builtins@5.0.1:
     dependencies:
-      semver: 7.6.2
+      semver: 7.4.0
 
   busboy@1.6.0:
     dependencies:
@@ -14348,7 +14353,7 @@ snapshots:
       acorn: 8.11.3
       eslint-visitor-keys: 3.4.3
       espree: 9.6.1
-      semver: 7.6.2
+      semver: 7.4.0
 
   jsonc-parser@3.2.0: {}
 
@@ -15329,7 +15334,7 @@ snapshots:
     dependencies:
       hosted-git-info: 2.8.9
       resolve: 1.22.8
-      semver: 5.7.1
+      semver: 5.7.2
       validate-npm-package-license: 3.0.4
 
   normalize-package-data@3.0.3:
@@ -15826,14 +15831,14 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-pkg@0.18.0(prettier@3.0.3):
+  prettier-plugin-pkg@0.18.0(prettier@3.2.5):
     dependencies:
-      prettier: 3.0.3
+      prettier: 3.2.5
 
-  prettier-plugin-sh@0.13.1(prettier@3.0.3):
+  prettier-plugin-sh@0.14.0(prettier@3.2.5):
     dependencies:
       mvdan-sh: 0.10.1
-      prettier: 3.0.3
+      prettier: 3.2.5
       sh-syntax: 0.4.1
 
   prettier@2.8.2: {}
@@ -15841,6 +15846,8 @@ snapshots:
   prettier@2.8.8: {}
 
   prettier@3.0.3: {}
+
+  prettier@3.2.5: {}
 
   pretty-bytes@5.6.0: {}
 
@@ -16500,7 +16507,7 @@ snapshots:
       pify: 4.0.1
       recursive-readdir: 2.2.3
       sc-istanbul: 0.4.6
-      semver: 7.6.2
+      semver: 7.4.0
       shelljs: 0.8.5
       web3-utils: 1.10.4
 
