@@ -36,7 +36,7 @@ importers:
         version: 2.0.1(prettier@3.0.3)
       '@types/node':
         specifier: ^20.6.2
-        version: 20.12.7
+        version: 20.12.11
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -2201,9 +2201,6 @@ packages:
 
   '@types/node@20.12.11':
     resolution: {integrity: sha512-vDg9PZ/zi+Nqp6boSOT7plNuthRugEKixDv5sFTIpkE89MmNtEArAShI4mxuX2+UrLEe9pxC1vm2cjm9YlWbJw==}
-
-  '@types/node@20.12.7':
-    resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==}
 
   '@types/node@20.6.2':
     resolution: {integrity: sha512-Y+/1vGBHV/cYk6OI1Na/LHzwnlNCAfU3ZNGrc1LdRe/LAIbdDPTTv/HU3M7yXN448aTVDq3eKRm2cg7iKLb8gw==}
@@ -10567,7 +10564,7 @@ snapshots:
 
   '@types/bn.js@5.1.1':
     dependencies:
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
 
   '@types/bn.js@5.1.5':
     dependencies:
@@ -10577,7 +10574,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.0.1
       '@types/keyv': 3.1.4
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
       '@types/responselike': 1.0.0
 
   '@types/chai-as-promised@7.1.5':
@@ -10590,7 +10587,7 @@ snapshots:
 
   '@types/cli-progress@3.11.0':
     dependencies:
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
 
   '@types/cli-progress@3.11.5':
     dependencies:
@@ -10602,7 +10599,7 @@ snapshots:
 
   '@types/concat-stream@2.0.3':
     dependencies:
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
 
   '@types/connect@3.4.35':
     dependencies:
@@ -10631,7 +10628,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 3.0.5
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
 
   '@types/hast@2.3.4':
     dependencies:
@@ -10653,7 +10650,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
 
   '@types/long@4.0.2': {}
 
@@ -10687,10 +10684,6 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@20.12.7':
-    dependencies:
-      undici-types: 5.26.5
-
   '@types/node@20.6.2': {}
 
   '@types/node@8.10.66': {}
@@ -10711,7 +10704,7 @@ snapshots:
 
   '@types/responselike@1.0.0':
     dependencies:
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
 
   '@types/secp256k1@4.0.6':
     dependencies:
