@@ -1,6 +1,12 @@
 {
-  "name": "aggregation",
+  "name": "example-aggregations",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling",
+    "directory": "examples/aggregations"
+  },
   "license": "MIT",
+  "private": true,
   "scripts": {
     "build": "graph build",
     "codegen": "graph codegen",
