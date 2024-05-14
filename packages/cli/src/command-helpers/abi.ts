@@ -224,7 +224,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'scroll-sepolia':
       return `https://api-sepolia.scrollscan.dev/api`;
     case 'optimism-sepolia':
-      return `https://sepolia-optimism.etherscan.io/api`;
+      return `https://api-sepolia-optimistic.etherscan.io/api`;
     case 'scroll':
       return `https://blockscout.scroll.io/api`;
     case 'linea':
