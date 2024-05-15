@@ -44,6 +44,19 @@ export const loadStartBlockForContract = async (
     },
   );
 
+export const loadContractNameForAddress = async (
+  network: string,
+  address: string,
+): Promise<string> =>
+  await withSpinner(
+    `Fetching Contract Name`,
+    `Failed to fetch Contract Name`,
+    `Warnings while fetching contract name from Etherscan`,
+    async () => {
+      return getContractNameForAddress(network, address);
+    },
+  );
+
 export const fetchDeployContractTransactionFromEtherscan = async (
   network: string,
   address: string,
@@ -110,6 +123,31 @@ export const fetchTransactionByHashFromRPC = async (
     throw new Error('Failed to fetch contract creation transaction');
   }
 };
+
+export const fetchSourceCodeFromEtherscan = async (network: string, address: string): Promise<any> => {
+  const scanApiUrl = getEtherscanLikeAPIUrl(network);
+  const result = await fetch(`${scanApiUrl}?module=contract&action=getsourcecode&address=${address}`);
+  const json = await result.json();
+  if (json.status === '1') {
+    return json;
+  }
+  throw new Error('Failed to fetch contract source code');
+}
+
+export const getContractNameForAddress = async (
+  network: string,
+  address: string,
+): Promise<string> => {
+  try {
+    const contractSourceCode = await fetchSourceCodeFromEtherscan(network, address);
+    const contractName = contractSourceCode.result[0].ContractName;
+    logger('Successfully getContractNameForAddress. contractName: %s', contractName);
+    return contractName;
+  } catch (error) {
+    logger('Failed to fetch getContractNameForAddress: %O', error);
+    throw new Error(error?.message);
+  }
+}
 
 export const getStartBlockForContract = async (
   network: string,
