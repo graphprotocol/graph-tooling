@@ -224,11 +224,13 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'scroll-sepolia':
       return `https://api-sepolia.scrollscan.dev/api`;
     case 'optimism-sepolia':
-      return `https://sepolia-optimism.etherscan.io/api`;
+      return `https://api-sepolia-optimistic.etherscan.io/api`;
     case 'scroll':
       return `https://blockscout.scroll.io/api`;
     case 'linea':
       return `https://api.lineascan.build/api`;
+    case 'linea-sepolia':
+      return 'https://api-sepolia.lineascan.build/api';
     case 'linea-goerli':
       return `https://api.linea-goerli.build/api`;
     case 'blast-testnet':
@@ -245,6 +247,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://explorer.mode.network/api`;
     case 'mode-sepolia':
       return `https://sepolia.explorer.mode.network/api`;
+    case 'fuse':
+      return 'https://explorer.fuse.io/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -331,6 +335,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.ankr.com/scroll';
     case 'linea':
       return 'https://linea-mainnet.public.blastapi.io';
+    case 'linea-sepolia':
+      return 'https://linea-sepolia.public.blastapi.io';
     case 'linea-goerli':
       return 'https://linea-goerli.public.blastapi.io';
     case 'blast-testnet':
