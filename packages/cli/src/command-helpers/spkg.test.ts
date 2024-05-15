@@ -22,8 +22,14 @@ describe('getSpkgFilePath', () => {
 });
 
 describe('isSpkgUrl', () => {
-  it('should return true for valid spkg url', () => {
+  it('should return true for valid spkg url with https', () => {
     const spkgUrl = 'https://spkg.io/streamingfast/package.spkg';
+    const result = isSpkgUrl(spkgUrl);
+    expect(result).toBe(true);
+  });
+
+  it('should return true for valid spkg url', () => {
+    const spkgUrl = 'spkg.io/streamingfast/package.spkg';
     const result = isSpkgUrl(spkgUrl);
     expect(result).toBe(true);
   });

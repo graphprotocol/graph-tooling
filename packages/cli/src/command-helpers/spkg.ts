@@ -4,7 +4,7 @@ import path from 'path';
 import { filesystem } from 'gluegun';
 
 export const isSpkgUrl = (value: string) => {
-  return value.startsWith('https://spkg.io/streamingfast');
+  return value.startsWith(`https://spkg.io`) || value.startsWith(`spkg.io`);
 };
 
 export const validateSpkg = (value: string) => {
