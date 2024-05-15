@@ -124,15 +124,20 @@ export const fetchTransactionByHashFromRPC = async (
   }
 };
 
-export const fetchSourceCodeFromEtherscan = async (network: string, address: string): Promise<any> => {
+export const fetchSourceCodeFromEtherscan = async (
+  network: string,
+  address: string,
+): Promise<any> => {
   const scanApiUrl = getEtherscanLikeAPIUrl(network);
-  const result = await fetch(`${scanApiUrl}?module=contract&action=getsourcecode&address=${address}`);
+  const result = await fetch(
+    `${scanApiUrl}?module=contract&action=getsourcecode&address=${address}`,
+  );
   const json = await result.json();
   if (json.status === '1') {
     return json;
   }
   throw new Error('Failed to fetch contract source code');
-}
+};
 
 export const getContractNameForAddress = async (
   network: string,
@@ -147,7 +152,7 @@ export const getContractNameForAddress = async (
     logger('Failed to fetch getContractNameForAddress: %O', error);
     throw new Error(error?.message);
   }
-}
+};
 
 export const getStartBlockForContract = async (
   network: string,

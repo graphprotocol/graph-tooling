@@ -120,13 +120,12 @@ export default class AddCommand extends Command {
         startBlock = userInputStartBlock;
       }
     }
-    
+
     try {
       contractName = await loadContractNameForAddress(network, address);
     } catch (error) {
       // not asking user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
-        
         const { contractName: userInputContractName } = await prompt.ask<{ contractName: string }>([
           {
             type: 'input',

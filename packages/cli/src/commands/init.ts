@@ -718,7 +718,7 @@ async function processInitForm(
               initStartBlock = Number(startBlock).toString();
             }
           }
-          
+
           // If contract name is not set, try to load it.
           if (!initContractName) {
             // Load contract name for this contract
