@@ -229,6 +229,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://blockscout.scroll.io/api`;
     case 'linea':
       return `https://api.lineascan.build/api`;
+    case 'linea-sepolia':
+      return 'https://api-sepolia.lineascan.build/api';
     case 'linea-goerli':
       return `https://api.linea-goerli.build/api`;
     case 'blast-testnet':
@@ -333,6 +335,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.ankr.com/scroll';
     case 'linea':
       return 'https://linea-mainnet.public.blastapi.io';
+    case 'linea-sepolia':
+      return 'https://linea-sepolia.public.blastapi.io';
     case 'linea-goerli':
       return 'https://linea-goerli.public.blastapi.io';
     case 'blast-testnet':
