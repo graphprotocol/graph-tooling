@@ -65,7 +65,7 @@
     "copyfiles": "^2.4.1",
     "oclif": "3.8.1",
     "spawn-command": "0.0.2-1",
-    "strip-ansi": "6.0.1",
+    "strip-ansi": "7.1.0",
     "tern": "0.24.3",
     "typescript": "^5.0.0",
     "vitest": "^1.0.2"

@@ -367,8 +367,8 @@ importers:
         specifier: 0.0.2-1
         version: 0.0.2-1
       strip-ansi:
-        specifier: 6.0.1
-        version: 6.0.1
+        specifier: 7.1.0
+        version: 7.1.0
       tern:
         specifier: 0.24.3
         version: 0.24.3
