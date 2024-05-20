@@ -1,5 +1,25 @@
 # @graphprotocol/graph-cli
 
+## 0.72.0
+
+### Minor Changes
+
+- [#1664](https://github.com/graphprotocol/graph-tooling/pull/1664)
+  [`c581b33`](https://github.com/graphprotocol/graph-tooling/commit/c581b338edf8eeec1675eb6987d77c1a50686816)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - auto fetch contract name from address
+
+### Patch Changes
+
+- [#1662](https://github.com/graphprotocol/graph-tooling/pull/1662)
+  [`00e774e`](https://github.com/graphprotocol/graph-tooling/commit/00e774ed3a82e7b345d01b89b52e2c6615a94789)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - fix: update optimism-sepolia
+  EtherscanLikeAPIUrl
+
+- [#1661](https://github.com/graphprotocol/graph-tooling/pull/1661)
+  [`8f6ee24`](https://github.com/graphprotocol/graph-tooling/commit/8f6ee241a4504ff912e943f6228d6195b117a815)
+  Thanks [@mitchhs12](https://github.com/mitchhs12)! - add Linea Sepolia RPC and Linea Sepolia
+  Etherscan url
+
 ## 0.71.2
 
 ### Patch Changes
