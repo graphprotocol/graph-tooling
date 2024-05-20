@@ -7,6 +7,7 @@ import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
+  loadContractNameForAddress,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
 import { initNetworksConfig } from '../command-helpers/network';
@@ -717,6 +718,18 @@ async function processInitForm(
               initStartBlock = Number(startBlock).toString();
             }
           }
+
+          // If contract name is not set, try to load it.
+          if (!initContractName) {
+            // Load contract name for this contract
+            const contractName = await retryWithPrompt(() =>
+              loadContractNameForAddress(network, value),
+            );
+            if (contractName) {
+              initContractName = contractName;
+            }
+          }
+
           return value;
         },
       },
@@ -813,6 +826,10 @@ async function processInitForm(
         initial: initContractName || 'Contract' || isSubstreams,
         skip: () => initFromExample !== undefined || !protocolInstance.hasContract(),
         validate: value => value && value.length > 0,
+        result(value) {
+          if (initContractName) return initContractName;
+          return value;
+        },
       },
     ]);
 
@@ -1314,11 +1331,6 @@ async function addAnotherContract(
       this.log(`✖ ${error}`);
     }
 
-    const contractName = await ux.prompt('\nContract Name', {
-      required: true,
-      default: 'Contract',
-    });
-
     // Get the cwd before process.chdir in order to switch back in the end of command execution
     const cwd = process.cwd();
 
@@ -1327,7 +1339,7 @@ async function addAnotherContract(
         process.chdir(directory);
       }
 
-      const commandLine = [contract, '--contract-name', contractName];
+      const commandLine = [contract];
 
       await AddCommand.run(commandLine);
     } catch (e) {

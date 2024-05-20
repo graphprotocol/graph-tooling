@@ -5,6 +5,7 @@ import { CLIError } from '@oclif/core/lib/errors';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
+  loadContractNameForAddress,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
@@ -64,7 +65,7 @@ export default class AddCommand extends Command {
       args: { address, 'subgraph-manifest': manifestPath },
       flags: {
         abi,
-        'contract-name': contractName,
+        'contract-name': contractNameFlag,
         'merge-entities': mergeEntities,
         'network-file': networksFile,
         'start-block': startBlockFlag,
@@ -78,6 +79,7 @@ export default class AddCommand extends Command {
     const result = manifest.result.asMutable();
 
     let startBlock = startBlockFlag;
+    let contractName = contractNameFlag;
 
     const entities = getEntities(manifest);
     const contractNames = getContractNames(manifest);
@@ -116,6 +118,27 @@ export default class AddCommand extends Command {
           },
         ]);
         startBlock = userInputStartBlock;
+      }
+    }
+
+    try {
+      contractName = await loadContractNameForAddress(network, address);
+    } catch (error) {
+      // not asking user to do prompt in test environment
+      if (process.env.NODE_ENV !== 'test') {
+        const { contractName: userInputContractName } = await prompt.ask<{ contractName: string }>([
+          {
+            type: 'input',
+            name: 'contractName',
+            message: 'Contract Name',
+            initial: 'Contract',
+            validate: value => value && value.length > 0,
+            result(value) {
+              return value;
+            },
+          },
+        ]);
+        contractName = userInputContractName;
       }
     }
 
