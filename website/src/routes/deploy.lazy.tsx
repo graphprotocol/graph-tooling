@@ -5,7 +5,6 @@ import { Address, encodePacked, keccak256, toBytes, toHex } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { z } from 'zod';
 import { Editor } from '@/components/Editor';
-import YamlEditor from '@focus-reactive/react-yaml';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { L2GNSABI } from '../abis/L2GNS';
@@ -59,7 +58,8 @@ async function uploadFileToIpfs(file: { path: string; content: Buffer }) {
 
     return uploadedFile.cid.toString();
   } catch (e) {
-    throw Error(`Failed to upload file to IPFS: ${e.message}`);
+    // @ts-expect-error - we are throwing an error here
+    throw Error(`Failed to upload file to IPFS: ${e?.message || e}`);
   }
 }
 
