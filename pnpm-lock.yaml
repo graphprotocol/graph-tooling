@@ -104,8 +104,8 @@ importers:
   examples/cosmos-validator-delegations:
     dependencies:
       as-proto:
-        specifier: ^0.2.3
-        version: 0.2.3
+        specifier: ^0.9.0
+        version: 0.9.2
       babel-polyfill:
         specifier: ^6.26.0
         version: 6.26.0
@@ -2609,8 +2609,8 @@ packages:
     resolution: {integrity: sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==}
     engines: {node: '>=8'}
 
-  as-proto@0.2.3:
-    resolution: {integrity: sha512-JwWFcTBYVTOzJEMqXtZfU/L9bYzR6rrLFJBA1DC4kRs0zE12titZtWhpnBAAmV27dhMSWauqOBJgbt5OrK2rcw==}
+  as-proto@0.9.2:
+    resolution: {integrity: sha512-/RQMiepP7udDvxqS9Z6tLrBVZ6X3gfRlvW93ceA7HXqm0ZltjPI3a9F1CBmt4mVqrSC6miBDRmgMDu6EBdt/MA==}
 
   asap@2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
@@ -11030,7 +11030,7 @@ snapshots:
 
   arrify@2.0.1: {}
 
-  as-proto@0.2.3: {}
+  as-proto@0.9.2: {}
 
   asap@2.0.6: {}
 

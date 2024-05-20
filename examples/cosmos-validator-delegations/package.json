@@ -20,7 +20,7 @@
     "remove-local": "graph remove cosmos-validator-delegations --node http://127.0.0.1:8020"
   },
   "dependencies": {
-    "as-proto": "^0.2.3",
+    "as-proto": "^0.9.0",
     "babel-polyfill": "^6.26.0",
     "babel-register": "^6.26.0"
   },
