@@ -1,9 +1,13 @@
 import base from 'base-x';
 import { ConnectKitButton } from 'connectkit';
 import { create } from 'kubo-rpc-client';
-import { Address, encodePacked, keccak256, toBytes, toHex, toRlp } from 'viem';
+import { Address, encodePacked, keccak256, toBytes, toHex } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { z } from 'zod';
+import { Editor } from '@/components/Editor';
+import YamlEditor from '@focus-reactive/react-yaml';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
 import { L2GNSABI } from '../abis/L2GNS';
 
 const base58 = base('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz');
@@ -59,6 +63,17 @@ async function uploadFileToIpfs(file: { path: string; content: Buffer }) {
   }
 }
 
+async function readIpfsFile(cid: string) {
+  const file = ipfsClient.cat(cid);
+
+  const chunks: Uint8Array[] = [];
+  for await (const chunk of file) {
+    chunks.push(chunk);
+  }
+
+  return Buffer.concat(chunks).toString('utf-8');
+}
+
 const convertSubgraphIdtoBase58 = (subgraphId: string) => {
   return base58.encode(toBytes(toHex(BigInt(subgraphId))));
 };
@@ -81,10 +96,14 @@ const buildSubgraphId = ({
   return BigInt(keccak256(encodePacked(['address', 'uint256'], [account, seqId]))).toString();
 };
 
-function Page() {
+function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
   const { data: hash, writeContract, isPending } = useWriteContract({});
   const { address, chainId } = useAccount();
-
+  const { data: subgraphManifest } = useQuery({
+    queryKey: ['subgraph-manifest', deploymentId],
+    queryFn: () => readIpfsFile(deploymentId),
+  });
+  console.log(subgraphManifest);
   const { data } = useReadContract({
     abi: L2GNSABI,
     address: '0x3133948342F35b8699d8F94aeE064AbB76eDe965',
@@ -93,18 +112,19 @@ function Page() {
   });
 
   async function deploySubgraph() {
-    const DEPLOYMENT_ID = ipfsHexHash('QmevjNtCgE1ReBi3oKuCH91Jpsj5T65276LyQaVchEwASf');
+    const DEPLOYMENT_ID = ipfsHexHash(deploymentId);
     const versionMeta = await uploadFileToIpfs({
       path: '',
       content: Buffer.from(JSON.stringify({ label: '0.0.3', description: null })),
     });
+
     const subgraphMeta = await uploadFileToIpfs({
       path: '',
       content: Buffer.from(
         JSON.stringify(
           subgraphMetadata({
             description: 'A subgraph for the Graph Network',
-            displayName: 'Graph Network Subgraph',
+            displayName: 'test Subgraph 1',
             name: 'graph-network-subgraph',
           }),
         ),
@@ -120,40 +140,63 @@ function Page() {
   }
 
   return (
+    <div className="flex px-4 lg:px-6 h-auto py-2">
+      <div className="w-1/2">
+        <form
+          onSubmit={async e => {
+            e.preventDefault();
+            await deploySubgraph();
+          }}
+        >
+          <button disabled={isPending} type="submit">
+            {isPending ? 'Confirming...' : 'Deploy'}
+          </button>
+
+          {hash ? <div>Transaction Hash: {hash}</div> : null}
+
+          {data && address && chainId ? (
+            <div>
+              Next Account Seq ID: https://testnet.thegraph.com/explorer/subgraphs/
+              {convertSubgraphIdtoBase58(
+                buildSubgraphId({
+                  account: address,
+                  seqId: data - 1n,
+                  chainId: chainId,
+                }),
+              )}
+            </div>
+          ) : null}
+        </form>
+      </div>
+      <div className="w-1/2 h-[calc(100vh_-_8rem)]">
+        <h1 className="text-2xl font-bold text-center mb-2">Subgraph Manifest</h1>
+        {subgraphManifest ? <Editor value={subgraphManifest} /> : null}
+      </div>
+    </div>
+  );
+}
+
+function Page() {
+  const { id } = Route.useSearch();
+
+  return (
     <div className="min-h-screen">
       <nav className="flex h-14 items-center border-b lg:h-[60px] justify-between  px-4 lg:px-6">
         <img src="/the-graph-logomark-light.png" alt="logo" className="h-8" />
         <ConnectKitButton />
       </nav>
-      <form
-        onSubmit={async e => {
-          e.preventDefault();
-          await deploySubgraph();
-        }}
-      >
-        <div className="flex px-4 lg:px-6">deploy page</div>
-        {/* <button disabled={isPending} type="submit">
-          {isPending ? 'Confirming...' : 'Deploy'}
-        </button> */}
-
-        {hash && <div>Transaction Hash: {hash}</div>}
-        {data && address && chainId && (
-          <div>
-            Next Account Seq ID: https://testnet.thegraph.com/explorer/subgraphs/
-            {convertSubgraphIdtoBase58(
-              buildSubgraphId({
-                account: address,
-                seqId: data - 1n,
-                chainId: chainId,
-              }),
-            )}
-          </div>
-        )}
-      </form>
+      {id ? (
+        <DeploySubgraph deploymentId={id} />
+      ) : (
+        <div className="flex justify-center items-center min-h-screen -mt-16">
+          Unable to find the Deployment ID. Go back to CLI
+        </div>
+      )}
     </div>
   );
 }
 
-export const Route = createLazyFileRoute('/deploy')({
+export const Route = createFileRoute('/deploy')({
   component: Page,
+  validateSearch: z.object({ id: z.string() }),
 });
