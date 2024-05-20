@@ -418,6 +418,9 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.6
         version: 0.4.7(eslint@8.57.0)
+      rimraf:
+        specifier: ^5.0.7
+        version: 5.0.7
       typescript:
         specifier: ^5.2.2
         version: 5.4.5
@@ -6952,6 +6955,11 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    hasBin: true
+
+  rimraf@5.0.7:
+    resolution: {integrity: sha512-nV6YcJo5wbLW77m+8KjH8aB/7/rxQy9SZ0HY5shnwULfS+9nmTtVXAJET5NdZmCzA4fPI/Hm1wo/Po/4mopOdg==}
+    engines: {node: '>=14.18'}
     hasBin: true
 
   ripemd160@2.0.2:
@@ -14062,7 +14070,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.4
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
 
@@ -14098,7 +14106,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 5.0.1
+      minimatch: 5.1.6
       once: 1.4.0
 
   glob@9.3.5:
@@ -16998,6 +17006,10 @@ snapshots:
   rimraf@3.0.2:
     dependencies:
       glob: 7.2.3
+
+  rimraf@5.0.7:
+    dependencies:
+      glob: 10.3.14
 
   ripemd160@2.0.2:
     dependencies:
