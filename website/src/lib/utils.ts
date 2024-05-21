@@ -1,7 +1,7 @@
 import base from 'base-x';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Address, encodePacked, keccak256 } from 'viem';
+import { Address, encodePacked, keccak256, toBytes, toHex } from 'viem';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
