@@ -3,7 +3,14 @@ import { ConnectKitButton, useModal } from 'connectkit';
 import { create } from 'kubo-rpc-client';
 import { useForm } from 'react-hook-form';
 import { Address, encodePacked, keccak256, toBytes, toHex } from 'viem';
-import { useAccount, useReadContract, useSwitchChain, useWriteContract } from 'wagmi';
+import {
+  useAccount,
+  useReadContract,
+  useSwitchChain,
+  useTransactionConfirmations,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi';
 import yaml from 'yaml';
 import { z } from 'zod';
 import { Editor } from '@/components/Editor';
@@ -25,9 +32,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { ToastAction } from '@/components/ui/toast';
+import { useToast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { L2GNSABI } from '../abis/L2GNS';
 import addresses from '../addresses.json';
 
@@ -154,9 +163,10 @@ const Manifest = z.object({
 });
 
 function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
-  const { data: hash, writeContract, isPending } = useWriteContract({});
+  const { writeContractAsync, isPending } = useWriteContract({});
   const { setOpen } = useModal();
   const { switchChainAsync, isPending: chainSwitchPending } = useSwitchChain();
+  const { toast } = useToast();
 
   const { address, chainId } = useAccount();
 
@@ -225,11 +235,17 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
       ),
     });
 
-    writeContract({
+    const hash = await writeContractAsync({
       address: selectedChain.contracts.L2GNS.address as Address,
       abi: L2GNSABI,
       functionName: 'publishNewSubgraph',
       args: [DEPLOYMENT_ID, ipfsHexHash(versionMeta), ipfsHexHash(subgraphMeta)],
+    });
+
+    window.open(`https://sepolia.arbiscan.io/tx/${hash}`, '_blank');
+
+    toast({
+      description: 'You are all set! You can go back to the CLI and close this window',
     });
   }
 

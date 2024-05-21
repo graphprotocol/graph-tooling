@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './global.css';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { ThemeProvider } from './components/theme-provider.tsx';
+import { Toaster } from './components/ui/toaster.tsx';
 import { WalletProvider } from './components/wallet-provider.tsx';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ThemeProvider defaultTheme="dark" storageKey="graph-tooling">
       <WalletProvider>
         <RouterProvider router={router} />
+        <Toaster />
       </WalletProvider>
     </ThemeProvider>
   </React.StrictMode>,
