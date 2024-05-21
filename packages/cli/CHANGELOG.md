@@ -1,5 +1,12 @@
 # @graphprotocol/graph-cli
 
+## 0.72.1
+
+### Patch Changes
+
+- [`d9108ed`](https://github.com/graphprotocol/graph-tooling/commit/d9108ed779d37212d9bbfce791f6b2a6b6f9557f)
+  Thanks [@saihaj](https://github.com/saihaj)! - get binaries published
+
 ## 0.72.0
 
 ### Minor Changes
