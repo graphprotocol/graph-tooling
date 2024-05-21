@@ -1,6 +1,6 @@
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
 import { createConfig, http, WagmiProvider } from 'wagmi';
-import { arbitrumSepolia } from 'wagmi/chains';
+import { arbitrum, arbitrumSepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -8,8 +8,9 @@ const queryClient = new QueryClient();
 const config = createConfig(
   getDefaultConfig({
     // Your dApps chains
-    chains: [arbitrumSepolia],
+    chains: [arbitrum, arbitrumSepolia],
     transports: {
+      [arbitrum.id]: http(),
       [arbitrumSepolia.id]: http(),
     },
     walletConnectProjectId: '1',
