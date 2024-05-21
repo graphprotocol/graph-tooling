@@ -171,6 +171,9 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
     });
   }
 
+  const isDeployButtonDisabled =
+    deployed || chainSwitchPending || isPending || !form.formState.isValid;
+
   const deployButtonCopy = (() => {
     if (deployed) return 'Deployed';
     if (chainSwitchPending) return 'Switching Chains...';
@@ -189,7 +192,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
               name="displayName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Display Name</FormLabel>
+                  <FormLabel>Display Name*</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -242,7 +245,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
               name="chain"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Publish to</FormLabel>
+                  <FormLabel>Publish to*</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -262,12 +265,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
               )}
             />
 
-            <Button
-              type="submit"
-              size="lg"
-              className="w-full"
-              disabled={isPending || chainSwitchPending || deployed}
-            >
+            <Button type="submit" size="lg" className="w-full" disabled={isDeployButtonDisabled}>
               {deployButtonCopy}
             </Button>
           </form>
