@@ -1,9 +1,8 @@
-import base from 'base-x';
+import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
-import { create } from 'kubo-rpc-client';
 import { useForm } from 'react-hook-form';
-import { Address, encodePacked, keccak256, toBytes, toHex } from 'viem';
-import { useAccount, useReadContract, useSwitchChain, useWriteContract } from 'wagmi';
+import { Address } from 'viem';
+import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import yaml from 'yaml';
 import { z } from 'zod';
 import { Editor } from '@/components/Editor';
@@ -26,13 +25,13 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { readIpfsFile, uploadFileToIpfs } from '@/lib/ipfs';
+import { ipfsHexHash } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { L2GNSABI } from '../abis/L2GNS';
 import addresses from '../addresses.json';
-
-const base58 = base('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz');
 
 const CHAINS = ['arbitrum-one', 'arbitrum-sepolia'] as const;
 const SUPPORTED_CHAIN = {
@@ -60,12 +59,6 @@ const subgraphMetadataSchema = z.object({
   chain: z.enum(CHAINS),
 });
 
-const ipfsHexHash = (ipfsHash: string) => {
-  const hash = base58.decode(ipfsHash).slice(2);
-  const hex = Buffer.from(hash).toString('hex');
-  return `0x${hex}` as const;
-};
-
 const subgraphMetadata = ({
   description,
   displayName,
@@ -87,63 +80,6 @@ const subgraphMetadata = ({
   };
 };
 
-const ipfsClient = create({
-  url: 'https://api.thegraph.com/ipfs/api/v0',
-});
-
-async function uploadFileToIpfs(file: { path: string; content: Buffer }) {
-  try {
-    const files = ipfsClient.addAll([file]);
-
-    // We get back async iterable
-    const filesIterator = files[Symbol.asyncIterator]();
-    // We only care about the first item, since that is the file, rest could be directories
-    const { value } = await filesIterator.next();
-
-    // we grab the file and pin it
-    const uploadedFile = value as Awaited<ReturnType<typeof ipfsClient.add>>;
-    await ipfsClient.pin.add(uploadedFile.cid);
-
-    return uploadedFile.cid.toString();
-  } catch (e) {
-    // @ts-expect-error - we are throwing an error here
-    throw Error(`Failed to upload file to IPFS: ${e?.message || e}`);
-  }
-}
-
-async function readIpfsFile(cid: string) {
-  const file = ipfsClient.cat(cid);
-
-  const chunks: Uint8Array[] = [];
-  for await (const chunk of file) {
-    chunks.push(chunk);
-  }
-
-  return Buffer.concat(chunks).toString('utf-8');
-}
-
-const convertSubgraphIdtoBase58 = (subgraphId: string) => {
-  return base58.encode(toBytes(toHex(BigInt(subgraphId))));
-};
-
-const buildSubgraphId = ({
-  chainId,
-  account,
-  seqId,
-}: {
-  account: Address;
-  seqId: bigint;
-  chainId?: number;
-}) => {
-  if (chainId) {
-    return BigInt(
-      keccak256(encodePacked(['address', 'uint256', 'uint256'], [account, seqId, BigInt(chainId)])),
-    ).toString();
-  }
-
-  return BigInt(keccak256(encodePacked(['address', 'uint256'], [account, seqId]))).toString();
-};
-
 // Subset of the manifest schema that we care about
 // https://github.com/graphprotocol/graph-node/blob/master/docs/subgraph-manifest.md#13-top-level-api
 const Manifest = z.object({
@@ -159,6 +95,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
   const { setOpen } = useModal();
   const { switchChainAsync, isPending: chainSwitchPending } = useSwitchChain();
   const { toast } = useToast();
+  const [deployed, setDeployed] = useState(false);
 
   const { address, chainId } = useAccount();
 
@@ -173,13 +110,6 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
         raw: manifest,
       };
     },
-  });
-
-  const { data } = useReadContract({
-    abi: L2GNSABI,
-    address: '0x3133948342F35b8699d8F94aeE064AbB76eDe965',
-    functionName: 'nextAccountSeqID',
-    args: ['0x6f5ccd3e078ba48291dfb491cce18f348f6f5c00'],
   });
 
   const form = useForm<z.infer<typeof subgraphMetadataSchema>>({
@@ -235,11 +165,18 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
     });
 
     window.open(`https://sepolia.arbiscan.io/tx/${hash}`, '_blank');
-
+    setDeployed(true);
     toast({
       description: 'You are all set! You can go back to the CLI and close this window',
     });
   }
+
+  const deployButtonCopy = (() => {
+    if (deployed) return 'Deployed';
+    if (chainSwitchPending) return 'Switching Chains...';
+    if (isPending) return 'Check Wallet...';
+    return 'Deploy';
+  })();
 
   return (
     <div className="flex px-4 lg:px-6 h-auto py-2">
@@ -329,30 +266,12 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
               type="submit"
               size="lg"
               className="w-full"
-              disabled={isPending || chainSwitchPending}
+              disabled={isPending || chainSwitchPending || deployed}
             >
-              {chainSwitchPending ? 'Switching Chain...' : isPending ? 'Check Wallet...' : 'Deploy'}
+              {deployButtonCopy}
             </Button>
           </form>
         </Form>
-        {/* <form onSubmit={onSubmit}>
-    
-
-          {hash ? <div>Transaction Hash: {hash}</div> : null}
-
-          {data && address && chainId ? (
-            <div>
-              Next Account Seq ID: https://testnet.thegraph.com/explorer/subgraphs/
-              {convertSubgraphIdtoBase58(
-                buildSubgraphId({
-                  account: address,
-                  seqId: data - 1n,
-                  chainId: chainId,
-                }),
-              )}
-            </div>
-          ) : null}
-        </form> */}
       </div>
 
       <div className="w-1/2 h-[calc(100vh_-_8rem)]">
