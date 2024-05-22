@@ -6,8 +6,6 @@
   "scripts": {
     "build": "tsc && vite build",
     "clean": "rimraf ./dist",
-    "clean:deploy": "rimraf ../cf-pages/*",
-    "deploy": "pnpm clean && pnpm build && pnpm clean:deploy && cp -r dist/* ../cf-pages/ && git add -A && git commit -m 'deploy website'",
     "dev": "vite",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
