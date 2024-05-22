@@ -245,7 +245,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'celo':
       return `https://api.celoscan.io/api`;
     case 'celo-alfajores':
-      return `https://alfajores.celoscan.io/api`;
+      return `https://api-alfajores.celoscan.io/api`;
     case 'gnosis':
       return `https://api.gnosisscan.io/api`;
     case 'fantom':
@@ -261,7 +261,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'polygon-zkevm-testnet':
       return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
-      return `https://zkevm.polygonscan.com/api`;
+      return `https://api-zkevm.polygonscan.com/api`;
     case 'sepolia':
       return `https://api-sepolia.etherscan.io/api`;
     case 'scroll-sepolia':
@@ -269,7 +269,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'optimism-sepolia':
       return `https://api-sepolia-optimistic.etherscan.io/api`;
     case 'scroll':
-      return `https://blockscout.scroll.io/api`;
+      return `https://api.scrollscan.com/api`;
     case 'linea':
       return `https://api.lineascan.build/api`;
     case 'linea-sepolia':
@@ -277,9 +277,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'linea-goerli':
       return `https://api.linea-goerli.build/api`;
     case 'blast-testnet':
-      return `https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan/api`;
+      return `https://api-sepolia.blastscan.io/api`;
     case 'blast-mainnet':
-      return `https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan/api`;
+      return `https://api.blastscan.io/api`;
     case 'etherlink-testnet':
       return `https://testnet-explorer.etherlink.com/api`;
     case 'polygon-amoy':
@@ -292,6 +292,10 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://sepolia.explorer.mode.network/api`;
     case 'fuse':
       return 'https://explorer.fuse.io/api';
+    case 'astar-zkevm-mainnet':
+      return `https://astar-zkevm.explorer.startale.com/api`;
+    case 'polygon-zkevm-cardona':
+      return `https://api-cardona-zkevm.polygonscan.com/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -315,7 +319,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'base-sepolia':
       return 'https://sepolia.base.org';
     case 'base':
-      return 'https://rpc.base.org';
+      return 'https://mainnet.base.org';
     case 'bsc':
       return 'https://bsc-dataseed.binance.org';
     case 'celo':
@@ -398,6 +402,10 @@ const getPublicRPCEndpoint = (network: string) => {
       return `https://mainnet.mode.network`;
     case 'mode-sepolia':
       return `https://sepolia.mode.network`;
+    case 'astar-zkevm-mainnet':
+      return `https://1rpc.io/astr`;
+    case 'polygon-zkevm-cardona':
+      return `https://rpc.cardona.zkevm-rpc.com`;
     default:
       throw new Error(`Unknown network: ${network}`);
   }
