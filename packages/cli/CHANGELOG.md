@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.72.2
+
+### Patch Changes
+
+- [#1668](https://github.com/graphprotocol/graph-tooling/pull/1668)
+  [`0e7b6cc`](https://github.com/graphprotocol/graph-tooling/commit/0e7b6cc3eb7e4aca4ba1e456e94ce37289d46b84)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - update etherscan api urls and rpc urls
+
 ## 0.72.1
 
 ### Patch Changes
