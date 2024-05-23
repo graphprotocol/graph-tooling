@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
+import { graphql } from 'gql.tada';
 import { useForm } from 'react-hook-form';
 import { Address } from 'viem';
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
@@ -25,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { networkSubgraphExecute } from '@/lib/graphql';
 import { readIpfsFile, uploadFileToIpfs } from '@/lib/ipfs';
 import { ipfsHexHash } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -41,6 +43,28 @@ const SUPPORTED_CHAIN = {
     contracts: addresses[421614],
   },
 } as const;
+
+const GetVersionInfo = graphql(`
+  query GetVersionInfo($account: String!, $displayNameStartsWith: String!) {
+    subgraphs(
+      where: {
+        owner: $account
+        metadata_: { displayName_starts_with_nocase: $displayNameStartsWith }
+      }
+    ) {
+      id
+      metadata {
+        displayName
+      }
+      versions {
+        id
+        metadata {
+          label
+        }
+      }
+    }
+  }
+`);
 
 const getChainInfo = (chain: keyof typeof SUPPORTED_CHAIN) => {
   return SUPPORTED_CHAIN[chain];
@@ -124,6 +148,20 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
       categories: undefined,
     },
   });
+
+  // const { data } = useQuery({
+  //   queryKey: ['version-info', address, form.getValues('displayName')],
+  //   enabled: !!address,
+  //   queryFn: async () => {
+  //     if (!address) return null;
+  //     return networkSubgraphExecute(GetVersionInfo, {
+  //       account: address.toLowerCase(),
+  //       displayNameStartsWith: form.getValues('displayName'),
+  //     });
+  //   },
+  // });
+
+  console.log(data);
 
   async function onSubmit(values: z.infer<typeof subgraphMetadataSchema>) {
     const selectedChain = getChainInfo(values.chain);
