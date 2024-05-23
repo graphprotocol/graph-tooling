@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -68,6 +69,15 @@ const GetVersionInfo = graphql(`
 
 const getChainInfo = (chain: keyof typeof SUPPORTED_CHAIN) => {
   return SUPPORTED_CHAIN[chain];
+};
+
+const publishToCopy = (chain: ReturnType<typeof getChainInfo>['chainId']) => {
+  switch (chain) {
+    case 42161:
+      return 'Production Indexers';
+    case 421614:
+      return 'Test Indexers';
+  }
 };
 
 const subgraphMetadataSchema = z.object({
@@ -161,7 +171,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
   //   },
   // });
 
-  console.log(data);
+  // console.log(data);
 
   async function onSubmit(values: z.infer<typeof subgraphMetadataSchema>) {
     const selectedChain = getChainInfo(values.chain);
@@ -232,7 +242,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
                 <FormItem>
                   <FormLabel>Display Name*</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder="Name to display on the Graph Explorer" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -287,13 +297,13 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select the chain to publish subgraph to" />
+                        <SelectValue placeholder="Select type of workload you are deploying" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {Object.entries(SUPPORTED_CHAIN).map(([chainName, { chainId }]) => (
                         <SelectItem key={chainId} value={chainName}>
-                          {chainName} (eip-{chainId})
+                          {publishToCopy(chainId)}
                         </SelectItem>
                       ))}
                     </SelectContent>
