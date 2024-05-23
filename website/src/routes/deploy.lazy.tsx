@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
 import { graphql } from 'gql.tada';
 import { useForm } from 'react-hook-form';
+import semver from 'semver';
 import { Address } from 'viem';
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import yaml from 'yaml';
@@ -11,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,7 +27,6 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { networkSubgraphExecute } from '@/lib/graphql';
 import { readIpfsFile, uploadFileToIpfs } from '@/lib/ipfs';
 import { ipfsHexHash } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -74,9 +73,9 @@ const getChainInfo = (chain: keyof typeof SUPPORTED_CHAIN) => {
 const publishToCopy = (chain: ReturnType<typeof getChainInfo>['chainId']) => {
   switch (chain) {
     case 42161:
-      return 'Production Indexers';
+      return 'The Graph Network';
     case 421614:
-      return 'Test Indexers';
+      return 'The Graph Testnet (not meant for production workload)';
   }
 };
 
@@ -90,6 +89,17 @@ const subgraphMetadataSchema = z.object({
   codeRepository: z.string().url().optional(),
   website: z.string().url().optional(),
   categories: z.array(z.string()).optional(),
+  versionLabel: z.string().superRefine((value, ctx) => {
+    if (!semver.valid(value)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Not a valid semver version. Example: 0.0.1',
+      });
+      return false;
+    }
+
+    return true;
+  }),
   chain: z.enum(CHAINS),
 });
 
@@ -148,6 +158,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
 
   const form = useForm<z.infer<typeof subgraphMetadataSchema>>({
     resolver: zodResolver(subgraphMetadataSchema),
+    mode: 'all',
     defaultValues: {
       description: subgraphManifest?.parsed.description,
       image: 'ipfs://QmeFs3a4d7kQKuGbV2Ujb5B7ZN8Ph61W5gFfF2mKg2SBtB',
@@ -158,20 +169,6 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
       categories: undefined,
     },
   });
-
-  // const { data } = useQuery({
-  //   queryKey: ['version-info', address, form.getValues('displayName')],
-  //   enabled: !!address,
-  //   queryFn: async () => {
-  //     if (!address) return null;
-  //     return networkSubgraphExecute(GetVersionInfo, {
-  //       account: address.toLowerCase(),
-  //       displayNameStartsWith: form.getValues('displayName'),
-  //     });
-  //   },
-  // });
-
-  // console.log(data);
 
   async function onSubmit(values: z.infer<typeof subgraphMetadataSchema>) {
     const selectedChain = getChainInfo(values.chain);
@@ -191,7 +188,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
 
     const versionMeta = await uploadFileToIpfs({
       path: '',
-      content: Buffer.from(JSON.stringify({ label: '0.0.3', description: null })),
+      content: Buffer.from(JSON.stringify({ label: values.versionLabel, description: null })),
     });
 
     const subgraphMeta = await uploadFileToIpfs({
@@ -248,6 +245,21 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="versionLabel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Version Label*</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="description"
@@ -297,7 +309,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type of workload you are deploying" />
+                        <SelectValue placeholder="Select the network to deploy" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
