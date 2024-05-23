@@ -25,6 +25,7 @@
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
     "chai": "^4.3.7",
+    "ethers": "v5.7.2",
     "hardhat-gas-reporter": "^1.0.9",
     "solidity-coverage": "^0.8.2",
     "typechain": "^8.1.1",

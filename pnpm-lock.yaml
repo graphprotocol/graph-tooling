@@ -146,22 +146,22 @@ importers:
     dependencies:
       '@nomicfoundation/hardhat-chai-matchers':
         specifier: ^1.0.6
-        version: 1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
+        version: 1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       '@nomicfoundation/hardhat-network-helpers':
         specifier: ^1.0.8
         version: 1.0.8(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       '@nomiclabs/hardhat-ethers':
         specifier: ^2.2.3
-        version: 2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
+        version: 2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       '@nomiclabs/hardhat-etherscan':
         specifier: ^3.1.7
         version: 3.1.7(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       '@typechain/ethers-v5':
         specifier: ^10.2.0
-        version: 10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
+        version: 10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
       '@typechain/hardhat':
         specifier: ^6.1.5
-        version: 6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))
+        version: 6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))
       '@types/chai':
         specifier: ^4.3.4
         version: 4.3.4
@@ -171,6 +171,9 @@ importers:
       chai:
         specifier: ^4.3.7
         version: 4.3.7
+      ethers:
+        specifier: v5.7.2
+        version: 5.7.2(bufferutil@4.0.8)
       hardhat-gas-reporter:
         specifier: ^1.0.9
         version: 1.0.9(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
@@ -192,7 +195,7 @@ importers:
         version: 0.35.1
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^2.0.2
-        version: 2.0.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@nomicfoundation/hardhat-chai-matchers@1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomicfoundation/hardhat-network-helpers@1.0.8(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-etherscan@3.1.7(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(@typechain/hardhat@6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4)))(@types/chai@4.3.4)(@types/mocha@10.0.1)(@types/node@20.12.11)(chai@4.3.7)(ethers@6.12.1(bufferutil@4.0.8))(hardhat-gas-reporter@1.0.9(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(solidity-coverage@0.8.2(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
+        version: 2.0.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@nomicfoundation/hardhat-chai-matchers@1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomicfoundation/hardhat-network-helpers@1.0.8(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-etherscan@3.1.7(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(@typechain/hardhat@6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4)))(@types/chai@4.3.4)(@types/mocha@10.0.1)(@types/node@20.12.11)(chai@4.3.7)(ethers@5.7.2(bufferutil@4.0.8))(hardhat-gas-reporter@1.0.9(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(solidity-coverage@0.8.2(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
       apollo-fetch:
         specifier: ^0.7.0
         version: 0.7.0
@@ -289,7 +292,7 @@ importers:
         version: 3.5.3
       debug:
         specifier: 4.3.4
-        version: 4.3.4(supports-color@8.1.1)
+        version: 4.3.4(supports-color@5.5.0)
       docker-compose:
         specifier: 0.23.19
         version: 0.23.19
@@ -11059,10 +11062,10 @@ snapshots:
       '@babel/helpers': 7.24.5
       '@babel/parser': 7.24.5
       '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.5
+      '@babel/traverse': 7.24.5(supports-color@5.5.0)
       '@babel/types': 7.24.5
       convert-source-map: 2.0.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -11117,7 +11120,7 @@ snapshots:
       '@babel/core': 7.24.5
       '@babel/helper-compilation-targets': 7.23.6
       '@babel/helper-plugin-utils': 7.24.5
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -11198,7 +11201,7 @@ snapshots:
   '@babel/helpers@7.24.5':
     dependencies:
       '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.5
+      '@babel/traverse': 7.24.5(supports-color@5.5.0)
       '@babel/types': 7.24.5
     transitivePeerDependencies:
       - supports-color
@@ -11887,21 +11890,6 @@ snapshots:
       '@babel/parser': 7.24.5
       '@babel/types': 7.24.5
 
-  '@babel/traverse@7.24.5':
-    dependencies:
-      '@babel/code-frame': 7.24.2
-      '@babel/generator': 7.24.5
-      '@babel/helper-environment-visitor': 7.22.20
-      '@babel/helper-function-name': 7.23.0
-      '@babel/helper-hoist-variables': 7.22.5
-      '@babel/helper-split-export-declaration': 7.24.5
-      '@babel/parser': 7.24.5
-      '@babel/types': 7.24.5
-      debug: 4.3.4(supports-color@8.1.1)
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/traverse@7.24.5(supports-color@5.5.0)':
     dependencies:
       '@babel/code-frame': 7.24.2
@@ -12286,7 +12274,7 @@ snapshots:
   '@eslint/eslintrc@2.1.4':
     dependencies:
       ajv: 6.12.6
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       espree: 9.6.1
       globals: 13.19.0
       ignore: 5.2.4
@@ -12632,7 +12620,7 @@ snapshots:
       binary-install-raw: 0.0.13(debug@4.3.4)
       chalk: 3.0.0
       chokidar: 3.5.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       docker-compose: 0.23.19
       dockerode: 2.5.8
       fs-extra: 9.1.0
@@ -12672,7 +12660,7 @@ snapshots:
       binary-install-raw: 0.0.13(debug@4.3.4)
       chalk: 3.0.0
       chokidar: 3.5.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       docker-compose: 0.23.19
       dockerode: 2.5.8
       fs-extra: 9.1.0
@@ -12726,7 +12714,7 @@ snapshots:
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -12740,7 +12728,7 @@ snapshots:
       '@babel/core': 7.24.5
       '@babel/generator': 7.24.5
       '@babel/parser': 7.24.5
-      '@babel/traverse': 7.24.5
+      '@babel/traverse': 7.24.5(supports-color@5.5.0)
       '@babel/types': 7.24.5
       prettier: 3.0.3
       semver: 7.6.2
@@ -12871,7 +12859,7 @@ snapshots:
     dependencies:
       '@libp2p/interface': 1.4.0
       '@multiformats/multiaddr': 12.2.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       interface-datastore: 8.2.11
       multiformats: 13.1.0
     transitivePeerDependencies:
@@ -12980,7 +12968,7 @@ snapshots:
       bufferutil: 4.0.8
       cross-fetch: 4.0.0(encoding@0.1.13)
       date-fns: 2.29.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eciesjs: 0.3.18
       eventemitter2: 6.4.9
       readable-stream: 3.6.2
@@ -13009,7 +12997,7 @@ snapshots:
       '@types/dom-screen-wake-lock': 1.0.3
       bowser: 2.11.0
       cross-fetch: 4.0.0(encoding@0.1.13)
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eciesjs: 0.3.18
       eth-rpc-errors: 4.0.3
       eventemitter2: 6.4.9
@@ -13040,7 +13028,7 @@ snapshots:
     dependencies:
       '@ethereumjs/tx': 4.2.0
       '@types/debug': 4.1.12
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       semver: 7.4.0
       superstruct: 1.0.4
     transitivePeerDependencies:
@@ -13052,7 +13040,7 @@ snapshots:
       '@noble/hashes': 1.4.0
       '@scure/base': 1.1.6
       '@types/debug': 4.1.12
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       pony-cause: 2.1.11
       semver: 7.6.2
       superstruct: 1.0.4
@@ -13237,15 +13225,15 @@ snapshots:
       '@nomicfoundation/ethereumjs-rlp': 5.0.4
       ethereum-cryptography: 0.1.3
 
-  '@nomicfoundation/hardhat-chai-matchers@1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))':
+  '@nomicfoundation/hardhat-chai-matchers@1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))':
     dependencies:
       '@ethersproject/abi': 5.7.0
-      '@nomiclabs/hardhat-ethers': 2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
+      '@nomiclabs/hardhat-ethers': 2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       '@types/chai-as-promised': 7.1.5
       chai: 4.3.7
       chai-as-promised: 7.1.1(chai@4.3.7)
       deep-eql: 4.1.3
-      ethers: 6.12.1(bufferutil@4.0.8)
+      ethers: 5.7.2(bufferutil@4.0.8)
       hardhat: 2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)
       ordinal: 1.0.3
 
@@ -13271,21 +13259,21 @@ snapshots:
       ethereumjs-util: 7.1.5
       hardhat: 2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)
 
-  ? '@nomicfoundation/hardhat-toolbox@2.0.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@nomicfoundation/hardhat-chai-matchers@1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomicfoundation/hardhat-network-helpers@1.0.8(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-etherscan@3.1.7(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(@typechain/hardhat@6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4)))(@types/chai@4.3.4)(@types/mocha@10.0.1)(@types/node@20.12.11)(chai@4.3.7)(ethers@6.12.1(bufferutil@4.0.8))(hardhat-gas-reporter@1.0.9(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(solidity-coverage@0.8.2(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)'
+  ? '@nomicfoundation/hardhat-toolbox@2.0.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@nomicfoundation/hardhat-chai-matchers@1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomicfoundation/hardhat-network-helpers@1.0.8(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@nomiclabs/hardhat-etherscan@3.1.7(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(@typechain/hardhat@6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4)))(@types/chai@4.3.4)(@types/mocha@10.0.1)(@types/node@20.12.11)(chai@4.3.7)(ethers@5.7.2(bufferutil@4.0.8))(hardhat-gas-reporter@1.0.9(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(solidity-coverage@0.8.2(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)'
   : dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2(bufferutil@4.0.8)
-      '@nomicfoundation/hardhat-chai-matchers': 1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
+      '@nomicfoundation/hardhat-chai-matchers': 1.0.6(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)))(chai@4.3.7)(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       '@nomicfoundation/hardhat-network-helpers': 1.0.8(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
-      '@nomiclabs/hardhat-ethers': 2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
+      '@nomiclabs/hardhat-ethers': 2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       '@nomiclabs/hardhat-etherscan': 3.1.7(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
-      '@typechain/ethers-v5': 10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
-      '@typechain/hardhat': 6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))
+      '@typechain/ethers-v5': 10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
+      '@typechain/hardhat': 6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))
       '@types/chai': 4.3.4
       '@types/mocha': 10.0.1
       '@types/node': 20.12.11
       chai: 4.3.7
-      ethers: 6.12.1(bufferutil@4.0.8)
+      ethers: 5.7.2(bufferutil@4.0.8)
       hardhat: 2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)
       hardhat-gas-reporter: 1.0.9(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
       solidity-coverage: 0.8.2(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))
@@ -13358,9 +13346,9 @@ snapshots:
       '@nomicfoundation/solidity-analyzer-win32-ia32-msvc': 0.1.1
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.1
 
-  '@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))':
+  '@nomiclabs/hardhat-ethers@2.2.3(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))':
     dependencies:
-      ethers: 6.12.1(bufferutil@4.0.8)
+      ethers: 5.7.2(bufferutil@4.0.8)
       hardhat: 2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)
 
   '@nomiclabs/hardhat-ethers@2.2.3(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5))':
@@ -13374,7 +13362,7 @@ snapshots:
       '@ethersproject/address': 5.7.0
       cbor: 8.1.0
       chalk: 2.4.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       fs-extra: 7.0.1
       hardhat: 2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)
       lodash: 4.17.21
@@ -13390,7 +13378,7 @@ snapshots:
       '@ethersproject/address': 5.7.0
       cbor: 8.1.0
       chalk: 2.4.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       fs-extra: 7.0.1
       hardhat: 2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)
       lodash: 4.17.21
@@ -13759,7 +13747,7 @@ snapshots:
     dependencies:
       '@oclif/core': 2.16.0(@types/node@20.12.11)(typescript@5.0.4)
       chalk: 4.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -13771,7 +13759,7 @@ snapshots:
     dependencies:
       '@oclif/core': 2.16.0(@types/node@20.12.11)(typescript@5.4.5)
       chalk: 4.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -13783,7 +13771,7 @@ snapshots:
     dependencies:
       '@oclif/core': 2.14.0(@types/node@20.12.11)(typescript@5.0.2)
       chalk: 4.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       fs-extra: 9.1.0
     transitivePeerDependencies:
       - '@swc/core'
@@ -13838,7 +13826,7 @@ snapshots:
     dependencies:
       '@oclif/core': 2.8.6(@types/node@20.12.11)(typescript@5.0.2)
       chalk: 4.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       fs-extra: 9.1.0
       http-call: 5.3.0
       lodash: 4.17.21
@@ -14982,7 +14970,7 @@ snapshots:
       '@babel/plugin-transform-react-jsx': 7.23.4(@babel/core@7.24.5)
       '@babel/plugin-transform-typescript': 7.24.5(@babel/core@7.24.5)
       '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.5
+      '@babel/traverse': 7.24.5(supports-color@5.5.0)
       '@babel/types': 7.24.5
       '@tanstack/router-generator': 1.32.10
       '@types/babel__core': 7.20.5
@@ -15044,12 +15032,12 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)':
+  '@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)':
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/providers': 5.7.2(bufferutil@4.0.8)
-      ethers: 6.12.1(bufferutil@4.0.8)
+      ethers: 5.7.2(bufferutil@4.0.8)
       lodash: 4.17.21
       ts-essentials: 7.0.3(typescript@5.0.4)
       typechain: 8.1.1(typescript@5.0.4)
@@ -15065,12 +15053,12 @@ snapshots:
       typechain: 8.3.2(typescript@5.4.5)
       typescript: 5.4.5
 
-  '@typechain/hardhat@6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@6.12.1(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))':
+  '@typechain/hardhat@6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(@typechain/ethers-v5@10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4))(ethers@5.7.2(bufferutil@4.0.8))(hardhat@2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4))(typechain@8.1.1(typescript@5.0.4))':
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2(bufferutil@4.0.8)
-      '@typechain/ethers-v5': 10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@6.12.1(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
-      ethers: 6.12.1(bufferutil@4.0.8)
+      '@typechain/ethers-v5': 10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2(bufferutil@4.0.8))(ethers@5.7.2(bufferutil@4.0.8))(typechain@8.1.1(typescript@5.0.4))(typescript@5.0.4)
+      ethers: 5.7.2(bufferutil@4.0.8)
       fs-extra: 9.1.0
       hardhat: 2.22.3(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.0.4))(typescript@5.0.4)
       typechain: 8.1.1(typescript@5.0.4)
@@ -15335,7 +15323,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.5)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.5)
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.2.4
@@ -15370,7 +15358,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.5)
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.4.5
@@ -15383,7 +15371,7 @@ snapshots:
       '@typescript-eslint/types': 7.9.0
       '@typescript-eslint/typescript-estree': 7.9.0(typescript@5.4.5)
       '@typescript-eslint/visitor-keys': 7.9.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.4.5
@@ -15404,7 +15392,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.5)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.5)
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.5)
     optionalDependencies:
@@ -15416,7 +15404,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 7.9.0(typescript@5.4.5)
       '@typescript-eslint/utils': 7.9.0(eslint@8.57.0)(typescript@5.4.5)
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eslint: 8.57.0
       ts-api-utils: 1.3.0(typescript@5.4.5)
     optionalDependencies:
@@ -15432,7 +15420,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.4.0
@@ -15446,7 +15434,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 7.9.0
       '@typescript-eslint/visitor-keys': 7.9.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.4
@@ -16010,13 +15998,13 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
   agentkeepalive@4.2.1:
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       depd: 1.1.2
       humanize-ms: 1.2.1
     transitivePeerDependencies:
@@ -17494,7 +17482,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -17531,7 +17519,7 @@ snapshots:
 
   dns-over-http-resolver@1.2.3(node-fetch@2.7.0(encoding@0.1.13)):
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       native-fetch: 3.0.0(node-fetch@2.7.0(encoding@0.1.13))
       receptacle: 1.3.2
     transitivePeerDependencies:
@@ -17650,7 +17638,7 @@ snapshots:
   engine.io-client@6.5.3(bufferutil@4.0.8):
     dependencies:
       '@socket.io/component-emitter': 3.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       engine.io-parser: 5.2.2
       ws: 8.11.0(bufferutil@4.0.8)
       xmlhttprequest-ssl: 2.0.0
@@ -17921,7 +17909,7 @@ snapshots:
 
   eslint-import-resolver-typescript@3.6.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.5))(eslint-plugin-import@2.28.1)(eslint@8.57.0):
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       enhanced-resolve: 5.12.0
       eslint: 8.57.0
       eslint-module-utils: 2.7.4(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.5))(eslint-plugin-import@2.28.1)(eslint@8.57.0))(eslint@8.57.0)
@@ -18128,7 +18116,7 @@ snapshots:
 
   eslint-plugin-yml@1.8.0(eslint@8.57.0):
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       eslint: 8.57.0
       lodash: 4.17.21
       natural-compare: 1.4.0
@@ -18161,7 +18149,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
       eslint-scope: 7.2.2
@@ -18644,11 +18632,11 @@ snapshots:
 
   follow-redirects@1.15.2(debug@4.3.4):
     optionalDependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
 
   follow-redirects@1.15.6(debug@4.3.4):
     optionalDependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
 
   for-each@0.3.3:
     dependencies:
@@ -19120,7 +19108,7 @@ snapshots:
       chalk: 2.4.2
       chokidar: 3.6.0
       ci-info: 2.0.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       enquirer: 2.4.1
       env-paths: 2.2.1
       ethereum-cryptography: 1.2.0
@@ -19174,7 +19162,7 @@ snapshots:
       chalk: 2.4.2
       chokidar: 3.6.0
       ci-info: 2.0.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       enquirer: 2.4.1
       env-paths: 2.2.1
       ethereum-cryptography: 1.2.0
@@ -19316,7 +19304,7 @@ snapshots:
   http-call@5.3.0:
     dependencies:
       content-type: 1.0.5
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       is-retry-allowed: 1.2.0
       is-stream: 2.0.1
       parse-json: 4.0.0
@@ -19336,7 +19324,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -19344,7 +19332,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -19368,7 +19356,7 @@ snapshots:
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -19524,7 +19512,7 @@ snapshots:
       any-signal: 2.1.2
       blob-to-it: 1.0.4
       browser-readablestream-to-it: 1.0.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       err-code: 3.0.1
       ipfs-core-types: 0.9.0(node-fetch@2.7.0(encoding@0.1.13))
       ipfs-unixfs: 6.0.9
@@ -19553,7 +19541,7 @@ snapshots:
       '@ipld/dag-pb': 2.1.18
       abort-controller: 3.0.0
       any-signal: 2.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       err-code: 3.0.1
       ipfs-core-types: 0.9.0(node-fetch@2.7.0(encoding@0.1.13))
       ipfs-core-utils: 0.13.0(encoding@0.1.13)(node-fetch@2.7.0(encoding@0.1.13))
@@ -20718,7 +20706,7 @@ snapshots:
 
   metro-source-map@0.80.9:
     dependencies:
-      '@babel/traverse': 7.24.5
+      '@babel/traverse': 7.24.5(supports-color@5.5.0)
       '@babel/types': 7.24.5
       invariant: 2.2.4
       metro-symbolicate: 0.80.9
@@ -20745,7 +20733,7 @@ snapshots:
       '@babel/core': 7.24.5
       '@babel/generator': 7.24.5
       '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.5
+      '@babel/traverse': 7.24.5(supports-color@5.5.0)
       nullthrows: 1.1.1
     transitivePeerDependencies:
       - supports-color
@@ -20777,7 +20765,7 @@ snapshots:
       '@babel/generator': 7.24.5
       '@babel/parser': 7.24.5
       '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.5
+      '@babel/traverse': 7.24.5(supports-color@5.5.0)
       '@babel/types': 7.24.5
       accepts: 1.3.8
       chalk: 4.1.2
@@ -21006,7 +20994,7 @@ snapshots:
 
   micromark@2.11.4:
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       parse-entities: 2.0.0
     transitivePeerDependencies:
       - supports-color
@@ -21014,7 +21002,7 @@ snapshots:
   micromark@3.1.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.0.6
       micromark-factory-space: 1.0.0
@@ -21639,7 +21627,7 @@ snapshots:
       '@oclif/plugin-warn-if-update-available': 2.0.24(@types/node@20.12.11)(typescript@5.0.2)
       aws-sdk: 2.1305.0
       concurrently: 7.6.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       find-yarn-workspace-root: 2.0.0
       fs-extra: 8.1.0
       github-slugger: 1.5.0
@@ -21831,7 +21819,7 @@ snapshots:
 
   p-transform@1.3.0:
     dependencies:
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       p-queue: 6.6.2
     transitivePeerDependencies:
       - supports-color
@@ -23028,7 +23016,7 @@ snapshots:
   socket.io-client@4.7.5(bufferutil@4.0.8):
     dependencies:
       '@socket.io/component-emitter': 3.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       engine.io-client: 6.5.3(bufferutil@4.0.8)
       socket.io-parser: 4.2.4
     transitivePeerDependencies:
@@ -23039,14 +23027,14 @@ snapshots:
   socket.io-parser@4.2.4:
     dependencies:
       '@socket.io/component-emitter': 3.1.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
   socks-proxy-agent@6.2.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       socks: 2.7.1
     transitivePeerDependencies:
       - supports-color
@@ -23054,7 +23042,7 @@ snapshots:
   socks-proxy-agent@7.0.0:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       socks: 2.7.1
     transitivePeerDependencies:
       - supports-color
@@ -23860,7 +23848,7 @@ snapshots:
   typechain@8.1.1(typescript@5.0.4):
     dependencies:
       '@types/prettier': 2.7.1
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       fs-extra: 7.0.1
       glob: 7.1.7
       js-sha3: 0.8.0
@@ -23878,7 +23866,7 @@ snapshots:
   typechain@8.3.2(typescript@5.4.5):
     dependencies:
       '@types/prettier': 2.7.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       fs-extra: 7.0.1
       glob: 7.1.7
       js-sha3: 0.8.0
@@ -24006,7 +23994,7 @@ snapshots:
       '@types/node': 18.19.33
       '@types/unist': 2.0.6
       concat-stream: 2.0.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       fault: 2.0.1
       glob: 8.1.0
       ignore: 5.3.1
@@ -24328,7 +24316,7 @@ snapshots:
   vite-node@1.0.2(@types/node@20.12.11)(terser@5.31.0):
     dependencies:
       cac: 6.7.14
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       pathe: 1.1.1
       picocolors: 1.0.0
       vite: 5.2.11(@types/node@20.12.11)(terser@5.31.0)
@@ -24372,7 +24360,7 @@ snapshots:
       acorn-walk: 8.3.1
       cac: 6.7.14
       chai: 4.3.10
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       execa: 8.0.1
       local-pkg: 0.5.0
       magic-string: 0.30.5
@@ -24802,7 +24790,7 @@ snapshots:
       cli-table: 0.3.11
       commander: 7.1.0
       dateformat: 4.6.3
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       diff: 5.1.0
       error: 10.4.0
       escape-string-regexp: 4.0.0
@@ -24838,7 +24826,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       dargs: 7.0.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@5.5.0)
       execa: 5.1.1
       github-username: 6.0.0(encoding@0.1.13)
       lodash: 4.17.21
