@@ -18,7 +18,7 @@ graph publish
 graph publish --ipfs <ipfs-hash>
 ```
 
-3. You can use a custom webapp url to use for deploying.
+3. You can use a custom webapp url for deploying.
 
 ```sh
 graph publish --webapp-url <webapp-url>
