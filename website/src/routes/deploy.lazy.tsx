@@ -7,6 +7,7 @@ import { Address } from 'viem';
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import yaml from 'yaml';
 import { z } from 'zod';
+import { SubgraphImageDropZone } from '@/components/Dropzone';
 import { Editor } from '@/components/Editor';
 import { Button } from '@/components/ui/button';
 import {
@@ -82,9 +83,6 @@ const publishToCopy = (chain: ReturnType<typeof getChainInfo>['chainId']) => {
 const subgraphMetadataSchema = z.object({
   description: z.string().optional(),
   displayName: z.string(),
-  image: z.string().transform(value => {
-    return value.startsWith('ipfs://') ? value : `ipfs://${value}`;
-  }),
   subgraphImage: z.string().url(),
   codeRepository: z.string().url().optional(),
   website: z.string().url().optional(),
@@ -109,12 +107,21 @@ const subgraphMetadata = ({
   codeRepository,
   website,
   categories,
-  image,
   subgraphImage,
 }: z.infer<typeof subgraphMetadataSchema>) => {
   return {
     description,
-    image,
+    image: (() => {
+      const match = subgraphImage.match(/[?&]arg=([^&]+)/);
+
+      const hash = match?.[1];
+
+      if (!hash) {
+        throw new Error('Invalid IPFS hash');
+      }
+
+      return `ipfs://${hash}`;
+    })(),
     subgraphImage,
     displayName,
     name: displayName,
@@ -161,7 +168,6 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
     mode: 'all',
     defaultValues: {
       description: subgraphManifest?.parsed.description,
-      image: 'ipfs://QmeFs3a4d7kQKuGbV2Ujb5B7ZN8Ph61W5gFfF2mKg2SBtB',
       subgraphImage:
         'https://api.thegraph.com/ipfs/api/v0/cat?arg=QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9',
       codeRepository: subgraphManifest?.parsed.repository,
@@ -294,6 +300,20 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
                   <FormLabel>Website</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="subgraphImage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Subgraph Image</FormLabel>
+                  <FormControl>
+                    <SubgraphImageDropZone {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
