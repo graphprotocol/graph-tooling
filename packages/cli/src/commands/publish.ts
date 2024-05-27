@@ -29,12 +29,17 @@ export default class PublishCommand extends Command {
       summary: 'IPFS hash of the subgraph manifest to deploy.',
       required: false,
     }),
+    'webapp-url': Flags.string({
+      summary: 'URL of the web UI you want to use to deploy.',
+      required: false,
+      default: 'https://cli.thegraph.com/publish',
+    }),
   };
 
   /**
    * Prompt the user to open up the browser to continue publishing the subgraph
    */
-  async publishWithBrowser({ ipfsHash }: { ipfsHash: string }) {
+  async publishWithBrowser({ ipfsHash, webapp }: { ipfsHash: string, webapp: string }) {
     const answer = await ux.prompt(
       `Press ${chalk.green(
         'y',
@@ -47,7 +52,7 @@ export default class PublishCommand extends Command {
       this.exit(0);
     }
 
-    const URL = `https://cli.thegraph.com/deploy?id=${ipfsHash}`;
+    const URL = `${webapp}?id=${ipfsHash}`;
 
     print.success(
       `Finalize the publish of the subgraph from the Graph CLI publish page. Opening up the browser to continue publishing at ${URL}`,
@@ -61,13 +66,13 @@ export default class PublishCommand extends Command {
       args: { 'subgraph-manifest': manifest },
       flags: {
         'ipfs-hash': ipfsHash,
-
+        'webapp-url': webUiUrl,
         ipfs,
       },
     } = await this.parse(PublishCommand);
 
     if (ipfsHash) {
-      await this.publishWithBrowser({ ipfsHash });
+      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl });
       return;
     }
 
@@ -99,7 +104,7 @@ export default class PublishCommand extends Command {
       return;
     }
 
-    await this.publishWithBrowser({ ipfsHash: result });
+    await this.publishWithBrowser({ ipfsHash: result, webapp: webUiUrl });
     return;
   }
 }
