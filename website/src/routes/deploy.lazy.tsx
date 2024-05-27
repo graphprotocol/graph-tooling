@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
-import { graphql } from 'gql.tada';
 import { useForm } from 'react-hook-form';
 import semver from 'semver';
 import { Address } from 'viem';
@@ -44,28 +43,6 @@ const SUPPORTED_CHAIN = {
     contracts: addresses[421614],
   },
 } as const;
-
-const GetVersionInfo = graphql(`
-  query GetVersionInfo($account: String!, $displayNameStartsWith: String!) {
-    subgraphs(
-      where: {
-        owner: $account
-        metadata_: { displayName_starts_with_nocase: $displayNameStartsWith }
-      }
-    ) {
-      id
-      metadata {
-        displayName
-      }
-      versions {
-        id
-        metadata {
-          label
-        }
-      }
-    }
-  }
-`);
 
 const getChainInfo = (chain: keyof typeof SUPPORTED_CHAIN) => {
   return SUPPORTED_CHAIN[chain];
