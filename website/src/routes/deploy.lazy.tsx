@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
 import { useForm } from 'react-hook-form';
+import semver from 'semver';
 import { Address } from 'viem';
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import yaml from 'yaml';
 import { z } from 'zod';
+import { SubgraphImageDropZone } from '@/components/Dropzone';
 import { Editor } from '@/components/Editor';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,16 +48,33 @@ const getChainInfo = (chain: keyof typeof SUPPORTED_CHAIN) => {
   return SUPPORTED_CHAIN[chain];
 };
 
+const publishToCopy = (chain: ReturnType<typeof getChainInfo>['chainId']) => {
+  switch (chain) {
+    case 42161:
+      return 'The Graph Network';
+    case 421614:
+      return 'The Graph Testnet (not meant for production workload)';
+  }
+};
+
 const subgraphMetadataSchema = z.object({
   description: z.string().optional(),
   displayName: z.string(),
-  image: z.string().transform(value => {
-    return value.startsWith('ipfs://') ? value : `ipfs://${value}`;
-  }),
   subgraphImage: z.string().url(),
   codeRepository: z.string().url().optional(),
   website: z.string().url().optional(),
   categories: z.array(z.string()).optional(),
+  versionLabel: z.string().superRefine((value, ctx) => {
+    if (!semver.valid(value)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Not a valid semver version. Example: 0.0.1',
+      });
+      return false;
+    }
+
+    return true;
+  }),
   chain: z.enum(CHAINS),
 });
 
@@ -65,12 +84,21 @@ const subgraphMetadata = ({
   codeRepository,
   website,
   categories,
-  image,
   subgraphImage,
 }: z.infer<typeof subgraphMetadataSchema>) => {
   return {
     description,
-    image,
+    image: (() => {
+      const match = subgraphImage.match(/[?&]arg=([^&]+)/);
+
+      const hash = match?.[1];
+
+      if (!hash) {
+        throw new Error('Invalid IPFS hash');
+      }
+
+      return `ipfs://${hash}`;
+    })(),
     subgraphImage,
     displayName,
     name: displayName,
@@ -114,9 +142,9 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
 
   const form = useForm<z.infer<typeof subgraphMetadataSchema>>({
     resolver: zodResolver(subgraphMetadataSchema),
+    mode: 'all',
     defaultValues: {
       description: subgraphManifest?.parsed.description,
-      image: 'ipfs://QmeFs3a4d7kQKuGbV2Ujb5B7ZN8Ph61W5gFfF2mKg2SBtB',
       subgraphImage:
         'https://api.thegraph.com/ipfs/api/v0/cat?arg=QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9',
       codeRepository: subgraphManifest?.parsed.repository,
@@ -143,7 +171,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
 
     const versionMeta = await uploadFileToIpfs({
       path: '',
-      content: Buffer.from(JSON.stringify({ label: '0.0.3', description: null })),
+      content: Buffer.from(JSON.stringify({ label: values.versionLabel, description: null })),
     });
 
     const subgraphMeta = await uploadFileToIpfs({
@@ -194,12 +222,27 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
                 <FormItem>
                   <FormLabel>Display Name*</FormLabel>
                   <FormControl>
+                    <Input {...field} placeholder="Name to display on the Graph Explorer" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="versionLabel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Version Label*</FormLabel>
+                  <FormControl>
                     <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="description"
@@ -242,6 +285,20 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
 
             <FormField
               control={form.control}
+              name="subgraphImage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Subgraph Image</FormLabel>
+                  <FormControl>
+                    <SubgraphImageDropZone {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="chain"
               render={({ field }) => (
                 <FormItem>
@@ -249,13 +306,13 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select the chain to publish subgraph to" />
+                        <SelectValue placeholder="Select the network to deploy" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {Object.entries(SUPPORTED_CHAIN).map(([chainName, { chainId }]) => (
                         <SelectItem key={chainId} value={chainName}>
-                          {chainName} (eip-{chainId})
+                          {publishToCopy(chainId)}
                         </SelectItem>
                       ))}
                     </SelectContent>
