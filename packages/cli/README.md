@@ -22,6 +22,7 @@ As of today, the command line interface supports the following commands:
   binary in order to test a subgraph.
 - `graph add` - Adds a new datasource to the yaml file and writes the necessary changes to other
   files - schema.graphql, abi and mapping.
+- `graph publish` - Publishes the subgraph to the Graph Network.
 
 ## How It Works
 

@@ -323,6 +323,9 @@ importers:
       js-yaml:
         specifier: 3.14.1
         version: 3.14.1
+      open:
+        specifier: 8.4.2
+        version: 8.4.2
       prettier:
         specifier: 3.0.3
         version: 3.0.3
@@ -8458,8 +8461,8 @@ packages:
     resolution: {integrity: sha512-MVHddDVweXZF3awtlAS+6pgKLlm/JgxZ90+/NBurBoQctVOOB/zDdVjcyPzQ+0laDGbsWgrRkflI65sQeOgT9Q==}
     engines: {node: '>=8'}
 
-  open@8.4.0:
-    resolution: {integrity: sha512-XgFPPM+B28FtCCgSb9I+s9szOC1vZRSwgWsRUA5ylIxRTgKozqjOCrVOqGsYABPYK5qnfqClxZTFBa8PKt2v6Q==}
+  open@8.4.2:
+    resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
   optionator@0.8.3:
@@ -14240,7 +14243,7 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.3
       is-glob: 4.0.3
-      open: 8.4.0
+      open: 8.4.2
       picocolors: 1.0.0
       tiny-glob: 0.2.9
       tslib: 2.6.2
@@ -22121,7 +22124,7 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  open@8.4.0:
+  open@8.4.2:
     dependencies:
       define-lazy-prop: 2.0.0
       is-docker: 2.2.1
@@ -23214,7 +23217,7 @@ snapshots:
 
   rollup-plugin-visualizer@5.12.0(rollup@4.17.2):
     dependencies:
-      open: 8.4.0
+      open: 8.4.2
       picomatch: 2.3.1
       source-map: 0.7.4
       yargs: 17.6.2
