@@ -39,7 +39,7 @@ export default class PublishCommand extends Command {
   /**
    * Prompt the user to open up the browser to continue publishing the subgraph
    */
-  async publishWithBrowser({ ipfsHash, webapp }: { ipfsHash: string, webapp: string }) {
+  async publishWithBrowser({ ipfsHash, webapp }: { ipfsHash: string; webapp: string }) {
     const answer = await ux.prompt(
       `Press ${chalk.green(
         'y',
@@ -64,11 +64,7 @@ export default class PublishCommand extends Command {
   async run() {
     const {
       args: { 'subgraph-manifest': manifest },
-      flags: {
-        'ipfs-hash': ipfsHash,
-        'webapp-url': webUiUrl,
-        ipfs,
-      },
+      flags: { 'ipfs-hash': ipfsHash, 'webapp-url': webUiUrl, ipfs },
     } = await this.parse(PublishCommand);
 
     if (ipfsHash) {
