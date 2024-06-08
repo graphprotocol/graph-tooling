@@ -1,6 +1,6 @@
 import path from 'path';
 import { URL } from 'url';
-import { print, } from 'gluegun';
+import { print } from 'gluegun';
 import { create } from 'ipfs-http-client';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import { identifyDeployKey } from '../command-helpers/auth';

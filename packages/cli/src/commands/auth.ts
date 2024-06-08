@@ -21,7 +21,7 @@ export default class AuthCommand extends Command {
       args: { 'deploy-key': deployKey },
     } = await this.parse(AuthCommand);
 
-    const { node } = chooseNodeUrl({})
+    const { node } = chooseNodeUrl({});
 
     // eslint-disable-next-line -- prettier has problems with ||=
     deployKey =

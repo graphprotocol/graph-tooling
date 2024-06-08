@@ -327,7 +327,7 @@ export default class InitCommand extends Command {
         return;
       }
 
-      ({ node, } = chooseNodeUrl({
+      ({ node } = chooseNodeUrl({
         node,
       }));
       await initSubgraphFromContract.bind(this)(
@@ -365,9 +365,9 @@ async function processFromExampleInitForm(
   },
 ): Promise<
   | {
-    subgraphName: string;
-    directory: string;
-  }
+      subgraphName: string;
+      directory: string;
+    }
   | undefined
 > {
   try {
@@ -403,7 +403,7 @@ async function processFromExampleInitForm(
 }
 
 async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined> {
-  for (; ;) {
+  for (;;) {
     try {
       return await func();
     } catch (_) {
@@ -453,18 +453,18 @@ async function processInitForm(
   },
 ): Promise<
   | {
-    abi: EthereumABI;
-    protocolInstance: Protocol;
-    subgraphName: string;
-    directory: string;
-    network: string;
-    contract: string;
-    indexEvents: boolean;
-    contractName: string;
-    startBlock: string;
-    fromExample: boolean;
-    spkgPath: string | undefined;
-  }
+      abi: EthereumABI;
+      protocolInstance: Protocol;
+      subgraphName: string;
+      directory: string;
+      network: string;
+      contract: string;
+      indexEvents: boolean;
+      contractName: string;
+      startBlock: string;
+      fromExample: boolean;
+      spkgPath: string | undefined;
+    }
   | undefined
 > {
   let abiFromEtherscan: EthereumABI | undefined = undefined;
@@ -490,7 +490,6 @@ async function processInitForm(
     const isSubstreams = protocol === 'substreams';
     initDebugger.extend('processInitForm')('isSubstreams: %O', isSubstreams);
 
-
     const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
       {
         type: 'input',
@@ -513,9 +512,7 @@ async function processInitForm(
       },
     ]);
 
-    let choices = (await AVAILABLE_NETWORKS())?.[
-      'studio'
-    ];
+    let choices = (await AVAILABLE_NETWORKS())?.['studio'];
 
     if (!choices) {
       this.error(
@@ -1164,7 +1161,7 @@ async function addAnotherContract(
     const ProtocolContract = protocolInstance.getContract()!;
 
     let contract = '';
-    for (; ;) {
+    for (;;) {
       contract = await ux.prompt(`\nContract ${ProtocolContract.identifierName()}`, {
         required: true,
       });

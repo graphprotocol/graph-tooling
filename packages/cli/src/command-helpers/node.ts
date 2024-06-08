@@ -7,15 +7,11 @@ export const validateNodeUrl = (node: string) => new URL(node);
 
 export const normalizeNodeUrl = (node: string) => new URL(node).toString();
 
-export function chooseNodeUrl({
-  node,
-}: {
-  node?: string;
-}) {
+export function chooseNodeUrl({ node }: { node?: string }) {
   if (node) {
     try {
       validateNodeUrl(node);
-      return { node }
+      return { node };
     } catch (e) {
       print.error(`Graph node "${node}" is invalid: ${e.message}`);
       process.exit(1);
