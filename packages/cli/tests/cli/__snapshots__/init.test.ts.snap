@@ -3,14 +3,6 @@
 exports[`Init > Ethereum > From contract 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Fetching ABI from Etherscan
 ✔ Fetching ABI from Etherscan
 - Create subgraph scaffold
@@ -49,14 +41,6 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 exports[`Init > Ethereum > From contract with abi 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Create subgraph scaffold
   Generate subgraph
 - Create subgraph scaffold
@@ -93,14 +77,6 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 exports[`Init > Ethereum > From contract with abi and structs 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Create subgraph scaffold
   Generate subgraph
 - Create subgraph scaffold
@@ -137,14 +113,6 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 exports[`Init > Ethereum > From contract with index events and abi with ID in events 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Create subgraph scaffold
   Generate subgraph
 - Create subgraph scaffold
@@ -181,14 +149,6 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 exports[`Init > Ethereum > From contract with list items in abi 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Create subgraph scaffold
   Generate subgraph
 - Create subgraph scaffold
@@ -225,14 +185,6 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 exports[`Init > Ethereum > From contract with overloaded elements 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Create subgraph scaffold
   Generate subgraph
 - Create subgraph scaffold
@@ -269,14 +221,6 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 exports[`Init > Ethereum > From example 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
 - Cloning example subgraph
 ✔ Cloning example subgraph
 - Initialize networks config
@@ -309,45 +253,11 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 `;
 
 exports[`Init > NEAR > From contract 1`] = `
-" ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will stop initializing a Git repository.
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
- ›   Warning: In next major version, this flag will be removed. By default we 
- ›   will deploy to the Graph Studio. Learn more about Sunrise of Decentralized
- ›    Data 
- ›   https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/
-- Create subgraph scaffold
-  Generate subgraph
-- Create subgraph scaffold
-  Write subgraph to directory
-- Create subgraph scaffold
-✔ Create subgraph scaffold
-- Initialize networks config
-✔ Initialize networks config
-- Install dependencies with yarn
-✔ Install dependencies with yarn
-- Generate ABI and schema types with yarn codegen
-✔ Generate ABI and schema types with yarn codegen
+" ›   Error: Nonexistent flag: --product
+ ›   See more help with --help
 "
 `;
 
-exports[`Init > NEAR > From contract 2`] = `0`;
+exports[`Init > NEAR > From contract 2`] = `2`;
 
-exports[`Init > NEAR > From contract 3`] = `
-"
-Subgraph user/near-from-contract created in from-contract
-
-Next steps:
-
-  1. Run \`graph auth\` to authenticate with your deploy key.
-
-  2. Type \`cd from-contract\` to enter the subgraph.
-
-  3. Run \`yarn deploy\` to deploy the subgraph.
-
-Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
-"
-`;
+exports[`Init > NEAR > From contract 3`] = `""`;
