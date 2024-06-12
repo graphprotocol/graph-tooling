@@ -11,6 +11,7 @@ interface CreateCompilerOptions {
   outputDir: string;
   outputFormat: string;
   skipMigrations: boolean;
+  // TODO: Remove this is unused
   blockIpfsMethods?: RegExpMatchArray;
   protocol: Protocol;
 }
