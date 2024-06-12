@@ -201,6 +201,11 @@ export default class InitCommand extends Command {
     } = flags;
 
     initDebugger('Flags: %O', flags);
+
+    if (product === 'hosted-service') {
+      this.error('✖ The hosted service is deprecated', { exit: 1 });
+    }
+
     let { node, allowSimpleName } = chooseNodeUrl({
       product,
       // if we are loading example, we want to ensure we are using studio
@@ -594,6 +599,10 @@ async function processInitForm(
         },
       },
     ]);
+
+    if (product == 'hosted-service') {
+      this.error('✖ The hosted service is deprecated', { exit: 1 });
+    }
 
     const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
       {

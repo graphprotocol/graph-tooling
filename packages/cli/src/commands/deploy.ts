@@ -281,6 +281,10 @@ export default class DeployCommand extends Command {
           ])
           .then(({ product }) => product as string));
 
+    if (product === 'hosted-service') {
+      this.error('✖ The hosted service is deprecated', { exit: 1 });
+    }
+
     const { node } = chooseNodeUrl({
       product,
       studio,

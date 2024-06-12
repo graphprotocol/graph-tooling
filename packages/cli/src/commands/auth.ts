@@ -57,6 +57,9 @@ export default class AuthCommand extends Command {
         required: true,
       }));
 
+    // Poor var naming will cleanup later
+    ({ node } = chooseNodeUrl({ product: node, studio: false }));
+
     // eslint-disable-next-line -- prettier has problems with ||=
     deployKey =
       deployKey ||
@@ -66,6 +69,10 @@ export default class AuthCommand extends Command {
       }));
     if (deployKey.length > 200) {
       this.error('✖ Deploy key must not exceed 200 characters', { exit: 1 });
+    }
+
+    if (product === 'hosted-service' || node?.match(/api.thegraph.com/)) {
+      this.error('✖ The hosted service is deprecated', { exit: 1 });
     }
 
     try {
