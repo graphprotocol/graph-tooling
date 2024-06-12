@@ -1,5 +1,20 @@
 # @graphprotocol/graph-cli
 
+## 0.74.0
+
+### Minor Changes
+
+- [#1681](https://github.com/graphprotocol/graph-tooling/pull/1681)
+  [`0a16b41`](https://github.com/graphprotocol/graph-tooling/commit/0a16b41979bc0644a1599b9434d9f5bf30687f64)
+  Thanks [@saihaj](https://github.com/saihaj)! - Part of the Hosted Service migration throw an error
+  when users are trying to use `hosted-service` product in `graph [auth|deploy|init]` commands.
+
+### Patch Changes
+
+- [#1681](https://github.com/graphprotocol/graph-tooling/pull/1681)
+  [`0a16b41`](https://github.com/graphprotocol/graph-tooling/commit/0a16b41979bc0644a1599b9434d9f5bf30687f64)
+  Thanks [@saihaj](https://github.com/saihaj)! - remove ipfs check for studio deploys
+
 ## 0.73.0
 
 ### Minor Changes
