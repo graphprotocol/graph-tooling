@@ -459,7 +459,7 @@ export default class DeployCommand extends Command {
       outputDir,
       outputFormat: 'wasm',
       skipMigrations,
-      blockIpfsMethods: isStudio || undefined, // Network does not support publishing subgraphs with IPFS methods
+      blockIpfsMethods: undefined,
       protocol,
     });
 
