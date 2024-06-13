@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.74.1
+
+### Patch Changes
+
+- [#1683](https://github.com/graphprotocol/graph-tooling/pull/1683)
+  [`f5bfa07`](https://github.com/graphprotocol/graph-tooling/commit/f5bfa07e04c0c70ed3285db4e90bf99cfdb265a3)
+  Thanks [@azf20](https://github.com/azf20)! - fix graph auth
+
 ## 0.74.0
 
 ### Minor Changes
