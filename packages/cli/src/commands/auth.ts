@@ -57,9 +57,6 @@ export default class AuthCommand extends Command {
         required: true,
       }));
 
-    // Poor var naming will cleanup later
-    ({ node } = chooseNodeUrl({ product: node, studio: false }));
-
     // eslint-disable-next-line -- prettier has problems with ||=
     deployKey =
       deployKey ||
