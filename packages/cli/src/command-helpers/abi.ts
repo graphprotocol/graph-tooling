@@ -296,6 +296,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://astar-zkevm.explorer.startale.com/api`;
     case 'polygon-zkevm-cardona':
       return `https://api-cardona-zkevm.polygonscan.com/api`;
+    case 'sei-mainnet':
+      return `https://setrace.com/pacific-1/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
