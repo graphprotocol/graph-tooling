@@ -408,6 +408,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return `https://1rpc.io/astr`;
     case 'polygon-zkevm-cardona':
       return `https://rpc.cardona.zkevm-rpc.com`;
+    case 'sei-mainnet':
+      return `https://evm-rpc.sei-apis.com`;
     default:
       throw new Error(`Unknown network: ${network}`);
   }
