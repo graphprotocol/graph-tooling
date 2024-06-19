@@ -296,6 +296,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://astar-zkevm.explorer.startale.com/api`;
     case 'polygon-zkevm-cardona':
       return `https://api-cardona-zkevm.polygonscan.com/api`;
+    case 'sei-mainnet':
+      return `https://seitrace.com/pacific-1/api`;
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -406,6 +408,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return `https://1rpc.io/astr`;
     case 'polygon-zkevm-cardona':
       return `https://rpc.cardona.zkevm-rpc.com`;
+    case 'sei-mainnet':
+      return `https://evm-rpc.sei-apis.com`;
     default:
       throw new Error(`Unknown network: ${network}`);
   }
