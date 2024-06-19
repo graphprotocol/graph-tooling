@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.75.0
+
+### Minor Changes
+
+- [#1686](https://github.com/graphprotocol/graph-tooling/pull/1686)
+  [`fea8f23`](https://github.com/graphprotocol/graph-tooling/commit/fea8f23b745d2595708b7f5b86384ad7eaa16f08)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - getEtherscanLikeAPIUrl: added for sei
+  mainnet (to be able to obtain contract ABI)
+
 ## 0.74.1
 
 ### Patch Changes
