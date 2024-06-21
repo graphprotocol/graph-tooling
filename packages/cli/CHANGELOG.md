@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.76.0
+
+### Minor Changes
+
+- [#1688](https://github.com/graphprotocol/graph-tooling/pull/1688)
+  [`3a96771`](https://github.com/graphprotocol/graph-tooling/commit/3a9677113a4282cd4f91adadfa4b4b1d00f6e035)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added rootstock blockexplorer api and
+  public rpc url
+
 ## 0.75.0
 
 ### Minor Changes
