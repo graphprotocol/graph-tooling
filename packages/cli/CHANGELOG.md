@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.77.0
+
+### Minor Changes
+
+- [#1690](https://github.com/graphprotocol/graph-tooling/pull/1690)
+  [`87e74ce`](https://github.com/graphprotocol/graph-tooling/commit/87e74ce64a0c98e9be13d5f6fd31c7020ef23d5e)
+  Thanks [@saihaj](https://github.com/saihaj)! - allow publishing new subgraph version
+
 ## 0.76.0
 
 ### Minor Changes
