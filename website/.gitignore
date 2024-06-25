@@ -24,4 +24,3 @@ dist-ssr
 *.sw?
 
 /src/routeTree.gen.ts
-/src/graphql-env.d.ts
