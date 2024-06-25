@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
+import { graphql } from 'gql.tada';
 import { useForm } from 'react-hook-form';
 import semver from 'semver';
 import { Address } from 'viem';
-import { useAccount, useReadContract, useSwitchChain, useWriteContract } from 'wagmi';
+import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import yaml from 'yaml';
 import { z } from 'zod';
 import { SubgraphImageDropZone } from '@/components/Dropzone';
@@ -27,6 +28,11 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  NETWORK_SUBGRAPH_MAINNET,
+  NETWORK_SUBGRAPH_SEPOLIA,
+  networkSubgraphExecute,
+} from '@/lib/graphql';
 import { readIpfsFile, uploadFileToIpfs } from '@/lib/ipfs';
 import { ipfsHexHash } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,10 +43,15 @@ import addresses from '../addresses.json';
 
 const CHAINS = ['arbitrum-one', 'arbitrum-sepolia'] as const;
 const SUPPORTED_CHAIN = {
-  'arbitrum-one': { chainId: 42161, contracts: addresses[42161] },
+  'arbitrum-one': {
+    chainId: 42161,
+    contracts: addresses[42161],
+    subgraph: NETWORK_SUBGRAPH_MAINNET,
+  },
   'arbitrum-sepolia': {
     chainId: 421614,
     contracts: addresses[421614],
+    subgraph: NETWORK_SUBGRAPH_SEPOLIA,
   },
 } as const;
 
@@ -118,6 +129,42 @@ const Manifest = z.object({
   repository: z.string().describe('An optional link to where the subgraph lives.').optional(),
 });
 
+const GetSubgraphInfo = graphql(/* GraphQL */ `
+  query GetSubgraphInfo($subgraphId: ID!) {
+    subgraph(id: $subgraphId) {
+      id
+      owner {
+        id
+      }
+      nftID
+      metadata {
+        displayName
+        image
+        description
+        website
+        codeRepository
+      }
+      versions {
+        id
+        metadata {
+          label
+        }
+      }
+    }
+  }
+`);
+
+function getEtherscanUrl({ chainId, hash }: { chainId: number; hash: string }) {
+  switch (chainId) {
+    case SUPPORTED_CHAIN['arbitrum-one'].chainId:
+      return `https://arbiscan.io/tx/${hash}`;
+    case SUPPORTED_CHAIN['arbitrum-sepolia'].chainId:
+      return `https://sepolia.arbiscan.io/tx/${hash}`;
+    default:
+      throw new Error('Invalid chain');
+  }
+}
+
 function DeploySubgraph({
   deploymentId,
   subgraphId,
@@ -125,14 +172,13 @@ function DeploySubgraph({
   deploymentId: string;
   subgraphId: string | undefined;
 }) {
-  const { writeContractAsync, isPending } = useWriteContract({});
+  const { writeContractAsync, isPending, error: contractError } = useWriteContract({});
   const { setOpen } = useModal();
   const { switchChainAsync, isPending: chainSwitchPending } = useSwitchChain();
   const { toast } = useToast();
   const [deployed, setDeployed] = useState(false);
 
   const { address, chainId } = useAccount();
-
   const { data: subgraphManifest } = useQuery({
     queryKey: ['subgraph-manifest', deploymentId],
     queryFn: async () => {
@@ -159,6 +205,74 @@ function DeploySubgraph({
     },
   });
 
+  const chain = form.watch('chain');
+
+  const { data: subgraphInfo } = useQuery({
+    queryKey: ['subgraph-info', subgraphId, chain, chainId],
+    queryFn: async () => {
+      if (!subgraphId) return;
+
+      const subgraphEndpoint = chain ? getChainInfo(chain)?.subgraph : null;
+
+      if (!subgraphEndpoint) return;
+
+      const data = await networkSubgraphExecute(
+        GetSubgraphInfo,
+        { subgraphId },
+        {
+          endpoint: subgraphEndpoint,
+        },
+      );
+
+      const metadata = data.subgraph?.metadata;
+      if (metadata) {
+        if (metadata.image) {
+          form.setValue('subgraphImage', metadata.image);
+        }
+
+        if (metadata.description) {
+          form.setValue('description', metadata.description);
+        }
+
+        if (metadata.codeRepository) {
+          form.setValue('codeRepository', metadata.codeRepository);
+        }
+
+        if (metadata.website) {
+          form.setValue('website', metadata.website);
+        }
+
+        if (metadata.displayName) {
+          form.setValue('displayName', metadata.displayName);
+        }
+      }
+
+      return data;
+    },
+    enabled: !!subgraphId && !!chain,
+  });
+
+  function ensureNewVersion() {
+    // If there is no subgraph ID then it means we are just deploying a new subgraph
+    if (!subgraphId) return true;
+
+    if (!subgraphInfo) return false;
+
+    const version = form.watch('versionLabel');
+
+    return !subgraphInfo.subgraph?.versions.some(({ metadata }) => metadata?.label === version);
+  }
+
+  function isOwner() {
+    // If there is no subgraph ID then it means we are just deploying a new subgraph
+    if (!subgraphId) return true;
+
+    // we expect to have the subgraph info
+    if (!subgraphInfo) return false;
+
+    return address?.toString().toLowerCase() === subgraphInfo.subgraph?.owner.id?.toLowerCase();
+  }
+
   async function onSubmit(values: z.infer<typeof subgraphMetadataSchema>) {
     const selectedChain = getChainInfo(values.chain);
 
@@ -180,6 +294,52 @@ function DeploySubgraph({
       content: Buffer.from(JSON.stringify({ label: values.versionLabel, description: null })),
     });
 
+    if (subgraphId) {
+      if (!subgraphInfo?.subgraph?.nftID) {
+        toast({
+          description:
+            "Missing Subgraph ID from subgraph. Try again, if it still doesn't work, please contact support.",
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      try {
+        const hash = await writeContractAsync({
+          address: selectedChain.contracts.L2GNS.address as Address,
+          abi: L2GNSABI,
+          functionName: 'publishNewVersion',
+          args: [BigInt(subgraphInfo.subgraph.nftID), DEPLOYMENT_ID, ipfsHexHash(versionMeta)],
+        });
+
+        const etherscanUrl = getEtherscanUrl({ chainId: selectedChain.chainId, hash });
+
+        window.open(etherscanUrl, '_blank');
+        setDeployed(true);
+        toast({
+          description: 'You are all set! You can go back to the CLI and close this window',
+        });
+      } catch (err) {
+        const e = contractError;
+        if (e?.name === 'ContractFunctionExecutionError') {
+          if (e.cause.name === 'ContractFunctionRevertedError') {
+            toast({
+              description: e.cause.reason,
+              variant: 'destructive',
+            });
+            return;
+          }
+        }
+
+        toast({
+          description:
+            'An error occurred while trying to deploy the new version. Please try again later or contact support',
+          variant: 'destructive',
+        });
+      }
+      return;
+    }
+
     const subgraphMeta = await uploadFileToIpfs({
       path: '',
       content: Buffer.from(
@@ -198,25 +358,23 @@ function DeploySubgraph({
       args: [DEPLOYMENT_ID, ipfsHexHash(versionMeta), ipfsHexHash(subgraphMeta)],
     });
 
-    switch (selectedChain.chainId) {
-      case SUPPORTED_CHAIN['arbitrum-one'].chainId:
-        window.open(`https://arbiscan.io/tx/${hash}`, '_blank');
-        break;
-      case SUPPORTED_CHAIN['arbitrum-sepolia'].chainId:
-        window.open(`https://sepolia.arbiscan.io/tx/${hash}`, '_blank');
-        break;
-      default:
-        break;
-    }
+    const etherscanUrl = getEtherscanUrl({ chainId: selectedChain.chainId, hash });
 
+    window.open(etherscanUrl, '_blank');
     setDeployed(true);
     toast({
       description: 'You are all set! You can go back to the CLI and close this window',
     });
+    return;
   }
 
   const isDeployButtonDisabled =
-    deployed || chainSwitchPending || isPending || !form.formState.isValid;
+    deployed ||
+    chainSwitchPending ||
+    isPending ||
+    !form.formState.isValid ||
+    !ensureNewVersion() ||
+    !isOwner();
 
   const deployButtonCopy = (() => {
     if (deployed) return 'Deployed';
