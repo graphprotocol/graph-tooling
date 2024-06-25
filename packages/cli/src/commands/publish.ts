@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import { print } from 'gluegun';
 import open from 'open';
 import { Args, Command, Flags, ux } from '@oclif/core';
+// eslint-disable-next-line no-restricted-imports
+import { URL, URLSearchParams } from '@whatwg-node/fetch';
 import { createCompiler } from '../command-helpers/compiler';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
@@ -19,6 +21,9 @@ export default class PublishCommand extends Command {
   static flags = {
     help: Flags.help({
       char: 'h',
+    }),
+    'subgraph-id': Flags.string({
+      summary: 'Subgraph ID to publish to.',
     }),
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
@@ -39,7 +44,15 @@ export default class PublishCommand extends Command {
   /**
    * Prompt the user to open up the browser to continue publishing the subgraph
    */
-  async publishWithBrowser({ ipfsHash, webapp }: { ipfsHash: string; webapp: string }) {
+  async publishWithBrowser({
+    ipfsHash,
+    webapp,
+    subgraphId,
+  }: {
+    ipfsHash: string;
+    webapp: string;
+    subgraphId: string | undefined;
+  }) {
     const answer = await ux.prompt(
       `Press ${chalk.green(
         'y',
@@ -52,23 +65,31 @@ export default class PublishCommand extends Command {
       this.exit(0);
     }
 
-    const URL = `${webapp}?id=${ipfsHash}`;
+    const url = new URL(webapp);
+
+    const searchParams = new URLSearchParams(url.search);
+    searchParams.set('id', ipfsHash);
+    if (subgraphId) {
+      searchParams.set('subgraphId', subgraphId);
+    }
+
+    const openUrl = url.toString();
 
     print.success(
       `Finalize the publish of the subgraph from the Graph CLI publish page. Opening up the browser to continue publishing at ${URL}`,
     );
-    await open(URL);
+    await open(openUrl);
     return;
   }
 
   async run() {
     const {
       args: { 'subgraph-manifest': manifest },
-      flags: { 'ipfs-hash': ipfsHash, 'webapp-url': webUiUrl, ipfs },
+      flags: { 'ipfs-hash': ipfsHash, 'webapp-url': webUiUrl, ipfs, 'subgraph-id': subgraphId },
     } = await this.parse(PublishCommand);
 
     if (ipfsHash) {
-      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl });
+      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl, subgraphId });
       return;
     }
 
@@ -100,7 +121,7 @@ export default class PublishCommand extends Command {
       return;
     }
 
-    await this.publishWithBrowser({ ipfsHash: result, webapp: webUiUrl });
+    await this.publishWithBrowser({ ipfsHash: result, webapp: webUiUrl, subgraphId });
     return;
   }
 }

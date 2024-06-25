@@ -359,5 +359,5 @@ function Page() {
 
 export const Route = createFileRoute('/publish')({
   component: Page,
-  validateSearch: z.object({ id: z.string() }),
+  validateSearch: z.object({ id: z.string(), subgraph: z.string() }),
 });
