@@ -24,6 +24,14 @@ export default class PublishCommand extends Command {
     }),
     'subgraph-id': Flags.string({
       summary: 'Subgraph ID to publish to.',
+      required: false,
+    }),
+    'protocol-network': Flags.string({
+      summary: 'The network to use for the subgraph deployment.',
+      options: ['arbitrum-one', 'arbitrum-sepolia'],
+      default: 'arbitrum-one',
+      required: false,
+      dependsOn: ['subgraph-id'],
     }),
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
@@ -48,10 +56,12 @@ export default class PublishCommand extends Command {
     ipfsHash,
     webapp,
     subgraphId,
+    protocolNetwork,
   }: {
     ipfsHash: string;
     webapp: string;
     subgraphId: string | undefined;
+    protocolNetwork: string | undefined;
   }) {
     const answer = await ux.prompt(
       `Press ${chalk.green(
@@ -72,11 +82,16 @@ export default class PublishCommand extends Command {
     if (subgraphId) {
       searchParams.set('subgraphId', subgraphId);
     }
+    if (protocolNetwork) {
+      searchParams.set('network', protocolNetwork);
+    }
+
+    url.search = searchParams.toString();
 
     const openUrl = url.toString();
 
     print.success(
-      `Finalize the publish of the subgraph from the Graph CLI publish page. Opening up the browser to continue publishing at ${URL}`,
+      `Finalize the publish of the subgraph from the Graph CLI publish page. Opening up the browser to continue publishing at ${openUrl}`,
     );
     await open(openUrl);
     return;
@@ -85,11 +100,17 @@ export default class PublishCommand extends Command {
   async run() {
     const {
       args: { 'subgraph-manifest': manifest },
-      flags: { 'ipfs-hash': ipfsHash, 'webapp-url': webUiUrl, ipfs, 'subgraph-id': subgraphId },
+      flags: {
+        'ipfs-hash': ipfsHash,
+        'webapp-url': webUiUrl,
+        ipfs,
+        'subgraph-id': subgraphId,
+        'protocol-network': protocolNetwork,
+      },
     } = await this.parse(PublishCommand);
 
     if (ipfsHash) {
-      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl, subgraphId });
+      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl, subgraphId, protocolNetwork });
       return;
     }
 
@@ -121,7 +142,12 @@ export default class PublishCommand extends Command {
       return;
     }
 
-    await this.publishWithBrowser({ ipfsHash: result, webapp: webUiUrl, subgraphId });
+    await this.publishWithBrowser({
+      ipfsHash: result,
+      webapp: webUiUrl,
+      subgraphId,
+      protocolNetwork,
+    });
     return;
   }
 }
