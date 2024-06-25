@@ -3,7 +3,7 @@ import { ConnectKitButton, useModal } from 'connectkit';
 import { useForm } from 'react-hook-form';
 import semver from 'semver';
 import { Address } from 'viem';
-import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
+import { useAccount, useReadContract, useSwitchChain, useWriteContract } from 'wagmi';
 import yaml from 'yaml';
 import { z } from 'zod';
 import { SubgraphImageDropZone } from '@/components/Dropzone';
@@ -118,7 +118,13 @@ const Manifest = z.object({
   repository: z.string().describe('An optional link to where the subgraph lives.').optional(),
 });
 
-function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
+function DeploySubgraph({
+  deploymentId,
+  subgraphId,
+}: {
+  deploymentId: string;
+  subgraphId: string | undefined;
+}) {
   const { writeContractAsync, isPending } = useWriteContract({});
   const { setOpen } = useModal();
   const { switchChainAsync, isPending: chainSwitchPending } = useSwitchChain();
@@ -192,7 +198,17 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
       args: [DEPLOYMENT_ID, ipfsHexHash(versionMeta), ipfsHexHash(subgraphMeta)],
     });
 
-    window.open(`https://sepolia.arbiscan.io/tx/${hash}`, '_blank');
+    switch (selectedChain.chainId) {
+      case SUPPORTED_CHAIN['arbitrum-one'].chainId:
+        window.open(`https://arbiscan.io/tx/${hash}`, '_blank');
+        break;
+      case SUPPORTED_CHAIN['arbitrum-sepolia'].chainId:
+        window.open(`https://sepolia.arbiscan.io/tx/${hash}`, '_blank');
+        break;
+      default:
+        break;
+    }
+
     setDeployed(true);
     toast({
       description: 'You are all set! You can go back to the CLI and close this window',
@@ -338,7 +354,7 @@ function DeploySubgraph({ deploymentId }: { deploymentId: string }) {
 }
 
 function Page() {
-  const { id } = Route.useSearch();
+  const { id, subgraphId } = Route.useSearch();
 
   return (
     <div className="min-h-screen">
@@ -347,7 +363,7 @@ function Page() {
         <ConnectKitButton />
       </nav>
       {id ? (
-        <DeploySubgraph deploymentId={id} />
+        <DeploySubgraph deploymentId={id} subgraphId={subgraphId} />
       ) : (
         <div className="flex justify-center items-center min-h-screen -mt-16">
           Unable to find the Deployment ID. Go back to CLI
@@ -359,5 +375,5 @@ function Page() {
 
 export const Route = createFileRoute('/publish')({
   component: Page,
-  validateSearch: z.object({ id: z.string(), subgraph: z.string() }),
+  validateSearch: z.object({ id: z.string(), subgraphId: z.string() }),
 });
