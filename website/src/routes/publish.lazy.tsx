@@ -168,9 +168,11 @@ function getEtherscanUrl({ chainId, hash }: { chainId: number; hash: string }) {
 function DeploySubgraph({
   deploymentId,
   subgraphId,
+  network,
 }: {
   deploymentId: string;
   subgraphId: string | undefined;
+  network: (typeof CHAINS)[number] | undefined;
 }) {
   const { writeContractAsync, isPending, error: contractError } = useWriteContract({});
   const { setOpen } = useModal();
@@ -202,6 +204,7 @@ function DeploySubgraph({
       codeRepository: subgraphManifest?.parsed.repository,
       website: undefined,
       categories: undefined,
+      chain: network,
     },
   });
 
@@ -512,7 +515,14 @@ function DeploySubgraph({
 }
 
 function Page() {
-  const { id, subgraphId } = Route.useSearch();
+  const { id, subgraphId, network } = Route.useSearch();
+
+  const protocolNetwork = network
+    ? // @ts-expect-error we want to compare if it is a string or not
+      CHAINS.includes(network.toLowerCase())
+      ? (network.toLowerCase() as (typeof CHAINS)[number])
+      : undefined
+    : undefined;
 
   return (
     <div className="min-h-screen">
@@ -521,7 +531,7 @@ function Page() {
         <ConnectKitButton />
       </nav>
       {id ? (
-        <DeploySubgraph deploymentId={id} subgraphId={subgraphId} />
+        <DeploySubgraph deploymentId={id} subgraphId={subgraphId} network={protocolNetwork} />
       ) : (
         <div className="flex justify-center items-center min-h-screen -mt-16">
           Unable to find the Deployment ID. Go back to CLI
@@ -533,5 +543,10 @@ function Page() {
 
 export const Route = createFileRoute('/publish')({
   component: Page,
-  validateSearch: z.object({ id: z.string(), subgraphId: z.string() }),
+  validateSearch: z.object({
+    id: z.string(),
+    subgraphId: z.string().optional(),
+    // I tried doing transforms here but it doesn't work
+    network: z.string().optional(),
+  }),
 });
