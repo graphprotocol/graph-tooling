@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { CHAINS } from '@/lib/constants';
 import {
   NETWORK_SUBGRAPH_MAINNET,
   NETWORK_SUBGRAPH_SEPOLIA,
@@ -37,11 +38,10 @@ import { readIpfsFile, uploadFileToIpfs } from '@/lib/ipfs';
 import { ipfsHexHash } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute } from '@tanstack/react-router';
 import { L2GNSABI } from '../abis/L2GNS';
 import addresses from '../addresses.json';
 
-const CHAINS = ['arbitrum-one', 'arbitrum-sepolia'] as const;
 const SUPPORTED_CHAIN = {
   'arbitrum-one': {
     chainId: 42161,
@@ -541,12 +541,6 @@ function Page() {
   );
 }
 
-export const Route = createFileRoute('/publish')({
+export const Route = createLazyFileRoute('/publish')({
   component: Page,
-  validateSearch: z.object({
-    id: z.string(),
-    subgraphId: z.string().optional(),
-    // I tried doing transforms here but it doesn't work
-    network: z.string().optional(),
-  }),
 });
