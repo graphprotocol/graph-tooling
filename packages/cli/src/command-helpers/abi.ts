@@ -300,6 +300,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://seitrace.com/pacific-1/api`;
     case 'rootstock':
       return 'https://rootstock.blockscout.com/api';
+    case 'iotex':
+      return 'https://index.iotexscan.io/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -414,6 +416,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return `https://evm-rpc.sei-apis.com`;
     case 'rootstock':
       return 'https://public-node.rsk.co';
+    case 'iotex':
+      return 'https://iotexrpc.com';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
