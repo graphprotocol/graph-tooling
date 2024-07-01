@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.78.0
+
+### Minor Changes
+
+- [#1692](https://github.com/graphprotocol/graph-tooling/pull/1692)
+  [`6f84e7a`](https://github.com/graphprotocol/graph-tooling/commit/6f84e7ade5c51232abefcb9a6fb7406e375ad125)
+  Thanks [@yash251](https://github.com/yash251)! - add iotex urls
+
 ## 0.77.0
 
 ### Minor Changes
