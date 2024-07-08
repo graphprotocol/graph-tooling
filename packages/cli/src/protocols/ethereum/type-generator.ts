@@ -4,7 +4,7 @@ import immutable from 'immutable';
 import prettier from 'prettier';
 import { GENERATED_FILE_NOTE } from '../../codegen/typescript';
 import { displayPath } from '../../command-helpers/fs';
-import withSpinner, { Spinner, step } from '../../command-helpers/spinner';
+import { Spinner, step, withSpinner } from '../../command-helpers/spinner';
 import { DataSource } from '../utils';
 import ABI from './abi';
 

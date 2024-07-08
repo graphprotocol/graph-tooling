@@ -17,7 +17,7 @@ import {
   writeSchema,
   writeTestsFiles,
 } from '../command-helpers/scaffold';
-import withSpinner from '../command-helpers/spinner';
+import { withSpinner } from '../command-helpers/spinner';
 import Protocol from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import Subgraph from '../subgraph';

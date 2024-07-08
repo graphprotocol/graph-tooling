@@ -7,7 +7,7 @@ import { filesystem, patching } from 'gluegun';
 import stripAnsi from 'strip-ansi';
 import tmp from 'tmp-promise';
 import { Args, Command, Flags } from '@oclif/core';
-import withSpinner, { step } from '../command-helpers/spinner';
+import { step, withSpinner } from '../command-helpers/spinner';
 
 // Clean up temporary files even when an uncaught exception occurs
 tmp.setGracefulCleanup();

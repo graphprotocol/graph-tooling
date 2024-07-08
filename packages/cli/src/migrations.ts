@@ -1,4 +1,4 @@
-import withSpinner, { step } from './command-helpers/spinner';
+import { step, withSpinner } from './command-helpers/spinner';
 
 const MIGRATIONS = [
   import('./migrations/mapping_api_version_0_0_1'),
