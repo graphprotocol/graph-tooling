@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import immutable from 'immutable';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import * as ts from '../../../codegen/typescript';
 import ABI from '../abi';
 import AbiCodeGenerator from './abi';
@@ -9,7 +10,7 @@ let tempdir: string;
 let abi: ABI;
 let generatedTypes: any[];
 
-describe('ABI code generation', () => {
+describe.concurrent('ABI code generation', () => {
   beforeAll(async () => {
     tempdir = await fs.mkdtemp('abi-codegen');
 

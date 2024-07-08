@@ -1,5 +1,46 @@
 # @graphprotocol/graph-ts
 
+## 0.35.1
+
+### Patch Changes
+
+- [#1637](https://github.com/graphprotocol/graph-tooling/pull/1637)
+  [`f0c583f`](https://github.com/graphprotocol/graph-tooling/commit/f0c583f00c90e917d87b707b5b7a892ad0da916f)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Update return type for ethereum.hasCode
+
+## 0.35.0
+
+### Minor Changes
+
+- [#1609](https://github.com/graphprotocol/graph-tooling/pull/1609)
+  [`e299f6c`](https://github.com/graphprotocol/graph-tooling/commit/e299f6ce5cf1ad74cab993f6df3feb7ca9993254)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for eth.hasCode method
+
+## 0.34.0
+
+### Minor Changes
+
+- [#1522](https://github.com/graphprotocol/graph-tooling/pull/1522)
+  [`d132f9c`](https://github.com/graphprotocol/graph-tooling/commit/d132f9c9f6ea5283e40a8d913f3abefe5a8ad5f8)
+  Thanks [@dotansimha](https://github.com/dotansimha)! - Added support for handling GraphQL
+  `Timestamp` scalar as `i64` (AssemblyScript)
+
+## 0.33.0
+
+### Minor Changes
+
+- [#1584](https://github.com/graphprotocol/graph-tooling/pull/1584)
+  [`0075f06`](https://github.com/graphprotocol/graph-tooling/commit/0075f06ddaa6d37606e42e1c12d11d19674d00ad)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Added getBalance call to ethereum API
+
+## 0.32.0
+
+### Minor Changes
+
+- [#1523](https://github.com/graphprotocol/graph-tooling/pull/1523)
+  [`167696e`](https://github.com/graphprotocol/graph-tooling/commit/167696eb611db0da27a6cf92a7390e72c74672ca)
+  Thanks [@xJonathanLEI](https://github.com/xJonathanLEI)! - add starknet data types
+
 ## 0.31.0
 
 ### Minor Changes

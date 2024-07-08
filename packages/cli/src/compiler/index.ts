@@ -548,7 +548,7 @@ export default class Compiler {
                 );
             }
 
-            if (protocol.name == 'substreams') {
+            if (protocol.name == 'substreams' || protocol.name == 'substreams/triggers') {
               updatedDataSource = updatedDataSource
                 // Write data source ABIs to the output directory
                 .updateIn(['source', 'package'], (substreamsPackage: any) =>
@@ -568,6 +568,17 @@ export default class Compiler {
                     );
                   }),
                 );
+
+              if (updatedDataSource.getIn(['mapping', 'file'])) {
+                updatedDataSource = updatedDataSource.updateIn(
+                  ['mapping', 'file'],
+                  (mappingFile: string) =>
+                    path.relative(
+                      this.options.outputDir,
+                      path.resolve(this.sourceDir, mappingFile),
+                    ),
+                );
+              }
 
               return updatedDataSource;
             }
@@ -662,7 +673,7 @@ export default class Compiler {
         }
 
         // Upload all mappings
-        if (this.protocol.name === 'substreams') {
+        if (this.protocol.name === 'substreams' || this.protocol.name === 'substreams/triggers') {
           for (const [i, dataSource] of subgraph.get('dataSources').entries()) {
             updates.push({
               keyPath: ['dataSources', i, 'source', 'package', 'file'],
@@ -672,6 +683,17 @@ export default class Compiler {
                 spinner,
               ),
             });
+
+            if (dataSource.getIn(['mapping', 'file'])) {
+              updates.push({
+                keyPath: ['dataSources', i, 'mapping', 'file'],
+                value: await this._uploadFileToIPFS(
+                  dataSource.getIn(['mapping', 'file']),
+                  uploadedFiles,
+                  spinner,
+                ),
+              });
+            }
           }
         } else {
           for (const [i, dataSource] of subgraph.get('dataSources').entries()) {

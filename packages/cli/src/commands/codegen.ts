@@ -1,69 +1,65 @@
-import path from "path";
-import { Args, Command, Flags } from "@oclif/core";
-import * as DataSourcesExtractor from "../command-helpers/data-sources";
-import {
-  assertGraphTsVersion,
-  assertManifestApiVersion,
-} from "../command-helpers/version";
-import debug from "../debug";
-import { loadManifest } from "../migrations/util/load-manifest";
-import Protocol from "../protocols/new-protocol";
-import TypeGenerator from "../type-generator";
+import path from 'path';
+import { Args, Command, Flags } from '@oclif/core';
+import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
+import debug from '../debug';
+import { loadManifest } from '../migrations/util/load-manifest';
+import Protocol from '../protocols/new-protocol';
+import TypeGenerator from '../type-generator';
 
-const codegenDebug = debug("graph-cli:codegen");
+const codegenDebug = debug('graph-cli:codegen');
 
 export default class CodegenCommand extends Command {
-  static description = "Generates AssemblyScript types for a subgraph.";
+  static description = 'Generates AssemblyScript types for a subgraph.';
 
   static args = {
-    "subgraph-manifest": Args.string({
-      default: "subgraph.yaml",
+    'subgraph-manifest': Args.string({
+      default: 'subgraph.yaml',
     }),
   };
 
   static flags = {
     help: Flags.help({
-      char: "h",
+      char: 'h',
     }),
 
-    "output-dir": Flags.directory({
-      summary: "Output directory for generated types.",
-      char: "o",
-      default: "generated/",
+    'output-dir': Flags.directory({
+      summary: 'Output directory for generated types.',
+      char: 'o',
+      default: 'generated/',
     }),
-    "skip-migrations": Flags.boolean({
-      summary: "Skip subgraph migrations.",
+    'skip-migrations': Flags.boolean({
+      summary: 'Skip subgraph migrations.',
     }),
     watch: Flags.boolean({
-      summary: "Regenerate types when subgraph files change.",
-      char: "w",
+      summary: 'Regenerate types when subgraph files change.',
+      char: 'w',
     }),
     uncrashable: Flags.boolean({
-      summary: "Generate Float Subgraph Uncrashable helper file.",
-      char: "u",
+      summary: 'Generate Float Subgraph Uncrashable helper file.',
+      char: 'u',
     }),
-    "uncrashable-config": Flags.file({
-      summary: "Directory for uncrashable config.",
-      aliases: ["uc"],
+    'uncrashable-config': Flags.file({
+      summary: 'Directory for uncrashable config.',
+      aliases: ['uc'],
       // TODO: using a default sets the value and therefore requires --uncrashable
       // default: 'uncrashable-config.yaml',
-      dependsOn: ["uncrashable"],
+      dependsOn: ['uncrashable'],
     }),
   };
 
   async run() {
     const {
-      args: { "subgraph-manifest": manifest },
+      args: { 'subgraph-manifest': manifest },
       flags: {
-        "output-dir": outputDir,
-        "skip-migrations": skipMigrations,
+        'output-dir': outputDir,
+        'skip-migrations': skipMigrations,
         watch,
         uncrashable,
-        "uncrashable-config": uncrashableConfig,
+        'uncrashable-config': uncrashableConfig,
       },
     } = await this.parse(CodegenCommand);
 
-    codegenDebug("Initialized codegen manifest: %o", manifest);
+    codegenDebug('Initialized codegen manifest: %o', manifest);
 
     let protocol: Protocol;
     try {
@@ -75,8 +71,8 @@ export default class CodegenCommand extends Command {
       // the wrong AssemblyScript version.
 
       // TODO: rewrite these functions to utilize manfiest data
-      await assertManifestApiVersion(manifest, "0.0.5");
-      await assertGraphTsVersion(path.dirname(manifest), "0.25.0");
+      await assertManifestApiVersion(manifest, '0.0.5');
+      await assertGraphTsVersion(path.dirname(manifest), '0.25.0');
       // ----
 
       const manifestData = await loadManifest(manifest);
@@ -92,7 +88,7 @@ export default class CodegenCommand extends Command {
       skipMigrations,
       protocol,
       uncrashable,
-      uncrashableConfig: uncrashableConfig || "uncrashable-config.yaml",
+      uncrashableConfig: uncrashableConfig || 'uncrashable-config.yaml',
     });
 
     // Watch working directory for file updates or additions, trigger

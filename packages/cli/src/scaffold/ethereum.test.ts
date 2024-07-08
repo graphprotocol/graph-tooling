@@ -1,4 +1,5 @@
 import immutable from 'immutable';
+import { describe, expect, test } from 'vitest';
 import Protocol from '../protocols';
 import ABI from '../protocols/ethereum/abi';
 import Scaffold from './index';
@@ -78,10 +79,12 @@ const scaffoldWithIndexEvents = new Scaffold({
   indexEvents: true,
 });
 
-describe('Ethereum subgraph scaffolding', () => {
-  test('Manifest', () => {
-    expect(scaffold.generateManifest()).toEqual(`\
-specVersion: 0.0.5
+describe.concurrent('Ethereum subgraph scaffolding', () => {
+  test('Manifest', async () => {
+    expect(await scaffold.generateManifest()).toEqual(`\
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
 schema:
   file: ./schema.graphql
 dataSources:
@@ -111,8 +114,8 @@ dataSources:
 `);
   });
 
-  test('Schema (default)', () => {
-    expect(scaffold.generateSchema()).toEqual(`\
+  test('Schema (default)', async () => {
+    expect(await scaffold.generateSchema()).toEqual(`\
 type ExampleEntity @entity {
   id: Bytes!
   count: BigInt!
@@ -122,8 +125,8 @@ type ExampleEntity @entity {
 `);
   });
 
-  test('Schema (for indexing events)', () => {
-    expect(scaffoldWithIndexEvents.generateSchema()).toEqual(`\
+  test('Schema (for indexing events)', async () => {
+    expect(await scaffoldWithIndexEvents.generateSchema()).toEqual(`\
 type ExampleEvent @entity(immutable: true) {
   id: Bytes!
   a: BigInt! # uint256
@@ -151,8 +154,8 @@ type ExampleEvent1 @entity(immutable: true) {
 `);
   });
 
-  test('Mapping (default)', () => {
-    expect(scaffold.generateMapping()).toEqual(`\
+  test('Mapping (default)', async () => {
+    expect(await scaffold.generateMapping()).toEqual(`\
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
   Contract,
@@ -208,8 +211,8 @@ export function handleExampleEvent1(event: ExampleEvent1): void {}
 `);
   });
 
-  test('Mapping (for indexing events)', () => {
-    expect(scaffoldWithIndexEvents.generateMapping()).toEqual(`\
+  test('Mapping (for indexing events)', async () => {
+    expect(await scaffoldWithIndexEvents.generateMapping()).toEqual(`\
 import {
   ExampleEvent as ExampleEventEvent,
   ExampleEvent1 as ExampleEvent1Event
@@ -253,8 +256,8 @@ export function handleExampleEvent1(event: ExampleEvent1Event): void {
 `);
   });
 
-  test('Test Files (default)', () => {
-    const files = scaffoldWithIndexEvents.generateTests();
+  test('Test Files (default)', async () => {
+    const files = await scaffoldWithIndexEvents.generateTests();
     const testFile = files?.['contract.test.ts'];
     const utilsFile = files?.['contract-utils.ts'];
     expect(testFile).toEqual(`\
@@ -382,8 +385,8 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
 `);
   });
 
-  test('Test Files (for indexing events)', () => {
-    const files = scaffoldWithIndexEvents.generateTests();
+  test('Test Files (for indexing events)', async () => {
+    const files = await scaffoldWithIndexEvents.generateTests();
     const testFile = files?.['contract.test.ts'];
     const utilsFile = files?.['contract-utils.ts'];
 

@@ -22,6 +22,7 @@ As of today, the command line interface supports the following commands:
   binary in order to test a subgraph.
 - `graph add` - Adds a new datasource to the yaml file and writes the necessary changes to other
   files - schema.graphql, abi and mapping.
+- `graph publish` - Publishes the subgraph to the Graph Network.
 
 ## How It Works
 
@@ -37,14 +38,26 @@ or a local directory for debugging, and deploys the subgraph to a
 
 ## Installation
 
-The Graph CLI can be installed with `npm` or `yarn`:
+We recommend install the CLI using package manager `npm` or `yarn` or `pnpm` when developing
+subgraphs locally:
 
 ```sh
 # NPM
-npm install -g @graphprotocol/graph-cli
+npm install @graphprotocol/graph-cli
 
 # Yarn
-yarn global add @graphprotocol/graph-cli
+yarn add @graphprotocol/graph-cli
+
+# pnpm
+pnpm install @graphprotocol/graph-cli
+```
+
+You can install the CLI globally using a binary. Eventually this will become the default mechanism
+for installing the CLI and building subgraphs because users do not need to install `Node.js` or any
+other external dependencies.
+
+```sh
+curl -LS https://cli.thegraph.com/install.sh | sudo sh
 ```
 
 ### On Linux
@@ -67,6 +80,22 @@ If you are ready to dive into the details of building a subgraph from scratch, t
 [detailed walkthrough](https://thegraph.com/docs/en/developer/create-subgraph-hosted/) for that as
 well, along with API documentation for the
 [AssemblyScript API](https://thegraph.com/docs/en/developer/assemblyscript-api/).
+
+## Releases
+
+The Graph CLI is released on [npm](https://www.npmjs.com/package/@graphprotocol/graph-cli) and
+published as a Binary on [GitHub Releases](https://github.com/graphprotocol/graph-tooling/releases).
+We support all the version of CLI that support
+[Maintenance, LTS and Current Node.js releases](https://github.com/nodejs/Release#release-schedule).
+Additionally if there are `graph-node` specific features that are breaking and no-longer supported,
+we will drop support for older versions of CLI. After 90 days of a new `Node.js` release, we will
+drop support for the oldest `Node.js` version.
+
+End-of-life Releases
+
+| Release    | End-of-life       | Reason                                |
+| ---------- | ----------------- | ------------------------------------- |
+| `>=0.60.0` | December 31, 2023 | No longer supporting Node 16 or lower |
 
 ## License
 

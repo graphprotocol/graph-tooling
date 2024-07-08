@@ -27,8 +27,8 @@ const protocolDebug = debug('graph-cli:protocol');
 
 export default class Protocol {
   static fromDataSources(dataSourcesAndTemplates: any) {
-    const firstDataSourceKind = dataSourcesAndTemplates[0].kind;
-    return new Protocol(firstDataSourceKind);
+    const firstDataSource = dataSourcesAndTemplates[0];
+    return new Protocol(firstDataSource);
   }
 
   name: ProtocolName;
@@ -36,8 +36,15 @@ export default class Protocol {
   // TODO: should assert non null? see the constructor switch default case comment
   config!: ProtocolConfig;
 
-  constructor(name: ProtocolName) {
+  constructor(datasource: any) {
+    /**
+     * TODO: we should improve this `any` type, because some places
+     * we can initiate a Protocol with just a string (the name) and
+     * some other places use datasource object
+     */
+    const name = typeof datasource === 'string' ? datasource : datasource.kind;
     this.name = Protocol.normalizeName(name)!;
+    protocolDebug('Initializing protocol %s', this.name);
 
     switch (this.name) {
       case 'arweave':
@@ -54,6 +61,14 @@ export default class Protocol {
         break;
       case 'substreams':
         this.config = substreamsProtocol;
+
+        /**
+         * Substreams triggers are a special case of substreams data sources
+         * which have a mapping file and a handler.
+         */
+        if (datasource?.mapping?.file && datasource?.mapping.handler) {
+          this.name = 'substreams/triggers';
+        }
         break;
       default:
       // Do not throw when undefined, a better error message is printed after the constructor
@@ -126,7 +141,13 @@ export default class Protocol {
       ],
       substreams: ['mainnet'],
     }) as immutable.Map<
-      'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams',
+      | 'arweave'
+      | 'ethereum'
+      | 'near'
+      | 'cosmos'
+      | 'substreams'
+      // this is temporary, until we have a better way to handle substreams triggers
+      | 'substreams/triggers',
       immutable.List<string>
     >;
   }
@@ -207,7 +228,13 @@ export default class Protocol {
   }
 }
 
-export type ProtocolName = 'arweave' | 'ethereum' | 'near' | 'cosmos' | 'substreams';
+export type ProtocolName =
+  | 'arweave'
+  | 'ethereum'
+  | 'near'
+  | 'cosmos'
+  | 'substreams'
+  | 'substreams/triggers';
 
 export interface ProtocolConfig {
   displayName: string;

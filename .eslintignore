@@ -7,3 +7,5 @@ packages/cli/tests/cli/validation
 
 # TODO: cleanup examples and lint
 examples
+
+cf-pages/**

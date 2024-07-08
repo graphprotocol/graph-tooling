@@ -7,6 +7,10 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
+    "lint:eslint": "eslint .",
+    "lint:eslint:fix": "eslint . --fix",
+    "lint:prettier": "prettier -c .",
+    "lint:prettier:fix": "prettier . --write",
     "test": "vitest"
   },
   "dependencies": {
@@ -15,6 +19,7 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^3.12.7",
+    "prettier": "3.0.3",
     "vitest": "^0.34.1"
   }
 }

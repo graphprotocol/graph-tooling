@@ -19,10 +19,18 @@ export default class AuthCommand extends Command {
     product: Flags.string({
       summary: 'Select a product for which to authenticate.',
       options: ['subgraph-studio', 'hosted-service'],
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
+      },
     }),
     studio: Flags.boolean({
       summary: 'Shortcut for "--product subgraph-studio".',
       exclusive: ['product'],
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
+      },
     }),
   };
 
@@ -58,6 +66,10 @@ export default class AuthCommand extends Command {
       }));
     if (deployKey.length > 200) {
       this.error('✖ Deploy key must not exceed 200 characters', { exit: 1 });
+    }
+
+    if (product === 'hosted-service' || node?.match(/api.thegraph.com/)) {
+      this.error('✖ The hosted service is deprecated', { exit: 1 });
     }
 
     try {

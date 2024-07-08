@@ -1,6 +1,7 @@
+import { describe, expect, it } from 'vitest';
 import { appendApiVersionForGraph } from './compiler';
 
-describe('appendApiVersionForGraph', () => {
+describe.concurrent('appendApiVersionForGraph', () => {
   it('append /api/v0 to Prod URL with trailing slash', () => {
     expect(appendApiVersionForGraph('https://api.thegraph.com/ipfs/')).toBe(
       'https://api.thegraph.com/ipfs/api/v0',

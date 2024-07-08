@@ -10,6 +10,8 @@ scalar BigInt
 scalar Boolean
 scalar JSON
 
+union StringOrBigInt = String | BigInt
+
 type SubgraphManifest {
   specVersion: String!
   features: [String!]
@@ -19,10 +21,15 @@ type SubgraphManifest {
   graft: Graft
   dataSources: [DataSource!]!
   templates: [DataSourceTemplate!]
+  indexerHints: IndexerHints
 }
 
 type Schema {
   file: File!
+}
+
+type IndexerHints {
+  prune: StringOrBigInt
 }
 
 type DataSource {
@@ -38,6 +45,7 @@ type ContractSource {
   address: String
   abi: String!
   startBlock: BigInt
+  endBlock: BigInt
 }
 
 type ContractMapping {
@@ -87,8 +95,13 @@ type CallHandler {
 type ContractEventHandler {
   event: String!
   topic0: String
+  topic1: [String]
+  topic2: [String]
+  topic3: [String]
   handler: String!
   receipt: Boolean
+  # This should really be just a Map<String, String>
+  calls: JSON
 }
 
 type Graft {

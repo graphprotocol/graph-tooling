@@ -1,107 +1,104 @@
-import { ChildProcess, spawn } from "child_process";
-import http from "http";
-import net from "net";
-import path from "path";
-import compose from "docker-compose";
-import { filesystem, patching } from "gluegun";
-import stripAnsi from "strip-ansi";
-import tmp from "tmp-promise";
-import { Args, Command, Flags } from "@oclif/core";
-import withSpinner, { step } from "../command-helpers/spinner";
+import { ChildProcess, spawn } from 'child_process';
+import http from 'http';
+import net from 'net';
+import path from 'path';
+import compose from 'docker-compose';
+import { filesystem, patching } from 'gluegun';
+import stripAnsi from 'strip-ansi';
+import tmp from 'tmp-promise';
+import { Args, Command, Flags } from '@oclif/core';
+import withSpinner, { step } from '../command-helpers/spinner';
 
 // Clean up temporary files even when an uncaught exception occurs
 tmp.setGracefulCleanup();
 
 export default class LocalCommand extends Command {
   static description =
-    "Runs local tests against a Graph Node environment (using Ganache by default).";
+    'Runs local tests against a Graph Node environment (using Ganache by default).';
 
   static args = {
-    "local-command": Args.string({
+    'local-command': Args.string({
       required: true,
     }),
   };
 
   static flags = {
     help: Flags.help({
-      char: "h",
+      char: 'h',
     }),
 
-    "node-logs": Flags.boolean({
-      summary: "Print the Graph Node logs.",
+    'node-logs': Flags.boolean({
+      summary: 'Print the Graph Node logs.',
     }),
-    "ethereum-logs": Flags.boolean({
-      summary: "Print the Ethereum logs.",
+    'ethereum-logs': Flags.boolean({
+      summary: 'Print the Ethereum logs.',
     }),
-    "compose-file": Flags.file({
-      summary: "Custom Docker Compose file for additional services.",
+    'compose-file': Flags.file({
+      summary: 'Custom Docker Compose file for additional services.',
     }),
-    "node-image": Flags.string({
-      summary: "Custom Graph Node image to test against.",
-      default: "graphprotocol/graph-node:latest",
+    'node-image': Flags.string({
+      summary: 'Custom Graph Node image to test against.',
+      default: 'graphprotocol/graph-node:latest',
     }),
-    "standalone-node": Flags.string({
-      summary: "Use a standalone Graph Node outside Docker Compose.",
+    'standalone-node': Flags.string({
+      summary: 'Use a standalone Graph Node outside Docker Compose.',
     }),
-    "standalone-node-args": Flags.string({
-      summary: "Custom arguments to be passed to the standalone Graph Node.",
-      dependsOn: ["standalone-node"],
+    'standalone-node-args': Flags.string({
+      summary: 'Custom arguments to be passed to the standalone Graph Node.',
+      dependsOn: ['standalone-node'],
     }),
-    "skip-wait-for-ipfs": Flags.boolean({
+    'skip-wait-for-ipfs': Flags.boolean({
       summary: "Don't wait for IPFS to be up at localhost:15001",
     }),
-    "skip-wait-for-ethereum": Flags.boolean({
+    'skip-wait-for-ethereum': Flags.boolean({
       summary: "Don't wait for Ethereum to be up at localhost:18545",
     }),
     // TODO: Remove in next major release
-    "skip-wait-for-etherium": Flags.boolean({
+    'skip-wait-for-etherium': Flags.boolean({
       summary: "Don't wait for Ethereum to be up at localhost:18545",
       deprecated: {
-        message: "Use --skip-wait-for-ethereum instead",
+        message: 'Use --skip-wait-for-ethereum instead',
       },
     }),
-    "skip-wait-for-postgres": Flags.boolean({
+    'skip-wait-for-postgres': Flags.boolean({
       summary: "Don't wait for Postgres to be up at localhost:15432",
     }),
     timeout: Flags.integer({
-      summary: "Time to wait for service containers in milliseconds.",
+      summary: 'Time to wait for service containers in milliseconds.',
       default: 120_000,
     }),
   };
 
   async run() {
     const {
-      args: { "local-command": testCommand },
+      args: { 'local-command': testCommand },
       flags: {
-        "compose-file": composeFileFlag,
-        "ethereum-logs": ethereumLogsFlag,
-        "node-image": nodeImage,
-        "node-logs": nodeLogsFlag,
-        "skip-wait-for-etherium": skipWaitForEthereumTypo,
-        "skip-wait-for-ethereum": skipWaitForEthereumGood,
-        "skip-wait-for-ipfs": skipWaitForIpfs,
-        "skip-wait-for-postgres": skipWaitForPostgres,
-        "standalone-node": standaloneNode,
-        "standalone-node-args": standaloneNodeArgs,
+        'compose-file': composeFileFlag,
+        'ethereum-logs': ethereumLogsFlag,
+        'node-image': nodeImage,
+        'node-logs': nodeLogsFlag,
+        'skip-wait-for-etherium': skipWaitForEthereumTypo,
+        'skip-wait-for-ethereum': skipWaitForEthereumGood,
+        'skip-wait-for-ipfs': skipWaitForIpfs,
+        'skip-wait-for-postgres': skipWaitForPostgres,
+        'standalone-node': standaloneNode,
+        'standalone-node-args': standaloneNodeArgs,
         timeout,
       },
     } = await this.parse(LocalCommand);
 
-    const skipWaitForEthereum =
-      skipWaitForEthereumTypo || skipWaitForEthereumGood;
+    const skipWaitForEthereum = skipWaitForEthereumTypo || skipWaitForEthereumGood;
 
     // Obtain the Docker Compose file for services that the tests run against
     const composeFile =
       composeFileFlag ||
       path.join(
         __dirname,
-        "..",
-        "..",
-        "resources",
-        "test",
-        standaloneNode
-          ? "docker-compose-standalone-node.yml"
-          : "docker-compose.yml"
+        '..',
+        '..',
+        'resources',
+        'test',
+        standaloneNode ? 'docker-compose-standalone-node.yml' : 'docker-compose.yml',
       );
 
     if (!filesystem.exists(composeFile)) {
@@ -110,7 +107,7 @@ export default class LocalCommand extends Command {
 
     // Create temporary directory to operate in
     const { path: tempdir } = await tmp.dir({
-      prefix: "graph-test",
+      prefix: 'graph-test',
       unsafeCleanup: true,
     });
     try {
@@ -146,21 +143,14 @@ export default class LocalCommand extends Command {
     const nodeOutputChunks: Buffer[] = [];
     if (standaloneNode) {
       try {
-        nodeProcess = await startGraphNode(
-          standaloneNode,
-          standaloneNodeArgs,
-          nodeOutputChunks
-        );
+        nodeProcess = await startGraphNode(standaloneNode, standaloneNodeArgs, nodeOutputChunks);
       } catch (e) {
         await stopTestEnvironment(tempdir);
-        let errorMessage = "\n";
-        errorMessage += "  Graph Node";
-        errorMessage += "  ----------";
-        errorMessage += indent(
-          "  ",
-          Buffer.concat(nodeOutputChunks).toString("utf-8")
-        );
-        errorMessage += "\n";
+        let errorMessage = '\n';
+        errorMessage += '  Graph Node';
+        errorMessage += '  ----------';
+        errorMessage += indent('  ', Buffer.concat(nodeOutputChunks).toString('utf-8'));
+        errorMessage += '\n';
         this.error(errorMessage, { exit: 1 });
       }
     }
@@ -170,14 +160,14 @@ export default class LocalCommand extends Command {
       await waitForGraphNode(timeout);
     } catch (e) {
       await stopTestEnvironment(tempdir);
-      let errorMessage = "\n";
-      errorMessage += "  Graph Node";
-      errorMessage += "  ----------";
+      let errorMessage = '\n';
+      errorMessage += '  Graph Node';
+      errorMessage += '  ----------';
       errorMessage += indent(
-        "  ",
-        await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks)
+        '  ',
+        await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks),
       );
-      errorMessage += "\n";
+      errorMessage += '\n';
       this.error(errorMessage, { exit: 1 });
     }
 
@@ -194,9 +184,9 @@ export default class LocalCommand extends Command {
     }
 
     if (result.exitCode == 0) {
-      this.log("✔ Tests passed");
+      this.log('✔ Tests passed');
     } else {
-      this.log("✖ Tests failed");
+      this.log('✖ Tests failed');
     }
 
     // Capture logs
@@ -204,9 +194,7 @@ export default class LocalCommand extends Command {
       nodeLogsFlag || result.exitCode !== 0
         ? await collectGraphNodeLogs(tempdir, standaloneNode, nodeOutputChunks)
         : undefined;
-    const ethereumLogs = ethereumLogsFlag
-      ? await collectEthereumLogs(tempdir)
-      : undefined;
+    const ethereumLogs = ethereumLogsFlag ? await collectEthereumLogs(tempdir) : undefined;
 
     // Bring down the test environment
     try {
@@ -216,27 +204,27 @@ export default class LocalCommand extends Command {
     }
 
     if (nodeLogs) {
-      this.log("");
-      this.log("  Graph node");
-      this.log("  ----------");
-      this.log("");
-      this.log(indent("  ", nodeLogs));
+      this.log('');
+      this.log('  Graph node');
+      this.log('  ----------');
+      this.log('');
+      this.log(indent('  ', nodeLogs));
     }
 
     if (ethereumLogs) {
-      this.log("");
-      this.log("  Ethereum");
-      this.log("  --------");
-      this.log("");
-      this.log(indent("  ", ethereumLogs));
+      this.log('');
+      this.log('  Ethereum');
+      this.log('  --------');
+      this.log('');
+      this.log(indent('  ', ethereumLogs));
     }
 
     // Always print the test output
-    this.log("");
-    this.log("  Output");
-    this.log("  ------");
-    this.log("");
-    this.log(indent("  ", result.output));
+    this.log('');
+    this.log('  Output');
+    this.log('  ------');
+    this.log('');
+    this.log(indent('  ', result.output));
 
     // Propagate the exit code from the test run
     this.exit(result.exitCode);
@@ -248,41 +236,29 @@ export default class LocalCommand extends Command {
  */
 const indent = (indentation: string, str: string) =>
   str
-    .split("\n")
-    .map((s) => `${indentation}${s}`)
+    .split('\n')
+    .map(s => `${indentation}${s}`)
     // Remove whitespace from empty lines
-    .map((s) => s.replace(/^\s+$/g, ""))
-    .join("\n");
+    .map(s => s.replace(/^\s+$/g, ''))
+    .join('\n');
 
-const configureTestEnvironment = async (
-  tempdir: string,
-  composeFile: string,
-  nodeImage: string
-) =>
+const configureTestEnvironment = async (tempdir: string, composeFile: string, nodeImage: string) =>
   await withSpinner(
     `Configure test environment`,
     `Failed to configure test environment`,
     `Warnings configuring test environment`,
     async () => {
       // Temporary compose file
-      const tempComposeFile = path.join(
-        tempdir,
-        "compose",
-        "docker-compose.yml"
-      );
+      const tempComposeFile = path.join(tempdir, 'compose', 'docker-compose.yml');
 
       // Copy the compose file to the temporary directory
       filesystem.copy(composeFile, tempComposeFile);
 
       // Substitute the graph-node image with the custom one, if appropriate
       if (nodeImage) {
-        await patching.replace(
-          tempComposeFile,
-          "graphprotocol/graph-node:latest",
-          nodeImage
-        );
+        await patching.replace(tempComposeFile, 'graphprotocol/graph-node:latest', nodeImage);
       }
-    }
+    },
   );
 
 const waitFor = async (timeout: number, testFn: () => void) => {
@@ -312,12 +288,12 @@ const startTestEnvironment = async (tempdir: string) =>
     `Start test environment`,
     `Failed to start test environment`,
     `Warnings starting test environment`,
-    async (_spinner) => {
+    async _spinner => {
       // Bring up the test environment
       await compose.upAll({
-        cwd: path.join(tempdir, "compose"),
+        cwd: path.join(tempdir, 'compose'),
       });
-    }
+    },
   );
 
 const waitForTestEnvironment = async ({
@@ -335,71 +311,67 @@ const waitForTestEnvironment = async ({
     `Wait for test environment`,
     `Failed to wait for test environment`,
     `Warnings waiting for test environment`,
-    async (spinner) => {
+    async spinner => {
       // Wait 10s for IPFS (if desired)
       if (skipWaitForIpfs) {
-        step(spinner, "Skip waiting for IPFS");
+        step(spinner, 'Skip waiting for IPFS');
       } else {
         await waitFor(
           timeout,
           async () =>
             new Promise((resolve, reject) => {
               http
-                .get("http://localhost:15001/api/v0/version", () => {
+                .get('http://localhost:15001/api/v0/version', () => {
                   resolve();
                 })
-                .on("error", (e) => {
+                .on('error', e => {
                   reject(new Error(`Could not connect to IPFS: ${e}`));
                 });
-            })
+            }),
         );
-        step(spinner, "IPFS is up");
+        step(spinner, 'IPFS is up');
       }
 
       // Wait 10s for Ethereum (if desired)
       if (skipWaitForEthereum) {
-        step(spinner, "Skip waiting for Ethereum");
+        step(spinner, 'Skip waiting for Ethereum');
       } else {
         await waitFor(
           timeout,
           async () =>
             new Promise((resolve, reject) => {
               http
-                .get("http://localhost:18545", () => {
+                .get('http://localhost:18545', () => {
                   resolve();
                 })
-                .on("error", (e) => {
+                .on('error', e => {
                   reject(new Error(`Could not connect to Ethereum: ${e}`));
                 });
-            })
+            }),
         );
-        step(spinner, "Ethereum is up");
+        step(spinner, 'Ethereum is up');
       }
 
       // Wait 10s for Postgres (if desired)
       if (skipWaitForPostgres) {
-        step(spinner, "Skip waiting for Postgres");
+        step(spinner, 'Skip waiting for Postgres');
       } else {
         await waitFor(
           timeout,
           async () =>
             new Promise((resolve, reject) => {
               try {
-                const socket = net.connect(15_432, "localhost", () =>
-                  resolve()
-                );
-                socket.on("error", (e) =>
-                  reject(new Error(`Could not connect to Postgres: ${e}`))
-                );
+                const socket = net.connect(15_432, 'localhost', () => resolve());
+                socket.on('error', e => reject(new Error(`Could not connect to Postgres: ${e}`)));
                 socket.end();
               } catch (e) {
                 reject(new Error(`Could not connect to Postgres: ${e}`));
               }
-            })
+            }),
         );
-        step(spinner, "Postgres is up");
+        step(spinner, 'Postgres is up');
       }
-    }
+    },
   );
 
 const stopTestEnvironment = async (tempdir: string) =>
@@ -411,52 +383,50 @@ const stopTestEnvironment = async (tempdir: string) =>
       // Our containers do not respond quickly to the SIGTERM which `down` tries before timing out
       // and killing them, so speed things up by sending a SIGKILL right away.
       try {
-        await compose.kill({ cwd: path.join(tempdir, "compose") });
+        await compose.kill({ cwd: path.join(tempdir, 'compose') });
       } catch (e) {
         // Do nothing, we will just try to run 'down'
         // to bring down the environment
       }
-      await compose.down({ cwd: path.join(tempdir, "compose") });
-    }
+      await compose.down({ cwd: path.join(tempdir, 'compose') });
+    },
   );
 
 const startGraphNode = async (
   standaloneNode: string,
   standaloneNodeArgs: string | undefined,
-  nodeOutputChunks: Buffer[]
+  nodeOutputChunks: Buffer[],
 ): Promise<ChildProcess> =>
   await withSpinner(
     `Start Graph node`,
     `Failed to start Graph node`,
     `Warnings starting Graph node`,
-    async (spinner) => {
+    async spinner => {
       const defaultArgs = [
-        "--ipfs",
-        "localhost:15001",
-        "--postgres-url",
-        "postgresql://graph:let-me-in@localhost:15432/graph",
-        "--ethereum-rpc",
-        "test:http://localhost:18545",
-        "--http-port",
-        "18000",
-        "--ws-port",
-        "18001",
-        "--admin-port",
-        "18020",
-        "--index-node-port",
-        "18030",
-        "--metrics-port",
-        "18040",
+        '--ipfs',
+        'localhost:15001',
+        '--postgres-url',
+        'postgresql://graph:let-me-in@localhost:15432/graph',
+        '--ethereum-rpc',
+        'test:http://localhost:18545',
+        '--http-port',
+        '18000',
+        '--ws-port',
+        '18001',
+        '--admin-port',
+        '18020',
+        '--index-node-port',
+        '18030',
+        '--metrics-port',
+        '18040',
       ];
 
       const defaultEnv = {
-        GRAPH_LOG: "debug",
-        GRAPH_MAX_API_VERSION: "0.0.5",
+        GRAPH_LOG: 'debug',
+        GRAPH_MAX_API_VERSION: '0.0.5',
       };
 
-      const args = standaloneNodeArgs
-        ? standaloneNodeArgs.split(" ")
-        : defaultArgs;
+      const args = standaloneNodeArgs ? standaloneNodeArgs.split(' ') : defaultArgs;
       const env = { ...defaultEnv, ...process.env };
 
       const nodeProcess = spawn(standaloneNode, args, {
@@ -464,21 +434,17 @@ const startGraphNode = async (
         env,
       });
 
-      step(spinner, "Graph node:", String(nodeProcess.spawnargs.join(" ")));
+      step(spinner, 'Graph node:', String(nodeProcess.spawnargs.join(' ')));
 
-      nodeProcess.stdout.on("data", (data) =>
-        nodeOutputChunks.push(Buffer.from(data))
-      );
-      nodeProcess.stderr.on("data", (data) =>
-        nodeOutputChunks.push(Buffer.from(data))
-      );
-      nodeProcess.on("error", (e) => {
-        nodeOutputChunks.push(Buffer.from(String(e), "utf-8"));
+      nodeProcess.stdout.on('data', data => nodeOutputChunks.push(Buffer.from(data)));
+      nodeProcess.stderr.on('data', data => nodeOutputChunks.push(Buffer.from(data)));
+      nodeProcess.on('error', e => {
+        nodeOutputChunks.push(Buffer.from(String(e), 'utf-8'));
       });
 
       // Return the node child process
       return nodeProcess;
-    }
+    },
   );
 
 const waitForGraphNode = async (timeout: number) =>
@@ -492,11 +458,11 @@ const waitForGraphNode = async (timeout: number) =>
         async () =>
           new Promise<void>((resolve, reject) => {
             http
-              .get("http://localhost:18000", { timeout }, () => resolve())
-              .on("error", (e) => reject(e));
-          })
+              .get('http://localhost:18000', { timeout }, () => resolve())
+              .on('error', e => reject(e));
+          }),
       );
-    }
+    },
   );
 
 const stopGraphNode = async (nodeProcess: ChildProcess) =>
@@ -506,32 +472,32 @@ const stopGraphNode = async (nodeProcess: ChildProcess) =>
     `Warnings stopping Graph node`,
     async () => {
       nodeProcess.kill(9);
-    }
+    },
   );
 
 const collectGraphNodeLogs = async (
   tempdir: string,
   standaloneNode: string | undefined,
-  nodeOutputChunks: Buffer[]
+  nodeOutputChunks: Buffer[],
 ) => {
   if (standaloneNode) {
     // Pull the logs from the captured output
-    return stripAnsi(Buffer.concat(nodeOutputChunks).toString("utf-8"));
+    return stripAnsi(Buffer.concat(nodeOutputChunks).toString('utf-8'));
   }
   // Pull the logs from docker compose
-  const logs = await compose.logs("graph-node", {
+  const logs = await compose.logs('graph-node', {
     follow: false,
-    cwd: path.join(tempdir, "compose"),
+    cwd: path.join(tempdir, 'compose'),
   });
-  return stripAnsi(logs.out.trim()).replace(/graph-node_1 {2}\| /g, "");
+  return stripAnsi(logs.out.trim()).replace(/graph-node_1 {2}\| /g, '');
 };
 
 const collectEthereumLogs = async (tempdir: string) => {
-  const logs = await compose.logs("ethereum", {
+  const logs = await compose.logs('ethereum', {
     follow: false,
-    cwd: path.join(tempdir, "compose"),
+    cwd: path.join(tempdir, 'compose'),
   });
-  return stripAnsi(logs.out.trim()).replace(/ethereum_1 {2}\| /g, "");
+  return stripAnsi(logs.out.trim()).replace(/ethereum_1 {2}\| /g, '');
 };
 
 const runTests = async (testCommand: string) =>
@@ -540,16 +506,16 @@ const runTests = async (testCommand: string) =>
     `Failed to run tests`,
     `Warnings running tests`,
     async () =>
-      new Promise((resolve) => {
+      new Promise(resolve => {
         const output: Buffer[] = [];
         const testProcess = spawn(String(testCommand), { shell: true });
-        testProcess.stdout.on("data", (data) => output.push(Buffer.from(data)));
-        testProcess.stderr.on("data", (data) => output.push(Buffer.from(data)));
-        testProcess.on("close", (code) => {
+        testProcess.stdout.on('data', data => output.push(Buffer.from(data)));
+        testProcess.stderr.on('data', data => output.push(Buffer.from(data)));
+        testProcess.on('close', code => {
           resolve({
             exitCode: code,
-            output: Buffer.concat(output).toString("utf-8"),
+            output: Buffer.concat(output).toString('utf-8'),
           });
         });
-      })
+      }),
   );

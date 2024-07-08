@@ -1,31 +1,75 @@
-import fs from "fs";
-import os from "os";
-import path from "path";
-import { filesystem, prompt, system } from "gluegun";
-import * as toolbox from "gluegun";
-import { Args, Command, Flags, ux } from "@oclif/core";
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import * as toolbox from 'gluegun';
+import { filesystem, prompt, system } from 'gluegun';
+import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
+  loadContractNameForAddress,
   loadStartBlockForContract,
-} from "../command-helpers/abi";
-import { initNetworksConfig } from "../command-helpers/network";
-import { chooseNodeUrl } from "../command-helpers/node";
-import { generateScaffold, writeScaffold } from "../command-helpers/scaffold";
-import withSpinner from "../command-helpers/spinner";
-import { validateStudioNetwork } from "../command-helpers/studio";
-import {
-  getSubgraphBasename,
-  validateSubgraphName,
-} from "../command-helpers/subgraph";
-import Protocol, { ProtocolName } from "../protocols";
-import EthereumABI from "../protocols/ethereum/abi";
-import { abiEvents } from "../scaffold/schema";
-import { validateContract } from "../validation";
-import AddCommand from "./add";
+} from '../command-helpers/abi';
+import { initNetworksConfig } from '../command-helpers/network';
+import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
+import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
+import { sortWithPriority } from '../command-helpers/sort';
+import { withSpinner } from '../command-helpers/spinner';
+import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import debugFactory from '../debug';
+import Protocol, { ProtocolName } from '../protocols';
+import EthereumABI from '../protocols/ethereum/abi';
+import { abiEvents } from '../scaffold/schema';
+import { validateContract } from '../validation';
+import AddCommand from './add';
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
-const availableNetworks = Protocol.availableNetworks();
+
+const initDebugger = debugFactory('graph-cli:commands:init');
+
+/**
+ * a dynamic list of available networks supported by the studio
+ */
+const AVAILABLE_NETWORKS = async () => {
+  const logger = initDebugger.extend('AVAILABLE_NETWORKS');
+  try {
+    logger('fetching chain_list from studio');
+    const res = await fetch(SUBGRAPH_STUDIO_URL, {
+      method: 'POST',
+      headers: {
+        ...GRAPH_CLI_SHARED_HEADERS,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'chain_list',
+        params: [],
+      }),
+    });
+
+    if (!res.ok) {
+      logger(
+        "Something went wrong while fetching 'chain_list' from studio HTTP code: %o",
+        res.status,
+      );
+      return null;
+    }
+
+    const result = await res.json();
+    if (result?.result) {
+      logger('chain_list result: %o', result.result);
+      return result.result as { studio: Array<string>; hostedService: Array<string> };
+    }
+
+    logger("Unable to get result for 'chain_list' from studio: %O", result);
+    return null;
+  } catch (e) {
+    logger('error: %O', e);
+    return null;
+  }
+};
 
 const DEFAULT_EXAMPLE_SUBGRAPH = "ethereum-gravatar";
 
@@ -46,12 +90,20 @@ export default class InitCommand extends Command {
       options: protocolChoices,
     }),
     product: Flags.string({
-      summary: "Selects the product for which to initialize.",
-      options: ["subgraph-studio", "hosted-service"],
+      summary: 'Selects the product for which to initialize.',
+      options: ['subgraph-studio', 'hosted-service'],
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
+      },
     }),
     studio: Flags.boolean({
       summary: 'Shortcut for "--product subgraph-studio".',
-      exclusive: ["product"],
+      exclusive: ['product'],
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
+      },
     }),
     node: Flags.string({
       summary: "Graph node for which to initialize.",
@@ -60,6 +112,10 @@ export default class InitCommand extends Command {
     "allow-simple-name": Flags.boolean({
       description: "Use a subgraph name without a prefix.",
       default: false,
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
+      },
     }),
 
     "from-contract": Flags.string({
@@ -87,9 +143,17 @@ export default class InitCommand extends Command {
       summary: "Skip installing dependencies.",
       default: false,
     }),
-    "start-block": Flags.string({
-      helpGroup: "Scaffold from contract",
-      description: "Block number to start indexing from.",
+    'skip-git': Flags.boolean({
+      summary: 'Skip initializing a Git repository.',
+      default: false,
+      deprecated: {
+        message:
+          'In next major version, this flag will be removed. By default we will stop initializing a Git repository.',
+      },
+    }),
+    'start-block': Flags.string({
+      helpGroup: 'Scaffold from contract',
+      description: 'Block number to start indexing from.',
       // TODO: using a default sets the value and therefore requires --from-contract
       // default: '0',
       dependsOn: ["from-contract"],
@@ -105,36 +169,42 @@ export default class InitCommand extends Command {
       summary: "Path to the SPKG file",
     }),
     network: Flags.string({
-      summary: "Network the contract is deployed to.",
-      dependsOn: ["from-contract"],
-      options: [
-        ...availableNetworks.get("ethereum")!,
-        ...availableNetworks.get("near")!,
-        ...availableNetworks.get("cosmos")!,
-      ],
+      summary: 'Network the contract is deployed to.',
+      description:
+        'Check https://thegraph.com/docs/en/developing/supported-networks/ for supported networks',
+      dependsOn: ['from-contract'],
     }),
   };
 
   async run() {
     const {
       args: { subgraphName, directory },
-      flags: {
-        protocol,
-        product,
-        studio,
-        node: nodeFlag,
-        "allow-simple-name": allowSimpleNameFlag,
-        "from-contract": fromContract,
-        "contract-name": contractName,
-        "from-example": fromExample,
-        "index-events": indexEvents,
-        "skip-install": skipInstall,
-        network,
-        abi: abiPath,
-        "start-block": startBlock,
-        spkg: spkgPath,
-      },
+      flags,
     } = await this.parse(InitCommand);
+
+    const {
+      protocol,
+      product,
+      studio,
+      node: nodeFlag,
+      'allow-simple-name': allowSimpleNameFlag,
+      'from-contract': fromContract,
+      'contract-name': contractName,
+      'from-example': fromExample,
+      'index-events': indexEvents,
+      'skip-install': skipInstall,
+      'skip-git': skipGit,
+      network,
+      abi: abiPath,
+      'start-block': startBlock,
+      spkg: spkgPath,
+    } = flags;
+
+    initDebugger('Flags: %O', flags);
+
+    if (product === 'hosted-service') {
+      this.error('✖ The hosted service is deprecated', { exit: 1 });
+    }
 
     let { node, allowSimpleName } = chooseNodeUrl({
       product,
@@ -195,6 +265,7 @@ export default class InitCommand extends Command {
           directory,
           subgraphName,
           skipInstall,
+          skipGit,
         },
         { commands }
       );
@@ -260,11 +331,10 @@ export default class InitCommand extends Command {
           subgraphName,
           contractName,
           node,
-          studio,
-          product,
           startBlock,
           spkgPath,
           skipInstall,
+          skipGit,
         },
         { commands, addContract: false }
       );
@@ -291,6 +361,7 @@ export default class InitCommand extends Command {
           subgraphName: answers.subgraphName,
           directory: answers.directory,
           skipInstall,
+          skipGit,
         },
         { commands }
       );
@@ -337,11 +408,10 @@ export default class InitCommand extends Command {
           indexEvents: answers.indexEvents,
           contractName: answers.contractName,
           node,
-          studio: answers.studio,
-          product: answers.product,
           startBlock: answers.startBlock,
           spkgPath: answers.spkgPath,
           skipInstall,
+          skipGit,
         },
         { commands, addContract: true }
       );
@@ -364,9 +434,9 @@ async function processFromExampleInitForm(
   }
 ): Promise<
   | {
-      subgraphName: string;
-      directory: string;
-    }
+    subgraphName: string;
+    directory: string;
+  }
   | undefined
 > {
   try {
@@ -422,7 +492,7 @@ async function processFromExampleInitForm(
 async function retryWithPrompt<T>(
   func: () => Promise<T>
 ): Promise<T | undefined> {
-  for (;;) {
+  for (; ;) {
     try {
       return await func();
     } catch (_) {
@@ -480,20 +550,20 @@ async function processInitForm(
   }
 ): Promise<
   | {
-      abi: EthereumABI;
-      protocolInstance: Protocol;
-      subgraphName: string;
-      directory: string;
-      studio: boolean;
-      product: string;
-      network: string;
-      contract: string;
-      indexEvents: boolean;
-      contractName: string;
-      startBlock: string;
-      fromExample: boolean;
-      spkgPath: string | undefined;
-    }
+    abi: EthereumABI;
+    protocolInstance: Protocol;
+    subgraphName: string;
+    directory: string;
+    studio: boolean;
+    product: string;
+    network: string;
+    contract: string;
+    indexEvents: boolean;
+    contractName: string;
+    startBlock: string;
+    fromExample: boolean;
+    spkgPath: string | undefined;
+  }
   | undefined
 > {
   let abiFromEtherscan: EthereumABI | undefined = undefined;
@@ -505,10 +575,19 @@ async function processInitForm(
       message: "Protocol",
       choices: protocolChoices,
       skip: protocolChoices.includes(String(initProtocol) as ProtocolName),
+      result: value => {
+        if (initProtocol) {
+          initDebugger.extend('processInitForm')('initProtocol: %O', initProtocol);
+          return initProtocol;
+        }
+        initDebugger.extend('processInitForm')('protocol: %O', value);
+        return value;
+      },
     });
 
     const protocolInstance = new Protocol(protocol);
-    const isSubstreams = protocol === "substreams";
+    const isSubstreams = protocol === 'substreams';
+    initDebugger.extend('processInitForm')('isSubstreams: %O', isSubstreams);
 
     const { product } = await prompt.ask<{
       product: "subgraph-studio" | "hosted-service";
@@ -542,6 +621,10 @@ async function processInitForm(
         },
       },
     ]);
+
+    if (product == 'hosted-service') {
+      this.error('✖ The hosted service is deprecated', { exit: 1 });
+    }
 
     const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
       {
@@ -583,17 +666,32 @@ async function processInitForm(
       },
     ]);
 
+    let choices = (await AVAILABLE_NETWORKS())?.[
+      product === 'subgraph-studio' ? 'studio' : 'hostedService'
+    ];
+
+    if (!choices) {
+      this.error(
+        'Unable to fetch available networks from API. Please report this issue. As a workaround you can pass `--network` flag from the available networks: https://thegraph.com/docs/en/developing/supported-networks',
+        { exit: 1 },
+      );
+    }
+
+    choices = sortWithPriority(choices, ['mainnet']);
+
     const { network } = await prompt.ask<{ network: string }>([
       {
         type: "select",
         name: "network",
         message: () => `${protocolInstance.displayName()} network`,
-        choices: availableNetworks
-          .get(protocol as ProtocolName) // Get networks related to the chosen protocol.
-          ?.toArray() || ["mainnet"],
-        skip: initFromExample !== undefined,
-        result: (value) => {
-          if (initNetwork) return initNetwork;
+        choices,
+        skip: initNetwork !== undefined,
+        result: value => {
+          if (initNetwork) {
+            initDebugger.extend('processInitForm')('initNetwork: %O', initNetwork);
+            return initNetwork;
+          }
+          initDebugger.extend('processInitForm')('network: %O', value);
           return value;
         },
       },
@@ -659,6 +757,18 @@ async function processInitForm(
               initStartBlock = Number(startBlock).toString();
             }
           }
+
+          // If contract name is not set, try to load it.
+          if (!initContractName) {
+            // Load contract name for this contract
+            const contractName = await retryWithPrompt(() =>
+              loadContractNameForAddress(network, value),
+            );
+            if (contractName) {
+              initContractName = contractName;
+            }
+          }
+
           return value;
         },
       },
@@ -759,13 +869,16 @@ async function processInitForm(
 
     const { contractName } = await prompt.ask<{ contractName: string }>([
       {
-        type: "input",
-        name: "contractName",
-        message: "Contract Name",
-        initial: initContractName || "Contract" || isSubstreams,
-        skip: () =>
-          initFromExample !== undefined || !protocolInstance.hasContract(),
-        validate: (value) => value && value.length > 0,
+        type: 'input',
+        name: 'contractName',
+        message: 'Contract Name',
+        initial: initContractName || 'Contract' || isSubstreams,
+        skip: () => initFromExample !== undefined || !protocolInstance.hasContract(),
+        validate: value => value && value.length > 0,
+        result(value) {
+          if (initContractName) return initContractName;
+          return value;
+        },
       },
     ]);
 
@@ -949,12 +1062,14 @@ async function initSubgraphFromExample(
     subgraphName,
     directory,
     skipInstall,
+    skipGit,
   }: {
     fromExample: string | boolean;
     allowSimpleName?: boolean;
     subgraphName: string;
     directory: string;
     skipInstall: boolean;
+    skipGit: boolean;
   },
   {
     commands,
@@ -1070,10 +1185,12 @@ async function initSubgraphFromExample(
   }
 
   // Initialize a fresh Git repository
-  const repo = await initRepository(directory);
-  if (repo !== true) {
-    this.exit(1);
-    return;
+  if (!skipGit) {
+    const repo = await initRepository(directory);
+    if (repo !== true) {
+      this.exit(1);
+      return;
+    }
   }
 
   // Install dependencies
@@ -1108,11 +1225,10 @@ async function initSubgraphFromContract(
     indexEvents,
     contractName,
     node,
-    studio,
-    product,
     startBlock,
     spkgPath,
     skipInstall,
+    skipGit,
   }: {
     protocolInstance: Protocol;
     allowSimpleName: boolean | undefined;
@@ -1124,11 +1240,10 @@ async function initSubgraphFromContract(
     indexEvents: boolean;
     contractName?: string;
     node?: string;
-    studio: boolean;
-    product?: string;
     startBlock?: string;
     spkgPath?: string;
     skipInstall: boolean;
+    skipGit: boolean;
   },
   {
     commands,
@@ -1164,15 +1279,6 @@ async function initSubgraphFromContract(
   ) {
     // Fail if the ABI does not contain any events
     this.error(`ABI does not contain any events`, { exit: 1 });
-  }
-
-  // We can validate this before the scaffold because we receive
-  // the network from the form or via command line argument.
-  // We don't need to read the manifest in this case.
-  try {
-    validateStudioNetwork({ studio, product, network });
-  } catch (e) {
-    this.error(e, { exit: 1 });
   }
 
   // Scaffold subgraph
@@ -1215,10 +1321,12 @@ async function initSubgraphFromContract(
   }
 
   // Initialize a fresh Git repository
-  const repo = await initRepository(directory);
-  if (repo !== true) {
-    this.exit(1);
-    return;
+  if (!skipGit) {
+    const repo = await initRepository(directory);
+    if (repo !== true) {
+      this.exit(1);
+      return;
+    }
   }
 
   if (!skipInstall) {
@@ -1270,7 +1378,7 @@ async function addAnotherContract(
     const ProtocolContract = protocolInstance.getContract()!;
 
     let contract = "";
-    for (;;) {
+    for (; ;) {
       contract = await ux.prompt(
         `\nContract ${ProtocolContract.identifierName()}`,
         {
@@ -1284,11 +1392,6 @@ async function addAnotherContract(
       this.log(`✖ ${error}`);
     }
 
-    const contractName = await ux.prompt("\nContract Name", {
-      required: true,
-      default: "Contract",
-    });
-
     // Get the cwd before process.chdir in order to switch back in the end of command execution
     const cwd = process.cwd();
 
@@ -1297,7 +1400,7 @@ async function addAnotherContract(
         process.chdir(directory);
       }
 
-      const commandLine = [contract, "--contract-name", contractName];
+      const commandLine = [contract];
 
       await AddCommand.run(commandLine);
     } catch (e) {
