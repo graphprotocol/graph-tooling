@@ -71,10 +71,10 @@ const AVAILABLE_NETWORKS = async () => {
   }
 };
 
-const DEFAULT_EXAMPLE_SUBGRAPH = "ethereum-gravatar";
+const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
 
 export default class InitCommand extends Command {
-  static description = "Creates a new subgraph with basic scaffolding.";
+  static description = 'Creates a new subgraph with basic scaffolding.';
 
   static args = {
     subgraphName: Args.string(),
@@ -83,7 +83,7 @@ export default class InitCommand extends Command {
 
   static flags = {
     help: Flags.help({
-      char: "h",
+      char: 'h',
     }),
 
     protocol: Flags.string({
@@ -106,11 +106,11 @@ export default class InitCommand extends Command {
       },
     }),
     node: Flags.string({
-      summary: "Graph node for which to initialize.",
-      char: "g",
+      summary: 'Graph node for which to initialize.',
+      char: 'g',
     }),
-    "allow-simple-name": Flags.boolean({
-      description: "Use a subgraph name without a prefix.",
+    'allow-simple-name': Flags.boolean({
+      description: 'Use a subgraph name without a prefix.',
       default: false,
       deprecated: {
         message:
@@ -118,29 +118,29 @@ export default class InitCommand extends Command {
       },
     }),
 
-    "from-contract": Flags.string({
-      description: "Creates a scaffold based on an existing contract.",
-      exclusive: ["from-example"],
+    'from-contract': Flags.string({
+      description: 'Creates a scaffold based on an existing contract.',
+      exclusive: ['from-example'],
     }),
-    "from-example": Flags.string({
-      description: "Creates a scaffold based on an example subgraph.",
+    'from-example': Flags.string({
+      description: 'Creates a scaffold based on an example subgraph.',
       // TODO: using a default sets the value and therefore requires not to have --from-contract
       // default: 'Contract',
-      exclusive: ["from-contract"],
+      exclusive: ['from-contract'],
     }),
 
-    "contract-name": Flags.string({
-      helpGroup: "Scaffold from contract",
-      description: "Name of the contract.",
-      dependsOn: ["from-contract"],
+    'contract-name': Flags.string({
+      helpGroup: 'Scaffold from contract',
+      description: 'Name of the contract.',
+      dependsOn: ['from-contract'],
     }),
-    "index-events": Flags.boolean({
-      helpGroup: "Scaffold from contract",
-      description: "Index contract events as entities.",
-      dependsOn: ["from-contract"],
+    'index-events': Flags.boolean({
+      helpGroup: 'Scaffold from contract',
+      description: 'Index contract events as entities.',
+      dependsOn: ['from-contract'],
     }),
-    "skip-install": Flags.boolean({
-      summary: "Skip installing dependencies.",
+    'skip-install': Flags.boolean({
+      summary: 'Skip installing dependencies.',
       default: false,
     }),
     'skip-git': Flags.boolean({
@@ -156,17 +156,17 @@ export default class InitCommand extends Command {
       description: 'Block number to start indexing from.',
       // TODO: using a default sets the value and therefore requires --from-contract
       // default: '0',
-      dependsOn: ["from-contract"],
+      dependsOn: ['from-contract'],
     }),
 
     abi: Flags.string({
-      summary: "Path to the contract ABI",
+      summary: 'Path to the contract ABI',
       // TODO: using a default sets the value and therefore requires --from-contract
       // default: '*Download from Etherscan*',
-      dependsOn: ["from-contract"],
+      dependsOn: ['from-contract'],
     }),
     spkg: Flags.string({
-      summary: "Path to the SPKG file",
+      summary: 'Path to the SPKG file',
     }),
     network: Flags.string({
       summary: 'Network the contract is deployed to.',
@@ -215,44 +215,33 @@ export default class InitCommand extends Command {
     });
 
     if (fromContract && fromExample) {
-      this.error(
-        'Only one of "--from-example" and "--from-contract" can be used at a time.',
-        {
-          exit: 1,
-        }
-      );
+      this.error('Only one of "--from-example" and "--from-contract" can be used at a time.', {
+        exit: 1,
+      });
     }
 
     // Detect git
-    const git = system.which("git");
+    const git = system.which('git');
     if (!git) {
-      this.error(
-        'Git was not found on your system. Please install "git" so it is in $PATH.',
-        {
-          exit: 1,
-        }
-      );
+      this.error('Git was not found on your system. Please install "git" so it is in $PATH.', {
+        exit: 1,
+      });
     }
 
     // Detect Yarn and/or NPM
-    const yarn = system.which("yarn");
-    const npm = system.which("npm");
+    const yarn = system.which('yarn');
+    const npm = system.which('npm');
     if (!yarn && !npm) {
-      this.error(
-        `Neither Yarn nor NPM were found on your system. Please install one of them.`,
-        {
-          exit: 1,
-        }
-      );
+      this.error(`Neither Yarn nor NPM were found on your system. Please install one of them.`, {
+        exit: 1,
+      });
     }
 
     const commands = {
-      link: yarn
-        ? "yarn link @graphprotocol/graph-cli"
-        : "npm link @graphprotocol/graph-cli",
-      install: yarn ? "yarn" : "npm install",
-      codegen: yarn ? "yarn codegen" : "npm run codegen",
-      deploy: yarn ? "yarn deploy" : "npm run deploy",
+      link: yarn ? 'yarn link @graphprotocol/graph-cli' : 'npm link @graphprotocol/graph-cli',
+      install: yarn ? 'yarn' : 'npm install',
+      codegen: yarn ? 'yarn codegen' : 'npm run codegen',
+      deploy: yarn ? 'yarn deploy' : 'npm run deploy',
     };
 
     // If all parameters are provided from the command-line,
@@ -267,7 +256,7 @@ export default class InitCommand extends Command {
           skipInstall,
           skipGit,
         },
-        { commands }
+        { commands },
       );
       // Exit with success
       return this.exit(0);
@@ -278,20 +267,13 @@ export default class InitCommand extends Command {
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract
-    if (
-      fromContract &&
-      protocol &&
-      subgraphName &&
-      directory &&
-      network &&
-      node
-    ) {
+    if (fromContract && protocol && subgraphName && directory && network && node) {
       if (!protocolChoices.includes(protocol as ProtocolName)) {
         this.error(
           `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
-            ", "
+            ', ',
           )}`,
-          { exit: 1 }
+          { exit: 1 },
         );
       }
 
@@ -307,7 +289,7 @@ export default class InitCommand extends Command {
           }
         } else {
           try {
-            if (network === "poa-core") {
+            if (network === 'poa-core') {
               abi = await loadAbiFromBlockScout(ABI, network, fromContract);
             } else {
               abi = await loadAbiFromEtherscan(ABI, network, fromContract);
@@ -336,7 +318,7 @@ export default class InitCommand extends Command {
           skipInstall,
           skipGit,
         },
-        { commands, addContract: false }
+        { commands, addContract: false },
       );
       // Exit with success
       return this.exit(0);
@@ -363,7 +345,7 @@ export default class InitCommand extends Command {
           skipInstall,
           skipGit,
         },
-        { commands }
+        { commands },
       );
     } else {
       // Otherwise, take the user through the interactive form
@@ -413,7 +395,7 @@ export default class InitCommand extends Command {
           skipInstall,
           skipGit,
         },
-        { commands, addContract: true }
+        { commands, addContract: true },
       );
     }
     // Exit with success
@@ -431,23 +413,23 @@ async function processFromExampleInitForm(
     directory?: string;
     subgraphName?: string;
     allowSimpleName: boolean | undefined;
-  }
+  },
 ): Promise<
   | {
-    subgraphName: string;
-    directory: string;
-  }
+      subgraphName: string;
+      directory: string;
+    }
   | undefined
 > {
   try {
     const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
       {
-        type: "input",
-        name: "subgraphName",
+        type: 'input',
+        name: 'subgraphName',
         // TODO: is defaulting to studio ok?
-        message: () => "Subgraph slug",
+        message: () => 'Subgraph slug',
         initial: initSubgraphName,
-        validate: (name) => {
+        validate: name => {
           try {
             validateSubgraphName(name, {
               allowSimpleName: initAllowSimpleName,
@@ -467,15 +449,13 @@ async function processFromExampleInitForm(
 
     const { directory } = await prompt.ask<{ directory: string }>([
       {
-        type: "input",
-        name: "directory",
-        message: "Directory to create the subgraph in",
+        type: 'input',
+        name: 'directory',
+        message: 'Directory to create the subgraph in',
         initial: () => initDirectory || getSubgraphBasename(subgraphName),
-        validate: (value) =>
-          filesystem.exists(
-            value || initDirectory || getSubgraphBasename(subgraphName)
-          )
-            ? "Directory already exists"
+        validate: value =>
+          filesystem.exists(value || initDirectory || getSubgraphBasename(subgraphName))
+            ? 'Directory already exists'
             : true,
       },
     ]);
@@ -489,17 +469,15 @@ async function processFromExampleInitForm(
   }
 }
 
-async function retryWithPrompt<T>(
-  func: () => Promise<T>
-): Promise<T | undefined> {
-  for (; ;) {
+async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined> {
+  for (;;) {
     try {
       return await func();
     } catch (_) {
       const { retry } = await toolbox.prompt.ask({
-        type: "confirm",
-        name: "retry",
-        message: "Do you want to retry?",
+        type: 'confirm',
+        name: 'retry',
+        message: 'Do you want to retry?',
         initial: true,
       });
 
@@ -547,32 +525,32 @@ async function processInitForm(
     contractName?: string;
     startBlock?: string;
     spkgPath?: string;
-  }
+  },
 ): Promise<
   | {
-    abi: EthereumABI;
-    protocolInstance: Protocol;
-    subgraphName: string;
-    directory: string;
-    studio: boolean;
-    product: string;
-    network: string;
-    contract: string;
-    indexEvents: boolean;
-    contractName: string;
-    startBlock: string;
-    fromExample: boolean;
-    spkgPath: string | undefined;
-  }
+      abi: EthereumABI;
+      protocolInstance: Protocol;
+      subgraphName: string;
+      directory: string;
+      studio: boolean;
+      product: string;
+      network: string;
+      contract: string;
+      indexEvents: boolean;
+      contractName: string;
+      startBlock: string;
+      fromExample: boolean;
+      spkgPath: string | undefined;
+    }
   | undefined
 > {
   let abiFromEtherscan: EthereumABI | undefined = undefined;
 
   try {
     const { protocol } = await prompt.ask<{ protocol: ProtocolName }>({
-      type: "select",
-      name: "protocol",
-      message: "Protocol",
+      type: 'select',
+      name: 'protocol',
+      message: 'Protocol',
       choices: protocolChoices,
       skip: protocolChoices.includes(String(initProtocol) as ProtocolName),
       result: value => {
@@ -590,30 +568,30 @@ async function processInitForm(
     initDebugger.extend('processInitForm')('isSubstreams: %O', isSubstreams);
 
     const { product } = await prompt.ask<{
-      product: "subgraph-studio" | "hosted-service";
+      product: 'subgraph-studio' | 'hosted-service';
     }>([
       {
-        type: "select",
-        name: "product",
-        message: "Product for which to initialize",
-        choices: ["subgraph-studio", "hosted-service"],
+        type: 'select',
+        name: 'product',
+        message: 'Product for which to initialize',
+        choices: ['subgraph-studio', 'hosted-service'],
         skip:
-          protocol === "arweave" ||
-          protocol === "cosmos" ||
-          protocol === "near" ||
-          initProduct === "subgraph-studio" ||
-          initProduct === "hosted-service" ||
+          protocol === 'arweave' ||
+          protocol === 'cosmos' ||
+          protocol === 'near' ||
+          initProduct === 'subgraph-studio' ||
+          initProduct === 'hosted-service' ||
           initStudio !== undefined ||
           initNode !== undefined,
-        result: (value) => {
+        result: value => {
           if (initProduct) return initProduct;
-          if (initStudio) return "subgraph-studio";
+          if (initStudio) return 'subgraph-studio';
           // For now we only support NEAR subgraphs in the Hosted Service
-          if (protocol === "near") {
-            return "hosted-service";
+          if (protocol === 'near') {
+            return 'hosted-service';
           }
 
-          if (value == "subgraph-studio") {
+          if (value == 'subgraph-studio') {
             initAllowSimpleName = true;
           }
 
@@ -628,12 +606,11 @@ async function processInitForm(
 
     const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
       {
-        type: "input",
-        name: "subgraphName",
-        message: () =>
-          product == "subgraph-studio" ? "Subgraph slug" : "Subgraph name",
+        type: 'input',
+        name: 'subgraphName',
+        message: () => (product == 'subgraph-studio' ? 'Subgraph slug' : 'Subgraph name'),
         initial: initSubgraphName,
-        validate: (name) => {
+        validate: name => {
           try {
             validateSubgraphName(name, {
               allowSimpleName: initAllowSimpleName,
@@ -653,15 +630,13 @@ async function processInitForm(
 
     const { directory } = await prompt.ask<{ directory: string }>([
       {
-        type: "input",
-        name: "directory",
-        message: "Directory to create the subgraph in",
+        type: 'input',
+        name: 'directory',
+        message: 'Directory to create the subgraph in',
         initial: () => initDirectory || getSubgraphBasename(subgraphName),
-        validate: (value) =>
-          filesystem.exists(
-            value || initDirectory || getSubgraphBasename(subgraphName)
-          )
-            ? "Directory already exists"
+        validate: value =>
+          filesystem.exists(value || initDirectory || getSubgraphBasename(subgraphName))
+            ? 'Directory already exists'
             : true,
       },
     ]);
@@ -681,8 +656,8 @@ async function processInitForm(
 
     const { network } = await prompt.ask<{ network: string }>([
       {
-        type: "select",
-        name: "network",
+        type: 'select',
+        name: 'network',
         message: () => `${protocolInstance.displayName()} network`,
         choices,
         skip: initNetwork !== undefined,
@@ -703,25 +678,20 @@ async function processInitForm(
       // - arweave
       // - cosmos
       {
-        type: "input",
-        name: "contract",
+        type: 'input',
+        name: 'contract',
         message: `Contract ${protocolInstance.getContract()?.identifierName()}`,
         skip: () =>
-          initFromExample !== undefined ||
-          !protocolInstance.hasContract() ||
-          isSubstreams,
+          initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
         initial: initContract,
         validate: async (value: string) => {
-          if (
-            initFromExample !== undefined ||
-            !protocolInstance.hasContract()
-          ) {
+          if (initFromExample !== undefined || !protocolInstance.hasContract()) {
             return true;
           }
 
           const protocolContract = protocolInstance.getContract();
           if (!protocolContract) {
-            return "Contract not found.";
+            return 'Contract not found.';
           }
           // Validate whether the contract is valid
           const { valid, error } = validateContract(value, protocolContract);
@@ -737,13 +707,13 @@ async function processInitForm(
 
           // Try loading the ABI from Etherscan, if none was provided
           if (protocolInstance.hasABIs() && !initAbi) {
-            if (network === "poa-core") {
+            if (network === 'poa-core') {
               abiFromEtherscan = await retryWithPrompt(() =>
-                loadAbiFromBlockScout(ABI, network, value)
+                loadAbiFromBlockScout(ABI, network, value),
               );
             } else {
               abiFromEtherscan = await retryWithPrompt(() =>
-                loadAbiFromEtherscan(ABI, network, value)
+                loadAbiFromEtherscan(ABI, network, value),
               );
             }
           }
@@ -751,7 +721,7 @@ async function processInitForm(
           if (!initStartBlock) {
             // Load startBlock for this contract
             const startBlock = await retryWithPrompt(() =>
-              loadStartBlockForContract(network, value)
+              loadStartBlockForContract(network, value),
             );
             if (startBlock) {
               initStartBlock = Number(startBlock).toString();
@@ -776,23 +746,21 @@ async function processInitForm(
 
     const { spkg } = await prompt.ask<{ spkg: string }>([
       {
-        type: "input",
-        name: "spkg",
-        message: "SPKG file (path)",
+        type: 'input',
+        name: 'spkg',
+        message: 'SPKG file (path)',
         initial: () => initSpkgPath,
         skip: () => !isSubstreams || !!initSpkgPath,
-        validate: (value) =>
-          filesystem.exists(initSpkgPath || value)
-            ? true
-            : "SPKG file does not exist",
+        validate: value =>
+          filesystem.exists(initSpkgPath || value) ? true : 'SPKG file does not exist',
       },
     ]);
 
     const { abi: abiFromFile } = await prompt.ask<{ abi: EthereumABI }>([
       {
-        type: "input",
-        name: "abi",
-        message: "ABI file (path)",
+        type: 'input',
+        name: 'abi',
+        message: 'ABI file (path)',
         initial: initAbi,
         skip: () =>
           !protocolInstance.hasABIs() ||
@@ -801,11 +769,7 @@ async function processInitForm(
           isSubstreams ||
           !!initAbiPath,
         validate: async (value: string) => {
-          if (
-            initFromExample ||
-            abiFromEtherscan ||
-            !protocolInstance.hasABIs()
-          ) {
+          if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
             return true;
           }
 
@@ -827,11 +791,7 @@ async function processInitForm(
           }
         },
         result: async (value: string) => {
-          if (
-            initFromExample ||
-            abiFromEtherscan ||
-            !protocolInstance.hasABIs()
-          ) {
+          if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
             return null;
           }
           const ABI = protocolInstance.getABI();
@@ -854,12 +814,12 @@ async function processInitForm(
 
     const { startBlock } = await prompt.ask<{ startBlock: string }>([
       {
-        type: "input",
-        name: "startBlock",
-        message: "Start Block",
-        initial: initStartBlock || "0",
+        type: 'input',
+        name: 'startBlock',
+        message: 'Start Block',
+        initial: initStartBlock || '0',
         skip: () => initFromExample !== undefined || isSubstreams,
-        validate: (value) => parseInt(value) >= 0,
+        validate: value => parseInt(value) >= 0,
         result(value) {
           if (initStartBlock) return initStartBlock;
           return value;
@@ -884,9 +844,9 @@ async function processInitForm(
 
     const { indexEvents } = await prompt.ask<{ indexEvents: boolean }>([
       {
-        type: "confirm",
-        name: "indexEvents",
-        message: "Index contract events as entities",
+        type: 'confirm',
+        name: 'indexEvents',
+        message: 'Index contract events as entities',
         initial: true,
         skip: () => !!initIndexEvents || isSubstreams,
       },
@@ -897,7 +857,7 @@ async function processInitForm(
       protocolInstance,
       subgraphName,
       directory,
-      studio: product === "subgraph-studio",
+      studio: product === 'subgraph-studio',
       startBlock,
       fromExample: !!initFromExample,
       product,
@@ -916,20 +876,20 @@ const loadAbiFromFile = (ABI: typeof EthereumABI, filename: string) => {
   const exists = filesystem.exists(filename);
 
   if (!exists) {
-    throw Error("File does not exist.");
-  } else if (exists === "dir") {
-    throw Error("Path points to a directory, not a file.");
-  } else if (exists === "other") {
-    throw Error("Not sure what this path points to.");
+    throw Error('File does not exist.');
+  } else if (exists === 'dir') {
+    throw Error('Path points to a directory, not a file.');
+  } else if (exists === 'other') {
+    throw Error('Not sure what this path points to.');
   } else {
-    return ABI.load("Contract", filename);
+    return ABI.load('Contract', filename);
   }
 };
 
 function revalidateSubgraphName(
   this: InitCommand,
   subgraphName: string,
-  { allowSimpleName }: { allowSimpleName: boolean | undefined }
+  { allowSimpleName }: { allowSimpleName: boolean | undefined },
 ) {
   // Fail if the subgraph name is invalid
   try {
@@ -948,13 +908,13 @@ function revalidateSubgraphName(
 // Inspired from: https://github.com/graphprotocol/graph-tooling/issues/1450#issuecomment-1713992618
 async function isInRepo() {
   try {
-    const result = await system.run("git rev-parse --is-inside-work-tree");
+    const result = await system.run('git rev-parse --is-inside-work-tree');
     // It seems like we are returning "true\n" instead of "true".
     // Don't think it is great idea to check for new line character here.
     // So best to just check if the result includes "true".
-    return result.includes("true");
+    return result.includes('true');
   } catch (err) {
-    if (err.stderr.includes("not a git repository")) {
+    if (err.stderr.includes('not a git repository')) {
       return false;
     }
     throw Error(err.stderr);
@@ -969,24 +929,24 @@ const initRepository = async (directory: string) =>
     async () => {
       // Remove .git dir in --from-example mode; in --from-contract, we're
       // starting from an empty directory
-      const gitDir = path.join(directory, ".git");
+      const gitDir = path.join(directory, '.git');
       if (filesystem.exists(gitDir)) {
         filesystem.remove(gitDir);
       }
       if (await isInRepo()) {
-        await system.run("git add --all", { cwd: directory });
+        await system.run('git add --all', { cwd: directory });
         await system.run('git commit -m "Initialize subgraph"', {
           cwd: directory,
         });
       } else {
-        await system.run("git init", { cwd: directory });
-        await system.run("git add --all", { cwd: directory });
+        await system.run('git init', { cwd: directory });
+        await system.run('git add --all', { cwd: directory });
         await system.run('git commit -m "Initial commit"', {
           cwd: directory,
         });
       }
       return true;
-    }
+    },
   );
 
 const installDependencies = async (
@@ -994,7 +954,7 @@ const installDependencies = async (
   commands: {
     link: string;
     install: string;
-  }
+  },
 ) =>
   await withSpinner(
     `Install dependencies with ${commands.install}`,
@@ -1008,7 +968,7 @@ const installDependencies = async (
       await system.run(commands.install, { cwd: directory });
 
       return true;
-    }
+    },
   );
 
 const runCodegen = async (directory: string, codegenCommand: string) =>
@@ -1019,7 +979,7 @@ const runCodegen = async (directory: string, codegenCommand: string) =>
     async () => {
       await system.run(codegenCommand, { cwd: directory });
       return true;
-    }
+    },
   );
 
 function printNextSteps(
@@ -1033,7 +993,7 @@ function printNextSteps(
       codegen: string;
       deploy: string;
     };
-  }
+  },
 ) {
   const relativeDir = path.relative(process.cwd(), directory);
 
@@ -1041,7 +1001,7 @@ function printNextSteps(
   this.log(
     `
 Subgraph ${subgraphName} created in ${relativeDir}
-`
+`,
   );
   this.log(`Next steps:
 
@@ -1080,7 +1040,7 @@ async function initSubgraphFromExample(
       codegen: string;
       deploy: string;
     };
-  }
+  },
 ) {
   // Fail if the subgraph name is invalid
   if (!revalidateSubgraphName.bind(this)(subgraphName, { allowSimpleName })) {
@@ -1100,28 +1060,22 @@ async function initSubgraphFromExample(
     `Warnings while cloning example subgraph`,
     async () => {
       // Create a temporary directory
-      const prefix = path.join(os.tmpdir(), "example-subgraph-");
+      const prefix = path.join(os.tmpdir(), 'example-subgraph-');
       const tmpDir = fs.mkdtempSync(prefix);
 
       try {
-        await system.run(
-          `git clone https://github.com/graphprotocol/graph-tooling ${tmpDir}`
-        );
+        await system.run(`git clone https://github.com/graphprotocol/graph-tooling ${tmpDir}`);
 
         // If an example is not specified, use the default one
         if (fromExample === undefined || fromExample === true) {
           fromExample = DEFAULT_EXAMPLE_SUBGRAPH;
         }
         // Legacy purposes when everything existed in examples repo
-        if (fromExample === "ethereum/gravatar") {
+        if (fromExample === 'ethereum/gravatar') {
           fromExample = DEFAULT_EXAMPLE_SUBGRAPH;
         }
 
-        const exampleSubgraphPath = path.join(
-          tmpDir,
-          "examples",
-          String(fromExample)
-        );
+        const exampleSubgraphPath = path.join(tmpDir, 'examples', String(fromExample));
         if (!filesystem.exists(exampleSubgraphPath)) {
           return { result: false, error: `Example not found: ${fromExample}` };
         }
@@ -1131,14 +1085,14 @@ async function initSubgraphFromExample(
       } finally {
         filesystem.remove(tmpDir);
       }
-    }
+    },
   );
   if (!cloned) {
     this.exit(1);
     return;
   }
 
-  const networkConf = await initNetworksConfig(directory, "address");
+  const networkConf = await initNetworksConfig(directory, 'address');
   if (networkConf !== true) {
     this.exit(1);
     return;
@@ -1152,22 +1106,19 @@ async function initSubgraphFromExample(
     async () => {
       try {
         // Load package.json
-        const pkgJsonFilename = filesystem.path(directory, "package.json");
-        const pkgJson = await filesystem.read(pkgJsonFilename, "json");
+        const pkgJsonFilename = filesystem.path(directory, 'package.json');
+        const pkgJson = await filesystem.read(pkgJsonFilename, 'json');
 
         pkgJson.name = getSubgraphBasename(subgraphName);
         for (const name of Object.keys(pkgJson.scripts)) {
-          pkgJson.scripts[name] = pkgJson.scripts[name].replace(
-            "example",
-            subgraphName
-          );
+          pkgJson.scripts[name] = pkgJson.scripts[name].replace('example', subgraphName);
         }
-        delete pkgJson["license"];
-        delete pkgJson["repository"];
+        delete pkgJson['license'];
+        delete pkgJson['repository'];
 
         // Remove example's cli in favor of the local one (added via `npm link`)
         if (process.env.GRAPH_CLI_TESTS) {
-          delete pkgJson["devDependencies"]["@graphprotocol/graph-cli"];
+          delete pkgJson['devDependencies']['@graphprotocol/graph-cli'];
         }
 
         // Write package.json
@@ -1177,7 +1128,7 @@ async function initSubgraphFromExample(
         filesystem.remove(directory);
         this.error(`Failed to preconfigure the subgraph: ${e}`);
       }
-    }
+    },
   );
   if (!prepared) {
     this.exit(1);
@@ -1256,9 +1207,9 @@ async function initSubgraphFromContract(
       deploy: string;
     };
     addContract: boolean;
-  }
+  },
 ) {
-  const isSubstreams = protocolInstance.name === "substreams";
+  const isSubstreams = protocolInstance.name === 'substreams';
 
   // Fail if the subgraph name is invalid
   if (!revalidateSubgraphName.bind(this)(subgraphName, { allowSimpleName })) {
@@ -1286,7 +1237,7 @@ async function initSubgraphFromContract(
     `Create subgraph scaffold`,
     `Failed to create subgraph scaffold`,
     `Warnings while creating subgraph scaffold`,
-    async (spinner) => {
+    async spinner => {
       const scaffold = await generateScaffold(
         {
           protocolInstance,
@@ -1300,11 +1251,11 @@ async function initSubgraphFromContract(
           node,
           spkgPath,
         },
-        spinner
+        spinner,
       );
       await writeScaffold(scaffold, directory, spinner);
       return true;
-    }
+    },
   );
   if (scaffold !== true) {
     process.exitCode = 1;
@@ -1366,25 +1317,22 @@ async function addAnotherContract(
   }: {
     protocolInstance: Protocol;
     directory: string;
-  }
+  },
 ) {
-  const addContractAnswer = await ux.prompt("Add another contract? (y/n)", {
+  const addContractAnswer = await ux.prompt('Add another contract? (y/n)', {
     required: true,
-    type: "single",
+    type: 'single',
   });
-  const addContractConfirmation = addContractAnswer.toLowerCase() === "y";
+  const addContractConfirmation = addContractAnswer.toLowerCase() === 'y';
 
   if (addContractConfirmation) {
     const ProtocolContract = protocolInstance.getContract()!;
 
-    let contract = "";
-    for (; ;) {
-      contract = await ux.prompt(
-        `\nContract ${ProtocolContract.identifierName()}`,
-        {
-          required: true,
-        }
-      );
+    let contract = '';
+    for (;;) {
+      contract = await ux.prompt(`\nContract ${ProtocolContract.identifierName()}`, {
+        required: true,
+      });
       const { valid, error } = validateContract(contract, ProtocolContract);
       if (valid) {
         break;
