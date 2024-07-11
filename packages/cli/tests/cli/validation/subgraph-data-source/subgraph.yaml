@@ -1,0 +1,21 @@
+specVersion: 0.0.1
+repository: https://github.com/graphprotocol/test-subgraph
+description: Test subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: subgraph
+    name: ExampleSubgraph
+    source:
+      address: "QmHASH"
+      startBlock: 0
+    mapping:
+      kind: entity
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./mapping.ts
+      entities:
+        - ExampleEntity
+      handlers:
+        - handler: handleExampleEvent
+          entity: ExampleEntity

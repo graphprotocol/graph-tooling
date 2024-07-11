@@ -20,6 +20,7 @@ import * as NearManifestScaffold from './near/scaffold/manifest';
 import * as NearMappingScaffold from './near/scaffold/mapping';
 import NearSubgraph from './near/subgraph';
 import { SubgraphOptions } from './subgraph';
+import SubgraphDS from './subgraph/subgraph';
 import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest';
 import SubstreamsSubgraph from './substreams/subgraph';
 
@@ -43,6 +44,7 @@ export default class Protocol {
      * some other places use datasource object
      */
     const name = typeof datasource === 'string' ? datasource : datasource.kind;
+    protocolDebug('Initializing protocol with datasource %O', datasource);
     this.name = Protocol.normalizeName(name)!;
     protocolDebug('Initializing protocol %s', this.name);
 
@@ -58,6 +60,9 @@ export default class Protocol {
         break;
       case 'near':
         this.config = nearProtocol;
+        break;
+      case 'subgraph':
+        this.config = subgraphProtocol;
         break;
       case 'substreams':
         this.config = substreamsProtocol;
@@ -85,6 +90,7 @@ export default class Protocol {
       near: ['near'],
       cosmos: ['cosmos'],
       substreams: ['substreams'],
+      subgraph: ['subgraph'],
     }) as immutable.Collection<ProtocolName, string[]>;
   }
 
@@ -140,6 +146,7 @@ export default class Protocol {
         'uni-3', // Juno testnet
       ],
       substreams: ['mainnet'],
+      subgraph: ['mainnet'],
     }) as immutable.Map<
       | 'arweave'
       | 'ethereum'
@@ -147,7 +154,8 @@ export default class Protocol {
       | 'cosmos'
       | 'substreams'
       // this is temporary, until we have a better way to handle substreams triggers
-      | 'substreams/triggers',
+      | 'substreams/triggers'
+      | 'subgraph',
       immutable.List<string>
     >;
   }
@@ -234,7 +242,8 @@ export type ProtocolName =
   | 'near'
   | 'cosmos'
   | 'substreams'
-  | 'substreams/triggers';
+  | 'substreams/triggers'
+  | 'subgraph';
 
 export interface ProtocolConfig {
   displayName: string;
@@ -288,6 +297,19 @@ const ethereumProtocol: ProtocolConfig = {
   },
   manifestScaffold: EthereumManifestScaffold,
   mappingScaffold: EthereumMappingScaffold,
+};
+
+const subgraphProtocol: ProtocolConfig = {
+  displayName: 'Subgraph',
+  abi: undefined,
+  contract: undefined,
+  getTemplateCodeGen: undefined,
+  getTypeGenerator: undefined,
+  getSubgraph(options) {
+    return new SubgraphDS(options);
+  },
+  manifestScaffold: undefined,
+  mappingScaffold: undefined,
 };
 
 const nearProtocol: ProtocolConfig = {
