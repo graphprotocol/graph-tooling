@@ -1,0 +1,34 @@
+{
+  "name": "@graphprotocol/graph-matchstick",
+  "version": "0.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "test": "ava",
+    "universal": "napi universal",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.3",
+    "ava": "^6.0.1"
+  },
+  "ava": {
+    "timeout": "3m"
+  },
+  "napi": {
+    "name": "@graphprotocol/graph-matchstick",
+    "triples": {
+      "additional": [
+        "aarch64-apple-darwin"
+      ]
+    }
+  }
+}
