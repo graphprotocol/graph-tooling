@@ -79,6 +79,16 @@ jobs:
             target/
           key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
 
+      - name: Cache cargo build
+        uses: actions/cache@v4
+        with:
+          path: target/
+          key:
+            ${{ runner.os }}-cargo-build-${{ matrix.settings.target }}-${{
+            hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-${{ matrix.settings.target }}-
+
       - uses: goto-bus-stop/setup-zig@v2
         if: ${{ contains(matrix.settings.target, 'musl') }}
         with:
@@ -174,12 +184,17 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v4
-      - name: setup node
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.5.0
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+          cache: pnpm
 
-      - name: install dependencies (lib)
+      - name: Install dependencies
         run: pnpm install
         working-directory: packages/matchstick
 
