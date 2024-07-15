@@ -72,14 +72,6 @@ jobs:
         run: |
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             brew install protobuf
-          elif [[ "$RUNNER_OS" == "Linux" ]]; then
-            sudo apt-get update
-            sudo apt-get install -y protobuf-compiler
-          fi
-
-      - name: Install OpenSSL on Ubuntu
-        if: matrix.settings.host == 'ubuntu-latest'
-        run: sudo apt-get install -y libssl-dev
 
       - name: Install OpenSSL on macOS
         if: matrix.settings.host == 'macos-latest'
@@ -122,12 +114,14 @@ jobs:
         if: ${{ matrix.settings.docker }}
         with:
           image: ${{ matrix.settings.docker }}
-          options:
-            '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v
-            ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{
+          options: >
+            --user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{
+            github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{
             github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{
-            github.workspace }}:/build -w /build/packages/matchstick'
-          run: ${{ matrix.settings.build }}
+            github.workspace }}:/build -w /build/packages/matchstick
+          run: |
+            apt-get update && apt-get install -y libssl-dev protobuf-compiler
+            ${{ matrix.settings.build }}
 
       - name: Build
         run: ${{ matrix.settings.build }}
