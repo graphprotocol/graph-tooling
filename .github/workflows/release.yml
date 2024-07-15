@@ -40,25 +40,9 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            build: |-
-              set -e &&
-              apt-get update &&
-              apt-get install -y libssl-dev protobuf-compiler &&
-              export OPENSSL_DIR=/usr &&
-              export OPENSSL_INCLUDE_DIR=/usr/include &&
-              export OPENSSL_LIB_DIR=/usr/lib &&
-              export PKG_CONFIG_PATH=/usr/lib/pkgconfig &&
-              export PROTOC=/usr/bin/protoc &&
-              echo "Checking OpenSSL headers in $OPENSSL_INCLUDE_DIR/openssl" &&
-              ls -l $OPENSSL_INCLUDE_DIR/openssl &&
-              echo "Building project..." &&
-              pnpm build --target x86_64-unknown-linux-gnu &&
-              strip *.node
+            build: pnpm build --target x86_64-unknown-linux-gnu
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
-    defaults:
-      run:
-        working-directory: packages/matchstick
     steps:
       - uses: actions/checkout@v4
         with:
@@ -149,9 +133,6 @@ jobs:
             export OPENSSL_LIB_DIR=/usr/lib
             export PKG_CONFIG_PATH=/usr/lib/pkgconfig
             export PROTOC=/usr/bin/protoc
-            echo "Checking OpenSSL headers in $OPENSSL_INCLUDE_DIR/openssl" &&
-            ls -l $OPENSSL_INCLUDE_DIR/openssl &&
-            echo "Building project..." &&
             ${{ matrix.settings.build }}
 
       - name: Build
@@ -165,6 +146,7 @@ jobs:
           name: bindings-${{ matrix.settings.target }}
           path: packages/matchstick/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
+
   publish:
     name: publish to npm
     runs-on: ubuntu-latest
