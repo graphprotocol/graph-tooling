@@ -39,7 +39,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
-      - run: cargo test
+      - name: Run tests
+        working-directory: packages/matchstick
+        run: cargo test
 
   fmt:
     name: Rustfmt

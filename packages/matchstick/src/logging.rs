@@ -7,13 +7,13 @@ static MARGIN: usize = 2;
 /// Current indentation when logging.
 pub static mut INDENT: usize = 0;
 pub fn add_indent() {
-    unsafe { INDENT += MARGIN };
+  unsafe { INDENT += MARGIN };
 }
 pub fn sub_indent() {
-    unsafe { INDENT -= MARGIN };
+  unsafe { INDENT -= MARGIN };
 }
 pub fn clear_indent() {
-    unsafe { INDENT = 0 };
+  unsafe { INDENT = 0 };
 }
 
 /// Whether to accumulate the logs or print them as they come.
@@ -22,73 +22,73 @@ pub(crate) static mut LOGS: Vec<String> = vec![];
 
 /// Start accumulating the logs instead of printing them directly.
 pub fn accum() {
-    unsafe { ACCUM = true };
+  unsafe { ACCUM = true };
 }
 
 /// Flush the accumulated logs by producing a resulting string
 /// and exit the accumulation mode of logging.
 pub fn flush() -> String {
-    let mut buf = String::new();
-    unsafe {
-        ACCUM = false;
-        LOGS.iter().for_each(|s| {
-            writeln!(&mut buf, "{s}").unwrap_or_else(|err| panic!("{}", Log::Critical(err)))
-        });
-        LOGS.clear();
-    };
-    buf
+  let mut buf = String::new();
+  unsafe {
+    ACCUM = false;
+    LOGS.iter().for_each(|s| {
+      writeln!(&mut buf, "{s}").unwrap_or_else(|err| panic!("{}", Log::Critical(err)))
+    });
+    LOGS.clear();
+  };
+  buf
 }
 
 pub enum Log<T: fmt::Display> {
-    Critical(T),
-    Error(T),
-    Warning(T),
-    Info(T),
-    Debug(T),
-    Success(T),
-    Default(T),
+  Critical(T),
+  Error(T),
+  Warning(T),
+  Info(T),
+  Debug(T),
+  Success(T),
+  Default(T),
 }
 
 impl<T: fmt::Display> Log<T> {
-    pub fn new(level: u32, s: T) -> Self {
-        match level {
-            0 => Log::Critical(s),
-            1 => Log::Error(s),
-            2 => Log::Warning(s),
-            3 => Log::Info(s),
-            4 => Log::Debug(s),
-            5 => Log::Success(s),
-            6 => Log::Default(s),
+  pub fn new(level: u32, s: T) -> Self {
+    match level {
+      0 => Log::Critical(s),
+      1 => Log::Error(s),
+      2 => Log::Warning(s),
+      3 => Log::Info(s),
+      4 => Log::Debug(s),
+      5 => Log::Success(s),
+      6 => Log::Default(s),
 
-            _ => panic!("Level is not supported!"),
-        }
+      _ => panic!("Level is not supported!"),
     }
+  }
 
-    pub fn println(&self) {
-        let s = self.to_string();
-        unsafe {
-            if ACCUM {
-                LOGS.push(s);
-                return;
-            }
-        }
-        println!("{s}");
+  pub fn println(&self) {
+    let s = self.to_string();
+    unsafe {
+      if ACCUM {
+        LOGS.push(s);
+        return;
+      }
     }
+    println!("{s}");
+  }
 }
 
 impl<T: fmt::Display> fmt::Display for Log<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = match self {
-            Log::Critical(s) => format!("🆘 {s}").bold().red(),
-            Log::Error(s) => format!("𝖷 {s}").bold().red(),
-            Log::Warning(s) => format!("⚠️  {s}").yellow(),
-            Log::Info(s) => format!("💬 {s}").italic(),
-            Log::Debug(s) => format!("🛠  {s}").italic().cyan(),
-            Log::Success(s) => format!("√ {s}").bold().green(),
-            Log::Default(s) => format!("{s}").normal(),
-        };
-        unsafe { write!(f, "{}{}", " ".repeat(INDENT), s) }
-    }
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let s = match self {
+      Log::Critical(s) => format!("🆘 {s}").bold().red(),
+      Log::Error(s) => format!("𝖷 {s}").bold().red(),
+      Log::Warning(s) => format!("⚠️  {s}").yellow(),
+      Log::Info(s) => format!("💬 {s}").italic(),
+      Log::Debug(s) => format!("🛠  {s}").italic().cyan(),
+      Log::Success(s) => format!("√ {s}").bold().green(),
+      Log::Default(s) => format!("{s}").normal(),
+    };
+    unsafe { write!(f, "{}{}", " ".repeat(INDENT), s) }
+  }
 }
 
 macro_rules! log {

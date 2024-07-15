@@ -55,7 +55,7 @@ pub(crate) fn populate_schema_definitions<C: graph::blockchain::Blockchain>(
             let entities = context
               .interface_to_entities
               .entry(interface_name.to_string())
-              .or_insert(Vec::new());
+              .or_default();
 
             entities.push(entity_def.name.clone());
           });
