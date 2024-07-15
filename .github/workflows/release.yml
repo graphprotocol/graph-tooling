@@ -30,7 +30,7 @@ jobs:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
-              pnpm build --target x86_64-apple-darwin
+              pnpm build
           - host: macos-latest
             target: aarch64-apple-darwin
             build: |
@@ -125,22 +125,13 @@ jobs:
       - name: Build
         run: ${{ matrix.settings.build }}
         shell: bash
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        if: matrix.settings.target != 'wasm32-wasip1-threads'
-        with:
-          name: bindings-${{ matrix.settings.target }}
-          path: '*.node'
-          if-no-files-found: error
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        if: matrix.settings.target == 'wasm32-wasip1-threads'
+        uses: actions/upload-artifact@v3
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: '*.wasm'
+          path: packages/matchstick/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
-
   publish:
     name: publish to npm
     runs-on: ubuntu-latest
