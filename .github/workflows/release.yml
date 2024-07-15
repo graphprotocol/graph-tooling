@@ -103,6 +103,13 @@ jobs:
         if: matrix.settings.host == 'macos-latest'
         run: brew install protobuf
 
+      - name: Install Protobuf on Windows
+        if: matrix.settings.host == 'windows-latest'
+        run: choco install protoc
+      - name: Set PROTOC environment variable on Windows
+        if: matrix.settings.host == 'windows-latest'
+        run: echo 'PROTOC=C:\Program Files\Google Protobuf\bin\protoc.exe' >> $GITHUB_ENV
+
       - name: Install OpenSSL and Protobuf
         if: matrix.settings.host == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libssl-dev protobuf-compiler
@@ -113,6 +120,7 @@ jobs:
           echo 'OPENSSL_DIR=/usr' >> $GITHUB_ENV
           echo 'OPENSSL_INCLUDE_DIR=/usr/include' >> $GITHUB_ENV
           echo 'OPENSSL_LIB_DIR=/usr/lib' >> $GITHUB_ENV
+          echo 'PKG_CONFIG_PATH=/usr/lib/pkgconfig' >> $GITHUB_ENV
 
       - name: Set PROTOC environment variable on macOS
         if: matrix.settings.host == 'macos-latest'
