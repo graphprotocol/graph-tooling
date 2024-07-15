@@ -107,6 +107,13 @@ jobs:
         if: matrix.settings.host == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libssl-dev protobuf-compiler
 
+      - name: Set OpenSSL environment variables on Ubuntu
+        if: matrix.settings.host == 'ubuntu-latest'
+        run: |
+          echo 'OPENSSL_DIR=/usr' >> $GITHUB_ENV
+          echo 'OPENSSL_INCLUDE_DIR=/usr/include' >> $GITHUB_ENV
+          echo 'OPENSSL_LIB_DIR=/usr/lib' >> $GITHUB_ENV
+
       - name: Set PROTOC environment variable on macOS
         if: matrix.settings.host == 'macos-latest'
         run: echo 'export PROTOC=/usr/local/bin/protoc' >> $GITHUB_ENV
@@ -137,6 +144,7 @@ jobs:
           name: bindings-${{ matrix.settings.target }}
           path: packages/matchstick/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
+
   publish:
     name: publish to npm
     runs-on: ubuntu-latest
