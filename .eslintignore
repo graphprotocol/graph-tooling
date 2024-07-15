@@ -4,6 +4,7 @@ build
 generated
 packages/cli/tests/cli/init
 packages/cli/tests/cli/validation
+packages/matchstick/mocks/yamls
 
 # TODO: cleanup examples and lint
 examples
