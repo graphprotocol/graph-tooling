@@ -68,10 +68,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Install Protobuf
-        run: |
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            brew install protobuf
+      - name: Install Protobuf on macOS
+        if: matrix.settings.host == 'macos-latest'
+        run: brew install protobuf
 
       - name: Install OpenSSL on macOS
         if: matrix.settings.host == 'macos-latest'
