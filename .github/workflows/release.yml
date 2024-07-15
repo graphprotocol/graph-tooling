@@ -30,19 +30,19 @@ jobs:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
-              yarn build
+              pnpm build
               strip -x *.node
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
             build: |-
               set -e &&
-              yarn build --target x86_64-unknown-linux-gnu &&
+              pnpm build --target x86_64-unknown-linux-gnu &&
               strip *.node
           - host: macos-latest-xlarge
             target: aarch64-apple-darwin
             build: |
-              yarn build --target aarch64-apple-darwin
+              pnpm build --target aarch64-apple-darwin
               strip -x *.node
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
@@ -59,6 +59,12 @@ jobs:
         if: ${{ !matrix.settings.docker }}
         with:
           node-version: 18
+
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.6
+
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
@@ -84,7 +90,7 @@ jobs:
         if: ${{ matrix.settings.setup }}
         shell: bash
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
       - name: Build in docker
         uses: addnab/docker-run-action@v3
         if: ${{ matrix.settings.docker }}
@@ -120,11 +126,11 @@ jobs:
           node-version: 18
 
       - name: install dependencies (lib)
-        run: yarn install
+        run: pnpm install
         working-directory: packages/matchstick
 
       - name: install dependencies (bin)
-        run: yarn install
+        run: pnpm install
         working-directory: bin/npm
 
       - name: Download all artifacts
@@ -133,7 +139,7 @@ jobs:
           path: packages/matchstick/artifacts
 
       - name: Move artifacts
-        run: yarn artifacts
+        run: pnpm artifacts
         working-directory: packages/matchstick
 
       - name: List packages
