@@ -39,6 +39,7 @@ jobs:
           - host: windows-latest
             target: i686-pc-windows-msvc
             build: |
+              rustup target add i686-pc-windows-msvc
               pnpm build --target i686-pc-windows-msvc
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -101,6 +102,10 @@ jobs:
       - name: Install Protobuf on macOS
         if: matrix.settings.host == 'macos-latest'
         run: brew install protobuf
+
+      - name: Install OpenSSL and Protobuf
+        if: matrix.settings.host == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev protobuf-compiler
 
       - name: Set PROTOC environment variable on macOS
         if: matrix.settings.host == 'macos-latest'
