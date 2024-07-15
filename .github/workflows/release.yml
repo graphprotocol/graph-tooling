@@ -37,6 +37,11 @@ jobs:
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
             build: |-
               set -e &&
+              apt-get update && apt-get install -y libssl-dev protobuf-compiler &&
+              export OPENSSL_DIR=/usr &&
+              export OPENSSL_INCLUDE_DIR=/usr/include &&
+              export OPENSSL_LIB_DIR=/usr/lib &&
+              export PROTOC=/usr/bin/protoc &&
               pnpm build --target x86_64-unknown-linux-gnu &&
               strip *.node
           - host: macos-latest-xlarge
@@ -75,17 +80,24 @@ jobs:
       - name: Set PROTOC environment variable on macOS
         if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
         run: echo 'export PROTOC=/usr/local/bin/protoc' >> $GITHUB_ENV
+
       - name: Install OpenSSL on macOS
-        if: matrix.settings.host == 'macos-latest'
-        run: brew install openssl
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
+        run: |
+          brew install openssl
+          echo 'export OPENSSL_DIR=$(brew --prefix openssl@1.1)' >> $GITHUB_ENV
+
+      - name: Install PostgreSQL on macOS
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
+        run: |
+          brew install postgresql
+          echo 'export LDFLAGS="-L/usr/local/opt/postgresql/lib"' >> $GITHUB_ENV
+          echo 'export CPPFLAGS="-I/usr/local/opt/postgresql/include"' >> $GITHUB_ENV
+          echo 'export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"' >> $GITHUB_ENV
 
       - name: Install OpenSSL on Windows
         if: matrix.settings.host == 'windows-latest'
         run: choco install openssl
-
-      - name: Install PostgreSQL on macOS
-        if: matrix.settings.host == 'macos-latest'
-        run: brew install postgresql
 
       - name: Install
         uses: dtolnay/rust-toolchain@stable
@@ -128,6 +140,8 @@ jobs:
           run: |
             apt-get update && apt-get install -y libssl-dev protobuf-compiler
             export OPENSSL_DIR=/usr
+            export OPENSSL_INCLUDE_DIR=/usr/include
+            export OPENSSL_LIB_DIR=/usr/lib
             export PROTOC=/usr/bin/protoc
             ${{ matrix.settings.build }}
 
