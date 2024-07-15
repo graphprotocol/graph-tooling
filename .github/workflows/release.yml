@@ -79,16 +79,6 @@ jobs:
             target/
           key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
 
-      - name: Cache cargo build
-        uses: actions/cache@v4
-        with:
-          path: target/
-          key:
-            ${{ runner.os }}-cargo-build-${{ matrix.settings.target }}-${{
-            hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-build-${{ matrix.settings.target }}-
-
       - uses: goto-bus-stop/setup-zig@v2
         if: ${{ contains(matrix.settings.target, 'musl') }}
         with:
@@ -211,22 +201,6 @@ jobs:
         run: ls -R ./npm
         shell: bash
         working-directory: packages/matchstick
-
-      - name: Update version to match release tag and commit
-        run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
-          cd packages/matchstick
-          npm version $TAG_NAME --no-git-tag-version
-          cd ../../
-          cd bin/npm
-          npm version $TAG_NAME --no-git-tag-version
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add .
-          git commit -m "ci: bump napi packages' versions to $TAG_NAME"
-        env:
-          GITHUB_REF: ${{ github.ref }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: publish lib
         working-directory: packages/matchstick
