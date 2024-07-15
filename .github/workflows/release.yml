@@ -42,10 +42,12 @@ jobs:
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
             build: |-
               set -e &&
-              apt-get update && apt-get install -y libssl-dev protobuf-compiler &&
+              apt-get update &&
+              apt-get install -y libssl-dev protobuf-compiler &&
               export OPENSSL_DIR=/usr &&
               export OPENSSL_INCLUDE_DIR=/usr/include &&
               export OPENSSL_LIB_DIR=/usr/lib &&
+              export PKG_CONFIG_PATH=/usr/lib/pkgconfig &&
               export PROTOC=/usr/bin/protoc &&
               pnpm build --target x86_64-unknown-linux-gnu &&
               strip *.node
@@ -142,6 +144,7 @@ jobs:
             export OPENSSL_DIR=/usr
             export OPENSSL_INCLUDE_DIR=/usr/include
             export OPENSSL_LIB_DIR=/usr/lib
+            export PKG_CONFIG_PATH=/usr/lib/pkgconfig
             export PROTOC=/usr/bin/protoc
             ${{ matrix.settings.build }}
 
@@ -156,7 +159,6 @@ jobs:
           name: bindings-${{ matrix.settings.target }}
           path: packages/matchstick/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
-
   publish:
     name: publish to npm
     runs-on: ubuntu-latest
