@@ -32,6 +32,11 @@ jobs:
             build: |
               pnpm build
               strip -x *.node
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            build: |
+              pnpm build --target aarch64-apple-darwin
+              strip -x *.node
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
@@ -44,11 +49,6 @@ jobs:
               export PROTOC=/usr/bin/protoc &&
               pnpm build --target x86_64-unknown-linux-gnu &&
               strip *.node
-          - host: macos-latest-xlarge
-            target: aarch64-apple-darwin
-            build: |
-              pnpm build --target aarch64-apple-darwin
-              strip -x *.node
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
     defaults:
@@ -74,21 +74,21 @@ jobs:
         run: pnpm install
 
       - name: Install Protobuf on macOS
-        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
+        if: matrix.settings.host == 'macos-latest'
         run: brew install protobuf
 
       - name: Set PROTOC environment variable on macOS
-        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
+        if: matrix.settings.host == 'macos-latest'
         run: echo 'export PROTOC=/usr/local/bin/protoc' >> $GITHUB_ENV
 
       - name: Install OpenSSL on macOS
-        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
+        if: matrix.settings.host == 'macos-latest'
         run: |
           brew install openssl
           echo 'export OPENSSL_DIR=$(brew --prefix openssl@1.1)' >> $GITHUB_ENV
 
       - name: Install PostgreSQL on macOS
-        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
+        if: matrix.settings.host == 'macos-latest'
         run: |
           brew install postgresql
           echo 'export LDFLAGS="-L/usr/local/opt/postgresql/lib"' >> $GITHUB_ENV
