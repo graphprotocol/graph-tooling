@@ -1,15 +1,15 @@
-import path from 'path'
-import { filesystem } from 'gluegun'
-import yaml from 'js-yaml'
-import { Args, Command, Flags } from '@oclif/core'
+import path from 'path';
+import { filesystem } from 'gluegun';
+import yaml from 'js-yaml';
+import { Args, Command, Flags } from '@oclif/core';
 
 // Dynamically import the N-API bindings based on the OS and architecture
 const { runTests } = (() => {
-  const platform = process.platform
-  const arch = process.arch
-  const napiModulePath = `../../../matchstick/the-graph-tooling-matchstick.${platform}-${arch}.node`
-  return require(napiModulePath)
-})()
+  const platform = process.platform;
+  const arch = process.arch;
+  const napiModulePath = `../../../matchstick/the-graph-tooling-matchstick.${platform}-${arch}.node`;
+  return require(napiModulePath);
+})();
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
@@ -28,8 +28,7 @@ export default class TestCommand extends Command {
       char: 'c',
     }),
     force: Flags.boolean({
-      summary:
-        'Binary - overwrites folder + file when downloading.',
+      summary: 'Binary - overwrites folder + file when downloading.',
       char: 'f',
     }),
     logs: Flags.boolean({
@@ -51,28 +50,28 @@ export default class TestCommand extends Command {
     const {
       args: { datasource },
       flags: { coverage, force, logs, recompile, version },
-    } = await this.parse(TestCommand)
+    } = await this.parse(TestCommand);
 
-    let testsDir = './tests'
+    let testsDir = './tests';
 
     // Check if matchstick.yaml config exists
     if (filesystem.exists('matchstick.yaml')) {
       try {
         // Load the config
-        const config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8')!)
+        const config = await yaml.load(filesystem.read('matchstick.yaml', 'utf8')!);
         // Check if matchstick.yaml and testsFolder not null
         if (config?.testsFolder) {
           // assign test folder from matchstick.yaml if present
-          testsDir = config.testsFolder
+          testsDir = config.testsFolder;
         }
       } catch (error) {
         this.error(`A problem occurred while reading "matchstick.yaml":\n${error.message}`, {
           exit: 1,
-        })
+        });
       }
     }
 
-    const cachePath = path.resolve(testsDir, '.latest.json')
+    const cachePath = path.resolve(testsDir, '.latest.json');
     const opts = {
       testsDir,
       cachePath,
@@ -82,49 +81,49 @@ export default class TestCommand extends Command {
       recompile,
       version,
       latestVersion: getLatestVersionFromCache(cachePath),
-    }
+    };
 
-    runNapi.bind(this)(datasource, opts)
+    runNapi.bind(this)(datasource, opts);
   }
 }
 
 function getLatestVersionFromCache(cachePath: string) {
   if (filesystem.exists(cachePath) == 'file') {
-    const cached = filesystem.read(cachePath, 'json')
+    const cached = filesystem.read(cachePath, 'json');
     // Get the cache age in days
-    const cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24)
+    const cacheAge = (Date.now() - cached.timestamp) / (1000 * 60 * 60 * 24);
     // If cache age is less than 1 day, use the cached version
     if (cacheAge < 1) {
-      return cached.version as string
+      return cached.version as string;
     }
   }
-  return null
+  return null;
 }
 
 async function runNapi(
   this: TestCommand,
   datasource: string | undefined,
   opts: {
-    coverage: boolean
-    force: boolean
-    logs: boolean
-    version: string | undefined
-    latestVersion: string | null
-    recompile: boolean
+    coverage: boolean;
+    force: boolean;
+    logs: boolean;
+    version: string | undefined;
+    latestVersion: string | null;
+    recompile: boolean;
   },
 ) {
-  const args = []
+  const args = [];
 
-  if (opts.coverage) args.push('--coverage')
-  if (opts.recompile) args.push('--recompile')
-  if (datasource) args.push(datasource)
+  if (opts.coverage) args.push('--coverage');
+  if (opts.recompile) args.push('--recompile');
+  if (datasource) args.push(datasource);
 
   try {
     // Call the N-API function
-    runTests(args)
+    runTests(args);
   } catch (error) {
     this.error(`Error running tests:\n${error.message}`, {
       exit: 1,
-    })
+    });
   }
 }

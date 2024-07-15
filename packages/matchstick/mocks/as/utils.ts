@@ -1,2 +1,2 @@
 // Mock file
-import { Gravatar } from '../generated/schema'
+import { Gravatar } from '../generated/schema';

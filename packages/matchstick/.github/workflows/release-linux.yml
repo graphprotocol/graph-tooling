@@ -34,7 +34,11 @@ jobs:
           sudo apt-get -y install libpq-dev protobuf-compiler
 
       - name: Build
-        run: cargo build --release && mv target/release/${{ matrix.artifact_name }} target/release/${{ matrix.asset_name }}
+        run:
+          cargo build --release && mv target/release/${{ matrix.artifact_name }} target/release/${{
+          matrix.asset_name }}
 
       - name: Upload binaries to release
-        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token && gh release upload ${GITHUB_REF##*/} target/release/${{ matrix.asset_name }}
+        run:
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token && gh release upload
+          ${GITHUB_REF##*/} target/release/${{ matrix.asset_name }}

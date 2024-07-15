@@ -1,7 +1,7 @@
 name: CI
 env:
   DEBUG: napi:*
-  APP_NAME: "@graphprotocol/graph-matchstick"
+  APP_NAME: '@graphprotocol/graph-matchstick'
   MACOSX_DEPLOYMENT_TARGET: '10.13'
 permissions:
   contents: write
@@ -65,7 +65,9 @@ jobs:
             target/
           key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
       - uses: goto-bus-stop/setup-zig@v2
-        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' || matrix.settings.target == 'armv7-unknown-linux-musleabihf' }}
+        if:
+          ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' || matrix.settings.target ==
+          'armv7-unknown-linux-musleabihf' }}
         with:
           version: 0.11.0
       - name: Setup toolchain
@@ -90,7 +92,11 @@ jobs:
         if: ${{ matrix.settings.docker }}
         with:
           image: ${{ matrix.settings.docker }}
-          options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
+          options:
+            '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v
+            ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{
+            github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{
+            github.workspace }}:/build -w /build'
           run: ${{ matrix.settings.build }}
       - name: Build
         run: ${{ matrix.settings.build }}

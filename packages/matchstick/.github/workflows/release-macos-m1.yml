@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         name: [macos-11-m1, macos-12-m1]
-        
+
         include:
           - name: macos-11-m1
             os: macos-11
@@ -26,7 +26,7 @@ jobs:
             os: macos-12
             artifact_name: matchstick
             asset_name: binary-macos-12-m1
-            
+
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
@@ -35,7 +35,12 @@ jobs:
       - run: brew install protobuf
 
       - name: Build
-        run: rustup target add aarch64-apple-darwin && cargo build --release --target aarch64-apple-darwin && mv target/aarch64-apple-darwin/release/${{ matrix.artifact_name }} target/release/${{ matrix.asset_name }}
+        run:
+          rustup target add aarch64-apple-darwin && cargo build --release --target
+          aarch64-apple-darwin && mv target/aarch64-apple-darwin/release/${{ matrix.artifact_name }}
+          target/release/${{ matrix.asset_name }}
 
       - name: Upload binary to release
-        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token && gh release upload ${GITHUB_REF##*/} target/release/${{ matrix.asset_name }}
+        run:
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token && gh release upload
+          ${GITHUB_REF##*/} target/release/${{ matrix.asset_name }}

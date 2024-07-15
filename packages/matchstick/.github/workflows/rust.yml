@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
     - cron: '0 6 * * *'
 
@@ -21,7 +21,7 @@ jobs:
         with:
           toolchain: 1.68.0
       - run: sudo apt-get install protobuf-compiler
-      - run: cargo check 
+      - run: cargo check
 
   test:
     name: Test Suite
@@ -35,7 +35,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
-      - run: cargo test 
+      - run: cargo test
 
   fmt:
     name: Rustfmt

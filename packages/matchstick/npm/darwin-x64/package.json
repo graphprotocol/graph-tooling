@@ -1,18 +1,18 @@
 {
   "name": "the-graph-tooling-matchstick-darwin-x64",
   "version": "0.0.0",
-  "os": [
-    "darwin"
-  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
   "cpu": [
     "x64"
+  ],
+  "os": [
+    "darwin"
   ],
   "main": "the-graph-tooling-matchstick.darwin-x64.node",
   "files": [
     "the-graph-tooling-matchstick.darwin-x64.node"
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">= 10"
-  }
+  ]
 }
