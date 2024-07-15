@@ -1,6 +1,9 @@
 {
   "name": "the-graph-tooling-matchstick-linux-x64-gnu",
   "version": "0.0.0",
+  "repository": {
+    "url": "https://github.com/graphprotocol/graph-tooling"
+  },
   "license": "MIT",
   "engines": {
     "node": ">= 10"
@@ -15,6 +18,9 @@
   "files": [
     "the-graph-tooling-matchstick.linux-x64-gnu.node"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "libc": [
     "glibc"
   ]

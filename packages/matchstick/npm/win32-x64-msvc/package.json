@@ -1,6 +1,9 @@
 {
   "name": "the-graph-tooling-matchstick-win32-x64-msvc",
   "version": "0.0.0",
+  "repository": {
+    "url": "https://github.com/graphprotocol/graph-tooling"
+  },
   "license": "MIT",
   "engines": {
     "node": ">= 10"
@@ -14,5 +17,8 @@
   "main": "the-graph-tooling-matchstick.win32-x64-msvc.node",
   "files": [
     "the-graph-tooling-matchstick.win32-x64-msvc.node"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
