@@ -69,9 +69,12 @@ jobs:
         run: pnpm install
 
       - name: Install Protobuf on macOS
-        if: matrix.settings.host == 'macos-latest'
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
         run: brew install protobuf
 
+      - name: Set PROTOC environment variable on macOS
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-latest-xlarge'
+        run: echo 'export PROTOC=/usr/local/bin/protoc' >> $GITHUB_ENV
       - name: Install OpenSSL on macOS
         if: matrix.settings.host == 'macos-latest'
         run: brew install openssl
@@ -124,6 +127,8 @@ jobs:
             github.workspace }}:/build -w /build/packages/matchstick
           run: |
             apt-get update && apt-get install -y libssl-dev protobuf-compiler
+            export OPENSSL_DIR=/usr
+            export PROTOC=/usr/bin/protoc
             ${{ matrix.settings.build }}
 
       - name: Build
