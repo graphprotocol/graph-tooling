@@ -117,12 +117,14 @@ jobs:
       - name: Cache custom OpenSSL
         if: matrix.settings.host == 'ubuntu-latest'
         uses: actions/cache@v4
+        id: openssl-cache
         with:
           path: /usr/local/openssl-1.1.1o
           key: openssl-1.1.1o
 
       - name: Install custom OpenSSL
-        if: matrix.settings.host == 'ubuntu-latest' && !steps.cache.outputs.cache-hit
+        if:
+          matrix.settings.host == 'ubuntu-latest' && steps.openssl-cache.outputs.cache-hit != 'true'
         run: |
           wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
           tar -xf openssl-1.1.1o.tar.gz
@@ -135,7 +137,6 @@ jobs:
           echo 'OPENSSL_LIB_DIR=/usr/local/openssl-1.1.1o/lib' >> $GITHUB_ENV
           echo '/usr/local/openssl-1.1.1o/lib' | sudo tee -a /etc/ld.so.conf.d/openssl-1.1.1o.conf
           sudo ldconfig
-
       - name: Set PROTOC environment variable on macOS
         if: matrix.settings.host == 'macos-latest'
         run: echo 'export PROTOC=/usr/local/bin/protoc' >> $GITHUB_ENV
