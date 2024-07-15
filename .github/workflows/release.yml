@@ -81,6 +81,10 @@ jobs:
         if: matrix.settings.host == 'windows-latest'
         run: choco install openssl
 
+      - name: Install PostgreSQL on macOS
+        if: matrix.settings.host == 'macos-latest'
+        run: brew install postgresql
+
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
