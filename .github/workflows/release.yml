@@ -155,10 +155,6 @@ jobs:
         run: pnpm install
         working-directory: packages/matchstick
 
-      - name: install dependencies (bin)
-        run: pnpm install
-        working-directory: bin/npm
-
       - name: Download all artifacts
         uses: actions/download-artifact@v3
         with:
