@@ -21,7 +21,10 @@ jobs:
         with:
           toolchain: 1.68.0
       - run: sudo apt-get install protobuf-compiler
-      - run: cargo check
+      - name: cargo check
+        working-directory: packages/matchstick
+        run: |
+          cargo check
 
   test:
     name: Test Suite
@@ -32,6 +35,7 @@ jobs:
         with:
           toolchain: 1.68.0
       - name: Install dependencies
+        working-directory: packages/matchstick
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
@@ -45,8 +49,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: 1.68.0
-      - run: rustup component add rustfmt
-      - run: cargo fmt --all -- --check
+      - name: install rustfmt
+        working-directory: packages/matchstick
+        run: rustup component add rustfmt
+      - name: format
+        working-directory: packages/matchstick
+        run: cargo fmt --all -- --check
 
   clippy:
     name: Clippy
@@ -60,5 +68,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
-      - run: rustup component add clippy
-      - run: cargo clippy -- -D warnings
+      - name: install clippy
+        working-directory: packages/matchstick
+        run: rustup component add clippy
+      - name: clippy
+        working-directory: packages/matchstick
+        run: cargo clippy -- -D warnings
