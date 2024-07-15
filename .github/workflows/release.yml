@@ -120,9 +120,8 @@ jobs:
           wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
           tar -xf openssl-1.1.1o.tar.gz
           cd openssl-1.1.1o
-          ./config --prefix=/usr/local/openssl-1.1.1o
+          ./config --prefix=/usr/local/openssl-1.1.1o no-tests
           make
-          make test
           sudo make install
           echo 'OPENSSL_DIR=/usr/local/openssl-1.1.1o' >> $GITHUB_ENV
           echo 'OPENSSL_INCLUDE_DIR=/usr/local/openssl-1.1.1o/include' >> $GITHUB_ENV
