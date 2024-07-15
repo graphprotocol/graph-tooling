@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-matchstick",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "engines": {
     "node": ">= 10"
@@ -24,7 +24,7 @@
     "timeout": "3m"
   },
   "napi": {
-    "name": "@graphprotocol/graph-matchstick",
+    "name": "graph-matchstick",
     "triples": {
       "additional": [
         "aarch64-apple-darwin"
