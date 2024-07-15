@@ -73,6 +73,17 @@ jobs:
             .cargo-cache
             target/
           key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+      - name: Install Protobuf Compiler on macOS
+        if: matrix.settings.host == 'macos-latest'
+        run: brew install protobuf
+      - name: Install Protobuf Compiler on Ubuntu
+        if: matrix.settings.host == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install Protobuf Compiler on Windows
+        if: matrix.settings.host == 'windows-latest'
+        run: |
+          choco install protoc
+          refreshenv
       - uses: goto-bus-stop/setup-zig@v2
         if:
           ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' || matrix.settings.target ==
