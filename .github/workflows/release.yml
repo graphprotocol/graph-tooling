@@ -77,6 +77,18 @@ jobs:
             sudo apt-get install -y protobuf-compiler
           fi
 
+      - name: Install OpenSSL on Ubuntu
+        if: matrix.settings.host == 'ubuntu-latest'
+        run: sudo apt-get install -y libssl-dev
+
+      - name: Install OpenSSL on macOS
+        if: matrix.settings.host == 'macos-latest'
+        run: brew install openssl
+
+      - name: Install OpenSSL on Windows
+        if: matrix.settings.host == 'windows-latest'
+        run: choco install openssl
+
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
