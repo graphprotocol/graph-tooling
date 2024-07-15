@@ -65,12 +65,25 @@ jobs:
         with:
           version: 9.0.6
 
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Protobuf
+        run: |
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            brew install protobuf
+          elif [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y protobuf-compiler
+          fi
+
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
         with:
           toolchain: stable
           targets: ${{ matrix.settings.target }}
+
       - name: Cache cargo
         uses: actions/cache@v4
         with:
@@ -81,16 +94,17 @@ jobs:
             .cargo-cache
             target/
           key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+
       - uses: goto-bus-stop/setup-zig@v2
         if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
         with:
           version: 0.11.0
+
       - name: Setup toolchain
         run: ${{ matrix.settings.setup }}
         if: ${{ matrix.settings.setup }}
         shell: bash
-      - name: Install dependencies
-        run: pnpm install
+
       - name: Build in docker
         uses: addnab/docker-run-action@v3
         if: ${{ matrix.settings.docker }}
@@ -102,10 +116,12 @@ jobs:
             github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{
             github.workspace }}:/build -w /build/packages/matchstick'
           run: ${{ matrix.settings.build }}
+
       - name: Build
         run: ${{ matrix.settings.build }}
         if: ${{ !matrix.settings.docker }}
         shell: bash
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
