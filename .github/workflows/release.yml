@@ -114,13 +114,21 @@ jobs:
         if: matrix.settings.host == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libssl-dev protobuf-compiler
 
-      - name: Set OpenSSL environment variables on Ubuntu
+      - name: Install custom OpenSSL
         if: matrix.settings.host == 'ubuntu-latest'
         run: |
-          echo 'OPENSSL_DIR=/usr' >> $GITHUB_ENV
-          echo 'OPENSSL_INCLUDE_DIR=/usr/include' >> $GITHUB_ENV
-          echo 'OPENSSL_LIB_DIR=/usr/lib' >> $GITHUB_ENV
-          echo 'PKG_CONFIG_PATH=/usr/lib/pkgconfig' >> $GITHUB_ENV
+          wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
+          tar -xf openssl-1.1.1o.tar.gz
+          cd openssl-1.1.1o
+          ./config --prefix=/usr/local/openssl-1.1.1o
+          make
+          make test
+          sudo make install
+          echo 'OPENSSL_DIR=/usr/local/openssl-1.1.1o' >> $GITHUB_ENV
+          echo 'OPENSSL_INCLUDE_DIR=/usr/local/openssl-1.1.1o/include' >> $GITHUB_ENV
+          echo 'OPENSSL_LIB_DIR=/usr/local/openssl-1.1.1o/lib' >> $GITHUB_ENV
+          echo '/usr/local/openssl-1.1.1o/lib' | sudo tee -a /etc/ld.so.conf.d/openssl-1.1.1o.conf
+          sudo ldconfig
 
       - name: Set PROTOC environment variable on macOS
         if: matrix.settings.host == 'macos-latest'
