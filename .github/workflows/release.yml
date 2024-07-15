@@ -36,11 +36,11 @@ jobs:
             build: |
               pnpm build --target aarch64-apple-darwin
               strip -x *.node
-          - host: windows-latest
-            target: i686-pc-windows-msvc
-            build: |
-              rustup target add i686-pc-windows-msvc
-              pnpm build --target i686-pc-windows-msvc
+          # - host: windows-latest
+          #   target: i686-pc-windows-msvc
+          #   build: |
+          #     rustup target add i686-pc-windows-msvc
+          #     pnpm build --target i686-pc-windows-msvc
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             build: pnpm build --target x86_64-unknown-linux-gnu --use-napi-cross
