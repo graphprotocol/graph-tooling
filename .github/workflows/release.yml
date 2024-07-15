@@ -114,8 +114,15 @@ jobs:
         if: matrix.settings.host == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libssl-dev protobuf-compiler
 
-      - name: Install custom OpenSSL
+      - name: Cache custom OpenSSL
         if: matrix.settings.host == 'ubuntu-latest'
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/openssl-1.1.1o
+          key: openssl-1.1.1o
+
+      - name: Install custom OpenSSL
+        if: matrix.settings.host == 'ubuntu-latest' && !steps.cache.outputs.cache-hit
         run: |
           wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
           tar -xf openssl-1.1.1o.tar.gz
