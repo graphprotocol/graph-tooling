@@ -40,9 +40,25 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            build: pnpm build --target x86_64-unknown-linux-gnu --use-napi-cross
+            build: |-
+              set -e &&
+              apt-get update &&
+              apt-get install -y libssl-dev protobuf-compiler &&
+              export OPENSSL_DIR=/usr &&
+              export OPENSSL_INCLUDE_DIR=/usr/include &&
+              export OPENSSL_LIB_DIR=/usr/lib &&
+              export PKG_CONFIG_PATH=/usr/lib/pkgconfig &&
+              export PROTOC=/usr/bin/protoc &&
+              echo "Checking OpenSSL headers..." &&
+              ls -l /usr/include/openssl/ &&
+              echo "Building project..." &&
+              pnpm build --target x86_64-unknown-linux-gnu &&
+              strip *.node
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
+    defaults:
+      run:
+        working-directory: packages/matchstick
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,7 +91,6 @@ jobs:
         run: |
           brew install openssl
           echo 'export OPENSSL_DIR=$(brew --prefix openssl@1.1)' >> $GITHUB_ENV
-
       - name: Install PostgreSQL on macOS
         if: matrix.settings.host == 'macos-latest'
         run: |
@@ -83,7 +98,6 @@ jobs:
           echo 'export LDFLAGS="-L/usr/local/opt/postgresql/lib"' >> $GITHUB_ENV
           echo 'export CPPFLAGS="-I/usr/local/opt/postgresql/include"' >> $GITHUB_ENV
           echo 'export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"' >> $GITHUB_ENV
-
       - name: Install OpenSSL on Windows
         if: matrix.settings.host == 'windows-latest'
         run: choco install openssl
@@ -133,8 +147,10 @@ jobs:
             export OPENSSL_LIB_DIR=/usr/lib
             export PKG_CONFIG_PATH=/usr/lib/pkgconfig
             export PROTOC=/usr/bin/protoc
+            echo "Checking OpenSSL headers..." &&
+            ls -l /usr/include/openssl/ &&
+            echo "Building project..." &&
             ${{ matrix.settings.build }}
-
       - name: Build
         run: ${{ matrix.settings.build }}
         if: ${{ !matrix.settings.docker }}
