@@ -30,53 +30,71 @@ jobs:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
-              pnpm build
-              strip -x *.node
+              pnpm build --target x86_64-apple-darwin
           - host: macos-latest
             target: aarch64-apple-darwin
             build: |
               pnpm build --target aarch64-apple-darwin
               strip -x *.node
+          - host: windows-latest
+            target: i686-pc-windows-msvc
+            build: |
+              pnpm build --target i686-pc-windows-msvc
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            build: |-
-              set -e &&
-              apt-get update &&
-              apt-get install -y libssl-dev protobuf-compiler &&
-              export OPENSSL_DIR=/usr &&
-              export OPENSSL_INCLUDE_DIR=/usr/include &&
-              export OPENSSL_LIB_DIR=/usr/lib &&
-              export PKG_CONFIG_PATH=/usr/lib/pkgconfig &&
-              export PROTOC=/usr/bin/protoc &&
-              echo "Checking OpenSSL headers..." &&
-              ls -l /usr/include/openssl/ &&
-              echo "Building project..." &&
-              pnpm build --target x86_64-unknown-linux-gnu &&
-              strip *.node
-    name: stable - ${{ matrix.settings.target }} - node@18
+            build: pnpm build --target x86_64-unknown-linux-gnu --use-napi-cross
+    name: stable - ${{ matrix.settings.target }} - node@20
     runs-on: ${{ matrix.settings.host }}
     defaults:
       run:
         working-directory: packages/matchstick
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        if: ${{ !matrix.settings.docker }}
-        with:
-          node-version: 18
-
       - name: setup pnpm
         uses: pnpm/action-setup@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          version: 9.0.6
+          node-version: 20
+          cache: pnpm
 
+      - name: Install
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: ${{ matrix.settings.target }}
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.napi-rs
+            .cargo-cache
+            target/
+          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+
+      - uses: goto-bus-stop/setup-zig@v2
+        if: ${{ contains(matrix.settings.target, 'musl') }}
+        with:
+          version: 0.13.0
+
+      - name: Setup toolchain
+        run: ${{ matrix.settings.setup }}
+        if: ${{ matrix.settings.setup }}
+        shell: bash
       - name: Install dependencies
         run: pnpm install
+
+      - name: Setup node x86
+        uses: actions/setup-node@v4
+        if: matrix.settings.target == 'i686-pc-windows-msvc'
+        with:
+          node-version: 20
+          cache: pnpm
+          architecture: x86
 
       - name: Install Protobuf on macOS
         if: matrix.settings.host == 'macos-latest'
@@ -102,65 +120,23 @@ jobs:
         if: matrix.settings.host == 'windows-latest'
         run: choco install openssl
 
-      - name: Install
-        uses: dtolnay/rust-toolchain@stable
-        if: ${{ !matrix.settings.docker }}
-        with:
-          toolchain: stable
-          targets: ${{ matrix.settings.target }}
-
-      - name: Cache cargo
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            .cargo-cache
-            target/
-          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
-
-      - uses: goto-bus-stop/setup-zig@v2
-        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
-        with:
-          version: 0.11.0
-
-      - name: Setup toolchain
-        run: ${{ matrix.settings.setup }}
-        if: ${{ matrix.settings.setup }}
-        shell: bash
-
-      - name: Build in docker
-        uses: addnab/docker-run-action@v3
-        if: ${{ matrix.settings.docker }}
-        with:
-          image: ${{ matrix.settings.docker }}
-          options: >
-            --user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{
-            github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{
-            github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{
-            github.workspace }}:/build -w /build/packages/matchstick
-          run: |
-            apt-get update && apt-get install -y libssl-dev protobuf-compiler
-            export OPENSSL_DIR=/usr
-            export OPENSSL_INCLUDE_DIR=/usr/include
-            export OPENSSL_LIB_DIR=/usr/lib
-            export PKG_CONFIG_PATH=/usr/lib/pkgconfig
-            export PROTOC=/usr/bin/protoc
-            echo "Checking OpenSSL headers..." &&
-            ls -l /usr/include/openssl/ &&
-            echo "Building project..." &&
-            ${{ matrix.settings.build }}
       - name: Build
         run: ${{ matrix.settings.build }}
-        if: ${{ !matrix.settings.docker }}
         shell: bash
-
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
+        if: matrix.settings.target != 'wasm32-wasip1-threads'
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: packages/matchstick/${{ env.APP_NAME }}.*.node
+          path: '*.node'
+          if-no-files-found: error
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.settings.target == 'wasm32-wasip1-threads'
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: '*.wasm'
           if-no-files-found: error
 
   publish:
