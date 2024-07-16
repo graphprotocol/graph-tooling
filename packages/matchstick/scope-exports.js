@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const exportMappingPath = path.join(__dirname, 'export-mapping.json');
-const exportMapping = JSON.parse(fs.readFileSync(exportMappingPath, 'utf8'));
+const exportMappingPath = path.join(__dirname, 'package.json');
+const exportMapping = JSON.parse(fs.readFileSync(exportMappingPath, 'utf8')).napi['export-mapping'];
 
 const modulesDir = path.join(__dirname, 'mod');
 
@@ -36,7 +36,7 @@ for (const [module, functions] of Object.entries(exportMapping)) {
   }
 
   const moduleContent = functions
-    .map(func => `module.exports.${func} = require('../index.node').${func};`)
+    .map(func => `module.exports.${func} = require('../../index.js').${func};`)
     .join('\n');
   fs.writeFileSync(path.join(moduleDir, 'index.js'), moduleContent, 'utf8');
 

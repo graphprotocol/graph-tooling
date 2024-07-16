@@ -1,4 +1,0 @@
-{
-  "testing": ["runTests"],
-  "validation": ["areNumbersEqual"]
-}
