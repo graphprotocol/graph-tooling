@@ -1,6 +1,7 @@
 name: Tests
 env:
   NODE_NO_WARNINGS: true
+  SKIP_PREBUILD: true
 on:
   push:
     branches:

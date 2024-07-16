@@ -1,5 +1,5 @@
 {
-  "name": "the-graph-tooling-matchstick-darwin-arm64",
+  "name": "@graphprotocol/the-graph-matchstick-darwin-arm64",
   "version": "0.0.1",
   "repository": {
     "url": "https://github.com/graphprotocol/graph-tooling"

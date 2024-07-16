@@ -15,13 +15,14 @@
     "pnpm": ">=9"
   },
   "scripts": {
-    "build": "pnpm --filter=@graphprotocol/graph-* --filter=!@graphprotocol/graph-matchstick build",
+    "build": "if [ \"$SKIP_PREBUILD\" != \"true\" ]; then pnpm run prebuild; fi && pnpm --filter=@graphprotocol/graph-* --filter=!@graphprotocol/graph-matchstick build",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:eslint": "eslint .",
     "lint:eslint:fix": "eslint . --fix",
     "lint:fix": "pnpm lint:prettier:fix && pnpm lint:eslint:fix",
     "lint:prettier": "prettier -c .",
     "lint:prettier:fix": "prettier . --write",
+    "prebuild": "pnpm --filter=@graphprotocol/graph-matchstick build",
     "release": "pnpm build && changeset publish",
     "test:cli": "pnpm --filter @graphprotocol/graph-cli test",
     "test:ts": "pnpm --filter @graphprotocol/graph-ts test",
