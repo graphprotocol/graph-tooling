@@ -12,7 +12,7 @@ on:
       - .editorconfig
       - docs/**
 
-  pull_request:
+  # pull_request:
 
 permissions: write-all
 
