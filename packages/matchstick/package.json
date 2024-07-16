@@ -1,5 +1,5 @@
 {
-  "name": "@graphprotocol/graph-matchstick",
+  "name": "@graphprotocol/graph-tooling-napi-utils",
   "version": "0.0.2",
   "repository": {
     "url": "https://github.com/graphprotocol/graph-tooling"
@@ -30,7 +30,7 @@
     "timeout": "3m"
   },
   "napi": {
-    "name": "graph-matchstick",
+    "binaryName": "graph-matchstick",
     "targets": [
       "x86_64-apple-darwin",
       "aarch64-apple-darwin",

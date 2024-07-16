@@ -32,11 +32,13 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: 1.77.0
+
       - name: Install dependencies
         working-directory: packages/matchstick
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
+
       - name: Run tests
         working-directory: packages/matchstick
         run: cargo test

@@ -1,9 +1,9 @@
 use clap::{App, Arg};
 
 pub fn initialize() -> App<'static, 'static> {
-  App::new("Matchstick 🔥")
+  App::new("Test Runner 🧪")
     .version("0.6.0")
-    .author("Limechain <https://limechain.tech>")
+    .author("The Graph <https://thegraph.com>")
     .about("Unit testing framework for Subgraph development on The Graph protocol.")
     .arg(
       Arg::with_name("coverage")

@@ -54,7 +54,7 @@ jobs:
           sudo apt-get -y install libpq-dev protobuf-compiler
 
       - name: Build Matchstick Package
-        run: pnpm --filter=@graphprotocol/graph-matchstick build
+        run: pnpm --filter=@graphprotocol/graph-tooling-napi-utils build
 
       - name: Upload Matchstick Build Artifacts
         uses: actions/upload-artifact@v3

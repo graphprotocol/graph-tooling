@@ -266,7 +266,7 @@ importers:
       '@float-capital/float-subgraph-uncrashable':
         specifier: ^0.0.0-alpha.4
         version: 0.0.0-alpha.6
-      '@graphprotocol/graph-matchstick':
+      '@graphprotocol/graph-tooling-napi-utils':
         specifier: workspace:*
         version: link:../matchstick
       '@oclif/core':
