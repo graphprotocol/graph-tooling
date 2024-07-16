@@ -11,9 +11,6 @@ on:
       - '**/*.gitignore'
       - .editorconfig
       - docs/**
-  pull_request:
-    branches:
-      - main
 
 permissions: write-all
 
