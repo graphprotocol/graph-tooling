@@ -35,7 +35,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.73.0
+          toolchain: 1.77.0
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
