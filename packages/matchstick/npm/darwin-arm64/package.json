@@ -14,9 +14,9 @@
   "os": [
     "darwin"
   ],
-  "main": "the-graph-tooling-matchstick.darwin-arm64.node",
+  "main": "raph-tooling-napi-utils.darwin-arm64.node",
   "files": [
-    "the-graph-tooling-matchstick.darwin-arm64.node"
+    "raph-tooling-napi-utils.darwin-arm64.node"
   ],
   "publishConfig": {
     "access": "public"
