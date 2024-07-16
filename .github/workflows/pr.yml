@@ -47,8 +47,8 @@ jobs:
           tag: alpha
           prepareScript: 'pnpm run build'
         env:
-          NPM_TOKEN: ${{ secrets.npmToken }}
-          GITHUB_TOKEN: ${{ secrets.githubToken }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release-candidate:
     runs-on: ubuntu-22.04
@@ -92,5 +92,5 @@ jobs:
           tag: rc
           prepareScript: 'pnpm run build'
         env:
-          NPM_TOKEN: ${{ secrets.npmToken }}
-          GITHUB_TOKEN: ${{ secrets.githubToken }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
