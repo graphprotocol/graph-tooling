@@ -267,8 +267,8 @@ importers:
         specifier: ^0.0.0-alpha.4
         version: 0.0.0-alpha.6
       '@graphprotocol/graph-matchstick':
-        specifier: 0.0.1
-        version: 0.0.1
+        specifier: workspace:*
+        version: link:../matchstick
       '@oclif/core':
         specifier: 2.8.6
         version: 2.8.6(@types/node@20.14.10)(typescript@5.0.2)
@@ -1870,10 +1870,6 @@ packages:
     resolution: {integrity: sha512-vTc2LEJMsSxCs9N1ATZuTUONi0H3wuh5o9w60zsNoNASBPtmo8elzgoXcM5ohpyMg+7cXaYaV885rG7bhYwBAQ==}
     engines: {node: '>=18'}
     hasBin: true
-
-  '@graphprotocol/graph-matchstick@0.0.1':
-    resolution: {integrity: sha512-de3UvQGz+5xfIDTSOAY3fJeSYXK3WxUSffTBSJ7lZkkyVKV9RrtzsMduDArJFJdpE2uCjsz9zuJgyICVjZqOHw==}
-    engines: {node: '>= 10'}
 
   '@graphprotocol/graph-ts@0.27.0':
     resolution: {integrity: sha512-r1SPDIZVQiGMxcY8rhFSM0y7d/xAbQf5vHMWUf59js1KgoyWpM6P3tczZqmQd7JTmeyNsDGIPzd9FeaxllsU4w==}
@@ -13861,8 +13857,6 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
-
-  '@graphprotocol/graph-matchstick@0.0.1': {}
 
   '@graphprotocol/graph-ts@0.27.0':
     dependencies:
