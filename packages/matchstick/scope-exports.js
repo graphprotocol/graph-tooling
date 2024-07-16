@@ -19,13 +19,13 @@ indexTypeContent = indexTypeContent.replace(/export declare export declare/g, 'e
 
 const extractDeclarations = (content, functions) => {
   const declarations = [];
-  functions.forEach(func => {
+  for (const func of functions) {
     const regex = new RegExp(`export declare function ${func}\\(.*`, 'g');
     const matches = content.match(regex);
     if (matches) {
       declarations.push(...matches);
     }
-  });
+  }
   return declarations;
 };
 
