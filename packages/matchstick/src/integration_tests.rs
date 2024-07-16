@@ -10,9 +10,8 @@ mod tests {
   #[test]
   #[serial]
   fn run_all_gravity_demo_subgraph_tests() {
-    SCHEMA_LOCATION.with(|path| *path.borrow_mut() = PathBuf::from("./mocks/schema.graphql"));
-    MANIFEST_LOCATION
-      .with(|path| *path.borrow_mut() = PathBuf::from("./mocks/yamls/subgraph.yaml"));
+    SCHEMA_LOCATION.with(|path| *path.borrow_mut() = PathBuf::from("mocks/schema.graphql"));
+    MANIFEST_LOCATION.with(|path| *path.borrow_mut() = PathBuf::from("mocks/yamls/subgraph.yaml"));
 
     let module = <MatchstickInstance<Chain>>::new("mocks/wasm/gravity.wasm");
     let test_suite = TestGroup::from(&module);
