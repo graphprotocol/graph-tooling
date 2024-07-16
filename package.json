@@ -15,7 +15,7 @@
     "pnpm": ">=9"
   },
   "scripts": {
-    "build": "pnpm --filter=@graphprotocol/graph-* build",
+    "build": "pnpm --filter=@graphprotocol/graph-* --filter=!@graphprotocol/graph-matchstick build",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:eslint": "eslint .",
     "lint:eslint:fix": "eslint . --fix",

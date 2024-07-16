@@ -1,15 +1,9 @@
 import path from 'path';
 import { filesystem } from 'gluegun';
 import yaml from 'js-yaml';
+// This'd import the N-API bindings based on the OS and architecture
+import { runTests } from '@graphprotocol/graph-matchstick';
 import { Args, Command, Flags } from '@oclif/core';
-
-// Dynamically import the N-API bindings based on the OS and architecture
-const { runTests } = (() => {
-  const platform = process.platform;
-  const arch = process.arch;
-  const napiModulePath = `../../../matchstick/the-graph-tooling-matchstick.${platform}-${arch}.node`;
-  return require(napiModulePath);
-})();
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
