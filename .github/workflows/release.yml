@@ -102,7 +102,7 @@ jobs:
           architecture: x86
 
       - name: Install Protobuf on macOS
-        if: matrix.settings.host == 'macos-latest'
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-14'
         run: brew install protobuf
 
       - name: Install Protobuf on Windows
@@ -140,16 +140,16 @@ jobs:
           echo '/usr/local/openssl-1.1.1o/lib' | sudo tee -a /etc/ld.so.conf.d/openssl-1.1.1o.conf
           sudo ldconfig
       - name: Set PROTOC environment variable on macOS
-        if: matrix.settings.host == 'macos-latest'
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-14'
         run: echo 'export PROTOC=/usr/local/bin/protoc' >> $GITHUB_ENV
 
       - name: Install OpenSSL on macOS
-        if: matrix.settings.host == 'macos-latest'
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-14'
         run: |
           brew install openssl
           echo 'export OPENSSL_DIR=$(brew --prefix openssl@1.1)' >> $GITHUB_ENV
       - name: Install PostgreSQL on macOS
-        if: matrix.settings.host == 'macos-latest'
+        if: matrix.settings.host == 'macos-latest' || matrix.settings.host == 'macos-14'
         run: |
           brew install postgresql
           echo 'export LDFLAGS="-L/usr/local/opt/postgresql/lib"' >> $GITHUB_ENV
