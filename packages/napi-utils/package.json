@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-tooling-napi-utils",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "repository": {
     "url": "https://github.com/graphprotocol/graph-tooling"
   },
@@ -11,6 +11,12 @@
   },
   "main": "index.js",
   "types": "index.d.ts",
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "mod/",
+    "package.json"
+  ],
   "scripts": {
     "artifacts": "napi artifacts",
     "build": "napi build --platform --release && node scope-exports.js",
