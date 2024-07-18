@@ -3,3 +3,8 @@
 ./idea
 .idea
 mod
+index.d.ts
+index.js
+graph-napi-utils.darwin-arm64.node
+graph-napi-utils.darwin-x64.node
+graph-napi-utils.darwin-x64.node

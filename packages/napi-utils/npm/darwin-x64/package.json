@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-tooling-napi-utils-darwin-x64",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "url": "https://github.com/graphprotocol/graph-tooling"
   },
@@ -14,9 +14,9 @@
   "os": [
     "darwin"
   ],
-  "main": "raph-tooling-napi-utils.darwin-x64.node",
+  "main": "graph-napi-utils.darwin.darwin-x64.node",
   "files": [
-    "raph-tooling-napi-utils.darwin-x64.node"
+    "graph-napi-utils.darwin.darwin-x64.node"
   ],
   "publishConfig": {
     "access": "public"

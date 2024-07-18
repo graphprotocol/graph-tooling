@@ -47,6 +47,7 @@ for (const [module, functions] of Object.entries(exportMapping)) {
 }
 
 // clear the content of the root index.d.ts file
+// TODO: instead of completley clearing it up, maybe only remove the declarations for the functions already re-exported under a scoped module, and leave the rest
 fs.writeFileSync(indexDtsPath, '', 'utf8');
 
 console.log('Entry points and TypeScript declarations generated successfully.');
