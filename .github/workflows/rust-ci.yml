@@ -43,6 +43,13 @@ jobs:
       - name: Install Protobuf on macOS
         run: brew install protobuf
 
+      - name: Install PostgreSQL on macOS
+        run: |
+          brew install postgresql
+          echo 'export LDFLAGS="-L/usr/local/opt/postgresql/lib"' >> $GITHUB_ENV
+          echo 'export CPPFLAGS="-I/usr/local/opt/postgresql/include"' >> $GITHUB_ENV
+          echo 'export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"' >> $GITHUB_ENV
+
       - name: Run tests
         working-directory: packages/napi-utils
         run: cargo test
