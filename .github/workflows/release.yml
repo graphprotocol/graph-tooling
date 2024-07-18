@@ -32,10 +32,9 @@ jobs:
             target: x86_64-apple-darwin
             architecture: x64
             build: |
-              pnpm build
-          - host: macos-latest
+              pnpm build --target x86_64-apple-darwin
+          - host: macos-14
             target: aarch64-apple-darwin
-            architecture: arm64
             build: |
               pnpm build --target aarch64-apple-darwin
               strip -x *.node
