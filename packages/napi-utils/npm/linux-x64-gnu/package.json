@@ -14,9 +14,9 @@
   "os": [
     "linux"
   ],
-  "main": "graph-napi-utils.darwin.linux-x64-gnu.node",
+  "main": "graph-napi-utils.linux-x64-gnu.node",
   "files": [
-    "graph-napi-utils.darwin.linux-x64-gnu.node"
+    "graph-napi-utils.linux-x64-gnu.node"
   ],
   "publishConfig": {
     "access": "public"
