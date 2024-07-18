@@ -4,7 +4,7 @@ build
 generated
 packages/cli/tests/cli/init
 packages/cli/tests/cli/validation/
-packages/matchstick/mocks/**/*
+packages/napi-utils/mocks/**/*
 
 # TODO: cleanup examples and lint
 examples

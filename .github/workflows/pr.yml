@@ -28,7 +28,7 @@ jobs:
           toolchain: 1.77.0
 
       - name: Install dependencies
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
@@ -65,7 +65,7 @@ jobs:
           toolchain: 1.77.0
 
       - name: Install dependencies
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler

@@ -3,8 +3,12 @@ name: Rust CI
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/napi-utils/**'
   pull_request:
     branches: [main]
+    paths:
+      - 'packages/napi-utils/**'
 
 env:
   CARGO_TERM_COLOR: always
@@ -20,7 +24,7 @@ jobs:
           toolchain: 1.77.0
       - run: sudo apt-get install protobuf-compiler
       - name: cargo check
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: |
           cargo check
 
@@ -34,13 +38,13 @@ jobs:
           toolchain: 1.77.0
 
       - name: Install dependencies
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
 
       - name: Run tests
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: cargo test
 
   fmt:
@@ -52,10 +56,10 @@ jobs:
         with:
           toolchain: 1.77.0
       - name: install rustfmt
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: rustup component add rustfmt
       - name: format
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: cargo fmt --all -- --check
 
   clippy:
@@ -71,8 +75,8 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
       - name: install clippy
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: rustup component add clippy
       - name: clippy
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: cargo clippy -- -D warnings

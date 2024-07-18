@@ -48,7 +48,7 @@ jobs:
         run: pnpm install
 
       - name: Install matchstick system dependencies
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: |
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
@@ -61,8 +61,8 @@ jobs:
         with:
           name: matchstick-build
           path: |
-            packages/matchstick/graph-matchstick.*.node
-            packages/matchstick/index.js
+            packages/napi-utils/graph-matchstick.*.node
+            packages/napi-utils/index.js
 
   cli:
     name: CLI / nodejs v${{ matrix.node-version }}
@@ -80,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: matchstick-build
-          path: packages/matchstick/
+          path: packages/napi-utils/
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
@@ -116,7 +116,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: matchstick-build
-          path: packages/matchstick/
+          path: packages/napi-utils/
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
@@ -150,7 +150,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: matchstick-build
-          path: packages/matchstick/
+          path: packages/napi-utils/
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env

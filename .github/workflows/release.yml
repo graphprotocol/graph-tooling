@@ -49,7 +49,7 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     defaults:
       run:
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
     steps:
       - uses: actions/checkout@v4
       - name: setup pnpm
@@ -166,7 +166,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: packages/matchstick/${{ env.APP_NAME }}.*.node
+          path: packages/napi-utils/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
 
   publish-matchstick:
@@ -188,24 +188,24 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
 
       - name: Download all artifacts
         uses: actions/download-artifact@v3
         with:
-          path: packages/matchstick/artifacts
+          path: packages/napi-utils/artifacts
 
       - name: Move artifacts
         run: pnpm artifacts
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
 
       - name: List packages
         run: ls -R ./npm
         shell: bash
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
 
       - name: publish lib
-        working-directory: packages/matchstick
+        working-directory: packages/napi-utils
         run: |
           npm config set provenance true
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
