@@ -22,7 +22,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: 1.77.0
-      - run: sudo apt-get install protobuf-compiler
+
+      - name: Install Protobuf on macOS
+        run: brew install protobuf
+
       - name: cargo check
         working-directory: packages/napi-utils
         run: |
