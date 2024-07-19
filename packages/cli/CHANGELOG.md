@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.79.0
+
+### Minor Changes
+
+- [#1696](https://github.com/graphprotocol/graph-tooling/pull/1696)
+  [`828bb04`](https://github.com/graphprotocol/graph-tooling/commit/828bb04125ad873ad675731e468d0c70009fea71)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added rpc & explorer urls for sei,
+  gravity (mainnet & testnet), etherlink (mainnet)
+
 ## 0.78.0
 
 ### Minor Changes
