@@ -2,8 +2,8 @@
 mod tests {
   use graph_chain_ethereum::Chain;
   use serial_test::serial;
-  use std::env;
   use std::path::PathBuf;
+  use std::{env, fs};
 
   use crate::test_suite::{Test, TestGroup, Testable};
   use crate::{MatchstickInstance, MANIFEST_LOCATION, SCHEMA_LOCATION};
@@ -30,6 +30,19 @@ mod tests {
     } else {
       println!("Manifest file found: {:?}", manifest_path);
     }
+
+    // Check file permissions
+    let schema_metadata = fs::metadata(&schema_path).expect("Unable to read schema file metadata");
+    let manifest_metadata =
+      fs::metadata(&manifest_path).expect("Unable to read manifest file metadata");
+    println!(
+      "Schema file permissions: {:?}",
+      schema_metadata.permissions()
+    );
+    println!(
+      "Manifest file permissions: {:?}",
+      manifest_metadata.permissions()
+    );
 
     SCHEMA_LOCATION.with(|path| *path.borrow_mut() = schema_path);
     MANIFEST_LOCATION.with(|path| *path.borrow_mut() = manifest_path);
