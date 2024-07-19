@@ -310,7 +310,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://explorer-sepolia.gravity.xyz/api';
     case 'etherlink-mainnet':
       return 'https://explorer.etherlink.com/api';
-      
+
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -430,7 +430,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'iotex':
       return 'https://iotexrpc.com';
     case 'gravity-mainnet':
-      return 'https://rpc.gravity.xyz/'; 
+      return 'https://rpc.gravity.xyz/';
     case 'gravity-testnet':
       return 'https://rpc-sepolia.gravity.xyz';
     case 'etherlink-mainnet':
