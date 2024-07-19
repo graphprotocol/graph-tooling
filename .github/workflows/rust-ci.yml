@@ -16,16 +16,13 @@ env:
 jobs:
   check:
     name: Check
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: 1.77.0
-
-      - name: Install Protobuf on macOS
-        run: brew install protobuf
-
+      - run: sudo apt-get install protobuf-compiler
       - name: cargo check
         working-directory: packages/napi-utils
         run: |
@@ -33,30 +30,26 @@ jobs:
 
   test:
     name: Test Suite
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: 1.77.0
 
-      - name: Install Protobuf on macOS
-        run: brew install protobuf
-
-      - name: Install PostgreSQL on macOS
+      - name: Install dependencies
+        working-directory: packages/napi-utils
         run: |
-          brew install postgresql
-          echo 'export LDFLAGS="-L/usr/local/opt/postgresql/lib"' >> $GITHUB_ENV
-          echo 'export CPPFLAGS="-I/usr/local/opt/postgresql/include"' >> $GITHUB_ENV
-          echo 'export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"' >> $GITHUB_ENV
+          sudo apt-get update
+          sudo apt-get -y install libpq-dev protobuf-compiler
 
       - name: Run tests
         working-directory: packages/napi-utils
-        run: cargo test
+        run: RUST_LOG=info RUST_BACKTRACE=1 cargo test -- --nocapture
 
   fmt:
     name: Rustfmt
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -71,14 +64,16 @@ jobs:
 
   clippy:
     name: Clippy
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: 1.77.0
-      - name: Install Protobuf on macOS
-        run: brew install protobuf
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install libpq-dev protobuf-compiler
       - name: install clippy
         working-directory: packages/napi-utils
         run: rustup component add clippy
