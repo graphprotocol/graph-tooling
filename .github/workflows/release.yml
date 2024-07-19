@@ -214,6 +214,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build-napi-utils
+      - build-napi-utils-universal-macOS
     steps:
       - uses: actions/checkout@v4
       - name: setup pnpm
