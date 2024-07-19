@@ -1,3 +1,3 @@
-# `raph-tooling-napi-utils-darwin-arm64`
+# `graph-tooling-napi-utils-darwin-arm64`
 
-This is the **aarch64-apple-darwin** binary for `raph-tooling-napi-utils`
+This is the **aarch64-apple-darwin** binary for `graph-tooling-napi-utils`
