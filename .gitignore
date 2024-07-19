@@ -81,3 +81,4 @@ oclif.manifest.json
 tmp
 
 *.wasm
+!packages/napi-utils/mocks/**/*.wasm
