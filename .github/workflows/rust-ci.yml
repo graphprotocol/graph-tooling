@@ -43,6 +43,13 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install libpq-dev protobuf-compiler
 
+      # Add a step to list the contents of the mocks directory
+      - name: List mocks directory contents
+        working-directory: packages/napi-utils
+        run: |
+          ls -la ./mocks
+          ls -la ./mocks/yamls
+
       - name: Run tests
         working-directory: packages/napi-utils
         run: RUST_LOG=info RUST_BACKTRACE=1 cargo test -- --nocapture

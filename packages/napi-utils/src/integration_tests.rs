@@ -3,7 +3,6 @@ mod tests {
   use graph_chain_ethereum::Chain;
   use serial_test::serial;
   use std::path::PathBuf;
-  use std::{env, fs};
 
   use crate::test_suite::{Test, TestGroup, Testable};
   use crate::{MatchstickInstance, MANIFEST_LOCATION, SCHEMA_LOCATION};
@@ -11,41 +10,9 @@ mod tests {
   #[test]
   #[serial]
   fn run_all_gravity_demo_subgraph_tests() {
-    let current_dir = env::current_dir().unwrap();
-    println!("Current directory: {:?}", current_dir);
-
-    let schema_path = PathBuf::from("./mocks/schema.graphql");
-    let manifest_path = PathBuf::from("./mocks/yamls/subgraph.yaml");
-
-    println!("Schema path: {:?}", schema_path);
-    println!("Manifest path: {:?}", manifest_path);
-
-    if !schema_path.exists() {
-      println!("Schema file does not exist: {:?}", schema_path);
-    } else {
-      println!("Schema file found: {:?}", schema_path);
-    }
-    if !manifest_path.exists() {
-      println!("Manifest file does not exist: {:?}", manifest_path);
-    } else {
-      println!("Manifest file found: {:?}", manifest_path);
-    }
-
-    // Check file permissions
-    let schema_metadata = fs::metadata(&schema_path).expect("Unable to read schema file metadata");
-    let manifest_metadata =
-      fs::metadata(&manifest_path).expect("Unable to read manifest file metadata");
-    println!(
-      "Schema file permissions: {:?}",
-      schema_metadata.permissions()
-    );
-    println!(
-      "Manifest file permissions: {:?}",
-      manifest_metadata.permissions()
-    );
-
-    SCHEMA_LOCATION.with(|path| *path.borrow_mut() = schema_path);
-    MANIFEST_LOCATION.with(|path| *path.borrow_mut() = manifest_path);
+    SCHEMA_LOCATION.with(|path| *path.borrow_mut() = PathBuf::from("./mocks/schema.graphql"));
+    MANIFEST_LOCATION
+      .with(|path| *path.borrow_mut() = PathBuf::from("./mocks/yamls/subgraph.yaml"));
 
     let module = <MatchstickInstance<Chain>>::new("mocks/wasm/gravity.wasm");
     let test_suite = TestGroup::from(&module);
