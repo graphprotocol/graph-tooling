@@ -2,8 +2,8 @@ import path from 'path'
 import { filesystem } from 'gluegun'
 import yaml from 'js-yaml'
 // This'd import the N-API bindings based on the OS and architecture
-import { runTests } from '@graphprotocol/graph-tooling-napi-utils/mod/testing'
 import { Args, Command, Flags } from '@oclif/core'
+import { execSync } from 'child_process'
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
@@ -45,6 +45,28 @@ export default class TestCommand extends Command {
       args: { datasource },
       flags: { coverage, force, logs, recompile, version },
     } = await this.parse(TestCommand)
+
+    // Ensure PostgreSQL 14 is installed
+    try {
+      const versionOutput = execSync('psql --version').toString()
+      const versionMatch = versionOutput.match(/\b14\.\d+/)
+      if (!versionMatch) {
+        this.error(`PostgreSQL version 14 is required. Detected version: ${versionOutput}`, {
+          exit: 1,
+        })
+      }
+    } catch (error) {
+      this.error(`PostgreSQL version 14 is required. It seems PostgreSQL is not installed.\n
+      To install PostgreSQL 14:\n
+      On Linux (Ubuntu/Debian based):
+      sudo apt update
+      sudo apt install -y postgresql-14
+
+      On macOS:
+      brew install postgresql@14`, {
+        exit: 1,
+      })
+    }
 
     let testsDir = './tests'
 
@@ -113,6 +135,8 @@ async function runNapi(
   if (datasource) args.push(datasource)
 
   try {
+    // Dynamically import runTests only after PostgreSQL check
+    const { runTests } = await import('@graphprotocol/graph-tooling-napi-utils/mod/testing')
     // Call the N-API function
     runTests(args)
   } catch (error) {
