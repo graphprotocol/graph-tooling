@@ -298,10 +298,19 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return `https://api-cardona-zkevm.polygonscan.com/api`;
     case 'sei-mainnet':
       return `https://seitrace.com/pacific-1/api`;
+    case 'sei-atlantic':
+      return `https://seitrace.com/atlantic-2/api`;
     case 'rootstock':
       return 'https://rootstock.blockscout.com/api';
     case 'iotex':
       return 'https://index.iotexscan.io/api';
+    case 'gravity-mainnet':
+      return 'https://explorer.gravity.xyz/api';
+    case 'gravity-testnet':
+      return 'https://explorer-sepolia.gravity.xyz/api';
+    case 'etherlink-mainnet':
+      return 'https://explorer.etherlink.com/api';
+
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -414,10 +423,18 @@ const getPublicRPCEndpoint = (network: string) => {
       return `https://rpc.cardona.zkevm-rpc.com`;
     case 'sei-mainnet':
       return `https://evm-rpc.sei-apis.com`;
+    case 'sei-atlantic':
+      return `https://evm-rpc-testnet.sei-apis.com`;
     case 'rootstock':
       return 'https://public-node.rsk.co';
     case 'iotex':
       return 'https://iotexrpc.com';
+    case 'gravity-mainnet':
+      return 'https://rpc.gravity.xyz/';
+    case 'gravity-testnet':
+      return 'https://rpc-sepolia.gravity.xyz';
+    case 'etherlink-mainnet':
+      return 'https://node.mainnet.etherlink.com';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
