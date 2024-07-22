@@ -221,6 +221,11 @@ jobs:
         working-directory: packages/napi-utils
         run: npx @napi-rs/cli@2.18.4 universal
 
+      - name: Rename macOS arm64 binary
+        run:
+          mv packages/napi-utils/index.darwin-universal.node
+          packages/napi-utils/graph-napi-utils.darwin-universal.node
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
