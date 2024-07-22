@@ -204,7 +204,7 @@ jobs:
 
       - name: Combine binaries
         working-directory: packages/napi-utils
-        run: pnpm universal
+        run: npx napi universal@2.18.4
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
