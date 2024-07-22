@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-tooling-napi-utils-darwin-universal",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "repository": {
     "url": "https://github.com/graphprotocol/graph-tooling"
   },
