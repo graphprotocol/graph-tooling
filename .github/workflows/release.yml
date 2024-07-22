@@ -202,6 +202,11 @@ jobs:
           name: bindings-aarch64-apple-darwin
           path: packages/napi-utils/artifacts
 
+      - name: List packages
+        run: ls -R ./artifacts
+        shell: bash
+        working-directory: packages/napi-utils
+
       - name: Rename macOS x64 binary
         run:
           mv packages/napi-utils/artifacts/bindings-x86_64-apple-darwin
