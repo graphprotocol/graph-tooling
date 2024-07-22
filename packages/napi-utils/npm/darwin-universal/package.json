@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-tooling-napi-utils-darwin-universal",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "repository": {
     "url": "https://github.com/graphprotocol/graph-tooling"
   },
@@ -14,5 +14,8 @@
   "main": "graph-napi-utils.darwin-universal.node",
   "files": [
     "graph-napi-utils.darwin-universal.node"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
