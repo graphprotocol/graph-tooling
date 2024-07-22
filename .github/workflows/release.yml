@@ -204,12 +204,12 @@ jobs:
 
       - name: Rename macOS x64 binary
         run:
-          mv packages/napi-utils/artifacts/bindings-x86_64-apple-darwin/index.node
+          mv packages/napi-utils/artifacts/bindings-x86_64-apple-darwin
           packages/napi-utils/artifacts/index.darwin-x64.node
 
       - name: Rename macOS arm64 binary
         run:
-          mv packages/napi-utils/artifacts/bindings-aarch64-apple-darwin/index.node
+          mv packages/napi-utils/artifacts/bindings-aarch64-apple-darwin
           packages/napi-utils/artifacts/index.darwin-arm64.node
 
       - name: Combine binaries
