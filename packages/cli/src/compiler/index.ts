@@ -231,8 +231,8 @@ export default class Compiler {
     spinner: Spinner,
   ) {
     const absoluteSourceFile = path.resolve(sourceDir, maybeRelativeFile);
-    const relativeSourceFile = path.relative(sourceDir, absoluteSourceFile);
-    const targetFile = path.join(targetDir, relativeSourceFile);
+    const baseName = path.basename(absoluteSourceFile);
+    const targetFile = path.join(targetDir, baseName);
     step(spinner, 'Write subgraph file', this.displayPath(targetFile));
     fs.mkdirsSync(path.dirname(targetFile));
     fs.writeFileSync(targetFile, data);
