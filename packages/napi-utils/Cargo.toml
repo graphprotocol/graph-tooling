@@ -1,7 +1,7 @@
 [package]
 name = "matchstick"
 version = "0.6.0"
-authors = ["LimeChain <limechain.tech>"]
+authors = ["The Graph core developers & contributors"]
 edition = "2021"
 
 [lib]
