@@ -267,8 +267,8 @@ importers:
         specifier: ^0.0.0-alpha.4
         version: 0.0.0-alpha.6
       '@graphprotocol/graph-tooling-napi-utils':
-        specifier: workspace:*
-        version: link:../napi-utils
+        specifier: 0.1.0
+        version: 0.1.0
       '@oclif/core':
         specifier: 2.8.6
         version: 2.8.6(@types/node@20.14.11)(typescript@5.0.2)
@@ -1867,6 +1867,33 @@ packages:
     resolution: {integrity: sha512-vTc2LEJMsSxCs9N1ATZuTUONi0H3wuh5o9w60zsNoNASBPtmo8elzgoXcM5ohpyMg+7cXaYaV885rG7bhYwBAQ==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@graphprotocol/graph-tooling-napi-utils-darwin-arm64@0.1.0':
+    resolution: {integrity: sha512-//LQhPq11XUkhHFhVQ3DcNJqmbIaK/hm0gSdhprJzfCljNmN3sFQKqpYbyngHgceP62MOizRffvBYTaL0cEJMw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@graphprotocol/graph-tooling-napi-utils-darwin-universal@0.1.0':
+    resolution: {integrity: sha512-jGyQCIasoHWC2mUz120efdPsC0/nEFs302FRF9gXOdBNYdQGByWrmE9giYXLm0cMReeBIvUfAFouDAakpzNW6g==}
+    engines: {node: '>= 10'}
+    os: [darwin]
+
+  '@graphprotocol/graph-tooling-napi-utils-darwin-x64@0.1.0':
+    resolution: {integrity: sha512-C4H6CFssh83f86RzKwHfWAQzHser7sL50tdCUOW9N/fjy+gp+dOgqZwWFX5iOvxxc5GGjwDTQy2qVPlk6meN4g==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@graphprotocol/graph-tooling-napi-utils-linux-x64-gnu@0.1.0':
+    resolution: {integrity: sha512-GzPRScUFxgBArmBcQiO537NnkYBrFrGD1T7X9X8Teq+/2z7sPDYNz0n2XsONbaY9dbqtTdZ6ggiEIzMmkBNgJQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@graphprotocol/graph-tooling-napi-utils@0.1.0':
+    resolution: {integrity: sha512-HO6+B2rFW7hWp6EP35S5f31E1+WuXylofuI3WoTaLvPtY/JZ+eIVUshRk5PE+fXRisA2kuJZHEuKcHCY4HYHbQ==}
+    engines: {node: '>= 10'}
 
   '@graphprotocol/graph-ts@0.27.0':
     resolution: {integrity: sha512-r1SPDIZVQiGMxcY8rhFSM0y7d/xAbQf5vHMWUf59js1KgoyWpM6P3tczZqmQd7JTmeyNsDGIPzd9FeaxllsU4w==}
@@ -6576,6 +6603,7 @@ packages:
 
   ethereum-bloom-filters@1.1.0:
     resolution: {integrity: sha512-J1gDRkLpuGNvWYzWslBQR9cDV4nd4kfvVTE/Wy4Kkm4yb3EYRSlyi0eB/inTsSTTVyA0+HyzHgbr95Fn/Z1fSw==}
+    deprecated: do not use this package use package versions above as this can miss some topics
 
   ethereum-cryptography@0.1.3:
     resolution: {integrity: sha512-w8/4x1SGGzc+tO97TASLja6SLd3fRIK2tLVcV2Gx4IB21hE19atll5Cq9o3d0ZmAYC/8aw0ipieTSiekAea4SQ==}
@@ -13888,6 +13916,25 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
+
+  '@graphprotocol/graph-tooling-napi-utils-darwin-arm64@0.1.0':
+    optional: true
+
+  '@graphprotocol/graph-tooling-napi-utils-darwin-universal@0.1.0':
+    optional: true
+
+  '@graphprotocol/graph-tooling-napi-utils-darwin-x64@0.1.0':
+    optional: true
+
+  '@graphprotocol/graph-tooling-napi-utils-linux-x64-gnu@0.1.0':
+    optional: true
+
+  '@graphprotocol/graph-tooling-napi-utils@0.1.0':
+    optionalDependencies:
+      '@graphprotocol/graph-tooling-napi-utils-darwin-arm64': 0.1.0
+      '@graphprotocol/graph-tooling-napi-utils-darwin-universal': 0.1.0
+      '@graphprotocol/graph-tooling-napi-utils-darwin-x64': 0.1.0
+      '@graphprotocol/graph-tooling-napi-utils-linux-x64-gnu': 0.1.0
 
   '@graphprotocol/graph-ts@0.27.0':
     dependencies:
