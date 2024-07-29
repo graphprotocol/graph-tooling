@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.79.1
+
+### Patch Changes
+
+- [#1701](https://github.com/graphprotocol/graph-tooling/pull/1701)
+  [`24c402f`](https://github.com/graphprotocol/graph-tooling/commit/24c402f5f2f296a1df35d54fe1927030f96481d4)
+  Thanks [@saihaj](https://github.com/saihaj)! - Allow publishing without forcing network or
+  subgraph id
+
 ## 0.79.0
 
 ### Minor Changes
