@@ -1,11 +1,11 @@
 [package]
-name = "napi-utils"
+name = "napi_utils"
 version = "0.6.0"
 authors = ["The Graph core developers & contributors"]
 edition = "2021"
 
 [lib]
-name = "napi-utils"
+name = "napi_utils"
 path = "src/lib.rs"
 crate-type = ["cdylib"]
 
