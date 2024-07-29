@@ -31,7 +31,6 @@ export default class PublishCommand extends Command {
       options: ['arbitrum-one', 'arbitrum-sepolia'],
       default: 'arbitrum-one',
       required: false,
-      dependsOn: ['subgraph-id'],
     }),
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
