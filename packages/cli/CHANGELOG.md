@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.79.2
+
+### Patch Changes
+
+- [#1698](https://github.com/graphprotocol/graph-tooling/pull/1698)
+  [`c8ec890`](https://github.com/graphprotocol/graph-tooling/commit/c8ec890cb13bb109bb97387e4819c948d97a079a)
+  Thanks [@soilking](https://github.com/soilking)! - Fix build files being placed outside the build
+  directory
+
 ## 0.79.1
 
 ### Patch Changes
