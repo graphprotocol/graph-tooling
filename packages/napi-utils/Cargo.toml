@@ -1,11 +1,11 @@
 [package]
-name = "matchstick"
+name = "napi-utils"
 version = "0.6.0"
 authors = ["The Graph core developers & contributors"]
 edition = "2021"
 
 [lib]
-name = "matchstick"
+name = "napi-utils"
 path = "src/lib.rs"
 crate-type = ["cdylib"]
 
