@@ -20,6 +20,7 @@ export const loadAbiFromEtherscan = async (
       const scanApiUrl = getEtherscanLikeAPIUrl(network);
       const result = await fetch(`${scanApiUrl}?module=contract&action=getabi&address=${address}`);
       const json = await result.json();
+      logger("json result from etherscan: %O", json);
 
       // Etherscan returns a JSON object that has a `status`, a `message` and
       // a `result` field. The `status` is '0' in case of errors and '1' in
