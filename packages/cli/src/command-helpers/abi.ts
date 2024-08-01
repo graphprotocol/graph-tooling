@@ -310,6 +310,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://explorer-sepolia.gravity.xyz/api';
     case 'etherlink-mainnet':
       return 'https://explorer.etherlink.com/api';
+    case 'iotex-testnet':
+      return 'https://testnet.index.iotexscan.io/api';
 
     default:
       return `https://api-${network}.etherscan.io/api`;
@@ -435,6 +437,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc-sepolia.gravity.xyz';
     case 'etherlink-mainnet':
       return 'https://node.mainnet.etherlink.com';
+    case 'iotex-testnet':
+      return 'https://babel-api.testnet.iotex.io';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
