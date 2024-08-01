@@ -20,7 +20,7 @@ type Block @entity(timeseries: true) {
   timestamp: Timestamp!
   hash: Bytes!
   number: Int!
-  # Artifical grouping keys; groupN is number % 10^N. In a real subgraph,
+  # Artificial grouping keys; groupN is number % 10^N. In a real subgraph,
   # this might be something like a reference to a `Token`
   group1: Int!
   group2: Int!
