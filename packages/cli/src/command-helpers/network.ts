@@ -48,7 +48,7 @@ export const updateSubgraphNetwork = async (
           return source;
         });
 
-        // All data sources shoud be on the same network,
+        // All data sources should be on the same network,
         // so we have to update the network of all templates too.
         // eslint-disable-next-line -- prettier has problems with &&=
         subgraph.templates &&
