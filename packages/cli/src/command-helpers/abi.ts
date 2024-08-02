@@ -313,9 +313,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'iotex-testnet':
       return 'https://testnet.index.iotexscan.io/api';
     case 'neox':
-      return 'https://xexplorer.neo.org/api'
+      return 'https://xexplorer.neo.org/api';
     case 'neox-testnet':
-      return 'https://xt4scan.ngd.network/api'
+      return 'https://xt4scan.ngd.network/api';
 
     default:
       return `https://api-${network}.etherscan.io/api`;
