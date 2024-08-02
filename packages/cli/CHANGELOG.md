@@ -1,5 +1,23 @@
 # @graphprotocol/graph-cli
 
+## 0.80.0
+
+### Minor Changes
+
+- [#1712](https://github.com/graphprotocol/graph-tooling/pull/1712)
+  [`9b48e45`](https://github.com/graphprotocol/graph-tooling/commit/9b48e455b258ecc4fba647e32773ee05b23b42eb)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - feat: add neox etherscan like url and
+  public rpc
+
+- [#1710](https://github.com/graphprotocol/graph-tooling/pull/1710)
+  [`687bbd0`](https://github.com/graphprotocol/graph-tooling/commit/687bbd054265243d7f00376c69dd2a11cbb14116)
+  Thanks [@yash251](https://github.com/yash251)! - add iotex testnet rpc and api url
+
+- [#1713](https://github.com/graphprotocol/graph-tooling/pull/1713)
+  [`4c7d17c`](https://github.com/graphprotocol/graph-tooling/commit/4c7d17c30fe7e87866e9002cae5d182bc8217eb5)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added publicRpc and blockExplorer for
+  arbitrum nova
+
 ## 0.79.2
 
 ### Patch Changes
