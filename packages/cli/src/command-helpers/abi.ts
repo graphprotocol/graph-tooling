@@ -312,6 +312,10 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://explorer.etherlink.com/api';
     case 'iotex-testnet':
       return 'https://testnet.index.iotexscan.io/api';
+    case 'neox':
+      return 'https://xexplorer.neo.org/api'
+    case 'neox-testnet':
+      return 'https://xt4scan.ngd.network/api'
 
     default:
       return `https://api-${network}.etherscan.io/api`;
@@ -439,6 +443,10 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://node.mainnet.etherlink.com';
     case 'iotex-testnet':
       return 'https://babel-api.testnet.iotex.io';
+    case 'neox':
+      return 'https://mainnet-1.rpc.banelabs.org';
+    case 'neox-testnet':
+      return 'https://neoxt4seed1.ngd.network';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
