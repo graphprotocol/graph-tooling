@@ -316,7 +316,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://xexplorer.neo.org/api';
     case 'neox-testnet':
       return 'https://xt4scan.ngd.network/api';
-
+    case 'arbitrum-nova':
+      return 'https://api-nova.arbiscan.io/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -447,6 +448,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://mainnet-1.rpc.banelabs.org';
     case 'neox-testnet':
       return 'https://neoxt4seed1.ngd.network';
+    case 'arbitrum-nova':
+      return 'https://nova.arbitrum.io/rpc';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
