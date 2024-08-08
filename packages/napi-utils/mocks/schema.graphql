@@ -1,0 +1,91 @@
+type entity @entity {
+  id: ID!
+}
+
+type Gravatar @entity {
+  id: ID!
+  owner: Bytes!
+  displayName: String!
+  imageUrl: String!
+}
+
+type Transaction @entity {
+  id: ID!
+  displayName: String!
+  imageUrl: String!
+}
+
+"""
+An account within the graph network. Contains metadata and all relevant data for this accounts
+delegating, curating, and indexing.
+"""
+type GraphAccount @entity {
+  "Graph account ID"
+  id: ID!
+  "Operator of other Graph Accounts"
+  operatorOf: [GraphAccount!]! @derivedFrom(field: "operators")
+  "Name signal transactions created by this GraphAccount"
+  nameSignalTransactions: [NameSignalTransaction!]! @derivedFrom(field: "signer")
+}
+
+"""
+A name chosen by a Graph Account from a Name System such as ENS. This allows Graph Accounts to be
+recognized by name, rather than just an Ethereum address
+"""
+type GraphAccountName @entity {
+  "Name system concatenated with the unique ID of the name system"
+  id: ID!
+  name: String!
+  "The graph account that owned the name when it was linked in the graph network"
+  graphAccount: GraphAccount # May not match if the graph account proceeded to transfer away their name on that system
+}
+
+"""
+All relevant data for a Name Signal Transaction in The Graph Network
+"""
+type NameSignalTransaction @entity {
+  id: ID!
+  signer: GraphAccount!
+}
+
+"""
+Token Lock Wallets which hold locked GRT
+"""
+type TokenLockWallet @entity {
+  "The address of the token lock wallet"
+  id: ID!
+  "The Manager address"
+  manager: Bytes!
+  "The hash of the initializer"
+  initHash: Bytes!
+  "Address of the beneficiary of locked tokens"
+  beneficiary: Bytes!
+  "The token being used (GRT)"
+  token: Bytes!
+  "Amount of tokens to be managed by the lock contract"
+  managedAmount: BigInt!
+  "Start time of the release schedule"
+  startTime: BigInt!
+  "End time of the release schedule"
+  endTime: BigInt!
+  "Number of periods between start time and end time"
+  periods: BigInt!
+  "Time when the releases start"
+  releaseStartTime: BigInt!
+  "Time the cliff vests, 0 if no cliff"
+  vestingCliffTime: BigInt!
+  "Whether or not the contract is revocable"
+  revocable: Revocability
+  "True if the beneficiary has approved addresses that the manager has approved"
+  tokenDestinationsApproved: Boolean!
+  "The amount of tokens that have been resleased"
+  tokensReleased: BigInt!
+  "The amount of tokens that have been withdrawn"
+  tokensWithdrawn: BigInt!
+  "The amount of tokens that have been revoked"
+  tokensRevoked: BigInt!
+  "The block this wlalet was created"
+  blockNumberCreated: BigInt!
+  "The creation tx hash of the wallet"
+  txHash: Bytes!
+}

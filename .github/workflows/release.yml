@@ -3,19 +3,289 @@ on:
   push:
     branches:
       - main
+    tags-ignore:
+      - '**'
+    paths-ignore:
+      - '**/*.md'
+      - LICENSE
+      - '**/*.gitignore'
+      - .editorconfig
+      - docs/**
 
 permissions: write-all
 
 env:
-  RELEASE_COMMIT_MSG: 'chore(release): update monorepo packages versions'
-
+  # RELEASE_COMMIT_MSG: 'chore(release): update monorepo packages versions'
+  DEBUG: napi:*
+  APP_NAME: graph-napi-utils
+  MACOSX_DEPLOYMENT_TARGET: '10.13'
 jobs:
+  # napi-utils
+  build-napi-utils:
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - host: macos-latest-large
+            target: x86_64-apple-darwin
+            architecture: x64
+            build: |
+              pnpm build --target x86_64-apple-darwin
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            build: |
+              pnpm build --target aarch64-apple-darwin
+              strip -x *.node
+          # - host: windows-latest
+          #   target: i686-pc-windows-msvc
+          #   build: |
+          #     rustup target add i686-pc-windows-msvc
+          #     pnpm build --target i686-pc-windows-msvc
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            build: pnpm build --target x86_64-unknown-linux-gnu --use-napi-cross
+    name: stable - ${{ matrix.settings.target }} - node@20
+    runs-on: ${{ matrix.settings.host }}
+    defaults:
+      run:
+        working-directory: packages/napi-utils
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.5.0
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: ${{ matrix.settings.target }}
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.napi-rs
+            .cargo-cache
+            target/
+          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+
+      - uses: goto-bus-stop/setup-zig@v2
+        if: ${{ contains(matrix.settings.target, 'musl') }}
+        with:
+          version: 0.13.0
+
+      - name: Setup toolchain
+        run: ${{ matrix.settings.setup }}
+        if: ${{ matrix.settings.setup }}
+        shell: bash
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Setup node x86
+        uses: actions/setup-node@v4
+        if: matrix.settings.target == 'i686-pc-windows-msvc'
+        with:
+          node-version: 20
+          cache: pnpm
+          architecture: x86
+
+      - name: Install Protobuf on macOS
+        if: matrix.settings.host == 'macos-latest-large' || matrix.settings.host == 'macos-latest'
+        run: brew install protobuf
+
+      - name: Install Protobuf on Windows
+        if: matrix.settings.host == 'windows-latest'
+        run: choco install protoc
+      - name: Set PROTOC environment variable on Windows
+        if: matrix.settings.host == 'windows-latest'
+        run: echo 'PROTOC=C:\Program Files\Google Protobuf\bin\protoc.exe' >> $GITHUB_ENV
+
+      - name: Install OpenSSL and Protobuf
+        if: matrix.settings.host == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev protobuf-compiler
+
+      - name: Cache custom OpenSSL
+        if: matrix.settings.host == 'ubuntu-latest'
+        uses: actions/cache@v4
+        id: openssl-cache
+        with:
+          path: /usr/local/openssl-1.1.1o
+          key: openssl-1.1.1o
+
+      - name: Install custom OpenSSL
+        if:
+          matrix.settings.host == 'ubuntu-latest' && steps.openssl-cache.outputs.cache-hit != 'true'
+        run: |
+          wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
+          tar -xf openssl-1.1.1o.tar.gz
+          cd openssl-1.1.1o
+          ./config --prefix=/usr/local/openssl-1.1.1o no-tests
+          make
+          sudo make install
+          echo 'OPENSSL_DIR=/usr/local/openssl-1.1.1o' >> $GITHUB_ENV
+          echo 'OPENSSL_INCLUDE_DIR=/usr/local/openssl-1.1.1o/include' >> $GITHUB_ENV
+          echo 'OPENSSL_LIB_DIR=/usr/local/openssl-1.1.1o/lib' >> $GITHUB_ENV
+          echo '/usr/local/openssl-1.1.1o/lib' | sudo tee -a /etc/ld.so.conf.d/openssl-1.1.1o.conf
+          sudo ldconfig
+      - name: Set PROTOC environment variable on macOS
+        if: matrix.settings.host == 'macos-latest-large' || matrix.settings.host == 'macos-latest'
+        run: echo 'export PROTOC=/usr/local/bin/protoc' >> $GITHUB_ENV
+
+      - name: Install OpenSSL on macOS
+        if: matrix.settings.host == 'macos-latest-large' || matrix.settings.host == 'macos-latest'
+        run: |
+          brew install openssl
+          echo 'export OPENSSL_DIR=$(brew --prefix openssl@1.1)' >> $GITHUB_ENV
+      - name: Install PostgreSQL on macOS
+        if: matrix.settings.host == 'macos-latest-large' || matrix.settings.host == 'macos-latest'
+        run: |
+          brew install postgresql
+          echo 'export LDFLAGS="-L/usr/local/opt/postgresql/lib"' >> $GITHUB_ENV
+          echo 'export CPPFLAGS="-I/usr/local/opt/postgresql/include"' >> $GITHUB_ENV
+          echo 'export PKG_CONFIG_PATH="/usr/local/opt/postgresql/lib/pkgconfig"' >> $GITHUB_ENV
+      - name: Install OpenSSL on Windows
+        if: matrix.settings.host == 'windows-latest'
+        run: choco install openssl
+
+      - name: Build
+        run: ${{ matrix.settings.build }}
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: packages/napi-utils/${{ env.APP_NAME }}.*.node
+          if-no-files-found: error
+
+  build-napi-utils-universal-macOS:
+    name: Build universal macOS binary
+    needs:
+      - build-napi-utils
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.5.0
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: packages/napi-utils
+
+      - name: Download macOS x64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-x86_64-apple-darwin
+          path: packages/napi-utils/artifacts
+
+      - name: Download macOS arm64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-aarch64-apple-darwin
+          path: packages/napi-utils/artifacts
+
+      - name: List packages
+        run: ls -R ./artifacts
+        shell: bash
+        working-directory: packages/napi-utils
+
+      - name: Rename macOS x64 binary
+        run:
+          mv packages/napi-utils/artifacts/graph-napi-utils.darwin-x64.node
+          packages/napi-utils/artifacts/index.darwin-x64.node
+
+      - name: Rename macOS arm64 binary
+        run:
+          mv packages/napi-utils/artifacts/graph-napi-utils.darwin-arm64.node
+          packages/napi-utils/artifacts/index.darwin-arm64.node
+
+      - name: Combine binaries
+        working-directory: packages/napi-utils
+        run: npx @napi-rs/cli@2.18.4 universal
+
+      - name: Rename macOS arm64 binary
+        run:
+          mv packages/napi-utils/index.darwin-universal.node
+          packages/napi-utils/graph-napi-utils.darwin-universal.node
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-universal-apple-darwin
+          path: packages/napi-utils/${{ env.APP_NAME }}.*.node
+          if-no-files-found: error
+
+  publish-napi-utils:
+    name: publish to npm
+    runs-on: ubuntu-latest
+    needs:
+      - build-napi-utils
+      - build-napi-utils-universal-macOS
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.5.0
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: packages/napi-utils
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: packages/napi-utils/artifacts
+
+      - name: Move artifacts
+        run: pnpm artifacts
+        working-directory: packages/napi-utils
+
+      - name: List packages
+        run: ls -R ./npm
+        shell: bash
+        working-directory: packages/napi-utils
+
+      - name: publish lib
+        working-directory: packages/napi-utils
+        run: |
+          npm config set provenance true
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          npm publish --access public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # CLI
   stable:
     name: Stable
     runs-on: ubuntu-latest
+    needs: publish-napi-utils
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
