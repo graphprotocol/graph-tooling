@@ -146,6 +146,9 @@ const GetSubgraphInfo = graphql(/* GraphQL */ `
       }
       versions {
         id
+        subgraphDeployment {
+          ipfsHash
+        }
         metadata {
           label
         }
@@ -255,6 +258,20 @@ function DeploySubgraph({
     enabled: !!subgraphId && !!chain,
   });
 
+  function updateMetadata() {
+    if (!subgraphInfo) return false;
+
+    const version = form.watch('versionLabel');
+
+    const versionInfo = subgraphInfo.subgraph?.versions.find(
+      ({ metadata }) => metadata?.label === version,
+    );
+
+    if (!versionInfo) return false;
+
+    return versionInfo.subgraphDeployment.ipfsHash === deploymentId;
+  }
+
   function ensureNewVersion() {
     // If there is no subgraph ID then it means we are just deploying a new subgraph
     if (!subgraphId) return true;
@@ -304,6 +321,37 @@ function DeploySubgraph({
             "Missing Subgraph ID from subgraph. Try again, if it still doesn't work, please contact support.",
           variant: 'destructive',
         });
+        return;
+      }
+
+      // we are just updating the metadata
+      if (updateMetadata() && !ensureNewVersion()) {
+        const subgraphMeta = await uploadFileToIpfs({
+          path: '',
+          content: Buffer.from(
+            JSON.stringify(
+              subgraphMetadata({
+                ...values,
+              }),
+            ),
+          ),
+        });
+
+        const hash = await writeContractAsync({
+          address: selectedChain.contracts.L2GNS.address as Address,
+          abi: L2GNSABI,
+          functionName: 'updateSubgraphMetadata',
+          args: [BigInt(subgraphInfo.subgraph.nftID), ipfsHexHash(subgraphMeta)],
+        });
+
+        const etherscanUrl = getEtherscanUrl({ chainId: selectedChain.chainId, hash });
+
+        window.open(etherscanUrl, '_blank');
+        setDeployed(true);
+        toast({
+          description: 'You are all set! You can go back to the CLI and close this window',
+        });
+
         return;
       }
 
@@ -376,13 +424,15 @@ function DeploySubgraph({
     chainSwitchPending ||
     isPending ||
     !form.formState.isValid ||
-    !ensureNewVersion() ||
+    !(ensureNewVersion() || updateMetadata()) ||
     !isOwner();
 
   const deployButtonCopy = (() => {
+    if (!address) return 'Need to connect wallet';
     if (deployed) return 'Deployed';
     if (chainSwitchPending) return 'Switching Chains...';
     if (isPending) return 'Check Wallet...';
+    if (updateMetadata()) return 'Update Metadata';
     return 'Deploy';
   })();
 
