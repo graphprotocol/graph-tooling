@@ -428,6 +428,7 @@ function DeploySubgraph({
     !isOwner();
 
   const deployButtonCopy = (() => {
+    if (!address) return 'Need to connect wallet';
     if (deployed) return 'Deployed';
     if (chainSwitchPending) return 'Switching Chains...';
     if (isPending) return 'Check Wallet...';
