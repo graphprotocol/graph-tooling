@@ -5,55 +5,70 @@ import prettier from 'prettier';
 import { GENERATED_FILE_NOTE } from '../../codegen/typescript';
 import { displayPath } from '../../command-helpers/fs';
 import { Spinner, step, withSpinner } from '../../command-helpers/spinner';
-import { TypeGeneratorOptions } from '../../type-generator';
+import { DataSource } from '../utils';
 import ABI from './abi';
 
 export default class EthereumTypeGenerator {
-  private sourceDir: TypeGeneratorOptions['sourceDir'];
-  private outputDir: TypeGeneratorOptions['outputDir'];
+  private datasource: DataSource;
 
-  constructor(options: TypeGeneratorOptions) {
-    this.sourceDir = options.sourceDir;
-    this.outputDir = options.outputDir;
+  constructor(datasource: DataSource) {
+    this.datasource = datasource;
   }
 
-  async loadABIs(subgraph: immutable.Map<any, any>) {
+  async loadABIs({ sourceDir }: { sourceDir: string }) {
     return await withSpinner(
       'Load contract ABIs',
       'Failed to load contract ABIs',
       `Warnings while loading contract ABIs`,
       async spinner => {
-        try {
-          return subgraph
-            .get('dataSources')
-            .reduce(
-              (abis: any[], dataSource: any) =>
-                dataSource
-                  .getIn(['mapping', 'abis'])
-                  .reduce(
-                    (abis: any[], abi: any) =>
-                      abis.push(
-                        this._loadABI(dataSource, abi.get('name'), abi.get('file'), spinner),
-                      ),
-                    abis,
-                  ),
-              immutable.List(),
+        switch (this.datasource.kind) {
+          case 'ethereum':
+          case 'ethereum/contract': {
+            const abis = this.datasource.mapping.abis;
+            try {
+              const a = await Promise.all(
+                abis.map(abi =>
+                  this._loadABI({
+                    name: abi.name,
+                    file: abi.file,
+                    spinner,
+                    sourceDir,
+                  }),
+                ),
+              );
+
+              return a;
+            } catch (e) {
+              throw Error(`Failed to load contract ABIs: ${e.message}`);
+            }
+          }
+          default:
+            throw Error(
+              `Cannot use 'EthereumTypeGenerator' with data source kind '${this.datasource.kind}'`,
             );
-        } catch (e) {
-          throw Error(`Failed to load contract ABIs: ${e.message}`);
         }
       },
     );
   }
 
-  _loadABI(dataSource: any, name: string, maybeRelativePath: string, spinner: Spinner) {
+  _loadABI({
+    name,
+    file,
+    spinner,
+    sourceDir,
+  }: {
+    name: string;
+    file: string;
+    spinner: Spinner;
+    sourceDir: string | undefined;
+  }) {
     try {
-      if (this.sourceDir) {
-        const absolutePath = path.resolve(this.sourceDir, maybeRelativePath);
+      if (sourceDir) {
+        const absolutePath = path.resolve(sourceDir, file);
         step(spinner, `Load contract ABI from`, displayPath(absolutePath));
-        return { dataSource, abi: ABI.load(name, absolutePath) };
+        return ABI.load(name, absolutePath);
       }
-      return { dataSource, abi: ABI.load(name, maybeRelativePath) };
+      return ABI.load(name, file);
     } catch (e) {
       throw Error(`Failed to load contract ABI: ${e.message}`);
     }
