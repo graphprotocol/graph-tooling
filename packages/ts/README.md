@@ -52,7 +52,7 @@ function handleNameRegistered(event: NameRegistered) {
 
 ## Helper Functions for AssemblyScript
 
-Refer to the `helper-functions.ts` file in this repository for a few common functions that help
+Refer to the `helper-functions.ts` file in [this](https://github.com/graphprotocol/graph-tooling/blob/main/packages/ts/helper-functions.ts) repository for a few common functions that help
 build on top of the AssemblyScript library, such as byte array concatenation, among others.
 
 ## API
