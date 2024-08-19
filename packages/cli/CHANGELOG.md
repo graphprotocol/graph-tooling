@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.80.1
+
+### Patch Changes
+
+- [#1715](https://github.com/graphprotocol/graph-tooling/pull/1715)
+  [`4cfef44`](https://github.com/graphprotocol/graph-tooling/commit/4cfef44d991de6f9bbb802eb8956de5d63b2c2a3)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - fix: getcontractcreation support on neox
+  etherscan api
+
 ## 0.80.0
 
 ### Minor Changes
