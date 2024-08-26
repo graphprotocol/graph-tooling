@@ -14,8 +14,9 @@ This repository houses the following tools:
 
 ## Contributing
 
-We welcome contributions to this repository. Please see the
-[contribution guidelines](CONTRIBUTING.md). For running the project locally,
+We welcome contributions to this repository. Please follow the
+[Code of Conduct](https://github.com/graphprotocol/graph-node/blob/master/CODE_OF_CONDUCT.md) for
+all the communications. For running the project locally,
 
 1. Clone the repository
 2. Make sure you have Node.js `>=20.x` installed
