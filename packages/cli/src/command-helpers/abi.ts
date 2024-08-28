@@ -318,6 +318,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://xt4scan.ngd.network/api/ngd/api';
     case 'arbitrum-nova':
       return 'https://api-nova.arbiscan.io/api';
+    case 'soneium-testnet':
+      return 'https://explorer-testnet.soneium.org/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -450,6 +452,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://neoxt4seed1.ngd.network';
     case 'arbitrum-nova':
       return 'https://nova.arbitrum.io/rpc';
+    case 'soneium-testnet':
+      return 'https://rpc.minato.soneium.org/';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
