@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.81.0
+
+### Minor Changes
+
+- [#1719](https://github.com/graphprotocol/graph-tooling/pull/1719)
+  [`2141242`](https://github.com/graphprotocol/graph-tooling/commit/21412420ad87579a1b884e17c190fc701f220623)
+  Thanks [@yash251](https://github.com/yash251)! - add soneium api and rpc
+
 ## 0.80.1
 
 ### Patch Changes
