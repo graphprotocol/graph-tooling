@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.82.0
+
+### Minor Changes
+
+- [#1726](https://github.com/graphprotocol/graph-tooling/pull/1726)
+  [`81afd9b`](https://github.com/graphprotocol/graph-tooling/commit/81afd9b6edd09fa2df0d3ed7ae43b894472fca98)
+  Thanks [@yash251](https://github.com/yash251)! - add chiliz rpc and api
+
 ## 0.81.0
 
 ### Minor Changes
