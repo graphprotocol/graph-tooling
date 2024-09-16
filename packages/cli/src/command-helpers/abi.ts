@@ -320,6 +320,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://api-nova.arbiscan.io/api';
     case 'soneium-testnet':
       return 'https://explorer-testnet.soneium.org/api';
+    case 'chiliz':
+      return 'https://scan.chiliz.com/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -454,6 +456,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://nova.arbitrum.io/rpc';
     case 'soneium-testnet':
       return 'https://rpc.minato.soneium.org/';
+    case 'chiliz':
+      return 'https://rpc.ankr.com/chiliz';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
