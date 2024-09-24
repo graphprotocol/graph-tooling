@@ -322,6 +322,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://explorer-testnet.soneium.org/api';
     case 'chiliz':
       return 'https://scan.chiliz.com/api';
+    case 'chiliz-testnet':
+      return 'https://spicy-explorer.chiliz.com/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -458,6 +460,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.minato.soneium.org/';
     case 'chiliz':
       return 'https://rpc.ankr.com/chiliz';
+    case 'chiliz-testnet':
+      return 'https://spicy-rpc.chiliz.com';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
