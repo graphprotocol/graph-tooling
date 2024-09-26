@@ -324,6 +324,16 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://scan.chiliz.com/api';
     case 'chiliz-testnet':
       return 'https://spicy-explorer.chiliz.com/api';
+    case 'boba':
+      return 'https://api.routescan.io/v2/network/mainnet/evm/288/etherscan/api';
+    case 'boba-testnet':
+      return 'https://api.routescan.io/v2/network/testnet/evm/28882/etherscan/api';
+    case 'boba-bnb':
+      return 'https://api.routescan.io/v2/network/mainnet/evm/56288/etherscan/api';
+    case 'boba-bnb-testnet':
+      return 'https://api.routescan.io/v2/network/testnet/evm/9728/etherscan/api';
+    case 'fuse-testnet':
+      return 'https://explorer.fusespark.io/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -462,6 +472,16 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://rpc.ankr.com/chiliz';
     case 'chiliz-testnet':
       return 'https://spicy-rpc.chiliz.com';
+    case 'boba':
+      return 'https://boba-eth.drpc.org';
+    case 'boba-testnet':
+      return 'https://sepolia.boba.network';
+    case 'boba-bnb':
+      return 'https://bnb.boba.network';
+    case 'boba-bnb-testnet':
+      return 'https://testnet.bnb.boba.network';
+    case 'fuse-testnet':
+      return 'https://rpc.fusespark.io';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
