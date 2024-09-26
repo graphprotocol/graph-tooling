@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.84.0
+
+### Minor Changes
+
+- [#1730](https://github.com/graphprotocol/graph-tooling/pull/1730)
+  [`e39279b`](https://github.com/graphprotocol/graph-tooling/commit/e39279be9d61a97e79ea18e558bd73795e25dbe0)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added boba, fuse blockexplorer
+
 ## 0.83.0
 
 ### Minor Changes
