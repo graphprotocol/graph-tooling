@@ -243,9 +243,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'fuji':
       return `https://api-testnet.snowtrace.io/api`;
     case 'celo':
-      return `https://api.celoscan.io/api`;
+      return `https://celo.abi.pinax.network/api`;
     case 'celo-alfajores':
-      return `https://api-alfajores.celoscan.io/api`;
+      return `https://celo-alfajores.abi.pinax.network/api`;
     case 'gnosis':
       return `https://api.gnosisscan.io/api`;
     case 'fantom':
