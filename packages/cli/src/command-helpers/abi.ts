@@ -317,7 +317,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'neox-testnet':
       return 'https://xt4scan.ngd.network/api/ngd/api';
     case 'arbitrum-nova':
-      return 'https://arbitrum-nova.pinax.network/api';
+      return 'https://arbitrum-nova.abi.pinax.network/api';
     case 'soneium-testnet':
       return 'https://explorer-testnet.soneium.org/api';
     case 'chiliz':
