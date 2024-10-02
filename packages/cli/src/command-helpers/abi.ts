@@ -233,11 +233,11 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'optimism':
       return `https://optimism.abi.pinax.network/api`;
     case 'moonbeam':
-      return `https://api-moonbeam.moonscan.io/api`;
+      return `https://moonbeam.abi.pinax.network/api`;
     case 'moonriver':
-      return `https://api-moonriver.moonscan.io/api`;
+      return `https://moonriver.abi.pinax.network/api`;
     case 'mbase':
-      return `https://api-moonbase.moonscan.io/api`;
+      return `https://moonbase.abi.pinax.network/api`;
     case 'avalanche':
       return `https://api.snowtrace.io/api`;
     case 'fuji':
