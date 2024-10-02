@@ -485,11 +485,11 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'fuse-testnet':
       return 'https://rpc.fusespark.io';
     case 'rootstock-testnet':
-      return 'https://public-node.testnet.rsk.co'
+      return 'https://public-node.testnet.rsk.co';
     case 'kaia':
-      return 'https://public-en.node.kaia.io'
+      return 'https://public-en.node.kaia.io';
     case 'kaia-testnet':
-      return 'https://public-en.kairos.node.kaia.io'
+      return 'https://public-en.kairos.node.kaia.io';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
