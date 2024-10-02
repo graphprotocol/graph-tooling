@@ -18,7 +18,9 @@ export const loadAbiFromSourcify = async (
     `Warnings while fetching ABI from Sourcify`,
     async () => {
       const chainId = await getSourcifyChainId(network);
-      const result = await fetch(`https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`);
+      const result = await fetch(
+        `https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`,
+      );
       const json = await result.json();
 
       if (result.ok) {
@@ -228,10 +230,8 @@ const getSourcifyChainId = async (network: string) => {
   // Can fail if network name doesn't follow https://chainlist.org name convention
   const match = json.find((e: any) => e.name.toLowerCase().includes(network.replace('-', ' ')));
 
-  if (match)
-    return match.chainId;
-  else
-    throw new Error(`Could not find chain id for "${network}"`);
+  if (match) return match.chainId;
+  throw new Error(`Could not find chain id for "${network}"`);
 };
 
 const getEtherscanLikeAPIUrl = (network: string) => {
