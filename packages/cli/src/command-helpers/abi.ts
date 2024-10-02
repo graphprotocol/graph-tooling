@@ -235,7 +235,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'moonbeam':
       return `https://moonbeam.abi.pinax.network/api`;
     case 'moonriver':
-      return `https://moonriver.abi.pinax.network/api`;
+      return `https://api-moonriver.moonscan.io/api`;
     case 'mbase':
       return `https://moonbase.abi.pinax.network/api`;
     case 'avalanche':
@@ -249,9 +249,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'gnosis':
       return `https://gnosis.abi.pinax.network/api`;
     case 'fantom':
-      return `https://api.ftmscan.com/api`;
+      return `https://fantom.abi.pinax.network/api`;
     case 'fantom-testnet':
-      return `https://api-testnet.ftmscan.com/api`;
+      return `https://fantom-testnet.abi.pinax.network/api`;
     case 'zksync-era':
       return `https://block-explorer-api.mainnet.zksync.io/api`;
     case 'zksync-era-testnet':
