@@ -14,28 +14,83 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    runs-on: ubuntu-22.04
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
-    with:
-      npmTag: alpha
-      buildScript: build
-      nodeVersion: 20
-      packageManager: pnpm
-      packageManagerVersion: 9.1.0
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
-      npmToken: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.77.0
+
+      - name: Install dependencies
+        working-directory: packages/napi-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install libpq-dev protobuf-compiler
+
+      - name: Setup Environment
+        uses: the-guild-org/shared-config/setup@main
+        with:
+          nodeVersion: 20
+          packageManager: pnpm
+          packageManagerVersion: 9.5.0
+
+      - name: Alpha release
+        id: changesets
+        uses: the-guild-org/changesets-snapshot-action@v0.0.1
+        with:
+          tag: alpha
+          prepareScript: 'pnpm run build'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release-candidate:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    runs-on: ubuntu-22.04
     if: ${{ github.event.pull_request.title == 'Upcoming Release Changes' }}
-    with:
-      npmTag: rc
-      buildScript: build
-      nodeVersion: 20
-      packageManager: pnpm
-      packageManagerVersion: 9.1.0
-      restoreDeletedChangesets: true
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
-      npmToken: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.77.0
+
+      - name: Install dependencies
+        working-directory: packages/napi-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install libpq-dev protobuf-compiler
+
+      - name: Setup Environment
+        uses: the-guild-org/shared-config/setup@main
+        with:
+          nodeVersion: 20
+          packageManager: pnpm
+          packageManagerVersion: 9.5.0
+
+      - name: Exit Prerelease Mode
+        if: ${{ inputs.exitPre }}
+        run: pnpm run changeset pre exit
+
+      - name: Restore Deleted Changesets
+        if: ${{ inputs.restoreDeletedChangesets }}
+        run: git checkout HEAD~1 -- .
+
+      - name: RC release
+        id: changesets
+        uses: the-guild-org/changesets-snapshot-action@v0.0.1
+        with:
+          tag: rc
+          prepareScript: 'pnpm run build'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

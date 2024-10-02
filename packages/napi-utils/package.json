@@ -1,0 +1,64 @@
+{
+  "name": "@graphprotocol/graph-tooling-napi-utils",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/graphprotocol/graph-tooling"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@9.5.0",
+  "engines": {
+    "node": ">= 10"
+  },
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "mod/",
+    "package.json"
+  ],
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release && node scope-exports.js",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "3.0.0-alpha.59",
+    "ava": "^6.1.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "ava": {
+    "timeout": "3m"
+  },
+  "napi": {
+    "binaryName": "graph-napi-utils",
+    "targets": [
+      "x86_64-apple-darwin",
+      "aarch64-apple-darwin",
+      "universal-apple-darwin",
+      "x86_64-unknown-linux-gnu"
+    ],
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "x86_64-apple-darwin",
+        "aarch64-apple-darwin",
+        "universal-apple-darwin",
+        "x86_64-unknown-linux-gnu"
+      ]
+    },
+    "export-mapping": {
+      "testing": [
+        "runTests"
+      ],
+      "validation": [
+        "areNumbersEqual",
+        "some_validation"
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@graphprotocol/graph-tooling-napi-utils-darwin-arm64",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/graphprotocol/graph-tooling"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "cpu": [
+    "arm64"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "main": "graph-napi-utils.darwin-arm64.node",
+  "files": [
+    "graph-napi-utils.darwin-arm64.node"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

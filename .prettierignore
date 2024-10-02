@@ -8,3 +8,4 @@ packages/cli/tests/cli/add
 pnpm-lock.yaml
 cf-pages/**
 website/src/graphql-env.d.ts
+packages/napi-utils/mocks/**/*

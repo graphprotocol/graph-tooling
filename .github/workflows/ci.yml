@@ -1,6 +1,7 @@
 name: Tests
 env:
   NODE_NO_WARNINGS: true
+  SKIP_PREBUILD: true
 on:
   push:
     branches:
@@ -13,36 +14,80 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 9.1.0
+          packageManagerVersion: 9.5.0
 
       - name: Lint
         run: pnpm lint
 
+  build-napi-utils:
+    name: Build Napi Utils
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.77.0
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: Setup Env
+        with:
+          nodeVersion: 20
+          packageManager: pnpm
+          packageManagerVersion: 9.5.0
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Install testing util system dependencies
+        working-directory: packages/napi-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install libpq-dev protobuf-compiler
+
+      - name: Build Napi Utils Package
+        run: pnpm --filter=@graphprotocol/graph-tooling-napi-utils build
+
+      - name: Upload Napi Utils Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: napi-utils-build
+          path: |
+            packages/napi-utils/graph-napi-utils.*.node
+            packages/napi-utils/index.js
+
   cli:
     name: CLI / nodejs v${{ matrix.node-version }}
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [lint, build-napi-utils]
     strategy:
       fail-fast: false
       matrix:
         node-version: [18, 20, 22]
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Download Napi Utils Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: napi-utils-build
+          path: packages/napi-utils/
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
         with:
           nodeVersion: ${{ matrix.node-version }}
           packageManager: pnpm
-          packageManagerVersion: 9.1.0
+          packageManagerVersion: 9.5.0
 
       - name: Setup git user information
         run: |
@@ -61,18 +106,24 @@ jobs:
 
   event-handler:
     name: Ethereum Basic Event Handlers
-    needs: [lint]
+    needs: [lint, build-napi-utils]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Download Napi Utils Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: napi-utils-build
+          path: packages/napi-utils/
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 9.1.0
+          packageManagerVersion: 9.5.0
 
       - name: Build Packages
         run: pnpm build
@@ -89,18 +140,24 @@ jobs:
 
   ts:
     name: Graph TS
-    needs: [lint]
+    needs: [lint, build-napi-utils]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Download Napi Utils Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: napi-utils-build
+          path: packages/napi-utils/
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 9.1.0
+          packageManagerVersion: 9.5.0
 
       - name: Build Packages
         run: pnpm build # will also check types
