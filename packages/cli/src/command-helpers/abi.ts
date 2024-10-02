@@ -221,9 +221,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'chapel':
       return `https://api-testnet.bscscan.com/api`;
     case 'matic':
-      return `https://api.polygonscan.com/api`;
+      return `https://polygon.abi.pinax.network/api`;
     case 'mumbai':
-      return `https://api-testnet.polygonscan.com/api`;
+      return `https://polygon-mumbai.abi.pinax.network/api`;
     case 'aurora':
       return `https://explorer.mainnet.aurora.dev/api`;
     case 'aurora-testnet':
@@ -259,9 +259,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'zksync-era-sepolia':
       return 'https://block-explorer-api.sepolia.zksync.dev/api';
     case 'polygon-zkevm-testnet':
-      return `https://testnet-zkevm.polygonscan.com/api`;
+      return `https://polygon-zkevm-testnet.abi.pinax.network/api`;
     case 'polygon-zkevm':
-      return `https://api-zkevm.polygonscan.com/api`;
+      return `https://polygon-zkevm.abi.pinax.network/api`;
     case 'sepolia':
       return `https://sepolia.abi.pinax.network/api`;
     case 'scroll-sepolia':
@@ -283,7 +283,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'etherlink-testnet':
       return `https://testnet-explorer.etherlink.com/api`;
     case 'polygon-amoy':
-      return `https://api-amoy.polygonscan.com/api`;
+      return `https://polygon-amoy.abi.pinax.network/api`;
     case 'gnosis-chiado':
       return `https://gnosis-chiado.blockscout.com/api`;
     case 'mode-mainnet':
@@ -295,7 +295,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'astar-zkevm-mainnet':
       return `https://astar-zkevm.explorer.startale.com/api`;
     case 'polygon-zkevm-cardona':
-      return `https://api-cardona-zkevm.polygonscan.com/api`;
+      return `https://polygon-zkevm-cardona.abi.pinax.network/api`;
     case 'sei-mainnet':
       return `https://seitrace.com/pacific-1/api`;
     case 'sei-atlantic':
