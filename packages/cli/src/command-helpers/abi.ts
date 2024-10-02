@@ -203,7 +203,7 @@ export const loadAbiFromBlockScout = async (
 const getEtherscanLikeAPIUrl = (network: string) => {
   switch (network) {
     case 'mainnet':
-      return `https://api.etherscan.io/api`;
+      return `https://mainnet.abi.pinax.network/api`;
     case 'arbitrum-one':
       return `https://api.arbiscan.io/api`;
     case 'arbitrum-goerli':
@@ -231,7 +231,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'optimism-goerli':
       return `https://api-goerli-optimistic.etherscan.io/api`;
     case 'optimism':
-      return `https://api-optimistic.etherscan.io/api`;
+      return `https://optimism.abi.pinax.network/api`;
     case 'moonbeam':
       return `https://api-moonbeam.moonscan.io/api`;
     case 'moonriver':
@@ -263,11 +263,11 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'polygon-zkevm':
       return `https://api-zkevm.polygonscan.com/api`;
     case 'sepolia':
-      return `https://api-sepolia.etherscan.io/api`;
+      return `https://sepolia.abi.pinax.network/api`;
     case 'scroll-sepolia':
       return `https://api-sepolia.scrollscan.dev/api`;
     case 'optimism-sepolia':
-      return `https://api-sepolia-optimistic.etherscan.io/api`;
+      return `https://optimism-sepolia.abi.pinax.network/api`;
     case 'scroll':
       return `https://api.scrollscan.com/api`;
     case 'linea':
