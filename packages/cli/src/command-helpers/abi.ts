@@ -259,7 +259,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'zksync-era-sepolia':
       return 'https://block-explorer-api.sepolia.zksync.dev/api';
     case 'polygon-zkevm-testnet':
-      return `https://polygon-zkevm-testnet.abi.pinax.network/api`;
+      return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
       return `https://polygon-zkevm.abi.pinax.network/api`;
     case 'sepolia':
