@@ -21,9 +21,6 @@ export const loadAbiFromSourcify = async (
       const result = await fetch(`https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`);
       const json = await result.json();
 
-      // Etherscan returns a JSON object that has a `status`, a `message` and
-      // a `result` field. The `status` is '0' in case of errors and '1' in
-      // case of success
       if (result.ok) {
         return new ABICtor('Contract', undefined, immutable.fromJS(json.output.abi));
       }
