@@ -707,7 +707,9 @@ async function processInitForm(
 
           // Try loading the ABI from Sourcify, if none was provided
           if (protocolInstance.hasABIs() && !initAbi) {
-            abiFromSourcify = await retryWithPrompt(() => loadAbiFromSourcify(ABI, network, value));
+            abiFromSourcify = await retryWithPrompt(() =>
+              loadAbiFromSourcify(ABI, network, value),
+            );
           }
           // If startBlock is not set, try to load it.
           if (!initStartBlock) {

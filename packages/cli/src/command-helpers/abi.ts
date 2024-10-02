@@ -17,6 +17,30 @@ export const loadAbiFromSourcify = async (
     `Failed to fetch ABI from Sourcify`,
     `Warnings while fetching ABI from Sourcify`,
     async () => {
+      const chainId = await getSourcifyChainId(network);
+      const result = await fetch(`https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`);
+      const json = await result.json();
+
+      // Etherscan returns a JSON object that has a `status`, a `message` and
+      // a `result` field. The `status` is '0' in case of errors and '1' in
+      // case of success
+      if (result.ok) {
+        return new ABICtor('Contract', undefined, immutable.fromJS(json.output.abi));
+      }
+      throw new Error('ABI not found, try loading it from a local file');
+    },
+  );
+
+export const loadAbiFromEtherscan = async (
+  ABICtor: typeof ABI,
+  network: string,
+  address: string,
+): Promise<ABI> =>
+  await withSpinner(
+    `Fetching ABI from Sourcify`,
+    `Failed to fetch ABI from Sourcify`,
+    `Warnings while fetching ABI from Sourcify`,
+    async () => {
       const json = await fetchMetadataFromSourcify(network, address);
 
       if (json) {
@@ -202,8 +226,10 @@ const getSourcifyChainId = async (network: string) => {
   // Can fail if network name doesn't follow https://chainlist.org name convention
   const match = json.find((e: any) => e.name.toLowerCase().includes(network.replace('-', ' ')));
 
-  if (match) return match.chainId;
-  throw new Error(`Could not find chain id for "${network}"`);
+  if (match)
+    return match.chainId;
+  else
+    throw new Error(`Could not find chain id for "${network}"`);
 };
 
 const getEtherscanLikeAPIUrl = (network: string) => {
