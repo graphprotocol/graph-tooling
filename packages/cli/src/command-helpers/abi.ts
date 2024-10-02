@@ -7,6 +7,30 @@ import { withSpinner } from './spinner';
 
 const logger = debugFactory('graph-cli:abi-helpers');
 
+export const loadAbiFromSourcify = async (
+  ABICtor: typeof ABI,
+  network: string,
+  address: string,
+): Promise<ABI> =>
+  await withSpinner(
+    `Fetching ABI from Sourcify`,
+    `Failed to fetch ABI from Sourcify`,
+    `Warnings while fetching ABI from Sourcify`,
+    async () => {
+      const chainId = await getSourcifyChainId(network);
+      const result = await fetch(`https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`);
+      const json = await result.json();
+
+      // Etherscan returns a JSON object that has a `status`, a `message` and
+      // a `result` field. The `status` is '0' in case of errors and '1' in
+      // case of success
+      if (result.ok) {
+        return new ABICtor('Contract', undefined, immutable.fromJS(json.output.abi));
+      }
+      throw new Error('ABI not found, try loading it from a local file');
+    },
+  );
+
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
   network: string,
@@ -200,6 +224,19 @@ export const loadAbiFromBlockScout = async (
     },
   );
 
+const getSourcifyChainId = async (network: string) => {
+  const result = await fetch('https://sourcify.dev/server/chains');
+  const json = await result.json();
+
+  // Can fail if network name doesn't follow https://chainlist.org name convention
+  const match = json.find((e: any) => e.name.toLowerCase().includes(network.replace('-', ' ')));
+
+  if (match)
+    return match.chainId;
+  else
+    throw new Error(`Could not find chain id for "${network}"`);
+};
+
 const getEtherscanLikeAPIUrl = (network: string) => {
   switch (network) {
     case 'mainnet':
@@ -334,8 +371,6 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://api.routescan.io/v2/network/testnet/evm/9728/etherscan/api';
     case 'fuse-testnet':
       return 'https://explorer.fusespark.io/api';
-    case 'rootstock-testnet':
-      return 'https://rootstock-testnet.blockscout.com/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -484,12 +519,6 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://testnet.bnb.boba.network';
     case 'fuse-testnet':
       return 'https://rpc.fusespark.io';
-    case 'rootstock-testnet':
-      return 'https://public-node.testnet.rsk.co';
-    case 'kaia':
-      return 'https://public-en.node.kaia.io';
-    case 'kaia-testnet':
-      return 'https://public-en.kairos.node.kaia.io';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
