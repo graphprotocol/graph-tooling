@@ -271,9 +271,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'scroll':
       return `https://api.scrollscan.com/api`;
     case 'linea':
-      return `https://api.lineascan.build/api`;
+      return `https://linea.abi.pinax.network/api`;
     case 'linea-sepolia':
-      return 'https://api-sepolia.lineascan.build/api';
+      return 'https://linea-sepolia.abi.pinax.network/api';
     case 'linea-goerli':
       return `https://api.linea-goerli.build/api`;
     case 'blast-testnet':
