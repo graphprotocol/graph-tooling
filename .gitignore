@@ -81,3 +81,5 @@ oclif.manifest.json
 tmp
 
 *.wasm
+
+.idea
