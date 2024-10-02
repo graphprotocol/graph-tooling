@@ -335,11 +335,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'fuse-testnet':
       return 'https://explorer.fusespark.io/api';
     case 'rootstock-testnet':
-      return 'https://rootstock-testnet.blockscout.com/api'
-    // case 'kaia':
-    //   return ''
-    // case 'kaia-testnet':
-    //   return ''
+      return 'https://rootstock-testnet.blockscout.com/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
