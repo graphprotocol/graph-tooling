@@ -205,11 +205,11 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'mainnet':
       return `https://mainnet.abi.pinax.network/api`;
     case 'arbitrum-one':
-      return `https://api.arbiscan.io/api`;
+      return `https://arbitrum-one.pinax.network/api`;
     case 'arbitrum-goerli':
       return `https://api-goerli.arbiscan.io/api`;
     case 'arbitrum-sepolia':
-      return `https://api-sepolia.arbiscan.io/api`;
+      return `https://arbitrum-sepolia.pinax.network/api`;
     case 'bsc':
       return `https://api.bscscan.com/api`;
     case 'base-testnet':
@@ -317,7 +317,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'neox-testnet':
       return 'https://xt4scan.ngd.network/api/ngd/api';
     case 'arbitrum-nova':
-      return 'https://api-nova.arbiscan.io/api';
+      return 'https://arbitrum-nova.pinax.network/api';
     case 'soneium-testnet':
       return 'https://explorer-testnet.soneium.org/api';
     case 'chiliz':
