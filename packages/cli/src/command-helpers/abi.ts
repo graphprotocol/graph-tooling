@@ -211,7 +211,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'arbitrum-sepolia':
       return `https://arbitrum-sepolia.pinax.network/api`;
     case 'bsc':
-      return `https://api.bscscan.com/api`;
+      return `https://bsc.abi.pinax.network/api`;
     case 'base-testnet':
       return `https://api-goerli.basescan.org/api`;
     case 'base-sepolia':
@@ -219,7 +219,7 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'base':
       return `https://api.basescan.org/api`;
     case 'chapel':
-      return `https://api-testnet.bscscan.com/api`;
+      return `https://bsc-testnet.abi.pinax.network/api`;
     case 'matic':
       return `https://polygon.abi.pinax.network/api`;
     case 'mumbai':
@@ -277,9 +277,9 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'linea-goerli':
       return `https://api.linea-goerli.build/api`;
     case 'blast-testnet':
-      return `https://api-sepolia.blastscan.io/api`;
+      return `https://blast-testnet.abi.pinax.network/api`;
     case 'blast-mainnet':
-      return `https://api.blastscan.io/api`;
+      return `https://blast.abi.pinax.network/api`;
     case 'etherlink-testnet':
       return `https://testnet-explorer.etherlink.com/api`;
     case 'polygon-amoy':
