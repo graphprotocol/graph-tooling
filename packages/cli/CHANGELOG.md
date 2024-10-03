@@ -1,5 +1,17 @@
 # @graphprotocol/graph-cli
 
+## 0.85.0
+
+### Minor Changes
+
+- [#1733](https://github.com/graphprotocol/graph-tooling/pull/1733)
+  [`d13bc5e`](https://github.com/graphprotocol/graph-tooling/commit/d13bc5e6ba08a62be78d1bf469fc0e3b89ee3c1a)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added rootstock
+
+- [#1736](https://github.com/graphprotocol/graph-tooling/pull/1736)
+  [`e759327`](https://github.com/graphprotocol/graph-tooling/commit/e759327cf53fe9462f9bdf65f5ff9fdd125f58db)
+  Thanks [@fschoell](https://github.com/fschoell)! - replace etherscan endpoints
+
 ## 0.84.0
 
 ### Minor Changes
