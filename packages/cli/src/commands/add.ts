@@ -4,7 +4,7 @@ import { Args, Command, Flags } from '@oclif/core';
 import { CLIError } from '@oclif/core/lib/errors';
 import {
   loadAbiFromBlockScout,
-  loadAbiFromEtherscan,
+  loadAbiFromSourcify,
   loadContractNameForAddress,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
@@ -96,7 +96,7 @@ export default class AddCommand extends Command {
     } else if (network === 'poa-core') {
       ethabi = await loadAbiFromBlockScout(EthereumABI, network, address);
     } else {
-      ethabi = await loadAbiFromEtherscan(EthereumABI, network, address);
+      ethabi = await loadAbiFromSourcify(EthereumABI, network, address);
     }
 
     try {
