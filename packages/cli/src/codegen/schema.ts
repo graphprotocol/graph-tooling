@@ -148,6 +148,23 @@ export default class SchemaCodeGenerator {
     );
   }
 
+  _isImmutableEntity(def: ObjectTypeDefinitionNode): boolean {
+    return (
+      def.directives?.find(directive => {
+        return (
+          directive.name.value === 'entity' &&
+          directive.arguments?.find(argument => {
+            return (
+              argument.name.value === 'immutable' &&
+              argument.value.kind === 'BooleanValue' &&
+              argument.value.value
+            );
+          }) !== undefined
+        );
+      }) !== undefined
+    );
+  }
+
   _isDerivedField(field: FieldDefinitionNode | undefined): boolean {
     return (
       field?.directives?.find(directive => directive.name.value === 'derivedFrom') !== undefined
@@ -168,6 +185,11 @@ export default class SchemaCodeGenerator {
 
     // Generate and add save() and getById() methods
     this._generateStoreMethods(name, idField).forEach(method => klass.addMethod(method));
+
+    // Generate and add remove() method
+    if (!this._isImmutableEntity(def)) {
+      klass.addMethod(this._generateRemoveMethod(name, idField));
+    }
 
     // Generate and add entity field getters and setters
     def.fields
@@ -286,6 +308,23 @@ export default class SchemaCodeGenerator {
         `,
       ),
     ];
+  }
+
+  _generateRemoveMethod(entityName: string, idField: IdField) {
+    return tsCodegen.method(
+      'remove',
+      [],
+      tsCodegen.namedType('void'),
+      `
+      let id = this.get('id')
+      assert(id != null,
+             'Cannot remove ${entityName} entity without an ID')
+      if (id) {
+        assert(id.kind == ${idField.tsValueKind()},
+               \`Entities of type ${entityName} must have an ID of type ${idField.gqlTypeName()} but the id '\${id.displayData()}' is of type \${id.displayKind()}\`)
+        store.remove('${entityName}', ${idField.tsValueToString()})
+      }`,
+    );
   }
 
   _generateEntityFieldMethods(
