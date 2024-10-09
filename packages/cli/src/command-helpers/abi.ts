@@ -340,6 +340,10 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://api.routescan.io/v2/network/testnet/evm/9728/etherscan/api';
     case 'fuse-testnet':
       return 'https://explorer.fusespark.io/api';
+    case 'rootstock-testnet':
+      return 'https://rootstock-testnet.blockscout.com/api';
+    case 'unichain-testnet':
+      return 'https://unichain-sepolia.blockscout.com/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -488,6 +492,14 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://testnet.bnb.boba.network';
     case 'fuse-testnet':
       return 'https://rpc.fusespark.io';
+    case 'rootstock-testnet':
+      return 'https://public-node.testnet.rsk.co';
+    case 'kaia':
+      return 'https://public-en.node.kaia.io';
+    case 'kaia-testnet':
+      return 'https://public-en.kairos.node.kaia.io';
+    case 'unichain-testnet':
+      return 'http://beta-u-Proxy-9QsHxlNJa4es-1179015898.us-east-2.elb.amazonaws.com:8545';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
