@@ -1,0 +1,256 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ABI code generation > Generated types > All expected types are generated 1`] = `
+[
+  "Contract__getProposalResultValue0Struct",
+  "Contract__getProposalInputParam1Struct",
+  "Contract__getProposalInputParam1BarStruct",
+  "Contract__getProposalsResultValue1Struct",
+  "Contract__getProposalsResult",
+  "Contract",
+]
+`;
+
+exports[`ABI code generation > Methods for callable functions > Have correct return types 1`] = `
+[
+  [
+    "bind",
+    Immutable.List [
+      Param {
+        "name": "address",
+        "type": "Address",
+      },
+    ],
+  ],
+  [
+    "read",
+    Immutable.List [],
+  ],
+  [
+    "try_read",
+    Immutable.List [],
+  ],
+  [
+    "getProposal",
+    Immutable.List [
+      Param {
+        "name": "proposalId",
+        "type": "BigInt",
+      },
+      Param {
+        "name": "param1",
+        "type": "Contract__getProposalInputParam1Struct",
+      },
+    ],
+  ],
+  [
+    "try_getProposal",
+    Immutable.List [
+      Param {
+        "name": "proposalId",
+        "type": "BigInt",
+      },
+      Param {
+        "name": "param1",
+        "type": "Contract__getProposalInputParam1Struct",
+      },
+    ],
+  ],
+  [
+    "getProposals",
+    Immutable.List [],
+  ],
+  [
+    "try_getProposals",
+    Immutable.List [],
+  ],
+  [
+    "overloaded",
+    Immutable.List [
+      Param {
+        "name": "param0",
+        "type": "string",
+      },
+    ],
+  ],
+  [
+    "try_overloaded",
+    Immutable.List [
+      Param {
+        "name": "param0",
+        "type": "string",
+      },
+    ],
+  ],
+  [
+    "overloaded1",
+    Immutable.List [
+      Param {
+        "name": "param0",
+        "type": "BigInt",
+      },
+    ],
+  ],
+  [
+    "try_overloaded1",
+    Immutable.List [
+      Param {
+        "name": "param0",
+        "type": "BigInt",
+      },
+    ],
+  ],
+  [
+    "overloaded2",
+    Immutable.List [
+      Param {
+        "name": "param0",
+        "type": "Bytes",
+      },
+    ],
+  ],
+  [
+    "try_overloaded2",
+    Immutable.List [
+      Param {
+        "name": "param0",
+        "type": "Bytes",
+      },
+    ],
+  ],
+]
+`;
+
+exports[`ABI code generation > Methods for callable functions > Have correct return types 2`] = `
+[
+  [
+    "bind",
+    NamedType {
+      "name": "Contract",
+    },
+  ],
+  [
+    "read",
+    NamedType {
+      "name": "Bytes",
+    },
+  ],
+  [
+    "try_read",
+    "ethereum.CallResult<Bytes>",
+  ],
+  [
+    "getProposal",
+    NamedType {
+      "name": "Contract__getProposalResultValue0Struct",
+    },
+  ],
+  [
+    "try_getProposal",
+    "ethereum.CallResult<Contract__getProposalResultValue0Struct>",
+  ],
+  [
+    "getProposals",
+    NamedType {
+      "name": "Contract__getProposalsResult",
+    },
+  ],
+  [
+    "try_getProposals",
+    "ethereum.CallResult<Contract__getProposalsResult>",
+  ],
+  [
+    "overloaded",
+    NamedType {
+      "name": "string",
+    },
+  ],
+  [
+    "try_overloaded",
+    "ethereum.CallResult<string>",
+  ],
+  [
+    "overloaded1",
+    NamedType {
+      "name": "string",
+    },
+  ],
+  [
+    "try_overloaded1",
+    "ethereum.CallResult<string>",
+  ],
+  [
+    "overloaded2",
+    NamedType {
+      "name": "string",
+    },
+  ],
+  [
+    "try_overloaded2",
+    "ethereum.CallResult<string>",
+  ],
+]
+`;
+
+exports[`ABI code generation > Tuples > Function bodies are generated correctly for tuple arrays 1`] = `
+[
+  [
+    "get foo",
+    "i32",
+  ],
+  [
+    "get bar",
+    "Contract__getProposalInputParam1BarStruct",
+  ],
+]
+`;
+
+exports[`ABI code generation > Tuples > Function bodies are generated correctly for tuple arrays 2`] = `
+[
+  [
+    "get baz",
+    "Address",
+  ],
+]
+`;
+
+exports[`ABI code generation > Tuples > Function bodies are generated correctly for tuple arrays 3`] = `
+[
+  [
+    "get result",
+    "i32",
+  ],
+  [
+    "get target",
+    "Address",
+  ],
+  [
+    "get data",
+    "Bytes",
+  ],
+  [
+    "get proposer",
+    "Address",
+  ],
+  [
+    "get feeRecipient",
+    "Address",
+  ],
+  [
+    "get fee",
+    "BigInt",
+  ],
+  [
+    "get startTime",
+    "BigInt",
+  ],
+  [
+    "get yesCount",
+    "BigInt",
+  ],
+  [
+    "get noCount",
+    "BigInt",
+  ],
+]
+`;
