@@ -44,8 +44,14 @@ type ContractMapping {
   apiVersion: String!
   language: String!
   file: File!
+  abis: [ContractAbi!]!
   entities: [String!]!
   handlers: [EntityHandler!]
+}
+
+type ContractAbi {
+  name: String!
+  file: File!
 }
 
 type EntityHandler {

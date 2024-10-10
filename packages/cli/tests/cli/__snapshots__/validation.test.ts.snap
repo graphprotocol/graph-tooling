@@ -969,6 +969,16 @@ Types generated successfully
 "
 `;
 
+exports[`Validation > Subgraph data source with handlers 1`] = `
+"    Error: Could not locate \`@graphprotocol/graph-ts\` package in parent 
+    directories of subgraph manifest.
+"
+`;
+
+exports[`Validation > Subgraph data source with handlers 2`] = `1`;
+
+exports[`Validation > Subgraph data source with handlers 3`] = `""`;
+
 exports[`Validation > topic0 is valid in an event handler 1`] = `
 "- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml

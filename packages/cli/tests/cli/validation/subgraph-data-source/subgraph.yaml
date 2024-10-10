@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.4
 repository: https://github.com/graphprotocol/test-subgraph
 description: Test subgraph
 schema:
@@ -16,6 +16,9 @@ dataSources:
       file: ./mapping.ts
       entities:
         - ExampleEntity
+      abis:
+        - name: ExampleContract
+          file: ./Abi.json
       handlers:
         - handler: handleExampleEvent
           entity: ExampleEntity
