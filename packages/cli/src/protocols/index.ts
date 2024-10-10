@@ -301,10 +301,12 @@ const ethereumProtocol: ProtocolConfig = {
 
 const subgraphProtocol: ProtocolConfig = {
   displayName: 'Subgraph',
-  abi: undefined,
+  abi: EthereumABI,
   contract: undefined,
   getTemplateCodeGen: undefined,
-  getTypeGenerator: undefined,
+  getTypeGenerator(options) {
+    return new EthereumTypeGenerator(options);
+  },
   getSubgraph(options) {
     return new SubgraphDS(options);
   },
