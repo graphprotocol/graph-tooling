@@ -49,7 +49,7 @@
     "jayson": "4.0.0",
     "js-yaml": "3.14.1",
     "open": "8.4.2",
-    "prettier": "3.0.3",
+    "prettier": "3.3.3",
     "semver": "7.4.0",
     "sync-request": "6.1.0",
     "tmp-promise": "3.0.3",
