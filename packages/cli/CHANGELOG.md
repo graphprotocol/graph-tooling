@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.87.0
+
+### Minor Changes
+
+- [#1746](https://github.com/graphprotocol/graph-tooling/pull/1746)
+  [`fef2e05`](https://github.com/graphprotocol/graph-tooling/commit/fef2e05c07d5f99f01834c4a6b9e063992d4bc2d)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - updated public rpc
+
 ## 0.86.0
 
 ### Minor Changes
