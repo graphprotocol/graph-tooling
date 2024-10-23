@@ -34,7 +34,7 @@ export default class TypeGenerator {
   private sourceDir: string;
   private options: TypeGeneratorOptions;
   private protocol: Protocol;
-  private protocolTypeGenerator: any;
+  private protocolTypeGenerator;
 
   constructor(options: TypeGeneratorOptions) {
     this.options = options;
@@ -43,10 +43,7 @@ export default class TypeGenerator {
       (this.options.subgraphManifest && path.dirname(this.options.subgraphManifest));
 
     this.protocol = this.options.protocol;
-    this.protocolTypeGenerator = this.protocol?.getTypeGenerator?.({
-      sourceDir: this.sourceDir,
-      outputDir: this.options.outputDir,
-    });
+    this.protocolTypeGenerator = this.protocol?.getTypeGenerator();
 
     process.on('uncaughtException', e => {
       toolbox.print.error(`UNCAUGHT EXCEPTION: ${e}`);
@@ -75,9 +72,11 @@ export default class TypeGenerator {
       const subgraph = await this.loadSubgraph();
 
       // Not all protocols support/have ABIs.
-      if (this.protocol.hasABIs()) {
+      if (this.protocol.hasAbis()) {
         typeGenDebug.extend('generateTypes')('Generating types for ABIs');
-        const abis = await this.protocolTypeGenerator.loadABIs(subgraph);
+        const abis = await this.protocolTypeGenerator?.loadABIs({
+          sourceDir: this.sourceDir,
+        });
         await this.protocolTypeGenerator.generateTypesForABIs(abis);
       }
 
@@ -85,7 +84,7 @@ export default class TypeGenerator {
       await this.generateTypesForDataSourceTemplates(subgraph);
 
       // Not all protocols support/have ABIs.
-      if (this.protocol.hasABIs()) {
+      if (this.protocol.hasAbis()) {
         const templateAbis = await this.protocolTypeGenerator.loadDataSourceTemplateABIs(subgraph);
         await this.protocolTypeGenerator.generateTypesForDataSourceTemplateABIs(templateAbis);
       }

@@ -141,6 +141,7 @@ export default class ABI {
   }
 
   static load(name: string, file: string) {
+    // TODO: make it async
     const data = JSON.parse(fs.readFileSync(file).toString());
     const abi = ABI.normalized(data);
 
