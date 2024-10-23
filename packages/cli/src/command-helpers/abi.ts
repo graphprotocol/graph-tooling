@@ -493,7 +493,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'kaia-testnet':
       return 'https://public-en.kairos.node.kaia.io';
     case 'unichain-testnet':
-      return 'http://beta-u-Proxy-9QsHxlNJa4es-1179015898.us-east-2.elb.amazonaws.com:8545';
+      return 'https://sepolia.unichain.org';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
