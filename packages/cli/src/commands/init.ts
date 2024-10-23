@@ -10,11 +10,13 @@ import {
   loadContractNameForAddress,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
+import { downloadFile } from '../command-helpers/download';
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { sortWithPriority } from '../command-helpers/sort';
 import { withSpinner } from '../command-helpers/spinner';
+import { getSpkgFilePath, isSpkgUrl, validateSpkg } from '../command-helpers/spkg';
 import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 import debugFactory from '../debug';
@@ -748,11 +750,10 @@ async function processInitForm(
       {
         type: 'input',
         name: 'spkg',
-        message: 'SPKG file (path)',
+        message: 'SPKG file (path or spkg.io url)',
         initial: () => initSpkgPath,
         skip: () => !isSubstreams || !!initSpkgPath,
-        validate: value =>
-          filesystem.exists(initSpkgPath || value) ? true : 'SPKG file does not exist',
+        validate: value => validateSpkg(value) || 'Invalid SPKG file',
       },
     ]);
 
@@ -1232,6 +1233,16 @@ async function initSubgraphFromContract(
     this.error(`ABI does not contain any events`, { exit: 1 });
   }
 
+  let spkgFilePath = spkgPath;
+  // if url let's overwrite with the file path
+  if (spkgPath && isSpkgUrl(spkgPath)) {
+    try {
+      spkgFilePath = await getSpkgFilePath(spkgPath, directory);
+    } catch (e) {
+      this.error(e.message, { exit: 1 });
+    }
+  }
+
   // Scaffold subgraph
   const scaffold = await withSpinner(
     `Create subgraph scaffold`,
@@ -1249,11 +1260,14 @@ async function initSubgraphFromContract(
           contractName,
           startBlock,
           node,
-          spkgPath,
+          spkgPath: spkgFilePath,
         },
         spinner,
       );
       await writeScaffold(scaffold, directory, spinner);
+      if (spkgPath && spkgFilePath && isSpkgUrl(spkgPath)) {
+        await downloadFile(spkgPath, spkgFilePath);
+      }
       return true;
     },
   );
