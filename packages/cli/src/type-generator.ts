@@ -80,7 +80,6 @@ export default class TypeGenerator {
         const abis = await this.protocolTypeGenerator.loadABIs(subgraph);
         await this.protocolTypeGenerator.generateTypesForABIs(abis);
       }
-
       typeGenDebug.extend('generateTypes')('Generating types for templates');
       await this.generateTypesForDataSourceTemplates(subgraph);
 
