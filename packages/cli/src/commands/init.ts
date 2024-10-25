@@ -6,7 +6,7 @@ import { filesystem, prompt, system } from 'gluegun';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
-  loadAbiFromEtherscan,
+  loadAbiFromSourcify,
   loadContractNameForAddress,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
@@ -292,7 +292,7 @@ export default class InitCommand extends Command {
             if (network === 'poa-core') {
               abi = await loadAbiFromBlockScout(ABI, network, fromContract);
             } else {
-              abi = await loadAbiFromEtherscan(ABI, network, fromContract);
+              abi = await loadAbiFromSourcify(ABI, network, fromContract);
             }
           } catch (e) {
             process.exitCode = 1;
@@ -544,7 +544,7 @@ async function processInitForm(
     }
   | undefined
 > {
-  let abiFromEtherscan: EthereumABI | undefined = undefined;
+  let abiFromSourcify: EthereumABI | undefined = undefined;
 
   try {
     const { protocol } = await prompt.ask<{ protocol: ProtocolName }>({
@@ -705,17 +705,11 @@ async function processInitForm(
 
           const ABI = protocolInstance.getABI();
 
-          // Try loading the ABI from Etherscan, if none was provided
+          // Try loading the ABI from Sourcify, if none was provided
           if (protocolInstance.hasABIs() && !initAbi) {
-            if (network === 'poa-core') {
-              abiFromEtherscan = await retryWithPrompt(() =>
-                loadAbiFromBlockScout(ABI, network, value),
-              );
-            } else {
-              abiFromEtherscan = await retryWithPrompt(() =>
-                loadAbiFromEtherscan(ABI, network, value),
-              );
-            }
+            abiFromSourcify = await retryWithPrompt(() =>
+              loadAbiFromSourcify(ABI, network, value),
+            );
           }
           // If startBlock is not set, try to load it.
           if (!initStartBlock) {
@@ -765,11 +759,11 @@ async function processInitForm(
         skip: () =>
           !protocolInstance.hasABIs() ||
           initFromExample !== undefined ||
-          abiFromEtherscan !== undefined ||
+          abiFromSourcify !== undefined ||
           isSubstreams ||
           !!initAbiPath,
         validate: async (value: string) => {
-          if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
+          if (initFromExample || abiFromSourcify || !protocolInstance.hasABIs()) {
             return true;
           }
 
@@ -791,7 +785,7 @@ async function processInitForm(
           }
         },
         result: async (value: string) => {
-          if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
+          if (initFromExample || abiFromSourcify || !protocolInstance.hasABIs()) {
             return null;
           }
           const ABI = protocolInstance.getABI();
@@ -853,7 +847,7 @@ async function processInitForm(
     ]);
 
     return {
-      abi: abiFromEtherscan || abiFromFile,
+      abi: abiFromSourcify || abiFromFile,
       protocolInstance,
       subgraphName,
       directory,

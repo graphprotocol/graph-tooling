@@ -7,25 +7,44 @@ import { withSpinner } from './spinner';
 
 const logger = debugFactory('graph-cli:abi-helpers');
 
+export const loadAbiFromSourcify = async (
+  ABICtor: typeof ABI,
+  network: string,
+  address: string,
+): Promise<ABI> =>
+  await withSpinner(
+    `Fetching ABI from Sourcify`,
+    `Failed to fetch ABI from Sourcify`,
+    `Warnings while fetching ABI from Sourcify`,
+    async () => {
+      const chainId = await getSourcifyChainId(network);
+      const result = await fetch(`https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`);
+      const json = await result.json();
+
+      // Etherscan returns a JSON object that has a `status`, a `message` and
+      // a `result` field. The `status` is '0' in case of errors and '1' in
+      // case of success
+      if (result.ok) {
+        return new ABICtor('Contract', undefined, immutable.fromJS(json.output.abi));
+      }
+      throw new Error('ABI not found, try loading it from a local file');
+    },
+  );
+
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
   network: string,
   address: string,
 ): Promise<ABI> =>
   await withSpinner(
-    `Fetching ABI from Etherscan`,
-    `Failed to fetch ABI from Etherscan`,
-    `Warnings while fetching ABI from Etherscan`,
+    `Fetching ABI from Sourcify`,
+    `Failed to fetch ABI from Sourcify`,
+    `Warnings while fetching ABI from Sourcify`,
     async () => {
-      const scanApiUrl = getEtherscanLikeAPIUrl(network);
-      const result = await fetch(`${scanApiUrl}?module=contract&action=getabi&address=${address}`);
-      const json = await result.json();
+      const json = await fetchMetadataFromSourcify(network, address);
 
-      // Etherscan returns a JSON object that has a `status`, a `message` and
-      // a `result` field. The `status` is '0' in case of errors and '1' in
-      // case of success
-      if (json.status === '1') {
-        return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
+      if (json) {
+        return new ABICtor('Contract', undefined, immutable.fromJS(json.output.abi));
       }
       throw new Error('ABI not found, try loading it from a local file');
     },
@@ -51,7 +70,7 @@ export const loadContractNameForAddress = async (
   await withSpinner(
     `Fetching Contract Name`,
     `Failed to fetch Contract Name`,
-    `Warnings while fetching contract name from Etherscan`,
+    `Warnings while fetching contract name from Sourcify`,
     async () => {
       return getContractNameForAddress(network, address);
     },
@@ -124,19 +143,19 @@ export const fetchTransactionByHashFromRPC = async (
   }
 };
 
-export const fetchSourceCodeFromEtherscan = async (
+export const fetchMetadataFromSourcify = async (
   network: string,
   address: string,
 ): Promise<any> => {
-  const scanApiUrl = getEtherscanLikeAPIUrl(network);
+  const chainId = await getSourcifyChainId(network);
   const result = await fetch(
-    `${scanApiUrl}?module=contract&action=getsourcecode&address=${address}`,
+    `https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`,
   );
   const json = await result.json();
-  if (json.status === '1') {
+  if (result.ok) {
     return json;
   }
-  throw new Error('Failed to fetch contract source code');
+  throw new Error('Failed to fetch metadata for address');
 };
 
 export const getContractNameForAddress = async (
@@ -144,8 +163,8 @@ export const getContractNameForAddress = async (
   address: string,
 ): Promise<string> => {
   try {
-    const contractSourceCode = await fetchSourceCodeFromEtherscan(network, address);
-    const contractName = contractSourceCode.result[0].ContractName;
+    const json = await fetchMetadataFromSourcify(network, address);
+    const contractName = Object.values(json.settings.compilationTarget)[0] as string;
     logger('Successfully getContractNameForAddress. contractName: %s', contractName);
     return contractName;
   } catch (error) {
@@ -199,6 +218,19 @@ export const loadAbiFromBlockScout = async (
       throw new Error('ABI not found, try loading it from a local file');
     },
   );
+
+const getSourcifyChainId = async (network: string) => {
+  const result = await fetch('https://sourcify.dev/server/chains');
+  const json = await result.json();
+
+  // Can fail if network name doesn't follow https://chainlist.org name convention
+  const match = json.find((e: any) => e.name.toLowerCase().includes(network.replace('-', ' ')));
+
+  if (match)
+    return match.chainId;
+  else
+    throw new Error(`Could not find chain id for "${network}"`);
+};
 
 const getEtherscanLikeAPIUrl = (network: string) => {
   switch (network) {
