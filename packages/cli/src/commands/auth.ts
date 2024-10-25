@@ -34,10 +34,6 @@ export default class AuthCommand extends Command {
       this.error('✖ Deploy key must not exceed 200 characters', { exit: 1 });
     }
 
-    if (product === 'hosted-service' || node?.match(/api.thegraph.com/)) {
-      this.error('✖ The hosted service is deprecated', { exit: 1 });
-    }
-
     try {
       await saveDeployKey(node!, deployKey);
       print.success(`Deploy key set for ${node}`);

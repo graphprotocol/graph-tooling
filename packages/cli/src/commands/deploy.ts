@@ -125,8 +125,6 @@ export default class DeployCommand extends Command {
       this.error('No Graph node provided');
     }
 
-    const isStudio = node.match(/studio/);
-
     const requestUrl = new URL(node);
     const client = createJsonRpcClient(requestUrl);
 
