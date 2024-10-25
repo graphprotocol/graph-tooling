@@ -1,5 +1,176 @@
 # @graphprotocol/graph-cli
 
+## 0.87.0
+
+### Minor Changes
+
+- [#1746](https://github.com/graphprotocol/graph-tooling/pull/1746)
+  [`fef2e05`](https://github.com/graphprotocol/graph-tooling/commit/fef2e05c07d5f99f01834c4a6b9e063992d4bc2d)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - updated public rpc
+
+## 0.86.0
+
+### Minor Changes
+
+- [#1740](https://github.com/graphprotocol/graph-tooling/pull/1740)
+  [`7b4f787`](https://github.com/graphprotocol/graph-tooling/commit/7b4f787ebe4f65dbb233d3dda02f179f75ef21d9)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added new chain
+
+## 0.85.0
+
+### Minor Changes
+
+- [#1733](https://github.com/graphprotocol/graph-tooling/pull/1733)
+  [`d13bc5e`](https://github.com/graphprotocol/graph-tooling/commit/d13bc5e6ba08a62be78d1bf469fc0e3b89ee3c1a)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added rootstock
+
+- [#1736](https://github.com/graphprotocol/graph-tooling/pull/1736)
+  [`e759327`](https://github.com/graphprotocol/graph-tooling/commit/e759327cf53fe9462f9bdf65f5ff9fdd125f58db)
+  Thanks [@fschoell](https://github.com/fschoell)! - replace etherscan endpoints
+
+## 0.84.0
+
+### Minor Changes
+
+- [#1730](https://github.com/graphprotocol/graph-tooling/pull/1730)
+  [`e39279b`](https://github.com/graphprotocol/graph-tooling/commit/e39279be9d61a97e79ea18e558bd73795e25dbe0)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added boba, fuse blockexplorer
+
+## 0.83.0
+
+### Minor Changes
+
+- [#1728](https://github.com/graphprotocol/graph-tooling/pull/1728)
+  [`a05db7b`](https://github.com/graphprotocol/graph-tooling/commit/a05db7bdf1f22f86501d9d59929245ddb7b1abae)
+  Thanks [@yash251](https://github.com/yash251)! - add chiliz testnet rpc and api
+
+## 0.82.0
+
+### Minor Changes
+
+- [#1726](https://github.com/graphprotocol/graph-tooling/pull/1726)
+  [`81afd9b`](https://github.com/graphprotocol/graph-tooling/commit/81afd9b6edd09fa2df0d3ed7ae43b894472fca98)
+  Thanks [@yash251](https://github.com/yash251)! - add chiliz rpc and api
+
+## 0.81.0
+
+### Minor Changes
+
+- [#1719](https://github.com/graphprotocol/graph-tooling/pull/1719)
+  [`2141242`](https://github.com/graphprotocol/graph-tooling/commit/21412420ad87579a1b884e17c190fc701f220623)
+  Thanks [@yash251](https://github.com/yash251)! - add soneium api and rpc
+
+## 0.80.1
+
+### Patch Changes
+
+- [#1715](https://github.com/graphprotocol/graph-tooling/pull/1715)
+  [`4cfef44`](https://github.com/graphprotocol/graph-tooling/commit/4cfef44d991de6f9bbb802eb8956de5d63b2c2a3)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - fix: getcontractcreation support on neox
+  etherscan api
+
+## 0.80.0
+
+### Minor Changes
+
+- [#1712](https://github.com/graphprotocol/graph-tooling/pull/1712)
+  [`9b48e45`](https://github.com/graphprotocol/graph-tooling/commit/9b48e455b258ecc4fba647e32773ee05b23b42eb)
+  Thanks [@Shiyasmohd](https://github.com/Shiyasmohd)! - feat: add neox etherscan like url and
+  public rpc
+
+- [#1710](https://github.com/graphprotocol/graph-tooling/pull/1710)
+  [`687bbd0`](https://github.com/graphprotocol/graph-tooling/commit/687bbd054265243d7f00376c69dd2a11cbb14116)
+  Thanks [@yash251](https://github.com/yash251)! - add iotex testnet rpc and api url
+
+- [#1713](https://github.com/graphprotocol/graph-tooling/pull/1713)
+  [`4c7d17c`](https://github.com/graphprotocol/graph-tooling/commit/4c7d17c30fe7e87866e9002cae5d182bc8217eb5)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added publicRpc and blockExplorer for
+  arbitrum nova
+
+## 0.79.2
+
+### Patch Changes
+
+- [#1698](https://github.com/graphprotocol/graph-tooling/pull/1698)
+  [`c8ec890`](https://github.com/graphprotocol/graph-tooling/commit/c8ec890cb13bb109bb97387e4819c948d97a079a)
+  Thanks [@soilking](https://github.com/soilking)! - Fix build files being placed outside the build
+  directory
+
+## 0.79.1
+
+### Patch Changes
+
+- [#1701](https://github.com/graphprotocol/graph-tooling/pull/1701)
+  [`24c402f`](https://github.com/graphprotocol/graph-tooling/commit/24c402f5f2f296a1df35d54fe1927030f96481d4)
+  Thanks [@saihaj](https://github.com/saihaj)! - Allow publishing without forcing network or
+  subgraph id
+
+## 0.79.0
+
+### Minor Changes
+
+- [#1696](https://github.com/graphprotocol/graph-tooling/pull/1696)
+  [`828bb04`](https://github.com/graphprotocol/graph-tooling/commit/828bb04125ad873ad675731e468d0c70009fea71)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added rpc & explorer urls for sei,
+  gravity (mainnet & testnet), etherlink (mainnet)
+
+## 0.78.0
+
+### Minor Changes
+
+- [#1692](https://github.com/graphprotocol/graph-tooling/pull/1692)
+  [`6f84e7a`](https://github.com/graphprotocol/graph-tooling/commit/6f84e7ade5c51232abefcb9a6fb7406e375ad125)
+  Thanks [@yash251](https://github.com/yash251)! - add iotex urls
+
+## 0.77.0
+
+### Minor Changes
+
+- [#1690](https://github.com/graphprotocol/graph-tooling/pull/1690)
+  [`87e74ce`](https://github.com/graphprotocol/graph-tooling/commit/87e74ce64a0c98e9be13d5f6fd31c7020ef23d5e)
+  Thanks [@saihaj](https://github.com/saihaj)! - allow publishing new subgraph version
+
+## 0.76.0
+
+### Minor Changes
+
+- [#1688](https://github.com/graphprotocol/graph-tooling/pull/1688)
+  [`3a96771`](https://github.com/graphprotocol/graph-tooling/commit/3a9677113a4282cd4f91adadfa4b4b1d00f6e035)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added rootstock blockexplorer api and
+  public rpc url
+
+## 0.75.0
+
+### Minor Changes
+
+- [#1686](https://github.com/graphprotocol/graph-tooling/pull/1686)
+  [`fea8f23`](https://github.com/graphprotocol/graph-tooling/commit/fea8f23b745d2595708b7f5b86384ad7eaa16f08)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - getEtherscanLikeAPIUrl: added for sei
+  mainnet (to be able to obtain contract ABI)
+
+## 0.74.1
+
+### Patch Changes
+
+- [#1683](https://github.com/graphprotocol/graph-tooling/pull/1683)
+  [`f5bfa07`](https://github.com/graphprotocol/graph-tooling/commit/f5bfa07e04c0c70ed3285db4e90bf99cfdb265a3)
+  Thanks [@azf20](https://github.com/azf20)! - fix graph auth
+
+## 0.74.0
+
+### Minor Changes
+
+- [#1681](https://github.com/graphprotocol/graph-tooling/pull/1681)
+  [`0a16b41`](https://github.com/graphprotocol/graph-tooling/commit/0a16b41979bc0644a1599b9434d9f5bf30687f64)
+  Thanks [@saihaj](https://github.com/saihaj)! - Part of the Hosted Service migration throw an error
+  when users are trying to use `hosted-service` product in `graph [auth|deploy|init]` commands.
+
+### Patch Changes
+
+- [#1681](https://github.com/graphprotocol/graph-tooling/pull/1681)
+  [`0a16b41`](https://github.com/graphprotocol/graph-tooling/commit/0a16b41979bc0644a1599b9434d9f5bf30687f64)
+  Thanks [@saihaj](https://github.com/saihaj)! - remove ipfs check for studio deploys
+
 ## 0.73.0
 
 ### Minor Changes

@@ -52,8 +52,10 @@ function handleNameRegistered(event: NameRegistered) {
 
 ## Helper Functions for AssemblyScript
 
-Refer to the `helper-functions.ts` file in this repository for a few common functions that help
-build on top of the AssemblyScript library, such as byte array concatenation, among others.
+Refer to the `helper-functions.ts` file in
+[this](https://github.com/graphprotocol/graph-tooling/blob/main/packages/ts/helper-functions.ts)
+repository for a few common functions that help build on top of the AssemblyScript library, such as
+byte array concatenation, among others.
 
 ## API
 
@@ -73,8 +75,9 @@ For examples of `graph-ts` in use take a look at one of the following subgraphs:
 
 Copyright &copy; 2018 Graph Protocol, Inc. and contributors.
 
-The Graph TypeScript library is dual-licensed under the [MIT license](LICENSE-MIT) and the
-[Apache License, Version 2.0](LICENSE-APACHE).
+The Graph TypeScript library is dual-licensed under the
+[MIT license](https://github.com/graphprotocol/graph-tooling/blob/main/LICENSE-MIT) and the
+[Apache License, Version 2.0](https://github.com/graphprotocol/graph-tooling/blob/main/LICENSE-APACHE).
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or

@@ -14,15 +14,18 @@ This repository houses the following tools:
 
 ## Contributing
 
-We welcome contributions to this repository. Please see the
-[contribution guidelines](CONTRIBUTING.md). For running the project locally,
+We welcome contributions to this repository. Please follow the
+[Code of Conduct](https://github.com/graphprotocol/graph-node/blob/master/CODE_OF_CONDUCT.md) for
+all the communications.
+
+To run this project locally:
 
 1. Clone the repository
-2. Make sure you have Node.js `>=20.x` installed
-3. Make sure you have [`pnpm`] installed:
-   [https://pnpm.io/installation](https://pnpm.io/installation)
+2. Make sure you have [Node.js](https://nodejs.org/en) `>=20.x` installed
+3. Make sure you have [`pnpm` installed](https://pnpm.io/installation)
 4. Run `pnpm install` to install dependencies
 5. Run `pnpm build` to build the packages
+6. Run `pnpm test` to run the tests
 
 ## Release process
 

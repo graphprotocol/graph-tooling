@@ -173,6 +173,7 @@ export default class InitCommand extends Command {
     } = flags;
 
     initDebugger('Flags: %O', flags);
+
     let { node } = chooseNodeUrl({
       node: nodeFlag,
     });

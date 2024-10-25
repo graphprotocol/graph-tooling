@@ -39,7 +39,7 @@ const TEST_CONTRACT_START_BLOCKS = {
 
   // Skipping these networks for now because they do not support the latest etherscan contracts API or is blockScout based
 
-  // Chains that doesnt support the latest etherscan contracts API
+  // Chains that doesn't support the latest etherscan contracts API
   //  mumbai: {
   //     '0x73bDCeC61b7b4707Baa4775c06A438A903065a17': 29_110_890,
   //   },

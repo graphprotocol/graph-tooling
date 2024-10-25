@@ -11,7 +11,8 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "example-*"
+    "example-*",
+    "website"
   ],
   "snapshot": {
     "useCalculatedVersion": true,

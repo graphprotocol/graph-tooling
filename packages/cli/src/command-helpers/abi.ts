@@ -203,27 +203,27 @@ export const loadAbiFromBlockScout = async (
 const getEtherscanLikeAPIUrl = (network: string) => {
   switch (network) {
     case 'mainnet':
-      return `https://api.etherscan.io/api`;
+      return `https://mainnet.abi.pinax.network/api`;
     case 'arbitrum-one':
-      return `https://api.arbiscan.io/api`;
+      return `https://arbitrum-one.abi.pinax.network/api`;
     case 'arbitrum-goerli':
       return `https://api-goerli.arbiscan.io/api`;
     case 'arbitrum-sepolia':
-      return `https://api-sepolia.arbiscan.io/api`;
+      return `https://arbitrum-sepolia.abi.pinax.network/api`;
     case 'bsc':
-      return `https://api.bscscan.com/api`;
+      return `https://bsc.abi.pinax.network/api`;
     case 'base-testnet':
       return `https://api-goerli.basescan.org/api`;
     case 'base-sepolia':
-      return `https://api-sepolia.basescan.org/api`;
+      return `https://base-sepolia.abi.pinax.network/api`;
     case 'base':
-      return `https://api.basescan.org/api`;
+      return `https://base.abi.pinax.network/api`;
     case 'chapel':
-      return `https://api-testnet.bscscan.com/api`;
+      return `https://bsc-testnet.abi.pinax.network/api`;
     case 'matic':
-      return `https://api.polygonscan.com/api`;
+      return `https://polygon.abi.pinax.network/api`;
     case 'mumbai':
-      return `https://api-testnet.polygonscan.com/api`;
+      return `https://polygon-mumbai.abi.pinax.network/api`;
     case 'aurora':
       return `https://explorer.mainnet.aurora.dev/api`;
     case 'aurora-testnet':
@@ -231,27 +231,27 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'optimism-goerli':
       return `https://api-goerli-optimistic.etherscan.io/api`;
     case 'optimism':
-      return `https://api-optimistic.etherscan.io/api`;
+      return `https://optimism.abi.pinax.network/api`;
     case 'moonbeam':
-      return `https://api-moonbeam.moonscan.io/api`;
+      return `https://moonbeam.abi.pinax.network/api`;
     case 'moonriver':
       return `https://api-moonriver.moonscan.io/api`;
     case 'mbase':
-      return `https://api-moonbase.moonscan.io/api`;
+      return `https://moonbase.abi.pinax.network/api`;
     case 'avalanche':
       return `https://api.snowtrace.io/api`;
     case 'fuji':
       return `https://api-testnet.snowtrace.io/api`;
     case 'celo':
-      return `https://api.celoscan.io/api`;
+      return `https://celo.abi.pinax.network/api`;
     case 'celo-alfajores':
-      return `https://api-alfajores.celoscan.io/api`;
+      return `https://celo-alfajores.abi.pinax.network/api`;
     case 'gnosis':
-      return `https://api.gnosisscan.io/api`;
+      return `https://gnosis.abi.pinax.network/api`;
     case 'fantom':
-      return `https://api.ftmscan.com/api`;
+      return `https://fantom.abi.pinax.network/api`;
     case 'fantom-testnet':
-      return `https://api-testnet.ftmscan.com/api`;
+      return `https://fantom-testnet.abi.pinax.network/api`;
     case 'zksync-era':
       return `https://block-explorer-api.mainnet.zksync.io/api`;
     case 'zksync-era-testnet':
@@ -261,29 +261,29 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'polygon-zkevm-testnet':
       return `https://testnet-zkevm.polygonscan.com/api`;
     case 'polygon-zkevm':
-      return `https://api-zkevm.polygonscan.com/api`;
+      return `https://polygon-zkevm.abi.pinax.network/api`;
     case 'sepolia':
-      return `https://api-sepolia.etherscan.io/api`;
+      return `https://sepolia.abi.pinax.network/api`;
     case 'scroll-sepolia':
       return `https://api-sepolia.scrollscan.dev/api`;
     case 'optimism-sepolia':
-      return `https://api-sepolia-optimistic.etherscan.io/api`;
+      return `https://optimism-sepolia.abi.pinax.network/api`;
     case 'scroll':
       return `https://api.scrollscan.com/api`;
     case 'linea':
-      return `https://api.lineascan.build/api`;
+      return `https://linea.abi.pinax.network/api`;
     case 'linea-sepolia':
-      return 'https://api-sepolia.lineascan.build/api';
+      return 'https://linea-sepolia.abi.pinax.network/api';
     case 'linea-goerli':
       return `https://api.linea-goerli.build/api`;
     case 'blast-testnet':
-      return `https://api-sepolia.blastscan.io/api`;
+      return `https://blast-testnet.abi.pinax.network/api`;
     case 'blast-mainnet':
-      return `https://api.blastscan.io/api`;
+      return `https://blast.abi.pinax.network/api`;
     case 'etherlink-testnet':
       return `https://testnet-explorer.etherlink.com/api`;
     case 'polygon-amoy':
-      return `https://api-amoy.polygonscan.com/api`;
+      return `https://polygon-amoy.abi.pinax.network/api`;
     case 'gnosis-chiado':
       return `https://gnosis-chiado.blockscout.com/api`;
     case 'mode-mainnet':
@@ -295,7 +295,49 @@ const getEtherscanLikeAPIUrl = (network: string) => {
     case 'astar-zkevm-mainnet':
       return `https://astar-zkevm.explorer.startale.com/api`;
     case 'polygon-zkevm-cardona':
-      return `https://api-cardona-zkevm.polygonscan.com/api`;
+      return `https://polygon-zkevm-cardona.abi.pinax.network/api`;
+    case 'sei-mainnet':
+      return `https://seitrace.com/pacific-1/api`;
+    case 'sei-atlantic':
+      return `https://seitrace.com/atlantic-2/api`;
+    case 'rootstock':
+      return 'https://rootstock.blockscout.com/api';
+    case 'iotex':
+      return 'https://index.iotexscan.io/api';
+    case 'gravity-mainnet':
+      return 'https://explorer.gravity.xyz/api';
+    case 'gravity-testnet':
+      return 'https://explorer-sepolia.gravity.xyz/api';
+    case 'etherlink-mainnet':
+      return 'https://explorer.etherlink.com/api';
+    case 'iotex-testnet':
+      return 'https://testnet.index.iotexscan.io/api';
+    case 'neox':
+      return 'https://xexplorer.neo.org/api/ngd/api';
+    case 'neox-testnet':
+      return 'https://xt4scan.ngd.network/api/ngd/api';
+    case 'arbitrum-nova':
+      return 'https://arbitrum-nova.abi.pinax.network/api';
+    case 'soneium-testnet':
+      return 'https://explorer-testnet.soneium.org/api';
+    case 'chiliz':
+      return 'https://scan.chiliz.com/api';
+    case 'chiliz-testnet':
+      return 'https://spicy-explorer.chiliz.com/api';
+    case 'boba':
+      return 'https://api.routescan.io/v2/network/mainnet/evm/288/etherscan/api';
+    case 'boba-testnet':
+      return 'https://api.routescan.io/v2/network/testnet/evm/28882/etherscan/api';
+    case 'boba-bnb':
+      return 'https://api.routescan.io/v2/network/mainnet/evm/56288/etherscan/api';
+    case 'boba-bnb-testnet':
+      return 'https://api.routescan.io/v2/network/testnet/evm/9728/etherscan/api';
+    case 'fuse-testnet':
+      return 'https://explorer.fusespark.io/api';
+    case 'rootstock-testnet':
+      return 'https://rootstock-testnet.blockscout.com/api';
+    case 'unichain-testnet':
+      return 'https://unichain-sepolia.blockscout.com/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -406,6 +448,52 @@ const getPublicRPCEndpoint = (network: string) => {
       return `https://1rpc.io/astr`;
     case 'polygon-zkevm-cardona':
       return `https://rpc.cardona.zkevm-rpc.com`;
+    case 'sei-mainnet':
+      return `https://evm-rpc.sei-apis.com`;
+    case 'sei-atlantic':
+      return `https://evm-rpc-testnet.sei-apis.com`;
+    case 'rootstock':
+      return 'https://public-node.rsk.co';
+    case 'iotex':
+      return 'https://iotexrpc.com';
+    case 'gravity-mainnet':
+      return 'https://rpc.gravity.xyz/';
+    case 'gravity-testnet':
+      return 'https://rpc-sepolia.gravity.xyz';
+    case 'etherlink-mainnet':
+      return 'https://node.mainnet.etherlink.com';
+    case 'iotex-testnet':
+      return 'https://babel-api.testnet.iotex.io';
+    case 'neox':
+      return 'https://mainnet-1.rpc.banelabs.org';
+    case 'neox-testnet':
+      return 'https://neoxt4seed1.ngd.network';
+    case 'arbitrum-nova':
+      return 'https://nova.arbitrum.io/rpc';
+    case 'soneium-testnet':
+      return 'https://rpc.minato.soneium.org/';
+    case 'chiliz':
+      return 'https://rpc.ankr.com/chiliz';
+    case 'chiliz-testnet':
+      return 'https://spicy-rpc.chiliz.com';
+    case 'boba':
+      return 'https://boba-eth.drpc.org';
+    case 'boba-testnet':
+      return 'https://sepolia.boba.network';
+    case 'boba-bnb':
+      return 'https://bnb.boba.network';
+    case 'boba-bnb-testnet':
+      return 'https://testnet.bnb.boba.network';
+    case 'fuse-testnet':
+      return 'https://rpc.fusespark.io';
+    case 'rootstock-testnet':
+      return 'https://public-node.testnet.rsk.co';
+    case 'kaia':
+      return 'https://public-en.node.kaia.io';
+    case 'kaia-testnet':
+      return 'https://public-en.kairos.node.kaia.io';
+    case 'unichain-testnet':
+      return 'https://sepolia.unichain.org';
     default:
       throw new Error(`Unknown network: ${network}`);
   }

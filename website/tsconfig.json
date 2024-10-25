@@ -23,7 +23,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum",
+        "tadaOutputLocation": "./src/graphql-env.d.ts"
+      }
+    ]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
