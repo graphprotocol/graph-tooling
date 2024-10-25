@@ -253,7 +253,7 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 `;
 
 exports[`Init > NEAR > From contract 1`] = `
-" ›   Error: Nonexistent flag: --product
+" ›   Error: Nonexistent flag: --studio
  ›   See more help with --help
 "
 `;
