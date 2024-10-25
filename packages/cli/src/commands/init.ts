@@ -634,12 +634,17 @@ async function processInitForm(
         name: 'directory',
         message: 'Directory to create the subgraph in',
         initial: () => initDirectory || getSubgraphBasename(subgraphName),
-        validate: value =>
-          filesystem.exists(value || initDirectory || getSubgraphBasename(subgraphName))
-            ? 'Directory already exists'
-            : true,
       },
     ]);
+
+    if (
+      filesystem.exists(directory) &&
+      !(await prompt.confirm(
+        'Directory already exists, do you want to initialize the subgraph here ?',
+        false,
+      ))
+    )
+      return;
 
     let choices = (await AVAILABLE_NETWORKS())?.[
       product === 'subgraph-studio' ? 'studio' : 'hostedService'
