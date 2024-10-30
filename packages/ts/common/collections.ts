@@ -459,6 +459,28 @@ export class Entity extends TypedMap<string, Value> {
 }
 
 /**
+ * Common representation for entity triggers, this wraps the entity
+ * and has fields for the operation type and the entity type.
+ */
+export class EntityTrigger<T extends Entity> {
+  constructor(
+    public operation: EntityOp,
+    public type: string,
+    public data: T, // T is a specific type that extends Entity
+  ) {}
+}
+
+/**
+ * Enum for entity operations.
+ * Create, Modify, Remove
+ */
+export enum EntityOp {
+  Create,
+  Modify,
+  Remove,
+}
+
+/**
  * The result of an operation, with a corresponding value and error type.
  */
 export class Result<V, E> {

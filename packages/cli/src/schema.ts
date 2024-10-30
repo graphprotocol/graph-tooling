@@ -23,4 +23,13 @@ export default class Schema {
     const ast = graphql.parse(document);
     return new Schema(filename, document, ast);
   }
+
+  static async loadFromString(filename: string, document: string) {
+    try {
+      const ast = graphql.parse(document);
+      return new Schema(filename, document, ast);
+    } catch (e) {
+      throw new Error(`Failed to load schema from string: ${e.message}`);
+    }
+  }
 }
