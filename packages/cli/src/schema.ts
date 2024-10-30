@@ -2,6 +2,9 @@ import fs from 'fs-extra';
 import * as graphql from 'graphql/language';
 import type { DocumentNode } from 'graphql/language';
 import SchemaCodeGenerator from './codegen/schema';
+import debug from './debug';
+
+const schemaDebug = debug('graph-cli:type-generator');
 
 export default class Schema {
   constructor(
@@ -22,5 +25,16 @@ export default class Schema {
     const document = await fs.readFile(filename, 'utf-8');
     const ast = graphql.parse(document);
     return new Schema(filename, document, ast);
+  }
+
+  static async loadFromString(filename: string, document: string) {
+    try {
+      const ast = graphql.parse(document);
+      schemaDebug('Loaded schema from string');
+      return new Schema(filename, document, ast);
+    } catch (e) {
+      schemaDebug('Failed to load schema from string: %s', e.message);
+      throw new Error(`Failed to load schema from string: ${e.message}`);
+    }
   }
 }

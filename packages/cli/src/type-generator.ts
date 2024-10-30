@@ -3,13 +3,17 @@ import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
+import { create } from 'ipfs-http-client';
+import yaml from 'js-yaml';
 import prettier from 'prettier';
 // @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
 import DataSourceTemplateCodeGenerator from './codegen/template';
 import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript';
+import { appendApiVersionForGraph } from './command-helpers/compiler';
 import { displayPath } from './command-helpers/fs';
 import { Spinner, step, withSpinner } from './command-helpers/spinner';
+import { GRAPH_CLI_SHARED_HEADERS } from './constants';
 import debug from './debug';
 import { applyMigrations } from './migrations';
 import Protocol from './protocols';
@@ -28,6 +32,8 @@ export interface TypeGeneratorOptions {
   skipMigrations?: boolean;
   uncrashable: boolean;
   uncrashableConfig: string;
+  subgraphSources: string[];
+  ipfsUrl: string;
 }
 
 export default class TypeGenerator {
@@ -65,6 +71,11 @@ export default class TypeGenerator {
       return;
     }
 
+    if (this.options.subgraphSources.length > 0) {
+      typeGenDebug.extend('generateTypes')('Subgraph uses subgraph datasources.');
+      toolbox.print.success('Subgraph uses subgraph datasources.');
+    }
+
     try {
       if (!this.options.skipMigrations && this.options.subgraphManifest) {
         await applyMigrations({
@@ -93,6 +104,30 @@ export default class TypeGenerator {
       typeGenDebug.extend('generateTypes')('Generating types for schema');
       await this.generateTypesForSchema(schema);
 
+      if (this.options.subgraphSources.length > 0) {
+        const ipfsClient = create({
+          url: appendApiVersionForGraph(this.options.ipfsUrl.toString()),
+          headers: {
+            ...GRAPH_CLI_SHARED_HEADERS,
+          },
+        });
+
+        await Promise.all(
+          this.options.subgraphSources.map(async manifest => {
+            const subgraphSchemaFile = await this.loadSubgraphSchemaFromIPFS(ipfsClient, manifest);
+
+            const subgraphSchema = await Schema.loadFromString(
+              `js${manifest}.graphql`,
+              subgraphSchemaFile,
+            );
+            typeGenDebug.extend('generateTypes')(
+              `Generating types for subgraph datasource ${manifest}`,
+            );
+            await this.generateTypesForSchema(subgraphSchema, `subgraph-${manifest}.ts`);
+          }),
+        );
+      }
+
       toolbox.print.success('\nTypes generated successfully\n');
 
       if (this.options.uncrashable && this.options.uncrashableConfig) {
@@ -102,6 +137,37 @@ export default class TypeGenerator {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  async loadSubgraphSchemaFromIPFS(ipfsClient: any, manifest: string) {
+    typeGenDebug.extend('loadSubgraphSchemaFromIPFS')(`Loading schema from IPFS ${manifest}`);
+    try {
+      const manifestBuffer = ipfsClient.cat(manifest);
+      let manifestFile = '';
+      for await (const chunk of manifestBuffer) {
+        manifestFile += Buffer.from(chunk).toString('utf8'); // Explicitly convert each chunk to UTF-8
+      }
+
+      const manifestYaml: any = yaml.safeLoad(manifestFile);
+      let schema = manifestYaml.schema.file['/'];
+
+      if (schema.startsWith('/ipfs/')) {
+        schema = schema.slice(6);
+      }
+
+      const schemaBuffer = ipfsClient.cat(schema);
+      let schemaFile = '';
+      for await (const chunk of schemaBuffer) {
+        schemaFile += Buffer.from(chunk).toString('utf8'); // Explicitly convert each chunk to UTF-8
+      }
+      return schemaFile;
+    } catch (e) {
+      typeGenDebug.extend('loadSubgraphSchemaFromIPFS')(
+        `Failed to load schema from IPFS ${manifest}`,
+      );
+      typeGenDebug.extend('loadSubgraphSchemaFromIPFS')(e);
+      throw Error(`Failed to load schema from IPFS ${manifest}`);
     }
   }
 
@@ -160,7 +226,11 @@ export default class TypeGenerator {
     );
   }
 
-  async generateTypesForSchema(schema: any) {
+  async generateTypesForSchema(
+    schema: any,
+    fileName = 'schema.ts', // Default file name
+    outputDir: string = this.options.outputDir, // Default output directory
+  ) {
     return await withSpinner(
       `Generate types for GraphQL schema`,
       `Failed to generate types for GraphQL schema`,
@@ -180,7 +250,7 @@ export default class TypeGenerator {
           },
         );
 
-        const outputFile = path.join(this.options.outputDir, 'schema.ts');
+        const outputFile = path.join(outputDir, fileName); // Use provided outputDir and fileName
         step(spinner, 'Write types to', displayPath(outputFile));
         await fs.mkdirs(path.dirname(outputFile));
         await fs.writeFile(outputFile, code);

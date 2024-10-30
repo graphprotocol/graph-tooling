@@ -7,7 +7,7 @@ dataSources:
   - kind: subgraph
     name: ExampleSubgraph
     source:
-      address: "QmHASH"
+      address: "QmbPZENDFo1HQcocaporuVGn7fXpGgba1hUX5TFbBv69tZ"
       startBlock: 0
     mapping:
       kind: entity

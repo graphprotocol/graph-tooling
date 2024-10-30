@@ -76,7 +76,7 @@ export default class Compiler {
 
     if (!globalsLib) {
       throw Error(
-        'Could not locate `@graphprotocol/graph-ts` package in parent directories of subgraph manifest.',
+        `Could not locate @graphprotocol/graph-ts package in parent directories of subgraph manifest. ${this.libsDirs}`,
       );
     }
 

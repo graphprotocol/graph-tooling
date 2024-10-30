@@ -1,6 +1,7 @@
 import path from 'path';
 import { Args, Command, Flags } from '@oclif/core';
 import * as DataSourcesExtractor from '../command-helpers/data-sources';
+import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import debug from '../debug';
 import Protocol from '../protocols';
@@ -38,6 +39,11 @@ export default class CodegenCommand extends Command {
       summary: 'Generate Float Subgraph Uncrashable helper file.',
       char: 'u',
     }),
+    ipfs: Flags.string({
+      summary: 'Upload build results to an IPFS node.',
+      char: 'i',
+      default: DEFAULT_IPFS_URL,
+    }),
     'uncrashable-config': Flags.file({
       summary: 'Directory for uncrashable config.',
       aliases: ['uc'],
@@ -54,6 +60,7 @@ export default class CodegenCommand extends Command {
         'output-dir': outputDir,
         'skip-migrations': skipMigrations,
         watch,
+        ipfs,
         uncrashable,
         'uncrashable-config': uncrashableConfig,
       },
@@ -62,6 +69,7 @@ export default class CodegenCommand extends Command {
     codegenDebug('Initialized codegen manifest: %o', manifest);
 
     let protocol;
+    let subgraphSources;
     try {
       // Checks to make sure codegen doesn't run against
       // older subgraphs (both apiVersion and graph-ts version).
@@ -73,8 +81,10 @@ export default class CodegenCommand extends Command {
       await assertGraphTsVersion(path.dirname(manifest), '0.25.0');
 
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
-
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
+      subgraphSources = dataSourcesAndTemplates
+        .filter((ds: any) => ds.kind == 'subgraph')
+        .map((ds: any) => ds.source.address);
     } catch (e) {
       this.error(e, { exit: 1 });
     }
@@ -85,7 +95,9 @@ export default class CodegenCommand extends Command {
       skipMigrations,
       protocol,
       uncrashable,
+      subgraphSources,
       uncrashableConfig: uncrashableConfig || 'uncrashable-config.yaml',
+      ipfsUrl: ipfs,
     });
 
     // Watch working directory for file updates or additions, trigger
