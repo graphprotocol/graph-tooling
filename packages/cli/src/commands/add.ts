@@ -77,6 +77,9 @@ export default class AddCommand extends Command {
     const manifest = await Subgraph.load(manifestPath, { protocol });
     const network = manifest.result.getIn(['dataSources', 0, 'network']) as any;
     const result = manifest.result.asMutable();
+    const isLocalHost = network === 'localhost'; // This flag prevent Etherscan lookups in case the network selected is `localhost`
+
+    if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
 
     let startBlock = startBlockFlag;
     let contractName = contractNameFlag;
@@ -96,10 +99,44 @@ export default class AddCommand extends Command {
     } else if (network === 'poa-core') {
       ethabi = await loadAbiFromBlockScout(EthereumABI, network, address);
     } else {
-      ethabi = await loadAbiFromEtherscan(EthereumABI, network, address);
+      try {
+        if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
+
+        ethabi = await loadAbiFromEtherscan(EthereumABI, network, address);
+      } catch (error) {
+        // we cannot ask user to do prompt in test environment
+        if (process.env.NODE_ENV !== 'test') {
+          const { abi: abiFromFile } = await prompt.ask<{ abi: EthereumABI }>([
+            {
+              type: 'input',
+              name: 'abi',
+              message: 'ABI file (path)',
+              initial: ethabi,
+              validate: async (value: string) => {
+                try {
+                  EthereumABI.load(contractName, value);
+                  return true;
+                } catch (e) {
+                  this.error(e.message);
+                }
+              },
+              result: async (value: string) => {
+                try {
+                  return EthereumABI.load(contractName, value);
+                } catch (e) {
+                  return e.message;
+                }
+              },
+            },
+          ]);
+          ethabi = abiFromFile;
+        }
+      }
     }
 
     try {
+      if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
+
       startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
     } catch (error) {
       // we cannot ask user to do prompt in test environment
@@ -122,6 +159,8 @@ export default class AddCommand extends Command {
     }
 
     try {
+      if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
+
       contractName = await loadContractNameForAddress(network, address);
     } catch (error) {
       // not asking user to do prompt in test environment
