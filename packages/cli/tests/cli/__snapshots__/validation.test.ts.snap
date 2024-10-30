@@ -970,14 +970,46 @@ Types generated successfully
 `;
 
 exports[`Validation > Subgraph data source with handlers 1`] = `
-"    Error: Could not locate \`@graphprotocol/graph-ts\` package in parent 
-    directories of subgraph manifest.
+"- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Load contract ABIs
+  Load contract ABI from Abi.json
+- Load contract ABIs
+✔ Load contract ABIs
+- Generate types for contract ABIs
+  Generate types for contract ABI: ExampleContract (Abi.json)
+- Generate types for contract ABIs
+  Write types to generated/ExampleSubgraph/ExampleContract.ts
+- Generate types for contract ABIs
+✔ Generate types for contract ABIs
+- Generate types for data source templates
+✔ Generate types for data source templates
+- Load data source template ABIs
+✔ Load data source template ABIs
+- Generate types for data source template ABIs
+✔ Generate types for data source template ABIs
+- Load GraphQL schema from schema.graphql
+✔ Load GraphQL schema from schema.graphql
+- Generate types for GraphQL schema
+  Write types to generated/schema.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
+- Generate types for GraphQL schema
+  Write types to generated/subgraph-QmbPZENDFo1HQcocaporuVGn7fXpGgba1hUX5TFbBv69tZ.ts
+- Generate types for GraphQL schema
+✔ Generate types for GraphQL schema
 "
 `;
 
-exports[`Validation > Subgraph data source with handlers 2`] = `1`;
+exports[`Validation > Subgraph data source with handlers 2`] = `0`;
 
-exports[`Validation > Subgraph data source with handlers 3`] = `""`;
+exports[`Validation > Subgraph data source with handlers 3`] = `
+"Subgraph uses subgraph datasources.
+
+Types generated successfully
+
+"
+`;
 
 exports[`Validation > topic0 is valid in an event handler 1`] = `
 "- Load subgraph from subgraph.yaml

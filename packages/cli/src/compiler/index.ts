@@ -71,6 +71,7 @@ export default class Compiler {
 
     const globalsFile = path.join('@graphprotocol', 'graph-ts', 'global', 'global.ts');
     const globalsLib = this.libsDirs.find(item => {
+      compilerDebug('Checking for globals file in %s', path.join(item, globalsFile));
       return fs.existsSync(path.join(item, globalsFile));
     });
 

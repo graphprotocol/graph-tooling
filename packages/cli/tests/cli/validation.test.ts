@@ -14,7 +14,7 @@ describe.concurrent(
     // );
     cliTest(
       'Subgraph data source with handlers',
-      ['build', '--skip-migrations'],
+      ['codegen', '--skip-migrations'],
       'validation/subgraph-data-source',
       {
         exitCode: 0,
