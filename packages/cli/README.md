@@ -29,12 +29,14 @@ As of today, the command line interface supports the following commands:
 The Graph CLI takes a subgraph manifest (defaults to `subgraph.yaml`) with references to:
 
 - A GraphQL schema,
-- Smart contract ABIs, and
-- Mappings written in AssemblyScript.
+- Smart contract ABIs,
+- Mappings written in AssemblyScript for traditional subgraphs,
+- Substreams package and triggers for substreams-based subgraphs
 
 It compiles the mappings to WebAssembly, builds a ready-to-use version of the subgraph saved to IPFS
 or a local directory for debugging, and deploys the subgraph to a
-[Graph Node](https://github.com/graphprotocol/graph-node).
+[Graph Node](https://github.com/graphprotocol/graph-node) instance or [Subgraph Studio](https://thegraph.com/studio/).
+Additionally it allows you to publish your subgraph to the decentralized network directly, making it available for indexing via [Graph Explorer](https://thegraph.com/explorer)
 
 ## Installation
 
@@ -71,13 +73,14 @@ Use one of the following commands depending on your distribution:
 
 ## Getting Started
 
-The Graph CLI can be used with a local or self-hosted
-[Graph Node](https://github.com/graphprotocol/graph-node) or with the
-[Hosted Service](https://thegraph.com/explorer/). To help you get going, there are
-[quick start guides](https://thegraph.com/docs/en/developer/quick-start/) available for both.
+The Graph CLI can be used with a local or self-hosted [Graph Node](https://github.com/graphprotocol/graph-node) or with the
+[Subgraph Studio](https://thegraph.com/studio/). To help you get going, there are
+[quick start guides](https://thegraph.com/docs/en/quick-start/) available for both.
+
+Additionally, you can use Graph CLI to [publish](https://thegraph.com/docs/en/quick-start/#publishing-from-the-cli) your subgraph to the decentralized network directly.
 
 If you are ready to dive into the details of building a subgraph from scratch, there is a
-[detailed walkthrough](https://thegraph.com/docs/en/developer/create-subgraph-hosted/) for that as
+[detailed walkthrough](https://thegraph.com/docs/en/developing/creating-a-subgraph/) for that as
 well, along with API documentation for the
 [AssemblyScript API](https://thegraph.com/docs/en/developer/assemblyscript-api/).
 
