@@ -462,11 +462,11 @@ export class Entity extends TypedMap<string, Value> {
  * Common representation for entity triggers, this wraps the entity
  * and has fields for the operation type and the entity type.
  */
-export class EntityTrigger {
+export class EntityTrigger<T extends Entity> {
   constructor(
-    public entityOp: u32,
-    public entityType: string,
-    public entity: Entity,
+    public operation: EntityOp,
+    public type: string,
+    public data: T, // T is a specific type that extends Entity
   ) {}
 }
 
