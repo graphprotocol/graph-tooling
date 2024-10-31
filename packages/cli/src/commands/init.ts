@@ -15,7 +15,7 @@ import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
 import { sortWithPriority } from '../command-helpers/sort';
 import { withSpinner } from '../command-helpers/spinner';
-import { getSubgraphBasename, validateSubgraphName } from '../command-helpers/subgraph';
+import { getSubgraphBasename } from '../command-helpers/subgraph';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
 import debugFactory from '../debug';
 import Protocol, { ProtocolName } from '../protocols';
@@ -89,35 +89,10 @@ export default class InitCommand extends Command {
     protocol: Flags.string({
       options: protocolChoices,
     }),
-    product: Flags.string({
-      summary: 'Selects the product for which to initialize.',
-      options: ['subgraph-studio', 'hosted-service'],
-      deprecated: {
-        message:
-          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
-      },
-    }),
-    studio: Flags.boolean({
-      summary: 'Shortcut for "--product subgraph-studio".',
-      exclusive: ['product'],
-      deprecated: {
-        message:
-          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
-      },
-    }),
     node: Flags.string({
       summary: 'Graph node for which to initialize.',
       char: 'g',
     }),
-    'allow-simple-name': Flags.boolean({
-      description: 'Use a subgraph name without a prefix.',
-      default: false,
-      deprecated: {
-        message:
-          'In next major version, this flag will be removed. By default we will deploy to the Graph Studio. Learn more about Sunrise of Decentralized Data https://thegraph.com/blog/unveiling-updated-sunrise-decentralized-data/',
-      },
-    }),
-
     'from-contract': Flags.string({
       description: 'Creates a scaffold based on an existing contract.',
       exclusive: ['from-example'],
@@ -184,10 +159,7 @@ export default class InitCommand extends Command {
 
     const {
       protocol,
-      product,
-      studio,
       node: nodeFlag,
-      'allow-simple-name': allowSimpleNameFlag,
       'from-contract': fromContract,
       'contract-name': contractName,
       'from-example': fromExample,
@@ -202,16 +174,8 @@ export default class InitCommand extends Command {
 
     initDebugger('Flags: %O', flags);
 
-    if (product === 'hosted-service') {
-      this.error('✖ The hosted service is deprecated', { exit: 1 });
-    }
-
-    let { node, allowSimpleName } = chooseNodeUrl({
-      product,
-      // if we are loading example, we want to ensure we are using studio
-      studio: studio || fromExample !== undefined,
+    let { node } = chooseNodeUrl({
       node: nodeFlag,
-      allowSimpleName: allowSimpleNameFlag,
     });
 
     if (fromContract && fromExample) {
@@ -250,7 +214,6 @@ export default class InitCommand extends Command {
       await initSubgraphFromExample.bind(this)(
         {
           fromExample,
-          allowSimpleName,
           directory,
           subgraphName,
           skipInstall,
@@ -305,7 +268,6 @@ export default class InitCommand extends Command {
         {
           protocolInstance,
           abi,
-          allowSimpleName,
           directory,
           contract: fromContract,
           indexEvents,
@@ -326,7 +288,6 @@ export default class InitCommand extends Command {
 
     if (fromExample) {
       const answers = await processFromExampleInitForm.bind(this)({
-        allowSimpleName,
         subgraphName,
         directory,
       });
@@ -338,7 +299,6 @@ export default class InitCommand extends Command {
 
       await initSubgraphFromExample.bind(this)(
         {
-          allowSimpleName,
           fromExample,
           subgraphName: answers.subgraphName,
           directory: answers.directory,
@@ -351,12 +311,8 @@ export default class InitCommand extends Command {
       // Otherwise, take the user through the interactive form
       const answers = await processInitForm.bind(this)({
         protocol: protocol as ProtocolName | undefined,
-        product,
-        studio,
-        node,
         abi,
         abiPath,
-        allowSimpleName,
         directory,
         contract: fromContract,
         indexEvents,
@@ -372,16 +328,12 @@ export default class InitCommand extends Command {
         return;
       }
 
-      ({ node, allowSimpleName } = chooseNodeUrl({
-        product: answers.product,
-        studio: answers.studio,
+      ({ node } = chooseNodeUrl({
         node,
-        allowSimpleName,
       }));
       await initSubgraphFromContract.bind(this)(
         {
           protocolInstance: answers.protocolInstance,
-          allowSimpleName,
           subgraphName: answers.subgraphName,
           directory: answers.directory,
           abi: answers.abi,
@@ -408,11 +360,9 @@ async function processFromExampleInitForm(
   {
     directory: initDirectory,
     subgraphName: initSubgraphName,
-    allowSimpleName: initAllowSimpleName,
   }: {
     directory?: string;
     subgraphName?: string;
-    allowSimpleName: boolean | undefined;
   },
 ): Promise<
   | {
@@ -426,24 +376,8 @@ async function processFromExampleInitForm(
       {
         type: 'input',
         name: 'subgraphName',
-        // TODO: is defaulting to studio ok?
         message: () => 'Subgraph slug',
         initial: initSubgraphName,
-        validate: name => {
-          try {
-            validateSubgraphName(name, {
-              allowSimpleName: initAllowSimpleName,
-            });
-            return true;
-          } catch (e) {
-            return `${e.message}
-
-    Examples:
-
-      $ graph init ${os.userInfo().username}/${name}
-      $ graph init ${name} --allow-simple-name`;
-          }
-        },
       },
     ]);
 
@@ -489,9 +423,6 @@ async function processInitForm(
   this: InitCommand,
   {
     protocol: initProtocol,
-    product: initProduct,
-    studio: initStudio,
-    node: initNode,
     abi: initAbi,
     abiPath: initAbiPath,
     directory: initDirectory,
@@ -502,16 +433,11 @@ async function processInitForm(
     subgraphName: initSubgraphName,
     contractName: initContractName,
     startBlock: initStartBlock,
-    allowSimpleName: initAllowSimpleName,
     spkgPath: initSpkgPath,
   }: {
     protocol?: ProtocolName;
-    product?: string;
-    studio: boolean;
-    node?: string;
     abi: EthereumABI;
     abiPath?: string;
-    allowSimpleName: boolean | undefined;
     directory?: string;
     contract?: string;
     indexEvents: boolean;
@@ -528,8 +454,6 @@ async function processInitForm(
       protocolInstance: Protocol;
       subgraphName: string;
       directory: string;
-      studio: boolean;
-      product: string;
       network: string;
       contract: string;
       indexEvents: boolean;
@@ -563,64 +487,12 @@ async function processInitForm(
     const isSubstreams = protocol === 'substreams';
     initDebugger.extend('processInitForm')('isSubstreams: %O', isSubstreams);
 
-    const { product } = await prompt.ask<{
-      product: 'subgraph-studio' | 'hosted-service';
-    }>([
-      {
-        type: 'select',
-        name: 'product',
-        message: 'Product for which to initialize',
-        choices: ['subgraph-studio', 'hosted-service'],
-        skip:
-          protocol === 'arweave' ||
-          protocol === 'cosmos' ||
-          protocol === 'near' ||
-          initProduct === 'subgraph-studio' ||
-          initProduct === 'hosted-service' ||
-          initStudio !== undefined ||
-          initNode !== undefined,
-        result: value => {
-          if (initProduct) return initProduct;
-          if (initStudio) return 'subgraph-studio';
-          // For now we only support NEAR subgraphs in the Hosted Service
-          if (protocol === 'near') {
-            return 'hosted-service';
-          }
-
-          if (value == 'subgraph-studio') {
-            initAllowSimpleName = true;
-          }
-
-          return value;
-        },
-      },
-    ]);
-
-    if (product == 'hosted-service') {
-      this.error('✖ The hosted service is deprecated', { exit: 1 });
-    }
-
     const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
       {
         type: 'input',
         name: 'subgraphName',
-        message: () => (product == 'subgraph-studio' ? 'Subgraph slug' : 'Subgraph name'),
+        message: 'Subgraph slug',
         initial: initSubgraphName,
-        validate: name => {
-          try {
-            validateSubgraphName(name, {
-              allowSimpleName: initAllowSimpleName,
-            });
-            return true;
-          } catch (e) {
-            return `${e.message}
-
-    Examples:
-
-      $ graph init ${os.userInfo().username}/${name}
-      $ graph init ${name} --allow-simple-name`;
-          }
-        },
       },
     ]);
 
@@ -633,9 +505,7 @@ async function processInitForm(
       },
     ]);
 
-    let choices = (await AVAILABLE_NETWORKS())?.[
-      product === 'subgraph-studio' ? 'studio' : 'hostedService'
-    ];
+    let choices = (await AVAILABLE_NETWORKS())?.['studio'];
 
     if (!choices) {
       this.error(
@@ -849,10 +719,8 @@ async function processInitForm(
       protocolInstance,
       subgraphName,
       directory,
-      studio: product === 'subgraph-studio',
       startBlock,
       fromExample: !!initFromExample,
-      product,
       network,
       contractName,
       contract,
@@ -877,25 +745,6 @@ const loadAbiFromFile = (ABI: typeof EthereumABI, filename: string) => {
     return ABI.load('Contract', filename);
   }
 };
-
-function revalidateSubgraphName(
-  this: InitCommand,
-  subgraphName: string,
-  { allowSimpleName }: { allowSimpleName: boolean | undefined },
-) {
-  // Fail if the subgraph name is invalid
-  try {
-    validateSubgraphName(subgraphName, { allowSimpleName });
-    return true;
-  } catch (e) {
-    this.error(`${e.message}
-
-  Examples:
-
-    $ graph init ${os.userInfo().username}/${subgraphName}
-    $ graph init ${subgraphName} --allow-simple-name`);
-  }
-}
 
 // Inspired from: https://github.com/graphprotocol/graph-tooling/issues/1450#issuecomment-1713992618
 async function isInRepo() {
@@ -1010,14 +859,12 @@ async function initSubgraphFromExample(
   this: InitCommand,
   {
     fromExample,
-    allowSimpleName,
     subgraphName,
     directory,
     skipInstall,
     skipGit,
   }: {
     fromExample: string | boolean;
-    allowSimpleName?: boolean;
     subgraphName: string;
     directory: string;
     skipInstall: boolean;
@@ -1034,11 +881,6 @@ async function initSubgraphFromExample(
     };
   },
 ) {
-  // Fail if the subgraph name is invalid
-  if (!revalidateSubgraphName.bind(this)(subgraphName, { allowSimpleName })) {
-    process.exitCode = 1;
-    return;
-  }
 
   let overwrite = false;
   if (filesystem.exists(directory)) {
@@ -1167,7 +1009,6 @@ async function initSubgraphFromContract(
   this: InitCommand,
   {
     protocolInstance,
-    allowSimpleName,
     subgraphName,
     directory,
     abi,
@@ -1182,7 +1023,6 @@ async function initSubgraphFromContract(
     skipGit,
   }: {
     protocolInstance: Protocol;
-    allowSimpleName: boolean | undefined;
     subgraphName: string;
     directory: string;
     abi: EthereumABI;
@@ -1210,12 +1050,6 @@ async function initSubgraphFromContract(
   },
 ) {
   const isSubstreams = protocolInstance.name === 'substreams';
-
-  // Fail if the subgraph name is invalid
-  if (!revalidateSubgraphName.bind(this)(subgraphName, { allowSimpleName })) {
-    this.exit(1);
-    return;
-  }
 
   if (
     filesystem.exists(directory) &&

@@ -32,6 +32,7 @@
     "@oclif/core": "2.8.6",
     "@oclif/plugin-autocomplete": "^2.3.6",
     "@oclif/plugin-not-found": "^2.4.0",
+    "@oclif/plugin-warn-if-update-available": "^3.1.20",
     "@whatwg-node/fetch": "^0.8.4",
     "assemblyscript": "0.19.23",
     "binary-install-raw": "0.0.13",
@@ -85,7 +86,12 @@
     ],
     "plugins": [
       "@oclif/plugin-not-found",
-      "@oclif/plugin-autocomplete"
-    ]
+      "@oclif/plugin-autocomplete",
+      "@oclif/plugin-warn-if-update-available"
+    ],
+    "warn-if-update-available": {
+      "timeoutInDays": 1,
+      "message": "<%= config.name %> update available from <%= chalk.yellowBright(config.version) %> to <%= chalk.greenBright(latest) %>."
+    }
   }
 }
