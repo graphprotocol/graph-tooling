@@ -881,7 +881,6 @@ async function initSubgraphFromExample(
     };
   },
 ) {
-
   let overwrite = false;
   if (filesystem.exists(directory)) {
     overwrite = await prompt.confirm(
