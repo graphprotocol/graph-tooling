@@ -453,10 +453,6 @@ async function processFromExampleInitForm(
         name: 'directory',
         message: 'Directory to create the subgraph in',
         initial: () => initDirectory || getSubgraphBasename(subgraphName),
-        validate: value =>
-          filesystem.exists(value || initDirectory || getSubgraphBasename(subgraphName))
-            ? 'Directory already exists'
-            : true,
       },
     ]);
 
@@ -636,15 +632,6 @@ async function processInitForm(
         initial: () => initDirectory || getSubgraphBasename(subgraphName),
       },
     ]);
-
-    if (
-      filesystem.exists(directory) &&
-      !(await prompt.confirm(
-        'Directory already exists, do you want to initialize the subgraph here ?',
-        false,
-      ))
-    )
-      return;
 
     let choices = (await AVAILABLE_NETWORKS())?.[
       product === 'subgraph-studio' ? 'studio' : 'hostedService'
@@ -1053,9 +1040,17 @@ async function initSubgraphFromExample(
     return;
   }
 
-  // Fail if the output directory already exists
+  let overwrite = false;
   if (filesystem.exists(directory)) {
-    this.error(`Directory or file "${directory}" already exists`, { exit: 1 });
+    overwrite = await prompt.confirm(
+      'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
+      false,
+    );
+
+    if (!overwrite) {
+      this.exit(1);
+      return;
+    }
   }
 
   // Clone the example subgraph repository
@@ -1085,7 +1080,7 @@ async function initSubgraphFromExample(
           return { result: false, error: `Example not found: ${fromExample}` };
         }
 
-        filesystem.copy(exampleSubgraphPath, directory);
+        filesystem.copy(exampleSubgraphPath, directory, { overwrite });
         return true;
       } finally {
         filesystem.remove(tmpDir);
@@ -1222,9 +1217,15 @@ async function initSubgraphFromContract(
     return;
   }
 
-  // Fail if the output directory already exists
-  if (filesystem.exists(directory)) {
-    this.error(`Directory or file "${directory}" already exists`, { exit: 1 });
+  if (
+    filesystem.exists(directory) &&
+    !(await prompt.confirm(
+      'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
+      false,
+    ))
+  ) {
+    this.exit(1);
+    return;
   }
 
   if (
