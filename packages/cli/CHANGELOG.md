@@ -1,5 +1,46 @@
 # @graphprotocol/graph-cli
 
+## 0.88.0
+
+### Minor Changes
+
+- [#1680](https://github.com/graphprotocol/graph-tooling/pull/1680)
+  [`08914a8`](https://github.com/graphprotocol/graph-tooling/commit/08914a89179e31363765bb3a6e72945f4585e207)
+  Thanks [@saihaj](https://github.com/saihaj)! - Breaking changes to the CLI to prepare for the
+  sunset of the hosted service.
+
+  - `graph auth`
+    - Removed `--product` flag
+    - Removed `--studio` flag
+    - Removed `node` argument
+  - `graph deploy`
+    - Removed `--product` flag
+    - Removed `--studio` flag
+    - Removed `--from-hosted-service` flag
+  - `graph init`
+    - Removed `--product` flag
+    - Removed `--studio` flag
+    - Removed `--allow-simple-name` flag
+
+- [#1749](https://github.com/graphprotocol/graph-tooling/pull/1749)
+  [`bf43cbf`](https://github.com/graphprotocol/graph-tooling/commit/bf43cbf8283c53f0005d7cb9dfa681c92f3a6a91)
+  Thanks [@0237h](https://github.com/0237h)! - Add warning for available CLI updates
+
+### Patch Changes
+
+- [#1751](https://github.com/graphprotocol/graph-tooling/pull/1751)
+  [`0ba99dc`](https://github.com/graphprotocol/graph-tooling/commit/0ba99dcd6783fb20779d4f5a6791fc155969939e)
+  Thanks [@0237h](https://github.com/0237h)! - Using `graph add` with `localhost` network now
+  prompts the user for input
+
+- [#1750](https://github.com/graphprotocol/graph-tooling/pull/1750)
+  [`d764867`](https://github.com/graphprotocol/graph-tooling/commit/d764867dc7eab32e2f1db8505419ea4fa03ed503)
+  Thanks [@0237h](https://github.com/0237h)! - Add prompt for existing directory in `init` flow
+
+- [#1756](https://github.com/graphprotocol/graph-tooling/pull/1756)
+  [`04bd901`](https://github.com/graphprotocol/graph-tooling/commit/04bd901d3ff974c197b82fd29426309ce7de1558)
+  Thanks [@0237h](https://github.com/0237h)! - Fix `matic` RPC endpoint and improve error message
+
 ## 0.87.0
 
 ### Minor Changes
