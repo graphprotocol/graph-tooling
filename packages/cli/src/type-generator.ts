@@ -102,7 +102,7 @@ export default class TypeGenerator {
 
       const schema = await this.loadSchema(subgraph);
       typeGenDebug.extend('generateTypes')('Generating types for schema');
-      await this.generateTypesForSchema(schema);
+      await this.generateTypesForSchema({ schema });
 
       if (this.options.subgraphSources.length > 0) {
         const ipfsClient = create({
@@ -123,7 +123,11 @@ export default class TypeGenerator {
             typeGenDebug.extend('generateTypes')(
               `Generating types for subgraph datasource ${manifest}`,
             );
-            await this.generateTypesForSchema(subgraphSchema, `subgraph-${manifest}.ts`);
+            await this.generateTypesForSchema({
+              schema: subgraphSchema,
+              fileName: `subgraph-${manifest}.ts`,
+              generateStoreMethods: false,
+            });
           }),
         );
       }
@@ -226,11 +230,17 @@ export default class TypeGenerator {
     );
   }
 
-  async generateTypesForSchema(
-    schema: any,
+  async generateTypesForSchema({
+    schema,
     fileName = 'schema.ts', // Default file name
-    outputDir: string = this.options.outputDir, // Default output directory
-  ) {
+    outputDir = this.options.outputDir, // Default output directory
+    generateStoreMethods = true,
+  }: {
+    schema: any;
+    fileName?: string;
+    outputDir?: string;
+    generateStoreMethods?: boolean;
+  }) {
     return await withSpinner(
       `Generate types for GraphQL schema`,
       `Failed to generate types for GraphQL schema`,
@@ -242,7 +252,7 @@ export default class TypeGenerator {
           [
             GENERATED_FILE_NOTE,
             ...codeGenerator.generateModuleImports(),
-            ...codeGenerator.generateTypes(),
+            ...codeGenerator.generateTypes(generateStoreMethods),
             ...codeGenerator.generateDerivedLoaders(),
           ].join('\n'),
           {
