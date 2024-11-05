@@ -100,8 +100,8 @@ export const fetchTransactionByHashFromRPC = async (
   transactionHash: string,
 ): Promise<any> => {
   let json: any;
+  const RPCURL = getPublicRPCEndpoint(network);
   try {
-    const RPCURL = getPublicRPCEndpoint(network);
     if (!RPCURL) throw new Error(`Unable to fetch RPC URL for ${network}`);
     const result = await fetch(String(RPCURL), {
       method: 'POST',
@@ -120,7 +120,9 @@ export const fetchTransactionByHashFromRPC = async (
     return json;
   } catch (error) {
     logger('Failed to fetchTransactionByHashFromRPC: %O', error);
-    throw new Error('Failed to fetch contract creation transaction');
+    throw new Error(
+      `Failed to run \`eth_getTransactionByHash\` on RPC (${RPCURL}) (run with env \`DEBUG=*\` for full error).`,
+    );
   }
 };
 
@@ -387,7 +389,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'mainnet':
       return 'https://rpc.ankr.com/eth';
     case 'matic':
-      return 'https://rpc-mainnet.maticvigil.com';
+      return 'https://polygon-rpc.com/';
     case 'mbase':
       return 'https://rpc.moonbase.moonbeam.network';
     case 'mumbai':
