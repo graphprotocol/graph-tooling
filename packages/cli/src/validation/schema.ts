@@ -227,7 +227,7 @@ const gatherLocalTypes = (defs: readonly graphql.DefinitionNode[]) => {
     )
     .map(
       def =>
-        // @ts-expect-error TODO: name field does not exist on definition, really?
+        // TODO: name field does not exist on definition, really?
         def.name.value,
     );
 };

@@ -46,6 +46,10 @@ export default class PublishCommand extends Command {
       required: false,
       default: 'https://cli.thegraph.com/publish',
     }),
+    'api-key': Flags.string({
+      summary: 'The API key to use for the Subgraph queries.',
+      required: false,
+    }),
   };
 
   /**
@@ -56,11 +60,13 @@ export default class PublishCommand extends Command {
     webapp,
     subgraphId,
     protocolNetwork,
+    apiKey,
   }: {
     ipfsHash: string;
     webapp: string;
     subgraphId: string | undefined;
     protocolNetwork: string | undefined;
+    apiKey: string | undefined;
   }) {
     const answer = await ux.prompt(
       `Press ${chalk.green(
@@ -84,6 +90,9 @@ export default class PublishCommand extends Command {
     if (protocolNetwork) {
       searchParams.set('network', protocolNetwork);
     }
+    if (apiKey) {
+      searchParams.set('apiKey', apiKey);
+    }
 
     url.search = searchParams.toString();
 
@@ -105,11 +114,12 @@ export default class PublishCommand extends Command {
         ipfs,
         'subgraph-id': subgraphId,
         'protocol-network': protocolNetwork,
+        'api-key': apiKey,
       },
     } = await this.parse(PublishCommand);
 
     if (ipfsHash) {
-      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl, subgraphId, protocolNetwork });
+      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl, subgraphId, protocolNetwork, apiKey });
       return;
     }
 
@@ -146,6 +156,7 @@ export default class PublishCommand extends Command {
       webapp: webUiUrl,
       subgraphId,
       protocolNetwork,
+      apiKey,
     });
     return;
   }
