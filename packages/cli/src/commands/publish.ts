@@ -119,7 +119,13 @@ export default class PublishCommand extends Command {
     } = await this.parse(PublishCommand);
 
     if (ipfsHash) {
-      await this.publishWithBrowser({ ipfsHash, webapp: webUiUrl, subgraphId, protocolNetwork, apiKey });
+      await this.publishWithBrowser({
+        ipfsHash,
+        webapp: webUiUrl,
+        subgraphId,
+        protocolNetwork,
+        apiKey,
+      });
       return;
     }
 

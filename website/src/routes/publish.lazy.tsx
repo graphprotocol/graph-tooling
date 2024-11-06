@@ -171,7 +171,7 @@ function DeploySubgraph({
   deploymentId,
   subgraphId,
   network,
-  apiKey
+  apiKey,
 }: {
   deploymentId: string;
   subgraphId: string | undefined;
@@ -226,7 +226,8 @@ function DeploySubgraph({
       }
       if (!apiKey) {
         toast({
-          description: "apiKey is missing in URL params. Please add it to the URL params and try again.",
+          description:
+            'apiKey is missing in URL params. Please add it to the URL params and try again.',
           variant: 'destructive',
         });
         return;
@@ -239,7 +240,7 @@ function DeploySubgraph({
       const data = await networkSubgraphExecute(
         GetSubgraphInfo(subgraphId),
         subgraphEndpoint,
-        apiKey
+        apiKey,
       );
 
       const metadata = data.subgraph?.metadata;
@@ -292,7 +293,9 @@ function DeploySubgraph({
 
     const version = form.watch('versionLabel');
 
-    return !subgraphInfo.subgraph?.versions.some(({ metadata }: { metadata: { label: string } }) => metadata?.label === version);
+    return !subgraphInfo.subgraph?.versions.some(
+      ({ metadata }: { metadata: { label: string } }) => metadata?.label === version,
+    );
   }
 
   function isOwner() {
@@ -593,7 +596,12 @@ function Page() {
         <ConnectKitButton />
       </nav>
       {id ? (
-        <DeploySubgraph deploymentId={id} subgraphId={subgraphId} network={protocolNetwork} apiKey={apiKey} />
+        <DeploySubgraph
+          deploymentId={id}
+          subgraphId={subgraphId}
+          network={protocolNetwork}
+          apiKey={apiKey}
+        />
       ) : (
         <div className="flex justify-center items-center min-h-screen -mt-16">
           Unable to find the Deployment ID. Go back to CLI
