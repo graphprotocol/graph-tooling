@@ -340,6 +340,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://rootstock-testnet.blockscout.com/api';
     case 'unichain-testnet':
       return 'https://unichain-sepolia.blockscout.com/api';
+    case 'lens-testnet':
+      return 'https://block-explorer-api.testnet.lens.dev/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -496,6 +498,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://public-en.kairos.node.kaia.io';
     case 'unichain-testnet':
       return 'https://sepolia.unichain.org';
+    case 'lens-testnet':
+      return 'https://api.staging.lens.zksync.dev';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
