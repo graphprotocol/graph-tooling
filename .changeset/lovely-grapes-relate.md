@@ -2,4 +2,4 @@
 "@graphprotocol/graph-cli": minor
 ---
 
-new chain urls
+Add new chain: Lens testnet

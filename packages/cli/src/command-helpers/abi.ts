@@ -499,7 +499,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'unichain-testnet':
       return 'https://sepolia.unichain.org';
     case 'lens-testnet':
-      return 'https://api.staging.lens.zksync.dev'          
+      return 'https://api.staging.lens.zksync.dev';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
