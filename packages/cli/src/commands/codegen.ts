@@ -1,9 +1,9 @@
 import path from 'path';
 import { Args, Command, Flags } from '@oclif/core';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
 import debug from '../debug';
-import Protocol from '../protocols';
+import { loadManifest } from '../migrations/util/load-manifest';
+import Protocol from '../protocols/new-protocol';
 import TypeGenerator from '../type-generator';
 
 const codegenDebug = debug('graph-cli:codegen');
@@ -61,7 +61,7 @@ export default class CodegenCommand extends Command {
 
     codegenDebug('Initialized codegen manifest: %o', manifest);
 
-    let protocol;
+    let protocol: Protocol;
     try {
       // Checks to make sure codegen doesn't run against
       // older subgraphs (both apiVersion and graph-ts version).
@@ -69,12 +69,15 @@ export default class CodegenCommand extends Command {
       // We don't want codegen to run without these conditions
       // because that would mean the CLI would generate code to
       // the wrong AssemblyScript version.
+
+      // TODO: rewrite these functions to utilize manfiest data
       await assertManifestApiVersion(manifest, '0.0.5');
       await assertGraphTsVersion(path.dirname(manifest), '0.25.0');
+      // ----
 
-      const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
+      const manifestData = await loadManifest(manifest);
 
-      protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
+      protocol = new Protocol(manifestData);
     } catch (e) {
       this.error(e, { exit: 1 });
     }
