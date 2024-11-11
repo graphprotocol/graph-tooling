@@ -7,6 +7,31 @@ import { withSpinner } from './spinner';
 
 const logger = debugFactory('graph-cli:abi-helpers');
 
+const fetchFromEtherscan = async (url: string): Promise<any | null> => {
+  const result = await fetch(url);
+  let json: any = {};
+
+  if (result.ok) {
+    json = await result.json().catch(error => {
+      throw new Error(`Failed to read JSON response from Etherscan: ${error}`);
+    });
+
+    // Etherscan returns a JSON object that has a `status`, a `message` and
+    // a `result` field. The `status` is '0' in case of errors and '1' in
+    // case of success
+    if (json.status === '1') return json;
+  }
+
+  logger(
+    'Failed to fetchFromEtherscan: [%s] %s (%s)\n%O',
+    result.status,
+    result.statusText,
+    result.url,
+    json,
+  );
+  return null;
+};
+
 export const loadAbiFromEtherscan = async (
   ABICtor: typeof ABI,
   network: string,
@@ -18,16 +43,14 @@ export const loadAbiFromEtherscan = async (
     `Warnings while fetching ABI from Etherscan`,
     async () => {
       const scanApiUrl = getEtherscanLikeAPIUrl(network);
-      const result = await fetch(`${scanApiUrl}?module=contract&action=getabi&address=${address}`);
-      const json = await result.json();
+      const json = await fetchFromEtherscan(
+        `${scanApiUrl}?module=contract&action=getabi&address=${address}`,
+      );
 
-      // Etherscan returns a JSON object that has a `status`, a `message` and
-      // a `result` field. The `status` is '0' in case of errors and '1' in
-      // case of success
-      if (json.status === '1') {
+      if (json)
         return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
-      }
-      throw new Error('ABI not found, try loading it from a local file');
+
+      throw new Error('Try loading it from a local file');
     },
   );
 
@@ -62,37 +85,17 @@ export const fetchDeployContractTransactionFromEtherscan = async (
   address: string,
 ): Promise<string> => {
   const scanApiUrl = getEtherscanLikeAPIUrl(network);
-  const json = await fetchContractCreationHashWithRetry(
+  const json = await fetchFromEtherscan(
     `${scanApiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
-    5,
   );
-  if (json.status === '1') {
+
+  if (json) {
     const hash = json.result[0].txHash;
     logger('Successfully fetchDeployContractTransactionFromEtherscan. txHash: %s', hash);
     return hash;
   }
 
   throw new Error(`Failed to fetch deploy contract transaction`);
-};
-
-export const fetchContractCreationHashWithRetry = async (
-  url: string,
-  retryCount: number,
-): Promise<any> => {
-  let json;
-  for (let i = 0; i < retryCount; i++) {
-    try {
-      const result = await fetch(url);
-      json = await result.json();
-      if (json.status !== '0') {
-        return json;
-      }
-    } catch (error) {
-      logger('Failed to fetchContractCreationHashWithRetry: %O', error);
-      /* empty */
-    }
-  }
-  throw new Error(`Failed to fetch contract creation transaction hash`);
 };
 
 export const fetchTransactionByHashFromRPC = async (
@@ -131,14 +134,15 @@ export const fetchSourceCodeFromEtherscan = async (
   address: string,
 ): Promise<any> => {
   const scanApiUrl = getEtherscanLikeAPIUrl(network);
-  const result = await fetch(
+  const json = await fetchFromEtherscan(
     `${scanApiUrl}?module=contract&action=getsourcecode&address=${address}`,
   );
-  const json = await result.json();
-  if (json.status === '1') {
-    return json;
-  }
-  throw new Error('Failed to fetch contract source code');
+
+  // Have to check that the SourceCode response is not empty due to Etherscan API bug responding with
+  // 1 - OK on non-valid contracts.
+  if (json.result[0].SourceCode) return json;
+
+  throw new Error(`Failed to fetch contract source code: ${json.result[0].ABI}`);
 };
 
 export const getContractNameForAddress = async (
