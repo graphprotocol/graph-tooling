@@ -1,5 +1,31 @@
 # @graphprotocol/graph-cli
 
+## 0.89.0
+
+### Minor Changes
+
+- [#1763](https://github.com/graphprotocol/graph-tooling/pull/1763)
+  [`58dbd28`](https://github.com/graphprotocol/graph-tooling/commit/58dbd2845b9e336bb06d7cee09929a92db7f2cf5)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - Add new chain: Lens testnet
+
+### Patch Changes
+
+- [#1759](https://github.com/graphprotocol/graph-tooling/pull/1759)
+  [`1d4217a`](https://github.com/graphprotocol/graph-tooling/commit/1d4217a506b38307ad0d750a9abe37bffa0a734d)
+  Thanks [@0237h](https://github.com/0237h)! - Refactor debug log for failed Etherscan ABI lookups
+
+- [#1764](https://github.com/graphprotocol/graph-tooling/pull/1764)
+  [`0b4cfe9`](https://github.com/graphprotocol/graph-tooling/commit/0b4cfe91091a86a0871d486f91754ea87f302b3e)
+  Thanks [@adamazad](https://github.com/adamazad)! - chore(rpcs): update gnosis chain RPC endpoint
+
+- [#1766](https://github.com/graphprotocol/graph-tooling/pull/1766)
+  [`d2fda94`](https://github.com/graphprotocol/graph-tooling/commit/d2fda940ace2b719354df9da43890c559ebfd3a8)
+  Thanks [@0237h](https://github.com/0237h)! - Improve ABI file path validation
+
+- [#1761](https://github.com/graphprotocol/graph-tooling/pull/1761)
+  [`baf36b4`](https://github.com/graphprotocol/graph-tooling/commit/baf36b42bc531f3aee2709c2f55682a7ec44e5ac)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - update soneium-testnet blockexplorer url
+
 ## 0.88.0
 
 ### Minor Changes
