@@ -391,7 +391,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'goerli':
       return 'https://rpc.ankr.com/eth_goerli';
     case 'gnosis':
-      return 'https://safe-transaction.gnosis.io';
+      return 'https://rpc.gnosischain.com';
     case 'mainnet':
       return 'https://rpc.ankr.com/eth';
     case 'matic':
