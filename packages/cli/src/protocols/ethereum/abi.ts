@@ -141,7 +141,13 @@ export default class ABI {
   }
 
   static load(name: string, file: string) {
-    const data = JSON.parse(fs.readFileSync(file).toString());
+    let data;
+    try {
+      data = JSON.parse(fs.readFileSync(file).toString());
+    } catch (e) {
+      throw Error(`Could not parse ABI: ${e}`);
+    }
+
     const abi = ABI.normalized(data);
 
     if (abi === null || abi === undefined) {

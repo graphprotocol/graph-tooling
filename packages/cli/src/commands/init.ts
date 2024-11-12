@@ -623,47 +623,34 @@ async function processInitForm(
         type: 'input',
         name: 'abi',
         message: 'ABI file (path)',
-        initial: initAbi,
+        initial: initAbiPath,
         skip: () =>
           !protocolInstance.hasABIs() ||
           initFromExample !== undefined ||
           abiFromEtherscan !== undefined ||
-          isSubstreams ||
-          !!initAbiPath,
+          isSubstreams,
         validate: async (value: string) => {
           if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
             return true;
           }
 
           const ABI = protocolInstance.getABI();
-          if (initAbiPath) {
-            try {
-              loadAbiFromFile(ABI, initAbiPath);
-              return true;
-            } catch (e) {
-              this.error(e.message);
-            }
-          }
+          if (initAbiPath) value = initAbiPath;
 
           try {
             loadAbiFromFile(ABI, value);
             return true;
           } catch (e) {
-            this.error(e.message);
+            return e.message;
           }
         },
         result: async (value: string) => {
           if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
             return null;
           }
+
           const ABI = protocolInstance.getABI();
-          if (initAbiPath) {
-            try {
-              return loadAbiFromFile(ABI, initAbiPath);
-            } catch (e) {
-              return e.message;
-            }
-          }
+          if (initAbiPath) value = initAbiPath;
 
           try {
             return loadAbiFromFile(ABI, value);
