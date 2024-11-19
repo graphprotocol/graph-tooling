@@ -465,6 +465,8 @@ async function processInitForm(
   | undefined
 > {
   let abiFromEtherscan: EthereumABI | undefined = undefined;
+  let startBlockFromEtherscan: string | undefined = undefined;
+  let contractNameFromEtherscan: string | undefined = undefined;
 
   try {
     const { protocol } = await prompt.ask<{ protocol: ProtocolName }>({
@@ -586,7 +588,7 @@ async function processInitForm(
               loadStartBlockForContract(network, value),
             );
             if (startBlock) {
-              initStartBlock = Number(startBlock).toString();
+              startBlockFromEtherscan = Number(startBlock).toString();
             }
           }
 
@@ -597,7 +599,7 @@ async function processInitForm(
               loadContractNameForAddress(network, value),
             );
             if (contractName) {
-              initContractName = contractName;
+              contractNameFromEtherscan = contractName;
             }
           }
 
@@ -666,13 +668,9 @@ async function processInitForm(
         type: 'input',
         name: 'startBlock',
         message: 'Start Block',
-        initial: initStartBlock || '0',
+        initial: initStartBlock || startBlockFromEtherscan || '0',
         skip: () => initFromExample !== undefined || isSubstreams,
         validate: value => parseInt(value) >= 0,
-        result(value) {
-          if (initStartBlock) return initStartBlock;
-          return value;
-        },
       },
     ]);
 
@@ -681,13 +679,9 @@ async function processInitForm(
         type: 'input',
         name: 'contractName',
         message: 'Contract Name',
-        initial: initContractName || 'Contract' || isSubstreams,
+        initial: initContractName || contractNameFromEtherscan || 'Contract' || isSubstreams,
         skip: () => initFromExample !== undefined || !protocolInstance.hasContract(),
         validate: value => value && value.length > 0,
-        result(value) {
-          if (initContractName) return initContractName;
-          return value;
-        },
       },
     ]);
 
