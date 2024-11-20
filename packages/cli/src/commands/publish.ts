@@ -118,6 +118,13 @@ export default class PublishCommand extends Command {
       },
     } = await this.parse(PublishCommand);
 
+    if (subgraphId && !apiKey) {
+      ux.error(
+        'API key is required to publish to an existing subgraph (`--api-key`).\nSee https://thegraph.com/docs/en/deploying/subgraph-studio-faqs/#2-how-do-i-create-an-api-key',
+        { exit: 1 },
+      );
+    }
+
     if (ipfsHash) {
       await this.publishWithBrowser({
         ipfsHash,
