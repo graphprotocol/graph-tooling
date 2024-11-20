@@ -264,6 +264,11 @@ function DeploySubgraph({
         if (metadata.displayName) {
           form.setValue('displayName', metadata.displayName);
         }
+
+        if (data.subgraph.versions?.length > 0) {
+          const version = data.subgraph.versions[data.subgraph.versions.length - 1];
+          form.setValue('versionLabel', version.metadata?.label ?? '');
+        }
       }
 
       return data;
