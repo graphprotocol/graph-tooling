@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
-import { graphql } from 'gql.tada';
 import { useForm } from 'react-hook-form';
 import semver from 'semver';
 import { Address } from 'viem';
@@ -129,9 +128,9 @@ const Manifest = z.object({
   repository: z.string().describe('An optional link to where the subgraph lives.').optional(),
 });
 
-const GetSubgraphInfo = graphql(/* GraphQL */ `
-  query GetSubgraphInfo($subgraphId: ID!) {
-    subgraph(id: $subgraphId) {
+const GetSubgraphInfo = (subgraphId: string) => `
+  {
+    subgraph(id: "${subgraphId}") {
       id
       owner {
         id
@@ -155,7 +154,7 @@ const GetSubgraphInfo = graphql(/* GraphQL */ `
       }
     }
   }
-`);
+`;
 
 function getEtherscanUrl({ chainId, hash }: { chainId: number; hash: string }) {
   switch (chainId) {
@@ -172,10 +171,12 @@ function DeploySubgraph({
   deploymentId,
   subgraphId,
   network,
+  apiKey,
 }: {
   deploymentId: string;
   subgraphId: string | undefined;
   network: (typeof CHAINS)[number] | undefined;
+  apiKey: string | undefined;
 }) {
   const { writeContractAsync, isPending, error: contractError } = useWriteContract({});
   const { setOpen } = useModal();
@@ -214,20 +215,32 @@ function DeploySubgraph({
   const chain = form.watch('chain');
 
   const { data: subgraphInfo } = useQuery({
-    queryKey: ['subgraph-info', subgraphId, chain, chainId],
+    queryKey: ['subgraph-info', subgraphId, chain, chainId, apiKey],
     queryFn: async () => {
-      if (!subgraphId) return;
+      if (!subgraphId) {
+        toast({
+          description: 'Subgraph ID is missing. Please add it to the URL params and try again.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      if (!apiKey) {
+        toast({
+          description:
+            'apiKey is missing in URL params. Please add it to the URL params and try again.',
+          variant: 'destructive',
+        });
+        return;
+      }
 
       const subgraphEndpoint = chain ? getChainInfo(chain)?.subgraph : null;
 
       if (!subgraphEndpoint) return;
 
       const data = await networkSubgraphExecute(
-        GetSubgraphInfo,
-        { subgraphId },
-        {
-          endpoint: subgraphEndpoint,
-        },
+        GetSubgraphInfo(subgraphId),
+        subgraphEndpoint,
+        apiKey,
       );
 
       const metadata = data.subgraph?.metadata;
@@ -251,6 +264,11 @@ function DeploySubgraph({
         if (metadata.displayName) {
           form.setValue('displayName', metadata.displayName);
         }
+
+        if (data.subgraph.versions?.length > 0) {
+          const version = data.subgraph.versions[data.subgraph.versions.length - 1];
+          form.setValue('versionLabel', version.metadata?.label ?? '');
+        }
       }
 
       return data;
@@ -264,7 +282,7 @@ function DeploySubgraph({
     const version = form.watch('versionLabel');
 
     const versionInfo = subgraphInfo.subgraph?.versions.find(
-      ({ metadata }) => metadata?.label === version,
+      ({ metadata }: { metadata: { label: string } }) => metadata?.label === version,
     );
 
     if (!versionInfo) return false;
@@ -280,7 +298,9 @@ function DeploySubgraph({
 
     const version = form.watch('versionLabel');
 
-    return !subgraphInfo.subgraph?.versions.some(({ metadata }) => metadata?.label === version);
+    return !subgraphInfo.subgraph?.versions.some(
+      ({ metadata }: { metadata: { label: string } }) => metadata?.label === version,
+    );
   }
 
   function isOwner() {
@@ -375,7 +395,7 @@ function DeploySubgraph({
         if (e?.name === 'ContractFunctionExecutionError') {
           if (e.cause.name === 'ContractFunctionRevertedError') {
             toast({
-              description: e.cause.reason,
+              description: e.cause.message,
               variant: 'destructive',
             });
             return;
@@ -565,7 +585,7 @@ function DeploySubgraph({
 }
 
 function Page() {
-  const { id, subgraphId, network } = Route.useSearch();
+  const { id, subgraphId, network, apiKey } = Route.useSearch();
 
   const protocolNetwork = network
     ? // @ts-expect-error we want to compare if it is a string or not
@@ -581,7 +601,12 @@ function Page() {
         <ConnectKitButton />
       </nav>
       {id ? (
-        <DeploySubgraph deploymentId={id} subgraphId={subgraphId} network={protocolNetwork} />
+        <DeploySubgraph
+          deploymentId={id}
+          subgraphId={subgraphId}
+          network={protocolNetwork}
+          apiKey={apiKey}
+        />
       ) : (
         <div className="flex justify-center items-center min-h-screen -mt-16">
           Unable to find the Deployment ID. Go back to CLI

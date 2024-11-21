@@ -1,25 +1,13 @@
-import { print } from 'graphql';
-import { TypedDocumentNode } from '@graphql-typed-document-node/core';
-
 export const NETWORK_SUBGRAPH_MAINNET =
-  'https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum';
+  'https://gateway.thegraph.com/api/{api-key}/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp';
 export const NETWORK_SUBGRAPH_SEPOLIA =
-  'https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-sepolia';
+  'https://gateway.thegraph.com/api/{api-key}/subgraphs/id/3xQHhMudr1oh69ut36G2mbzpYmYxwqCeU6wwqyCDCnqV';
 
-export async function networkSubgraphExecute<Result = unknown, Variables = unknown>(
-  query: TypedDocumentNode<Result, Variables>,
-  variables: Variables,
-  {
-    endpoint,
-  }: {
-    endpoint: string;
-  },
-): Promise<Result> {
-  const response = await fetch(endpoint, {
+export async function networkSubgraphExecute(query: string, endpoint: string, apiKey: string) {
+  const response = await fetch(endpoint.replace('{api-key}', apiKey), {
     method: 'POST',
     body: JSON.stringify({
-      query: print(query),
-      variables,
+      query,
     }),
   });
   return (await response.json()).data;
