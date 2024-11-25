@@ -151,7 +151,13 @@ export const getContractNameForAddress = async (
 ): Promise<string> => {
   try {
     const contractSourceCode = await fetchSourceCodeFromEtherscan(network, address);
-    const contractName = contractSourceCode.result[0].ContractName;
+    let contractName: string = contractSourceCode.result[0].ContractName;
+
+    // Some explorers will return the full path of the contract instead of just the name
+    // Example: contracts/SyncSwapRouter.sol:SyncSwapRouter
+    if (contractName.includes(':'))
+      contractName = contractName.substring(contractName.lastIndexOf(':') + 1);
+
     logger('Successfully getContractNameForAddress. contractName: %s', contractName);
     return contractName;
   } catch (error) {
