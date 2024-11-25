@@ -151,11 +151,12 @@ export const getContractNameForAddress = async (
 ): Promise<string> => {
   try {
     const contractSourceCode = await fetchSourceCodeFromEtherscan(network, address);
-    let contractName = contractSourceCode.result[0].ContractName;
-    // Some explorers will return the full path of the contract instead of just the name
-    const regex = /(?<contract>.+)\.sol:\1$/;
+    let contractName: string = contractSourceCode.result[0].ContractName;
 
-    if (regex.test(contractName)) contractName = regex.exec(contractName)?.groups?.contract;
+    // Some explorers will return the full path of the contract instead of just the name
+    // Example: contracts/SyncSwapRouter.sol:SyncSwapRouter
+    if (contractName.includes(':'))
+      contractName = contractName.substring(contractName.lastIndexOf(':') + 1);
 
     logger('Successfully getContractNameForAddress. contractName: %s', contractName);
     return contractName;
