@@ -8,7 +8,7 @@ export declare namespace ethereum {
   function getBalance(address: Address): BigInt;
   function hasCode(address: Address): Wrapped<bool>;
   function encode(token: Value): Bytes | null;
-  function decode(types: String, data: Bytes): Value | null;
+  function decode(types: string, data: Bytes): Value | null;
 }
 
 export namespace ethereum {

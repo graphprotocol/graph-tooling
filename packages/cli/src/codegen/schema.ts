@@ -6,11 +6,11 @@ import type {
   NamedTypeNode,
   ObjectTypeDefinitionNode,
   TypeNode,
-} from 'graphql/language';
-import debug from '../debug';
-import Schema from '../schema';
-import * as typesCodegen from './types';
-import * as tsCodegen from './typescript';
+} from 'graphql/language/index.js';
+import debug from '../debug.js';
+import Schema from '../schema.js';
+import * as typesCodegen from './types/index.js';
+import * as tsCodegen from './typescript.js';
 
 class IdField {
   static BYTES = Symbol('Bytes');

@@ -1,13 +1,12 @@
 /* eslint-disable unicorn/no-array-for-each */
 import fs from 'fs';
 import immutable from 'immutable';
-import request from 'sync-request';
-import Web3EthAbi from 'web3-eth-abi';
+import { decodeLog } from 'web3-eth-abi';
 import yaml from 'yaml';
-import * as typesCodegen from '../../../codegen/types';
-import * as tsCodegen from '../../../codegen/typescript';
-import * as util from '../../../codegen/util';
-import ABI from '../abi';
+import * as typesCodegen from '../../../codegen/types/index.js';
+import * as tsCodegen from '../../../codegen/typescript.js';
+import * as util from '../../../codegen/util.js';
+import ABI from '../abi.js';
 
 const doFixtureCodegen = fs.existsSync('./fixtures.yaml');
 
@@ -46,9 +45,9 @@ export default class AbiCodeGenerator {
     return imports;
   }
 
-  generateTypes() {
+  async generateTypes() {
     return [
-      ...this._generateEventTypes(),
+      ...(await this._generateEventTypes()),
       ...this._generateSmartContractClass(),
       ...this._generateCallTypes(),
     ];
@@ -169,7 +168,7 @@ export default class AbiCodeGenerator {
     );
   }
 
-  _generateEventTypes() {
+  async _generateEventTypes() {
     // Enumerate events with duplicate names
     let events = util.disambiguateNames({
       // @ts-expect-error improve typings of disambiguateNames to handle iterables
@@ -180,7 +179,7 @@ export default class AbiCodeGenerator {
       setName: (event, name) => event.set('_alias', name),
     }) as any[];
 
-    events = events.map(event => {
+    events = events.map(async event => {
       const eventClassName = event.get('_alias');
       const tupleClasses: any[] = [];
 
@@ -253,15 +252,13 @@ export default class AbiCodeGenerator {
         const apiKey = args['apiKey'];
         const url = `https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=${blockNumber}&toBlock=${blockNumber}&address=${contractAddr}&${topic0}=topic0&apikey=${apiKey}`;
 
-        const resp = request('GET', url);
-        const body = JSON.parse(resp.getBody('utf8'));
+        const resp = await fetch(url);
+        const body = JSON.parse(await resp.json());
         if (body.status === '0') {
           throw new Error(body.result);
         }
 
-        const res = Web3EthAbi
-          // @ts-expect-error decodeLog seems to exist on Web3EthAbi
-          .decodeLog(namesAndTypes, body.result[0].data, []);
+        const res = decodeLog(namesAndTypes, body.result[0].data, []);
 
         let stmnts = '';
         for (let i = 0; i < namesAndTypes.length; i++) {
@@ -294,10 +291,12 @@ export default class AbiCodeGenerator {
       return [klass, paramsClass, ...tupleClasses];
     });
 
-    return events.reduce(
-      // flatten the array
-      (array, classes) => array.concat(classes),
-      [],
+    return Promise.all(events).then(events =>
+      events.reduce(
+        // flatten the array
+        (array, classes) => array.concat(classes),
+        [],
+      ),
     );
   }
 
@@ -378,8 +377,8 @@ export default class AbiCodeGenerator {
       util.isTupleMatrixType(type)
         ? `Array<Array<${tupleClassName}>>`
         : util.isTupleArrayType(type)
-        ? `Array<${tupleClassName}>`
-        : tupleClassName,
+          ? `Array<${tupleClassName}>`
+          : tupleClassName,
       `
       return ${isTupleType ? `changetype<${tupleClassName}>(${returnValue})` : String(returnValue)}
       `,
@@ -687,10 +686,10 @@ export default class AbiCodeGenerator {
     return util.isTupleType(type)
       ? this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)
       : util.isTupleMatrixType(type)
-      ? `Array<Array<${this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)}>>`
-      : util.isTupleArrayType(type)
-      ? `Array<${this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)}>`
-      : typesCodegen.ascTypeForEthereum(type);
+        ? `Array<Array<${this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)}>>`
+        : util.isTupleArrayType(type)
+          ? `Array<${this._tupleTypeName(inputOrOutput, index, tupleParentType, this.abi.name)}>`
+          : typesCodegen.ascTypeForEthereum(type);
   }
 
   _indexedInputType(inputType: string) {

@@ -1,25 +1,24 @@
 import path from 'path';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
-import * as graphql from 'graphql/language';
+import * as graphql from 'graphql/language/index.js';
 import immutable from 'immutable';
-import { create } from 'ipfs-http-client';
 import prettier from 'prettier';
 // @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
-import DataSourceTemplateCodeGenerator from './codegen/template';
-import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript';
-import { appendApiVersionForGraph } from './command-helpers/compiler';
-import { displayPath } from './command-helpers/fs';
-import { Spinner, step, withSpinner } from './command-helpers/spinner';
-import { GRAPH_CLI_SHARED_HEADERS } from './constants';
-import debug from './debug';
-import { applyMigrations } from './migrations';
-import Protocol from './protocols';
-import Schema from './schema';
-import Subgraph from './subgraph';
-import loadSubgraphSchemaFromIPFS from './utils';
-import Watcher from './watcher';
+import DataSourceTemplateCodeGenerator from './codegen/template.js';
+import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript.js';
+import { appendApiVersionForGraph } from './command-helpers/compiler.js';
+import { displayPath } from './command-helpers/fs.js';
+import { Spinner, step, withSpinner } from './command-helpers/spinner.js';
+import { GRAPH_CLI_SHARED_HEADERS } from './constants.js';
+import debug from './debug.js';
+import { applyMigrations } from './migrations.js';
+import Protocol from './protocols/index.js';
+import Schema from './schema.js';
+import Subgraph from './subgraph.js';
+import { create, loadSubgraphSchemaFromIPFS } from './utils.js';
+import Watcher from './watcher.js';
 
 const typeGenDebug = debug('graph-cli:type-generator');
 
@@ -68,7 +67,6 @@ export default class TypeGenerator {
         'Subgraph uses a substream datasource. Codegeneration is not required.',
       );
       process.exit(0);
-      return;
     }
 
     if (this.options.subgraphSources.length > 0) {
@@ -218,7 +216,7 @@ export default class TypeGenerator {
           [
             GENERATED_FILE_NOTE,
             ...codeGenerator.generateModuleImports(),
-            ...codeGenerator.generateTypes(generateStoreMethods),
+            ...(await codeGenerator.generateTypes(generateStoreMethods)),
             ...codeGenerator.generateDerivedLoaders(),
           ].join('\n'),
           {

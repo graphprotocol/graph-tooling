@@ -2,11 +2,11 @@ import path from 'path';
 import fs from 'fs-extra';
 import immutable from 'immutable';
 import prettier from 'prettier';
-import { GENERATED_FILE_NOTE } from '../../codegen/typescript';
-import { displayPath } from '../../command-helpers/fs';
-import { Spinner, step, withSpinner } from '../../command-helpers/spinner';
-import { TypeGeneratorOptions } from '../../type-generator';
-import ABI from './abi';
+import { GENERATED_FILE_NOTE } from '../../codegen/typescript.js';
+import { displayPath } from '../../command-helpers/fs.js';
+import { Spinner, step, withSpinner } from '../../command-helpers/spinner.js';
+import { TypeGeneratorOptions } from '../../type-generator.js';
+import ABI from './abi.js';
 
 export default class EthereumTypeGenerator {
   private sourceDir: TypeGeneratorOptions['sourceDir'];
@@ -137,7 +137,7 @@ export default class EthereumTypeGenerator {
         [
           GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
-          ...codeGenerator.generateTypes(),
+          ...(await codeGenerator.generateTypes()),
         ].join('\n'),
         {
           parser: 'typescript',
@@ -183,7 +183,7 @@ export default class EthereumTypeGenerator {
         [
           GENERATED_FILE_NOTE,
           ...codeGenerator.generateModuleImports(),
-          ...codeGenerator.generateTypes(),
+          ...(await codeGenerator.generateTypes()),
         ].join('\n'),
         {
           parser: 'typescript',

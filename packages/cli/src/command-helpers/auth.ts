@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import * as toolbox from 'gluegun';
-import { normalizeNodeUrl } from './node';
+import { normalizeNodeUrl } from './node.js';
 
 const homedir = os.homedir();
 

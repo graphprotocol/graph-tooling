@@ -1,10 +1,10 @@
 import assert from 'assert';
-import * as graphql from 'graphql/language';
+import * as graphql from 'graphql/language/index.js';
 import prettier from 'prettier';
 import { describe, expect, test } from 'vitest';
-import Schema from '../schema';
-import SchemaCodeGenerator from './schema';
-import { Class, Method, NamedType, NullableType, Param, StaticMethod } from './typescript';
+import Schema from '../schema.js';
+import SchemaCodeGenerator from './schema.js';
+import { Class, Method, NamedType, NullableType, Param, StaticMethod } from './typescript.js';
 
 const formatTS = async (code: string) =>
   await prettier.format(code, { parser: 'typescript', semi: false });

@@ -1,8 +1,8 @@
 import immutable from 'immutable';
-import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types';
-import * as util from '../codegen/util';
-import Protocol from '../protocols';
-import { INPUT_NAMES_BLACKLIST, renameInput } from './mapping';
+import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types/index.js';
+import * as util from '../codegen/util.js';
+import Protocol from '../protocols/index.js';
+import { INPUT_NAMES_BLACKLIST, renameInput } from './mapping.js';
 
 export function abiEvents(abi: { data: immutable.Collection<any, any> }) {
   return util.disambiguateNames({

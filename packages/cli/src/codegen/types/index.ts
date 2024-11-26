@@ -1,5 +1,5 @@
 import immutable from 'immutable';
-import TYPE_CONVERSIONS from './conversions';
+import TYPE_CONVERSIONS from './conversions.js';
 
 // Conversion utilities
 

@@ -1,33 +1,31 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import * as toolbox from 'gluegun';
 import { filesystem, prompt, system } from 'gluegun';
-import { create } from 'ipfs-http-client';
-import { Args, Command, Flags, ux } from '@oclif/core';
+import { Args, Command, Flags } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
   loadContractNameForAddress,
   loadStartBlockForContract,
-} from '../command-helpers/abi';
-import { appendApiVersionForGraph } from '../command-helpers/compiler';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
-import { initNetworksConfig } from '../command-helpers/network';
-import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
-import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
-import { sortWithPriority } from '../command-helpers/sort';
-import { withSpinner } from '../command-helpers/spinner';
-import { getSubgraphBasename } from '../command-helpers/subgraph';
-import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
-import debugFactory from '../debug';
-import Protocol, { ProtocolName } from '../protocols';
-import EthereumABI from '../protocols/ethereum/abi';
-import { abiEvents } from '../scaffold/schema';
-import Schema from '../schema';
-import loadSubgraphSchemaFromIPFS from '../utils';
-import { validateContract } from '../validation';
-import AddCommand from './add';
+} from '../command-helpers/abi.js';
+import { appendApiVersionForGraph } from '../command-helpers/compiler.js';
+import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import { initNetworksConfig } from '../command-helpers/network.js';
+import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node.js';
+import { generateScaffold, writeScaffold } from '../command-helpers/scaffold.js';
+import { sortWithPriority } from '../command-helpers/sort.js';
+import { withSpinner } from '../command-helpers/spinner.js';
+import { getSubgraphBasename } from '../command-helpers/subgraph.js';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
+import debugFactory from '../debug.js';
+import EthereumABI from '../protocols/ethereum/abi.js';
+import Protocol, { ProtocolName } from '../protocols/index.js';
+import { abiEvents } from '../scaffold/schema.js';
+import Schema from '../schema.js';
+import { create, loadSubgraphSchemaFromIPFS } from '../utils.js';
+import { validateContract } from '../validation/index.js';
+import AddCommand from './add.js';
 
 const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 
@@ -270,8 +268,7 @@ export default class InitCommand extends Command {
               abi = await loadAbiFromEtherscan(ABI, network, fromContract);
             }
           } catch (e) {
-            process.exitCode = 1;
-            return;
+            this.exit(1);
           }
         }
       }
@@ -307,7 +304,6 @@ export default class InitCommand extends Command {
 
       if (!answers) {
         this.exit(1);
-        return;
       }
 
       await initSubgraphFromExample.bind(this)(
@@ -339,7 +335,6 @@ export default class InitCommand extends Command {
       });
       if (!answers) {
         this.exit(1);
-        return;
       }
 
       ({ node } = chooseNodeUrl({
@@ -419,7 +414,7 @@ async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined
     try {
       return await func();
     } catch (_) {
-      const { retry } = await toolbox.prompt.ask({
+      const { retry } = await prompt.ask({
         type: 'confirm',
         name: 'retry',
         message: 'Do you want to retry?',
@@ -724,8 +719,9 @@ async function processInitForm(
         type: 'input',
         name: 'contractName',
         message: 'Contract Name',
-        initial: initContractName || contractNameFromEtherscan || 'Contract' || isSubstreams,
-        skip: () => initFromExample !== undefined || !protocolInstance.hasContract(),
+        initial: initContractName || contractNameFromEtherscan || 'Contract',
+        skip: () =>
+          initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
         validate: value => value && value.length > 0,
       },
     ]);
@@ -917,7 +913,6 @@ async function initSubgraphFromExample(
 
     if (!overwrite) {
       this.exit(1);
-      return;
     }
   }
 
@@ -957,13 +952,11 @@ async function initSubgraphFromExample(
   );
   if (!cloned) {
     this.exit(1);
-    return;
   }
 
   const networkConf = await initNetworksConfig(directory, 'address');
   if (networkConf !== true) {
     this.exit(1);
-    return;
   }
 
   // Update package.json to match the subgraph name
@@ -1000,7 +993,6 @@ async function initSubgraphFromExample(
   );
   if (!prepared) {
     this.exit(1);
-    return;
   }
 
   // Initialize a fresh Git repository
@@ -1008,7 +1000,6 @@ async function initSubgraphFromExample(
     const repo = await initRepository(directory);
     if (repo !== true) {
       this.exit(1);
-      return;
     }
   }
 
@@ -1017,7 +1008,6 @@ async function initSubgraphFromExample(
     const installed = await installDependencies(directory, commands);
     if (installed !== true) {
       this.exit(1);
-      return;
     }
   }
 
@@ -1025,7 +1015,6 @@ async function initSubgraphFromExample(
   const codegen = await runCodegen(directory, commands.codegen);
   if (codegen !== true) {
     this.exit(1);
-    return;
   }
 
   printNextSteps.bind(this)({ subgraphName, directory }, { commands });
@@ -1088,7 +1077,6 @@ async function initSubgraphFromContract(
     ))
   ) {
     this.exit(1);
-    return;
   }
 
   let entities: string[] | undefined;
@@ -1148,16 +1136,14 @@ async function initSubgraphFromContract(
     },
   );
   if (scaffold !== true) {
-    process.exitCode = 1;
-    return;
+    this.exit(1);
   }
 
   if (protocolInstance.hasContract()) {
     const identifierName = protocolInstance.getContract()!.identifierName();
     const networkConf = await initNetworksConfig(directory, identifierName);
     if (networkConf !== true) {
-      process.exitCode = 1;
-      return;
+      this.exit(1);
     }
   }
 
@@ -1166,7 +1152,6 @@ async function initSubgraphFromContract(
     const repo = await initRepository(directory);
     if (repo !== true) {
       this.exit(1);
-      return;
     }
   }
 
@@ -1175,7 +1160,6 @@ async function initSubgraphFromContract(
     const installed = await installDependencies(directory, commands);
     if (installed !== true) {
       this.exit(1);
-      return;
     }
   }
 
@@ -1185,7 +1169,6 @@ async function initSubgraphFromContract(
     const codegen = await runCodegen(directory, commands.codegen);
     if (codegen !== true) {
       this.exit(1);
-      return;
     }
 
     while (addContract) {
@@ -1209,22 +1192,33 @@ async function addAnotherContract(
     directory: string;
   },
 ) {
-  const addContractAnswer = await ux.prompt('Add another contract? (y/n)', {
-    required: true,
-    type: 'single',
-  });
-  const addContractConfirmation = addContractAnswer.toLowerCase() === 'y';
+  const { addAnother } = await prompt.ask<{ addAnother: boolean }>([
+    {
+      type: 'confirm',
+      name: 'addAnother',
+      message: () => 'Add another contract? (y/n)',
+      initial: false,
+      required: true,
+    },
+  ]);
 
-  if (addContractConfirmation) {
+  if (addAnother) {
     const ProtocolContract = protocolInstance.getContract()!;
 
-    let contract = '';
+    let validContract = '';
     for (;;) {
-      contract = await ux.prompt(`\nContract ${ProtocolContract.identifierName()}`, {
-        required: true,
-      });
+      const { contract } = await prompt.ask<{ contract: string }>([
+        {
+          type: 'input',
+          name: 'contract',
+          message: () => `\nContract ${ProtocolContract.identifierName()}`,
+          initial: ProtocolContract.identifierName(),
+          required: true,
+        },
+      ]);
       const { valid, error } = validateContract(contract, ProtocolContract);
       if (valid) {
+        validContract = contract;
         break;
       }
       this.log(`✖ ${error}`);
@@ -1238,7 +1232,7 @@ async function addAnotherContract(
         process.chdir(directory);
       }
 
-      const commandLine = [contract];
+      const commandLine = [validContract];
 
       await AddCommand.run(commandLine);
     } catch (e) {
@@ -1249,5 +1243,5 @@ async function addAnotherContract(
     }
   }
 
-  return addContractConfirmation;
+  return addAnother;
 }

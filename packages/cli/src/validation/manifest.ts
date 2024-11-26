@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import immutable from 'immutable';
 import yaml from 'js-yaml';
-import Protocol from '../protocols';
+import Protocol from '../protocols/index.js';
 
 const List = immutable.List;
 const Map = immutable.Map;
@@ -18,7 +18,7 @@ const typeName = (value: immutable.Collection<unknown, unknown>) =>
  */
 const toYAML = (x: immutable.Collection<unknown, unknown>) =>
   yaml
-    .safeDump(typeName(x) === 'list' || typeName(x) === 'map' ? x.toJS() : x, {
+    .dump(typeName(x) === 'list' || typeName(x) === 'map' ? x.toJS() : x, {
       indent: 2,
     })
     .trim();
@@ -43,17 +43,17 @@ const resolveType = (schema: immutable.Map<any, any>, type: immutable.Map<any, a
   type.has('type')
     ? resolveType(schema, type.get('type'))
     : type.get('kind') === 'NamedType'
-    ? schema
-        .get('definitions')
-        .find((def: any) => def.getIn(['name', 'value']) === type.getIn(['name', 'value']))
-    : 'resolveType: unimplemented';
+      ? schema
+          .get('definitions')
+          .find((def: any) => def.getIn(['name', 'value']) === type.getIn(['name', 'value']))
+      : 'resolveType: unimplemented';
 
 /**
  * A map of supported validators.
  */
 const validators = immutable.fromJS({
   ScalarTypeDefinition: (value: any, ctx: immutable.Map<any, any>) =>
-    (validators.get(ctx.getIn(['type', 'name', 'value'])) as any)(value, ctx),
+    (validators.get(ctx.getIn(['type', 'name', 'value']) as any) as any)(value, ctx),
 
   UnionTypeDefinition: (value: any, ctx: immutable.Map<any, any>) => {
     const unionVariants = ctx.getIn(['type', 'types']) as any[];
@@ -234,7 +234,7 @@ const validators = immutable.fromJS({
 
 const validateValue = (value: any, ctx: immutable.Collection<any, any>) => {
   const kind = ctx.getIn(['type', 'kind']);
-  const validator = validators.get(kind) as any;
+  const validator = validators.get(kind as any) as any;
 
   if (validator !== undefined) {
     // If the type is nullable, accept undefined and null; if the nullable

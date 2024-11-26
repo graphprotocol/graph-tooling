@@ -1,30 +1,30 @@
 import immutable from 'immutable';
-import debug from '../debug';
-import Subgraph from '../subgraph';
-import * as ArweaveManifestScaffold from './arweave/scaffold/manifest';
-import * as ArweaveMappingScaffold from './arweave/scaffold/mapping';
-import ArweaveSubgraph from './arweave/subgraph';
-import { ContractCtor } from './contract';
-import * as CosmosManifestScaffold from './cosmos/scaffold/manifest';
-import * as CosmosMappingScaffold from './cosmos/scaffold/mapping';
-import CosmosSubgraph from './cosmos/subgraph';
-import EthereumABI from './ethereum/abi';
-import EthereumTemplateCodeGen from './ethereum/codegen/template';
-import EthereumContract from './ethereum/contract';
-import * as EthereumManifestScaffold from './ethereum/scaffold/manifest';
-import * as EthereumMappingScaffold from './ethereum/scaffold/mapping';
-import EthereumSubgraph from './ethereum/subgraph';
-import EthereumTypeGenerator from './ethereum/type-generator';
-import NearContract from './near/contract';
-import * as NearManifestScaffold from './near/scaffold/manifest';
-import * as NearMappingScaffold from './near/scaffold/mapping';
-import NearSubgraph from './near/subgraph';
-import { SubgraphOptions } from './subgraph';
-import * as SubgraphDataSourceManifestScaffold from './subgraph/scaffold/manifest';
-import * as SubgraphMappingScaffold from './subgraph/scaffold/mapping';
-import SubgraphDataSource from './subgraph/subgraph';
-import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest';
-import SubstreamsSubgraph from './substreams/subgraph';
+import debug from '../debug.js';
+import Subgraph from '../subgraph.js';
+import * as ArweaveManifestScaffold from './arweave/scaffold/manifest.js';
+import * as ArweaveMappingScaffold from './arweave/scaffold/mapping.js';
+import ArweaveSubgraph from './arweave/subgraph.js';
+import { ContractCtor } from './contract.js';
+import * as CosmosManifestScaffold from './cosmos/scaffold/manifest.js';
+import * as CosmosMappingScaffold from './cosmos/scaffold/mapping.js';
+import CosmosSubgraph from './cosmos/subgraph.js';
+import EthereumABI from './ethereum/abi.js';
+import EthereumTemplateCodeGen from './ethereum/codegen/template.js';
+import EthereumContract from './ethereum/contract.js';
+import * as EthereumManifestScaffold from './ethereum/scaffold/manifest.js';
+import * as EthereumMappingScaffold from './ethereum/scaffold/mapping.js';
+import EthereumSubgraph from './ethereum/subgraph.js';
+import EthereumTypeGenerator from './ethereum/type-generator.js';
+import NearContract from './near/contract.js';
+import * as NearManifestScaffold from './near/scaffold/manifest.js';
+import * as NearMappingScaffold from './near/scaffold/mapping.js';
+import NearSubgraph from './near/subgraph.js';
+import { SubgraphOptions } from './subgraph.js';
+import * as SubgraphDataSourceManifestScaffold from './subgraph/scaffold/manifest.js';
+import * as SubgraphMappingScaffold from './subgraph/scaffold/mapping.js';
+import SubgraphDataSource from './subgraph/subgraph.js';
+import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest.js';
+import SubstreamsSubgraph from './substreams/subgraph.js';
 
 const protocolDebug = debug('graph-cli:protocol');
 
@@ -93,7 +93,7 @@ export default class Protocol {
       cosmos: ['cosmos'],
       substreams: ['substreams'],
       subgraph: ['subgraph'],
-    }) as immutable.Collection<ProtocolName, string[]>;
+    }) as immutable.Collection<ProtocolName, immutable.List<string>>;
   }
 
   static availableNetworks() {
@@ -202,7 +202,7 @@ export default class Protocol {
   }
 
   getTypeGenerator(options: any) {
-    if (this.config == null || this.config.getTypeGenerator == null) {
+    if (this.config?.getTypeGenerator == null) {
       return null;
     }
 

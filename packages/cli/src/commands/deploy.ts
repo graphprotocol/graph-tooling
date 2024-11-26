@@ -1,19 +1,19 @@
 import path from 'path';
 import { URL } from 'url';
-import { print } from 'gluegun';
-import { create } from 'ipfs-http-client';
-import { Args, Command, Flags, ux } from '@oclif/core';
-import { identifyDeployKey } from '../command-helpers/auth';
-import { appendApiVersionForGraph, createCompiler } from '../command-helpers/compiler';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
-import { createJsonRpcClient } from '../command-helpers/jsonrpc';
-import { updateSubgraphNetwork } from '../command-helpers/network';
-import { chooseNodeUrl } from '../command-helpers/node';
-import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
-import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
-import debugFactory from '../debug';
-import Protocol from '../protocols';
+import { print, prompt } from 'gluegun';
+import { Args, Command, Flags } from '@oclif/core';
+import { identifyDeployKey } from '../command-helpers/auth.js';
+import { appendApiVersionForGraph, createCompiler } from '../command-helpers/compiler.js';
+import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
+import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import { createJsonRpcClient } from '../command-helpers/jsonrpc.js';
+import { updateSubgraphNetwork } from '../command-helpers/network.js';
+import { chooseNodeUrl } from '../command-helpers/node.js';
+import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version.js';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
+import debugFactory from '../debug.js';
+import Protocol from '../protocols/index.js';
+import { create } from '../utils.js';
 
 const headersFlag = Flags.custom<Record<string, string>>({
   summary: 'Add custom headers that will be used by the IPFS HTTP client.',
@@ -111,11 +111,15 @@ export default class DeployCommand extends Command {
       },
     } = await this.parse(DeployCommand);
 
-    const subgraphName =
-      subgraphNameArg ||
-      (await ux.prompt('What is the subgraph name?', {
+    const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
+      {
+        type: 'input',
+        name: 'subgraphName',
+        message: () => 'What is the subgraph name?',
+        initial: subgraphNameArg,
         required: true,
-      }));
+      },
+    ]);
 
     const { node } = chooseNodeUrl({
       node: nodeFlag,
@@ -131,7 +135,6 @@ export default class DeployCommand extends Command {
     // Exit with an error code if the client couldn't be created
     if (!client) {
       this.exit(1);
-      return;
     }
 
     // Use the deploy key, if one is set
@@ -149,10 +152,15 @@ export default class DeployCommand extends Command {
     }
 
     // Ask for label if not on hosted service
-    let versionLabel = versionLabelFlag;
-    versionLabel ||= await ux.prompt('Which version label to use? (e.g. "v0.0.1")', {
-      required: true,
-    });
+    const { versionLabel } = await prompt.ask<{ versionLabel: string }>([
+      {
+        type: 'input',
+        name: 'versionLabel',
+        message: () => 'Which version label to use? (e.g. "v0.0.1")',
+        initial: versionLabelFlag,
+        required: true,
+      },
+    ]);
 
     const deploySubgraph = async (ipfsHash: string) => {
       const spinner = print.spin(`Deploying to Graph node ${requestUrl}`);
@@ -263,7 +271,7 @@ export default class DeployCommand extends Command {
       await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
     }
 
-    const compiler = createCompiler(manifest, {
+    const compiler = await createCompiler(manifest, {
       ipfs,
       headers,
       outputDir,
@@ -276,7 +284,6 @@ export default class DeployCommand extends Command {
     // Exit with an error code if the compiler couldn't be created
     if (!compiler) {
       this.exit(1);
-      return;
     }
 
     if (watch) {

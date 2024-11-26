@@ -1,11 +1,11 @@
 import path from 'path';
 import { Args, Command, Flags } from '@oclif/core';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
-import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version';
-import debug from '../debug';
-import Protocol from '../protocols';
-import TypeGenerator from '../type-generator';
+import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
+import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version.js';
+import debug from '../debug.js';
+import Protocol from '../protocols/index.js';
+import TypeGenerator from '../type-generator.js';
 
 const codegenDebug = debug('graph-cli:codegen');
 

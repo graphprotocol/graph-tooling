@@ -1,5 +1,17 @@
 module.exports = {
   extends: ['@theguild'],
+  ignorePatterns: [
+    'node_modules',
+    'dist',
+    'build',
+    'generated',
+    'packages/cli/tests/cli/init',
+    'packages/cli/tests/cli/validation',
+    'packages/ts/test/',
+    'examples',
+    'cf-pages/*',
+    'vitest.config.ts',
+  ],
   rules: {
     // not necessary here, we dont build with bob
     'import/extensions': 'off',
@@ -16,6 +28,7 @@ module.exports = {
     '@typescript-eslint/ban-types': 'off',
     // AssemblyScript `===` is a reference equality check, not a value equality check. We are trying to do a value check. Learn more: https://github.com/AssemblyScript/assemblyscript/issues/621#issuecomment-497973428
     eqeqeq: 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
   },
   overrides: [
     {
@@ -29,6 +42,7 @@ module.exports = {
         'sonarjs/no-inverted-boolean-check': 'warn',
         // TODO: warning for now, clean up
         '@typescript-eslint/no-loss-of-precision': 'warn',
+        'no-loss-of-precision': 'warn',
         // AssemblyScript types are different from TS and in cases we want to use what TS may think we should not,
       },
     },

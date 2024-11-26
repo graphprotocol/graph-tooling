@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { fetch } from '@whatwg-node/fetch';
-import { GRAPH_CLI_SHARED_HEADERS } from './constants';
+import { GRAPH_CLI_SHARED_HEADERS } from './constants.js';
 
 export default function fetchWrapper(
   input: Parameters<typeof fetch>[0],

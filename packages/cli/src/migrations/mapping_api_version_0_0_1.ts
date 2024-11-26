@@ -2,8 +2,8 @@
 
 import * as toolbox from 'gluegun';
 import semver from 'semver';
-import { loadManifest } from './util/load-manifest';
-import { getGraphTsVersion } from './util/versions';
+import { loadManifest } from './util/load-manifest.js';
+import { getGraphTsVersion } from './util/versions.js';
 
 // If any of the manifest apiVersions are 0.0.1, replace them with 0.0.2
 export default {

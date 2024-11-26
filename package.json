@@ -17,8 +17,8 @@
   "scripts": {
     "build": "pnpm --filter=@graphprotocol/graph-* build",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
-    "lint:eslint": "eslint .",
-    "lint:eslint:fix": "eslint . --fix",
+    "lint:eslint": "ESLINT_USE_FLAT_CONFIG=false eslint .",
+    "lint:eslint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --fix",
     "lint:fix": "pnpm lint:prettier:fix && pnpm lint:eslint:fix",
     "lint:prettier": "prettier -c .",
     "lint:prettier:fix": "prettier . --write",
@@ -28,20 +28,12 @@
     "type-check": "pnpm --filter=@graphprotocol/graph-cli type-check"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.5",
-    "@babel/preset-env": "^7.20.2",
-    "@babel/preset-typescript": "^7.18.6",
     "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.25.2",
-    "@theguild/eslint-config": "0.11.0",
-    "@theguild/prettier-config": "2.0.1",
-    "@types/node": "^20.6.2",
-    "eslint": "8.57.0",
-    "prettier": "3.0.3"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "oclif@3.8.1": "patches/oclif@3.8.1.patch"
-    }
+    "@changesets/cli": "^2.27.10",
+    "@theguild/eslint-config": "0.13.1",
+    "@theguild/prettier-config": "3.0.0",
+    "@types/node": "^22.10.1",
+    "eslint": "9.16.0",
+    "prettier": "3.4.1"
   }
 }

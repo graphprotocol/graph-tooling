@@ -1,14 +1,14 @@
 import { strings } from 'gluegun';
 import prettier from 'prettier';
-import { getSubgraphBasename } from '../command-helpers/subgraph';
-import Protocol from '../protocols';
-import ABI from '../protocols/ethereum/abi';
-import { version } from '../version';
-import { getDockerFile } from './get-docker-file';
-import { getGitIgnore } from './get-git-ignore';
-import { generateEventIndexingHandlers } from './mapping';
-import { abiEvents, generateEventType, generateExampleEntityType } from './schema';
-import { generateTestsFiles } from './tests';
+import { getSubgraphBasename } from '../command-helpers/subgraph.js';
+import ABI from '../protocols/ethereum/abi.js';
+import Protocol from '../protocols/index.js';
+import { version } from '../version.js';
+import { getDockerFile } from './get-docker-file.js';
+import { getGitIgnore } from './get-git-ignore.js';
+import { generateEventIndexingHandlers } from './mapping.js';
+import { abiEvents, generateEventType, generateExampleEntityType } from './schema.js';
+import { generateTestsFiles } from './tests.js';
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   ? // JSON.stringify should remove this key, we will install the local

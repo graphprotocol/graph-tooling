@@ -2,10 +2,10 @@ import path from 'path';
 import * as toolbox from 'gluegun';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import yaml from 'yaml';
-import { initNetworksConfig, updateSubgraphNetwork } from './network';
+import { initNetworksConfig, updateSubgraphNetwork } from './network.js';
 
 const SUBGRAPH_PATH_BASE = path.join(
-  __dirname,
+  `${process.platform === 'win32' ? '' : '/'}${/file:\/{2,3}(.+)\/[^/]/.exec(import.meta.url)![1]}`,
   '..',
   '..',
   '..',
@@ -14,7 +14,7 @@ const SUBGRAPH_PATH_BASE = path.join(
   'example-subgraph',
 );
 
-describe.concurrent('initNetworksConfig', () => {
+describe('initNetworksConfig', () => {
   beforeAll(async () => {
     await initNetworksConfig(SUBGRAPH_PATH_BASE, 'address');
   });
@@ -40,7 +40,7 @@ describe.concurrent('initNetworksConfig', () => {
   });
 });
 
-describe.concurrent('updateSubgraphNetwork', () => {
+describe('updateSubgraphNetwork', () => {
   beforeAll(async () => {
     const content = {
       optimism: {

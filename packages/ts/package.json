@@ -6,13 +6,12 @@
   "module": "index.ts",
   "types": "index.ts",
   "scripts": {
-    "build": "asc --explicitStart --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts -b index.wasm",
-    "format": "prettier --write -c **/*.{js,ts}",
-    "lint": "prettier -c **/*.{js,ts}",
-    "test": "node test/test.js"
+    "build": "asc --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts -o index.wasm",
+    "format": "prettier --write -c **/*.{js,mjs,ts}",
+    "lint": "prettier -c **/*.{js,mjs,ts}",
+    "test": "node test/test.mjs"
   },
   "dependencies": {
-    "assemblyscript": "0.19.10"
-  },
-  "ascMain": "index.ts"
+    "assemblyscript": "0.27.31"
+  }
 }

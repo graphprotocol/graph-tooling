@@ -194,7 +194,6 @@ describe.sequential(
           '--skip-git',
           '--protocol',
           'near',
-          '--studio',
           '--from-contract',
           'app.good-morning.near',
           '--network',

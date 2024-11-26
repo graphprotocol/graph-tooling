@@ -7,7 +7,7 @@ import { filesystem, patching } from 'gluegun';
 import stripAnsi from 'strip-ansi';
 import tmp from 'tmp-promise';
 import { Args, Command, Flags } from '@oclif/core';
-import { step, withSpinner } from '../command-helpers/spinner';
+import { step, withSpinner } from '../command-helpers/spinner.js';
 
 // Clean up temporary files even when an uncaught exception occurs
 tmp.setGracefulCleanup();
@@ -93,7 +93,9 @@ export default class LocalCommand extends Command {
     const composeFile =
       composeFileFlag ||
       path.join(
-        __dirname,
+        `${process.platform === 'win32' ? '' : '/'}${
+          /file:\/{2,3}(.+)\/[^/]/.exec(import.meta.url)![1]
+        }`,
         '..',
         '..',
         'resources',
@@ -114,7 +116,6 @@ export default class LocalCommand extends Command {
       await configureTestEnvironment(tempdir, composeFile, nodeImage);
     } catch (e) {
       this.exit(1);
-      return;
     }
 
     // Bring up test environment
@@ -135,7 +136,6 @@ export default class LocalCommand extends Command {
     } catch (e) {
       await stopTestEnvironment(tempdir);
       this.exit(1);
-      return;
     }
 
     // Bring up Graph Node separately, if a standalone node is used
@@ -270,7 +270,7 @@ const waitFor = async (timeout: number, testFn: () => void) => {
         reject(error);
       } else {
         try {
-          const result = await testFn();
+          const result = testFn();
           resolve(result);
         } catch (e) {
           error = e;

@@ -1,10 +1,10 @@
 import { filesystem } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
-import { createCompiler } from '../command-helpers/compiler';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { updateSubgraphNetwork } from '../command-helpers/network';
-import debug from '../debug';
-import Protocol from '../protocols';
+import { createCompiler } from '../command-helpers/compiler.js';
+import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
+import { updateSubgraphNetwork } from '../command-helpers/network.js';
+import debug from '../debug.js';
+import Protocol from '../protocols/index.js';
 
 const buildDebug = debug('graph-cli:build');
 
@@ -87,7 +87,7 @@ export default class BuildCommand extends Command {
       await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
     }
 
-    const compiler = createCompiler(manifest, {
+    const compiler = await createCompiler(manifest, {
       ipfs,
       outputDir,
       outputFormat,

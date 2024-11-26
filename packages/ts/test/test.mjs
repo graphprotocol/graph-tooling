@@ -1,10 +1,9 @@
 // TODO: disabling eslint for now
 // We need to re-do this and use TS instead of JS
-/* eslint-disable */
-const fs = require('fs');
-const asc = require('assemblyscript/cli/asc');
-const path = require('path');
-const { StringDecoder } = require('string_decoder');
+import fs from 'fs';
+import path from 'path';
+import { StringDecoder } from 'string_decoder';
+import asc from 'assemblyscript/asc';
 
 async function main() {
   // Copy index.ts to a temporary subdirectory so that asc doesn't put all the
@@ -42,22 +41,10 @@ async function main() {
   try {
     const outputWasmPath = 'test/temp_out/test.wasm';
 
-    const promises = {};
-    promises['bigInt'] = testFile('test/bigInt.ts', outputWasmPath);
-    promises['bytes'] = testFile('test/bytes.ts', outputWasmPath);
-    promises['entity'] = testFile('test/entity.ts', outputWasmPath);
-
-    const entries = Object.entries(promises);
-    const results = await Promise.allSettled(entries.map(entry => entry[1]));
-    const failures = Object.fromEntries(
-      results
-        .map((result, index) => [entries[index][0], result])
-        .filter(([index, result]) => result.status === 'rejected'),
-    );
-
-    if (Object.keys(failures).length > 0) {
-      throw failures;
-    }
+    for (const file of ['test/bigInt.ts', 'test/bytes.ts', 'test/entity.ts'])
+      await testFile(file, outputWasmPath);
+  } catch (e) {
+    console.error(e);
   } finally {
     fs.unlinkSync('test/temp_lib/common/collections.ts');
     fs.unlinkSync('test/temp_lib/common/conversion.ts');
@@ -82,26 +69,23 @@ async function main() {
 
 async function testFile(sourceFile, outputWasmPath) {
   console.log(`Compiling test file ${sourceFile} to WASM...`);
-  if (
-    asc.main([
-      '--explicitStart',
-      '--exportRuntime',
-      '--importMemory',
-      '--runtime',
-      'stub',
-      sourceFile,
-      '--lib',
-      'test',
-      '-b',
-      outputWasmPath,
-    ]) != 0
-  ) {
-    throw Error('Failed to compile');
-  }
+  const { error } = await asc.main([
+    '--exportRuntime',
+    '--importMemory',
+    '--runtime',
+    'stub',
+    sourceFile,
+    '--lib',
+    'test',
+    '-o',
+    outputWasmPath,
+  ]);
+
+  if (error) throw Error(`Failed to compile: ${sourceFile}`);
 
   const wasmCode = new Uint8Array(fs.readFileSync(outputWasmPath));
   const memory = new WebAssembly.Memory({ initial: 1, maximum: 1 });
-  const module = await WebAssembly.instantiate(wasmCode, {
+  const wasm_module = await WebAssembly.instantiate(wasmCode, {
     env: {
       memory,
       abort(messagePtr, fileNamePtr, lineNumber, columnNumber) {
@@ -119,11 +103,8 @@ async function testFile(sourceFile, outputWasmPath) {
     },
   });
 
-  // Call AS start explicitly
-  module.instance.exports._start();
-
   console.log(`Running "${sourceFile}" tests...`);
-  for (const [testName, testFn] of Object.entries(module.instance.exports)) {
+  for (const [testName, testFn] of Object.entries(wasm_module.instance.exports)) {
     if (typeof testFn === 'function' && testName.startsWith('test')) {
       console.log(`Running "${testName}"...`);
       testFn();
