@@ -1,8 +1,8 @@
-const path = require('node:path');
-const { system, patching, filesystem } = require('gluegun');
-const { createApolloFetch } = require('apollo-fetch');
-const { ethers } = require('hardhat');
-const { expect } = require('chai');
+import path from 'node:path';
+import { createApolloFetch } from 'apollo-fetch';
+import { expect } from 'chai';
+import { filesystem, patching, system } from 'gluegun';
+import { ethers } from 'hardhat';
 
 const srcDir = path.join(__dirname, '..');
 
