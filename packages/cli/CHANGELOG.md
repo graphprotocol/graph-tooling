@@ -1,5 +1,30 @@
 # @graphprotocol/graph-cli
 
+## 0.90.0
+
+### Minor Changes
+
+- [`098b433`](https://github.com/graphprotocol/graph-tooling/commit/098b433815390e5aff2e0e52f22ab0ee44b9c206)
+  Thanks [@DenisCarriere](https://github.com/DenisCarriere)! - Update deprecated endpoints and
+  support API key for updating published subgraphs
+
+### Patch Changes
+
+- [#1771](https://github.com/graphprotocol/graph-tooling/pull/1771)
+  [`93271b0`](https://github.com/graphprotocol/graph-tooling/commit/93271b07116752c74419720a39c1fdbd460c078d)
+  Thanks [@0237h](https://github.com/0237h)! - Support parsing full path contract name from block
+  explorers
+
+- [#1774](https://github.com/graphprotocol/graph-tooling/pull/1774)
+  [`5d9f0c9`](https://github.com/graphprotocol/graph-tooling/commit/5d9f0c9c9d714d95ed455deb02137ea5440f3e2d)
+  Thanks [@0237h](https://github.com/0237h)! - Add new chains: `abstract-testnet`, `corn` and
+  `corn-testnet`
+
+- [#1767](https://github.com/graphprotocol/graph-tooling/pull/1767)
+  [`6f2cb45`](https://github.com/graphprotocol/graph-tooling/commit/6f2cb45e5a07d8de2946a485763feb0b1bcfd4f0)
+  Thanks [@0237h](https://github.com/0237h)! - Fix CLI validation for `startBlock` and
+  `contractName` fetched from external APIs
+
 ## 0.89.0
 
 ### Minor Changes
