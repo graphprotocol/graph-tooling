@@ -352,6 +352,12 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://unichain-sepolia.blockscout.com/api';
     case 'lens-testnet':
       return 'https://block-explorer-api.testnet.lens.dev/api';
+    case 'abstract-sepolia':
+      return 'https://block-explorer-api.testnet.abs.xyz/api';
+    case 'corn':
+      return 'https://maizenet-explorer.usecorn.com/api';
+    case 'corn-sepolia':
+      return 'https://testnet-explorer.usecorn.com/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -510,6 +516,12 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://sepolia.unichain.org';
     case 'lens-testnet':
       return 'https://api.staging.lens.zksync.dev';
+    case 'abstract-sepolia':
+      return 'https://api.testnet.abs.xyz';
+    case 'corn':
+      return 'https://maizenet-rpc.usecorn.com';
+    case 'corn-sepolia':
+      return 'https://testnet-rpc.usecorn.com';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
