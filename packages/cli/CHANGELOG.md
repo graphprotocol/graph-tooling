@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.90.1
+
+### Patch Changes
+
+- [#1776](https://github.com/graphprotocol/graph-tooling/pull/1776)
+  [`c4c0590`](https://github.com/graphprotocol/graph-tooling/commit/c4c059029c391dd6e256a56b3b90bcf20b86680c)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - Fix testnet names for `abstract` and
+  `corn`
+
 ## 0.90.0
 
 ### Minor Changes
