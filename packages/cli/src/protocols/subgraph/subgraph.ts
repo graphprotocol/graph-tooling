@@ -1,7 +1,7 @@
 import immutable from 'immutable';
 import { Subgraph, SubgraphOptions } from '../subgraph';
 
-export default class SubgraphDS implements Subgraph {
+export default class SubgraphDataSource implements Subgraph {
   public manifest: SubgraphOptions['manifest'];
   public resolveFile: SubgraphOptions['resolveFile'];
   public protocol: SubgraphOptions['protocol'];

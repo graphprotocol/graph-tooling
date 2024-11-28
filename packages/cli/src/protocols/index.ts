@@ -22,7 +22,7 @@ import NearSubgraph from './near/subgraph';
 import { SubgraphOptions } from './subgraph';
 import * as SubgraphDataSourceManifestScaffold from './subgraph/scaffold/manifest';
 import * as SubgraphMappingScaffold from './subgraph/scaffold/mapping';
-import SubgraphDS from './subgraph/subgraph';
+import SubgraphDataSource from './subgraph/subgraph';
 import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest';
 import SubstreamsSubgraph from './substreams/subgraph';
 
@@ -314,7 +314,7 @@ const subgraphProtocol: ProtocolConfig = {
     return new EthereumTypeGenerator(options);
   },
   getSubgraph(options) {
-    return new SubgraphDS(options);
+    return new SubgraphDataSource(options);
   },
   manifestScaffold: SubgraphDataSourceManifestScaffold,
   mappingScaffold: SubgraphMappingScaffold,
