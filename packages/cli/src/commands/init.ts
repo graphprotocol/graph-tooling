@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import * as toolbox from 'gluegun';
 import { filesystem, prompt, system } from 'gluegun';
+import { create } from 'ipfs-http-client';
 import { Args, Command, Flags, ux } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
@@ -10,6 +11,8 @@ import {
   loadContractNameForAddress,
   loadStartBlockForContract,
 } from '../command-helpers/abi';
+import { appendApiVersionForGraph } from '../command-helpers/compiler';
+import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
 import { initNetworksConfig } from '../command-helpers/network';
 import { chooseNodeUrl, SUBGRAPH_STUDIO_URL } from '../command-helpers/node';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold';
@@ -21,6 +24,8 @@ import debugFactory from '../debug';
 import Protocol, { ProtocolName } from '../protocols';
 import EthereumABI from '../protocols/ethereum/abi';
 import { abiEvents } from '../scaffold/schema';
+import Schema from '../schema';
+import loadSubgraphSchemaFromIPFS from '../utils';
 import { validateContract } from '../validation';
 import AddCommand from './add';
 
@@ -149,6 +154,12 @@ export default class InitCommand extends Command {
         'Check https://thegraph.com/docs/en/developing/supported-networks/ for supported networks',
       dependsOn: ['from-contract'],
     }),
+
+    ipfs: Flags.string({
+      summary: 'IPFS node to use for fetching subgraph data.',
+      char: 'i',
+      default: DEFAULT_IPFS_URL,
+    }),
   };
 
   async run() {
@@ -166,6 +177,7 @@ export default class InitCommand extends Command {
       'index-events': indexEvents,
       'skip-install': skipInstall,
       'skip-git': skipGit,
+      ipfs,
       network,
       abi: abiPath,
       'start-block': startBlock,
@@ -269,7 +281,7 @@ export default class InitCommand extends Command {
           protocolInstance,
           abi,
           directory,
-          contract: fromContract,
+          source: fromContract,
           indexEvents,
           network,
           subgraphName,
@@ -279,6 +291,7 @@ export default class InitCommand extends Command {
           spkgPath,
           skipInstall,
           skipGit,
+          ipfsUrl: ipfs,
         },
         { commands, addContract: false },
       );
@@ -314,7 +327,7 @@ export default class InitCommand extends Command {
         abi,
         abiPath,
         directory,
-        contract: fromContract,
+        source: fromContract,
         indexEvents,
         fromExample,
         network,
@@ -322,6 +335,7 @@ export default class InitCommand extends Command {
         contractName,
         startBlock,
         spkgPath,
+        ipfsUrl: ipfs,
       });
       if (!answers) {
         this.exit(1);
@@ -338,7 +352,7 @@ export default class InitCommand extends Command {
           directory: answers.directory,
           abi: answers.abi,
           network: answers.network,
-          contract: answers.contract,
+          source: answers.source,
           indexEvents: answers.indexEvents,
           contractName: answers.contractName,
           node,
@@ -346,6 +360,7 @@ export default class InitCommand extends Command {
           spkgPath: answers.spkgPath,
           skipInstall,
           skipGit,
+          ipfsUrl: answers.ipfs,
         },
         { commands, addContract: true },
       );
@@ -430,7 +445,7 @@ async function processInitForm(
     abi: initAbi,
     abiPath: initAbiPath,
     directory: initDirectory,
-    contract: initContract,
+    source: initContract,
     indexEvents: initIndexEvents,
     fromExample: initFromExample,
     network: initNetwork,
@@ -438,12 +453,13 @@ async function processInitForm(
     contractName: initContractName,
     startBlock: initStartBlock,
     spkgPath: initSpkgPath,
+    ipfsUrl,
   }: {
     protocol?: ProtocolName;
     abi: EthereumABI;
     abiPath?: string;
     directory?: string;
-    contract?: string;
+    source?: string;
     indexEvents: boolean;
     fromExample?: string | boolean;
     network?: string;
@@ -451,6 +467,7 @@ async function processInitForm(
     contractName?: string;
     startBlock?: string;
     spkgPath?: string;
+    ipfsUrl?: string;
   },
 ): Promise<
   | {
@@ -459,12 +476,13 @@ async function processInitForm(
       subgraphName: string;
       directory: string;
       network: string;
-      contract: string;
+      source: string;
       indexEvents: boolean;
       contractName: string;
       startBlock: string;
       fromExample: boolean;
       spkgPath: string | undefined;
+      ipfs: string;
     }
   | undefined
 > {
@@ -488,6 +506,7 @@ async function processInitForm(
     });
 
     const protocolInstance = new Protocol(protocol);
+    const isComposedSubgraph = protocolInstance.isComposedSubgraph();
     const isSubstreams = protocol === 'substreams';
     initDebugger.extend('processInitForm')('isSubstreams: %O', isSubstreams);
 
@@ -542,19 +561,22 @@ async function processInitForm(
       },
     ]);
 
-    const { contract } = await prompt.ask<{ contract: string }>([
-      // TODO:
-      // protocols that don't support contract
-      // - arweave
-      // - cosmos
+    const sourceMessage = isComposedSubgraph
+      ? 'Source subgraph identifier'
+      : `Contract ${protocolInstance.getContract()?.identifierName()}`;
+
+    const { source } = await prompt.ask<{ source: string }>([
       {
         type: 'input',
-        name: 'contract',
-        message: `Contract ${protocolInstance.getContract()?.identifierName()}`,
-        skip: () =>
-          initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
+        name: 'source',
+        message: sourceMessage,
+        skip: () => !isComposedSubgraph,
         initial: initContract,
         validate: async (value: string) => {
+          if (isComposedSubgraph) {
+            return true;
+          }
+
           if (initFromExample !== undefined || !protocolInstance.hasContract()) {
             return true;
           }
@@ -569,7 +591,8 @@ async function processInitForm(
           return valid ? true : error;
         },
         result: async (value: string) => {
-          if (initFromExample !== undefined || isSubstreams || initAbiPath) {
+          if (initFromExample !== undefined || isSubstreams || initAbiPath || isComposedSubgraph) {
+            initDebugger("value: '%s'", value);
             return value;
           }
 
@@ -614,6 +637,16 @@ async function processInitForm(
       },
     ]);
 
+    const { ipfs } = await prompt.ask<{ ipfs: string }>([
+      {
+        type: 'input',
+        name: 'ipfs',
+        message: `IPFS node to use for fetching subgraph manifest`,
+        initial: ipfsUrl,
+        skip: () => !isComposedSubgraph,
+      },
+    ]);
+
     const { spkg } = await prompt.ask<{ spkg: string }>([
       {
         type: 'input',
@@ -637,9 +670,15 @@ async function processInitForm(
           initFromExample !== undefined ||
           abiFromEtherscan !== undefined ||
           isSubstreams ||
-          !!initAbiPath,
+          !!initAbiPath ||
+          isComposedSubgraph,
         validate: async (value: string) => {
-          if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
+          if (
+            initFromExample ||
+            abiFromEtherscan ||
+            !protocolInstance.hasABIs() ||
+            isComposedSubgraph
+          ) {
             return true;
           }
 
@@ -661,9 +700,15 @@ async function processInitForm(
           }
         },
         result: async (value: string) => {
-          if (initFromExample || abiFromEtherscan || !protocolInstance.hasABIs()) {
+          if (
+            initFromExample ||
+            abiFromEtherscan ||
+            !protocolInstance.hasABIs() ||
+            isComposedSubgraph
+          ) {
             return null;
           }
+
           const ABI = protocolInstance.getABI();
           if (initAbiPath) {
             try {
@@ -718,7 +763,7 @@ async function processInitForm(
         name: 'indexEvents',
         message: 'Index contract events as entities',
         initial: true,
-        skip: () => !!initIndexEvents || isSubstreams,
+        skip: () => !!initIndexEvents || isSubstreams || isComposedSubgraph,
       },
     ]);
 
@@ -731,9 +776,10 @@ async function processInitForm(
       fromExample: !!initFromExample,
       network,
       contractName,
-      contract,
+      source,
       indexEvents,
       spkgPath: spkg,
+      ipfs,
     };
   } catch (e) {
     this.error(e, { exit: 1 });
@@ -1012,7 +1058,7 @@ async function initSubgraphFromContract(
     directory,
     abi,
     network,
-    contract,
+    source,
     indexEvents,
     contractName,
     node,
@@ -1020,13 +1066,14 @@ async function initSubgraphFromContract(
     spkgPath,
     skipInstall,
     skipGit,
+    ipfsUrl,
   }: {
     protocolInstance: Protocol;
     subgraphName: string;
     directory: string;
     abi: EthereumABI;
     network: string;
-    contract: string;
+    source: string;
     indexEvents: boolean;
     contractName?: string;
     node?: string;
@@ -1034,6 +1081,7 @@ async function initSubgraphFromContract(
     spkgPath?: string;
     skipInstall: boolean;
     skipGit: boolean;
+    ipfsUrl: string;
   },
   {
     commands,
@@ -1049,13 +1097,33 @@ async function initSubgraphFromContract(
   },
 ) {
   const isSubstreams = protocolInstance.name === 'substreams';
-
+  const isComposedSubgraph = protocolInstance.isComposedSubgraph();
   // Fail if the output directory already exists
   if (filesystem.exists(directory)) {
     this.error(`Directory or file "${directory}" already exists`, { exit: 1 });
   }
 
+  let entities: string[] | undefined;
+
+  if (isComposedSubgraph) {
+    try {
+      const ipfsClient = create({
+        url: appendApiVersionForGraph(ipfsUrl),
+        headers: {
+          ...GRAPH_CLI_SHARED_HEADERS,
+        },
+      });
+
+      const schemaString = await loadSubgraphSchemaFromIPFS(ipfsClient, source);
+      const schema = await Schema.loadFromString(schemaString);
+      entities = schema.getEntityNames();
+    } catch (e) {
+      this.error(`Failed to load and parse subgraph schema: ${e.message}`, { exit: 1 });
+    }
+  }
+
   if (
+    !protocolInstance.isComposedSubgraph() &&
     protocolInstance.hasABIs() &&
     (abiEvents(abi).size === 0 ||
       // @ts-expect-error TODO: the abiEvents result is expected to be a List, how's it an array?
@@ -1077,12 +1145,13 @@ async function initSubgraphFromContract(
           subgraphName,
           abi,
           network,
-          contract,
+          source,
           indexEvents,
           contractName,
           startBlock,
           node,
           spkgPath,
+          entities,
         },
         spinner,
       );

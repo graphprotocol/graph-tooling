@@ -55,7 +55,7 @@ export const generateScaffold = async (
   {
     protocolInstance,
     abi,
-    contract,
+    source,
     network,
     subgraphName,
     indexEvents,
@@ -63,10 +63,11 @@ export const generateScaffold = async (
     startBlock,
     node,
     spkgPath,
+    entities,
   }: {
     protocolInstance: Protocol;
     abi: ABI;
-    contract: string;
+    source: string;
     network: string;
     subgraphName: string;
     indexEvents: boolean;
@@ -74,6 +75,7 @@ export const generateScaffold = async (
     startBlock?: string;
     node?: string;
     spkgPath?: string;
+    entities?: string[];
   },
   spinner: Spinner,
 ) => {
@@ -83,13 +85,14 @@ export const generateScaffold = async (
     protocol: protocolInstance,
     abi,
     indexEvents,
-    contract,
+    contract: source,
     network,
     contractName,
     startBlock,
     subgraphName,
     node,
     spkgPath,
+    entities,
   });
 
   return await scaffold.generate();

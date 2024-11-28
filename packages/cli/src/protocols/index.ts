@@ -20,6 +20,8 @@ import * as NearManifestScaffold from './near/scaffold/manifest';
 import * as NearMappingScaffold from './near/scaffold/mapping';
 import NearSubgraph from './near/subgraph';
 import { SubgraphOptions } from './subgraph';
+import * as SubgraphDataSourceManifestScaffold from './subgraph/scaffold/manifest';
+import * as SubgraphMappingScaffold from './subgraph/scaffold/mapping';
 import SubgraphDS from './subgraph/subgraph';
 import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest';
 import SubstreamsSubgraph from './substreams/subgraph';
@@ -188,7 +190,7 @@ export default class Protocol {
     // A problem with hasEvents usage in the codebase is that it's almost every where
     // where used, the ABI data is actually use after the conditional, so it seems
     // both concept are related. So internally, we map to this condition.
-    return this.hasABIs();
+    return this.hasABIs() && !this.isComposedSubgraph();
   }
 
   hasTemplates() {
@@ -233,6 +235,10 @@ export default class Protocol {
 
   getMappingScaffold() {
     return this.config.mappingScaffold;
+  }
+
+  isComposedSubgraph() {
+    return this.name === 'subgraph';
   }
 }
 
@@ -310,8 +316,8 @@ const subgraphProtocol: ProtocolConfig = {
   getSubgraph(options) {
     return new SubgraphDS(options);
   },
-  manifestScaffold: undefined,
-  mappingScaffold: undefined,
+  manifestScaffold: SubgraphDataSourceManifestScaffold,
+  mappingScaffold: SubgraphMappingScaffold,
 };
 
 const nearProtocol: ProtocolConfig = {

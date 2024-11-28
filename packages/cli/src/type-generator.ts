@@ -4,7 +4,6 @@ import * as toolbox from 'gluegun';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
 import { create } from 'ipfs-http-client';
-import yaml from 'js-yaml';
 import prettier from 'prettier';
 // @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
@@ -19,6 +18,7 @@ import { applyMigrations } from './migrations';
 import Protocol from './protocols';
 import Schema from './schema';
 import Subgraph from './subgraph';
+import loadSubgraphSchemaFromIPFS from './utils';
 import Watcher from './watcher';
 
 const typeGenDebug = debug('graph-cli:type-generator');
@@ -114,12 +114,9 @@ export default class TypeGenerator {
 
         await Promise.all(
           this.options.subgraphSources.map(async manifest => {
-            const subgraphSchemaFile = await this.loadSubgraphSchemaFromIPFS(ipfsClient, manifest);
+            const subgraphSchemaFile = await loadSubgraphSchemaFromIPFS(ipfsClient, manifest);
 
-            const subgraphSchema = await Schema.loadFromString(
-              `js${manifest}.graphql`,
-              subgraphSchemaFile,
-            );
+            const subgraphSchema = await Schema.loadFromString(subgraphSchemaFile);
             typeGenDebug.extend('generateTypes')(
               `Generating types for subgraph datasource ${manifest}`,
             );
@@ -141,37 +138,6 @@ export default class TypeGenerator {
       return true;
     } catch (e) {
       return false;
-    }
-  }
-
-  async loadSubgraphSchemaFromIPFS(ipfsClient: any, manifest: string) {
-    typeGenDebug.extend('loadSubgraphSchemaFromIPFS')(`Loading schema from IPFS ${manifest}`);
-    try {
-      const manifestBuffer = ipfsClient.cat(manifest);
-      let manifestFile = '';
-      for await (const chunk of manifestBuffer) {
-        manifestFile += Buffer.from(chunk).toString('utf8'); // Explicitly convert each chunk to UTF-8
-      }
-
-      const manifestYaml: any = yaml.safeLoad(manifestFile);
-      let schema = manifestYaml.schema.file['/'];
-
-      if (schema.startsWith('/ipfs/')) {
-        schema = schema.slice(6);
-      }
-
-      const schemaBuffer = ipfsClient.cat(schema);
-      let schemaFile = '';
-      for await (const chunk of schemaBuffer) {
-        schemaFile += Buffer.from(chunk).toString('utf8'); // Explicitly convert each chunk to UTF-8
-      }
-      return schemaFile;
-    } catch (e) {
-      typeGenDebug.extend('loadSubgraphSchemaFromIPFS')(
-        `Failed to load schema from IPFS ${manifest}`,
-      );
-      typeGenDebug.extend('loadSubgraphSchemaFromIPFS')(e);
-      throw Error(`Failed to load schema from IPFS ${manifest}`);
     }
   }
 

@@ -5,9 +5,9 @@ import SchemaCodeGenerator from './codegen/schema';
 
 export default class Schema {
   constructor(
-    public filename: string,
     public document: string,
     public ast: DocumentNode,
+    public filename?: string,
   ) {
     this.filename = filename;
     this.document = document;
@@ -21,15 +21,25 @@ export default class Schema {
   static async load(filename: string) {
     const document = await fs.readFile(filename, 'utf-8');
     const ast = graphql.parse(document);
-    return new Schema(filename, document, ast);
+    return new Schema(document, ast, filename);
   }
 
-  static async loadFromString(filename: string, document: string) {
+  static async loadFromString(document: string) {
     try {
       const ast = graphql.parse(document);
-      return new Schema(filename, document, ast);
+      return new Schema(document, ast);
     } catch (e) {
       throw new Error(`Failed to load schema from string: ${e.message}`);
     }
+  }
+
+  getEntityNames(): string[] {
+    return this.ast.definitions
+      .filter(
+        def =>
+          def.kind === 'ObjectTypeDefinition' &&
+          def.directives?.find(directive => directive.name.value === 'entity') !== undefined,
+      )
+      .map(entity => (entity as graphql.ObjectTypeDefinitionNode).name.value);
   }
 }

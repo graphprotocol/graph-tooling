@@ -1,8 +1,34 @@
-export const source = ({ spkgPath }: { spkgPath?: string }) => `
-      package:
-        moduleName: graph_out
-        file: ${spkgPath || 'substreams-eth-block-meta-v0.1.0.spkg'}`;
+export const source = ({
+  contract,
+  startBlock,
+}: {
+  contract: string;
+  contractName: string;
+  startBlock: string;
+}) =>
+  `
+      address: '${contract}'
+      startBlock: ${startBlock}`;
 
-export const mapping = () => `
-      apiVersion: 0.0.5
-      kind: substreams/graph-entities`;
+export const mapping = ({
+  entities,
+  contractName,
+}: {
+  entities: string[];
+  contractName: string;
+}) => `
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+       - ExampleEntity
+      handlers:
+      ${entities
+        .map(
+          entity => `
+        - handler: handle${entity}
+          entity: ${entity}`,
+        )
+        .join(' ')}
+      file: ./src/${contractName}.ts
+`;
