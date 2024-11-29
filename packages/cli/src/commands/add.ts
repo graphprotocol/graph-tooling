@@ -136,8 +136,9 @@ export default class AddCommand extends Command {
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-
-      startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
+      if (startBlock === undefined) {
+        startBlock = Number(await loadStartBlockForContract(network, address)).toString();
+      }
     } catch (error) {
       // we cannot ask user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
@@ -161,7 +162,7 @@ export default class AddCommand extends Command {
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
 
-      contractName = await loadContractNameForAddress(network, address);
+      contractName ||= await loadContractNameForAddress(network, address);
     } catch (error) {
       // not asking user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
