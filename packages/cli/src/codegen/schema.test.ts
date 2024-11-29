@@ -10,7 +10,7 @@ const formatTS = async (code: string) =>
   await prettier.format(code, { parser: 'typescript', semi: false });
 
 const createSchemaCodeGen = (schema: string) =>
-  new SchemaCodeGenerator(new Schema('', schema, graphql.parse(schema)));
+  new SchemaCodeGenerator(new Schema(schema, graphql.parse(schema), ''));
 
 const testEntity = async (generatedTypes: any[], expectedEntity: any) => {
   const entity = generatedTypes.find(type => type.name === expectedEntity.name);

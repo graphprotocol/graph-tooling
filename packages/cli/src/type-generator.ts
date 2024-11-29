@@ -3,18 +3,22 @@ import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
 import * as graphql from 'graphql/language';
 import immutable from 'immutable';
+import { create } from 'ipfs-http-client';
 import prettier from 'prettier';
 // @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
 import DataSourceTemplateCodeGenerator from './codegen/template';
 import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript';
+import { appendApiVersionForGraph } from './command-helpers/compiler';
 import { displayPath } from './command-helpers/fs';
 import { Spinner, step, withSpinner } from './command-helpers/spinner';
+import { GRAPH_CLI_SHARED_HEADERS } from './constants';
 import debug from './debug';
 import { applyMigrations } from './migrations';
 import Protocol from './protocols';
 import Schema from './schema';
 import Subgraph from './subgraph';
+import loadSubgraphSchemaFromIPFS from './utils';
 import Watcher from './watcher';
 
 const typeGenDebug = debug('graph-cli:type-generator');
@@ -28,6 +32,8 @@ export interface TypeGeneratorOptions {
   skipMigrations?: boolean;
   uncrashable: boolean;
   uncrashableConfig: string;
+  subgraphSources: string[];
+  ipfsUrl: string;
 }
 
 export default class TypeGenerator {
@@ -65,6 +71,11 @@ export default class TypeGenerator {
       return;
     }
 
+    if (this.options.subgraphSources.length > 0) {
+      typeGenDebug.extend('generateTypes')('Subgraph uses subgraph datasources.');
+      toolbox.print.success('Subgraph uses subgraph datasources.');
+    }
+
     try {
       if (!this.options.skipMigrations && this.options.subgraphManifest) {
         await applyMigrations({
@@ -80,7 +91,6 @@ export default class TypeGenerator {
         const abis = await this.protocolTypeGenerator.loadABIs(subgraph);
         await this.protocolTypeGenerator.generateTypesForABIs(abis);
       }
-
       typeGenDebug.extend('generateTypes')('Generating types for templates');
       await this.generateTypesForDataSourceTemplates(subgraph);
 
@@ -92,7 +102,32 @@ export default class TypeGenerator {
 
       const schema = await this.loadSchema(subgraph);
       typeGenDebug.extend('generateTypes')('Generating types for schema');
-      await this.generateTypesForSchema(schema);
+      await this.generateTypesForSchema({ schema });
+
+      if (this.options.subgraphSources.length > 0) {
+        const ipfsClient = create({
+          url: appendApiVersionForGraph(this.options.ipfsUrl.toString()),
+          headers: {
+            ...GRAPH_CLI_SHARED_HEADERS,
+          },
+        });
+
+        await Promise.all(
+          this.options.subgraphSources.map(async manifest => {
+            const subgraphSchemaFile = await loadSubgraphSchemaFromIPFS(ipfsClient, manifest);
+
+            const subgraphSchema = await Schema.loadFromString(subgraphSchemaFile);
+            typeGenDebug.extend('generateTypes')(
+              `Generating types for subgraph datasource ${manifest}`,
+            );
+            await this.generateTypesForSchema({
+              schema: subgraphSchema,
+              fileName: `subgraph-${manifest}.ts`,
+              generateStoreMethods: false,
+            });
+          }),
+        );
+      }
 
       toolbox.print.success('\nTypes generated successfully\n');
 
@@ -161,7 +196,17 @@ export default class TypeGenerator {
     );
   }
 
-  async generateTypesForSchema(schema: any) {
+  async generateTypesForSchema({
+    schema,
+    fileName = 'schema.ts', // Default file name
+    outputDir = this.options.outputDir, // Default output directory
+    generateStoreMethods = true,
+  }: {
+    schema: any;
+    fileName?: string;
+    outputDir?: string;
+    generateStoreMethods?: boolean;
+  }) {
     return await withSpinner(
       `Generate types for GraphQL schema`,
       `Failed to generate types for GraphQL schema`,
@@ -173,7 +218,7 @@ export default class TypeGenerator {
           [
             GENERATED_FILE_NOTE,
             ...codeGenerator.generateModuleImports(),
-            ...codeGenerator.generateTypes(),
+            ...codeGenerator.generateTypes(generateStoreMethods),
             ...codeGenerator.generateDerivedLoaders(),
           ].join('\n'),
           {
@@ -181,7 +226,7 @@ export default class TypeGenerator {
           },
         );
 
-        const outputFile = path.join(this.options.outputDir, 'schema.ts');
+        const outputFile = path.join(outputDir, fileName); // Use provided outputDir and fileName
         step(spinner, 'Write types to', displayPath(outputFile));
         await fs.mkdirs(path.dirname(outputFile));
         await fs.writeFile(outputFile, code);

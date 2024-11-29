@@ -21,29 +21,44 @@ export default class EthereumTypeGenerator {
     return await withSpinner(
       'Load contract ABIs',
       'Failed to load contract ABIs',
-      `Warnings while loading contract ABIs`,
+      'Warnings while loading contract ABIs',
       async spinner => {
         try {
-          return subgraph
-            .get('dataSources')
-            .reduce(
-              (abis: any[], dataSource: any) =>
-                dataSource
-                  .getIn(['mapping', 'abis'])
-                  .reduce(
-                    (abis: any[], abi: any) =>
-                      abis.push(
-                        this._loadABI(dataSource, abi.get('name'), abi.get('file'), spinner),
-                      ),
-                    abis,
-                  ),
-              immutable.List(),
-            );
+          const dataSources = subgraph.get('dataSources');
+          if (!dataSources) return immutable.List();
+
+          return dataSources.reduce((accumulatedAbis: any[], dataSource: any) => {
+            // Get ABIs from the current data source's mapping
+            const sourceAbis = dataSource.getIn(['mapping', 'abis']);
+            if (!sourceAbis) return accumulatedAbis;
+
+            // Process each ABI in the current data source
+            return sourceAbis.reduce((currentAbis: any[], abiConfig: any) => {
+              // Skip invalid ABI configurations
+              if (!this.isValidAbiConfig(abiConfig)) {
+                return currentAbis;
+              }
+
+              // Load and add the ABI to our list
+              const loadedAbi = this._loadABI(
+                dataSource,
+                abiConfig.get('name'),
+                abiConfig.get('file'),
+                spinner,
+              );
+
+              return currentAbis.push(loadedAbi);
+            }, accumulatedAbis);
+          }, immutable.List());
         } catch (e) {
           throw Error(`Failed to load contract ABIs: ${e.message}`);
         }
       },
     );
+  }
+
+  isValidAbiConfig(abiConfig: any): boolean {
+    return !!(abiConfig?.get('name') && abiConfig?.get('file'));
   }
 
   _loadABI(dataSource: any, name: string, maybeRelativePath: string, spinner: Spinner) {

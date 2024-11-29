@@ -1,0 +1,71 @@
+# Each referenced type's in any of the types below must be listed
+# here either as `scalar` or `type` for the validation code to work
+# properly.
+#
+# That's why `String` is listed as a scalar even though it's built-in
+# GraphQL basic types.
+scalar String
+scalar File
+scalar BigInt
+scalar Boolean
+scalar JSON
+
+union StringOrBigInt = String | BigInt
+
+type SubgraphManifest {
+  specVersion: String!
+  features: [String!]
+  schema: Schema!
+  description: String
+  repository: String
+  graft: Graft
+  dataSources: [DataSource!]!
+  indexerHints: IndexerHints
+}
+
+type Schema {
+  file: File!
+}
+
+type IndexerHints {
+  prune: StringOrBigInt
+}
+
+type DataSource {
+  kind: String!
+  name: String!
+  network: String
+  context: JSON
+  source: ContractSource!
+  mapping: ContractMapping!
+}
+
+type ContractSource {
+  address: String!
+  startBlock: BigInt
+}
+
+type ContractMapping {
+  kind: String
+  apiVersion: String!
+  language: String!
+  file: File!
+  abis: [ContractABI!]
+  entities: [String!]!
+  handlers: [EntityHandler!]
+}
+
+type ContractABI {
+  name: String!
+  file: File!
+}
+
+type EntityHandler {
+  handler: String!
+  entity: String!
+}
+
+type Graft {
+  base: String!
+  block: BigInt!
+}

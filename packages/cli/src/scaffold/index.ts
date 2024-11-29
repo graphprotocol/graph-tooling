@@ -28,6 +28,7 @@ export interface ScaffoldOptions {
   subgraphName?: string;
   node?: string;
   spkgPath?: string;
+  entities?: string[];
 }
 
 export default class Scaffold {
@@ -41,6 +42,7 @@ export default class Scaffold {
   node?: string;
   startBlock?: string;
   spkgPath?: string;
+  entities?: string[];
 
   constructor(options: ScaffoldOptions) {
     this.protocol = options.protocol;
@@ -53,6 +55,7 @@ export default class Scaffold {
     this.startBlock = options.startBlock;
     this.node = options.node;
     this.spkgPath = options.spkgPath;
+    this.entities = options.entities;
   }
 
   async generatePackageJson() {
