@@ -402,10 +402,6 @@ async function processFromExampleInitForm(
         name: 'directory',
         message: 'Directory to create the subgraph in',
         initial: () => initDirectory || getSubgraphBasename(subgraphName),
-        validate: value =>
-          filesystem.exists(value || initDirectory || getSubgraphBasename(subgraphName))
-            ? 'Directory already exists'
-            : true,
       },
     ]);
 
@@ -487,6 +483,8 @@ async function processInitForm(
   | undefined
 > {
   let abiFromEtherscan: EthereumABI | undefined = undefined;
+  let startBlockFromEtherscan: string | undefined = undefined;
+  let contractNameFromEtherscan: string | undefined = undefined;
 
   try {
     const { protocol } = await prompt.ask<{ protocol: ProtocolName }>({
@@ -525,10 +523,6 @@ async function processInitForm(
         name: 'directory',
         message: 'Directory to create the subgraph in',
         initial: () => initDirectory || getSubgraphBasename(subgraphName),
-        validate: value =>
-          filesystem.exists(value || initDirectory || getSubgraphBasename(subgraphName))
-            ? 'Directory already exists'
-            : true,
       },
     ]);
 
@@ -617,7 +611,7 @@ async function processInitForm(
               loadStartBlockForContract(network, value),
             );
             if (startBlock) {
-              initStartBlock = Number(startBlock).toString();
+              startBlockFromEtherscan = Number(startBlock).toString();
             }
           }
 
@@ -628,7 +622,7 @@ async function processInitForm(
               loadContractNameForAddress(network, value),
             );
             if (contractName) {
-              initContractName = contractName;
+              contractNameFromEtherscan = contractName;
             }
           }
 
@@ -664,7 +658,7 @@ async function processInitForm(
         type: 'input',
         name: 'abi',
         message: 'ABI file (path)',
-        initial: initAbi,
+        initial: initAbiPath,
         skip: () =>
           !protocolInstance.hasABIs() ||
           initFromExample !== undefined ||
@@ -683,20 +677,13 @@ async function processInitForm(
           }
 
           const ABI = protocolInstance.getABI();
-          if (initAbiPath) {
-            try {
-              loadAbiFromFile(ABI, initAbiPath);
-              return true;
-            } catch (e) {
-              this.error(e.message);
-            }
-          }
+          if (initAbiPath) value = initAbiPath;
 
           try {
             loadAbiFromFile(ABI, value);
             return true;
           } catch (e) {
-            this.error(e.message);
+            return e.message;
           }
         },
         result: async (value: string) => {
@@ -710,13 +697,7 @@ async function processInitForm(
           }
 
           const ABI = protocolInstance.getABI();
-          if (initAbiPath) {
-            try {
-              return loadAbiFromFile(ABI, initAbiPath);
-            } catch (e) {
-              return e.message;
-            }
-          }
+          if (initAbiPath) value = initAbiPath;
 
           try {
             return loadAbiFromFile(ABI, value);
@@ -732,13 +713,9 @@ async function processInitForm(
         type: 'input',
         name: 'startBlock',
         message: 'Start Block',
-        initial: initStartBlock || '0',
+        initial: initStartBlock || startBlockFromEtherscan || '0',
         skip: () => initFromExample !== undefined || isSubstreams,
         validate: value => parseInt(value) >= 0,
-        result(value) {
-          if (initStartBlock) return initStartBlock;
-          return value;
-        },
       },
     ]);
 
@@ -747,13 +724,9 @@ async function processInitForm(
         type: 'input',
         name: 'contractName',
         message: 'Contract Name',
-        initial: initContractName || 'Contract' || isSubstreams,
+        initial: initContractName || contractNameFromEtherscan || 'Contract' || isSubstreams,
         skip: () => initFromExample !== undefined || !protocolInstance.hasContract(),
         validate: value => value && value.length > 0,
-        result(value) {
-          if (initContractName) return initContractName;
-          return value;
-        },
       },
     ]);
 
@@ -935,9 +908,17 @@ async function initSubgraphFromExample(
     };
   },
 ) {
-  // Fail if the output directory already exists
+  let overwrite = false;
   if (filesystem.exists(directory)) {
-    this.error(`Directory or file "${directory}" already exists`, { exit: 1 });
+    overwrite = await prompt.confirm(
+      'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
+      false,
+    );
+
+    if (!overwrite) {
+      this.exit(1);
+      return;
+    }
   }
 
   // Clone the example subgraph repository
@@ -967,7 +948,7 @@ async function initSubgraphFromExample(
           return { result: false, error: `Example not found: ${fromExample}` };
         }
 
-        filesystem.copy(exampleSubgraphPath, directory);
+        filesystem.copy(exampleSubgraphPath, directory, { overwrite });
         return true;
       } finally {
         filesystem.remove(tmpDir);
@@ -1098,9 +1079,16 @@ async function initSubgraphFromContract(
 ) {
   const isSubstreams = protocolInstance.name === 'substreams';
   const isComposedSubgraph = protocolInstance.isComposedSubgraph();
-  // Fail if the output directory already exists
-  if (filesystem.exists(directory)) {
-    this.error(`Directory or file "${directory}" already exists`, { exit: 1 });
+
+  if (
+    filesystem.exists(directory) &&
+    !(await prompt.confirm(
+      'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
+      false,
+    ))
+  ) {
+    this.exit(1);
+    return;
   }
 
   let entities: string[] | undefined;

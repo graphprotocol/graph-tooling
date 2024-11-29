@@ -1,5 +1,106 @@
 # @graphprotocol/graph-cli
 
+## 0.90.1
+
+### Patch Changes
+
+- [#1776](https://github.com/graphprotocol/graph-tooling/pull/1776)
+  [`c4c0590`](https://github.com/graphprotocol/graph-tooling/commit/c4c059029c391dd6e256a56b3b90bcf20b86680c)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - Fix testnet names for `abstract` and
+  `corn`
+
+## 0.90.0
+
+### Minor Changes
+
+- [`098b433`](https://github.com/graphprotocol/graph-tooling/commit/098b433815390e5aff2e0e52f22ab0ee44b9c206)
+  Thanks [@DenisCarriere](https://github.com/DenisCarriere)! - Update deprecated endpoints and
+  support API key for updating published subgraphs
+
+### Patch Changes
+
+- [#1771](https://github.com/graphprotocol/graph-tooling/pull/1771)
+  [`93271b0`](https://github.com/graphprotocol/graph-tooling/commit/93271b07116752c74419720a39c1fdbd460c078d)
+  Thanks [@0237h](https://github.com/0237h)! - Support parsing full path contract name from block
+  explorers
+
+- [#1774](https://github.com/graphprotocol/graph-tooling/pull/1774)
+  [`5d9f0c9`](https://github.com/graphprotocol/graph-tooling/commit/5d9f0c9c9d714d95ed455deb02137ea5440f3e2d)
+  Thanks [@0237h](https://github.com/0237h)! - Add new chains: `abstract-testnet`, `corn` and
+  `corn-testnet`
+
+- [#1767](https://github.com/graphprotocol/graph-tooling/pull/1767)
+  [`6f2cb45`](https://github.com/graphprotocol/graph-tooling/commit/6f2cb45e5a07d8de2946a485763feb0b1bcfd4f0)
+  Thanks [@0237h](https://github.com/0237h)! - Fix CLI validation for `startBlock` and
+  `contractName` fetched from external APIs
+
+## 0.89.0
+
+### Minor Changes
+
+- [#1763](https://github.com/graphprotocol/graph-tooling/pull/1763)
+  [`58dbd28`](https://github.com/graphprotocol/graph-tooling/commit/58dbd2845b9e336bb06d7cee09929a92db7f2cf5)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - Add new chain: Lens testnet
+
+### Patch Changes
+
+- [#1759](https://github.com/graphprotocol/graph-tooling/pull/1759)
+  [`1d4217a`](https://github.com/graphprotocol/graph-tooling/commit/1d4217a506b38307ad0d750a9abe37bffa0a734d)
+  Thanks [@0237h](https://github.com/0237h)! - Refactor debug log for failed Etherscan ABI lookups
+
+- [#1764](https://github.com/graphprotocol/graph-tooling/pull/1764)
+  [`0b4cfe9`](https://github.com/graphprotocol/graph-tooling/commit/0b4cfe91091a86a0871d486f91754ea87f302b3e)
+  Thanks [@adamazad](https://github.com/adamazad)! - chore(rpcs): update gnosis chain RPC endpoint
+
+- [#1766](https://github.com/graphprotocol/graph-tooling/pull/1766)
+  [`d2fda94`](https://github.com/graphprotocol/graph-tooling/commit/d2fda940ace2b719354df9da43890c559ebfd3a8)
+  Thanks [@0237h](https://github.com/0237h)! - Improve ABI file path validation
+
+- [#1761](https://github.com/graphprotocol/graph-tooling/pull/1761)
+  [`baf36b4`](https://github.com/graphprotocol/graph-tooling/commit/baf36b42bc531f3aee2709c2f55682a7ec44e5ac)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - update soneium-testnet blockexplorer url
+
+## 0.88.0
+
+### Minor Changes
+
+- [#1680](https://github.com/graphprotocol/graph-tooling/pull/1680)
+  [`08914a8`](https://github.com/graphprotocol/graph-tooling/commit/08914a89179e31363765bb3a6e72945f4585e207)
+  Thanks [@saihaj](https://github.com/saihaj)! - Breaking changes to the CLI to prepare for the
+  sunset of the hosted service.
+
+  - `graph auth`
+    - Removed `--product` flag
+    - Removed `--studio` flag
+    - Removed `node` argument
+  - `graph deploy`
+    - Removed `--product` flag
+    - Removed `--studio` flag
+    - Removed `--from-hosted-service` flag
+  - `graph init`
+    - Removed `--product` flag
+    - Removed `--studio` flag
+    - Removed `--allow-simple-name` flag
+
+- [#1749](https://github.com/graphprotocol/graph-tooling/pull/1749)
+  [`bf43cbf`](https://github.com/graphprotocol/graph-tooling/commit/bf43cbf8283c53f0005d7cb9dfa681c92f3a6a91)
+  Thanks [@0237h](https://github.com/0237h)! - Add warning for available CLI updates
+
+### Patch Changes
+
+- [#1751](https://github.com/graphprotocol/graph-tooling/pull/1751)
+  [`0ba99dc`](https://github.com/graphprotocol/graph-tooling/commit/0ba99dcd6783fb20779d4f5a6791fc155969939e)
+  Thanks [@0237h](https://github.com/0237h)! - Using `graph add` with `localhost` network now
+  prompts the user for input
+
+- [#1750](https://github.com/graphprotocol/graph-tooling/pull/1750)
+  [`d764867`](https://github.com/graphprotocol/graph-tooling/commit/d764867dc7eab32e2f1db8505419ea4fa03ed503)
+  Thanks [@0237h](https://github.com/0237h)! - Add prompt for existing directory in `init` flow
+
+- [#1756](https://github.com/graphprotocol/graph-tooling/pull/1756)
+  [`04bd901`](https://github.com/graphprotocol/graph-tooling/commit/04bd901d3ff974c197b82fd29426309ce7de1558)
+  Thanks [@0237h](https://github.com/0237h)! - Fix `matic` RPC endpoint and improve error message
+
 ## 0.87.0
 
 ### Minor Changes
