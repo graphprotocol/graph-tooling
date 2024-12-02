@@ -358,6 +358,8 @@ const getEtherscanLikeAPIUrl = (network: string) => {
       return 'https://maizenet-explorer.usecorn.com/api';
     case 'corn-testnet':
       return 'https://testnet-explorer.usecorn.com/api';
+    case 'botanix-testnet':
+      return 'https://api.routescan.io/v2/network/testnet/evm/3636/etherscan/api';
     default:
       return `https://api-${network}.etherscan.io/api`;
   }
@@ -522,6 +524,8 @@ const getPublicRPCEndpoint = (network: string) => {
       return 'https://maizenet-rpc.usecorn.com';
     case 'corn-testnet':
       return 'https://testnet-rpc.usecorn.com';
+    case 'botanix-testnet':
+      return 'https://node.botanixlabs.dev';  
     default:
       throw new Error(`Unknown network: ${network}`);
   }
