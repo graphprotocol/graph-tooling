@@ -1,3 +1,4 @@
+import fs from 'fs-extra';
 import { strings } from 'gluegun';
 import prettier from 'prettier';
 import { getSubgraphBasename } from '../command-helpers/subgraph.js';
@@ -125,7 +126,7 @@ dataSources:
   - kind: ${this.protocol.name}
     name: ${this.contractName}
     network: ${this.network}
-    source: ${protocolManifest.source(this)}
+    source: ${protocolManifest.source({ ...this, spkgPath: './substreams.spkg', spkgModule: 'graph_out' })}
     mapping: ${protocolManifest.mapping(this)}
 `,
       { parser: 'yaml' },
@@ -147,6 +148,13 @@ dataSources:
         trailingComma: 'none',
       },
     );
+  }
+
+  async generateSpkgContent() {
+    if (!this.spkgPath) {
+      return undefined;
+    }
+    return fs.readFile(this.spkgPath);
   }
 
   async generateTsConfig() {
@@ -215,6 +223,7 @@ dataSources:
         'schema.graphql': await this.generateSchema(),
         'package.json': await this.generatePackageJsonForSubstreams(),
         '.gitignore': await this.generateGitIgnoreFile(),
+        'substreams.spkg': await this.generateSpkgContent(),
       };
     }
     return {

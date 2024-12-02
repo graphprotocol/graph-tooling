@@ -1,7 +1,7 @@
-export const source = ({ spkgPath }: { spkgPath?: string }) => `
+export const source = ({ spkgPath, spkgModule }: { spkgPath?: string; spkgModule?: string }) => `
       package:
-        moduleName: graph_out
-        file: ${spkgPath || 'substreams-eth-block-meta-v0.1.0.spkg'}`;
+        moduleName: ${spkgModule || 'graph_out'}
+        file: ${spkgPath || 'substreams.spkg'}`;
 
 export const mapping = () => `
       apiVersion: 0.0.5

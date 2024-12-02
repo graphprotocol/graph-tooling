@@ -1,12 +1,8 @@
 import { filesystem, prompt, system } from 'gluegun';
 import immutable from 'immutable';
 import { Args, Command, Errors, Flags } from '@oclif/core';
-import {
-  loadAbiFromBlockScout,
-  loadAbiFromEtherscan,
-  loadContractNameForAddress,
-  loadStartBlockForContract,
-} from '../command-helpers/abi.js';
+import { NetworksRegistry } from '@pinax/graph-networks-registry';
+import { ContractService } from '../command-helpers/contracts.js';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
 import { updateNetworksFile } from '../command-helpers/network.js';
 import {
@@ -77,8 +73,13 @@ export default class AddCommand extends Command {
     const network = manifest.result.getIn(['dataSources', 0, 'network']) as any;
     const result = manifest.result.asMutable();
     const isLocalHost = network === 'localhost'; // This flag prevent Etherscan lookups in case the network selected is `localhost`
+    let contractService: ContractService | undefined;
 
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
+    else {
+      const registry = await NetworksRegistry.fromLatestVersion();
+      contractService = new ContractService(registry);
+    }
 
     let startBlock = startBlockFlag;
     let contractName = contractNameFlag;
@@ -95,13 +96,11 @@ export default class AddCommand extends Command {
     let ethabi = null;
     if (abi) {
       ethabi = EthereumABI.load(contractName, abi);
-    } else if (network === 'poa-core') {
-      ethabi = await loadAbiFromBlockScout(EthereumABI, network, address);
     } else {
       try {
         if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
 
-        ethabi = await loadAbiFromEtherscan(EthereumABI, network, address);
+        ethabi = await contractService?.getABI(EthereumABI, network, address);
       } catch (error) {
         // we cannot ask user to do prompt in test environment
         if (process.env.NODE_ENV !== 'test') {
@@ -136,7 +135,7 @@ export default class AddCommand extends Command {
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
 
-      startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
+      startBlock ||= Number(await contractService?.getStartBlock(network, address)).toString();
     } catch (error) {
       // we cannot ask user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
@@ -160,7 +159,7 @@ export default class AddCommand extends Command {
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
 
-      contractName = await loadContractNameForAddress(network, address);
+      contractName = (await contractService?.getContractName(network, address)) ?? '';
     } catch (error) {
       // not asking user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
