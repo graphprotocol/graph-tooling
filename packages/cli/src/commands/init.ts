@@ -433,7 +433,11 @@ async function processInitForm(
     const registry = await NetworksRegistry.fromLatestVersion();
     const contractService = new ContractService(registry);
 
-    const networks = sortWithPriority(registry.networks, n => n.issuanceRewards);
+    const networks = sortWithPriority(
+      registry.networks,
+      n => n.issuanceRewards,
+      (a, b) => registry.networks.indexOf(a) - registry.networks.indexOf(b),
+    );
 
     const networkToChoice = (n: Network) => ({
       name: n.id,
@@ -471,7 +475,7 @@ async function processInitForm(
             .map(networkToChoice)
             .filter(({ value }) => (value ?? '').includes(input.toLowerCase())),
         ),
-      validate: value => (networks.find(n => n.id === value) ? true : 'Select a network'),
+      validate: value => (networks.find(n => n.id === value) ? true : 'Pick a network'),
     });
 
     const network = networks.find(n => n.id === networkId)!;

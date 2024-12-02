@@ -34,7 +34,7 @@
     "@oclif/plugin-autocomplete": "^3.2.11",
     "@oclif/plugin-not-found": "^3.2.29",
     "@oclif/plugin-warn-if-update-available": "^3.1.24",
-    "@pinax/graph-networks-registry": "^0.6.4",
+    "@pinax/graph-networks-registry": "^0.6.5",
     "@whatwg-node/fetch": "^0.10.1",
     "assemblyscript": "0.27.31",
     "binary-install": "^1.1.0",
