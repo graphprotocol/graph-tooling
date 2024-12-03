@@ -525,7 +525,7 @@ const getPublicRPCEndpoint = (network: string) => {
     case 'corn-testnet':
       return 'https://testnet-rpc.usecorn.com';
     case 'botanix-testnet':
-      return 'https://node.botanixlabs.dev';  
+      return 'https://node.botanixlabs.dev';
     default:
       throw new Error(`Unknown network: ${network}`);
   }
