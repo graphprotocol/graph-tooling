@@ -3,10 +3,10 @@
 #!/bin/sh
 
 # Change to the correct directory
-cd /usr/src/app;
+cd /usr/src/app
 
 # Run hardhat
-pnpm localnode;
+pnpm localnode
 
 # Keep node alive
 set -e
