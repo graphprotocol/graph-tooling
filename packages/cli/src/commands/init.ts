@@ -494,7 +494,10 @@ async function processInitForm(
           return 'Arweave only supported via substreams';
         }
         if (name === 'cosmos') {
-          return 'Cosmos only supported via substreams';
+          return 'Cosmos chains only supported via substreams';
+        }
+        if (name === 'near') {
+          return 'Near chains only supported via substreams';
         }
         return true;
       },
