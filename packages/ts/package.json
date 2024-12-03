@@ -6,7 +6,7 @@
   "module": "index.ts",
   "types": "index.ts",
   "scripts": {
-    "build": "asc --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts -o index.wasm",
+    "build": "asc --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts -o index.wasm --disableWarning 235",
     "format": "prettier --write -c **/*.{js,mjs,ts}",
     "lint": "prettier -c **/*.{js,mjs,ts}",
     "test": "node test/test.mjs"
