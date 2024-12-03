@@ -18,8 +18,8 @@
     "deploy-local": "graph deploy example --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.71.2",
-    "@graphprotocol/graph-ts": "0.35.1",
+    "@graphprotocol/graph-cli": "0.91.0",
+    "@graphprotocol/graph-ts": "0.36.0",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "hardhat": "^2.13.1"
   }

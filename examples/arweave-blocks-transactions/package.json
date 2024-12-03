@@ -19,7 +19,7 @@
     "remove-local": "graph remove arweave-example --node http://localhost:8020"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.71.2",
-    "@graphprotocol/graph-ts": "0.35.1"
+    "@graphprotocol/graph-cli": "0.91.0",
+    "@graphprotocol/graph-ts": "0.36.0"
   }
 }
