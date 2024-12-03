@@ -496,9 +496,6 @@ async function processInitForm(
         if (name === 'cosmos') {
           return 'Cosmos chains only supported via substreams';
         }
-        if (name === 'near') {
-          return 'Near chains only supported via substreams';
-        }
         return true;
       },
     });
@@ -543,40 +540,34 @@ async function processInitForm(
           (!protocolInstance.hasContract() && !isComposedSubgraph),
         initial: initContract,
         validate: async (value: string) => {
+          if (initFromExample !== undefined || !protocolInstance.hasContract()) {
+            return true;
+          }
           if (isComposedSubgraph) {
             return value.startsWith('Qm') ? true : 'Subgraph deployment ID must start with Qm';
           }
 
-          if (initFromExample !== undefined || !protocolInstance.hasContract()) {
-            return true;
-          }
-
-          const protocolContract = protocolInstance.getContract();
-          if (!protocolContract) {
-            return 'Contract not found.';
-          }
-          // Validate whether the contract is valid
-          const { valid, error } = validateContract(value, protocolContract);
-
+          const { valid, error } = validateContract(value, protocolInstance.getContract()!);
           return valid ? true : error;
         },
         result: async (address: string) => {
-          if (initFromExample !== undefined || isSubstreams || initAbiPath || isComposedSubgraph) {
+          if (
+            initFromExample !== undefined ||
+            initAbiPath ||
+            protocolInstance.name !== 'ethereum' // we can only validate against Etherscan API
+          ) {
             initDebugger("value: '%s'", address);
             return address;
           }
 
-          const ABI = protocolInstance.getABI();
-
-          // Try loading the ABI from Etherscan, if none was provided
+          // If ABI is not provided, try to fetch it from Etherscan API
           if (protocolInstance.hasABIs() && !initAbi) {
             abiFromEtherscan = await retryWithPrompt(() =>
-              contractService.getABI(ABI, networkId, address),
+              contractService.getABI(protocolInstance.getABI(), networkId, address),
             );
           }
-          // If startBlock is not set, try to load it.
+          // If startBlock is not provided, try to fetch it from Etherscan API
           if (!initStartBlock) {
-            // Load startBlock for this contract
             const startBlock = await retryWithPrompt(() =>
               contractService.getStartBlock(networkId, address),
             );
@@ -585,9 +576,8 @@ async function processInitForm(
             }
           }
 
-          // If contract name is not set, try to load it.
+          // If contract name is not provided, try to fetch it from Etherscan API
           if (!initContractName) {
-            // Load contract name for this contract
             const contractName = await retryWithPrompt(() =>
               contractService.getContractName(networkId, address),
             );

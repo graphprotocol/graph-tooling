@@ -12,7 +12,7 @@ export class ContractService {
 
   private async fetchFromEtherscan(url: string): Promise<any | null> {
     const result = await fetch(url).catch(_error => {
-      throw new Error(`Etherscan API is unreachable`);
+      throw new Error(`Contract API is unreachable`);
     });
     let json: any = {};
 
@@ -25,7 +25,7 @@ export class ContractService {
     }
 
     logger(
-      'Failed to fetch from etherscan: [%s] %s (%s)\n%O',
+      'Failed to fetch from contract API: [%s] %s (%s)\n%O',
       result.status,
       result.statusText,
       result.url,
@@ -75,12 +75,12 @@ export class ContractService {
 
     let errors: string[] = [];
     return await withSpinner(
-      `Fetching ABI from Etherscan`,
-      `Failed to fetch ABI from Etherscan`,
-      `Warnings while fetching ABI from Etherscan`,
+      `Fetching ABI from contract API`,
+      `Failed to fetch ABI from contract API`,
+      `Warnings while fetching ABI from contract API`,
       async () => {
         if (!urls.length) {
-          throw new Error(`No Etherscan API available`);
+          throw new Error(`No contract API available for ${networkId} in the registry`);
         }
         for (const url of urls) {
           try {
@@ -107,12 +107,12 @@ export class ContractService {
     const urls = this.getEtherscanUrls(networkId);
 
     return await withSpinner(
-      `Fetching Start Block`,
-      `Failed to fetch Start Block`,
-      `Warnings while fetching deploy contract transaction from Etherscan`,
+      `Fetching start block`,
+      `Failed to fetch start block`,
+      `Warnings while fetching deploy contract transaction from contract API`,
       async () => {
         if (!urls.length) {
-          throw new Error(`No Etherscan API available`);
+          throw new Error(`No contract API available for ${networkId} in the registry`);
         }
         for (const url of urls) {
           try {
@@ -146,12 +146,12 @@ export class ContractService {
     const urls = this.getEtherscanUrls(networkId);
 
     return await withSpinner(
-      `Fetching Contract Name`,
-      `Failed to fetch Contract Name`,
-      `Warnings while fetching contract name from Etherscan`,
+      `Fetching contract name`,
+      `Failed to fetch contract name`,
+      `Warnings while fetching contract name from contract API`,
       async () => {
         if (!urls.length) {
-          throw new Error(`No Etherscan API available`);
+          throw new Error(`No contract API available for ${networkId} in the registry`);
         }
         for (const url of urls) {
           try {
@@ -179,7 +179,7 @@ export class ContractService {
   private async fetchTransactionByHash(networkId: string, txHash: string) {
     const urls = this.getRpcUrls(networkId);
     if (!urls.length) {
-      throw new Error(`No JSON-RPC available`);
+      throw new Error(`No JSON-RPC available for ${networkId} in the registry`);
     }
     for (const url of urls) {
       try {
