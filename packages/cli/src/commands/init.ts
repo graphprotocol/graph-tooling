@@ -337,7 +337,7 @@ async function processFromExampleInitForm(
       {
         type: 'input',
         name: 'subgraphName',
-        message: () => 'Subgraph slug',
+        message: 'Subgraph slug',
         initial: initSubgraphName,
       },
     ]);
@@ -483,13 +483,17 @@ async function processInitForm(
     const { protocol } = await prompt.ask<{ protocol: string }>({
       type: 'select',
       name: 'protocol',
-      message: 'Protocol',
-      choices: [network.graphNode?.protocol ?? '', 'substreams'].filter(Boolean),
-      validate: value => {
-        if (value === 'arweave') {
+      message: 'Source',
+      choices: [
+        { message: 'Smart contract', name: network.graphNode?.protocol ?? '', value: 'contract' },
+        { message: 'Substreams', name: 'substreams', value: 'substreams' },
+        { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
+      ].filter(({ name }) => name),
+      validate: name => {
+        if (name === 'arweave') {
           return 'Arweave only supported via substreams';
         }
-        if (value === 'cosmos') {
+        if (name === 'cosmos') {
           return 'Cosmos only supported via substreams';
         }
         return true;
@@ -522,7 +526,7 @@ async function processInitForm(
     ]);
 
     const sourceMessage = isComposedSubgraph
-      ? 'Source subgraph identifier'
+      ? 'Source subgraph deployment ID'
       : `Contract ${protocolInstance.getContract()?.identifierName()}`;
 
     const { source } = await prompt.ask<{ source: string }>([
@@ -531,11 +535,13 @@ async function processInitForm(
         name: 'source',
         message: sourceMessage,
         skip: () =>
-          initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
+          initFromExample !== undefined ||
+          isSubstreams ||
+          (!protocolInstance.hasContract() && !isComposedSubgraph),
         initial: initContract,
         validate: async (value: string) => {
           if (isComposedSubgraph) {
-            return true;
+            return value.startsWith('Qm') ? true : 'Subgraph deployment ID must start with Qm';
           }
 
           if (initFromExample !== undefined || !protocolInstance.hasContract()) {
@@ -692,7 +698,7 @@ async function processInitForm(
       {
         type: 'input',
         name: 'startBlock',
-        message: 'Start Block',
+        message: 'Start block',
         initial: initStartBlock || startBlockFromEtherscan || '0',
         skip: () => initFromExample !== undefined || isSubstreams,
         validate: value => parseInt(value) >= 0,
@@ -703,7 +709,7 @@ async function processInitForm(
       {
         type: 'input',
         name: 'contractName',
-        message: 'Contract Name',
+        message: 'Contract name',
         initial: initContractName || contractNameFromEtherscan || 'Contract',
         skip: () =>
           initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
