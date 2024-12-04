@@ -742,8 +742,7 @@ async function processInitForm(
       },
     });
 
-    // Execute all prompts with ESC navigation support
-    const results = await promptManager.executePrompts();
+    const results = await promptManager.executeInteractive();
     console.log('results', results);
 
     return {
@@ -762,6 +761,7 @@ async function processInitForm(
       cleanup: spkgCleanup,
     };
   } catch (e) {
+    console.error(e);
     this.error(e, { exit: 1 });
   }
 }

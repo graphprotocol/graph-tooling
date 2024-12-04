@@ -1,25 +1,22 @@
 import { prompt } from 'gluegun';
 import { PromptOptions } from 'gluegun/build/types/toolbox/prompt-enquirer-types';
 
-interface PromptStep {
-  execute: () => Promise<any>;
-}
-
 export class PromptManager {
-  private steps: PromptStep[] = [];
+  private steps: PromptOptions[] = [];
   private currentStep = 0;
   private results: any[] = [];
 
   addStep(options: PromptOptions) {
-    this.steps.push({
-      execute: async () => {
-        const result = await prompt.ask(options);
-        return result;
-      },
-    });
+    this.steps.push(options);
   }
 
-  async executePrompts() {
+  // runs all steps and returns the results
+  async execute() {
+    return prompt.ask(this.steps);
+  }
+
+  // allows going back with Escape and returns the results
+  async executeInteractive() {
     let isCtrlC = false;
     // gluegun always throws empty string, so we have this workaround
     const keypressHandler = (_: string, key: { name: string; ctrl: boolean }) => {
@@ -31,7 +28,7 @@ export class PromptManager {
 
     while (this.currentStep < this.steps.length) {
       try {
-        const result = await this.steps[this.currentStep].execute();
+        const result = await prompt.ask(this.steps[this.currentStep]);
         this.results[this.currentStep] = result;
         this.currentStep++;
       } catch (error) {
