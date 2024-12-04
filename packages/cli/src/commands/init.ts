@@ -10,6 +10,7 @@ import { resolveFile } from '../command-helpers/file-resolver.js';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
 import { initNetworksConfig } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
+import { PromptManager } from '../command-helpers/prompt-manager.js';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold.js';
 import { sortWithPriority } from '../command-helpers/sort.js';
 import { withSpinner } from '../command-helpers/spinner.js';
@@ -473,7 +474,9 @@ async function processInitForm(
     let spkgCleanup: (() => void) | undefined;
     let indexEvents = initIndexEvents;
 
-    await prompt.ask({
+    const promptManager = new PromptManager();
+
+    promptManager.addStep({
       type: 'autocomplete',
       name: 'networkId',
       required: true,
@@ -494,7 +497,7 @@ async function processInitForm(
       },
     });
 
-    await prompt.ask({
+    promptManager.addStep({
       type: 'select',
       name: 'protocol',
       message: 'Source',
@@ -521,241 +524,227 @@ async function processInitForm(
       },
     });
 
-    await prompt.ask([
-      {
-        type: 'input',
-        name: 'subgraphName',
-        message: 'Subgraph slug',
-        initial: initSubgraphName,
-        result: value => {
-          initDebugger.extend('processInitForm')('subgraphName: %O', value);
-          subgraphName = value;
-          return value;
-        },
+    promptManager.addStep({
+      type: 'input',
+      name: 'subgraphName',
+      message: 'Subgraph slug',
+      initial: initSubgraphName,
+      result: value => {
+        initDebugger.extend('processInitForm')('subgraphName: %O', value);
+        subgraphName = value;
+        return value;
       },
-    ]);
+    });
 
-    await prompt.ask([
-      {
-        type: 'input',
-        name: 'directory',
-        message: 'Directory to create the subgraph in',
-        initial: () => initDirectory || getSubgraphBasename(subgraphName),
-        result: value => {
-          directory = value;
-          initDebugger.extend('processInitForm')('directory: %O', value);
-          return value;
-        },
+    promptManager.addStep({
+      type: 'input',
+      name: 'directory',
+      message: 'Directory to create the subgraph in',
+      initial: () => initDirectory || getSubgraphBasename(subgraphName),
+      result: value => {
+        directory = value;
+        initDebugger.extend('processInitForm')('directory: %O', value);
+        return value;
       },
-    ]);
+    });
 
-    await prompt.ask([
-      {
-        type: 'input',
-        name: 'source',
-        message: isComposedSubgraph
+    promptManager.addStep({
+      type: 'input',
+      name: 'source',
+      message: () =>
+        isComposedSubgraph
           ? 'Source subgraph deployment ID'
           : `Contract ${protocolInstance.getContract()?.identifierName()}`,
-        skip: () =>
+      skip: () =>
+        initFromExample !== undefined ||
+        isSubstreams ||
+        (!protocolInstance.hasContract() && !isComposedSubgraph),
+      initial: initContract,
+      validate: async (value: string) => {
+        if (isComposedSubgraph) {
+          return value.startsWith('Qm') ? true : 'Subgraph deployment ID must start with Qm';
+        }
+        if (initFromExample !== undefined || !protocolInstance.hasContract()) {
+          return true;
+        }
+
+        const { valid, error } = validateContract(value, protocolInstance.getContract()!);
+        return valid ? true : error;
+      },
+      result: async (address: string) => {
+        initDebugger.extend('processInitForm')("source: '%s'", address);
+        if (
           initFromExample !== undefined ||
-          isSubstreams ||
-          (!protocolInstance.hasContract() && !isComposedSubgraph),
-        initial: initContract,
-        validate: async (value: string) => {
-          if (initFromExample !== undefined || !protocolInstance.hasContract()) {
-            return true;
-          }
-          if (isComposedSubgraph) {
-            return value.startsWith('Qm') ? true : 'Subgraph deployment ID must start with Qm';
-          }
-
-          const { valid, error } = validateContract(value, protocolInstance.getContract()!);
-          return valid ? true : error;
-        },
-        result: async (address: string) => {
-          initDebugger.extend('processInitForm')("source: '%s'", address);
-          if (
-            initFromExample !== undefined ||
-            initAbiPath ||
-            protocolInstance.name !== 'ethereum' // we can only validate against Etherscan API
-          ) {
-            source = address;
-            return address;
-          }
-
-          // If ABI is not provided, try to fetch it from Etherscan API
-          if (protocolInstance.hasABIs() && !initAbi) {
-            abiFromApi = await retryWithPrompt(() =>
-              contractService.getABI(protocolInstance.getABI(), network.id, address),
-            );
-            initDebugger.extend('processInitForm')("abiFromEtherscan len: '%s'", abiFromApi?.name);
-          }
-          // If startBlock is not provided, try to fetch it from Etherscan API
-          if (!initStartBlock) {
-            startBlock = await retryWithPrompt(() =>
-              contractService.getStartBlock(network.id, address),
-            );
-            initDebugger.extend('processInitForm')("startBlockFromEtherscan: '%s'", startBlock);
-          }
-
-          // If contract name is not provided, try to fetch it from Etherscan API
-          if (!initContractName) {
-            contractName = await retryWithPrompt(() =>
-              contractService.getContractName(network.id, address),
-            );
-            initDebugger.extend('processInitForm')("contractNameFromEtherscan: '%s'", contractName);
-          }
-
+          initAbiPath ||
+          protocolInstance.name !== 'ethereum' // we can only validate against Etherscan API
+        ) {
           source = address;
           return address;
-        },
-      },
-    ]);
+        }
 
-    await prompt.ask([
-      {
-        type: 'input',
-        name: 'ipfs',
-        message: `IPFS node to use for fetching subgraph manifest`,
-        initial: ipfsUrl,
-        skip: () => !isComposedSubgraph,
-        result: value => {
-          ipfsNode = value;
-          initDebugger.extend('processInitForm')('ipfs: %O', value);
-          return value;
-        },
-      },
-    ]);
-
-    await prompt.ask<{ spkg: string }>([
-      {
-        type: 'input',
-        name: 'spkg',
-        message: 'Substreams SPKG (local path, IPFS hash, or URL)',
-        initial: () => initSpkgPath,
-        skip: () => !isSubstreams || !!initSpkgPath,
-        validate: async value => {
-          if (!isSubstreams || !!initSpkgPath) return true;
-          return await withSpinner(
-            `Resolving Substreams SPKG file`,
-            `Failed to resolve SPKG file`,
-            `Warnings while resolving SPKG file`,
-            async () => {
-              try {
-                const { path, cleanup } = await resolveFile(value, 'substreams.spkg', 10_000);
-                spkgPath = path;
-                spkgCleanup = cleanup;
-                initDebugger.extend('processInitForm')('spkgPath: %O', path);
-                return true;
-              } catch (e) {
-                return e.message;
-              }
-            },
+        // If ABI is not provided, try to fetch it from Etherscan API
+        if (protocolInstance.hasABIs() && !initAbi) {
+          abiFromApi = await retryWithPrompt(() =>
+            contractService.getABI(protocolInstance.getABI(), network.id, address),
           );
-        },
-      },
-    ]);
+          initDebugger.extend('processInitForm')("abiFromEtherscan len: '%s'", abiFromApi?.name);
+        }
+        // If startBlock is not provided, try to fetch it from Etherscan API
+        if (!initStartBlock) {
+          startBlock = await retryWithPrompt(() =>
+            contractService.getStartBlock(network.id, address),
+          );
+          initDebugger.extend('processInitForm')("startBlockFromEtherscan: '%s'", startBlock);
+        }
 
-    await prompt.ask([
-      {
-        type: 'input',
-        name: 'abi',
-        message: 'ABI file (path)',
-        initial: initAbiPath,
-        skip: () =>
+        // If contract name is not provided, try to fetch it from Etherscan API
+        if (!initContractName) {
+          contractName = await retryWithPrompt(() =>
+            contractService.getContractName(network.id, address),
+          );
+          initDebugger.extend('processInitForm')("contractNameFromEtherscan: '%s'", contractName);
+        }
+
+        source = address;
+        return address;
+      },
+    });
+
+    promptManager.addStep({
+      type: 'input',
+      name: 'ipfs',
+      message: `IPFS node to use for fetching subgraph manifest`,
+      initial: ipfsUrl,
+      skip: () => !isComposedSubgraph,
+      result: value => {
+        ipfsNode = value;
+        initDebugger.extend('processInitForm')('ipfs: %O', value);
+        return value;
+      },
+    });
+
+    promptManager.addStep({
+      type: 'input',
+      name: 'spkg',
+      message: 'Substreams SPKG (local path, IPFS hash, or URL)',
+      initial: () => initSpkgPath,
+      skip: () => !isSubstreams || !!initSpkgPath,
+      validate: async value => {
+        if (!isSubstreams || !!initSpkgPath) return true;
+        return await withSpinner(
+          `Resolving Substreams SPKG file`,
+          `Failed to resolve SPKG file`,
+          `Warnings while resolving SPKG file`,
+          async () => {
+            try {
+              const { path, cleanup } = await resolveFile(value, 'substreams.spkg', 10_000);
+              spkgPath = path;
+              spkgCleanup = cleanup;
+              initDebugger.extend('processInitForm')('spkgPath: %O', path);
+              return true;
+            } catch (e) {
+              return e.message;
+            }
+          },
+        );
+      },
+    });
+
+    promptManager.addStep({
+      type: 'input',
+      name: 'abiFromFile',
+      message: 'ABI file (path)',
+      initial: initAbiPath,
+      skip: () =>
+        !protocolInstance.hasABIs() ||
+        initFromExample !== undefined ||
+        abiFromApi !== undefined ||
+        isSubstreams ||
+        !!initAbiPath ||
+        isComposedSubgraph,
+      validate: async (value: string) => {
+        if (
+          initFromExample ||
+          abiFromApi ||
           !protocolInstance.hasABIs() ||
-          initFromExample !== undefined ||
-          abiFromApi !== undefined ||
           isSubstreams ||
-          !!initAbiPath ||
-          isComposedSubgraph,
-        validate: async (value: string) => {
-          if (
-            initFromExample ||
-            abiFromApi ||
-            !protocolInstance.hasABIs() ||
-            isSubstreams ||
-            isComposedSubgraph
-          ) {
-            return true;
-          }
+          isComposedSubgraph
+        ) {
+          return true;
+        }
 
-          const ABI = protocolInstance.getABI();
-          if (initAbiPath) value = initAbiPath;
+        const ABI = protocolInstance.getABI();
+        if (initAbiPath) value = initAbiPath;
 
-          try {
-            loadAbiFromFile(ABI, value);
-            return true;
-          } catch (e) {
-            return e.message;
-          }
-        },
-        result: async (value: string) => {
-          initDebugger.extend('processInitForm')('abiFromFile: %O', value);
-          if (initFromExample || abiFromApi || !protocolInstance.hasABIs() || isComposedSubgraph) {
-            return null;
-          }
-
-          const ABI = protocolInstance.getABI();
-          if (initAbiPath) value = initAbiPath;
-
-          try {
-            abiFromFile = loadAbiFromFile(ABI, value);
-            return value;
-          } catch (e) {
-            return e.message;
-          }
-        },
+        try {
+          loadAbiFromFile(ABI, value);
+          return true;
+        } catch (e) {
+          return e.message;
+        }
       },
-    ]);
+      result: async (value: string) => {
+        initDebugger.extend('processInitForm')('abiFromFile: %O', value);
+        if (initFromExample || abiFromApi || !protocolInstance.hasABIs() || isComposedSubgraph) {
+          return null;
+        }
 
-    await prompt.ask([
-      {
-        type: 'input',
-        name: 'startBlock',
-        message: 'Start block',
-        initial: initStartBlock || startBlock || '0',
-        skip: () => initFromExample !== undefined || isSubstreams,
-        validate: value => parseInt(value) >= 0,
-        result: value => {
-          startBlock = value;
-          initDebugger.extend('processInitForm')('startBlock: %O', value);
+        const ABI = protocolInstance.getABI();
+        if (initAbiPath) value = initAbiPath;
+
+        try {
+          abiFromFile = loadAbiFromFile(ABI, value);
           return value;
-        },
+        } catch (e) {
+          return e.message;
+        }
       },
-    ]);
+    });
 
-    await prompt.ask([
-      {
-        type: 'input',
-        name: 'contractName',
-        message: 'Contract name',
-        initial: initContractName || 'Contract',
-        skip: () =>
-          initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
-        validate: value => value && value.length > 0,
-        result: value => {
-          contractName = value;
-          initDebugger.extend('processInitForm')('contractName: %O', value);
-          return value;
-        },
+    promptManager.addStep({
+      type: 'input',
+      name: 'startBlock',
+      message: 'Start block',
+      initial: () => initStartBlock || startBlock || '0',
+      skip: () => initFromExample !== undefined || isSubstreams,
+      validate: value => parseInt(value) >= 0,
+      result: value => {
+        startBlock = value;
+        initDebugger.extend('processInitForm')('startBlock: %O', value);
+        return value;
       },
-    ]);
+    });
 
-    await prompt.ask([
-      {
-        type: 'confirm',
-        name: 'indexEvents',
-        message: 'Index contract events as entities',
-        initial: true,
-        skip: () => !!initIndexEvents || isSubstreams || isComposedSubgraph,
-        result: value => {
-          indexEvents = value === 'true';
-          initDebugger.extend('processInitForm')('indexEvents: %O', value);
-          return value;
-        },
+    promptManager.addStep({
+      type: 'input',
+      name: 'contractName',
+      message: 'Contract name',
+      initial: () => initContractName || contractName || 'Contract',
+      skip: () => initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
+      validate: value => value && value.length > 0,
+      result: value => {
+        contractName = value;
+        initDebugger.extend('processInitForm')('contractName: %O', value);
+        return value;
       },
-    ]);
+    });
+
+    promptManager.addStep({
+      type: 'confirm',
+      name: 'indexEvents',
+      message: 'Index contract events as entities',
+      initial: true,
+      skip: () => !!initIndexEvents || isSubstreams || isComposedSubgraph,
+      result: value => {
+        indexEvents = value === 'true';
+        initDebugger.extend('processInitForm')('indexEvents: %O', value);
+        return value;
+      },
+    });
+
+    // Execute all prompts with ESC navigation support
+    const results = await promptManager.executePrompts();
+    console.log('results', results);
 
     return {
       abi: (abiFromApi || abiFromFile)!,
