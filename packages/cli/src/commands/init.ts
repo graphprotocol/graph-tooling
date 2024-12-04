@@ -529,6 +529,7 @@ async function processInitForm(
       name: 'subgraphName',
       message: 'Subgraph slug',
       initial: initSubgraphName,
+      validate: value => value.length > 0 || 'Subgraph slug must not be empty',
       result: value => {
         initDebugger.extend('processInitForm')('subgraphName: %O', value);
         subgraphName = value;
@@ -541,6 +542,7 @@ async function processInitForm(
       name: 'directory',
       message: 'Directory to create the subgraph in',
       initial: () => initDirectory || getSubgraphBasename(subgraphName),
+      validate: value => value.length > 0 || 'Directory must not be empty',
       result: value => {
         directory = value;
         initDebugger.extend('processInitForm')('directory: %O', value);
@@ -707,7 +709,11 @@ async function processInitForm(
       message: 'Start block',
       initial: () => initStartBlock || startBlock || '0',
       skip: () => initFromExample !== undefined || isSubstreams,
-      validate: value => parseInt(value) >= 0,
+      validate: value =>
+        initFromExample !== undefined ||
+        isSubstreams ||
+        parseInt(value) >= 0 ||
+        'Invalid start block',
       result: value => {
         startBlock = value;
         initDebugger.extend('processInitForm')('startBlock: %O', value);
@@ -721,7 +727,12 @@ async function processInitForm(
       message: 'Contract name',
       initial: () => initContractName || contractName || 'Contract',
       skip: () => initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
-      validate: value => value && value.length > 0,
+      validate: value =>
+        initFromExample !== undefined ||
+        !protocolInstance.hasContract() ||
+        isSubstreams ||
+        value.length > 0 ||
+        'Contract name must not be empty',
       result: value => {
         contractName = value;
         initDebugger.extend('processInitForm')('contractName: %O', value);
@@ -742,8 +753,7 @@ async function processInitForm(
       },
     });
 
-    const results = await promptManager.executeInteractive();
-    console.log('results', results);
+    await promptManager.executeInteractive();
 
     return {
       abi: (abiFromApi || abiFromFile)!,
@@ -761,7 +771,6 @@ async function processInitForm(
       cleanup: spkgCleanup,
     };
   } catch (e) {
-    console.error(e);
     this.error(e, { exit: 1 });
   }
 }

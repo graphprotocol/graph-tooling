@@ -28,8 +28,7 @@ export class PromptManager {
 
     while (this.currentStep < this.steps.length) {
       try {
-        const result = await prompt.ask(this.steps[this.currentStep]);
-        this.results[this.currentStep] = result;
+        this.results[this.currentStep] = await prompt.ask(this.steps[this.currentStep]);
         this.currentStep++;
       } catch (error) {
         if (error instanceof Error) {
@@ -42,6 +41,12 @@ export class PromptManager {
         // delete 2 lines
         process.stdout.write('\x1b[1A\x1b[2K\x1b[1A\x1b[2K');
         this.currentStep--;
+        while (this.currentStep > 0) {
+          const skip = this.steps[this.currentStep].skip;
+          const shouldSkip = typeof skip === 'function' ? await skip({}) : skip;
+          if (!shouldSkip) break;
+          this.currentStep--;
+        }
       }
     }
 
