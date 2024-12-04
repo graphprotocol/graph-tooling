@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import * as toolbox from 'gluegun';
 import Compiler from '../compiler/index.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';

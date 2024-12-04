@@ -9,22 +9,17 @@ module.exports = {
     'packages/cli/tests/cli/validation',
     'packages/ts/test/',
     'examples',
-    'cf-pages/*',
-    'vitest.config.ts',
+    'vitest.config.ts'
   ],
   rules: {
     // not necessary here, we dont build with bob
     'import/extensions': 'off',
     // pushing to array multiple times is not a big deal
     'unicorn/no-array-push-push': 'off',
-    // TODO: warning for now, clean up
-    '@typescript-eslint/no-this-alias': 'warn',
     // TODO: remove default exports, breaking change?
     'import/no-default-export': 'off',
     // TODO: remove once we get rid of all anys
     '@typescript-eslint/no-explicit-any': 'off',
-    // TODO: not ready yet
-    'unicorn/prefer-node-protocol': 'off',
     '@typescript-eslint/ban-types': 'off',
     // AssemblyScript `===` is a reference equality check, not a value equality check. We are trying to do a value check. Learn more: https://github.com/AssemblyScript/assemblyscript/issues/621#issuecomment-497973428
     eqeqeq: 'off',
@@ -36,12 +31,8 @@ module.exports = {
       rules: {
         // TODO: want to avoid any structural change so fix it later
         '@typescript-eslint/no-namespace': 'off',
-        // TODO: warning for now, clean up
-        'unicorn/filename-case': 'warn',
-        // TODO: warning for now, clean up
-        'sonarjs/no-inverted-boolean-check': 'warn',
-        // TODO: warning for now, clean up
-        '@typescript-eslint/no-loss-of-precision': 'warn',
+        // Some operator depend on the implementation of others, prevent recursion
+        'sonarjs/no-inverted-boolean-check': 'off',
         'no-loss-of-precision': 'warn',
         // AssemblyScript types are different from TS and in cases we want to use what TS may think we should not,
       },

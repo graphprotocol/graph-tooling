@@ -399,14 +399,13 @@ export class Entity extends TypedMap<string, Value> {
 
   /** Assigns properties from sources to this Entity in right-to-left order */
   merge(sources: Array<Entity>): Entity {
-    const target = this;
     for (let i = 0; i < sources.length; i++) {
       const entries = sources[i].entries;
       for (let j = 0; j < entries.length; j++) {
-        target.set(entries[j].key, entries[j].value);
+        this.set(entries[j].key, entries[j].value);
       }
     }
-    return target;
+    return this;
   }
 
   setString(key: string, value: string): void {

@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import path from 'path';
+import crypto from 'node:crypto';
+import path from 'node:path';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
@@ -188,7 +188,6 @@ export default class Compiler {
   }
 
   async watchAndCompile(onCompiled?: (ipfsHash: string) => void) {
-    const compiler = this;
     let spinner: Spinner;
 
     // Create watcher and recompile once and then on every change to a watched file
@@ -198,11 +197,11 @@ export default class Compiler {
         if (changedFile !== undefined) {
           spinner.info(`File change detected: ${this.displayPath(changedFile)}\n`);
         }
-        const ipfsHash = await compiler.compile({ validate: false });
+        const ipfsHash = await this.compile({ validate: false });
         onCompiled?.(ipfsHash);
         spinner.start();
       },
-      onCollectFiles: async () => await compiler.getFilesToWatch(),
+      onCollectFiles: async () => await this.getFilesToWatch(),
       onError: error => {
         spinner.stop();
         toolbox.print.error(`${error.message}\n`);

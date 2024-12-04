@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { Args, Command, Flags } from '@oclif/core';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';

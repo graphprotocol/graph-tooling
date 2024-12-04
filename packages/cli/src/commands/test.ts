@@ -1,6 +1,6 @@
-import { exec, spawn } from 'child_process';
-import os from 'os';
-import path from 'path';
+import { exec, spawn } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
 import { Binary } from 'binary-install';
 import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';

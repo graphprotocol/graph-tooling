@@ -1,5 +1,4 @@
 // Side-effect to evaluate eagerly the offset of stub AS runtime
-import './common/eager_offset';
 import { ByteArray, Bytes, Entity } from './common/collections';
 import { Value } from './common/value';
 

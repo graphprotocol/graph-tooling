@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
 import * as graphql from 'graphql/language/index.js';
@@ -316,7 +316,6 @@ export default class TypeGenerator {
   }
 
   async watchAndGenerateTypes() {
-    const generator = this;
     let spinner: Spinner;
 
     // Create watcher and generate types once and then on every change to a watched file
@@ -326,10 +325,10 @@ export default class TypeGenerator {
         if (changedFile !== undefined) {
           spinner.info(`File change detected: ${displayPath(changedFile)}\n`);
         }
-        await generator.generateTypes();
+        await this.generateTypes();
         spinner.start();
       },
-      onCollectFiles: async () => await generator.getFilesToWatch(),
+      onCollectFiles: async () => await this.getFilesToWatch(),
       onError: error => {
         spinner.stop();
         toolbox.print.error(`${error}\n`);

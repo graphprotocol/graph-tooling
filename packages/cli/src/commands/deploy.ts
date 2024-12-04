@@ -1,5 +1,5 @@
-import path from 'path';
-import { URL } from 'url';
+import path from 'node:path';
+import { URL } from 'node:url';
 import { print, prompt } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
 import { identifyDeployKey } from '../command-helpers/auth.js';
