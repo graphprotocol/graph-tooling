@@ -9,7 +9,7 @@ module.exports = {
     'packages/cli/tests/cli/validation',
     'packages/ts/test/',
     'examples',
-    'vitest.config.ts'
+    'vitest.config.ts',
   ],
   rules: {
     // not necessary here, we dont build with bob
