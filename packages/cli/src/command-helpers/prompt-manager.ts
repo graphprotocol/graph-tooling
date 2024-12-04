@@ -18,11 +18,9 @@ export class PromptManager {
   // allows going back with Escape and returns the results
   async executeInteractive() {
     let isCtrlC = false;
-    // gluegun always throws empty string, so we have this workaround
+    // gluegun always throws empty string so we don't know what caused the exception, so we need this workaround to handle Ctrl+C
     const keypressHandler = (_: string, key: { name: string; ctrl: boolean }) => {
-      if (key.ctrl && key.name === 'c') {
-        isCtrlC = true;
-      }
+      isCtrlC = key.ctrl && key.name === 'c';
     };
     process.stdin.on('keypress', keypressHandler);
 
@@ -42,6 +40,7 @@ export class PromptManager {
         process.stdout.write('\x1b[1A\x1b[2K\x1b[1A\x1b[2K');
         this.currentStep--;
         while (this.currentStep > 0) {
+          delete this.results[this.currentStep];
           const skip = this.steps[this.currentStep].skip;
           const shouldSkip = typeof skip === 'function' ? await skip({}) : skip;
           if (!shouldSkip) break;
