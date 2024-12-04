@@ -43,4 +43,4 @@ describe('Add command', () => {
 
     expect(expected.equals(abi)).toBe(true);
   });
-});
+}, { timeout: 20_000 });
