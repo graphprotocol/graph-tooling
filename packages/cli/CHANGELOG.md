@@ -1,5 +1,19 @@
 # @graphprotocol/graph-cli
 
+## 0.91.0
+
+### Minor Changes
+
+- [#1754](https://github.com/graphprotocol/graph-tooling/pull/1754)
+  [`2050bf6`](https://github.com/graphprotocol/graph-tooling/commit/2050bf6259c19bd86a7446410c7e124dfaddf4cd)
+  Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for subgraph datasource and
+  associated types.
+
+- [#1781](https://github.com/graphprotocol/graph-tooling/pull/1781)
+  [`e8218ee`](https://github.com/graphprotocol/graph-tooling/commit/e8218eedec4292a95957efc5cadcbcf5280c0375)
+  Thanks [@alinobrasil](https://github.com/alinobrasil)! - added rpc and api urls for
+  botanix-testnet
+
 ## 0.90.1
 
 ### Patch Changes
