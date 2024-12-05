@@ -1,8 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Validation > @derivedFrom target type missing 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
   Foo:
@@ -15,8 +14,7 @@ exports[`Validation > @derivedFrom target type missing 2`] = `1`;
 exports[`Validation > @derivedFrom target type missing 3`] = `""`;
 
 exports[`Validation > 2D arrays are valid 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -53,8 +51,7 @@ Types generated successfully
 `;
 
 exports[`Validation > 3D arrays are valid 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -91,8 +88,7 @@ Types generated successfully
 `;
 
 exports[`Validation > ABI not found in data source 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > source > abi
@@ -113,8 +109,7 @@ exports[`Validation > ABI not found in data source 2`] = `1`;
 exports[`Validation > ABI not found in data source 3`] = `""`;
 
 exports[`Validation > BigDecimal is a valid type 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -151,8 +146,7 @@ Types generated successfully
 `;
 
 exports[`Validation > Block handler filters 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -189,8 +183,7 @@ Types generated successfully
 `;
 
 exports[`Validation > Call function not found in the ABI 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > callHandlers > 0
@@ -208,8 +201,7 @@ exports[`Validation > Call function not found in the ABI 2`] = `1`;
 exports[`Validation > Call function not found in the ABI 3`] = `""`;
 
 exports[`Validation > Call handler with tuple 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -246,8 +238,7 @@ Types generated successfully
 `;
 
 exports[`Validation > Conflicting network names 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: /
@@ -265,8 +256,7 @@ exports[`Validation > Conflicting network names 2`] = `1`;
 exports[`Validation > Conflicting network names 3`] = `""`;
 
 exports[`Validation > Conflicting protocol names 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: /
@@ -284,8 +274,7 @@ exports[`Validation > Conflicting protocol names 2`] = `1`;
 exports[`Validation > Conflicting protocol names 3`] = `""`;
 
 exports[`Validation > Deprecated template format gives nice error 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > mapping
@@ -298,8 +287,7 @@ exports[`Validation > Deprecated template format gives nice error 2`] = `1`;
 exports[`Validation > Deprecated template format gives nice error 3`] = `""`;
 
 exports[`Validation > Deriving from interface-typed fields is allowed 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Gravity.json
@@ -336,8 +324,7 @@ Types generated successfully
 `;
 
 exports[`Validation > Duplicate data source name 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 1 > name
@@ -350,8 +337,7 @@ exports[`Validation > Duplicate data source name 2`] = `1`;
 exports[`Validation > Duplicate data source name 3`] = `""`;
 
 exports[`Validation > Duplicate template name 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: templates > 1 > name
@@ -364,8 +350,7 @@ exports[`Validation > Duplicate template name 2`] = `1`;
 exports[`Validation > Duplicate template name 3`] = `""`;
 
 exports[`Validation > Entity field arguments 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
   MyEntity:
@@ -378,8 +363,7 @@ exports[`Validation > Entity field arguments 2`] = `1`;
 exports[`Validation > Entity field arguments 3`] = `""`;
 
 exports[`Validation > Ethereum contract data source without handlers 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > mapping
@@ -393,8 +377,7 @@ exports[`Validation > Ethereum contract data source without handlers 2`] = `1`;
 exports[`Validation > Ethereum contract data source without handlers 3`] = `""`;
 
 exports[`Validation > Event not found in ABI 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > eventHandlers > 0
@@ -414,8 +397,7 @@ exports[`Validation > Event not found in ABI 2`] = `1`;
 exports[`Validation > Event not found in ABI 3`] = `""`;
 
 exports[`Validation > Example values found in manifest 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ⚠ Warnings while loading subgraph from subgraph.yaml: Warnings in subgraph.yaml:
 
     Path: repository
@@ -462,8 +444,7 @@ Types generated successfully
 `;
 
 exports[`Validation > Invalid @fulltext directive 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
   A:
@@ -503,8 +484,7 @@ exports[`Validation > Invalid @fulltext directive 2`] = `1`;
 exports[`Validation > Invalid @fulltext directive 3`] = `""`;
 
 exports[`Validation > Invalid ABI files 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > mapping > abis > 0 > file
@@ -517,8 +497,7 @@ exports[`Validation > Invalid ABI files 2`] = `1`;
 exports[`Validation > Invalid ABI files 3`] = `""`;
 
 exports[`Validation > Invalid GraphQL schema 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -551,8 +530,7 @@ exports[`Validation > Invalid GraphQL schema 2`] = `1`;
 exports[`Validation > Invalid GraphQL schema 3`] = `""`;
 
 exports[`Validation > Invalid contract addresses 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > source > address
@@ -574,8 +552,7 @@ exports[`Validation > Invalid contract addresses 2`] = `1`;
 exports[`Validation > Invalid contract addresses 3`] = `""`;
 
 exports[`Validation > Invalid data source template 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: dataSources > 0 > mapping > abis > 0 > file
@@ -613,8 +590,7 @@ exports[`Validation > Invalid data source template 2`] = `1`;
 exports[`Validation > Invalid data source template 3`] = `""`;
 
 exports[`Validation > Invalid entity field types 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
   MyEntity:
@@ -770,8 +746,7 @@ exports[`Validation > Invalid entity field types 2`] = `1`;
 exports[`Validation > Invalid entity field types 3`] = `""`;
 
 exports[`Validation > Invalid subgraph manifest (cannot infer protocol) 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: /
@@ -784,8 +759,7 @@ exports[`Validation > Invalid subgraph manifest (cannot infer protocol) 2`] = `1
 exports[`Validation > Invalid subgraph manifest (cannot infer protocol) 3`] = `""`;
 
 exports[`Validation > Invalid subgraph manifest 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
 
   Path: schema > file
@@ -821,8 +795,7 @@ exports[`Validation > Invalid subgraph manifest 2`] = `1`;
 exports[`Validation > Invalid subgraph manifest 3`] = `""`;
 
 exports[`Validation > Missing entity "id" field 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
   MyEntity:
@@ -835,8 +808,7 @@ exports[`Validation > Missing entity "id" field 2`] = `1`;
 exports[`Validation > Missing entity "id" field 3`] = `""`;
 
 exports[`Validation > Missing or invalid @derivedFrom fields 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
 
   A:
@@ -854,8 +826,7 @@ exports[`Validation > Missing or invalid @derivedFrom fields 2`] = `1`;
 exports[`Validation > Missing or invalid @derivedFrom fields 3`] = `""`;
 
 exports[`Validation > NEAR is a valid chain 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Generate types for data source templates
 ✔ Generate types for data source templates
@@ -878,8 +849,7 @@ Types generated successfully
 `;
 
 exports[`Validation > No network names (valid) 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -926,8 +896,7 @@ Types generated successfully
 `;
 
 exports[`Validation > Should parse indexerHints 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -964,8 +933,7 @@ Types generated successfully
 `;
 
 exports[`Validation > Source without address is valid 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
@@ -1002,8 +970,7 @@ Types generated successfully
 `;
 
 exports[`Validation > topic0 is valid in an event handler 1`] = `
-" ›   Warning: @graphprotocol/graph-cli update available from 0.90.1 to 0.91.0.
-- Load subgraph from subgraph.yaml
+"- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml
 - Load contract ABIs
   Load contract ABI from Abi.json
