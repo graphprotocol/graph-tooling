@@ -157,7 +157,7 @@ export default class InitCommand extends Command {
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
       default: DEFAULT_IPFS_URL,
-      hidden: true
+      hidden: true,
     }),
   };
 
