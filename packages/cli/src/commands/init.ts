@@ -159,7 +159,7 @@ export default class InitCommand extends Command {
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
       default: DEFAULT_IPFS_URL,
-      hidden: true
+      hidden: true,
     }),
   };
 
@@ -565,7 +565,8 @@ async function processInitForm(
         type: 'input',
         name: 'source',
         message: sourceMessage,
-        skip: () => !isComposedSubgraph,
+        skip: () =>
+          initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
         initial: initContract,
         validate: async (value: string) => {
           if (isComposedSubgraph) {
