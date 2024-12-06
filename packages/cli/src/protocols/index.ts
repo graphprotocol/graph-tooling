@@ -92,7 +92,7 @@ export default class Protocol {
       near: ['near'],
       cosmos: ['cosmos'],
       substreams: ['substreams'],
-      subgraph: ['subgraph'],
+      // subgraph: ['subgraph'],
     }) as immutable.Collection<ProtocolName, string[]>;
   }
 
