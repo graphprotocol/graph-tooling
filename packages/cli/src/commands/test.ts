@@ -180,7 +180,7 @@ async function getPlatform(
   const type = os.type();
   const arch = os.arch();
   const cpuCore = os.cpus()[0];
-  const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|M3|processor)/.test(cpuCore.model);
+  const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|M3|M4|processor)/.test(cpuCore.model);
   const linuxInfo = type === 'Linux' ? await getLinuxInfo.bind(this)() : {};
   const linuxDistro = linuxInfo.name;
   const release = linuxInfo.version || os.release();
