@@ -565,7 +565,7 @@ async function processInitForm(
         type: 'input',
         name: 'source',
         message: sourceMessage,
-        skip: () => !isComposedSubgraph,
+        skip: () => initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
         initial: initContract,
         validate: async (value: string) => {
           if (isComposedSubgraph) {
