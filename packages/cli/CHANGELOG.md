@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.91.1
+
+### Patch Changes
+
+- [#1783](https://github.com/graphprotocol/graph-tooling/pull/1783)
+  [`ea1d948`](https://github.com/graphprotocol/graph-tooling/commit/ea1d94863783e19a379ce6d545d5f8523d8bf9e8)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - Fix bug with network selection
+
 ## 0.91.0
 
 ### Minor Changes
