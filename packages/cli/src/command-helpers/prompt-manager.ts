@@ -5,9 +5,34 @@ export class PromptManager {
   private steps: PromptOptions[] = [];
   private currentStep = 0;
   private results: any[] = [];
+  private stepLines: number[] = [];
 
+  // adds a step prompt
   addStep(options: PromptOptions) {
     this.steps.push(options);
+    this.stepLines.push(1);
+  }
+
+  // "options" doesn't take closure, so to populate it dynamically we need to call this
+  setOptions(stepName: string, options: Partial<PromptOptions>) {
+    const step = this.steps.find(s => s.name === stepName);
+    if (step) {
+      Object.assign(step, options);
+    }
+  }
+
+  // can be called externally if more than one line is added on the step
+  addLine() {
+    this.stepLines[this.currentStep]++;
+  }
+
+  // clears the lines added during the step
+  private clearStepLines() {
+    const linesToClear = 1 + this.stepLines[this.currentStep];
+    for (let i = 0; i < linesToClear; i++) {
+      process.stdout.write('\x1b[1A\x1b[2K'); // Move up and clear line
+    }
+    this.stepLines[this.currentStep] = 1;
   }
 
   // runs all steps and returns the results
@@ -36,8 +61,7 @@ export class PromptManager {
           process.stdout.write('\n');
           process.exit(0);
         }
-        // delete 2 lines
-        process.stdout.write('\x1b[1A\x1b[2K\x1b[1A\x1b[2K');
+
         this.currentStep--;
         while (this.currentStep > 0) {
           delete this.results[this.currentStep];
@@ -46,6 +70,7 @@ export class PromptManager {
           if (!shouldSkip) break;
           this.currentStep--;
         }
+        this.clearStepLines();
       }
     }
 

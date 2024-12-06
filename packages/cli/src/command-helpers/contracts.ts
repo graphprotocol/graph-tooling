@@ -3,7 +3,6 @@ import { NetworksRegistry } from '@pinax/graph-networks-registry';
 import debugFactory from '../debug.js';
 import fetch from '../fetch.js';
 import ABI from '../protocols/ethereum/abi.js';
-import { withSpinner } from './spinner.js';
 
 const logger = debugFactory('graph-cli:contract-service');
 
@@ -72,108 +71,84 @@ export class ContractService {
 
   async getABI(ABICtor: typeof ABI, networkId: string, address: string) {
     const urls = this.getEtherscanUrls(networkId);
-
     let errors: string[] = [];
-    return await withSpinner(
-      `Fetching ABI from contract API`,
-      `Failed to fetch ABI from contract API`,
-      `Warnings while fetching ABI from contract API`,
-      async () => {
-        if (!urls.length) {
-          throw new Error(`No contract API available for ${networkId} in the registry`);
-        }
-        for (const url of urls) {
-          try {
-            const json = await this.fetchFromEtherscan(
-              `${url}?module=contract&action=getabi&address=${address}`,
-            );
+    if (!urls.length) {
+      throw new Error(`No contract API available for ${networkId} in the registry`);
+    }
+    for (const url of urls) {
+      try {
+        const json = await this.fetchFromEtherscan(
+          `${url}?module=contract&action=getabi&address=${address}`,
+        );
 
-            if (json) {
-              return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
-            }
-            throw new Error(`no result: ${JSON.stringify(json)}`);
-          } catch (error) {
-            logger(`Failed to fetch from ${url}: ${error}`);
-            errors.push(`${error}`);
-          }
+        if (json) {
+          return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
         }
+        throw new Error(`no result: ${JSON.stringify(json)}`);
+      } catch (error) {
+        logger(`Failed to fetch from ${url}: ${error}`);
+        errors.push(`${error}`);
+      }
+    }
 
-        throw new Error(errors?.[0]);
-      },
-    );
+    throw new Error(errors?.[0]);
   }
 
   async getStartBlock(networkId: string, address: string): Promise<string> {
     const urls = this.getEtherscanUrls(networkId);
+    if (!urls.length) {
+      throw new Error(`No contract API available for ${networkId} in the registry`);
+    }
+    for (const url of urls) {
+      try {
+        const json = await this.fetchFromEtherscan(
+          `${url}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
+        );
 
-    return await withSpinner(
-      `Fetching start block`,
-      `Failed to fetch start block`,
-      `Warnings while fetching deploy contract transaction from contract API`,
-      async () => {
-        if (!urls.length) {
-          throw new Error(`No contract API available for ${networkId} in the registry`);
-        }
-        for (const url of urls) {
-          try {
-            const json = await this.fetchFromEtherscan(
-              `${url}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
-            );
-
-            if (json?.result?.length) {
-              if (json.result[0]?.blockNumber) {
-                return json.result[0].blockNumber;
-              }
-              const txHash = json.result[0].txHash;
-              const tx = await this.fetchTransactionByHash(networkId, txHash);
-              if (!tx?.blockNumber) {
-                throw new Error(`no blockNumber: ${JSON.stringify(tx)}`);
-              }
-              return Number(tx.blockNumber).toString();
-            }
-            throw new Error(`no result: ${JSON.stringify(json)}`);
-          } catch (error) {
-            logger(`Failed to fetch start block from ${url}: ${error}`);
+        if (json?.result?.length) {
+          if (json.result[0]?.blockNumber) {
+            return json.result[0].blockNumber;
           }
+          const txHash = json.result[0].txHash;
+          const tx = await this.fetchTransactionByHash(networkId, txHash);
+          if (!tx?.blockNumber) {
+            throw new Error(`no blockNumber: ${JSON.stringify(tx)}`);
+          }
+          return Number(tx.blockNumber).toString();
         }
+        throw new Error(`no result: ${JSON.stringify(json)}`);
+      } catch (error) {
+        logger(`Failed to fetch start block from ${url}: ${error}`);
+      }
+    }
 
-        throw new Error(`Failed to fetch deploy contract transaction for ${address}`);
-      },
-    );
+    throw new Error(`Failed to fetch deploy contract transaction for ${address}`);
   }
 
   async getContractName(networkId: string, address: string): Promise<string> {
     const urls = this.getEtherscanUrls(networkId);
+    if (!urls.length) {
+      throw new Error(`No contract API available for ${networkId} in the registry`);
+    }
+    for (const url of urls) {
+      try {
+        const json = await this.fetchFromEtherscan(
+          `${url}?module=contract&action=getsourcecode&address=${address}`,
+        );
 
-    return await withSpinner(
-      `Fetching contract name`,
-      `Failed to fetch contract name`,
-      `Warnings while fetching contract name from contract API`,
-      async () => {
-        if (!urls.length) {
-          throw new Error(`No contract API available for ${networkId} in the registry`);
-        }
-        for (const url of urls) {
-          try {
-            const json = await this.fetchFromEtherscan(
-              `${url}?module=contract&action=getsourcecode&address=${address}`,
-            );
-
-            if (json) {
-              const { ContractName } = json.result[0];
-              if (ContractName !== '') {
-                return ContractName;
-              }
-            }
-            throw new Error(`no result: ${JSON.stringify(json)}`);
-          } catch (error) {
-            logger(`Failed to fetch from ${url}: ${error}`);
+        if (json) {
+          const { ContractName } = json.result[0];
+          if (ContractName !== '') {
+            return ContractName;
           }
         }
+        throw new Error(`no result: ${JSON.stringify(json)}`);
+      } catch (error) {
+        logger(`Failed to fetch from ${url}: ${error}`);
+      }
+    }
 
-        throw new Error(`Failed to fetch contract name for ${address}`);
-      },
-    );
+    throw new Error(`Failed to fetch contract name for ${address}`);
   }
 
   private async fetchTransactionByHash(networkId: string, txHash: string) {

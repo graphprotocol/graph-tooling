@@ -5,6 +5,7 @@ import { NetworksRegistry } from '@pinax/graph-networks-registry';
 import { ContractService } from '../command-helpers/contracts.js';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
 import { updateNetworksFile } from '../command-helpers/network.js';
+import { retryWithPrompt } from '../command-helpers/retry.js';
 import {
   generateDataSource,
   writeABI,
@@ -100,7 +101,14 @@ export default class AddCommand extends Command {
       try {
         if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
 
-        ethabi = await contractService?.getABI(EthereumABI, network, address);
+        ethabi = await retryWithPrompt(() =>
+          withSpinner(
+            'Fetching ABI from contract API...',
+            'Failed to fetch ABI',
+            'Warning fetching ABI',
+            () => contractService?.getABI(EthereumABI, network, address),
+          ),
+        );
       } catch (error) {
         // we cannot ask user to do prompt in test environment
         if (process.env.NODE_ENV !== 'test') {

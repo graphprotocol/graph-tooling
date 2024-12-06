@@ -11,6 +11,7 @@ import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
 import { initNetworksConfig } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
 import { PromptManager } from '../command-helpers/prompt-manager.js';
+import { retryWithPrompt } from '../command-helpers/retry.js';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold.js';
 import { sortWithPriority } from '../command-helpers/sort.js';
 import { withSpinner } from '../command-helpers/spinner.js';
@@ -361,26 +362,6 @@ async function processFromExampleInitForm(
   }
 }
 
-async function retryWithPrompt<T>(func: () => Promise<T>): Promise<T | undefined> {
-  for (;;) {
-    try {
-      return await func();
-    } catch (_) {
-      const { retry } = await prompt.ask({
-        type: 'confirm',
-        name: 'retry',
-        message: 'Do you want to retry?',
-        initial: true,
-      });
-
-      if (!retry) {
-        break;
-      }
-    }
-  }
-  return undefined;
-}
-
 async function processInitForm(
   this: InitCommand,
   {
@@ -493,6 +474,18 @@ async function processInitForm(
       result: value => {
         initDebugger.extend('processInitForm')('networkId: %O', value);
         network = networks.find(n => n.id === value)!;
+        promptManager.setOptions('protocol', {
+          choices: [
+            {
+              message: 'Smart contract',
+              name: network.graphNode?.protocol ?? '',
+              value: 'contract',
+            },
+            { message: 'Substreams', name: 'substreams', value: 'substreams' },
+            { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
+          ].filter(({ name }) => name),
+        });
+
         return value;
       },
     });
@@ -502,16 +495,15 @@ async function processInitForm(
       name: 'protocol',
       message: 'Source',
       choices: [
-        { message: 'Smart contract', name: network.graphNode?.protocol ?? '', value: 'contract' },
         { message: 'Substreams', name: 'substreams', value: 'substreams' },
         { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
       ].filter(({ name }) => name),
       validate: name => {
         if (name === 'arweave') {
-          return 'Arweave only supported via substreams';
+          return 'Arweave are only supported via substreams';
         }
         if (name === 'cosmos') {
-          return 'Cosmos chains only supported via substreams';
+          return 'Cosmos chains are only supported via substreams';
         }
         return true;
       },
@@ -587,14 +579,24 @@ async function processInitForm(
         // If ABI is not provided, try to fetch it from Etherscan API
         if (protocolInstance.hasABIs() && !initAbi) {
           abiFromApi = await retryWithPrompt(() =>
-            contractService.getABI(protocolInstance.getABI(), network.id, address),
+            withSpinner(
+              'Fetching ABI from contract API...',
+              'Failed to fetch ABI',
+              'Warning fetching ABI',
+              () => contractService.getABI(protocolInstance.getABI(), network.id, address),
+            ),
           );
           initDebugger.extend('processInitForm')("abiFromEtherscan len: '%s'", abiFromApi?.name);
         }
         // If startBlock is not provided, try to fetch it from Etherscan API
         if (!initStartBlock) {
           startBlock = await retryWithPrompt(() =>
-            contractService.getStartBlock(network.id, address),
+            withSpinner(
+              'Fetching start block from contract API...',
+              'Failed to fetch start block',
+              'Warning fetching start block',
+              () => contractService.getStartBlock(network.id, address),
+            ),
           );
           initDebugger.extend('processInitForm')("startBlockFromEtherscan: '%s'", startBlock);
         }
@@ -602,7 +604,12 @@ async function processInitForm(
         // If contract name is not provided, try to fetch it from Etherscan API
         if (!initContractName) {
           contractName = await retryWithPrompt(() =>
-            contractService.getContractName(network.id, address),
+            withSpinner(
+              'Fetching contract name from contract API...',
+              'Failed to fetch contract name',
+              'Warning fetching contract name',
+              () => contractService.getContractName(network.id, address),
+            ),
           );
           initDebugger.extend('processInitForm')("contractNameFromEtherscan: '%s'", contractName);
         }
