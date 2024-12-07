@@ -434,7 +434,7 @@ async function processInitForm(
           name: ``,
           disabled: true,
           hint: '',
-          message: `< ${remaining} more - start typing to filter >`,
+          message: `< ${remaining} more networks >`,
         },
       ];
     };
