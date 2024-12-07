@@ -1,7 +1,7 @@
 {
   "name": "@graphprotocol/graph-cli",
-  "type": "module",
   "version": "0.91.1",
+  "type": "module",
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
