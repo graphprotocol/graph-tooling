@@ -13,7 +13,7 @@ const ACCEPTED_IMAGE_TYPES = {
 };
 
 // Limit avatar images to 1mb
-const MAX_IMAGE_SIZE = 1000000;
+const MAX_IMAGE_SIZE = 1_000_000;
 
 const BOX_SIZE = 152;
 

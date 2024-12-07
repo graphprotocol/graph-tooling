@@ -7,7 +7,7 @@
     "build": "tsc && vite build",
     "clean": "rimraf ./dist",
     "dev": "vite",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --report-unused-disable-directives",
+    "lint": "eslint . --report-unused-disable-directives",
     "prebuild": "tsr generate",
     "preview": "vite preview"
   },
