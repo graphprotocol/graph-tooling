@@ -1,7 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { filesystem, prompt, system } from 'gluegun';
+import { filesystem, print, prompt, system } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
 import { Network, NetworksRegistry } from '@pinax/graph-networks-registry';
 import { appendApiVersionForGraph } from '../command-helpers/compiler.js';
@@ -434,7 +434,7 @@ async function processInitForm(
           name: ``,
           disabled: true,
           hint: '',
-          message: `  < ${remaining} more >`,
+          message: `< ${remaining} more - start typing to filter >`,
         },
       ];
     };
@@ -463,7 +463,12 @@ async function processInitForm(
       required: true,
       message: 'Network',
       choices: formatChoices(networks.map(networkToChoice)),
-      format: value => `${value}`,
+      format: value => {
+        const network = networks.find(n => n.id === value);
+        return network
+          ? `${network.fullName}${print.colors.muted(` · ${network.id} · ${network.explorerUrls?.[0] ?? ''}`)}`
+          : value;
+      },
       suggest: (input, _) =>
         formatChoices(
           networks
@@ -497,7 +502,7 @@ async function processInitForm(
       choices: [
         { message: 'Substreams', name: 'substreams', value: 'substreams' },
         { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
-      ].filter(({ name }) => name),
+      ],
       validate: name => {
         if (name === 'arweave') {
           return 'Arweave are only supported via substreams';
@@ -506,6 +511,18 @@ async function processInitForm(
           return 'Cosmos chains are only supported via substreams';
         }
         return true;
+      },
+      format: protocol => {
+        switch (protocol) {
+          case '':
+            return '';
+          case 'substreams':
+            return 'Substreams';
+          case 'subgraph':
+            return 'Subgraph';
+          default:
+            return `Smart Contract${print.colors.muted(` · ${protocol}`)}`;
+        }
       },
       result: protocol => {
         protocolInstance = new Protocol(protocol);
