@@ -16,6 +16,8 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
     undefined
   : // For scaffolding real subgraphs
     version;
+const GRAPH_TS_VERSION = '0.36.0';
+const GRAPH_MATCHSTICK_VERSION = '0.6.0';
 
 export interface ScaffoldOptions {
   protocol: Protocol;
@@ -78,9 +80,11 @@ export default class Scaffold {
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
-          '@graphprotocol/graph-ts': `0.32.0`,
+          '@graphprotocol/graph-ts': GRAPH_TS_VERSION,
         },
-        devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0` } : undefined,
+        devDependencies: this.protocol.hasEvents()
+          ? { 'matchstick-as': GRAPH_MATCHSTICK_VERSION }
+          : undefined,
       }),
       { parser: 'json' },
     );
