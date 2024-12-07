@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sortWithPriority } from './sort'; // adjust the import based on your file structure
+import { sortWithPriority } from './sort.js'; // adjust the import based on your file structure
 
 describe('sortWithPriority', () => {
   it('should sort numbers with specific priority elements', () => {

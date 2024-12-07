@@ -1,18 +1,18 @@
-import crypto from 'crypto';
-import path from 'path';
+import crypto from 'node:crypto';
+import path from 'node:path';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
 import immutable from 'immutable';
-import type { IPFSHTTPClient } from 'ipfs-http-client';
 import yaml from 'js-yaml';
-import { Spinner, step, withSpinner } from '../command-helpers/spinner';
-import debug from '../debug';
-import { applyMigrations } from '../migrations';
-import Protocol from '../protocols';
-import Subgraph from '../subgraph';
-import Watcher from '../watcher';
-import * as asc from './asc';
+import type { KuboRPCClient } from 'kubo-rpc-client';
+import { Spinner, step, withSpinner } from '../command-helpers/spinner.js';
+import debug from '../debug.js';
+import { applyMigrations } from '../migrations.js';
+import Protocol from '../protocols/index.js';
+import Subgraph from '../subgraph.js';
+import Watcher from '../watcher.js';
+import * as asc from './asc.js';
 
 const compilerDebug = debug('graph-cli:compiler');
 
@@ -27,7 +27,7 @@ interface CompilerOptions {
 }
 
 export default class Compiler {
-  private ipfs: IPFSHTTPClient;
+  private ipfs: KuboRPCClient;
   private sourceDir: string;
   private blockIpfsMethods?: RegExpMatchArray;
   private libsDirs: string[];
@@ -188,7 +188,6 @@ export default class Compiler {
   }
 
   async watchAndCompile(onCompiled?: (ipfsHash: string) => void) {
-    const compiler = this;
     let spinner: Spinner;
 
     // Create watcher and recompile once and then on every change to a watched file
@@ -198,11 +197,11 @@ export default class Compiler {
         if (changedFile !== undefined) {
           spinner.info(`File change detected: ${this.displayPath(changedFile)}\n`);
         }
-        const ipfsHash = await compiler.compile({ validate: false });
+        const ipfsHash = await this.compile({ validate: false });
         onCompiled?.(ipfsHash);
         spinner.start();
       },
-      onCollectFiles: async () => await compiler.getFilesToWatch(),
+      onCollectFiles: async () => await this.getFilesToWatch(),
       onError: error => {
         spinner.stop();
         toolbox.print.error(`${error.message}\n`);
@@ -247,8 +246,6 @@ export default class Compiler {
       async spinner => {
         // Cache compiled files so identical input files are only compiled once
         const compiledFiles = new Map();
-
-        await asc.ready();
 
         subgraph = subgraph.update('dataSources', (dataSources: any[]) =>
           dataSources.map((dataSource: any) =>
@@ -772,7 +769,7 @@ export default class Compiler {
   }
 
   async _uploadSubgraphDefinitionToIPFS(subgraph: immutable.Map<any, any>) {
-    const str = yaml.safeDump(subgraph.toJS(), { noRefs: true, sortKeys: true });
+    const str = yaml.dump(subgraph.toJS(), { noRefs: true, sortKeys: true });
     const file = { path: 'subgraph.yaml', content: Buffer.from(str, 'utf-8') };
     return await this._uploadToIPFS(file);
   }

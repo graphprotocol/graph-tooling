@@ -6,8 +6,8 @@ import { Address } from 'viem';
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import yaml from 'yaml';
 import { z } from 'zod';
-import { SubgraphImageDropZone } from '@/components/Dropzone';
-import { Editor } from '@/components/Editor';
+import { SubgraphImageDropZone } from '@/components/dropzone';
+import { Editor } from '@/components/editor';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -38,18 +38,18 @@ import { ipfsHexHash } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { L2GNSABI } from '../abis/L2GNS';
+import { L2GNSABI } from '../abis/l2gns';
 import addresses from '../addresses.json';
 
 const SUPPORTED_CHAIN = {
   'arbitrum-one': {
-    chainId: 42161,
-    contracts: addresses[42161],
+    chainId: 42_161,
+    contracts: addresses[42_161],
     subgraph: NETWORK_SUBGRAPH_MAINNET,
   },
   'arbitrum-sepolia': {
-    chainId: 421614,
-    contracts: addresses[421614],
+    chainId: 421_614,
+    contracts: addresses[421_614],
     subgraph: NETWORK_SUBGRAPH_SEPOLIA,
   },
 } as const;
@@ -60,9 +60,9 @@ const getChainInfo = (chain: keyof typeof SUPPORTED_CHAIN) => {
 
 const publishToCopy = (chain: ReturnType<typeof getChainInfo>['chainId']) => {
   switch (chain) {
-    case 42161:
+    case 42_161:
       return 'The Graph Network';
-    case 421614:
+    case 421_614:
       return 'The Graph Testnet (not meant for production workload)';
   }
 };
@@ -390,16 +390,17 @@ function DeploySubgraph({
         toast({
           description: 'You are all set! You can go back to the CLI and close this window',
         });
-      } catch (err) {
+      } catch (_) {
         const e = contractError;
-        if (e?.name === 'ContractFunctionExecutionError') {
-          if (e.cause.name === 'ContractFunctionRevertedError') {
-            toast({
-              description: e.cause.message,
-              variant: 'destructive',
-            });
-            return;
-          }
+        if (
+          e?.name === 'ContractFunctionExecutionError' &&
+          e.cause.name === 'ContractFunctionRevertedError'
+        ) {
+          toast({
+            description: e.cause.message,
+            variant: 'destructive',
+          });
+          return;
         }
 
         toast({

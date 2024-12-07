@@ -1,4 +1,4 @@
-import { Contract } from '../contract';
+import { Contract } from '../contract.js';
 
 export default class EthereumContract implements Contract {
   static identifierName() {

@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { print } from 'gluegun';
 
 export const SUBGRAPH_STUDIO_URL = 'https://api.studio.thegraph.com/deploy/';

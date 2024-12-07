@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import * as toolbox from 'gluegun';
-import { loadManifest } from './util/load-manifest';
+import { loadManifest } from './util/load-manifest.js';
 
 // Spec version 0.0.4 uses feature management, but features are
 // detected and validated by the graph-node instance during subgraph

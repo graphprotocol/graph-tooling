@@ -1,13 +1,13 @@
-import { step, withSpinner } from './command-helpers/spinner';
+import { step, withSpinner } from './command-helpers/spinner.js';
 
 const MIGRATIONS = [
-  import('./migrations/mapping_api_version_0_0_1'),
-  import('./migrations/mapping_api_version_0_0_2'),
-  import('./migrations/mapping_api_version_0_0_3'),
-  import('./migrations/mapping_api_version_0_0_4'),
-  import('./migrations/mapping_api_version_0_0_5'),
-  import('./migrations/spec_version_0_0_2'),
-  import('./migrations/spec_version_0_0_3'),
+  import('./migrations/mapping_api_version_0_0_1.js'),
+  import('./migrations/mapping_api_version_0_0_2.js'),
+  import('./migrations/mapping_api_version_0_0_3.js'),
+  import('./migrations/mapping_api_version_0_0_4.js'),
+  import('./migrations/mapping_api_version_0_0_5.js'),
+  import('./migrations/spec_version_0_0_2.js'),
+  import('./migrations/spec_version_0_0_3.js'),
 ];
 
 export const applyMigrations = async (options: { sourceDir: string; manifestFile: string }) =>

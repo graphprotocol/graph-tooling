@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import * as toolbox from 'gluegun';
-import { loadManifest } from './util/load-manifest';
+import { loadManifest } from './util/load-manifest.js';
 
 // Spec version to 0.0.2 uses top level templates. graph-cli no longer supports
 // 0.0.1 which used nested templates.

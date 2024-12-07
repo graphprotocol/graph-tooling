@@ -1,7 +1,7 @@
-import path from 'path';
+import path from 'node:path';
 import { filesystem, patching } from 'gluegun';
 import yaml from 'yaml';
-import { step, withSpinner } from './spinner';
+import { step, withSpinner } from './spinner.js';
 
 export const updateSubgraphNetwork = async (
   manifest: any,

@@ -1,4 +1,3 @@
-import './eager_offset';
 import { Bytes } from './collections';
 
 /** Host type conversion interface */

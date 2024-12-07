@@ -1,4 +1,4 @@
-import * as asc from 'assemblyscript/cli/asc';
+import asc from 'assemblyscript/asc';
 
 const createExitHandler = (inputFile: string) => () => {
   throw new Error(`The AssemblyScript compiler crashed when compiling this file: '${inputFile}'
@@ -14,26 +14,12 @@ const setupExitHandler = (exitHandler: (code: number) => void) =>
 const removeExitHandler = (exitHandler: (code: number) => void) =>
   process.removeListener('exit', exitHandler);
 
-// Important note, the `asc.main` callback function parameter is synchronous,
-// that's why this function doesn't need to be `async` and the throw works properly.
-const assemblyScriptCompiler = (argv: string[], options: asc.APIOptions) =>
-  asc.main(argv, options, err => {
-    if (err) {
-      throw err;
-    }
-    return 0;
-  });
+const assemblyScriptCompiler = async (argv: string[], options: asc.APIOptions) =>
+  await asc.main(argv, options);
 
 const compilerDefaults = {
   stdout: process.stdout,
   stderr: process.stdout,
-};
-
-// You MUST call this function once before compiling anything.
-// Internally it just delegates to the AssemblyScript compiler
-// which just delegates to the binaryen lib.
-export const ready = async () => {
-  await asc.ready;
 };
 
 export interface CompileOptions {

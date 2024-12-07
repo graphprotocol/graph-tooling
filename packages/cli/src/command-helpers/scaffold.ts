@@ -1,16 +1,16 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import { strings } from 'gluegun';
 import { Map } from 'immutable';
 import prettier from 'prettier';
 import yaml from 'yaml';
-import Protocol from '../protocols';
-import ABI from '../protocols/ethereum/abi';
-import Scaffold from '../scaffold';
-import { generateEventIndexingHandlers } from '../scaffold/mapping';
-import { abiEvents, generateEventType } from '../scaffold/schema';
-import { generateTestsFiles } from '../scaffold/tests';
-import { Spinner, step } from './spinner';
+import ABI from '../protocols/ethereum/abi.js';
+import Protocol from '../protocols/index.js';
+import Scaffold from '../scaffold/index.js';
+import { generateEventIndexingHandlers } from '../scaffold/mapping.js';
+import { abiEvents, generateEventType } from '../scaffold/schema.js';
+import { generateTestsFiles } from '../scaffold/tests.js';
+import { Spinner, step } from './spinner.js';
 
 export const generateDataSource = async (
   protocol: Protocol,
@@ -22,33 +22,34 @@ export const generateDataSource = async (
 ) => {
   const protocolManifest = protocol.getManifestScaffold();
 
-  return Map.of(
-    'kind',
-    protocol.name,
-    'name',
-    contractName,
-    'network',
-    network,
-    'source',
-    yaml.parse(
-      await prettier.format(
-        protocolManifest.source({
-          contract: contractAddress,
-          contractName,
-          startBlock,
-        }),
-        {
-          parser: 'yaml',
-        },
+  return Map([
+    ['kind', protocol.name],
+    ['name', contractName],
+    ['network', network],
+    [
+      'source',
+      yaml.parse(
+        await prettier.format(
+          protocolManifest.source({
+            contract: contractAddress,
+            contractName,
+            startBlock,
+          }),
+          {
+            parser: 'yaml',
+          },
+        ),
       ),
-    ),
-    'mapping',
-    yaml.parse(
-      await prettier.format(protocolManifest.mapping({ abi, contractName }), {
-        parser: 'yaml',
-      }),
-    ),
-  ).asMutable();
+    ],
+    [
+      'mapping',
+      yaml.parse(
+        await prettier.format(protocolManifest.mapping({ abi, contractName }), {
+          parser: 'yaml',
+        }),
+      ),
+    ],
+  ]).asMutable();
 };
 
 export const generateScaffold = async (

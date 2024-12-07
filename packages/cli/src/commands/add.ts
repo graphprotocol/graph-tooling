@@ -1,26 +1,25 @@
 import { filesystem, prompt, system } from 'gluegun';
 import immutable from 'immutable';
-import { Args, Command, Flags } from '@oclif/core';
-import { CLIError } from '@oclif/core/lib/errors';
+import { Args, Command, Errors, Flags } from '@oclif/core';
 import {
   loadAbiFromBlockScout,
   loadAbiFromEtherscan,
   loadContractNameForAddress,
   loadStartBlockForContract,
-} from '../command-helpers/abi';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { updateNetworksFile } from '../command-helpers/network';
+} from '../command-helpers/abi.js';
+import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
+import { updateNetworksFile } from '../command-helpers/network.js';
 import {
   generateDataSource,
   writeABI,
   writeMapping,
   writeSchema,
   writeTestsFiles,
-} from '../command-helpers/scaffold';
-import { withSpinner } from '../command-helpers/spinner';
-import Protocol from '../protocols';
-import EthereumABI from '../protocols/ethereum/abi';
-import Subgraph from '../subgraph';
+} from '../command-helpers/scaffold.js';
+import { withSpinner } from '../command-helpers/spinner.js';
+import EthereumABI from '../protocols/ethereum/abi.js';
+import Protocol from '../protocols/index.js';
+import Subgraph from '../subgraph.js';
 
 export default class AddCommand extends Command {
   static description = 'Adds a new datasource to a subgraph.';
@@ -282,7 +281,7 @@ const updateEventNamesOnCollision = (
     if (dataRow.get('type') === 'event') {
       if (entities.includes(dataRow.get('name'))) {
         if (entities.includes(`${contractName}${dataRow.get('name')}`)) {
-          throw new CLIError(
+          throw new Errors.CLIError(
             `Contract name ('${contractName}') + event name ('${dataRow.get(
               'name',
             )}') entity already exists.`,

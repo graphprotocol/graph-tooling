@@ -1,9 +1,9 @@
 import immutable from 'immutable';
-import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
-import debugFactory from '../debug';
-import fetch from '../fetch';
-import ABI from '../protocols/ethereum/abi';
-import { withSpinner } from './spinner';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
+import debugFactory from '../debug.js';
+import fetch from '../fetch.js';
+import ABI from '../protocols/ethereum/abi.js';
+import { withSpinner } from './spinner.js';
 
 const logger = debugFactory('graph-cli:abi-helpers');
 

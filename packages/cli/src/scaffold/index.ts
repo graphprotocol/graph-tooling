@@ -1,14 +1,14 @@
 import { strings } from 'gluegun';
 import prettier from 'prettier';
-import { getSubgraphBasename } from '../command-helpers/subgraph';
-import Protocol from '../protocols';
-import ABI from '../protocols/ethereum/abi';
-import { version } from '../version';
-import { getDockerFile } from './get-docker-file';
-import { getGitIgnore } from './get-git-ignore';
-import { generateEventIndexingHandlers } from './mapping';
-import { abiEvents, generateEventType, generateExampleEntityType } from './schema';
-import { generateTestsFiles } from './tests';
+import { getSubgraphBasename } from '../command-helpers/subgraph.js';
+import ABI from '../protocols/ethereum/abi.js';
+import Protocol from '../protocols/index.js';
+import { version } from '../version.js';
+import { getDockerFile } from './get-docker-file.js';
+import { getGitIgnore } from './get-git-ignore.js';
+import { generateEventIndexingHandlers } from './mapping.js';
+import { abiEvents, generateEventType, generateExampleEntityType } from './schema.js';
+import { generateTestsFiles } from './tests.js';
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   ? // JSON.stringify should remove this key, we will install the local
@@ -16,6 +16,8 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
     undefined
   : // For scaffolding real subgraphs
     version;
+const GRAPH_TS_VERSION = '0.36.0';
+const GRAPH_MATCHSTICK_VERSION = '0.6.0';
 
 export interface ScaffoldOptions {
   protocol: Protocol;
@@ -78,9 +80,11 @@ export default class Scaffold {
         },
         dependencies: {
           '@graphprotocol/graph-cli': GRAPH_CLI_VERSION,
-          '@graphprotocol/graph-ts': `0.32.0`,
+          '@graphprotocol/graph-ts': GRAPH_TS_VERSION,
         },
-        devDependencies: this.protocol.hasEvents() ? { 'matchstick-as': `0.5.0` } : undefined,
+        devDependencies: this.protocol.hasEvents()
+          ? { 'matchstick-as': GRAPH_MATCHSTICK_VERSION }
+          : undefined,
       }),
       { parser: 'json' },
     );

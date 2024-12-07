@@ -1,11 +1,11 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { print } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
-import { Deprecation } from '@oclif/core/lib/interfaces';
-import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth';
-import { createJsonRpcClient } from '../command-helpers/jsonrpc';
-import { validateNodeUrl } from '../command-helpers/node';
-import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
+import { Deprecation } from '@oclif/core/interfaces';
+import { identifyDeployKey as identifyAccessToken } from '../command-helpers/auth.js';
+import { createJsonRpcClient } from '../command-helpers/jsonrpc.js';
+import { validateNodeUrl } from '../command-helpers/node.js';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 
 export default class CreateCommand extends Command {
   static description = 'Registers a subgraph name';
@@ -54,7 +54,6 @@ export default class CreateCommand extends Command {
     // Exit with an error code if the client couldn't be created
     if (!client) {
       this.exit(1);
-      return;
     }
 
     // Use the access token, if one is set

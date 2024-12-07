@@ -1,4 +1,4 @@
-import * as util from '../codegen/util';
+import * as util from '../codegen/util.js';
 
 export const generateFieldAssignment = (key: string[], value: string[]) =>
   `entity.${key.join('_')} = event.params.${value.join('.')}`;

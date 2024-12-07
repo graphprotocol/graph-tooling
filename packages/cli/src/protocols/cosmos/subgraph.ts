@@ -1,5 +1,5 @@
 import immutable from 'immutable';
-import { Subgraph, SubgraphOptions } from '../subgraph';
+import { Subgraph, SubgraphOptions } from '../subgraph.js';
 
 export default class CosmosSubgraph implements Subgraph {
   manifest: SubgraphOptions['manifest'];

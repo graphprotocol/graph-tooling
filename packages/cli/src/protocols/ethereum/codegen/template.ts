@@ -1,5 +1,5 @@
 import immutable from 'immutable';
-import * as tsCodegen from '../../../codegen/typescript';
+import * as tsCodegen from '../../../codegen/typescript.js';
 
 export default class EthereumTemplateCodeGen {
   constructor(public template: immutable.Map<any, any>) {

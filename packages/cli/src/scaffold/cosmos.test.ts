@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import Protocol from '../protocols';
-import Scaffold from './index';
+import Protocol from '../protocols/index.js';
+import Scaffold from './index.js';
 
 const protocol = new Protocol('cosmos');
 

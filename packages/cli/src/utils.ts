@@ -1,9 +1,11 @@
 import yaml from 'js-yaml';
-import debug from './debug';
+import debug from './debug.js';
 
 const utilsDebug = debug('graph-cli:utils');
 
-export default async function loadSubgraphSchemaFromIPFS(ipfsClient: any, manifest: string) {
+export const create = (await import('kubo-rpc-client')).create;
+
+export async function loadSubgraphSchemaFromIPFS(ipfsClient: any, manifest: string) {
   try {
     const manifestBuffer = ipfsClient.cat(manifest);
     let manifestFile = '';
@@ -11,7 +13,7 @@ export default async function loadSubgraphSchemaFromIPFS(ipfsClient: any, manife
       manifestFile += Buffer.from(chunk).toString('utf8'); // Explicitly convert each chunk to UTF-8
     }
 
-    const manifestYaml: any = yaml.safeLoad(manifestFile);
+    const manifestYaml: any = yaml.load(manifestFile);
     let schema = manifestYaml.schema.file['/'];
 
     if (schema.startsWith('/ipfs/')) {
