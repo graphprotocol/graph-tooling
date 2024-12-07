@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 
+// needed to extend the guild config
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
@@ -14,11 +15,7 @@ const compat = new FlatCompat({
 export default [
   {
     ignores: [
-      '**/node_modules',
       '**/dist',
-      '**/build',
-      '**/generated',
-      'packages/cli/tests/cli/init',
       'packages/cli/tests/cli/validation',
       'packages/ts/test/',
       '**/examples',
@@ -32,7 +29,6 @@ export default [
       'unicorn/no-array-push-push': 'off',
       'import/no-default-export': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/ban-types': 'off',
       eqeqeq: 'off',
       '@typescript-eslint/no-unused-vars': 'off',
     },
@@ -43,7 +39,6 @@ export default [
     rules: {
       '@typescript-eslint/no-namespace': 'off',
       'sonarjs/no-inverted-boolean-check': 'off',
-      'no-loss-of-precision': 'warn',
     },
   },
   {
