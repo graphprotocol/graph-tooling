@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { print } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
 import { Deprecation } from '@oclif/core/interfaces';

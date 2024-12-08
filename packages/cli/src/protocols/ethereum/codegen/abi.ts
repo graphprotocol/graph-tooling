@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/no-array-for-each */
-import fs from 'fs';
+import fs from 'node:fs';
 import immutable from 'immutable';
 import { decodeLog } from 'web3-eth-abi';
 import yaml from 'yaml';

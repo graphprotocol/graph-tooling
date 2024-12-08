@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import { system } from 'gluegun';
 import spawn from 'spawn-command';

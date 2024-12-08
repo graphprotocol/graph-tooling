@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import * as graphql from 'graphql/language/index.js';
 import immutable from 'immutable';
 import debugFactory from '../debug.js';

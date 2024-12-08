@@ -1,7 +1,7 @@
-import { ChildProcess, spawn } from 'child_process';
-import http from 'http';
-import net from 'net';
-import path from 'path';
+import { ChildProcess, spawn } from 'node:child_process';
+import http from 'node:http';
+import net from 'node:net';
+import path from 'node:path';
 import compose from 'docker-compose';
 import { filesystem, patching } from 'gluegun';
 import stripAnsi from 'strip-ansi';

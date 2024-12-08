@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import * as toolbox from 'gluegun';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import yaml from 'yaml';

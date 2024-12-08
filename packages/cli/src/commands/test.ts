@@ -1,6 +1,6 @@
-import { exec, spawn } from 'child_process';
-import os from 'os';
-import path from 'path';
+import { exec, spawn } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
 import { Binary } from 'binary-install';
 import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
@@ -180,7 +180,7 @@ async function getPlatform(
   const type = os.type();
   const arch = os.arch();
   const cpuCore = os.cpus()[0];
-  const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|M3|processor)/.test(cpuCore.model);
+  const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|M3|M4|processor)/.test(cpuCore.model);
   const linuxInfo = type === 'Linux' ? await getLinuxInfo.bind(this)() : {};
   const linuxDistro = linuxInfo.name;
   const release = linuxInfo.version || os.release();

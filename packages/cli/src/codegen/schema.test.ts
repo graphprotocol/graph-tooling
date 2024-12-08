@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import * as graphql from 'graphql/language/index.js';
 import prettier from 'prettier';
 import { describe, expect, test } from 'vitest';

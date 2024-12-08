@@ -1,6 +1,6 @@
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { filesystem, print, prompt, system } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
 import { Network, NetworksRegistry } from '@pinax/graph-networks-registry';
@@ -113,6 +113,7 @@ export default class InitCommand extends Command {
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
       default: DEFAULT_IPFS_URL,
+      hidden: true,
     }),
   };
 

@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { TanStackRouterVite } from '@tanstack/router-vite-plugin';

@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { Args, Command, Flags } from '@oclif/core';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
@@ -43,6 +43,7 @@ export default class CodegenCommand extends Command {
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
       default: DEFAULT_IPFS_URL,
+      hidden: true,
     }),
     'uncrashable-config': Flags.file({
       summary: 'Directory for uncrashable config.',

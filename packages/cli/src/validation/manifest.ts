@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import immutable from 'immutable';
 import yaml from 'js-yaml';
 import Protocol from '../protocols/index.js';

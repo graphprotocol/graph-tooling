@@ -27,7 +27,6 @@ async function main() {
   fs.copyFileSync('common/collections.ts', 'test/temp_lib/common/collections.ts');
   fs.copyFileSync('common/conversion.ts', 'test/temp_lib/common/conversion.ts');
   fs.copyFileSync('common/datasource.ts', 'test/temp_lib/common/datasource.ts');
-  fs.copyFileSync('common/eager_offset.ts', 'test/temp_lib/common/eager_offset.ts');
   fs.copyFileSync('common/json.ts', 'test/temp_lib/common/json.ts');
   fs.copyFileSync('common/numbers.ts', 'test/temp_lib/common/numbers.ts');
   fs.copyFileSync('common/value.ts', 'test/temp_lib/common/value.ts');
@@ -49,7 +48,6 @@ async function main() {
     fs.unlinkSync('test/temp_lib/common/collections.ts');
     fs.unlinkSync('test/temp_lib/common/conversion.ts');
     fs.unlinkSync('test/temp_lib/common/datasource.ts');
-    fs.unlinkSync('test/temp_lib/common/eager_offset.ts');
     fs.unlinkSync('test/temp_lib/common/json.ts');
     fs.unlinkSync('test/temp_lib/common/numbers.ts');
     fs.unlinkSync('test/temp_lib/common/value.ts');
