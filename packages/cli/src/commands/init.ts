@@ -489,7 +489,7 @@ async function processInitForm(
               value: 'contract',
             },
             { message: 'Substreams', name: 'substreams', value: 'substreams' },
-            { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
+            // { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
           ].filter(({ name }) => name),
         });
 
@@ -501,10 +501,7 @@ async function processInitForm(
       type: 'select',
       name: 'protocol',
       message: 'Source',
-      choices: [
-        { message: 'Substreams', name: 'substreams', value: 'substreams' },
-        { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
-      ],
+      choices: [],
       validate: name => {
         if (name === 'arweave') {
           return 'Arweave are only supported via substreams';
