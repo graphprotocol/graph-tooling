@@ -56,7 +56,7 @@ describe('Basic event handlers', () => {
     await patching.replace(
       path.join(srcDir, 'subgraph.yaml'),
       'DEPLOYED_CONTRACT_ADDRESS',
-      registry.target,
+      String(registry.target),
     );
 
     await registry.setMythicalGravatar();
