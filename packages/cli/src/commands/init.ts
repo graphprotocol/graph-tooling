@@ -141,7 +141,7 @@ export default class InitCommand extends Command {
 
     initDebugger('Flags: %O', flags);
 
-    let { node } = chooseNodeUrl({
+    const { node } = chooseNodeUrl({
       node: nodeFlag,
     });
 
@@ -422,7 +422,7 @@ async function processInitForm(
       name: n.id,
       value: `${n.id}:${n.shortName}:${n.fullName}`.toLowerCase(),
       hint: n.id,
-      message: `${n.fullName}`,
+      message: n.fullName,
     });
 
     const formatChoices = (choices: ReturnType<typeof networkToChoice>[]) => {

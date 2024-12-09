@@ -1,5 +1,5 @@
-import os from 'os';
-import path from 'path';
+import os from 'node:os';
+import path from 'node:path';
 import fs from 'fs-extra';
 import fetch from '../fetch.js';
 import { DEFAULT_IPFS_URL } from './ipfs.js';

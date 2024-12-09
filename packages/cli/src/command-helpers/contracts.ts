@@ -71,7 +71,7 @@ export class ContractService {
 
   async getABI(ABICtor: typeof ABI, networkId: string, address: string) {
     const urls = this.getEtherscanUrls(networkId);
-    let errors: string[] = [];
+    const errors: string[] = [];
     if (!urls.length) {
       throw new Error(`No contract API available for ${networkId} in the registry`);
     }
@@ -87,7 +87,7 @@ export class ContractService {
         throw new Error(`no result: ${JSON.stringify(json)}`);
       } catch (error) {
         logger(`Failed to fetch from ${url}: ${error}`);
-        errors.push(`${error}`);
+        errors.push(String(error));
       }
     }
 
