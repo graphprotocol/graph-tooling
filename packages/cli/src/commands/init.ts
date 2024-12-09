@@ -783,8 +783,8 @@ async function processInitForm(
       initial: true,
       skip: () => !!initIndexEvents || isSubstreams || isComposedSubgraph,
       result: value => {
-        indexEvents = value === 'true';
-        initDebugger.extend('processInitForm')('indexEvents: %O', value);
+        indexEvents = String(value) === 'true';
+        initDebugger.extend('processInitForm')('indexEvents: %O', indexEvents);
         return value;
       },
     });
