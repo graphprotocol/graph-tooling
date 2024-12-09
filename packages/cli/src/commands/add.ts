@@ -1,10 +1,10 @@
 import { filesystem, prompt, system } from 'gluegun';
 import immutable from 'immutable';
 import { Args, Command, Errors, Flags } from '@oclif/core';
-import { NetworksRegistry } from '@pinax/graph-networks-registry';
 import { ContractService } from '../command-helpers/contracts.js';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
 import { updateNetworksFile } from '../command-helpers/network.js';
+import { loadRegistry } from '../command-helpers/registry.js';
 import { retryWithPrompt } from '../command-helpers/retry.js';
 import {
   generateDataSource,
@@ -78,7 +78,7 @@ export default class AddCommand extends Command {
 
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
     else {
-      const registry = await NetworksRegistry.fromLatestVersion();
+      const registry = await loadRegistry();
       contractService = new ContractService(registry);
     }
 

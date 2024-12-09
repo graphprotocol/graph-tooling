@@ -16,6 +16,7 @@
     "bin",
     "dist",
     "oclif.manifest.json",
+    "config/TheGraphNetworksRegistry.json",
     "README.md",
     "!dist/*.tar.gz"
   ],

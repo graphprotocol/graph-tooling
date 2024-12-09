@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { filesystem, print, prompt, system } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
-import { Network, NetworksRegistry } from '@pinax/graph-networks-registry';
+import { Network } from '@pinax/graph-networks-registry';
 import { appendApiVersionForGraph } from '../command-helpers/compiler.js';
 import { ContractService } from '../command-helpers/contracts.js';
 import { resolveFile } from '../command-helpers/file-resolver.js';
@@ -11,6 +11,7 @@ import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
 import { initNetworksConfig } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
 import { PromptManager } from '../command-helpers/prompt-manager.js';
+import { loadRegistry } from '../command-helpers/registry.js';
 import { retryWithPrompt } from '../command-helpers/retry.js';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold.js';
 import { sortWithPriority } from '../command-helpers/sort.js';
@@ -198,7 +199,7 @@ export default class InitCommand extends Command {
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract
     if (fromContract && protocol && subgraphName && directory && network && node) {
-      const registry = await NetworksRegistry.fromLatestVersion();
+      const registry = await loadRegistry();
       const contractService = new ContractService(registry);
 
       if (!protocolChoices.includes(protocol as ProtocolName)) {
@@ -409,7 +410,7 @@ async function processInitForm(
   | undefined
 > {
   try {
-    const registry = await NetworksRegistry.fromLatestVersion();
+    const registry = await loadRegistry();
     const contractService = new ContractService(registry);
 
     const networks = sortWithPriority(
@@ -440,7 +441,7 @@ async function processInitForm(
       ];
     };
 
-    let network: Network = networks[0];
+    let network = networks[0];
     let protocolInstance: Protocol = new Protocol('ethereum');
     let isComposedSubgraph = false;
     let isSubstreams = false;

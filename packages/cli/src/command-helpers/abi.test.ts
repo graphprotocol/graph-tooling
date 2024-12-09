@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { NetworksRegistry } from '@pinax/graph-networks-registry';
 import { ContractService } from './contracts';
+import { loadRegistry } from './registry';
 
 // An object with some test cases for contract deployment block numbers
 const TEST_CONTRACT_START_BLOCKS = {
@@ -86,7 +86,7 @@ const TEST_CONTRACT_START_BLOCKS = {
 
 // skip this test since its time consuming
 describe.sequential('getStartBlockForContract', async () => {
-  const registry = await NetworksRegistry.fromLatestVersion();
+  const registry = await loadRegistry();
   const contractService = new ContractService(registry);
   for (const [network, contracts] of Object.entries(TEST_CONTRACT_START_BLOCKS)) {
     for (const [contract, startBlockExp] of Object.entries(contracts)) {
