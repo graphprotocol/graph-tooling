@@ -253,11 +253,37 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 `;
 
 exports[`Init > NEAR > From contract 1`] = `
-" ›   Error: Nonexistent flag: --studio
- ›   See more help with --help
+" ›   Warning: In next major version, this flag will be removed. By default we 
+ ›   will stop initializing a Git repository.
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Initialize networks config
+✔ Initialize networks config
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+- Generate ABI and schema types with yarn codegen
+✔ Generate ABI and schema types with yarn codegen
 "
 `;
 
-exports[`Init > NEAR > From contract 2`] = `2`;
+exports[`Init > NEAR > From contract 2`] = `0`;
 
-exports[`Init > NEAR > From contract 3`] = `""`;
+exports[`Init > NEAR > From contract 3`] = `
+"
+Subgraph user/near-from-contract created in from-contract
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-contract\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;

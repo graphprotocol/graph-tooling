@@ -1,6 +1,6 @@
 import { strings } from 'gluegun';
-import { abiEvents } from '../../../scaffold/schema';
-import ABI from '../abi';
+import { abiEvents } from '../../../scaffold/schema.js';
+import ABI from '../abi.js';
 
 export const source = ({
   contract,

@@ -1,6 +1,6 @@
 import { strings } from 'gluegun';
 import prettier from 'prettier';
-import { ascTypeForEthereum, ethereumFromAsc } from '../codegen/types';
+import { ascTypeForEthereum, ethereumFromAsc } from '../codegen/types/index.js';
 
 const VARIABLES_VALUES = {
   i32: 123,

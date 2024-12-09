@@ -47,7 +47,7 @@ const waitForSubgraphToBeSynced = async () =>
 describe('Basic event handlers', () => {
   // Deploy the subgraph once before all tests
   before(async () => {
-    const GravatarRegistry = await hre.ethers.getContractFactory('GravatarRegistry');
+    const GravatarRegistry = await ethers.getContractFactory('GravatarRegistry');
     const registry = await GravatarRegistry.deploy();
     const accounts = await ethers.getSigners();
 
@@ -56,7 +56,7 @@ describe('Basic event handlers', () => {
     await patching.replace(
       path.join(srcDir, 'subgraph.yaml'),
       'DEPLOYED_CONTRACT_ADDRESS',
-      registry.address,
+      registry.target,
     );
 
     await registry.setMythicalGravatar();

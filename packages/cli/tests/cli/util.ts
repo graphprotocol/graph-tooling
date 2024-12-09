@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import { system } from 'gluegun';
 import spawn from 'spawn-command';
@@ -93,7 +93,7 @@ function runCommand(
 
 export function runGraphCli(args: string[], cwd: string) {
   // Resolve the path to graph.js
-  const graphCli = path.join(__dirname, '..', '..', 'bin', 'run');
+  const graphCli = path.join(__dirname, '..', '..', 'bin', 'run.js');
 
   return runCommand(graphCli, args, cwd);
 }

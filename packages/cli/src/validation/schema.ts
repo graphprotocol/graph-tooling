@@ -1,7 +1,7 @@
-import fs from 'fs';
-import * as graphql from 'graphql/language';
+import fs from 'node:fs';
+import * as graphql from 'graphql/language/index.js';
 import immutable from 'immutable';
-import debugFactory from '../debug';
+import debugFactory from '../debug.js';
 
 const validateDebugger = debugFactory('graph-cli:validation');
 
@@ -154,19 +154,19 @@ Reason: Lists with null elements are not supported.`,
         },
       ])
     : field.type.kind === 'ListType' && field.type.type.kind !== 'NonNullType'
-    ? immutable.fromJS([
-        {
-          loc: field.loc,
-          entity: def.name.value,
-          message: `\
+      ? immutable.fromJS([
+          {
+            loc: field.loc,
+            entity: def.name.value,
+            message: `\
 Field '${field.name.value}':
 Field has type [${field.type.type.name.value}] but
 must have type [${field.type.type.name.value}!]
 
 Reason: Lists with null elements are not supported.`,
-        },
-      ])
-    : List();
+          },
+        ])
+      : List();
 };
 
 const unwrapType = (type: any) => {
@@ -225,11 +225,7 @@ const gatherLocalTypes = (defs: readonly graphql.DefinitionNode[]) => {
         def.kind === 'EnumTypeDefinition' ||
         def.kind === 'InterfaceTypeDefinition',
     )
-    .map(
-      def =>
-        // @ts-expect-error TODO: name field does not exist on definition, really?
-        def.name.value,
-    );
+    .map(def => def.name.value);
 };
 
 const gatherImportedTypes = (defs: readonly graphql.DefinitionNode[]) =>
@@ -262,11 +258,11 @@ const gatherImportedTypes = (defs: readonly graphql.DefinitionNode[]) =>
             type.kind == 'StringValue'
               ? type.value
               : type.kind == 'ObjectValue' &&
-                type.fields.find(
-                  (field: any) => field.name.value == 'as' && field.value.kind == 'StringValue',
-                )
-              ? type.fields.find((field: any) => field.name.value == 'as').value.value
-              : undefined,
+                  type.fields.find(
+                    (field: any) => field.name.value == 'as' && field.value.kind == 'StringValue',
+                  )
+                ? type.fields.find((field: any) => field.name.value == 'as').value.value
+                : undefined,
           ),
         ),
     )

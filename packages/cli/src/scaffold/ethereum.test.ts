@@ -1,8 +1,8 @@
 import immutable from 'immutable';
 import { describe, expect, test } from 'vitest';
-import Protocol from '../protocols';
-import ABI from '../protocols/ethereum/abi';
-import Scaffold from './index';
+import ABI from '../protocols/ethereum/abi.js';
+import Protocol from '../protocols/index.js';
+import Scaffold from './index.js';
 
 const TEST_EVENT = {
   name: 'ExampleEvent',

@@ -1,9 +1,9 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import * as toolbox from 'gluegun';
-import { create } from 'ipfs-http-client';
-import Compiler from '../compiler';
-import { GRAPH_CLI_SHARED_HEADERS } from '../constants';
-import Protocol from '../protocols';
+import Compiler from '../compiler/index.js';
+import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
+import Protocol from '../protocols/index.js';
+import { create } from '../utils.js';
 
 interface CreateCompilerOptions {
   ipfs: string | URL | undefined;
@@ -33,7 +33,7 @@ export function appendApiVersionForGraph(inputString: string) {
 }
 
 // Helper function to construct a subgraph compiler
-export function createCompiler(
+export async function createCompiler(
   manifest: string,
   {
     ipfs,

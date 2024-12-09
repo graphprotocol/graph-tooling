@@ -1,7 +1,7 @@
 import immutable from 'immutable';
 import yaml from 'js-yaml';
-import { loadManifest } from '../migrations/util/load-manifest';
-import Protocol from '../protocols';
+import { loadManifest } from '../migrations/util/load-manifest.js';
+import Protocol from '../protocols/index.js';
 
 // Loads manifest from file path and returns all:
 // - data sources
@@ -19,7 +19,7 @@ export const fromFilePath = async (manifestPath: string) => {
 // In a single list.
 export function fromManifestString(manifest: string) {
   // TODO: can we make it typesafe?
-  const { dataSources = [], templates = [] } = (yaml.safeLoad(manifest) || {}) as unknown as any;
+  const { dataSources = [], templates = [] } = (yaml.load(manifest) || {}) as unknown as any;
 
   return dataSources.concat(templates);
 }

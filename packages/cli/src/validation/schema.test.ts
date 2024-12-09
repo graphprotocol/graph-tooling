@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { typeSuggestion } from './schema';
+import { typeSuggestion } from './schema.js';
 
 describe.concurrent('Schema validation', () => {
   test('Type suggestions', () => {

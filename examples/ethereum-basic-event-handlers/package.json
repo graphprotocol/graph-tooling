@@ -13,29 +13,22 @@
     "codegen": "graph codegen",
     "create-test": "graph create test/basic-event-handlers --node http://localhost:8020/",
     "deploy-test": "graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:5001 --node http://localhost:8020/",
-    "test": "docker compose up -d && sleep 30 && hardhat test --network localhost && docker compose down"
+    "test": "docker compose up -d && sleep 30 && hardhat test --network localhost && docker compose down",
+    "test:hardhat": "hardhat test --network localhost"
   },
   "dependencies": {
-    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
-    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
-    "@nomiclabs/hardhat-ethers": "^2.2.3",
-    "@nomiclabs/hardhat-etherscan": "^3.1.7",
-    "@typechain/ethers-v5": "^10.2.0",
-    "@typechain/hardhat": "^6.1.5",
-    "@types/chai": "^4.3.4",
-    "@types/mocha": "^10.0.1",
-    "chai": "^4.3.7",
-    "ethers": "v5.7.2",
-    "hardhat-gas-reporter": "^1.0.9",
-    "solidity-coverage": "^0.8.2",
-    "typechain": "^8.1.1",
-    "typescript": "^5.0.4"
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
+    "@types/chai": "^4.2.0",
+    "@types/mocha": "^10.0.10",
+    "chai": "^4.2.0",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.71.2",
+    "@graphprotocol/graph-cli": "0.90.1",
     "@graphprotocol/graph-ts": "0.35.1",
-    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "apollo-fetch": "^0.7.0",
-    "hardhat": "^2.22.1"
+    "hardhat": "^2.22.17"
   }
 }

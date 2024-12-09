@@ -1,10 +1,10 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
 
 export async function loadManifest(manifestFile: string) {
   if (manifestFile.match(/.js$/)) {
-    return require(path.resolve(manifestFile));
+    return await import(path.resolve(manifestFile));
   }
-  return yaml.safeLoad(await fs.readFile(manifestFile, 'utf-8'));
+  return yaml.load(await fs.readFile(manifestFile, 'utf-8'));
 }

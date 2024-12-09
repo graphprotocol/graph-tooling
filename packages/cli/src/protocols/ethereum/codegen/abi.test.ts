@@ -1,10 +1,10 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import immutable from 'immutable';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import * as ts from '../../../codegen/typescript';
-import ABI from '../abi';
-import AbiCodeGenerator from './abi';
+import * as ts from '../../../codegen/typescript.js';
+import ABI from '../abi.js';
+import AbiCodeGenerator from './abi.js';
 
 let tempdir: string;
 let abi: ABI;
@@ -168,7 +168,7 @@ describe.concurrent('ABI code generation', () => {
       );
       abi = ABI.load('Contract', filename);
       const codegen = new AbiCodeGenerator(abi);
-      generatedTypes = codegen.generateTypes();
+      generatedTypes = await codegen.generateTypes();
     } finally {
       await fs.remove(tempdir);
     }

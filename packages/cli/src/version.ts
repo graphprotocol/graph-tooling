@@ -1,11 +1,15 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const packageJson = JSON.parse(
   fs
     .readFileSync(
       // works even when bundled/built because the path to package.json is the same
-      path.join(__dirname, '..', 'package.json'),
+      path.join(
+        `${process.platform === 'win32' ? '' : '/'}${/file:\/{2,3}(.+)\/[^/]/.exec(import.meta.url)![1]}`,
+        '..',
+        'package.json',
+      ),
     )
     .toString(),
 );

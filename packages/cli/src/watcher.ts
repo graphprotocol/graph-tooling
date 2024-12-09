@@ -1,12 +1,13 @@
-import path from 'path';
+import path from 'node:path';
 import chokidar from 'chokidar';
+import type { FSWatcher } from 'chokidar';
 
 export default class Watcher {
   private onReady: () => void;
   private onTrigger: (arg: any) => void;
   private onCollectFiles: () => Promise<string[]>;
   private onError: (error: Error) => void;
-  private watcher: chokidar.FSWatcher | undefined;
+  private watcher: FSWatcher | undefined;
 
   constructor(options: {
     onReady: () => void;
@@ -44,7 +45,7 @@ export default class Watcher {
       onReady();
 
       // Trigger once when ready
-      await onTrigger(undefined);
+      onTrigger(undefined);
     });
 
     watcher.on('error', (error: any) => {
@@ -81,7 +82,7 @@ export default class Watcher {
         watcher.add(filesDiff.added);
 
         // Run the trigger callback
-        await onTrigger(file);
+        onTrigger(file);
       } catch (e) {
         onError(e);
       }

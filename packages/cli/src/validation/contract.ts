@@ -1,6 +1,6 @@
 import immutable from 'immutable';
-import Protocol from '../protocols';
-import { ContractCtor } from '../protocols/contract';
+import { ContractCtor } from '../protocols/contract.js';
+import Protocol from '../protocols/index.js';
 
 export const validateContract = (value: string, ProtocolContract: ContractCtor) => {
   const contract = new ProtocolContract(value);
