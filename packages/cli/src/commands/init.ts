@@ -422,7 +422,7 @@ async function processInitForm(
     const networkToChoice = (n: Network) => ({
       name: n.id,
       value: `${n.id}:${n.shortName}:${n.fullName}`.toLowerCase(),
-      hint: n.id,
+      hint: `· ${n.id}`,
       message: n.fullName,
     });
 
@@ -430,6 +430,14 @@ async function processInitForm(
       const shown = choices.slice(0, 20);
       const remaining = networks.length - shown.length;
       if (remaining == 0) return shown;
+      if (shown.length === choices.length) {
+        shown.push({
+          name: '--other--',
+          value: '',
+          hint: '· other network not on the list',
+          message: `Other`,
+        });
+      }
       return [
         ...shown,
         {
@@ -477,7 +485,12 @@ async function processInitForm(
             .map(networkToChoice)
             .filter(({ value }) => (value ?? '').includes(input.toLowerCase())),
         ),
-      validate: value => (networks.find(n => n.id === value) ? true : 'Pick a network'),
+      validate: value => {
+        if (value === '--other--') {
+          return 'To add a network refer to https://github.com/graphprotocol/networks-registry';
+        }
+        return networks.find(n => n.id === value) ? true : 'Pick a network';
+      },
       result: value => {
         initDebugger.extend('processInitForm')('networkId: %O', value);
         network = networks.find(n => n.id === value)!;
