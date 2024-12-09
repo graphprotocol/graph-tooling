@@ -14,9 +14,9 @@
   "files": [
     "CHANGELOG.md",
     "bin",
+    "config/TheGraphNetworksRegistry.json",
     "dist",
     "oclif.manifest.json",
-    "config/TheGraphNetworksRegistry.json",
     "README.md",
     "!dist/*.tar.gz"
   ],
