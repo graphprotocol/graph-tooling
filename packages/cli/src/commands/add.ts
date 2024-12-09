@@ -80,7 +80,7 @@ export default class AddCommand extends Command {
 
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
 
-    let startBlock = startBlockFlag;
+    let startBlock = parseInt(startBlockFlag ?? '').toString();
     let contractName = contractNameFlag;
 
     const entities = getEntities(manifest);
@@ -135,7 +135,6 @@ export default class AddCommand extends Command {
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-
       startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
     } catch (error) {
       // we cannot ask user to do prompt in test environment
@@ -159,8 +158,7 @@ export default class AddCommand extends Command {
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-
-      contractName = await loadContractNameForAddress(network, address);
+      contractName ||= await loadContractNameForAddress(network, address);
     } catch (error) {
       // not asking user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
