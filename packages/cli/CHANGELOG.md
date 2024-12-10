@@ -1,5 +1,23 @@
 # @graphprotocol/graph-cli
 
+## 0.92.0
+
+### Minor Changes
+
+- [#1775](https://github.com/graphprotocol/graph-tooling/pull/1775)
+  [`7faa309`](https://github.com/graphprotocol/graph-tooling/commit/7faa3098b2e6c61f09fc81b8b2d333e66b0080d1)
+  Thanks [@0237h](https://github.com/0237h)! - Update all dependencies
+
+- [#1788](https://github.com/graphprotocol/graph-tooling/pull/1788)
+  [`edb601d`](https://github.com/graphprotocol/graph-tooling/commit/edb601dbe29e3bab1ae356b4c94d4356f84929d6)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - - add networks registry support
+  - improve `graph init` flow
+    - filter through the networks as you type
+    - more information about the networks
+    - remove unnecessary options depending on the selection
+    - ESC key to go back
+  - allow specifying ipfs/url for substreams package
+
 ## 0.91.1
 
 ### Patch Changes
