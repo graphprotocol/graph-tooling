@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { ContractService } from './contracts';
-import { loadRegistry } from './registry';
+import { ContractService } from './contracts.js';
+import { loadRegistry } from './registry.js';
 
 // An object with some test cases for contract deployment block numbers
 const TEST_CONTRACT_START_BLOCKS = {
