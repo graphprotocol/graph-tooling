@@ -65,7 +65,7 @@ export async function resolveFile(
 
       throw new Error('Invalid file source. Must be a file path, IPFS hash, or URL');
     } catch (error) {
-      await cleanup();
+      cleanup();
       throw error;
     }
   };

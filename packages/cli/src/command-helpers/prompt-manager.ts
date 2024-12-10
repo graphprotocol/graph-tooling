@@ -59,7 +59,7 @@ export class PromptManager {
         }
         if (isCtrlC || this.currentStep === 0) {
           process.stdout.write('\n');
-          process.exit(0);
+          process.exit(1);
         }
 
         this.currentStep--;
