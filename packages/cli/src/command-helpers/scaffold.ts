@@ -108,7 +108,7 @@ const writeScaffoldDirectory = async (scaffold: any, directory: string, spinner:
     const filename = path.join(directory, basename);
 
     // Write file or recurse into subdirectory
-    if (typeof content === 'string') {
+    if (typeof content === 'string' || Buffer.isBuffer(content)) {
       await fs.writeFile(filename, content, 'utf-8');
     } else if (content == null) {
       return; // continue loop

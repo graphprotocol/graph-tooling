@@ -3,7 +3,7 @@ import debug from './debug.js';
 
 const utilsDebug = debug('graph-cli:utils');
 
-export const create = (await import('kubo-rpc-client')).create;
+export const createIpfsClient = (await import('kubo-rpc-client')).create;
 
 export async function loadSubgraphSchemaFromIPFS(ipfsClient: any, manifest: string) {
   try {

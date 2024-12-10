@@ -12,9 +12,9 @@
   "scripts": {
     "build": "graph build",
     "codegen": "graph codegen",
-    "create": "graph create arweave-example --node https://api.thegraph.com/deploy/",
+    "create": "graph create arweave-example --node https://api.studio.thegraph.com/deploy/",
     "create-local": "graph create arweave-example --node http://localhost:8020",
-    "deploy": "graph deploy arweave-example --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy": "graph deploy arweave-example --ipfs https://api.thegraph.com/ipfs/ --node https://api.studio.thegraph.com/deploy/",
     "deploy-local": "graph deploy arweave-example -l v0.1.0 --ipfs http://localhost:5001 --node http://localhost:8020",
     "remove-local": "graph remove arweave-example --node http://localhost:8020"
   },

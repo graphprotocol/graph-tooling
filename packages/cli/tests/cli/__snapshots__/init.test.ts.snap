@@ -3,8 +3,6 @@
 exports[`Init > Ethereum > From contract 1`] = `
 " ›   Warning: In next major version, this flag will be removed. By default we 
  ›   will stop initializing a Git repository.
-- Fetching ABI from Etherscan
-✔ Fetching ABI from Etherscan
 - Create subgraph scaffold
   Generate subgraph
 - Create subgraph scaffold

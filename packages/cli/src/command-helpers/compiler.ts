@@ -3,7 +3,7 @@ import * as toolbox from 'gluegun';
 import Compiler from '../compiler/index.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 import Protocol from '../protocols/index.js';
-import { create } from '../utils.js';
+import { createIpfsClient } from '../utils.js';
 
 interface CreateCompilerOptions {
   ipfs: string | URL | undefined;
@@ -56,7 +56,7 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
 
   // Connect to the IPFS node (if a node address was provided)
   const ipfsClient = ipfs
-    ? create({
+    ? createIpfsClient({
         url: appendApiVersionForGraph(ipfs.toString()),
         headers: {
           ...headers,
