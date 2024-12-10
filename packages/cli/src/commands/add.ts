@@ -77,10 +77,8 @@ export default class AddCommand extends Command {
     let contractService: ContractService | undefined;
 
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
-    else {
-      const registry = await loadRegistry();
-      contractService = new ContractService(registry);
-    }
+    const registry = await loadRegistry();
+    contractService = new ContractService(registry);
 
     let startBlock = startBlockFlag;
     let contractName = contractNameFlag;
