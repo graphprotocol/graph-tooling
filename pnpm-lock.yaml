@@ -381,7 +381,7 @@ importers:
         version: 1.2.2(@types/react-dom@18.3.2)(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.62.2
-        version: 5.62.3(react@18.3.1)
+        version: 5.62.7(react@18.3.1)
       '@tanstack/react-router':
         specifier: ^1.85.4
         version: 1.87.1(@tanstack/router-generator@1.86.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -396,7 +396,7 @@ importers:
         version: 2.1.1
       connectkit:
         specifier: ^1.8.2
-        version: 1.8.2(@babel/core@7.26.0)(@tanstack/react-query@5.62.3(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@16.13.1)(react@18.3.1)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.13.5(@tanstack/query-core@5.62.3)(@tanstack/react-query@5.62.3(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8))
+        version: 1.8.2(@babel/core@7.26.0)(@tanstack/react-query@5.62.7(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@16.13.1)(react@18.3.1)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.13.5(@tanstack/query-core@5.62.7)(@tanstack/react-query@5.62.7(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8))
       file-type:
         specifier: ^19.6.0
         version: 19.6.0
@@ -438,7 +438,7 @@ importers:
         version: 0.22.0(rollup@4.28.1)(vite@6.0.3(@types/node@22.10.1)(jiti@2.4.1)(tsx@4.19.2)(yaml@2.6.1))
       wagmi:
         specifier: ^2.13.3
-        version: 2.13.5(@tanstack/query-core@5.62.3)(@tanstack/react-query@5.62.3(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        version: 2.13.5(@tanstack/query-core@5.62.7)(@tanstack/react-query@5.62.7(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       yaml:
         specifier: 2.6.1
         version: 2.6.1
@@ -3610,11 +3610,11 @@ packages:
     resolution: {integrity: sha512-62z1qXIILvjdkQyMTVPFQedHOc6kQgunz9GHV9jSy2z1ixsDqyI9GxNj3AWx8Ucmhjwd5/P+v3XN10bsb+FzRA==}
     engines: {node: '>=12'}
 
-  '@tanstack/query-core@5.62.3':
-    resolution: {integrity: sha512-Jp/nYoz8cnO7kqhOlSv8ke/0MJRJVGuZ0P/JO9KQ+f45mpN90hrerzavyTKeSoT/pOzeoOUkv1Xd0wPsxAWXfg==}
+  '@tanstack/query-core@5.62.7':
+    resolution: {integrity: sha512-fgpfmwatsrUal6V+8EC2cxZIQVl9xvL7qYa03gsdsCy985UTUlS4N+/3hCzwR0PclYDqisca2AqR1BVgJGpUDA==}
 
-  '@tanstack/react-query@5.62.3':
-    resolution: {integrity: sha512-y2zDNKuhgiuMgsKkqd4AcsLIBiCfEO8U11AdrtAUihmLbRNztPrlcZqx2lH1GacZsx+y1qRRbCcJLYTtF1vKsw==}
+  '@tanstack/react-query@5.62.7':
+    resolution: {integrity: sha512-+xCtP4UAFDTlRTYyEjLx0sRtWyr5GIk7TZjZwBu4YaNahi3Rt2oMyRqfpfVrtwsqY2sayP4iXVCwmC+ZqqFmuw==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -12815,7 +12815,7 @@ snapshots:
     dependencies:
       '@ethereumjs/tx': 4.2.0
       '@types/debug': 4.1.12
-      debug: 4.3.7(supports-color@5.5.0)
+      debug: 4.4.0
       semver: 7.6.3
       superstruct: 1.0.4
     transitivePeerDependencies:
@@ -13050,7 +13050,7 @@ snapshots:
 
   '@nomicfoundation/hardhat-ethers@3.0.8(ethers@6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(hardhat@2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10))':
     dependencies:
-      debug: 4.3.7(supports-color@5.5.0)
+      debug: 4.4.0
       ethers: 6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       hardhat: 2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10)
       lodash.isequal: 4.5.0
@@ -13071,7 +13071,7 @@ snapshots:
       '@nomicfoundation/ignition-core': 0.15.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@nomicfoundation/ignition-ui': 0.15.8
       chalk: 4.1.2
-      debug: 4.3.7(supports-color@5.5.0)
+      debug: 4.4.0
       fs-extra: 10.1.0
       hardhat: 2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10)
       json5: 2.2.3
@@ -13133,7 +13133,7 @@ snapshots:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
       cbor: 8.1.0
-      debug: 4.3.7(supports-color@5.5.0)
+      debug: 4.4.0
       hardhat: 2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10)
       lodash.clonedeep: 4.5.0
       picocolors: 1.1.1
@@ -13148,7 +13148,7 @@ snapshots:
       '@ethersproject/address': 5.6.1
       '@nomicfoundation/solidity-analyzer': 0.1.2
       cbor: 9.0.2
-      debug: 4.3.7(supports-color@5.5.0)
+      debug: 4.4.0
       ethers: 6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       fs-extra: 10.1.0
       immer: 10.0.2
@@ -14396,11 +14396,11 @@ snapshots:
 
   '@tanstack/history@1.85.3': {}
 
-  '@tanstack/query-core@5.62.3': {}
+  '@tanstack/query-core@5.62.7': {}
 
-  '@tanstack/react-query@5.62.3(react@18.3.1)':
+  '@tanstack/react-query@5.62.7(react@18.3.1)':
     dependencies:
-      '@tanstack/query-core': 5.62.3
+      '@tanstack/query-core': 5.62.7
       react: 18.3.1
 
   '@tanstack/react-router@1.87.1(@tanstack/router-generator@1.86.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -14480,7 +14480,7 @@ snapshots:
       '@typescript-eslint/parser': 8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2)
       eslint: 9.16.0(jiti@2.4.1)
       eslint-config-prettier: 9.1.0(eslint@9.16.0(jiti@2.4.1))
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0)(eslint@9.16.0(jiti@2.4.1))
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-jsonc: 2.18.2(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.16.0(jiti@2.4.1))
@@ -14489,7 +14489,7 @@ snapshots:
       eslint-plugin-promise: 7.1.0(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-react: 7.37.2(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-react-hooks: 5.0.0(eslint@9.16.0(jiti@2.4.1))
-      eslint-plugin-sonarjs: 2.0.4(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1))
+      eslint-plugin-sonarjs: 2.0.4(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-unicorn: 56.0.1(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-yml: 1.15.0(eslint@9.16.0(jiti@2.4.1))
       typescript: 5.6.2
@@ -14999,13 +14999,13 @@ snapshots:
       loupe: 3.1.2
       tinyrainbow: 1.2.0
 
-  '@wagmi/connectors@5.5.3(@types/react@18.3.14)(@wagmi/core@2.15.2(@tanstack/query-core@5.62.3)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
+  '@wagmi/connectors@5.5.3(@types/react@18.3.14)(@wagmi/core@2.15.2(@tanstack/query-core@5.62.7)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
       '@coinbase/wallet-sdk': 4.2.3
       '@metamask/sdk': 0.31.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@safe-global/safe-apps-provider': 0.18.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
-      '@wagmi/core': 2.15.2(@tanstack/query-core@5.62.3)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))
+      '@wagmi/core': 2.15.2(@tanstack/query-core@5.62.7)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))
       '@walletconnect/ethereum-provider': 2.17.0(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1)(utf-8-validate@5.0.10)
       cbw-sdk: '@coinbase/wallet-sdk@3.9.3'
       viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -15033,14 +15033,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@wagmi/core@2.15.2(@tanstack/query-core@5.62.3)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))':
+  '@wagmi/core@2.15.2(@tanstack/query-core@5.62.7)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@5.7.2)
       viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       zustand: 5.0.0(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(use-sync-external-store@1.2.0(react@18.3.1))
     optionalDependencies:
-      '@tanstack/query-core': 5.62.3
+      '@tanstack/query-core': 5.62.7
       typescript: 5.7.2
     transitivePeerDependencies:
       - '@types/react'
@@ -16445,9 +16445,9 @@ snapshots:
       ini: 1.3.8
       proto-list: 1.2.4
 
-  connectkit@1.8.2(@babel/core@7.26.0)(@tanstack/react-query@5.62.3(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@16.13.1)(react@18.3.1)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.13.5(@tanstack/query-core@5.62.3)(@tanstack/react-query@5.62.3(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)):
+  connectkit@1.8.2(@babel/core@7.26.0)(@tanstack/react-query@5.62.7(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@16.13.1)(react@18.3.1)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.13.5(@tanstack/query-core@5.62.7)(@tanstack/react-query@5.62.7(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)):
     dependencies:
-      '@tanstack/react-query': 5.62.3(react@18.3.1)
+      '@tanstack/react-query': 5.62.7(react@18.3.1)
       buffer: 6.0.3
       detect-browser: 5.3.0
       framer-motion: 6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -16459,7 +16459,7 @@ snapshots:
       resize-observer-polyfill: 1.5.1
       styled-components: 5.3.11(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react-is@16.13.1)(react@18.3.1)
       viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
-      wagmi: 2.13.5(@tanstack/query-core@5.62.3)(@tanstack/react-query@5.62.3(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+      wagmi: 2.13.5(@tanstack/query-core@5.62.7)(@tanstack/react-query@5.62.7(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
     transitivePeerDependencies:
       - '@babel/core'
       - react-is
@@ -17187,13 +17187,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0)(eslint@9.16.0(jiti@2.4.1)):
+  eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.3.7(supports-color@5.5.0)
       enhanced-resolve: 5.17.1
       eslint: 9.16.0(jiti@2.4.1)
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
       fast-glob: 3.3.2
       get-tsconfig: 4.8.1
       is-bun-module: 1.3.0
@@ -17233,14 +17233,14 @@ snapshots:
       - bluebird
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1)):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2)
       eslint: 9.16.0(jiti@2.4.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0)(eslint@9.16.0(jiti@2.4.1))
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -17251,7 +17251,7 @@ snapshots:
       eslint: 9.16.0(jiti@2.4.1)
       eslint-compat-utils: 0.5.1(eslint@9.16.0(jiti@2.4.1))
 
-  eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1)):
+  eslint-plugin-import@2.30.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -17262,7 +17262,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.16.0(jiti@2.4.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -17290,7 +17290,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.16.0(jiti@2.4.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -17459,7 +17459,7 @@ snapshots:
       string.prototype.matchall: 4.0.11
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-sonarjs@2.0.4(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1)):
+  eslint-plugin-sonarjs@2.0.4(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       '@babel/core': 7.25.2
       '@babel/eslint-parser': 7.25.1(@babel/core@7.25.2)(eslint@9.16.0(jiti@2.4.1))
@@ -17473,7 +17473,7 @@ snapshots:
       builtin-modules: 3.3.0
       bytes: 3.1.2
       eslint: 9.16.0(jiti@2.4.1)
-      eslint-plugin-import: 2.30.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@9.16.0(jiti@2.4.1))
+      eslint-plugin-import: 2.30.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.15.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.6.2))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-jsx-a11y: 6.10.0(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-react: 7.36.1(eslint@9.16.0(jiti@2.4.1))
       eslint-plugin-react-hooks: 4.6.2(eslint@9.16.0(jiti@2.4.1))
@@ -21834,7 +21834,7 @@ snapshots:
   typechain@8.3.2(typescript@5.7.2):
     dependencies:
       '@types/prettier': 2.7.3
-      debug: 4.3.7(supports-color@5.5.0)
+      debug: 4.4.0
       fs-extra: 7.0.1
       glob: 7.1.7
       js-sha3: 0.8.0
@@ -22302,11 +22302,11 @@ snapshots:
 
   wabt@1.0.24: {}
 
-  wagmi@2.13.5(@tanstack/query-core@5.62.3)(@tanstack/react-query@5.62.3(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
+  wagmi@2.13.5(@tanstack/query-core@5.62.7)(@tanstack/react-query@5.62.7(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
     dependencies:
-      '@tanstack/react-query': 5.62.3(react@18.3.1)
-      '@wagmi/connectors': 5.5.3(@types/react@18.3.14)(@wagmi/core@2.15.2(@tanstack/query-core@5.62.3)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
-      '@wagmi/core': 2.15.2(@tanstack/query-core@5.62.3)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))
+      '@tanstack/react-query': 5.62.7(react@18.3.1)
+      '@wagmi/connectors': 5.5.3(@types/react@18.3.14)(@wagmi/core@2.15.2(@tanstack/query-core@5.62.7)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+      '@wagmi/core': 2.15.2(@tanstack/query-core@5.62.7)(@types/react@18.3.14)(immer@10.0.2)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))
       react: 18.3.1
       use-sync-external-store: 1.2.0(react@18.3.1)
       viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
