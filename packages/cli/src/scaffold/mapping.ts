@@ -13,29 +13,23 @@ export const generateFieldAssignments = ({ index, input }: { index: number; inpu
         [input.name || `param${index}`],
       );
 
-type BlacklistDictionary = Record<string, string>;
-
 /**
  * Map of input names that are reserved so we do not use them as field names to avoid conflicts
+ * see https://github.com/graphprotocol/graph-tooling/issues/710
+ * name => mappedName
  */
-export const INPUT_NAMES_BLACKLIST = {
-  /** Related to https://github.com/graphprotocol/graph-tooling/issues/710 */
-  id: 'id',
+const NAMES_REMAP_DICTIONARY: Record<string, string> = {
+  id: 'internal_id',
+  _id: 'internal__id',
 } as const;
 
-export const renameInput = (name: string, subgraphName: string) => {
-  const inputMap: BlacklistDictionary = {
-    [INPUT_NAMES_BLACKLIST.id]: `${subgraphName}_id`,
-  };
-
-  return inputMap?.[name] ?? name;
+export const renameNameIfNeeded = (name: string) => {
+  return NAMES_REMAP_DICTIONARY[name] ?? name;
 };
 
-export const generateEventFieldAssignments = (event: any, contractName: string) =>
+export const generateEventFieldAssignments = (event: any, _contractName: string) =>
   event.inputs.reduce((acc: any[], input: any, index: number) => {
-    if (Object.values(INPUT_NAMES_BLACKLIST).includes(input.name)) {
-      input.mappedName = renameInput(input.name, contractName ?? 'contract');
-    }
+    input.mappedName = renameNameIfNeeded(input.name);
     return acc.concat(generateFieldAssignments({ input, index }));
   }, []);
 
