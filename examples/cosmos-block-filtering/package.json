@@ -11,9 +11,9 @@
   "scripts": {
     "build": "graph build",
     "codegen": "graph codegen",
-    "create": "graph create cosmos-block-filtering --node https://api.thegraph.com/deploy/",
+    "create": "graph create cosmos-block-filtering --node https://api.studio.thegraph.com/deploy/",
     "create-local": "graph create cosmos-block-filtering --node http://127.0.0.1:8020",
-    "deploy": "graph deploy cosmos-block-filtering --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy": "graph deploy cosmos-block-filtering --ipfs https://api.thegraph.com/ipfs/ --node https://api.studio.thegraph.com/deploy/",
     "deploy-local": "graph deploy cosmos-block-filtering -l v0.1.0 --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
     "prepare:cosmoshub": "mustache config/cosmoshub.json subgraph.template.yaml > subgraph.yaml",
     "prepare:osmosis": "mustache config/osmosis.json subgraph.template.yaml > subgraph.yaml",

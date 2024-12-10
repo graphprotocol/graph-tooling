@@ -11,9 +11,9 @@
   "scripts": {
     "build": "graph build",
     "codegen": "graph codegen",
-    "create": "graph create cosmos-validator-delegations --node https://api.thegraph.com/deploy/",
+    "create": "graph create cosmos-validator-delegations --node https://api.studio.thegraph.com/deploy/",
     "create-local": "graph create cosmos-validator-delegations --node http://127.0.0.1:8020",
-    "deploy": "graph deploy cosmos-validator-delegations --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy": "graph deploy cosmos-validator-delegations --ipfs https://api.thegraph.com/ipfs/ --node https://api.studio.thegraph.com/deploy/",
     "deploy-local": "graph deploy cosmos-validator-delegations -l v0.1.0 --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
     "prepare:cosmoshub": "mustache config/cosmoshub.json subgraph.template.yaml > subgraph.yaml",
     "prepare:osmosis": "mustache config/osmosis.json subgraph.template.yaml > subgraph.yaml",

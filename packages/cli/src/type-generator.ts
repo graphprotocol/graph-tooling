@@ -17,7 +17,7 @@ import { applyMigrations } from './migrations.js';
 import Protocol from './protocols/index.js';
 import Schema from './schema.js';
 import Subgraph from './subgraph.js';
-import { create, loadSubgraphSchemaFromIPFS } from './utils.js';
+import { createIpfsClient, loadSubgraphSchemaFromIPFS } from './utils.js';
 import Watcher from './watcher.js';
 
 const typeGenDebug = debug('graph-cli:type-generator');
@@ -103,7 +103,7 @@ export default class TypeGenerator {
       await this.generateTypesForSchema({ schema });
 
       if (this.options.subgraphSources.length > 0) {
-        const ipfsClient = create({
+        const ipfsClient = createIpfsClient({
           url: appendApiVersionForGraph(this.options.ipfsUrl.toString()),
           headers: {
             ...GRAPH_CLI_SHARED_HEADERS,
