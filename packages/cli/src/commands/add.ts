@@ -74,11 +74,10 @@ export default class AddCommand extends Command {
     const network = manifest.result.getIn(['dataSources', 0, 'network']) as any;
     const result = manifest.result.asMutable();
     const isLocalHost = network === 'localhost'; // This flag prevent Etherscan lookups in case the network selected is `localhost`
-    let contractService: ContractService | undefined;
 
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
     const registry = await loadRegistry();
-    contractService = new ContractService(registry);
+    const contractService = new ContractService(registry);
 
     let startBlock = startBlockFlag;
     let contractName = contractNameFlag;
