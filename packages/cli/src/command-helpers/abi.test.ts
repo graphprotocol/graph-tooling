@@ -84,7 +84,6 @@ const TEST_CONTRACT_START_BLOCKS = {
   // },
 };
 
-// skip this test since its time consuming
 describe.sequential('getStartBlockForContract', async () => {
   const registry = await loadRegistry();
   const contractService = new ContractService(registry);
