@@ -4,4 +4,8 @@
 
 - add networks registry support
 - improve `graph init` flow
-- allow ipfs/url for substreams package
+  - filter through the networks as you type
+  - more information about the networks
+  - remove unnecessary options depending on the selection
+  - ESC key to go back
+- allow specifying ipfs/url for substreams package
