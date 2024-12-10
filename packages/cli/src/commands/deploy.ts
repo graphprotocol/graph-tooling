@@ -13,6 +13,7 @@ import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpe
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 import debugFactory from '../debug.js';
 import Protocol from '../protocols/index.js';
+import { createIpfsClient } from '../utils.js';
 
 const headersFlag = Flags.custom<Record<string, string>>({
   summary: 'Add custom headers that will be used by the IPFS HTTP client.',
@@ -221,9 +222,8 @@ export default class DeployCommand extends Command {
 
     // we are provided the IPFS hash, so we deploy directly
     if (ipfsHash) {
-      const create = (await import('kubo-rpc-client')).create;
       // Connect to the IPFS node (if a node address was provided)
-      const ipfsClient = create({
+      const ipfsClient = createIpfsClient({
         url: appendApiVersionForGraph(ipfs.toString()),
         headers: {
           ...headers,

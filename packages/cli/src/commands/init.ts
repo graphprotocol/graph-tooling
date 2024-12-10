@@ -23,7 +23,7 @@ import EthereumABI from '../protocols/ethereum/abi.js';
 import Protocol, { ProtocolName } from '../protocols/index.js';
 import { abiEvents } from '../scaffold/schema.js';
 import Schema from '../schema.js';
-import { create, loadSubgraphSchemaFromIPFS } from '../utils.js';
+import { createIpfsClient, loadSubgraphSchemaFromIPFS } from '../utils.js';
 import { validateContract } from '../validation/index.js';
 import AddCommand from './add.js';
 
@@ -1137,7 +1137,7 @@ async function initSubgraphFromContract(
 
   if (isComposedSubgraph) {
     try {
-      const ipfsClient = create({
+      const ipfsClient = createIpfsClient({
         url: appendApiVersionForGraph(ipfsUrl),
         headers: {
           ...GRAPH_CLI_SHARED_HEADERS,
