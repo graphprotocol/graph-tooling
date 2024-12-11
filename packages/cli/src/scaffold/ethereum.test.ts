@@ -26,6 +26,7 @@ const TEST_EVENT = {
       ],
     },
     { name: 'd', type: 'string', indexed: true },
+    { name: 'id', type: 'string' },
   ],
 };
 
@@ -106,7 +107,7 @@ dataSources:
         - name: Contract
           file: ./abis/Contract.json
       eventHandlers:
-        - event: ExampleEvent(indexed uint256,bytes[4],string,(uint256,bytes32,string,(uint96,string,bytes32)),indexed string)
+        - event: ExampleEvent(indexed uint256,bytes[4],string,(uint256,bytes32,string,(uint96,string,bytes32)),indexed string,string)
           handler: handleExampleEvent
         - event: ExampleEvent(bytes32)
           handler: handleExampleEvent1
@@ -139,6 +140,7 @@ type ExampleEvent @entity(immutable: true) {
   c_c3_value1: String! # string
   c_c3_value2: Bytes! # bytes32
   d: String! # string
+  internal_id: String! # string
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -233,6 +235,7 @@ export function handleExampleEvent(event: ExampleEventEvent): void {
   entity.c_c3_value1 = event.params.c.c3.value1
   entity.c_c3_value2 = event.params.c.c3.value2
   entity.d = event.params.d
+  entity.internal_id = event.params.id
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -285,7 +288,8 @@ describe("Describe entity assertions", () => {
     let param2 = "Example string value"
     let c = "ethereum.Tuple Not implemented"
     let d = "Example string value"
-    let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d)
+    let id = "Example string value"
+    let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d, id)
     handleExampleEvent(newExampleEventEvent)
   })
 
@@ -346,7 +350,8 @@ export function createExampleEventEvent(
   b: Array<Bytes>,
   param2: string,
   c: ethereum.Tuple,
-  d: string
+  d: string,
+  id: string
 ): ExampleEvent {
   let exampleEventEvent = changetype<ExampleEvent>(newMockEvent())
 
@@ -366,6 +371,9 @@ export function createExampleEventEvent(
   )
   exampleEventEvent.parameters.push(
     new ethereum.EventParam("d", ethereum.Value.fromString(d))
+  )
+  exampleEventEvent.parameters.push(
+    new ethereum.EventParam("id", ethereum.Value.fromString(id))
   )
 
   return exampleEventEvent
@@ -415,7 +423,8 @@ describe("Describe entity assertions", () => {
     let param2 = "Example string value"
     let c = "ethereum.Tuple Not implemented"
     let d = "Example string value"
-    let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d)
+    let id = "Example string value"
+    let newExampleEventEvent = createExampleEventEvent(a, b, param2, c, d, id)
     handleExampleEvent(newExampleEventEvent)
   })
 
@@ -476,7 +485,8 @@ export function createExampleEventEvent(
   b: Array<Bytes>,
   param2: string,
   c: ethereum.Tuple,
-  d: string
+  d: string,
+  id: string
 ): ExampleEvent {
   let exampleEventEvent = changetype<ExampleEvent>(newMockEvent())
 
@@ -496,6 +506,9 @@ export function createExampleEventEvent(
   )
   exampleEventEvent.parameters.push(
     new ethereum.EventParam("d", ethereum.Value.fromString(d))
+  )
+  exampleEventEvent.parameters.push(
+    new ethereum.EventParam("id", ethereum.Value.fromString(id))
   )
 
   return exampleEventEvent
