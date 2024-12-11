@@ -679,7 +679,7 @@ const validateFulltextArgumentIncludeFields = (def: any, directive: any, field: 
         loc: directive.name.loc,
         entity: def.name.value,
         directive: fulltextDirectiveName(directive),
-        message: `@fulltext argument 'include > ${field.name.value}' must be be one of: entity, fields`,
+        message: `@fulltext argument 'include > ${field.name.value}' must be one of: entity, fields`,
       }),
     ]);
   }

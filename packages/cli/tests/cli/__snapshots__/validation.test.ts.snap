@@ -471,7 +471,7 @@ exports[`Validation > Invalid @fulltext directive 1`] = `
     IncludeMissingEntityField:
     - @fulltext argument include must have two fields, 'entity' and 'fields'
     InvalidIncludeArgumentOther:
-    - @fulltext argument 'include > other' must be be one of: entity, fields
+    - @fulltext argument 'include > other' must be one of: entity, fields
     IncludeFieldsMustBeList:
     - @fulltext argument 'include > fields' must be a list
     Other:
