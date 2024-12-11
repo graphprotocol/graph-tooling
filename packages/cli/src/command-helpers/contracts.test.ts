@@ -22,18 +22,19 @@ const TEST_CONTRACT_START_BLOCKS = {
   moonbeam: {
     '0x011E52E4E40CF9498c79273329E8827b21E2e581': 505_060,
   },
-  moonriver: {
-    '0x3dB01570D97631f69bbb0ba39796865456Cf89A5': 800_950,
-  },
   optimism: {
     '0xc35DADB65012eC5796536bD9864eD8773aBc74C4': 7_019_815,
-  },
-  celo: {
-    '0x8084936982D089130e001b470eDf58faCA445008': 10_186_627,
   },
   gnosis: {
     '0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3': 16_655_565,
   },
+  // not stable RPCs
+  // moonriver: {
+  //   '0x3dB01570D97631f69bbb0ba39796865456Cf89A5': 800_950,
+  // },
+  // celo: {
+  //   '0x8084936982D089130e001b470eDf58faCA445008': 10_186_627,
+  // },
 
   // Skipping these networks for now because they do not support the latest etherscan contracts API or is blockScout based
 
