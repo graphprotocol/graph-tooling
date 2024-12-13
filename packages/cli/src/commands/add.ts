@@ -81,7 +81,7 @@ export default class AddCommand extends Command {
 
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
 
-    let startBlock = parseInt(startBlockFlag ?? '').toString();
+    let startBlock = startBlockFlag ? parseInt(startBlockFlag).toString() : startBlockFlag;
     let contractName = contractNameFlag;
 
     let ethabi = null;
