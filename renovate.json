@@ -16,11 +16,7 @@
   "rebaseWhen": "conflicted",
   "packageRules": [
     {
-      "excludePackagePatterns": [
-        "typescript",
-        "typedoc*",
-        "^@theguild/"
-      ],
+      "excludePackagePatterns": ["typescript", "typedoc*", "^@theguild/"],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
