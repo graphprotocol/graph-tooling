@@ -84,15 +84,6 @@ export default class AddCommand extends Command {
     let startBlock = parseInt(startBlockFlag ?? '').toString();
     let contractName = contractNameFlag;
 
-    const entities = getEntities(manifest);
-    const contractNames = getContractNames(manifest);
-    if (contractNames.includes(contractName)) {
-      this.error(
-        `Datasource or template with name ${contractName} already exists, please choose a different name.`,
-        { exit: 1 },
-      );
-    }
-
     let ethabi = null;
     if (abi) {
       ethabi = EthereumABI.load(contractName, abi);
@@ -177,6 +168,15 @@ export default class AddCommand extends Command {
         ]);
         contractName = userInputContractName;
       }
+    }
+
+    const entities = getEntities(manifest);
+    const contractNames = getContractNames(manifest);
+    if (contractNames.includes(contractName)) {
+      this.error(
+        `Datasource or template with name ${contractName} already exists, please choose a different name.`,
+        { exit: 1 },
+      );
     }
 
     await writeABI(ethabi, contractName);
