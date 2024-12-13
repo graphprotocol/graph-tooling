@@ -8,3 +8,4 @@ packages/cli/tests/cli/add
 packages/cli/config/TheGraphNetworksRegistry.json
 pnpm-lock.yaml
 website/src/graphql-env.d.ts
+renovate.json
