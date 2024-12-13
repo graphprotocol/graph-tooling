@@ -3,12 +3,28 @@
   "extends": ["config:recommended"],
   "prConcurrentLimit": 25,
   "reviewers": ["YaroShkvorets", "0237h"],
-  "automerge": false,
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true
   },
   "recreateWhen": "never",
   "labels": ["dependencies"],
-  "rebaseWhen": "conflicted"
+  "rebaseWhen": "conflicted",
+  "packageRules": [
+    {
+      "excludePackagePatterns": [
+        "typescript",
+        "typedoc*",
+        "^@theguild/"
+      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    }
+  ]
 }
