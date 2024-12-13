@@ -1,5 +1,5 @@
-import { generateEventFieldAssignments } from '../../../scaffold/mapping';
-import ABI from '../abi';
+import { generateEventFieldAssignments } from '../../../scaffold/mapping.js';
+import ABI from '../abi.js';
 
 export const generatePlaceholderHandlers = ({
   abi,

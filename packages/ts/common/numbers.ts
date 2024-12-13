@@ -1,4 +1,3 @@
-import './eager_offset';
 import { ByteArray, Bytes } from './collections';
 import { typeConversion } from './conversion';
 
@@ -168,7 +167,7 @@ export class BigInt extends Uint8Array {
   }
 
   sqrt(): BigInt {
-    const x: BigInt = this;
+    const x: BigInt = this; // eslint-disable-line @typescript-eslint/no-this-alias -- Using variables instead of this makes it more clear
     let z = x.plus(BigInt.fromI32(1)).div(BigInt.fromI32(2));
     let y = x;
     while (z < y) {

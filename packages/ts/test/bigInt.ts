@@ -1,5 +1,5 @@
 /* eslint-disable no-self-compare */
-import { BigInt, ByteArray, Bytes } from 'temp_lib/index';
+import { BigInt, ByteArray, Bytes } from './temp_lib/index';
 
 // Test some BigInt methods.
 export function testBigInt(): void {

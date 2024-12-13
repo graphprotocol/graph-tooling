@@ -6,11 +6,11 @@ import type {
   NamedTypeNode,
   ObjectTypeDefinitionNode,
   TypeNode,
-} from 'graphql/language';
-import debug from '../debug';
-import Schema from '../schema';
-import * as typesCodegen from './types';
-import * as tsCodegen from './typescript';
+} from 'graphql/language/index.js';
+import debug from '../debug.js';
+import Schema from '../schema.js';
+import * as typesCodegen from './types/index.js';
+import * as tsCodegen from './typescript.js';
 
 class IdField {
   static BYTES = Symbol('Bytes');
@@ -97,14 +97,14 @@ export default class SchemaCodeGenerator {
     ];
   }
 
-  generateTypes(): Array<tsCodegen.Class> {
+  generateTypes(generateStoreMethods = true): Array<tsCodegen.Class> {
     return this.schema.ast.definitions
       .map(def => {
         if (this._isEntityTypeDefinition(def)) {
           schemaCodeGeneratorDebug.extend('generateTypes')(
             `Generating entity type for ${def.name.value}`,
           );
-          return this._generateEntityType(def);
+          return this._generateEntityType(def, generateStoreMethods);
         }
       })
       .filter(Boolean) as Array<tsCodegen.Class>;
@@ -157,7 +157,7 @@ export default class SchemaCodeGenerator {
     return def.kind === 'InterfaceTypeDefinition';
   }
 
-  _generateEntityType(def: ObjectTypeDefinitionNode) {
+  _generateEntityType(def: ObjectTypeDefinitionNode, generateStoreMethods = true) {
     const name = def.name.value;
     const klass = tsCodegen.klass(name, { export: true, extends: 'Entity' });
     const fields = def.fields;
@@ -166,8 +166,10 @@ export default class SchemaCodeGenerator {
     // Generate and add a constructor
     klass.addMethod(this._generateConstructor(name, fields));
 
-    // Generate and add save() and getById() methods
-    this._generateStoreMethods(name, idField).forEach(method => klass.addMethod(method));
+    if (generateStoreMethods) {
+      // Generate and add save() and getById() methods
+      this._generateStoreMethods(name, idField).forEach(method => klass.addMethod(method));
+    }
 
     // Generate and add entity field getters and setters
     def.fields

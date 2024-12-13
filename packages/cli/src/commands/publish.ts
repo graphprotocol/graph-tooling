@@ -1,13 +1,12 @@
-import chalk from 'chalk';
-import { print } from 'gluegun';
+import { print, prompt } from 'gluegun';
 import open from 'open';
 import { Args, Command, Flags, ux } from '@oclif/core';
 // eslint-disable-next-line no-restricted-imports
 import { URL, URLSearchParams } from '@whatwg-node/fetch';
-import { createCompiler } from '../command-helpers/compiler';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs';
-import Protocol from '../protocols';
+import { createCompiler } from '../command-helpers/compiler.js';
+import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
+import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import Protocol from '../protocols/index.js';
 
 export default class PublishCommand extends Command {
   static description = 'Publish to the Graph Network';
@@ -68,15 +67,17 @@ export default class PublishCommand extends Command {
     protocolNetwork: string | undefined;
     apiKey: string | undefined;
   }) {
-    const answer = await ux.prompt(
-      `Press ${chalk.green(
-        'y',
-      )} (or any key) to open up the browser to continue publishing or ${chalk.yellow(
-        'q',
-      )} to exit`,
-    );
+    const { openBrowser } = await prompt.ask<{ openBrowser: boolean }>([
+      {
+        type: 'confirm',
+        name: 'openBrowser',
+        message: () => `Open up the browser to continue publishing ?`,
+        initial: true,
+        required: true,
+      },
+    ]);
 
-    if (answer.toLowerCase() === 'q') {
+    if (!openBrowser) {
       this.exit(0);
     }
 
@@ -144,7 +145,7 @@ export default class PublishCommand extends Command {
       this.error(e, { exit: 1 });
     }
 
-    const compiler = createCompiler(manifest, {
+    const compiler = await createCompiler(manifest, {
       ipfs,
       outputDir: 'build/',
       outputFormat: 'wasm',
@@ -155,13 +156,11 @@ export default class PublishCommand extends Command {
     // Exit with an error code if the compiler couldn't be created
     if (!compiler) {
       this.exit(1);
-      return;
     }
     const result = await compiler.compile({ validate: true });
     if (result === undefined || result === false) {
       // Compilation failed, not deploying.
-      process.exitCode = 1;
-      return;
+      this.exit(1);
     }
 
     await this.publishWithBrowser({

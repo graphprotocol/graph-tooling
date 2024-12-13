@@ -1,7 +1,7 @@
 import immutable from 'immutable';
-import * as DataSourcesExtractor from '../../command-helpers/data-sources';
-import { Subgraph, SubgraphOptions } from '../subgraph';
-import ABI from './abi';
+import * as DataSourcesExtractor from '../../command-helpers/data-sources.js';
+import { Subgraph, SubgraphOptions } from '../subgraph.js';
+import ABI from './abi.js';
 
 export default class EthereumSubgraph implements Subgraph {
   public manifest: SubgraphOptions['manifest'];

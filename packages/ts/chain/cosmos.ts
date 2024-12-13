@@ -1,4 +1,3 @@
-import '../common/eager_offset';
 import { Bytes } from '../common/collections';
 
 export namespace cosmos {

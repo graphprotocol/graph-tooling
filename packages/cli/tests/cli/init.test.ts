@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { describe } from 'vitest';
 import { cliTest } from './util';
 
@@ -194,7 +194,6 @@ describe.sequential(
           '--skip-git',
           '--protocol',
           'near',
-          '--studio',
           '--from-contract',
           'app.good-morning.near',
           '--network',

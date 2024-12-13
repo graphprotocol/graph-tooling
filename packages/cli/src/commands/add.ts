@@ -1,26 +1,22 @@
 import { filesystem, prompt, system } from 'gluegun';
 import immutable from 'immutable';
-import { Args, Command, Flags } from '@oclif/core';
-import { CLIError } from '@oclif/core/lib/errors';
-import {
-  loadAbiFromBlockScout,
-  loadAbiFromEtherscan,
-  loadContractNameForAddress,
-  loadStartBlockForContract,
-} from '../command-helpers/abi';
-import * as DataSourcesExtractor from '../command-helpers/data-sources';
-import { updateNetworksFile } from '../command-helpers/network';
+import { Args, Command, Errors, Flags } from '@oclif/core';
+import { ContractService } from '../command-helpers/contracts.js';
+import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
+import { updateNetworksFile } from '../command-helpers/network.js';
+import { loadRegistry } from '../command-helpers/registry.js';
+import { retryWithPrompt } from '../command-helpers/retry.js';
 import {
   generateDataSource,
   writeABI,
   writeMapping,
   writeSchema,
   writeTestsFiles,
-} from '../command-helpers/scaffold';
-import { withSpinner } from '../command-helpers/spinner';
-import Protocol from '../protocols';
-import EthereumABI from '../protocols/ethereum/abi';
-import Subgraph from '../subgraph';
+} from '../command-helpers/scaffold.js';
+import { withSpinner } from '../command-helpers/spinner.js';
+import EthereumABI from '../protocols/ethereum/abi.js';
+import Protocol from '../protocols/index.js';
+import Subgraph from '../subgraph.js';
 
 export default class AddCommand extends Command {
   static description = 'Adds a new datasource to a subgraph.';
@@ -80,6 +76,8 @@ export default class AddCommand extends Command {
     const isLocalHost = network === 'localhost'; // This flag prevent Etherscan lookups in case the network selected is `localhost`
 
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
+    const registry = await loadRegistry();
+    const contractService = new ContractService(registry);
 
     let startBlock = startBlockFlag ? parseInt(startBlockFlag).toString() : startBlockFlag;
     let contractName = contractNameFlag;
@@ -87,13 +85,18 @@ export default class AddCommand extends Command {
     let ethabi = null;
     if (abi) {
       ethabi = EthereumABI.load(contractName, abi);
-    } else if (network === 'poa-core') {
-      ethabi = await loadAbiFromBlockScout(EthereumABI, network, address);
     } else {
       try {
         if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
 
-        ethabi = await loadAbiFromEtherscan(EthereumABI, network, address);
+        ethabi = await retryWithPrompt(() =>
+          withSpinner(
+            'Fetching ABI from contract API...',
+            'Failed to fetch ABI',
+            'Warning fetching ABI',
+            () => contractService?.getABI(EthereumABI, network, address),
+          ),
+        );
       } catch (error) {
         // we cannot ask user to do prompt in test environment
         if (process.env.NODE_ENV !== 'test') {
@@ -127,7 +130,7 @@ export default class AddCommand extends Command {
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-      startBlock ||= Number(await loadStartBlockForContract(network, address)).toString();
+      startBlock ||= Number(await contractService?.getStartBlock(network, address)).toString();
     } catch (error) {
       // we cannot ask user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
@@ -150,7 +153,7 @@ export default class AddCommand extends Command {
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-      contractName ||= await loadContractNameForAddress(network, address);
+      contractName = (await contractService?.getContractName(network, address)) ?? '';
     } catch (error) {
       // not asking user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
@@ -280,7 +283,7 @@ const updateEventNamesOnCollision = (
     if (dataRow.get('type') === 'event') {
       if (entities.includes(dataRow.get('name'))) {
         if (entities.includes(`${contractName}${dataRow.get('name')}`)) {
-          throw new CLIError(
+          throw new Errors.CLIError(
             `Contract name ('${contractName}') + event name ('${dataRow.get(
               'name',
             )}') entity already exists.`,

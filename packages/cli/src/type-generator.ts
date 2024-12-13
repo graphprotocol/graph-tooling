@@ -1,21 +1,24 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
-import * as graphql from 'graphql/language';
+import * as graphql from 'graphql/language/index.js';
 import immutable from 'immutable';
 import prettier from 'prettier';
 // @ts-expect-error TODO: type out if necessary
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
-import DataSourceTemplateCodeGenerator from './codegen/template';
-import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript';
-import { displayPath } from './command-helpers/fs';
-import { Spinner, step, withSpinner } from './command-helpers/spinner';
-import debug from './debug';
-import { applyMigrations } from './migrations';
-import Protocol from './protocols';
-import Schema from './schema';
-import Subgraph from './subgraph';
-import Watcher from './watcher';
+import DataSourceTemplateCodeGenerator from './codegen/template.js';
+import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript.js';
+import { appendApiVersionForGraph } from './command-helpers/compiler.js';
+import { displayPath } from './command-helpers/fs.js';
+import { Spinner, step, withSpinner } from './command-helpers/spinner.js';
+import { GRAPH_CLI_SHARED_HEADERS } from './constants.js';
+import debug from './debug.js';
+import { applyMigrations } from './migrations.js';
+import Protocol from './protocols/index.js';
+import Schema from './schema.js';
+import Subgraph from './subgraph.js';
+import { createIpfsClient, loadSubgraphSchemaFromIPFS } from './utils.js';
+import Watcher from './watcher.js';
 
 const typeGenDebug = debug('graph-cli:type-generator');
 
@@ -28,6 +31,8 @@ export interface TypeGeneratorOptions {
   skipMigrations?: boolean;
   uncrashable: boolean;
   uncrashableConfig: string;
+  subgraphSources: string[];
+  ipfsUrl: string;
 }
 
 export default class TypeGenerator {
@@ -62,7 +67,11 @@ export default class TypeGenerator {
         'Subgraph uses a substream datasource. Codegeneration is not required.',
       );
       process.exit(0);
-      return;
+    }
+
+    if (this.options.subgraphSources.length > 0) {
+      typeGenDebug.extend('generateTypes')('Subgraph uses subgraph datasources.');
+      toolbox.print.success('Subgraph uses subgraph datasources.');
     }
 
     try {
@@ -80,7 +89,6 @@ export default class TypeGenerator {
         const abis = await this.protocolTypeGenerator.loadABIs(subgraph);
         await this.protocolTypeGenerator.generateTypesForABIs(abis);
       }
-
       typeGenDebug.extend('generateTypes')('Generating types for templates');
       await this.generateTypesForDataSourceTemplates(subgraph);
 
@@ -92,7 +100,32 @@ export default class TypeGenerator {
 
       const schema = await this.loadSchema(subgraph);
       typeGenDebug.extend('generateTypes')('Generating types for schema');
-      await this.generateTypesForSchema(schema);
+      await this.generateTypesForSchema({ schema });
+
+      if (this.options.subgraphSources.length > 0) {
+        const ipfsClient = createIpfsClient({
+          url: appendApiVersionForGraph(this.options.ipfsUrl.toString()),
+          headers: {
+            ...GRAPH_CLI_SHARED_HEADERS,
+          },
+        });
+
+        await Promise.all(
+          this.options.subgraphSources.map(async manifest => {
+            const subgraphSchemaFile = await loadSubgraphSchemaFromIPFS(ipfsClient, manifest);
+
+            const subgraphSchema = await Schema.loadFromString(subgraphSchemaFile);
+            typeGenDebug.extend('generateTypes')(
+              `Generating types for subgraph datasource ${manifest}`,
+            );
+            await this.generateTypesForSchema({
+              schema: subgraphSchema,
+              fileName: `subgraph-${manifest}.ts`,
+              generateStoreMethods: false,
+            });
+          }),
+        );
+      }
 
       toolbox.print.success('\nTypes generated successfully\n');
 
@@ -161,7 +194,17 @@ export default class TypeGenerator {
     );
   }
 
-  async generateTypesForSchema(schema: any) {
+  async generateTypesForSchema({
+    schema,
+    fileName = 'schema.ts', // Default file name
+    outputDir = this.options.outputDir, // Default output directory
+    generateStoreMethods = true,
+  }: {
+    schema: any;
+    fileName?: string;
+    outputDir?: string;
+    generateStoreMethods?: boolean;
+  }) {
     return await withSpinner(
       `Generate types for GraphQL schema`,
       `Failed to generate types for GraphQL schema`,
@@ -173,7 +216,7 @@ export default class TypeGenerator {
           [
             GENERATED_FILE_NOTE,
             ...codeGenerator.generateModuleImports(),
-            ...codeGenerator.generateTypes(),
+            ...(await codeGenerator.generateTypes(generateStoreMethods)),
             ...codeGenerator.generateDerivedLoaders(),
           ].join('\n'),
           {
@@ -181,7 +224,7 @@ export default class TypeGenerator {
           },
         );
 
-        const outputFile = path.join(this.options.outputDir, 'schema.ts');
+        const outputFile = path.join(outputDir, fileName); // Use provided outputDir and fileName
         step(spinner, 'Write types to', displayPath(outputFile));
         await fs.mkdirs(path.dirname(outputFile));
         await fs.writeFile(outputFile, code);
@@ -273,7 +316,6 @@ export default class TypeGenerator {
   }
 
   async watchAndGenerateTypes() {
-    const generator = this;
     let spinner: Spinner;
 
     // Create watcher and generate types once and then on every change to a watched file
@@ -283,10 +325,10 @@ export default class TypeGenerator {
         if (changedFile !== undefined) {
           spinner.info(`File change detected: ${displayPath(changedFile)}\n`);
         }
-        await generator.generateTypes();
+        await this.generateTypes();
         spinner.start();
       },
-      onCollectFiles: async () => await generator.getFilesToWatch(),
+      onCollectFiles: async () => await this.getFilesToWatch(),
       onError: error => {
         spinner.stop();
         toolbox.print.error(`${error}\n`);

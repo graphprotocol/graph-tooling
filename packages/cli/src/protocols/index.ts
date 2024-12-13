@@ -1,27 +1,30 @@
 import immutable from 'immutable';
-import debug from '../debug';
-import Subgraph from '../subgraph';
-import * as ArweaveManifestScaffold from './arweave/scaffold/manifest';
-import * as ArweaveMappingScaffold from './arweave/scaffold/mapping';
-import ArweaveSubgraph from './arweave/subgraph';
-import { ContractCtor } from './contract';
-import * as CosmosManifestScaffold from './cosmos/scaffold/manifest';
-import * as CosmosMappingScaffold from './cosmos/scaffold/mapping';
-import CosmosSubgraph from './cosmos/subgraph';
-import EthereumABI from './ethereum/abi';
-import EthereumTemplateCodeGen from './ethereum/codegen/template';
-import EthereumContract from './ethereum/contract';
-import * as EthereumManifestScaffold from './ethereum/scaffold/manifest';
-import * as EthereumMappingScaffold from './ethereum/scaffold/mapping';
-import EthereumSubgraph from './ethereum/subgraph';
-import EthereumTypeGenerator from './ethereum/type-generator';
-import NearContract from './near/contract';
-import * as NearManifestScaffold from './near/scaffold/manifest';
-import * as NearMappingScaffold from './near/scaffold/mapping';
-import NearSubgraph from './near/subgraph';
-import { SubgraphOptions } from './subgraph';
-import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest';
-import SubstreamsSubgraph from './substreams/subgraph';
+import debug from '../debug.js';
+import Subgraph from '../subgraph.js';
+import * as ArweaveManifestScaffold from './arweave/scaffold/manifest.js';
+import * as ArweaveMappingScaffold from './arweave/scaffold/mapping.js';
+import ArweaveSubgraph from './arweave/subgraph.js';
+import { ContractCtor } from './contract.js';
+import * as CosmosManifestScaffold from './cosmos/scaffold/manifest.js';
+import * as CosmosMappingScaffold from './cosmos/scaffold/mapping.js';
+import CosmosSubgraph from './cosmos/subgraph.js';
+import EthereumABI from './ethereum/abi.js';
+import EthereumTemplateCodeGen from './ethereum/codegen/template.js';
+import EthereumContract from './ethereum/contract.js';
+import * as EthereumManifestScaffold from './ethereum/scaffold/manifest.js';
+import * as EthereumMappingScaffold from './ethereum/scaffold/mapping.js';
+import EthereumSubgraph from './ethereum/subgraph.js';
+import EthereumTypeGenerator from './ethereum/type-generator.js';
+import NearContract from './near/contract.js';
+import * as NearManifestScaffold from './near/scaffold/manifest.js';
+import * as NearMappingScaffold from './near/scaffold/mapping.js';
+import NearSubgraph from './near/subgraph.js';
+import { SubgraphOptions } from './subgraph.js';
+import * as SubgraphDataSourceManifestScaffold from './subgraph/scaffold/manifest.js';
+import * as SubgraphMappingScaffold from './subgraph/scaffold/mapping.js';
+import SubgraphDataSource from './subgraph/subgraph.js';
+import * as SubstreamsManifestScaffold from './substreams/scaffold/manifest.js';
+import SubstreamsSubgraph from './substreams/subgraph.js';
 
 const protocolDebug = debug('graph-cli:protocol');
 
@@ -43,6 +46,7 @@ export default class Protocol {
      * some other places use datasource object
      */
     const name = typeof datasource === 'string' ? datasource : datasource.kind;
+    protocolDebug('Initializing protocol with datasource %O', datasource);
     this.name = Protocol.normalizeName(name)!;
     protocolDebug('Initializing protocol %s', this.name);
 
@@ -58,6 +62,9 @@ export default class Protocol {
         break;
       case 'near':
         this.config = nearProtocol;
+        break;
+      case 'subgraph':
+        this.config = subgraphProtocol;
         break;
       case 'substreams':
         this.config = substreamsProtocol;
@@ -85,71 +92,8 @@ export default class Protocol {
       near: ['near'],
       cosmos: ['cosmos'],
       substreams: ['substreams'],
-    }) as immutable.Collection<ProtocolName, string[]>;
-  }
-
-  static availableNetworks() {
-    return immutable.fromJS({
-      arweave: ['arweave-mainnet'],
-      ethereum: [
-        'mainnet',
-        'rinkeby',
-        'goerli',
-        'poa-core',
-        'poa-sokol',
-        'gnosis',
-        'matic',
-        'mumbai',
-        'fantom',
-        'fantom-testnet',
-        'bsc',
-        'chapel',
-        'clover',
-        'avalanche',
-        'fuji',
-        'celo',
-        'celo-alfajores',
-        'fuse',
-        'moonbeam',
-        'moonriver',
-        'mbase',
-        'arbitrum-one',
-        'arbitrum-goerli',
-        'arbitrum-sepolia',
-        'optimism',
-        'optimism-goerli',
-        'aurora',
-        'aurora-testnet',
-        'base-testnet',
-        'base',
-        'zksync-era',
-        'zksync-era-testnet',
-        'sepolia',
-        'polygon-zkevm-testnet',
-        'polygon-zkevm',
-        'scroll-sepolia',
-        'scroll',
-      ],
-      near: ['near-mainnet', 'near-testnet'],
-      cosmos: [
-        'cosmoshub-4',
-        'theta-testnet-001', // CosmosHub testnet
-        'osmosis-1',
-        'osmo-test-4', // Osmosis testnet
-        'juno-1',
-        'uni-3', // Juno testnet
-      ],
-      substreams: ['mainnet'],
-    }) as immutable.Map<
-      | 'arweave'
-      | 'ethereum'
-      | 'near'
-      | 'cosmos'
-      | 'substreams'
-      // this is temporary, until we have a better way to handle substreams triggers
-      | 'substreams/triggers',
-      immutable.List<string>
-    >;
+      subgraph: ['subgraph'],
+    }) as immutable.Collection<ProtocolName, immutable.List<string>>;
   }
 
   static normalizeName(name: ProtocolName) {
@@ -176,11 +120,15 @@ export default class Protocol {
     return this.config.contract != null;
   }
 
+  isSubstreams() {
+    return this.name === 'substreams';
+  }
+
   hasEvents() {
     // A problem with hasEvents usage in the codebase is that it's almost every where
     // where used, the ABI data is actually use after the conditional, so it seems
     // both concept are related. So internally, we map to this condition.
-    return this.hasABIs();
+    return this.hasABIs() && !this.isComposedSubgraph();
   }
 
   hasTemplates() {
@@ -192,7 +140,7 @@ export default class Protocol {
   }
 
   getTypeGenerator(options: any) {
-    if (this.config == null || this.config.getTypeGenerator == null) {
+    if (this.config?.getTypeGenerator == null) {
       return null;
     }
 
@@ -226,6 +174,10 @@ export default class Protocol {
   getMappingScaffold() {
     return this.config.mappingScaffold;
   }
+
+  isComposedSubgraph() {
+    return this.name === 'subgraph';
+  }
 }
 
 export type ProtocolName =
@@ -234,7 +186,8 @@ export type ProtocolName =
   | 'near'
   | 'cosmos'
   | 'substreams'
-  | 'substreams/triggers';
+  | 'substreams/triggers'
+  | 'subgraph';
 
 export interface ProtocolConfig {
   displayName: string;
@@ -290,6 +243,21 @@ const ethereumProtocol: ProtocolConfig = {
   mappingScaffold: EthereumMappingScaffold,
 };
 
+const subgraphProtocol: ProtocolConfig = {
+  displayName: 'Subgraph',
+  abi: EthereumABI,
+  contract: undefined,
+  getTemplateCodeGen: undefined,
+  getTypeGenerator(options) {
+    return new EthereumTypeGenerator(options);
+  },
+  getSubgraph(options) {
+    return new SubgraphDataSource(options);
+  },
+  manifestScaffold: SubgraphDataSourceManifestScaffold,
+  mappingScaffold: SubgraphMappingScaffold,
+};
+
 const nearProtocol: ProtocolConfig = {
   displayName: 'NEAR',
   abi: undefined,
@@ -315,5 +283,3 @@ const substreamsProtocol: ProtocolConfig = {
   manifestScaffold: SubstreamsManifestScaffold,
   mappingScaffold: undefined,
 };
-
-protocolDebug('Available networks %M', Protocol.availableNetworks());

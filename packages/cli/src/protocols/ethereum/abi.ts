@@ -1,7 +1,7 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import immutable from 'immutable';
-import AbiCodeGenerator from './codegen/abi';
+import AbiCodeGenerator from './codegen/abi.js';
 
 const TUPLE_ARRAY_PATTERN = /^tuple\[([0-9]*)\]$/;
 const TUPLE_MATRIX_PATTERN = /^tuple\[([0-9]*)\]\[([0-9]*)\]$/;

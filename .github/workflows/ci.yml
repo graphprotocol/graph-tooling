@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
@@ -35,7 +35,7 @@ jobs:
         node-version: [18, 20, 22]
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
@@ -53,7 +53,7 @@ jobs:
         run: pnpm build # will also check types
 
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
@@ -81,7 +81,7 @@ jobs:
         run: pnpm i
 
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: the-guild-org/shared-config/setup@main
         name: Setup Env
@@ -106,7 +106,7 @@ jobs:
         run: pnpm build # will also check types
 
       - name: Run Tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3

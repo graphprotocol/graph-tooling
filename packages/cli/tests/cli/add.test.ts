@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import * as toolbox from 'gluegun';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { runGraphCli } from './util';

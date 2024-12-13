@@ -1,8 +1,8 @@
 import immutable from 'immutable';
-import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types';
-import * as util from '../codegen/util';
-import Protocol from '../protocols';
-import { INPUT_NAMES_BLACKLIST, renameInput } from './mapping';
+import { ascTypeForProtocol, valueTypeForAsc } from '../codegen/types/index.js';
+import * as util from '../codegen/util.js';
+import Protocol from '../protocols/index.js';
+import { renameNameIfNeeded } from './mapping.js';
 
 export function abiEvents(abi: { data: immutable.Collection<any, any> }) {
   return util.disambiguateNames({
@@ -73,9 +73,7 @@ export const generateEventType = (
         id: Bytes!
         ${event.inputs
           .reduce((acc: any[], input: any, index: number) => {
-            if (Object.values(INPUT_NAMES_BLACKLIST).includes(input.name)) {
-              input.name = renameInput(input.name, contractName ?? 'contract');
-            }
+            input.name = renameNameIfNeeded(input.name);
             return acc.concat(generateEventFields({ input, index, protocolName }));
           }, [])
           .join('\n')}

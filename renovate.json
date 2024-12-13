@@ -1,3 +1,30 @@
 {
-  "extends": ["github>the-guild-org/shared-config:renovate"]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "prConcurrentLimit": 25,
+  "reviewers": ["YaroShkvorets", "0237h"],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "recreateWhen": "never",
+  "labels": ["dependencies"],
+  "rebaseWhen": "conflicted",
+  "packageRules": [
+    {
+      "excludePackagePatterns": [
+        "typescript",
+        "typedoc*",
+        "^@theguild/"
+      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    }
+  ]
 }

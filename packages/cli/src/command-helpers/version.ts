@@ -1,6 +1,6 @@
 import semver from 'semver';
-import * as manifestUtil from '../migrations/util/load-manifest';
-import * as graphTsUtil from '../migrations/util/versions';
+import * as manifestUtil from '../migrations/util/load-manifest.js';
+import * as graphTsUtil from '../migrations/util/versions.js';
 
 export const assertManifestApiVersion = async (manifestPath: string, minimumApiVersion: string) => {
   const manifest = await manifestUtil.loadManifest(manifestPath);

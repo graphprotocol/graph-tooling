@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "moduleResolution": "node",
-    "module": "commonjs",
-    "target": "es2020",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "target": "ESNext",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -13,6 +13,9 @@
     "declaration": true,
     "skipLibCheck": true,
     "allowJs": true
+  },
+  "ts-node": {
+    "esm": true
   },
   "include": ["./src", "./tests"],
   "exclude": ["./tests/cli/init", "./tests/cli/validation"]

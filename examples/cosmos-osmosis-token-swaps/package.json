@@ -11,9 +11,9 @@
   "scripts": {
     "build": "graph build",
     "codegen": "graph codegen",
-    "create": "graph create osmosis-token-swaps --node https://api.thegraph.com/deploy/",
+    "create": "graph create osmosis-token-swaps --node https://api.studio.thegraph.com/deploy/",
     "create-local": "graph create osmosis-token-swaps --node http://0.0.0.0:8020",
-    "deploy": "graph deploy osmosis-token-swaps --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy": "graph deploy osmosis-token-swaps --ipfs https://api.thegraph.com/ipfs/ --node https://api.studio.thegraph.com/deploy/",
     "deploy-local": "graph deploy osmosis-token-swaps -l v0.1.0 --ipfs http://0.0.0.0:5001 --node http://0.0.0.0:8020",
     "remove-local": "graph remove osmosis-token-swaps --node http://0.0.0.0:8020"
   },
@@ -22,7 +22,7 @@
     "babel-register": "^6.26.0"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.71.2",
+    "@graphprotocol/graph-cli": "0.90.1",
     "@graphprotocol/graph-ts": "0.35.1"
   }
 }

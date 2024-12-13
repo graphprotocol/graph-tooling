@@ -1,11 +1,9 @@
 import { describe, expect, test } from 'vitest';
-import { getStartBlockForContract } from './abi';
+import { ContractService } from './contracts.js';
+import { loadRegistry } from './registry.js';
 
 // An object with some test cases for contract deployment block numbers
 const TEST_CONTRACT_START_BLOCKS = {
-  'arbitrum-goerli': {
-    '0xde438d54c7b75f798985ae38a4d07b5431702077': 4_488_583,
-  },
   'arbitrum-one': {
     '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3': 226_981,
   },
@@ -14,12 +12,6 @@ const TEST_CONTRACT_START_BLOCKS = {
   },
   bsc: {
     '0xc35DADB65012eC5796536bD9864eD8773aBc74C4': 5_205_069,
-  },
-  fantom: {
-    '0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5': 28_771_200,
-  },
-  goerli: {
-    '0xff02b7d59975E76F67B63b20b813a9Ec0f6AbD60': 226_385,
   },
   mainnet: {
     '0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd': 10_736_242,
@@ -30,12 +22,19 @@ const TEST_CONTRACT_START_BLOCKS = {
   moonbeam: {
     '0x011E52E4E40CF9498c79273329E8827b21E2e581': 505_060,
   },
-  moonriver: {
-    '0x3dB01570D97631f69bbb0ba39796865456Cf89A5': 800_950,
-  },
   optimism: {
     '0xc35DADB65012eC5796536bD9864eD8773aBc74C4': 7_019_815,
   },
+  gnosis: {
+    '0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3': 16_655_565,
+  },
+  // not stable RPCs
+  // moonriver: {
+  //   '0x3dB01570D97631f69bbb0ba39796865456Cf89A5': 800_950,
+  // },
+  // celo: {
+  //   '0x8084936982D089130e001b470eDf58faCA445008': 10_186_627,
+  // },
 
   // Skipping these networks for now because they do not support the latest etherscan contracts API or is blockScout based
 
@@ -86,15 +85,20 @@ const TEST_CONTRACT_START_BLOCKS = {
   // },
 };
 
-// skip this test since its time consuming
-describe.skip('getStartBlockForContract', () => {
+describe.sequential('getStartBlockForContract', async () => {
+  const registry = await loadRegistry();
+  const contractService = new ContractService(registry);
   for (const [network, contracts] of Object.entries(TEST_CONTRACT_START_BLOCKS)) {
     for (const [contract, startBlockExp] of Object.entries(contracts)) {
-      test(`Returns the start block ${network} ${contract} ${startBlockExp}`, async () => {
-        //loop through the TEST_CONTRACT_START_BLOCKS object and test each network
-        const startBlock = await getStartBlockForContract(network, contract);
-        expect(startBlock).toBe(startBlockExp);
-      });
+      test(
+        `Returns the start block ${network} ${contract} ${startBlockExp}`,
+        async () => {
+          //loop through the TEST_CONTRACT_START_BLOCKS object and test each network
+          const startBlock = await contractService.getStartBlock(network, contract);
+          expect(parseInt(startBlock)).toBe(startBlockExp);
+        },
+        { timeout: 10_000 },
+      );
     }
   }
 });

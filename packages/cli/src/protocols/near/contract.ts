@@ -1,4 +1,4 @@
-import { Contract } from '../contract';
+import { Contract } from '../contract.js';
 
 const MINIMUM_ACCOUNT_ID_LENGTH = 2 as const;
 const MAXIMUM_ACCOUNT_ID_LENGTH = 64 as const;

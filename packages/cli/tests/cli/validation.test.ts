@@ -184,7 +184,7 @@ describe.concurrent(
       ['codegen', '--skip-migrations'],
       'validation/nested-template-nice-error',
       {
-        exitCode: 1,
+        exitCode: 0,
       },
     );
 

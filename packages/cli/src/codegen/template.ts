@@ -1,7 +1,7 @@
 import immutable from 'immutable';
-import Protocol from '../protocols';
-import FileTemplateCodeGen from '../protocols/file_template';
-import * as tsCodegen from './typescript';
+import FileTemplateCodeGen from '../protocols/file_template.js';
+import Protocol from '../protocols/index.js';
+import * as tsCodegen from './typescript.js';
 
 export default class DataSourceTemplateCodeGenerator {
   protocolTemplateCodeGen: any;

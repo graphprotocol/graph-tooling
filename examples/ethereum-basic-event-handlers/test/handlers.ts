@@ -1,8 +1,8 @@
-const path = require('node:path');
-const { system, patching, filesystem } = require('gluegun');
-const { createApolloFetch } = require('apollo-fetch');
-const { ethers } = require('hardhat');
-const { expect } = require('chai');
+import path from 'node:path';
+import { createApolloFetch } from 'apollo-fetch';
+import { expect } from 'chai';
+import { filesystem, patching, system } from 'gluegun';
+import { ethers } from 'hardhat';
 
 const srcDir = path.join(__dirname, '..');
 
@@ -47,7 +47,7 @@ const waitForSubgraphToBeSynced = async () =>
 describe('Basic event handlers', () => {
   // Deploy the subgraph once before all tests
   before(async () => {
-    const GravatarRegistry = await hre.ethers.getContractFactory('GravatarRegistry');
+    const GravatarRegistry = await ethers.getContractFactory('GravatarRegistry');
     const registry = await GravatarRegistry.deploy();
     const accounts = await ethers.getSigners();
 
@@ -56,7 +56,7 @@ describe('Basic event handlers', () => {
     await patching.replace(
       path.join(srcDir, 'subgraph.yaml'),
       'DEPLOYED_CONTRACT_ADDRESS',
-      registry.address,
+      String(registry.target),
     );
 
     await registry.setMythicalGravatar();

@@ -399,14 +399,13 @@ export class Entity extends TypedMap<string, Value> {
 
   /** Assigns properties from sources to this Entity in right-to-left order */
   merge(sources: Array<Entity>): Entity {
-    const target = this;
     for (let i = 0; i < sources.length; i++) {
       const entries = sources[i].entries;
       for (let j = 0; j < entries.length; j++) {
-        target.set(entries[j].key, entries[j].value);
+        this.set(entries[j].key, entries[j].value);
       }
     }
-    return target;
+    return this;
   }
 
   setString(key: string, value: string): void {
@@ -456,6 +455,28 @@ export class Entity extends TypedMap<string, Value> {
   getBigDecimal(key: string): BigDecimal {
     return this.get(key)!.toBigDecimal();
   }
+}
+
+/**
+ * Common representation for entity triggers, this wraps the entity
+ * and has fields for the operation type and the entity type.
+ */
+export class EntityTrigger<T extends Entity> {
+  constructor(
+    public operation: EntityOp,
+    public type: string,
+    public data: T, // T is a specific type that extends Entity
+  ) {}
+}
+
+/**
+ * Enum for entity operations.
+ * Create, Modify, Remove
+ */
+export enum EntityOp {
+  Create,
+  Modify,
+  Remove,
 }
 
 /**

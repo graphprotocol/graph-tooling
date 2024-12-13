@@ -12,15 +12,15 @@
     "build": "graph build",
     "build:contract": "hardhat compile",
     "codegen": "graph codegen",
-    "create": "graph create example --node https://api.thegraph.com/deploy/",
+    "create": "graph create example --node https://api.studio.thegraph.com/deploy/",
     "create-local": "graph create example --node http://127.0.0.1:8020",
-    "deploy": "graph deploy example --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy": "graph deploy example --ipfs https://api.thegraph.com/ipfs/ --node https://api.studio.thegraph.com/deploy/",
     "deploy-local": "graph deploy example --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.71.2",
+    "@graphprotocol/graph-cli": "0.90.1",
     "@graphprotocol/graph-ts": "0.35.1",
-    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
-    "hardhat": "^2.13.1"
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.17"
   }
 }

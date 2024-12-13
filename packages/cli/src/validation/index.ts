@@ -1,3 +1,3 @@
-export { validateContract, validateContractValues } from './contract';
-export { validateManifest } from './manifest';
-export { validateSchema } from './schema';
+export { validateContract, validateContractValues } from './contract.js';
+export { validateManifest } from './manifest.js';
+export { validateSchema } from './schema.js';

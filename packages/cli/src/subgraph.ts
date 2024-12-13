@@ -1,12 +1,11 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
-import * as graphql from 'graphql/language';
+import * as graphql from 'graphql/language/index.js';
 import immutable from 'immutable';
-import yaml from 'yaml';
-import { strOptions } from 'yaml/types';
-import debug from './debug';
-import { Subgraph as ISubgraph } from './protocols/subgraph';
-import * as validation from './validation';
+import yaml, { Scalar } from 'yaml';
+import debug from './debug.js';
+import { Subgraph as ISubgraph } from './protocols/subgraph.js';
+import * as validation from './validation/index.js';
 
 const subgraphDebug = debug('graph-cli:subgraph');
 
@@ -54,7 +53,7 @@ export default class Subgraph {
     const schema = graphql.parse(
       await fs.readFile(
         path.join(
-          __dirname,
+          `${process.platform === 'win32' ? '' : '/'}${/file:\/{2,3}(.+)\/[^/]/.exec(import.meta.url)![1]}`,
           'protocols',
           // TODO: substreams/triggers is a special case, should be handled better
           protocol.name === 'substreams/triggers' ? 'substreams' : protocol.name,
@@ -246,11 +245,7 @@ More than one template named '${name}', template names must be unique.`,
   }
 
   static dump(manifest: any) {
-    strOptions.fold.lineWidth = 90;
-    // @ts-expect-error TODO: plain is the value behind the TS constant
-    strOptions.defaultType = 'PLAIN';
-
-    return yaml.stringify(manifest.toJS());
+    return yaml.stringify(manifest.toJS(), { defaultKeyType: Scalar.PLAIN, lineWidth: 90 });
   }
 
   static async load(
@@ -264,7 +259,7 @@ More than one template named '${name}', template names must be unique.`,
     let has_file_data_sources = false;
 
     if (filename.match(/.js$/)) {
-      data = require(path.resolve(filename));
+      data = await import(path.resolve(filename));
     } else {
       subgraphDebug('Loading manifest from %s', filename);
       const raw_data = await fs.readFile(filename, 'utf-8');
