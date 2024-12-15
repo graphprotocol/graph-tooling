@@ -1,6 +1,5 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
-import chalk from 'chalk';
 import fs from 'fs-extra';
 import * as toolbox from 'gluegun';
 import immutable from 'immutable';
@@ -138,7 +137,7 @@ export default class Compiler {
 
   completed(ipfsHashOrPath: string) {
     toolbox.print.info('');
-    toolbox.print.success(`Build completed: ${chalk.blue(ipfsHashOrPath)}`);
+    toolbox.print.success(`Build completed: ${toolbox.print.colors.blue(ipfsHashOrPath)}`);
     toolbox.print.info('');
   }
 
