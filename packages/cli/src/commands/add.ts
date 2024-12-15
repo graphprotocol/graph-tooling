@@ -18,6 +18,8 @@ import EthereumABI from '../protocols/ethereum/abi.js';
 import Protocol from '../protocols/index.js';
 import Subgraph from '../subgraph.js';
 
+const DEFAULT_CONTRACT_NAME = 'Contract';
+
 export default class AddCommand extends Command {
   static description = 'Adds a new datasource to a subgraph.';
 
@@ -36,14 +38,14 @@ export default class AddCommand extends Command {
       char: 'h',
     }),
     abi: Flags.string({
-      summary: 'Path to the contract ABI.',
+      summary: 'Path to the contract ABI. If not provided, will be fetched from contract API.',
     }),
     'start-block': Flags.string({
-      summary: 'The block number to start indexing events from.',
+      summary:
+        'The block number to start indexing events from. If not provided, will be fetched from contract API',
     }),
     'contract-name': Flags.string({
-      summary: 'Name of the contract.',
-      default: 'Contract',
+      summary: 'Name of the contract. If not provided, will be fetched from contract API',
     }),
     'merge-entities': Flags.boolean({
       summary: 'Whether to merge entities with the same name.',
@@ -80,7 +82,7 @@ export default class AddCommand extends Command {
     const contractService = new ContractService(registry);
 
     let startBlock = startBlockFlag ? parseInt(startBlockFlag).toString() : startBlockFlag;
-    let contractName = contractNameFlag;
+    let contractName = contractNameFlag || DEFAULT_CONTRACT_NAME;
 
     let ethabi = null;
     if (abi) {
@@ -94,43 +96,36 @@ export default class AddCommand extends Command {
             'Fetching ABI from contract API...',
             'Failed to fetch ABI',
             'Warning fetching ABI',
-            () => contractService?.getABI(EthereumABI, network, address),
+            () => contractService.getABI(EthereumABI, network, address),
           ),
         );
+        if (!ethabi) throw Error;
       } catch (error) {
         // we cannot ask user to do prompt in test environment
         if (process.env.NODE_ENV !== 'test') {
-          const { abi: abiFromFile } = await prompt.ask<{ abi: EthereumABI }>([
+          const { abi: abiFile } = await prompt.ask<{ abi: string }>([
             {
               type: 'input',
               name: 'abi',
               message: 'ABI file (path)',
-              initial: ethabi,
               validate: async (value: string) => {
                 try {
                   EthereumABI.load(contractName, value);
                   return true;
                 } catch (e) {
-                  this.error(e.message);
-                }
-              },
-              result: async (value: string) => {
-                try {
-                  return EthereumABI.load(contractName, value);
-                } catch (e) {
-                  return e.message;
+                  return `Failed to load ABI from ${value}: ${e.message}`;
                 }
               },
             },
           ]);
-          ethabi = abiFromFile;
+          ethabi = EthereumABI.load(contractName, abiFile);
         }
       }
     }
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-      startBlock ||= Number(await contractService?.getStartBlock(network, address)).toString();
+      startBlock ||= Number(await contractService.getStartBlock(network, address)).toString();
     } catch (error) {
       // we cannot ask user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
@@ -153,7 +148,10 @@ export default class AddCommand extends Command {
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-      contractName = (await contractService?.getContractName(network, address)) ?? '';
+      if (contractName === DEFAULT_CONTRACT_NAME) {
+        contractName =
+          (await contractService.getContractName(network, address)) ?? DEFAULT_CONTRACT_NAME;
+      }
     } catch (error) {
       // not asking user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
