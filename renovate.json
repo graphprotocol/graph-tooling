@@ -24,26 +24,26 @@
       "enabled": false
     },
     {
-      "matchFileNames": ["package.json", "packages/**"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "packages dependencies",
       "groupSlug": "packages-minor-patch"
     },
     {
-      "matchFileNames": ["examples/**"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "examples dependencies",
-      "groupSlug": "examples-minor-patch"
-    },
-    {
       "matchFileNames": ["website/**"],
-      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "website dependencies",
       "groupSlug": "website-minor-patch"
     },
     {
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchFileNames": ["examples/**"],
+      "groupName": "examples dependencies",
+      "groupSlug": "examples-minor-patch"
+    },
+    {
       "matchPackageNames": ["typescript", "@theguild/**"],
+      "groupName": null
+    },
+    {
+      "matchUpdateTypes": ["major"],
       "groupName": null
     }
   ]
