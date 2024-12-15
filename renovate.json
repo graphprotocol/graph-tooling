@@ -21,14 +21,18 @@
   ],
   "packageRules": [
     {
+      "matchManagers": ["cargo"],
+      "enabled": false
+    },
+    {
       "matchUpdateTypes": ["minor", "patch"],
-      "matchPackageNames": ["//typescript//", "//^@theguild///"],
+      "matchPackageNames": ["/^typescript/", "/^@theguild//"],
       "groupName": null
     },
     {
       "matchFileNames": ["package.json", "packages/**"],
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "packages non-major dependencies",
+      "groupName": "packages dependencies",
       "groupSlug": "packages-minor-patch"
     },
     {
