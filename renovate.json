@@ -1,6 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
   "prConcurrentLimit": 25,
   "reviewers": ["YaroShkvorets", "0237h"],
   "automerge": true,
@@ -22,35 +21,25 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["//typescript//", "//^@theguild///"],
       "groupName": null
     },
     {
-      "matchPackagePatterns": ["/typescript/", "/^@theguild//"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": null
-    },
-    {
-      "matchPackagePatterns": ["*"],
-      "excludePackagePatterns": ["/typescript/", "/^@theguild//"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "extends": [":semanticCommitTypeAll(chore)"]
-    },
-    {
-      "extends": [":group(minor)"],
       "matchFileNames": ["package.json", "packages/**"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "packages non-major dependencies",
       "groupSlug": "packages-minor-patch"
     },
     {
-      "extends": [":group(minor)"],
       "matchFileNames": ["examples/**"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "examples dependencies",
       "groupSlug": "examples-minor-patch"
     },
     {
-      "extends": [":group(minor)"],
       "matchFileNames": ["website/**"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "website dependencies",
       "groupSlug": "website-minor-patch"
     }
