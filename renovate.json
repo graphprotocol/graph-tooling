@@ -1,7 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
   "prConcurrentLimit": 25,
-  "prHourlyLimit": 10,
+  "reviewers": ["YaroShkvorets"],
   "automerge": true,
   "major": {
     "automerge": false
@@ -13,38 +14,14 @@
   "recreateWhen": "never",
   "labels": ["dependencies"],
   "rebaseWhen": "conflicted",
-  "includePaths": [
-    "package.json",
-    "packages/**",
-    "examples/**",
-    "website/**"
-  ],
   "packageRules": [
     {
-      "matchManagers": ["cargo"],
-      "enabled": false
-    },
-    {
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "packages dependencies",
-      "groupSlug": "packages-minor-patch"
-    },
-    {
-      "matchFileNames": ["website/**"],
-      "groupName": "website dependencies",
-      "groupSlug": "website-minor-patch"
-    },
-    {
-      "matchFileNames": ["examples/**"],
-      "groupName": "examples dependencies",
-      "groupSlug": "examples-minor-patch"
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
     },
     {
       "matchPackageNames": ["typescript", "@theguild/**"],
-      "groupName": null
-    },
-    {
-      "matchUpdateTypes": ["major"],
       "groupName": null
     }
   ]
