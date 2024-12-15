@@ -18,8 +18,10 @@
     "deploy-local": "graph deploy arweave-example -l v0.1.0 --ipfs http://localhost:5001 --node http://localhost:8020",
     "remove-local": "graph remove arweave-example --node http://localhost:8020"
   },
-  "devDependencies": {
-    "@graphprotocol/graph-cli": "0.90.1",
+  "dependencies": {
     "@graphprotocol/graph-ts": "0.35.1"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "0.90.1"
   }
 }

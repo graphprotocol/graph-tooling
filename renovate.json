@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "prConcurrentLimit": 25,
-  "reviewers": ["YaroShkvorets", "0237h"],
   "automerge": true,
   "major": {
     "automerge": false
@@ -25,11 +24,6 @@
       "enabled": false
     },
     {
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchPackageNames": ["/^typescript/", "/^@theguild//"],
-      "groupName": null
-    },
-    {
       "matchFileNames": ["package.json", "packages/**"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "packages dependencies",
@@ -46,6 +40,11 @@
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "website dependencies",
       "groupSlug": "website-minor-patch"
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["typescript", "@theguild/**"],
+      "groupName": null
     }
   ]
 }
