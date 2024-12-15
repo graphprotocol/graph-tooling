@@ -21,6 +21,7 @@
     "lint:eslint": "eslint .",
     "lint:eslint:fix": "eslint . --fix",
     "lint:fix": "pnpm lint:prettier:fix && pnpm lint:eslint:fix",
+    "lint:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "lint:prettier": "prettier -c .",
     "lint:prettier:fix": "prettier . --write",
     "release": "pnpm build && changeset publish",
