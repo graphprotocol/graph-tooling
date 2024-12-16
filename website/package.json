@@ -28,7 +28,7 @@
     "connectkit": "^1.8.2",
     "file-type": "^19.6.0",
     "gql.tada": "^1.8.10",
-    "graphql": "16.9.0",
+    "graphql": "16.10.0",
     "kubo-rpc-client": "^5.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
