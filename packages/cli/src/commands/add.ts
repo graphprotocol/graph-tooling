@@ -242,9 +242,11 @@ export default class AddCommand extends Command {
       });
     }
 
-    await withSpinner('Running codegen', 'Failed to run codegen', 'Warning during codegen', () =>
-      system.run(yarn ? 'yarn codegen' : 'npm run codegen'),
+    await withSpinner('Running codegen', 'Failed to run codegen', 'Warning during codegen', async () =>
+      await system.run(yarn ? 'yarn codegen' : 'npm run codegen'),
     );
+
+    this.exit(0);
   }
 }
 
