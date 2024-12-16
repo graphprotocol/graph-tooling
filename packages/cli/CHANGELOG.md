@@ -1,5 +1,39 @@
 # @graphprotocol/graph-cli
 
+## 0.92.0
+
+### Minor Changes
+
+- [#1775](https://github.com/graphprotocol/graph-tooling/pull/1775)
+  [`7faa309`](https://github.com/graphprotocol/graph-tooling/commit/7faa3098b2e6c61f09fc81b8b2d333e66b0080d1)
+  Thanks [@0237h](https://github.com/0237h)! - Update all dependencies
+
+- [#1788](https://github.com/graphprotocol/graph-tooling/pull/1788)
+  [`edb601d`](https://github.com/graphprotocol/graph-tooling/commit/edb601dbe29e3bab1ae356b4c94d4356f84929d6)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - - add networks registry support
+  - improve `graph init` flow
+    - filter through the networks as you type
+    - more information about the networks
+    - remove unnecessary options depending on the selection
+    - ESC key to go back
+  - allow specifying ipfs/url for substreams package
+
+### Patch Changes
+
+- [#1778](https://github.com/graphprotocol/graph-tooling/pull/1778)
+  [`5900f09`](https://github.com/graphprotocol/graph-tooling/commit/5900f0948711285018b639219d1b33536c2ac69e)
+  Thanks [@briceyan](https://github.com/briceyan)! - Fix `graph add` flag parameters parsing
+
+- [#1810](https://github.com/graphprotocol/graph-tooling/pull/1810)
+  [`c301481`](https://github.com/graphprotocol/graph-tooling/commit/c301481d4350e3eb89074d3d0407520222bd810b)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix bug with clashing \_id field name
+  in schema
+
+- [#1835](https://github.com/graphprotocol/graph-tooling/pull/1835)
+  [`299c75b`](https://github.com/graphprotocol/graph-tooling/commit/299c75b4649a452aabc8933460e04f21bf1c3058)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix generated example entity id
+  uniqueness
+
 ## 0.91.1
 
 ### Patch Changes
