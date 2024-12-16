@@ -21,7 +21,7 @@
       "groupSlug": "all-minor-patch"
     },
     {
-      "matchPackageNames": ["typescript", "@theguild/**"],
+      "matchPackageNames": ["typescript", "@theguild/**", "@pinax/**"],
       "groupName": null
     }
   ]
