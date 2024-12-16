@@ -11,7 +11,7 @@ export const generatePlaceholderHandlers = ({
   contractName: string;
 }) =>
   `
-  import { BigInt } from '@graphprotocol/graph-ts'
+  import { BigInt, Bytes } from '@graphprotocol/graph-ts'
   import { ${contractName}, ${events.map(event => event._alias)} }
     from '../generated/${contractName}/${contractName}'
   import { ExampleEntity } from '../generated/schema'
@@ -21,14 +21,15 @@ export const generatePlaceholderHandlers = ({
       index === 0
         ? `
     export function handle${event._alias}(event: ${event._alias}): void {
-      // Entities can be loaded from the store using a string ID; this ID
+      // Entities can be loaded from the store using an ID; this ID
       // needs to be unique across all entities of the same type
-      let entity = ExampleEntity.load(event.transaction.from)
+      const id = event.transaction.hash.concat(Bytes.fromByteArray(Bytes.fromBigInt(event.logIndex)));
+      let entity = ExampleEntity.load(id)
 
       // Entities only exist after they have been saved to the store;
       // \`null\` checks allow to create entities on demand
       if (!entity) {
-        entity = new ExampleEntity(event.transaction.from)
+        entity = new ExampleEntity(id)
 
         // Entity fields can be set using simple assignments
         entity.count = BigInt.fromI32(0)
