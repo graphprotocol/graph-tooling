@@ -19,6 +19,8 @@ describe('Add command', () => {
         '0x2E645469f354BB4F5c8a05B3b30A929361cf77eC',
         '--contract-name',
         'Gravatar',
+        '--start-block',
+        '6175244',
         '--abi',
         `${EXAMPLE_SUBGRAPH_PATH}/abis/Gravity.json`,
       ],
