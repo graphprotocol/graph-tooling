@@ -432,7 +432,7 @@ async function processInitForm(
       if (remaining == 0) return shown;
       if (shown.length === choices.length) {
         shown.push({
-          name: '--other--',
+          name: 'N/A',
           value: '',
           hint: '· other network not on the list',
           message: `Other`,
@@ -485,15 +485,21 @@ async function processInitForm(
             .map(networkToChoice)
             .filter(({ value }) => (value ?? '').includes(input.toLowerCase())),
         ),
-      validate: value => {
-        if (value === '--other--') {
-          return 'To add a network refer to https://github.com/graphprotocol/networks-registry';
-        }
-        return networks.find(n => n.id === value) ? true : 'Pick a network';
-      },
+      validate: value =>
+        value === 'N/A' || networks.find(n => n.id === value) ? true : 'Pick a network',
       result: value => {
         initDebugger.extend('processInitForm')('networkId: %O', value);
-        network = networks.find(n => n.id === value)!;
+        const foundNetwork = networks.find(n => n.id === value);
+        if (!foundNetwork) {
+          this.log(`
+  The chain list is populated from the Networks Registry:
+
+  https://github.com/graphprotocol/networks-registry
+
+  To add a chain to the registry you can create an issue or submit a PR`);
+          process.exit(0);
+        }
+        network = foundNetwork;
         promptManager.setOptions('protocol', {
           choices: [
             {
