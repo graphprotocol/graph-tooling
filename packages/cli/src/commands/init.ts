@@ -485,7 +485,8 @@ async function processInitForm(
             .map(networkToChoice)
             .filter(({ value }) => (value ?? '').includes(input.toLowerCase())),
         ),
-      validate: value => (value === 'N/A' || networks.find(n => n.id === value)) ? true : 'Pick a network',
+      validate: value =>
+        value === 'N/A' || networks.find(n => n.id === value) ? true : 'Pick a network',
       result: value => {
         initDebugger.extend('processInitForm')('networkId: %O', value);
         const foundNetwork = networks.find(n => n.id === value);
@@ -495,8 +496,7 @@ async function processInitForm(
 
   https://github.com/graphprotocol/networks-registry
 
-  To add a chain to the registry you can create an issue or submit a PR`
-          );
+  To add a chain to the registry you can create an issue or submit a PR`);
           process.exit(0);
         }
         network = foundNetwork;
