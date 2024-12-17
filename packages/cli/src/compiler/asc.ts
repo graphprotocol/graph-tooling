@@ -40,7 +40,6 @@ export const compile = ({ inputFile, global, baseDir, libs, outputFile }: Compil
   setupExitHandler(exitHandler);
 
   const compilerArgs = [
-    '--explicitStart',
     '--exportRuntime',
     '--runtime',
     'stub',
