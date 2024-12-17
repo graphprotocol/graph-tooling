@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  rimraf: ^6.0.0
+
 patchedDependencies:
   oclif@4.16.0:
     hash: ofxhflhoc4vkbbfnh6gtk4pfua
@@ -292,16 +295,22 @@ importers:
         version: 4.1.0
       kubo-rpc-client:
         specifier: ^5.0.2
-        version: 5.0.2(undici@5.28.4)
+        version: 5.0.2(undici@7.1.1)
       open:
         specifier: 10.1.0
         version: 10.1.0
+      prettier:
+        specifier: 3.4.2
+        version: 3.4.2
       semver:
         specifier: 7.6.3
         version: 7.6.3
       tmp-promise:
         specifier: 3.0.3
         version: 3.0.3
+      undici:
+        specifier: 7.1.1
+        version: 7.1.1
       web3-eth-abi:
         specifier: 4.4.1
         version: 4.4.1(typescript@5.7.2)(zod@3.23.8)
@@ -404,7 +413,7 @@ importers:
         version: 16.9.0
       kubo-rpc-client:
         specifier: ^5.0.2
-        version: 5.0.2(undici@5.28.4)
+        version: 5.0.2(undici@7.1.1)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -470,7 +479,7 @@ importers:
         specifier: ^8.4.49
         version: 8.4.49
       rimraf:
-        specifier: ^6.0.1
+        specifier: ^6.0.0
         version: 6.0.1
       tailwindcss:
         specifier: ^3.4.15
@@ -8363,16 +8372,6 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rimraf@2.7.1:
-    resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
-    deprecated: Rimraf versions prior to v4 are no longer supported
-    hasBin: true
-
-  rimraf@3.0.2:
-    resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
-    deprecated: Rimraf versions prior to v4 are no longer supported
-    hasBin: true
-
   rimraf@6.0.1:
     resolution: {integrity: sha512-9dkvaxAsk/xNXSJzMgFqqMCuFgt2+KsOFek3TMLfo8NCPfWpBmqwyNn5Y+NX56QUYfCtsyhF3ayiboEoUmJk/A==}
     engines: {node: 20 || >=22}
@@ -9170,6 +9169,10 @@ packages:
   undici@5.28.4:
     resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
     engines: {node: '>=14.0'}
+
+  undici@7.1.1:
+    resolution: {integrity: sha512-WZkQ6eH9f5ZT93gaIffsbUaDpBwjbpvmMbfaEhOnbdUneurTESeRxwPGwjI28mRFESH3W3e8Togijh37ptOQqA==}
+    engines: {node: '>=20.18.1'}
 
   unenv@1.10.0:
     resolution: {integrity: sha512-wY5bskBQFL9n3Eca5XnhH6KbUo/tfvkwm9OpcdCvLaeA7piBNbavbOKJySEwQ1V0RH6HvNlSAFRTpvTqgKRQXQ==}
@@ -15371,7 +15374,7 @@ snapshots:
   binary-install-raw@0.0.13(debug@4.3.4):
     dependencies:
       axios: 0.21.4(debug@4.3.4)
-      rimraf: 3.0.2
+      rimraf: 6.0.1
       tar: 6.2.1
     transitivePeerDependencies:
       - debug
@@ -15379,7 +15382,7 @@ snapshots:
   binary-install@1.1.0(debug@4.3.7):
     dependencies:
       axios: 0.26.1(debug@4.3.7)
-      rimraf: 3.0.2
+      rimraf: 6.0.1
       tar: 6.2.1
     transitivePeerDependencies:
       - debug
@@ -17358,7 +17361,7 @@ snapshots:
   fs-jetpack@4.3.1:
     dependencies:
       minimatch: 3.1.2
-      rimraf: 2.7.1
+      rimraf: 6.0.1
 
   fs-minipass@2.1.0:
     dependencies:
@@ -18497,7 +18500,7 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  kubo-rpc-client@5.0.2(undici@5.28.4):
+  kubo-rpc-client@5.0.2(undici@7.1.1):
     dependencies:
       '@ipld/dag-cbor': 9.2.2
       '@ipld/dag-json': 10.2.3
@@ -18526,7 +18529,7 @@ snapshots:
       merge-options: 3.0.4
       multiformats: 13.3.1
       nanoid: 5.0.9
-      native-fetch: 4.0.2(undici@5.28.4)
+      native-fetch: 4.0.2(undici@7.1.1)
       parse-duration: 1.1.1
       react-native-fetch-api: 3.0.0
       stream-to-it: 1.0.1
@@ -19225,9 +19228,9 @@ snapshots:
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
 
-  native-fetch@4.0.2(undici@5.28.4):
+  native-fetch@4.0.2(undici@7.1.1):
     dependencies:
-      undici: 5.28.4
+      undici: 7.1.1
 
   natural-compare@1.4.0: {}
 
@@ -20279,14 +20282,6 @@ snapshots:
 
   reusify@1.0.4: {}
 
-  rimraf@2.7.1:
-    dependencies:
-      glob: 7.2.3
-
-  rimraf@3.0.2:
-    dependencies:
-      glob: 7.2.3
-
   rimraf@6.0.1:
     dependencies:
       glob: 11.0.0
@@ -21235,6 +21230,8 @@ snapshots:
   undici@5.28.4:
     dependencies:
       '@fastify/busboy': 2.1.1
+
+  undici@7.1.1: {}
 
   unenv@1.10.0:
     dependencies:
