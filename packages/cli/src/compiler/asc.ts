@@ -34,7 +34,7 @@ export interface CompileOptions {
 // it requires an asynchronous wait. Whenever you call this function,
 // it doesn't matter how many times, just make sure you call `ready`
 // once before everything..
-export const compile = ({ inputFile, global, baseDir, libs, outputFile }: CompileOptions) => {
+export const compile = async ({ inputFile, global, baseDir, libs, outputFile }: CompileOptions) => {
   const exitHandler = createExitHandler(inputFile);
 
   setupExitHandler(exitHandler);
@@ -55,7 +55,7 @@ export const compile = ({ inputFile, global, baseDir, libs, outputFile }: Compil
     '--debug',
   ];
 
-  assemblyScriptCompiler(compilerArgs, compilerDefaults);
+  await assemblyScriptCompiler(compilerArgs, compilerDefaults);
 
   // only if compiler succeeded, that is, when the line above doesn't throw
   removeExitHandler(exitHandler);
