@@ -1,5 +1,13 @@
 # @graphprotocol/graph-ts
 
+## 0.37.0
+
+### Minor Changes
+
+- [#1843](https://github.com/graphprotocol/graph-tooling/pull/1843)
+  [`c09b56b`](https://github.com/graphprotocol/graph-tooling/commit/c09b56b093f23c80aa5d217b2fd56fccac061145)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - Update all dependencies
+
 ## 0.36.0
 
 ### Minor Changes

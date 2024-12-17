@@ -1,5 +1,49 @@
 # @graphprotocol/graph-cli
 
+## 0.92.0
+
+### Minor Changes
+
+- [#1843](https://github.com/graphprotocol/graph-tooling/pull/1843)
+  [`c09b56b`](https://github.com/graphprotocol/graph-tooling/commit/c09b56b093f23c80aa5d217b2fd56fccac061145)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - Update all dependencies
+
+- [#1843](https://github.com/graphprotocol/graph-tooling/pull/1843)
+  [`c09b56b`](https://github.com/graphprotocol/graph-tooling/commit/c09b56b093f23c80aa5d217b2fd56fccac061145)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - - add networks registry support
+  - improve `graph init` flow
+    - filter through the networks as you type
+    - more information about the networks
+    - remove unnecessary options depending on the selection
+    - ESC key to go back
+  - allow specifying ipfs/url for substreams package
+
+### Patch Changes
+
+- [#1848](https://github.com/graphprotocol/graph-tooling/pull/1848)
+  [`f2726cb`](https://github.com/graphprotocol/graph-tooling/commit/f2726cb4741ec87a4292088affbca554c252313a)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - dependencies updates:
+
+  - Added dependency [`prettier@3.4.2` ↗︎](https://www.npmjs.com/package/prettier/v/3.4.2) (to
+    `dependencies`)
+  - Added dependency [`undici@7.1.1` ↗︎](https://www.npmjs.com/package/undici/v/7.1.1) (to
+    `dependencies`)
+
+- [#1843](https://github.com/graphprotocol/graph-tooling/pull/1843)
+  [`c09b56b`](https://github.com/graphprotocol/graph-tooling/commit/c09b56b093f23c80aa5d217b2fd56fccac061145)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - Fix `graph add` flag parameters
+  parsing
+
+- [#1843](https://github.com/graphprotocol/graph-tooling/pull/1843)
+  [`c09b56b`](https://github.com/graphprotocol/graph-tooling/commit/c09b56b093f23c80aa5d217b2fd56fccac061145)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix bug with clashing \_id field name
+  in schema
+
+- [#1843](https://github.com/graphprotocol/graph-tooling/pull/1843)
+  [`c09b56b`](https://github.com/graphprotocol/graph-tooling/commit/c09b56b093f23c80aa5d217b2fd56fccac061145)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix generated example entity id
+  uniqueness
+
 ## 0.91.1
 
 ### Patch Changes
