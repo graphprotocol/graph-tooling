@@ -87,7 +87,7 @@ export default class BuildCommand extends Command {
       await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
     }
 
-    const compiler = await createCompiler(manifest, {
+    const compiler = createCompiler(manifest, {
       ipfs,
       outputDir,
       outputFormat,

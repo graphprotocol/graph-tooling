@@ -145,7 +145,7 @@ export default class PublishCommand extends Command {
       this.error(e, { exit: 1 });
     }
 
-    const compiler = await createCompiler(manifest, {
+    const compiler = createCompiler(manifest, {
       ipfs,
       outputDir: 'build/',
       outputFormat: 'wasm',

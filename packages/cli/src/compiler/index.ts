@@ -246,41 +246,32 @@ export default class Compiler {
         // Cache compiled files so identical input files are only compiled once
         const compiledFiles = new Map();
 
-        // Handle data sources
-        const dataSources = subgraph.get('dataSources');
-        const compiledDataSources = await Promise.all(
-          dataSources.map(async (dataSource: any) => {
-            const mappingPath = dataSource.getIn(['mapping', 'file']);
-            const compiledPath = await this._compileDataSourceMapping(
-              this.protocol,
-              dataSource,
-              mappingPath,
-              compiledFiles,
-              spinner,
-              validate,
-            );
-            return dataSource.setIn(['mapping', 'file'], compiledPath);
-          }),
-        );
-        subgraph = subgraph.set('dataSources', compiledDataSources);
+        await asc.ready();
 
-        // Handle templates if they exist
-        const templates = subgraph.get('templates');
-        if (templates !== undefined) {
-          const compiledTemplates = await Promise.all(
-            templates.map(async (template: any) => {
-              const mappingPath = template.getIn(['mapping', 'file']);
-              const compiledPath = await this._compileTemplateMapping(
-                template,
+        subgraph = subgraph.update('dataSources', (dataSources: any[]) =>
+          dataSources.map((dataSource: any) =>
+            dataSource.updateIn(['mapping', 'file'], (mappingPath: string) =>
+              this._compileDataSourceMapping(
+                this.protocol,
+                dataSource,
                 mappingPath,
                 compiledFiles,
                 spinner,
-              );
-              return template.setIn(['mapping', 'file'], compiledPath);
-            }),
-          );
-          subgraph = subgraph.set('templates', compiledTemplates);
-        }
+                validate,
+              ),
+            ),
+          ),
+        );
+
+        subgraph = subgraph.update('templates', (templates: any) =>
+          templates === undefined
+            ? templates
+            : templates.map((template: any) =>
+                template.updateIn(['mapping', 'file'], (mappingPath: string) =>
+                  this._compileTemplateMapping(template, mappingPath, compiledFiles, spinner),
+                ),
+              ),
+        );
 
         return subgraph;
       },
@@ -343,7 +334,7 @@ export default class Compiler {
     return missingHandlers;
   }
 
-  async _compileDataSourceMapping(
+  _compileDataSourceMapping(
     protocol: Protocol,
     dataSource: immutable.Map<any, any>,
     mappingPath: string,
@@ -397,7 +388,7 @@ export default class Compiler {
       }
       const global = path.relative(baseDir, this.globalsFile);
 
-      await asc.compile({
+      asc.compile({
         inputFile,
         global,
         baseDir,
@@ -424,7 +415,7 @@ export default class Compiler {
     }
   }
 
-  async _compileTemplateMapping(
+  _compileTemplateMapping(
     template: immutable.Collection<any, any>,
     mappingPath: string,
     compiledFiles: Map<any, any>,
@@ -478,7 +469,7 @@ export default class Compiler {
       }
       const global = path.relative(baseDir, this.globalsFile);
 
-      await asc.compile({
+      asc.compile({
         inputFile,
         global,
         baseDir,

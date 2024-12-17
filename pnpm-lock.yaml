@@ -258,8 +258,8 @@ importers:
         specifier: ^0.10.1
         version: 0.10.1
       assemblyscript:
-        specifier: 0.27.31
-        version: 0.27.31
+        specifier: 0.19.23
+        version: 0.19.23
       binary-install:
         specifier: ^1.1.0
         version: 1.1.0(debug@4.3.7)
