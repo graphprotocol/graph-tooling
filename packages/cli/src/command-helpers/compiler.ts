@@ -33,7 +33,7 @@ export function appendApiVersionForGraph(inputString: string) {
 }
 
 // Helper function to construct a subgraph compiler
-export async function createCompiler(
+export function createCompiler(
   manifest: string,
   {
     ipfs,

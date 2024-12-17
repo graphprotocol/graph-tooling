@@ -1,4 +1,4 @@
-import asc from 'assemblyscript/asc';
+import * as asc from 'assemblyscript/cli/asc';
 
 const createExitHandler = (inputFile: string) => () => {
   throw new Error(`The AssemblyScript compiler crashed when compiling this file: '${inputFile}'
@@ -14,12 +14,26 @@ const setupExitHandler = (exitHandler: (code: number) => void) =>
 const removeExitHandler = (exitHandler: (code: number) => void) =>
   process.removeListener('exit', exitHandler);
 
-const assemblyScriptCompiler = async (argv: string[], options: asc.APIOptions) =>
-  await asc.main(argv, options);
+// Important note, the `asc.main` callback function parameter is synchronous,
+// that's why this function doesn't need to be `async` and the throw works properly.
+const assemblyScriptCompiler = (argv: string[], options: asc.APIOptions) =>
+  asc.main(argv, options, err => {
+    if (err) {
+      throw err;
+    }
+    return 0;
+  });
 
 const compilerDefaults = {
   stdout: process.stdout,
   stderr: process.stdout,
+};
+
+// You MUST call this function once before compiling anything.
+// Internally it just delegates to the AssemblyScript compiler
+// which just delegates to the binaryen lib.
+export const ready = async () => {
+  await asc.ready;
 };
 
 export interface CompileOptions {
@@ -34,12 +48,13 @@ export interface CompileOptions {
 // it requires an asynchronous wait. Whenever you call this function,
 // it doesn't matter how many times, just make sure you call `ready`
 // once before everything..
-export const compile = async ({ inputFile, global, baseDir, libs, outputFile }: CompileOptions) => {
+export const compile = ({ inputFile, global, baseDir, libs, outputFile }: CompileOptions) => {
   const exitHandler = createExitHandler(inputFile);
 
   setupExitHandler(exitHandler);
 
   const compilerArgs = [
+    '--explicitStart',
     '--exportRuntime',
     '--runtime',
     'stub',
@@ -55,7 +70,7 @@ export const compile = async ({ inputFile, global, baseDir, libs, outputFile }: 
     '--debug',
   ];
 
-  await assemblyScriptCompiler(compilerArgs, compilerDefaults);
+  assemblyScriptCompiler(compilerArgs, compilerDefaults);
 
   // only if compiler succeeded, that is, when the line above doesn't throw
   removeExitHandler(exitHandler);

@@ -37,7 +37,7 @@
     "@oclif/plugin-warn-if-update-available": "^3.1.24",
     "@pinax/graph-networks-registry": "^0.6.5",
     "@whatwg-node/fetch": "^0.10.1",
-    "assemblyscript": "0.27.31",
+    "assemblyscript": "0.19.23",
     "binary-install": "^1.1.0",
     "chokidar": "4.0.1",
     "debug": "4.3.7",
