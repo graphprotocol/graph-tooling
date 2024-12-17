@@ -1,0 +1,17 @@
+diff --git a/lib/tarballs/build.js b/lib/tarballs/build.js
+index a7577a89c721bf4a52657f037fcc079e8fa9dca3..ebf5245840ac671064c8699f166102b2cc5d85c3 100644
+--- a/lib/tarballs/build.js
++++ b/lib/tarballs/build.js
+@@ -195,8 +195,10 @@ const addDependencies = async (c) => {
+     else {
+         const lockpath = (0, node_fs_1.existsSync)(path.join(c.root, 'package-lock.json'))
+             ? path.join(c.root, 'package-lock.json')
+-            : path.join(c.root, 'npm-shrinkwrap.json');
+-        await (0, fs_extra_1.copy)(lockpath, path.join(c.workspace(), path.basename(lockpath)));
++            : null;
++        if (lockpath) {
++            await (0, fs_extra_1.copy)(lockpath, path.join(c.workspace(), path.basename(lockpath)));
++        }
+         await exec('npm install --production', { cwd: c.workspace() });
+     }
+ };
