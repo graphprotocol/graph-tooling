@@ -1,5 +1,5 @@
 diff --git a/lib/tarballs/build.js b/lib/tarballs/build.js
-index a7577a89c721bf4a52657f037fcc079e8fa9dca3..ebf5245840ac671064c8699f166102b2cc5d85c3 100644
+index a7577a89c721bf4a52657f037fcc079e8fa9dca3..51c33346763dee8c60a3b59b8c46b6789c496239 100644
 --- a/lib/tarballs/build.js
 +++ b/lib/tarballs/build.js
 @@ -195,8 +195,10 @@ const addDependencies = async (c) => {
@@ -15,3 +15,12 @@ index a7577a89c721bf4a52657f037fcc079e8fa9dca3..ebf5245840ac671064c8699f166102b2
          await exec('npm install --production', { cwd: c.workspace() });
      }
  };
+@@ -229,7 +231,7 @@ const buildTarget = async (target, c, options) => {
+     const { bin, version } = c.config;
+     const { gitSha: sha } = c;
+     const templateShortKeyCommonOptions = { arch, bin, platform, sha, version };
+-    const [gzLocalKey, xzLocalKey] = ['.tar.gz', '.tar.xz'].map((ext) => (0, upload_util_1.templateShortKey)('versioned', { ...templateShortKeyCommonOptions, ext }));
++    const [gzLocalKey, xzLocalKey] = ['.tar.gz', '.tar.xz'].map((ext) => (0, upload_util_1.templateShortKey)('unversioned', { ...templateShortKeyCommonOptions, ext }));
+     const base = path.basename(gzLocalKey);
+     (0, log_1.log)(`building target ${base}`);
+     (0, log_1.log)('copying workspace', c.workspace(), workspace);

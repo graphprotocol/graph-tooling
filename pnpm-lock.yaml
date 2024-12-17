@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  oclif@4.16.0:
+    hash: ofxhflhoc4vkbbfnh6gtk4pfua
+    path: patches/oclif@4.16.0.patch
+
 importers:
 
   .:
@@ -324,7 +329,7 @@ importers:
         version: 2.4.1
       oclif:
         specifier: 4.16.0
-        version: 4.16.0(@types/node@22.10.1)
+        version: 4.16.0(patch_hash=ofxhflhoc4vkbbfnh6gtk4pfua)(@types/node@22.10.1)
       spawn-command:
         specifier: 1.0.0
         version: 1.0.0
@@ -19424,7 +19429,7 @@ snapshots:
 
   obliterator@2.0.4: {}
 
-  oclif@4.16.0(@types/node@22.10.1):
+  oclif@4.16.0(patch_hash=ofxhflhoc4vkbbfnh6gtk4pfua)(@types/node@22.10.1):
     dependencies:
       '@aws-sdk/client-cloudfront': 3.699.0
       '@aws-sdk/client-s3': 3.705.0
