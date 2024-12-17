@@ -116,6 +116,7 @@ export default class DeployCommand extends Command {
         type: 'input',
         name: 'subgraphName',
         message: () => 'What is the subgraph name?',
+        skip: () => !!subgraphNameArg,
         initial: subgraphNameArg,
         required: true,
       },
@@ -158,6 +159,7 @@ export default class DeployCommand extends Command {
         name: 'versionLabel',
         message: () => 'Which version label to use? (e.g. "v0.0.1")',
         initial: versionLabelFlag,
+        skip: () => !!versionLabelFlag,
         required: true,
       },
     ]);
@@ -191,10 +193,10 @@ export default class DeployCommand extends Command {
               errorMessage += '\nYou may need to authenticate first.';
             }
             spinner.fail(errorMessage);
-            this.exit(1);
+            process.exit(1);
           } else if (requestError) {
             spinner.fail(`HTTP error deploying the subgraph ${requestError.code}`);
-            this.exit(1);
+            process.exit(1);
           } else {
             spinner.stop();
 
