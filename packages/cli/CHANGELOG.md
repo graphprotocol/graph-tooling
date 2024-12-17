@@ -1,5 +1,52 @@
 # @graphprotocol/graph-cli
 
+## 0.93.0
+
+### Minor Changes
+
+- [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
+  [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - Update all dependencies
+
+- [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
+  [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - - add networks registry support
+  - improve `graph init` flow
+    - filter through the networks as you type
+    - more information about the networks
+    - remove unnecessary options depending on the selection
+    - ESC key to go back
+  - allow specifying ipfs/url for substreams package
+
+### Patch Changes
+
+- [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
+  [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - dependencies updates:
+
+  - Updated dependency
+    [`assemblyscript@0.19.23` ↗︎](https://www.npmjs.com/package/assemblyscript/v/0.19.23) (from
+    `0.27.31`, in `dependencies`)
+
+- [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
+  [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - Fix `graph add` flag parameters
+  parsing
+
+- [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
+  [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix bug with clashing \_id field name
+  in schema
+
+- [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
+  [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix generated example entity id
+  uniqueness
+
+- [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
+  [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - rollback asc version
+
 ## 0.92.0
 
 ### Minor Changes
