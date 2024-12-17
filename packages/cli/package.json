@@ -54,6 +54,7 @@
     "prettier": "3.4.2",
     "semver": "7.6.3",
     "tmp-promise": "3.0.3",
+    "undici": "7.1.1",
     "web3-eth-abi": "4.4.1",
     "yaml": "2.6.1"
   },
