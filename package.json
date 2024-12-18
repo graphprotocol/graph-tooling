@@ -39,12 +39,12 @@
     "eslint": "9.16.0",
     "prettier": "3.4.2"
   },
-  "overrides": {
-    "rimraf": "^6.0.0"
-  },
   "pnpm": {
     "patchedDependencies": {
       "oclif@4.16.0": "patches/oclif@4.16.0.patch"
+    },
+    "overrides": {
+      "rimraf": "^6.0.0"
     }
   }
 }

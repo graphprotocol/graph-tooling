@@ -74,6 +74,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "overrides": {
+    "rimraf": "^6.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "rimraf": "^6.0.0"
+    }
+  },
   "oclif": {
     "bin": "graph",
     "commands": "./dist/commands",
