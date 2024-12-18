@@ -5,7 +5,7 @@
   "description": "CLI for building for and deploying to The Graph",
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.18.1"
   },
   "bin": {
     "graph": "bin/run.js"
