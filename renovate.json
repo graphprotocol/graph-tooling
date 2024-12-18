@@ -23,6 +23,10 @@
     {
       "matchPackageNames": ["typescript", "@theguild/**", "@pinax/**"],
       "groupName": null
+    },
+    {
+      "matchPackageNames": ["assemblyscript"],
+      "enabled": false
     }
   ]
 }
