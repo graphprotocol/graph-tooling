@@ -1,5 +1,14 @@
 # @graphprotocol/graph-cli
 
+## 0.93.1
+
+### Patch Changes
+
+- [#1859](https://github.com/graphprotocol/graph-tooling/pull/1859)
+  [`71c8405`](https://github.com/graphprotocol/graph-tooling/commit/71c84056ef9fc29c4ca18ed82b9e1bad12fd20d9)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - `graph auth`: fix bug with setting
+  deploy key
+
 ## 0.93.0
 
 ### Minor Changes
