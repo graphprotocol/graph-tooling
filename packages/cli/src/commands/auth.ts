@@ -34,6 +34,7 @@ export default class AuthCommand extends Command {
         name: 'deployKey',
         message: () => 'What is your Subgraph Studio deploy key?',
         required: true,
+        initial: initialDeployKey,
         skip: this.validateStudioDeployKey(initialDeployKey),
         validate: value =>
           this.validateStudioDeployKey(value) || `Invalid Subgraph Studio deploy key: ${value}`,
