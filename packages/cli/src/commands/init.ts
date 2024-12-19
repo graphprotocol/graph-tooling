@@ -504,6 +504,7 @@ async function processInitForm(
           choices: [
             {
               message: 'Smart contract',
+              hint: '· default',
               name: network.graphNode?.protocol ?? '',
               value: 'contract',
             },
