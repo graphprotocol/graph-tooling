@@ -210,6 +210,33 @@ describe.sequential(
         },
       );
     });
+
+    describe('Substreams', () => {
+      const substreamsBaseDir = path.join(baseDir, 'substreams');
+
+      cliTest(
+        'From package',
+        [
+          'init',
+          '--skip-git',
+          '--protocol',
+          'substreams',
+          '--spkg',
+          path.join(substreamsBaseDir, 'substreams.spkg'),
+          '--network',
+          'mainnet',
+          'user/subgraph-from-substreams',
+          path.join(substreamsBaseDir, 'from-package'),
+        ],
+        path.join('init', 'substreams', 'from-package'),
+        {
+          exitCode: 0,
+          timeout: 100_000,
+          cwd: substreamsBaseDir,
+          deleteDir: true,
+        },
+      );
+    });
   },
   {
     timeout: 60_000,
