@@ -81,10 +81,6 @@ export default class InitCommand extends Command {
     'skip-git': Flags.boolean({
       summary: 'Skip initializing a Git repository.',
       default: false,
-      deprecated: {
-        message:
-          'In next major version, this flag will be removed. By default we will stop initializing a Git repository.',
-      },
     }),
     'start-block': Flags.string({
       helpGroup: 'Scaffold from contract',
@@ -141,6 +137,12 @@ export default class InitCommand extends Command {
     } = flags;
 
     initDebugger('Flags: %O', flags);
+
+    if (skipGit) {
+      this.warn(
+        'The --skip-git flag will be removed in the next major version. By default we will stop initializing a Git repository.',
+      );
+    }
 
     const { node } = chooseNodeUrl({
       node: nodeFlag,
