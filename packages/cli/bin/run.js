@@ -1,20 +1,10 @@
 #!/usr/bin/env node
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import semver from 'semver';
 import { execute } from '@oclif/core';
+import { nodeVersion } from '../dist/version.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
-
-const requiredVersion = pkg.engines.node;
-const currentVersion = process.version;
-
-if (!semver.satisfies(currentVersion, requiredVersion)) {
-  console.error(
-    `Error: Node.js version ${requiredVersion} is required. Current version: ${currentVersion}`,
-  );
+if (!semver.satisfies(process.version, nodeVersion)) {
+  console.error(`Node.js version ${nodeVersion} is required. Current version: ${process.version}`);
   process.exit(1);
 }
 
