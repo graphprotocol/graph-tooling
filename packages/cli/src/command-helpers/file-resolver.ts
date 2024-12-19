@@ -1,7 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
 import fs from 'fs-extra';
-import fetch from '../fetch.js';
 import { DEFAULT_IPFS_URL } from './ipfs.js';
 
 export interface FileSource {
@@ -42,7 +41,7 @@ export async function resolveFile(
       if (source.startsWith('Qm')) {
         const response = await fetch(`${DEFAULT_IPFS_URL}/cat?arg=${source}`);
         if (!response.ok) {
-          throw new Error(`Failed to fetch file from IPFS: ${response.statusText}`);
+          throw new Error(`failed to fetch from IPFS: ${response.statusText}`);
         }
         const filePath = path.join(tempDir, fileName);
         const buffer = Buffer.from(await response.arrayBuffer());
@@ -52,9 +51,9 @@ export async function resolveFile(
 
       // If it's a URL
       if (source.startsWith('http')) {
-        const response = await fetch(source);
+        const response = await fetch(source, { redirect: 'follow' });
         if (!response.ok) {
-          throw new Error(`Failed to fetch file from URL: ${response.statusText}`);
+          throw new Error(`failed to fetch from URL: ${response.statusText}`);
         }
         const filePath = path.join(tempDir, fileName);
         const buffer = Buffer.from(await response.arrayBuffer());
@@ -66,7 +65,10 @@ export async function resolveFile(
       throw new Error('Invalid file source. Must be a file path, IPFS hash, or URL');
     } catch (error) {
       cleanup();
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`Failed to resolve ${source} - ${error.message}`);
+      }
+      throw new Error(`Failed to resolve ${source}`);
     }
   };
 
