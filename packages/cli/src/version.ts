@@ -15,3 +15,4 @@ const packageJson = JSON.parse(
 );
 
 export const version = packageJson.version as string;
+export const nodeVersion = (packageJson.engines?.node ?? '') as string;
