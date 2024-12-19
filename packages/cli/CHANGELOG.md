@@ -1,5 +1,22 @@
 # @graphprotocol/graph-cli
 
+## 0.93.2
+
+### Patch Changes
+
+- [#1863](https://github.com/graphprotocol/graph-tooling/pull/1863)
+  [`4e70f64`](https://github.com/graphprotocol/graph-tooling/commit/4e70f64681a6c0158fa8287a77b8a79907d51b7d)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - warn about outdated node version
+
+- [#1866](https://github.com/graphprotocol/graph-tooling/pull/1866)
+  [`a4f0745`](https://github.com/graphprotocol/graph-tooling/commit/a4f074542a8ad9a4c783830e42702f309690418b)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - show skip-git deprecation warning
+  only when used
+
+- [#1865](https://github.com/graphprotocol/graph-tooling/pull/1865)
+  [`4ddb562`](https://github.com/graphprotocol/graph-tooling/commit/4ddb56209361908804f366ec94266ec7f7dc079f)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - minor `graph init` ux improvements
+
 ## 0.93.1
 
 ### Patch Changes
