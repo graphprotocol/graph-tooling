@@ -32,6 +32,7 @@ const protocolChoices = Array.from(Protocol.availableProtocols().keys());
 const initDebugger = debugFactory('graph-cli:commands:init');
 
 const DEFAULT_EXAMPLE_SUBGRAPH = 'ethereum-gravatar';
+const DEFAULT_CONTRACT_NAME = 'Contract';
 
 export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';
@@ -103,7 +104,6 @@ export default class InitCommand extends Command {
       summary: 'Network the contract is deployed to.',
       description:
         'Refer to https://github.com/graphprotocol/networks-registry/ for supported networks',
-      dependsOn: ['from-contract'],
     }),
 
     ipfs: Flags.string({
@@ -142,6 +142,9 @@ export default class InitCommand extends Command {
       this.warn(
         'The --skip-git flag will be removed in the next major version. By default we will stop initializing a Git repository.',
       );
+    }
+    if ((!fromContract || !spkgPath) && !network) {
+      this.error('--network is required when using --from-contract or --spkg');
     }
 
     const { node } = chooseNodeUrl({
@@ -200,7 +203,7 @@ export default class InitCommand extends Command {
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract
-    if (fromContract && protocol && subgraphName && directory && network && node) {
+    if ((fromContract || spkgPath) && protocol && subgraphName && directory && network && node) {
       const registry = await loadRegistry();
       const contractService = new ContractService(registry);
 
@@ -225,7 +228,7 @@ export default class InitCommand extends Command {
           }
         } else {
           try {
-            abi = await contractService.getABI(ABI, network, fromContract);
+            abi = await contractService.getABI(ABI, network, fromContract!);
           } catch (e) {
             this.exit(1);
           }
@@ -237,11 +240,11 @@ export default class InitCommand extends Command {
           protocolInstance,
           abi,
           directory,
-          source: fromContract,
+          source: fromContract!,
           indexEvents,
           network,
           subgraphName,
-          contractName,
+          contractName: contractName || DEFAULT_CONTRACT_NAME,
           node,
           startBlock,
           spkgPath,
@@ -303,7 +306,7 @@ export default class InitCommand extends Command {
           network: answers.network,
           source: answers.source,
           indexEvents: answers.indexEvents,
-          contractName: answers.contractName,
+          contractName: answers.contractName || DEFAULT_CONTRACT_NAME,
           node,
           startBlock: answers.startBlock,
           spkgPath: answers.spkgPath,

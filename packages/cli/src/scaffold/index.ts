@@ -118,6 +118,7 @@ export default class Scaffold {
 
   async generateManifest() {
     const protocolManifest = this.protocol.getManifestScaffold();
+    const name = this.contractName || getSubgraphBasename(String(this.subgraphName));
 
     return await prettier.format(
       `
@@ -128,7 +129,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ${this.protocol.name}
-    name: ${this.contractName}
+    name: ${name}
     network: ${this.network}
     source: ${protocolManifest.source({ ...this, spkgPath: './substreams.spkg', spkgModule: 'graph_out' })}
     mapping: ${protocolManifest.mapping(this)}
