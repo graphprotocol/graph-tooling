@@ -285,3 +285,35 @@ Next steps:
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
 "
 `;
+
+exports[`Init > Substreams > From package 1`] = `
+" ›   Warning: The --skip-git flag will be removed in the next major version. By
+ ›    default we will stop initializing a Git repository.
+- Create subgraph scaffold
+  Generate subgraph
+- Create subgraph scaffold
+  Write subgraph to directory
+- Create subgraph scaffold
+✔ Create subgraph scaffold
+- Install dependencies with yarn
+✔ Install dependencies with yarn
+"
+`;
+
+exports[`Init > Substreams > From package 2`] = `0`;
+
+exports[`Init > Substreams > From package 3`] = `
+"
+Subgraph user/subgraph-from-substreams created in from-package
+
+Next steps:
+
+  1. Run \`graph auth\` to authenticate with your deploy key.
+
+  2. Type \`cd from-package\` to enter the subgraph.
+
+  3. Run \`yarn deploy\` to deploy the subgraph.
+
+Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
