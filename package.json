@@ -42,9 +42,6 @@
   "pnpm": {
     "patchedDependencies": {
       "oclif@4.16.0": "patches/oclif@4.16.0.patch"
-    },
-    "overrides": {
-      "rimraf": "^6.0.0"
     }
   }
 }

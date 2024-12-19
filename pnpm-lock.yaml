@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  rimraf: ^6.0.0
-
 patchedDependencies:
   oclif@4.16.0:
     hash: ofxhflhoc4vkbbfnh6gtk4pfua
@@ -479,7 +476,7 @@ importers:
         specifier: ^8.4.49
         version: 8.4.49
       rimraf:
-        specifier: ^6.0.0
+        specifier: ^6.0.1
         version: 6.0.1
       tailwindcss:
         specifier: ^3.4.15
@@ -8380,6 +8377,16 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
+  rimraf@2.7.1:
+    resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
+    hasBin: true
+
+  rimraf@3.0.2:
+    resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
+    hasBin: true
+
   rimraf@6.0.1:
     resolution: {integrity: sha512-9dkvaxAsk/xNXSJzMgFqqMCuFgt2+KsOFek3TMLfo8NCPfWpBmqwyNn5Y+NX56QUYfCtsyhF3ayiboEoUmJk/A==}
     engines: {node: 20 || >=22}
@@ -12431,7 +12438,7 @@ snapshots:
     dependencies:
       '@ethereumjs/tx': 4.2.0
       '@types/debug': 4.1.12
-      debug: 4.4.0
+      debug: 4.3.7(supports-color@5.5.0)
       semver: 7.6.3
       superstruct: 1.0.4
     transitivePeerDependencies:
@@ -12666,7 +12673,7 @@ snapshots:
 
   '@nomicfoundation/hardhat-ethers@3.0.8(ethers@6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(hardhat@2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10))':
     dependencies:
-      debug: 4.4.0
+      debug: 4.3.7(supports-color@5.5.0)
       ethers: 6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       hardhat: 2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10)
       lodash.isequal: 4.5.0
@@ -12687,7 +12694,7 @@ snapshots:
       '@nomicfoundation/ignition-core': 0.15.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@nomicfoundation/ignition-ui': 0.15.9
       chalk: 4.1.2
-      debug: 4.4.0
+      debug: 4.3.7(supports-color@5.5.0)
       fs-extra: 10.1.0
       hardhat: 2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10)
       json5: 2.2.3
@@ -12749,7 +12756,7 @@ snapshots:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
       cbor: 8.1.0
-      debug: 4.4.0
+      debug: 4.3.7(supports-color@5.5.0)
       hardhat: 2.22.17(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))(typescript@5.7.2)(utf-8-validate@5.0.10)
       lodash.clonedeep: 4.5.0
       picocolors: 1.1.1
@@ -12764,7 +12771,7 @@ snapshots:
       '@ethersproject/address': 5.6.1
       '@nomicfoundation/solidity-analyzer': 0.1.2
       cbor: 9.0.2
-      debug: 4.4.0
+      debug: 4.3.7(supports-color@5.5.0)
       ethers: 6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       fs-extra: 10.1.0
       immer: 10.0.2
@@ -15382,7 +15389,7 @@ snapshots:
   binary-install-raw@0.0.13(debug@4.3.4):
     dependencies:
       axios: 0.21.4(debug@4.3.4)
-      rimraf: 6.0.1
+      rimraf: 3.0.2
       tar: 6.2.1
     transitivePeerDependencies:
       - debug
@@ -15390,7 +15397,7 @@ snapshots:
   binary-install@1.1.0(debug@4.3.7):
     dependencies:
       axios: 0.26.1(debug@4.3.7)
-      rimraf: 6.0.1
+      rimraf: 3.0.2
       tar: 6.2.1
     transitivePeerDependencies:
       - debug
@@ -16658,7 +16665,7 @@ snapshots:
       - bluebird
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.16.0(jiti@2.4.1)):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -16687,7 +16694,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.16.0(jiti@2.4.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.16.0(jiti@2.4.1))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -17137,7 +17144,7 @@ snapshots:
 
   execa@5.1.1:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       get-stream: 6.0.1
       human-signals: 2.1.0
       is-stream: 2.0.1
@@ -17369,7 +17376,7 @@ snapshots:
   fs-jetpack@4.3.1:
     dependencies:
       minimatch: 3.1.2
-      rimraf: 6.0.1
+      rimraf: 2.7.1
 
   fs-minipass@2.1.0:
     dependencies:
@@ -20300,6 +20307,14 @@ snapshots:
 
   reusify@1.0.4: {}
 
+  rimraf@2.7.1:
+    dependencies:
+      glob: 7.2.3
+
+  rimraf@3.0.2:
+    dependencies:
+      glob: 7.2.3
+
   rimraf@6.0.1:
     dependencies:
       glob: 11.0.0
@@ -21150,7 +21165,7 @@ snapshots:
   typechain@8.3.2(typescript@5.7.2):
     dependencies:
       '@types/prettier': 2.7.3
-      debug: 4.4.0
+      debug: 4.3.7(supports-color@5.5.0)
       fs-extra: 7.0.1
       glob: 7.1.7
       js-sha3: 0.8.0
