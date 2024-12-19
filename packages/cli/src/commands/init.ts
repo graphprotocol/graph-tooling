@@ -62,7 +62,7 @@ export default class InitCommand extends Command {
       description: 'Creates a scaffold based on an example subgraph.',
       // TODO: using a default sets the value and therefore requires not to have --from-contract
       // default: 'Contract',
-      exclusive: ['from-contract'],
+      exclusive: ['from-contract', 'spkg'],
     }),
 
     'contract-name': Flags.string({
@@ -143,19 +143,13 @@ export default class InitCommand extends Command {
         'The --skip-git flag will be removed in the next major version. By default we will stop initializing a Git repository.',
       );
     }
-    if ((!fromContract || !spkgPath) && !network) {
+    if ((!fromContract || !spkgPath) && !network && !fromExample) {
       this.error('--network is required when using --from-contract or --spkg');
     }
 
     const { node } = chooseNodeUrl({
       node: nodeFlag,
     });
-
-    if (fromContract && fromExample) {
-      this.error('Only one of "--from-example" and "--from-contract" can be used at a time.', {
-        exit: 1,
-      });
-    }
 
     // Detect git
     const git = system.which('git');
