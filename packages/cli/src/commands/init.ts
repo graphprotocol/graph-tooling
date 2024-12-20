@@ -143,7 +143,7 @@ export default class InitCommand extends Command {
         'The --skip-git flag will be removed in the next major version. By default we will stop initializing a Git repository.',
       );
     }
-    if ((!fromContract || !spkgPath) && !network && !fromExample) {
+    if ((fromContract || spkgPath) && !network && !fromExample) {
       this.error('--network is required when using --from-contract or --spkg');
     }
 
