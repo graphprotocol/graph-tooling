@@ -1,5 +1,13 @@
 # @graphprotocol/graph-cli
 
+## 0.93.3
+
+### Patch Changes
+
+- [#1875](https://github.com/graphprotocol/graph-tooling/pull/1875)
+  [`675a89a`](https://github.com/graphprotocol/graph-tooling/commit/675a89a0f060f241f3da15542d6a7f497d5fcf5b)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix flag startup bug
+
 ## 0.93.2
 
 ### Patch Changes
