@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { disambiguateNames, unrollTuple } from './util.js';
 
-describe.concurrent('Codegen utilities', () => {
+describe('Codegen utilities', { concurrent: true }, () => {
   test('Name disambiguation', () => {
     expect(
       disambiguateNames({

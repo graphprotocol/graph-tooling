@@ -8,7 +8,7 @@ let tempdir: string;
 let abi: ABI;
 let generatedTypes: any[] = [];
 
-describe.concurrent('ABI code generation', () => {
+describe('ABI code generation', { concurrent: true }, () => {
   beforeAll(async () => {
     tempdir = await fs.mkdtemp('abi-codegen');
 

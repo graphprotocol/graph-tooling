@@ -85,7 +85,7 @@ const TEST_CONTRACT_START_BLOCKS = {
   // },
 };
 
-describe.sequential('getStartBlockForContract', async () => {
+describe('getStartBlockForContract', { sequential: true }, async () => {
   const registry = await loadRegistry();
   const contractService = new ContractService(registry);
   for (const [network, contracts] of Object.entries(TEST_CONTRACT_START_BLOCKS)) {

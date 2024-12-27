@@ -3,7 +3,7 @@ import * as loadManifestUtils from '../migrations/util/load-manifest.js';
 import * as graphTsUtil from '../migrations/util/versions.js';
 import { assertGraphTsVersion, assertManifestApiVersion } from './version.js';
 
-describe.concurrent('Version Command Helpers', () => {
+describe('Version Command Helpers', { concurrent: true }, () => {
   beforeEach(() => {
     vi.resetModules();
   });
