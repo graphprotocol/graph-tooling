@@ -24,6 +24,11 @@ type Schema {
   file: File!
 }
 
+type Graft {
+  base: String!
+  block: BigInt!
+}
+
 type IndexerHints {
   prune: StringOrBigInt
 }
