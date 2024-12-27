@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug graph init",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/packages/cli/bin/run",
+      "args": ["init", "--skip-git"],
+      "preLaunchTask": "build:dev",
+      "outFiles": ["${workspaceFolder}/packages/cli/dist/**/*.js"],
+      "sourceMaps": true,
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}
