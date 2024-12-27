@@ -229,7 +229,7 @@ function bytesToBase64(bytes: Uint8Array, urlSafe: boolean): string {
       result += '==';
     }
   }
-  if (!urlSafe && i === l) {
+  if (i === l) {
     // 2 octets yet to write
     result += alphabet[bytes[i - 2] >> 2];
     result += alphabet[((bytes[i - 2] & 0x03) << 4) | (bytes[i - 1] >> 4)];
