@@ -39,3 +39,41 @@ jobs:
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NPM_TOKEN }}
+            - name: Deploy Environment
+  # You may pin to the exact commit or the version.
+  # uses: parasoft/deploy-environment-action@486e9382c6c2958fcbaad60b895da799d16730c2
+  uses: parasoft/deploy-environment-action@1.0.2
+  with:
+    # CTP URL
+    ctpUrl: 
+    # CTP Username
+    ctpUsername: 
+    # CTP Password
+    ctpPassword: 
+    # Name of the system
+    system: 
+    # Name of the environment
+    environment: 
+    # Name of the environment instance to provision
+    instance: 
+    # Fail action and abort on provisioning failure
+    abortOnFailure: # optional
+    # Virtual assets in the environment will be replicated on another server
+    copyToVirtualize: # optional
+    # The environment assets will be copied to a Virtualize server matching this name
+    virtServerName: # optional
+    # The name for the replicated environment can be used to later destroy the environment
+    newEnvironmentName: # optional
+    # Duplicate associated data repositories before provisioning
+    duplicateDataRepo: # optional
+    # Where to duplicate data repository
+    duplicateType: # optional ok
+    # The host of the data repository server
+    repoHost: # optional
+    # The port of the data repository server
+    repoPort: # optional
+    # The username of the data repository server
+    repoUsername: # optional
+    # The password of the data repository server
+    repoPassword: # optional
+          
