@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import * as codegen from './index.js';
 
-describe.concurrent('ethereum.Value -> AssemblyScript', () => {
+describe('ethereum.Value -> AssemblyScript', { concurrent: true }, () => {
   // Scalar values
 
   test('address -> Address', () => {

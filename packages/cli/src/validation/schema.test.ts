@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { typeSuggestion } from './schema.js';
 
-describe.concurrent('Schema validation', () => {
+describe('Schema validation', { concurrent: true }, () => {
   test('Type suggestions', () => {
     expect(typeSuggestion('Address')).toEqual('Bytes');
     expect(typeSuggestion('address')).toEqual('Bytes');

@@ -4,8 +4,12 @@ import { cliTest } from './util';
 
 // we run the tests sequentially because each init command installs deps with the
 // same package manager and we want to avoid race conditions on the deps cache
-describe.sequential(
+describe(
   'Init',
+  {
+    sequential: true,
+    timeout: 100_000,
+  },
   () => {
     const baseDir = path.join(__dirname, 'init');
 
@@ -237,8 +241,5 @@ describe.sequential(
         },
       );
     });
-  },
-  {
-    timeout: 60_000,
   },
 );

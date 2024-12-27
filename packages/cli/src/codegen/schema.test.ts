@@ -38,7 +38,7 @@ const testEntity = async (generatedTypes: any[], expectedEntity: any) => {
   expect(methods.length).toBe(expectedEntity.methods.length);
 };
 
-describe.concurrent('Schema code generator', () => {
+describe('Schema code generator', { concurrent: true }, () => {
   test('Should generate nothing for non entity types', () => {
     const codegen = createSchemaCodeGen(`
       type Foo {
@@ -217,7 +217,7 @@ describe.concurrent('Schema code generator', () => {
               return 0
             } else {
               return value.toI32()
-            } 
+            }
             `,
           },
           {
@@ -313,7 +313,7 @@ describe.concurrent('Schema code generator', () => {
             params: [],
             returnType: new NamedType('WalletLoader'),
             body: `
-              return new WalletLoader("Account", this.get('id')!.toString(), "wallets") 
+              return new WalletLoader("Account", this.get('id')!.toString(), "wallets")
             `,
           },
         ],
@@ -566,7 +566,7 @@ describe.concurrent('Schema code generator', () => {
         id: Bytes!
         related: [RelatedBytes!]! @derivedFrom(field: "related")
       }
-      
+
       type RelatedBytes @entity {
         id: ID!
         related: WithBytes!
@@ -647,17 +647,17 @@ describe.concurrent('Schema code generator', () => {
   test('no derived loader for interface', () => {
     const codegen = createSchemaCodeGen(`
     interface IExample {
-      id: ID! 
+      id: ID!
       main: Main!
       num: Int!
     }
-    
+
     type Example1 implements IExample @entity {
-      id: ID! 
+      id: ID!
       main: Main!
       num: Int!
     }
-    
+
     type Main @entity {
       id: ID!
       examples: [IExample!]! @derivedFrom(field: "main")
