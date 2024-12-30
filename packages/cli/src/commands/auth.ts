@@ -28,18 +28,20 @@ export default class AuthCommand extends Command {
 
     const { node } = chooseNodeUrl({});
 
-    const { deployKey } = await prompt.ask<{ deployKey: string }>([
-      {
-        type: 'input',
-        name: 'deployKey',
-        message: () => 'What is your Subgraph Studio deploy key?',
-        required: true,
-        initial: initialDeployKey,
-        skip: this.validateStudioDeployKey(initialDeployKey),
-        validate: value =>
-          this.validateStudioDeployKey(value) || `Invalid Subgraph Studio deploy key: ${value}`,
-      },
-    ]);
+    const { deployKey } = await prompt
+      .ask<{ deployKey: string }>([
+        {
+          type: 'input',
+          name: 'deployKey',
+          message: () => 'What is your Subgraph Studio deploy key?',
+          required: true,
+          initial: initialDeployKey,
+          skip: this.validateStudioDeployKey(initialDeployKey),
+          validate: value =>
+            this.validateStudioDeployKey(value) || `Invalid Subgraph Studio deploy key: ${value}`,
+        },
+      ])
+      .catch(() => this.exit(1));
 
     try {
       await saveDeployKey(node!, deployKey);

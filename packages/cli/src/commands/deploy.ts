@@ -111,16 +111,18 @@ export default class DeployCommand extends Command {
       },
     } = await this.parse(DeployCommand);
 
-    const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
-      {
-        type: 'input',
-        name: 'subgraphName',
-        message: () => 'What is the subgraph name?',
-        skip: () => !!subgraphNameArg,
-        initial: subgraphNameArg,
-        required: true,
-      },
-    ]);
+    const { subgraphName } = await prompt
+      .ask<{ subgraphName: string }>([
+        {
+          type: 'input',
+          name: 'subgraphName',
+          message: () => 'What is the subgraph name?',
+          skip: () => !!subgraphNameArg,
+          initial: subgraphNameArg,
+          required: true,
+        },
+      ])
+      .catch(() => this.exit(1));
 
     const { node } = chooseNodeUrl({
       node: nodeFlag,
@@ -153,16 +155,18 @@ export default class DeployCommand extends Command {
     }
 
     // Ask for label if not on hosted service
-    const { versionLabel } = await prompt.ask<{ versionLabel: string }>([
-      {
-        type: 'input',
-        name: 'versionLabel',
-        message: () => 'Which version label to use? (e.g. "v0.0.1")',
-        initial: versionLabelFlag,
-        skip: () => !!versionLabelFlag,
-        required: true,
-      },
-    ]);
+    const { versionLabel } = await prompt
+      .ask<{ versionLabel: string }>([
+        {
+          type: 'input',
+          name: 'versionLabel',
+          message: () => 'Which version label to use? (e.g. "v0.0.1")',
+          initial: versionLabelFlag,
+          skip: () => !!versionLabelFlag,
+          required: true,
+        },
+      ])
+      .catch(() => this.exit(1));
 
     const deploySubgraph = async (ipfsHash: string) => {
       const spinner = print.spin(`Deploying to Graph node ${requestUrl}`);

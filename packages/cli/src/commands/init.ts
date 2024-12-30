@@ -253,10 +253,12 @@ export default class InitCommand extends Command {
     }
 
     if (fromExample) {
-      const answers = await processFromExampleInitForm.bind(this)({
-        subgraphName,
-        directory,
-      });
+      const answers = await processFromExampleInitForm
+        .bind(this)({
+          subgraphName,
+          directory,
+        })
+        .catch(() => this.exit(1));
 
       if (!answers) {
         this.exit(1);
@@ -274,19 +276,21 @@ export default class InitCommand extends Command {
       );
     } else {
       // Otherwise, take the user through the interactive form
-      const answers = await processInitForm.bind(this)({
-        abi,
-        abiPath,
-        directory,
-        source: fromContract,
-        indexEvents,
-        fromExample,
-        subgraphName,
-        contractName,
-        startBlock,
-        spkgPath,
-        ipfsUrl: ipfs,
-      });
+      const answers = await processInitForm
+        .bind(this)({
+          abi,
+          abiPath,
+          directory,
+          source: fromContract,
+          indexEvents,
+          fromExample,
+          subgraphName,
+          contractName,
+          startBlock,
+          spkgPath,
+          ipfsUrl: ipfs,
+        })
+        .catch(() => this.exit(1));
       if (!answers) {
         this.exit(1);
       }
@@ -966,12 +970,13 @@ async function initSubgraphFromExample(
     };
   },
 ) {
-  let overwrite = false;
   if (filesystem.exists(directory)) {
-    overwrite = await prompt.confirm(
-      'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
-      false,
-    );
+    const overwrite = await prompt
+      .confirm(
+        'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
+        false,
+      )
+      .catch(() => false);
 
     if (!overwrite) {
       this.exit(1);
@@ -1005,7 +1010,7 @@ async function initSubgraphFromExample(
           return { result: false, error: `Example not found: ${fromExample}` };
         }
 
-        filesystem.copy(exampleSubgraphPath, directory, { overwrite });
+        filesystem.copy(exampleSubgraphPath, directory, { overwrite: true });
         return true;
       } finally {
         filesystem.remove(tmpDir);
@@ -1129,14 +1134,17 @@ async function initSubgraphFromContract(
   },
 ) {
   const isComposedSubgraph = protocolInstance.isComposedSubgraph();
-  if (
-    filesystem.exists(directory) &&
-    !(await prompt.confirm(
-      'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
-      false,
-    ))
-  ) {
-    this.exit(1);
+  if (filesystem.exists(directory)) {
+    const overwrite = await prompt
+      .confirm(
+        'Directory already exists, do you want to initialize the subgraph here (files will be overwritten) ?',
+        false,
+      )
+      .catch(() => false);
+
+    if (!overwrite) {
+      this.exit(1);
+    }
   }
 
   let entities: string[] | undefined;
@@ -1232,10 +1240,12 @@ async function initSubgraphFromContract(
     }
 
     while (addContract) {
-      addContract = await addAnotherContract.bind(this)({
-        protocolInstance,
-        directory,
-      });
+      addContract = await addAnotherContract
+        .bind(this)({
+          protocolInstance,
+          directory,
+        })
+        .catch(() => false);
     }
   }
 
