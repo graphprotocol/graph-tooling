@@ -253,12 +253,10 @@ export default class InitCommand extends Command {
     }
 
     if (fromExample) {
-      const answers = await processFromExampleInitForm
-        .bind(this)({
-          subgraphName,
-          directory,
-        })
-        .catch(() => this.exit(1));
+      const answers = await processFromExampleInitForm.bind(this)({
+        subgraphName,
+        directory,
+      });
 
       if (!answers) {
         this.exit(1);
@@ -276,21 +274,19 @@ export default class InitCommand extends Command {
       );
     } else {
       // Otherwise, take the user through the interactive form
-      const answers = await processInitForm
-        .bind(this)({
-          abi,
-          abiPath,
-          directory,
-          source: fromContract,
-          indexEvents,
-          fromExample,
-          subgraphName,
-          contractName,
-          startBlock,
-          spkgPath,
-          ipfsUrl: ipfs,
-        })
-        .catch(() => this.exit(1));
+      const answers = await processInitForm.bind(this)({
+        abi,
+        abiPath,
+        directory,
+        source: fromContract,
+        indexEvents,
+        fromExample,
+        subgraphName,
+        contractName,
+        startBlock,
+        spkgPath,
+        ipfsUrl: ipfs,
+      });
       if (!answers) {
         this.exit(1);
       }
