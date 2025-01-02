@@ -1,16 +1,30 @@
 import * as util from '../codegen/util.js';
 
-export const generateFieldAssignment = (key: string[], value: string[]) =>
-  `entity.${key.join('_')} = event.params.${value.join('.')}`;
+/**
+ * Map of value types that need to be changeType'd to their corresponding AssemblyScript type
+ */
+export const VALUE_TYPECAST_MAP: Record<string, string> = {
+  'address[]': 'Bytes[]',
+  'tuple[]': 'Bytes[]',
+};
+
+export const generateFieldAssignment = (keyPath: string[], value: string[], type?: string) => {
+  let rightSide = `event.params.${value.join('.')}`;
+  if (type && VALUE_TYPECAST_MAP[type]) {
+    rightSide = `changeType<${VALUE_TYPECAST_MAP[type]}>(${rightSide})`;
+  }
+  return `entity.${keyPath.join('_')} = ${rightSide}`;
+};
 
 export const generateFieldAssignments = ({ index, input }: { index: number; input: any }) =>
   input.type === 'tuple'
     ? util
         .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
-        .map(({ path }: any) => generateFieldAssignment(path, path))
+        .map(({ path, type }: any) => generateFieldAssignment(path, path, type))
     : generateFieldAssignment(
         [(input.mappedName ?? input.name) || `param${index}`],
         [input.name || `param${index}`],
+        input.type,
       );
 
 /**
@@ -39,6 +53,7 @@ export const generateEventIndexingHandlers = (events: any[], contractName: strin
     event => `${event._alias} as ${event._alias}Event`,
   )}} from '../generated/${contractName}/${contractName}'
   import { ${events.map(event => event._alias)} } from '../generated/schema'
+  import { Bytes } from '@graphprotocol/graph-ts'
 
   ${events
     .map(
