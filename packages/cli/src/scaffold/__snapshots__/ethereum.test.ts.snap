@@ -21,6 +21,7 @@ dataSources:
       entities:
         - ExampleEvent
         - ExampleEvent1
+        - TupleArrayEvent
       abis:
         - name: Contract
           file: ./abis/Contract.json
@@ -29,6 +30,8 @@ dataSources:
           handler: handleExampleEvent
         - event: ExampleEvent(bytes32)
           handler: handleExampleEvent1
+        - event: TupleArrayEvent((uint256,address)[],address[])
+          handler: handleTupleArrayEvent
       file: ./src/contract.ts
 "
 `;
@@ -38,7 +41,8 @@ exports[`Ethereum subgraph scaffolding > Mapping (default) 1`] = `
 import {
   Contract,
   ExampleEvent,
-  ExampleEvent1
+  ExampleEvent1,
+  TupleArrayEvent
 } from "../generated/Contract/Contract"
 import { ExampleEntity } from "../generated/schema"
 
@@ -89,15 +93,23 @@ export function handleExampleEvent(event: ExampleEvent): void {
 }
 
 export function handleExampleEvent1(event: ExampleEvent1): void {}
+
+export function handleTupleArrayEvent(event: TupleArrayEvent): void {}
 "
 `;
 
 exports[`Ethereum subgraph scaffolding > Mapping (for indexing events) 1`] = `
 "import {
   ExampleEvent as ExampleEventEvent,
-  ExampleEvent1 as ExampleEvent1Event
+  ExampleEvent1 as ExampleEvent1Event,
+  TupleArrayEvent as TupleArrayEventEvent
 } from "../generated/Contract/Contract"
-import { ExampleEvent, ExampleEvent1 } from "../generated/schema"
+import {
+  ExampleEvent,
+  ExampleEvent1,
+  TupleArrayEvent
+} from "../generated/schema"
+import { Bytes } from "@graphprotocol/graph-ts"
 
 export function handleExampleEvent(event: ExampleEventEvent): void {
   let entity = new ExampleEvent(
@@ -134,6 +146,82 @@ export function handleExampleEvent1(event: ExampleEvent1Event): void {
 
   entity.save()
 }
+
+export function handleTupleArrayEvent(event: TupleArrayEventEvent): void {
+  let entity = new TupleArrayEvent(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  )
+  entity.tupleArray = changeType<Bytes[]>(event.params.tupleArray)
+  entity.addressArray = changeType<Bytes[]>(event.params.addressArray)
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+"
+`;
+
+exports[`Ethereum subgraph scaffolding > Mapping handles tuple array type conversion 1`] = `
+"import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import {
+  Contract,
+  ExampleEvent,
+  ExampleEvent1,
+  TupleArrayEvent
+} from "../generated/Contract/Contract"
+import { ExampleEntity } from "../generated/schema"
+
+export function handleExampleEvent(event: ExampleEvent): void {
+  // Entities can be loaded from the store using an ID; this ID
+  // needs to be unique across all entities of the same type
+  const id = event.transaction.hash.concat(
+    Bytes.fromByteArray(Bytes.fromBigInt(event.logIndex))
+  )
+  let entity = ExampleEntity.load(id)
+
+  // Entities only exist after they have been saved to the store;
+  // \`null\` checks allow to create entities on demand
+  if (!entity) {
+    entity = new ExampleEntity(id)
+
+    // Entity fields can be set using simple assignments
+    entity.count = BigInt.fromI32(0)
+  }
+
+  // BigInt and BigDecimal math are supported
+  entity.count = entity.count + BigInt.fromI32(1)
+
+  // Entity fields can be set based on event parameters
+  entity.a = event.params.a
+  entity.b = event.params.b
+
+  // Entities can be written to the store with \`.save()\`
+  entity.save()
+
+  // Note: If a handler doesn't require existing field values, it is faster
+  // _not_ to load the entity from the store. Instead, create it fresh with
+  // \`new Entity(...)\`, set the fields that should be updated and save the
+  // entity back to the store. Fields that were not set or unset remain
+  // unchanged, allowing for partial updates to be applied.
+
+  // It is also possible to access smart contracts from mappings. For
+  // example, the contract that has emitted the event can be connected to
+  // with:
+  //
+  // let contract = Contract.bind(event.address)
+  //
+  // The following functions can then be called on this contract to access
+  // state variables and other data:
+  //
+  // - contract.someVariable(...)
+  // - contract.getSomeValue(...)
+}
+
+export function handleExampleEvent1(event: ExampleEvent1): void {}
+
+export function handleTupleArrayEvent(event: TupleArrayEvent): void {}
 "
 `;
 
@@ -173,6 +261,15 @@ type ExampleEvent1 @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type TupleArrayEvent @entity(immutable: true) {
+  id: Bytes!
+  tupleArray: [Bytes!]! # tuple[]
+  addressArray: [Bytes!]! # address[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
 "
 `;
 
@@ -185,7 +282,7 @@ exports[`Ethereum subgraph scaffolding > Test Files (default) 1`] = `
   beforeAll,
   afterAll
 } from "matchstick-as/assembly/index"
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
 import { ExampleEvent } from "../generated/schema"
 import { ExampleEvent as ExampleEventEvent } from "../generated/Contract/Contract"
 import { handleExampleEvent } from "../src/contract"
@@ -257,8 +354,12 @@ describe("Describe entity assertions", () => {
 
 exports[`Ethereum subgraph scaffolding > Test Files (default) 2`] = `
 "import { newMockEvent } from "matchstick-as"
-import { ethereum, BigInt, Bytes } from "@graphprotocol/graph-ts"
-import { ExampleEvent, ExampleEvent1 } from "../generated/Contract/Contract"
+import { ethereum, BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
+import {
+  ExampleEvent,
+  ExampleEvent1,
+  TupleArrayEvent
+} from "../generated/Contract/Contract"
 
 export function createExampleEventEvent(
   a: BigInt,
@@ -305,6 +406,30 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
 
   return exampleEvent1Event
 }
+
+export function createTupleArrayEventEvent(
+  tupleArray: Array<ethereum.Tuple>,
+  addressArray: Array<Address>
+): TupleArrayEvent {
+  let tupleArrayEventEvent = changetype<TupleArrayEvent>(newMockEvent())
+
+  tupleArrayEventEvent.parameters = new Array()
+
+  tupleArrayEventEvent.parameters.push(
+    new ethereum.EventParam(
+      "tupleArray",
+      ethereum.Value.fromTupleArray(tupleArray)
+    )
+  )
+  tupleArrayEventEvent.parameters.push(
+    new ethereum.EventParam(
+      "addressArray",
+      ethereum.Value.fromAddressArray(addressArray)
+    )
+  )
+
+  return tupleArrayEventEvent
+}
 "
 `;
 
@@ -317,7 +442,7 @@ exports[`Ethereum subgraph scaffolding > Test Files (for indexing events) 1`] = 
   beforeAll,
   afterAll
 } from "matchstick-as/assembly/index"
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
 import { ExampleEvent } from "../generated/schema"
 import { ExampleEvent as ExampleEventEvent } from "../generated/Contract/Contract"
 import { handleExampleEvent } from "../src/contract"
@@ -389,8 +514,12 @@ describe("Describe entity assertions", () => {
 
 exports[`Ethereum subgraph scaffolding > Test Files (for indexing events) 2`] = `
 "import { newMockEvent } from "matchstick-as"
-import { ethereum, BigInt, Bytes } from "@graphprotocol/graph-ts"
-import { ExampleEvent, ExampleEvent1 } from "../generated/Contract/Contract"
+import { ethereum, BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
+import {
+  ExampleEvent,
+  ExampleEvent1,
+  TupleArrayEvent
+} from "../generated/Contract/Contract"
 
 export function createExampleEventEvent(
   a: BigInt,
@@ -436,6 +565,30 @@ export function createExampleEvent1Event(a: Bytes): ExampleEvent1 {
   )
 
   return exampleEvent1Event
+}
+
+export function createTupleArrayEventEvent(
+  tupleArray: Array<ethereum.Tuple>,
+  addressArray: Array<Address>
+): TupleArrayEvent {
+  let tupleArrayEventEvent = changetype<TupleArrayEvent>(newMockEvent())
+
+  tupleArrayEventEvent.parameters = new Array()
+
+  tupleArrayEventEvent.parameters.push(
+    new ethereum.EventParam(
+      "tupleArray",
+      ethereum.Value.fromTupleArray(tupleArray)
+    )
+  )
+  tupleArrayEventEvent.parameters.push(
+    new ethereum.EventParam(
+      "addressArray",
+      ethereum.Value.fromAddressArray(addressArray)
+    )
+  )
+
+  return tupleArrayEventEvent
 }
 "
 `;

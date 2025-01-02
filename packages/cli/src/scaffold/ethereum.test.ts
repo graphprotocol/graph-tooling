@@ -56,10 +56,32 @@ const TEST_CALLABLE_FUNCTIONS = [
   },
 ];
 
+const TEST_TUPLE_ARRAY_EVENT = {
+  name: 'TupleArrayEvent',
+  type: 'event',
+  inputs: [
+    {
+      name: 'tupleArray',
+      type: 'tuple[]',
+      components: [
+        { name: 'field1', type: 'uint256' },
+        { name: 'field2', type: 'address' },
+      ],
+    },
+    { name: 'addressArray', type: 'address[]' },
+  ],
+};
+
 const TEST_ABI = new ABI(
   'Contract',
   undefined,
-  immutable.fromJS([TEST_EVENT, OVERLOADED_EVENT, TEST_CONTRACT, ...TEST_CALLABLE_FUNCTIONS]),
+  immutable.fromJS([
+    TEST_EVENT,
+    OVERLOADED_EVENT,
+    TEST_TUPLE_ARRAY_EVENT,
+    TEST_CONTRACT,
+    ...TEST_CALLABLE_FUNCTIONS,
+  ]),
 );
 
 const protocol = new Protocol('ethereum');
@@ -99,6 +121,10 @@ describe('Ethereum subgraph scaffolding', () => {
 
   test('Mapping (for indexing events)', async () => {
     expect(await scaffoldWithIndexEvents.generateMapping()).toMatchSnapshot();
+  });
+
+  test('Mapping handles tuple array type conversion', async () => {
+    expect(await scaffold.generateMapping()).toMatchSnapshot();
   });
 
   test('Test Files (default)', async () => {
