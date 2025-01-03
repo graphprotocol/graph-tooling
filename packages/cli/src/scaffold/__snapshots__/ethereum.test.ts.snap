@@ -151,8 +151,8 @@ export function handleTupleArrayEvent(event: TupleArrayEventEvent): void {
   let entity = new TupleArrayEvent(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
-  entity.tupleArray = changeType<Bytes[]>(event.params.tupleArray)
-  entity.addressArray = changeType<Bytes[]>(event.params.addressArray)
+  entity.tupleArray = changetype<Bytes[]>(event.params.tupleArray)
+  entity.addressArray = changetype<Bytes[]>(event.params.addressArray)
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

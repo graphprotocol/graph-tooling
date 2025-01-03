@@ -1,7 +1,7 @@
 import * as util from '../codegen/util.js';
 
 /**
- * Map of value types that need to be changeType'd to their corresponding AssemblyScript type
+ * Map of value types that need to be changetype'd to their corresponding AssemblyScript type
  */
 export const VALUE_TYPECAST_MAP: Record<string, string> = {
   'address[]': 'Bytes[]',
@@ -18,7 +18,7 @@ export const generateFieldAssignment = (
 
   if (type in VALUE_TYPECAST_MAP) {
     const castTo = VALUE_TYPECAST_MAP[type];
-    rightSide = `changeType<${castTo}>(${rightSide})`;
+    rightSide = `changetype<${castTo}>(${rightSide})`;
     imports.push(castTo.replace('[]', ''));
   }
 
@@ -85,11 +85,13 @@ export const generateEventFieldAssignments = (
   );
 
 export const generateEventIndexingHandlers = (events: any[], contractName: string) => {
-  const allImports: string[] = [];
-  const eventHandlers = events.map(event => {
-    const { assignments, imports } = generateEventFieldAssignments(event, contractName);
-    allImports.push(...imports);
+  const eventFieldAssignments = events.map(event => ({
+    event,
+    ...generateEventFieldAssignments(event, contractName),
+  }));
+  const allImports = [...new Set(eventFieldAssignments.map(({ imports }) => imports).flat())];
 
+  const eventHandlers = eventFieldAssignments.map(({ event, assignments }) => {
     return `
   export function handle${event._alias}(event: ${event._alias}Event): void {
     let entity = new ${event._alias}(event.transaction.hash.concatI32(event.logIndex.toI32()))
@@ -111,7 +113,7 @@ export const generateEventIndexingHandlers = (events: any[], contractName: strin
   import { ${events.map(event => event._alias)} } from '../generated/schema'
   ${
     allImports.length > 0
-      ? `import { ${[...new Set(allImports)].join(', ')} } from '@graphprotocol/graph-ts'`
+      ? `import { ${allImports.join(', ')} } from '@graphprotocol/graph-ts'`
       : ''
   }
 
