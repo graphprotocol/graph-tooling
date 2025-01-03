@@ -358,7 +358,8 @@ export default class AbiCodeGenerator {
     }
 
     const tupleIdentifier = parentClass + tsCodegen.namedType(name).capitalize();
-    const tupleClassName = tupleIdentifier + 'Struct';
+    const tupleClassName =
+      tupleIdentifier + (parentField === 'outputValues' ? 'Output' : '') + 'Struct';
     let tupleClasses: any[] = [];
 
     const isTupleType = util.isTupleType(type);
