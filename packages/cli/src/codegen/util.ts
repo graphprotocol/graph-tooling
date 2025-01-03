@@ -43,7 +43,7 @@ export const unrollTuple = ({
   path: string[];
   index: number; // TODO: index is unused, do we really need it?
   value: any;
-}) =>
+}): { path: string[]; type: string }[] =>
   value.components.reduce((acc: any[], component: any, index: number) => {
     const name = component.name || `value${index}`;
     return acc.concat(

@@ -8,24 +8,51 @@ export const VALUE_TYPECAST_MAP: Record<string, string> = {
   'tuple[]': 'Bytes[]',
 };
 
-export const generateFieldAssignment = (keyPath: string[], value: string[], type?: string) => {
+export const generateFieldAssignment = (
+  key: string[],
+  value: string[],
+  type: string,
+): { assignment: string; imports: string[] } => {
   let rightSide = `event.params.${value.join('.')}`;
-  if (type && VALUE_TYPECAST_MAP[type]) {
-    rightSide = `changeType<${VALUE_TYPECAST_MAP[type]}>(${rightSide})`;
+  const imports = [];
+
+  if (type in VALUE_TYPECAST_MAP) {
+    const castTo = VALUE_TYPECAST_MAP[type];
+    rightSide = `changeType<${castTo}>(${rightSide})`;
+    imports.push(castTo.replace('[]', ''));
   }
-  return `entity.${keyPath.join('_')} = ${rightSide}`;
+
+  return {
+    assignment: `entity.${key.join('_')} = ${rightSide}`,
+    imports,
+  };
 };
 
-export const generateFieldAssignments = ({ index, input }: { index: number; input: any }) =>
-  input.type === 'tuple'
-    ? util
-        .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
-        .map(({ path, type }: any) => generateFieldAssignment(path, path, type))
-    : generateFieldAssignment(
-        [(input.mappedName ?? input.name) || `param${index}`],
-        [input.name || `param${index}`],
-        input.type,
-      );
+export const generateFieldAssignments = ({
+  index,
+  input,
+}: {
+  index: number;
+  input: any;
+}): { assignments: string[]; imports: string[] } => {
+  const fields =
+    input.type === 'tuple'
+      ? util
+          .unrollTuple({ value: input, index, path: [input.name || `param${index}`] })
+          .map(({ path, type }) => generateFieldAssignment(path, path, type))
+      : [
+          generateFieldAssignment(
+            [(input.mappedName ?? input.name) || `param${index}`],
+            [input.name || `param${index}`],
+            input.type,
+          ),
+        ];
+
+  return {
+    assignments: fields.map(a => a.assignment),
+    imports: fields.map(a => a.imports).flat(),
+  };
+};
 
 /**
  * Map of input names that are reserved so we do not use them as field names to avoid conflicts
@@ -41,27 +68,32 @@ export const renameNameIfNeeded = (name: string) => {
   return NAMES_REMAP_DICTIONARY[name] ?? name;
 };
 
-export const generateEventFieldAssignments = (event: any, _contractName: string) =>
-  event.inputs.reduce((acc: any[], input: any, index: number) => {
-    input.mappedName = renameNameIfNeeded(input.name);
-    return acc.concat(generateFieldAssignments({ input, index }));
-  }, []);
+export const generateEventFieldAssignments = (
+  event: any,
+  _contractName: string,
+): { assignments: string[]; imports: string[] } =>
+  event.inputs.reduce(
+    (acc: any, input: any, index: number) => {
+      input.mappedName = renameNameIfNeeded(input.name);
+      const { assignments, imports } = generateFieldAssignments({ input, index });
+      return {
+        assignments: acc.assignments.concat(assignments),
+        imports: acc.imports.concat(imports),
+      };
+    },
+    { assignments: [], imports: [] },
+  );
 
-export const generateEventIndexingHandlers = (events: any[], contractName: string) =>
-  `
-  import { ${events.map(
-    event => `${event._alias} as ${event._alias}Event`,
-  )}} from '../generated/${contractName}/${contractName}'
-  import { ${events.map(event => event._alias)} } from '../generated/schema'
-  import { Bytes } from '@graphprotocol/graph-ts'
+export const generateEventIndexingHandlers = (events: any[], contractName: string) => {
+  const allImports: string[] = [];
+  const eventHandlers = events.map(event => {
+    const { assignments, imports } = generateEventFieldAssignments(event, contractName);
+    allImports.push(...imports);
 
-  ${events
-    .map(
-      event =>
-        `
+    return `
   export function handle${event._alias}(event: ${event._alias}Event): void {
     let entity = new ${event._alias}(event.transaction.hash.concatI32(event.logIndex.toI32()))
-    ${generateEventFieldAssignments(event, contractName).join('\n')}
+    ${assignments.join('\n')}
 
     entity.blockNumber = event.block.number
     entity.blockTimestamp = event.block.timestamp
@@ -69,7 +101,20 @@ export const generateEventIndexingHandlers = (events: any[], contractName: strin
 
     entity.save()
   }
-    `,
-    )
-    .join('\n')}
+    `;
+  });
+
+  return `
+  import { ${events.map(
+    event => `${event._alias} as ${event._alias}Event`,
+  )}} from '../generated/${contractName}/${contractName}'
+  import { ${events.map(event => event._alias)} } from '../generated/schema'
+  ${
+    allImports.length > 0
+      ? `import { ${[...new Set(allImports)].join(', ')} } from '@graphprotocol/graph-ts'`
+      : ''
+  }
+
+  ${eventHandlers.join('\n')}
 `;
+};

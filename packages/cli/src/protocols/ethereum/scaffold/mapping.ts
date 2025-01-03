@@ -39,7 +39,7 @@ export const generatePlaceholderHandlers = ({
       entity.count = entity.count + BigInt.fromI32(1)
 
       // Entity fields can be set based on event parameters
-      ${generateEventFieldAssignments(event, contractName).slice(0, 2).join('\n')}
+      ${generateEventFieldAssignments(event, contractName).assignments.slice(0, 2).join('\n')}
 
       // Entities can be written to the store with \`.save()\`
       entity.save()
