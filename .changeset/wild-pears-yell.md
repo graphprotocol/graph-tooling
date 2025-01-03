@@ -2,4 +2,4 @@
 '@graphprotocol/graph-cli': minor
 ---
 
-handle tuple[] and address[] for event parameters
+handle tuple[] and address[] for event parameters - #949
