@@ -119,7 +119,13 @@ const isNativeType = (type: string) => {
   return natives.some(rx => rx.test(type));
 };
 
-const fetchArrayInnerType = (type: string) => type.match(/Array<(.*?)>/);
+// get inner type: Array<T> -> T, Array<Array<T>> -> T
+const fetchArrayInnerType = (type: string): RegExpMatchArray | null => {
+  const match = type.match(/Array<(.+)>/);
+  if (!match) return null;
+
+  return fetchArrayInnerType(match[1]) || match;
+};
 
 // Generates the example test.ts file
 const generateExampleTest = (
