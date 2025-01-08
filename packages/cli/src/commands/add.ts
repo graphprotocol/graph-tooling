@@ -103,21 +103,23 @@ export default class AddCommand extends Command {
       } catch (error) {
         // we cannot ask user to do prompt in test environment
         if (process.env.NODE_ENV !== 'test') {
-          const { abi: abiFile } = await prompt.ask<{ abi: string }>([
-            {
-              type: 'input',
-              name: 'abi',
-              message: 'ABI file (path)',
-              validate: async (value: string) => {
-                try {
-                  EthereumABI.load(contractName, value);
-                  return true;
-                } catch (e) {
-                  return `Failed to load ABI from ${value}: ${e.message}`;
-                }
+          const { abi: abiFile } = await prompt
+            .ask<{ abi: string }>([
+              {
+                type: 'input',
+                name: 'abi',
+                message: 'ABI file (path)',
+                validate: async (value: string) => {
+                  try {
+                    EthereumABI.load(contractName, value);
+                    return true;
+                  } catch (e) {
+                    return `Failed to load ABI from ${value}: ${e.message}`;
+                  }
+                },
               },
-            },
-          ]);
+            ])
+            .catch(() => this.exit(1)); // properly handle ESC
           ethabi = EthereumABI.load(contractName, abiFile);
         }
       }
@@ -130,18 +132,20 @@ export default class AddCommand extends Command {
       // we cannot ask user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
         // If we can't get the start block, we'll just leave it out of the manifest
-        const { startBlock: userInputStartBlock } = await prompt.ask<{ startBlock: string }>([
-          {
-            type: 'input',
-            name: 'startBlock',
-            message: 'Start Block',
-            initial: '0',
-            validate: value => parseInt(value) >= 0,
-            result(value) {
-              return value;
+        const { startBlock: userInputStartBlock } = await prompt
+          .ask<{ startBlock: string }>([
+            {
+              type: 'input',
+              name: 'startBlock',
+              message: 'Start Block',
+              initial: '0',
+              validate: value => parseInt(value) >= 0,
+              result(value) {
+                return value;
+              },
             },
-          },
-        ]);
+          ])
+          .catch(() => this.exit(1));
         startBlock = userInputStartBlock;
       }
     }
@@ -155,18 +159,20 @@ export default class AddCommand extends Command {
     } catch (error) {
       // not asking user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
-        const { contractName: userInputContractName } = await prompt.ask<{ contractName: string }>([
-          {
-            type: 'input',
-            name: 'contractName',
-            message: 'Contract Name',
-            initial: 'Contract',
-            validate: value => value && value.length > 0,
-            result(value) {
-              return value;
+        const { contractName: userInputContractName } = await prompt
+          .ask<{ contractName: string }>([
+            {
+              type: 'input',
+              name: 'contractName',
+              message: 'Contract Name',
+              initial: 'Contract',
+              validate: value => value && value.length > 0,
+              result(value) {
+                return value;
+              },
             },
-          },
-        ]);
+          ])
+          .catch(() => this.exit(1));
         contractName = userInputContractName;
       }
     }
