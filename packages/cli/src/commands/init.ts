@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { filesystem, print, prompt, system } from 'gluegun';
-import immutable from 'immutable';
 import { Args, Command, Flags } from '@oclif/core';
 import { Network } from '@pinax/graph-networks-registry';
 import { appendApiVersionForGraph } from '../command-helpers/compiler.js';
@@ -229,11 +228,7 @@ export default class InitCommand extends Command {
         } else {
           try {
             abi = sourcifyContractInfo
-              ? new EthereumABI(
-                  DEFAULT_CONTRACT_NAME,
-                  undefined,
-                  immutable.fromJS(sourcifyContractInfo.abi),
-                )
+              ? sourcifyContractInfo.abi
               : await contractService.getABI(ABI, network, fromContract!);
           } catch (e) {
             this.exit(1);
@@ -635,7 +630,7 @@ async function processInitForm(
           initDebugger.extend('processInitForm')(
             "infoFromSourcify: '%s'/'%s'",
             initStartBlock,
-            initContractName
+            initContractName,
           );
         }
 
