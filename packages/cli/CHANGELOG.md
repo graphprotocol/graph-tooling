@@ -1,5 +1,35 @@
 # @graphprotocol/graph-cli
 
+## 0.94.0
+
+### Minor Changes
+
+- [#1892](https://github.com/graphprotocol/graph-tooling/pull/1892)
+  [`b4564a7`](https://github.com/graphprotocol/graph-tooling/commit/b4564a71134c310dee983f6eff613b953bf481be)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - handle tuple[] and address[] for
+  event parameters - #949
+
+### Patch Changes
+
+- [#1891](https://github.com/graphprotocol/graph-tooling/pull/1891)
+  [`d1fa5e0`](https://github.com/graphprotocol/graph-tooling/commit/d1fa5e0e34a92f24db29d3def26e133e87e7bdde)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix bug with duplicate IDs - #1604
+
+- [#1889](https://github.com/graphprotocol/graph-tooling/pull/1889)
+  [`e085e39`](https://github.com/graphprotocol/graph-tooling/commit/e085e39e48cd0241277ede246aa2b7833e6a91f3)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix confusing "no error" message when
+  pressing Escape on prompts
+
+- [#1879](https://github.com/graphprotocol/graph-tooling/pull/1879)
+  [`f6079a6`](https://github.com/graphprotocol/graph-tooling/commit/f6079a68c016e8d9864f2fc94526a60d4b21eb69)
+  Thanks [@McAronDev](https://github.com/McAronDev)! - fix bug with missing Graft type in SpS
+  manifest definition
+
+- [#1884](https://github.com/graphprotocol/graph-tooling/pull/1884)
+  [`93d87a8`](https://github.com/graphprotocol/graph-tooling/commit/93d87a8c6912b87ed8dbdce0e1b4d2765bc1df39)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - `graph init`: fix tests generation
+  for events with [][] params #1878
+
 ## 0.93.3
 
 ### Patch Changes
