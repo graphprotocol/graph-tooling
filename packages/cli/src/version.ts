@@ -1,12 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const packageJson = JSON.parse(
   fs
     .readFileSync(
       // works even when bundled/built because the path to package.json is the same
       path.join(
-        `${process.platform === 'win32' ? '' : '/'}${/file:\/{2,3}(.+)\/[^/]/.exec(import.meta.url)![1]}`,
+        `${process.platform === 'win32' ? '' : '/'}${/file:\/{2,3}(.+)\/[^/]/.exec(fileURLToPath(import.meta.url))![1]}`,
         '..',
         'package.json',
       ),
