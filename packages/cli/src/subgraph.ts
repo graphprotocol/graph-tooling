@@ -54,7 +54,8 @@ export default class Subgraph {
     const schema = graphql.parse(
       await fs.readFile(
         path.join(
-          `${process.platform === 'win32' ? '' : '/'}${/file:\/{2,3}(.+)\/[^/]/.exec(fileURLToPath(import.meta.url))![1]}`,
+          `${process.platform === 'win32' ? '' : '/'}${fileURLToPath(import.meta.url)}`,
+          '..',
           'protocols',
           // TODO: substreams/triggers is a special case, should be handled better
           protocol.name === 'substreams/triggers' ? 'substreams' : protocol.name,
