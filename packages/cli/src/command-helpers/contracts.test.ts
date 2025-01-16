@@ -99,6 +99,12 @@ const TEST_SOURCIFY_CONTRACT_INFO = {
       startBlock: 7_019_815,
     },
   },
+  wax: {
+    '': {
+      name: '',
+      startBlock: 0,
+    },
+  },
 };
 
 describe('getStartBlockForContract', { sequential: true }, async () => {
@@ -127,13 +133,20 @@ describe('getFromSourcifyForContract', { sequential: true }, async () => {
       test(
         `Returns contract information ${networkId} ${contract} ${info.name} ${info.startBlock}`,
         async () => {
-          // Only check name and startBlock, omit API property from Sourcify results
-          const { name, startBlock } = (await contractService.getFromSourcify(
-            EthereumABI,
-            networkId,
-            contract,
-          ))!;
-          expect(info).toEqual({ name, startBlock: parseInt(startBlock) });
+          if (networkId == 'wax') {
+            // Sourcify only supports EVM chains
+            expect(
+              await contractService.getFromSourcify(EthereumABI, networkId, contract),
+            ).toBeNull();
+          } else {
+            // Only check name and startBlock, omit API property from Sourcify results
+            const { name, startBlock } = (await contractService.getFromSourcify(
+              EthereumABI,
+              networkId,
+              contract,
+            ))!;
+            expect(info).toEqual({ name, startBlock: parseInt(startBlock) });
+          }
         },
         { timeout: 10_000 },
       );
