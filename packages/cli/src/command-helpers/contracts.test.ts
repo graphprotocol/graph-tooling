@@ -100,9 +100,15 @@ const TEST_SOURCIFY_CONTRACT_INFO = {
     },
   },
   wax: {
-    '': {
-      name: '',
-      startBlock: 0,
+    account: {
+      name: null,
+      startBlock: null,
+    },
+  },
+  'non-existing chain': {
+    '0x0000000000000000000000000000000000000000': {
+      name: null,
+      startBlock: null,
     },
   },
 };
@@ -129,23 +135,17 @@ describe('getFromSourcifyForContract', { sequential: true }, async () => {
   const registry = await loadRegistry();
   const contractService = new ContractService(registry);
   for (const [networkId, contractInfo] of Object.entries(TEST_SOURCIFY_CONTRACT_INFO)) {
-    for (const [contract, info] of Object.entries(contractInfo)) {
+    for (const [contract, t] of Object.entries(contractInfo)) {
       test(
-        `Returns contract information ${networkId} ${contract} ${info.name} ${info.startBlock}`,
+        `Returns contract information ${networkId} ${contract} ${t.name} ${t.startBlock}`,
         async () => {
-          if (networkId == 'wax') {
-            // Sourcify only supports EVM chains
-            expect(
-              await contractService.getFromSourcify(EthereumABI, networkId, contract),
-            ).toBeNull();
+          const result = await contractService.getFromSourcify(EthereumABI, networkId, contract);
+          if (t.name === null && t.startBlock === null) {
+            expect(result).toBeNull();
           } else {
             // Only check name and startBlock, omit API property from Sourcify results
-            const { name, startBlock } = (await contractService.getFromSourcify(
-              EthereumABI,
-              networkId,
-              contract,
-            ))!;
-            expect(info).toEqual({ name, startBlock: parseInt(startBlock) });
+            const { name, startBlock } = result!;
+            expect(t).toEqual({ name, startBlock: parseInt(startBlock) });
           }
         },
         { timeout: 10_000 },
