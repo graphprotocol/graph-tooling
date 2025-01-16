@@ -6,12 +6,7 @@ const packageJson = JSON.parse(
   fs
     .readFileSync(
       // works even when bundled/built because the path to package.json is the same
-      path.join(
-        `${process.platform === 'win32' ? '' : '/'}${fileURLToPath(import.meta.url)}`,
-        '..',
-        '..',
-        'package.json',
-      ),
+      path.join(fileURLToPath(import.meta.url), '..', '..', 'package.json'),
     )
     .toString(),
 );

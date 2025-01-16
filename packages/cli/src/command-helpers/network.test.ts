@@ -6,7 +6,7 @@ import yaml from 'yaml';
 import { initNetworksConfig, updateSubgraphNetwork } from './network.js';
 
 const SUBGRAPH_PATH_BASE = path.join(
-  `${process.platform === 'win32' ? '' : '/'}${fileURLToPath(import.meta.url)}`,
+  fileURLToPath(import.meta.url),
   '..',
   '..',
   '..',
