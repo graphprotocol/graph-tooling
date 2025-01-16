@@ -160,10 +160,10 @@ export class ContractService {
       const network = this.registry.getNetworkById(networkId);
       if (!network) throw new Error(`Invalid network ${networkId}`);
 
-      const chainId = network.caip2Id.split(':')[1];
-      if (!/^\d+$/.test(chainId))
-        throw new Error(`Invalid chainId, Sourcify API expects integer value, got '${chainId}'`);
+      if (!network.caip2Id.startsWith('eip155'))
+        throw new Error(`Invalid chainId, Sourcify API only supports EVM chains`);
 
+      const chainId = network.caip2Id.split(':')[1];
       const url = `https://sourcify.dev/server/files/any/${chainId}/${address}`;
       const json:
         | {
