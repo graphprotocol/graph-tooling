@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import EthereumABI from '../protocols/ethereum/abi.js';
 import { ContractService } from './contracts.js';
 import { loadRegistry } from './registry.js';
 
@@ -85,6 +86,21 @@ const TEST_CONTRACT_START_BLOCKS = {
   // },
 };
 
+const TEST_SOURCIFY_CONTRACT_INFO = {
+  mainnet: {
+    '0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd': {
+      name: 'MasterChef',
+      startBlock: 10_736_242,
+    },
+  },
+  optimism: {
+    '0xc35DADB65012eC5796536bD9864eD8773aBc74C4': {
+      name: 'BentoBoxV1',
+      startBlock: 7_019_815,
+    },
+  },
+};
+
 describe('getStartBlockForContract', { sequential: true }, async () => {
   const registry = await loadRegistry();
   const contractService = new ContractService(registry);
@@ -96,6 +112,28 @@ describe('getStartBlockForContract', { sequential: true }, async () => {
           //loop through the TEST_CONTRACT_START_BLOCKS object and test each network
           const startBlock = await contractService.getStartBlock(network, contract);
           expect(parseInt(startBlock)).toBe(startBlockExp);
+        },
+        { timeout: 10_000 },
+      );
+    }
+  }
+});
+
+describe('getFromSourcifyForContract', { sequential: true }, async () => {
+  const registry = await loadRegistry();
+  const contractService = new ContractService(registry);
+  for (const [networkId, contractInfo] of Object.entries(TEST_SOURCIFY_CONTRACT_INFO)) {
+    for (const [contract, info] of Object.entries(contractInfo)) {
+      test(
+        `Returns contract information ${networkId} ${contract} ${info.name} ${info.startBlock}`,
+        async () => {
+          // Only check name and startBlock, omit API property from Sourcify results
+          const { name, startBlock } = (await contractService.getFromSourcify(
+            EthereumABI,
+            networkId,
+            contract,
+          ))!;
+          expect(info).toEqual({ name, startBlock: parseInt(startBlock) });
         },
         { timeout: 10_000 },
       );
