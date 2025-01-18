@@ -9,7 +9,8 @@ export function disambiguateNames<T>({
 }) {
   const collisionCounter = new Map();
   return values.map((value, index) => {
-    const name = getName(value, index);
+    let name = getName(value, index);
+    name = handleReservedWord(name);
     const counter = collisionCounter.get(name);
     if (counter === undefined) {
       collisionCounter.set(name, 1);
@@ -18,6 +19,61 @@ export function disambiguateNames<T>({
     collisionCounter.set(name, counter + 1);
     return setName(value, `${name}${counter}`);
   });
+}
+
+// List of JavaScript reserved words that need to be handled
+const RESERVED_WORDS = new Set([
+  'await',
+  'break',
+  'case',
+  'catch',
+  'class',
+  'const',
+  'continue',
+  'debugger',
+  'default',
+  'delete',
+  'do',
+  'else',
+  'enum',
+  'export',
+  'extends',
+  'false',
+  'finally',
+  'for',
+  'function',
+  'if',
+  'implements',
+  'import',
+  'in',
+  'instanceof',
+  'interface',
+  'let',
+  'new',
+  'null',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'return',
+  'super',
+  'switch',
+  'static',
+  'this',
+  'throw',
+  'true',
+  'try',
+  'typeof',
+  'var',
+  'void',
+  'while',
+  'with',
+  'yield'
+]);
+
+// Function to handle JavaScript reserved words by appending an underscore
+export function handleReservedWord(name: string): string {
+  return RESERVED_WORDS.has(name) ? `${name}_` : name;
 }
 
 export function isTupleType(t: string) {
