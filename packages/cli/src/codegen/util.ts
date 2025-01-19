@@ -9,8 +9,7 @@ export function disambiguateNames<T>({
 }) {
   const collisionCounter = new Map();
   return values.map((value, index) => {
-    let name = getName(value, index);
-    name = handleReservedWord(name);
+    const name = handleReservedWord(getName(value, index));
     const counter = collisionCounter.get(name);
     if (counter === undefined) {
       collisionCounter.set(name, 1);
@@ -21,7 +20,6 @@ export function disambiguateNames<T>({
   });
 }
 
-// List of JavaScript reserved words that need to be handled
 const RESERVED_WORDS = new Set([
   'await',
   'break',
@@ -68,10 +66,9 @@ const RESERVED_WORDS = new Set([
   'void',
   'while',
   'with',
-  'yield'
+  'yield',
 ]);
 
-// Function to handle JavaScript reserved words by appending an underscore
 export function handleReservedWord(name: string): string {
   return RESERVED_WORDS.has(name) ? `${name}_` : name;
 }
