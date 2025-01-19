@@ -13,7 +13,10 @@ export const generateFieldAssignment = (
   value: string[],
   type: string,
 ): { assignment: string; imports: string[] } => {
-  let rightSide = `event.params.${value.join('.')}`;
+  const safeKey = key.map(k => util.handleReservedWord(k));
+  const safeValue = value.map(v => util.handleReservedWord(v));
+
+  let rightSide = `event.params.${safeValue.join('.')}`;
   const imports = [];
 
   if (type in VALUE_TYPECAST_MAP) {
@@ -23,7 +26,7 @@ export const generateFieldAssignment = (
   }
 
   return {
-    assignment: `entity.${key.join('_')} = ${rightSide}`,
+    assignment: `entity.${safeKey.join('_')} = ${rightSide}`,
     imports,
   };
 };
