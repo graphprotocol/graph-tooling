@@ -308,7 +308,8 @@ export default class SchemaCodeGenerator {
 
   _generateEntityFieldGetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const isDerivedField = this._isDerivedField(fieldDef);
-    const name = util.handleReservedWord(fieldDef.name.value);
+    const name = fieldDef.name.value;
+    const safeName = util.handleReservedWord(name);
 
     if (isDerivedField) {
       schemaCodeGeneratorDebug.extend('_generateEntityFieldGetter')(
@@ -340,7 +341,7 @@ export default class SchemaCodeGenerator {
                         }`;
 
     return tsCodegen.method(
-      `get ${name}`,
+      `get ${safeName}`,
       [],
       returnType,
       `
@@ -351,7 +352,9 @@ export default class SchemaCodeGenerator {
   }
   _generateDerivedFieldGetter(entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const entityName = entityDef.name.value;
-    const name = util.handleReservedWord(fieldDef.name.value);
+    const name = fieldDef.name.value;
+    const safeName = util.handleReservedWord(name);
+
     schemaCodeGeneratorDebug.extend('_generateDerivedFieldGetter')(
       `Generating derived field '${name}' getter for Entity '${entityName}'`,
     );
@@ -391,7 +394,7 @@ export default class SchemaCodeGenerator {
     const toValueString = idIsBytes ? '.toBytes().toHexString()' : '.toString()';
 
     return tsCodegen.method(
-      `get ${name}`,
+      `get ${safeName}`,
       [],
       returnType,
       `
@@ -415,7 +418,8 @@ export default class SchemaCodeGenerator {
     _entityDef: ObjectTypeDefinitionNode,
     fieldDef: FieldDefinitionNode,
   ) {
-    const name = util.handleReservedWord(fieldDef.name.value);
+    const name = fieldDef.name.value;
+    const safeName = util.handleReservedWord(name);
     const gqlType = fieldDef.type;
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
     const returnType = this._typeFromGraphQl(gqlType);
@@ -429,7 +433,7 @@ export default class SchemaCodeGenerator {
                         }`;
 
     return tsCodegen.method(
-      `get ${name}`,
+      `get ${safeName}`,
       [],
       returnType,
       `
@@ -439,7 +443,8 @@ export default class SchemaCodeGenerator {
     );
   }
   _generateEntityFieldSetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
-    const name = util.handleReservedWord(fieldDef.name.value);
+    const name = fieldDef.name.value;
+    const safeName = util.handleReservedWord(name);
     const isDerivedField = !!fieldDef.directives?.find(
       directive => directive.name.value === 'derivedFrom',
     );
@@ -478,7 +483,7 @@ Suggestion: add an '!' to the member type of the List, change from '[${baseType}
     `;
 
     return tsCodegen.method(
-      `set ${name}`,
+      `set ${safeName}`,
       [tsCodegen.param('value', paramType)],
       undefined,
       isNullable ? setNullable : setNonNullable,
