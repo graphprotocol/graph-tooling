@@ -11,6 +11,7 @@ import debug from '../debug.js';
 import Schema from '../schema.js';
 import * as typesCodegen from './types/index.js';
 import * as tsCodegen from './typescript.js';
+import * as util from './util.js';
 
 class IdField {
   static BYTES = Symbol('Bytes');
@@ -307,7 +308,7 @@ export default class SchemaCodeGenerator {
 
   _generateEntityFieldGetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const isDerivedField = this._isDerivedField(fieldDef);
-    const name = fieldDef.name.value;
+    const name = util.handleReservedWord(fieldDef.name.value);
 
     if (isDerivedField) {
       schemaCodeGeneratorDebug.extend('_generateEntityFieldGetter')(
@@ -350,7 +351,7 @@ export default class SchemaCodeGenerator {
   }
   _generateDerivedFieldGetter(entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
     const entityName = entityDef.name.value;
-    const name = fieldDef.name.value;
+    const name = util.handleReservedWord(fieldDef.name.value);
     schemaCodeGeneratorDebug.extend('_generateDerivedFieldGetter')(
       `Generating derived field '${name}' getter for Entity '${entityName}'`,
     );
@@ -414,7 +415,7 @@ export default class SchemaCodeGenerator {
     _entityDef: ObjectTypeDefinitionNode,
     fieldDef: FieldDefinitionNode,
   ) {
-    const name = fieldDef.name.value;
+    const name = util.handleReservedWord(fieldDef.name.value);
     const gqlType = fieldDef.type;
     const fieldValueType = this._valueTypeFromGraphQl(gqlType);
     const returnType = this._typeFromGraphQl(gqlType);
@@ -438,7 +439,7 @@ export default class SchemaCodeGenerator {
     );
   }
   _generateEntityFieldSetter(_entityDef: ObjectTypeDefinitionNode, fieldDef: FieldDefinitionNode) {
-    const name = fieldDef.name.value;
+    const name = util.handleReservedWord(fieldDef.name.value);
     const isDerivedField = !!fieldDef.directives?.find(
       directive => directive.name.value === 'derivedFrom',
     );
