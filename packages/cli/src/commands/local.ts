@@ -2,6 +2,7 @@ import { ChildProcess, spawn } from 'node:child_process';
 import http from 'node:http';
 import net from 'node:net';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import compose from 'docker-compose';
 import { filesystem, patching } from 'gluegun';
 import stripAnsi from 'strip-ansi';
@@ -93,9 +94,8 @@ export default class LocalCommand extends Command {
     const composeFile =
       composeFileFlag ||
       path.join(
-        `${process.platform === 'win32' ? '' : '/'}${
-          /file:\/{2,3}(.+)\/[^/]/.exec(import.meta.url)![1]
-        }`,
+        fileURLToPath(import.meta.url),
+        '..',
         '..',
         '..',
         'resources',

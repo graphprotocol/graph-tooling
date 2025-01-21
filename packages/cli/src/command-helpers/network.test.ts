@@ -1,11 +1,13 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as toolbox from 'gluegun';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import yaml from 'yaml';
 import { initNetworksConfig, updateSubgraphNetwork } from './network.js';
 
 const SUBGRAPH_PATH_BASE = path.join(
-  `${process.platform === 'win32' ? '' : '/'}${/file:\/{2,3}(.+)\/[^/]/.exec(import.meta.url)![1]}`,
+  fileURLToPath(import.meta.url),
+  '..',
   '..',
   '..',
   '..',
