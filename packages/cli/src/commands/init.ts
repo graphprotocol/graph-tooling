@@ -200,6 +200,11 @@ export default class InitCommand extends Command {
     if ((fromContract || spkgPath) && protocol && subgraphName && directory && network && node) {
       const registry = await loadRegistry();
       const contractService = new ContractService(registry);
+      const sourcifyContractInfo = await contractService.getFromSourcify(
+        EthereumABI,
+        network,
+        fromContract!,
+      );
 
       if (!protocolChoices.includes(protocol as ProtocolName)) {
         this.error(
@@ -222,7 +227,9 @@ export default class InitCommand extends Command {
           }
         } else {
           try {
-            abi = await contractService.getABI(ABI, network, fromContract!);
+            abi = sourcifyContractInfo
+              ? sourcifyContractInfo.abi
+              : await contractService.getABI(ABI, network, fromContract!);
           } catch (e) {
             this.exit(1);
           }
@@ -448,7 +455,7 @@ async function processInitForm(
       ];
     };
 
-    let network = networks[0];
+    let network: Network = networks[0];
     let protocolInstance: Protocol = new Protocol('ethereum');
     let isComposedSubgraph = false;
     let isSubstreams = false;
@@ -611,6 +618,22 @@ async function processInitForm(
           return address;
         }
 
+        const sourcifyContractInfo = await contractService.getFromSourcify(
+          EthereumABI,
+          network.id,
+          address,
+        );
+        if (sourcifyContractInfo) {
+          initStartBlock ??= sourcifyContractInfo.startBlock;
+          initContractName ??= sourcifyContractInfo.name;
+          initAbi ??= sourcifyContractInfo.abi;
+          initDebugger.extend('processInitForm')(
+            "infoFromSourcify: '%s'/'%s'",
+            initStartBlock,
+            initContractName,
+          );
+        }
+
         // If ABI is not provided, try to fetch it from Etherscan API
         if (protocolInstance.hasABIs() && !initAbi) {
           abiFromApi = await retryWithPrompt(() =>
@@ -622,6 +645,8 @@ async function processInitForm(
             ),
           );
           initDebugger.extend('processInitForm')("abiFromEtherscan len: '%s'", abiFromApi?.name);
+        } else {
+          abiFromApi = initAbi;
         }
         // If startBlock is not provided, try to fetch it from Etherscan API
         if (!initStartBlock) {

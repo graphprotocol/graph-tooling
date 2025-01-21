@@ -80,12 +80,24 @@ export default class AddCommand extends Command {
     if (isLocalHost) this.warn('`localhost` network detected, prompting user for inputs');
     const registry = await loadRegistry();
     const contractService = new ContractService(registry);
+    const sourcifyContractInfo = await contractService.getFromSourcify(
+      EthereumABI,
+      network,
+      address,
+    );
 
     let startBlock = startBlockFlag ? parseInt(startBlockFlag).toString() : startBlockFlag;
     let contractName = contractNameFlag || DEFAULT_CONTRACT_NAME;
-
     let ethabi = null;
-    if (abi) {
+
+    if (sourcifyContractInfo) {
+      startBlock ??= sourcifyContractInfo.startBlock;
+      contractName =
+        contractName == DEFAULT_CONTRACT_NAME ? sourcifyContractInfo.name : contractName;
+      ethabi ??= sourcifyContractInfo.abi;
+    }
+
+    if (!ethabi && abi) {
       ethabi = EthereumABI.load(contractName, abi);
     } else {
       try {

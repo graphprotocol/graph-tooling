@@ -151,6 +151,61 @@ export class ContractService {
     throw new Error(`Failed to fetch contract name for ${address}`);
   }
 
+  async getFromSourcify(
+    ABICtor: typeof ABI,
+    networkId: string,
+    address: string,
+  ): Promise<{ abi: ABI; startBlock: string; name: string } | null> {
+    try {
+      const network = this.registry.getNetworkById(networkId);
+      if (!network) throw new Error(`Invalid network ${networkId}`);
+
+      if (!network.caip2Id.startsWith('eip155'))
+        throw new Error(`Invalid chainId, Sourcify API only supports EVM chains`);
+
+      const chainId = network.caip2Id.split(':')[1];
+      const url = `https://sourcify.dev/server/files/any/${chainId}/${address}`;
+      const json:
+        | {
+            status: string;
+            files: { name: string; path: string; content: string }[];
+          }
+        | { error: string } = await (
+        await fetch(url).catch(error => {
+          throw new Error(`Sourcify API is unreachable: ${error}`);
+        })
+      ).json();
+
+      if (json) {
+        if ('error' in json) throw new Error(`Sourcify API error: ${json.error}`);
+
+        let metadata: any = json.files.find(e => e.name === 'metadata.json')?.content;
+        if (!metadata) throw new Error('Contract is missing metadata');
+
+        const tx_hash = json.files.find(e => e.name === 'creator-tx-hash.txt')?.content;
+        if (!tx_hash) throw new Error('Contract is missing tx creation hash');
+
+        const tx = await this.fetchTransactionByHash(networkId, tx_hash);
+        if (!tx?.blockNumber)
+          throw new Error(`Can't fetch blockNumber from tx: ${JSON.stringify(tx)}`);
+
+        metadata = JSON.parse(metadata);
+        const contractName = Object.values(metadata.settings.compilationTarget)[0] as string;
+        return {
+          abi: new ABICtor(contractName, undefined, immutable.fromJS(metadata.output.abi)) as ABI,
+          startBlock: Number(tx.blockNumber).toString(),
+          name: contractName,
+        };
+      }
+
+      throw new Error(`No result: ${JSON.stringify(json)}`);
+    } catch (error) {
+      logger(`Failed to fetch from Sourcify: ${error}`);
+    }
+
+    return null;
+  }
+
   private async fetchTransactionByHash(networkId: string, txHash: string) {
     const urls = this.getRpcUrls(networkId);
     if (!urls.length) {

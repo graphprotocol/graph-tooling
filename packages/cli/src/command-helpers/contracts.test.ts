@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import EthereumABI from '../protocols/ethereum/abi.js';
 import { ContractService } from './contracts.js';
 import { loadRegistry } from './registry.js';
 
@@ -85,19 +86,89 @@ const TEST_CONTRACT_START_BLOCKS = {
   // },
 };
 
-describe('getStartBlockForContract', { sequential: true }, async () => {
+const TEST_SOURCIFY_CONTRACT_INFO = {
+  mainnet: {
+    '0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd': {
+      name: 'MasterChef',
+      startBlock: 10_736_242,
+    },
+  },
+  optimism: {
+    '0xc35DADB65012eC5796536bD9864eD8773aBc74C4': {
+      name: 'BentoBoxV1',
+      startBlock: 7_019_815,
+    },
+  },
+  wax: {
+    account: {
+      name: null,
+      startBlock: null,
+    },
+  },
+  'non-existing chain': {
+    '0x0000000000000000000000000000000000000000': {
+      name: null,
+      startBlock: null,
+    },
+  },
+};
+
+// Retry helper with configurable number of retries
+async function retry<T>(operation: () => Promise<T>, maxRetries = 3, sleepMs = 5000): Promise<T> {
+  let lastError: Error | undefined;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      if (attempt < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, sleepMs));
+      }
+    }
+  }
+  throw lastError;
+}
+
+describe('getStartBlockForContract', { concurrent: true }, async () => {
   const registry = await loadRegistry();
   const contractService = new ContractService(registry);
   for (const [network, contracts] of Object.entries(TEST_CONTRACT_START_BLOCKS)) {
     for (const [contract, startBlockExp] of Object.entries(contracts)) {
       test(
         `Returns the start block ${network} ${contract} ${startBlockExp}`,
-        async () => {
-          //loop through the TEST_CONTRACT_START_BLOCKS object and test each network
-          const startBlock = await contractService.getStartBlock(network, contract);
+        { timeout: 50_000 },
+        async ({ expect }) => {
+          const startBlock = await retry(
+            () => contractService.getStartBlock(network, contract),
+            10,
+          );
           expect(parseInt(startBlock)).toBe(startBlockExp);
         },
-        { timeout: 10_000 },
+      );
+    }
+  }
+});
+
+describe('getFromSourcifyForContract', { concurrent: true }, async () => {
+  const registry = await loadRegistry();
+  const contractService = new ContractService(registry);
+  for (const [networkId, contractInfo] of Object.entries(TEST_SOURCIFY_CONTRACT_INFO)) {
+    for (const [contract, t] of Object.entries(contractInfo)) {
+      test(
+        `Returns contract information ${networkId} ${contract} ${t.name} ${t.startBlock}`,
+        { timeout: 50_000 },
+        async () => {
+          const result = await retry(() =>
+            contractService.getFromSourcify(EthereumABI, networkId, contract),
+          );
+          if (t.name === null && t.startBlock === null) {
+            expect(result).toBeNull();
+          } else {
+            // Only check name and startBlock, omit API property from Sourcify results
+            const { name, startBlock } = result!;
+            expect(t).toEqual({ name, startBlock: parseInt(startBlock) });
+          }
+        },
       );
     }
   }
