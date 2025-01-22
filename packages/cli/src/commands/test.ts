@@ -174,8 +174,8 @@ async function runBinary(
       await pipeline(response.body, fileStream);
       await fs.promises.chmod(binPath, '755');
     } catch (e) {
-      this.warn(`Failed to download matchstick binary: ${e.message}`);
-      this.warn('Consider using -d flag to run tests in Docker instead:');
+      this.warn(`Failed to download matchstick binary for your platform: ${e.message}`);
+      this.warn('Consider using -d flag to run it in Docker instead:');
       this.warn('  graph test -d');
       process.exit(1);
     }
