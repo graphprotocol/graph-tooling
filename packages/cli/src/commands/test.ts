@@ -1,4 +1,5 @@
 import { exec, spawn } from 'node:child_process';
+import events from 'node:events';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -161,40 +162,35 @@ async function runBinary(
     this.log(`Binary path: ${binPath}`);
   }
 
-  try {
-    if (!fs.existsSync(binPath)) {
-      this.log(`Downloading matchstick binary: ${url}`);
+  if (!fs.existsSync(binPath)) {
+    this.log(`Downloading matchstick binary: ${url}`);
+    try {
       await fs.promises.mkdir(binDir, { recursive: true });
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`Failed to download binary: ${response.statusText}`);
+      if (!response.ok) throw new Error(`Status: ${response.statusText}`);
       if (!response.body) throw new Error('No response body received');
 
       const fileStream = fs.createWriteStream(binPath);
       await pipeline(response.body, fileStream);
       await fs.promises.chmod(binPath, '755');
+    } catch (e) {
+      this.warn(`Failed to download matchstick binary: ${e.message}`);
+      this.warn('Consider using -d flag to run tests in Docker instead:');
+      this.warn('  graph test -d');
+      process.exit(1);
     }
+  }
 
-    const args = [];
-    if (coverageOpt) args.push('-c');
-    if (recompileOpt) args.push('-r');
-    if (datasource) args.push(datasource);
+  const args = [];
+  if (coverageOpt) args.push('-c');
+  if (recompileOpt) args.push('-r');
+  if (datasource) args.push(datasource);
 
-    const child = spawn(binPath, args, { stdio: 'inherit' });
-    await new Promise((resolve, reject) => {
-      child.on('close', code => {
-        if (code === 0) {
-          resolve(code);
-        } else {
-          reject(new Error(`Process exited with code ${code}`));
-        }
-      });
-      child.on('error', reject);
-    });
-  } catch (e) {
-    this.warn(`Failed to run matchstick binary: ${e.message}`);
-    this.warn('Recommendation: Use the -d flag to run tests in Docker instead:');
-    this.warn('  graph test -d\n');
-    this.error('Failed to run matchstick tests', { exit: 1 });
+  const child = spawn(binPath, args, { stdio: 'inherit' });
+  const [code] = await events.once(child, 'exit');
+  if (code !== 0) {
+    this.warn('Matchstick tests failed');
+    process.exit(1);
   }
 }
 
