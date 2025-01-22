@@ -1,13 +1,14 @@
 import { exec, spawn } from 'node:child_process';
+import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { Binary } from 'binary-install';
+import { pipeline } from 'node:stream/promises';
+import { fileURLToPath } from 'node:url';
 import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
 import semver from 'semver';
 import { Args, Command, Flags } from '@oclif/core';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
-import fetch from '../fetch.js';
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
@@ -144,7 +145,6 @@ async function runBinary(
   },
 ) {
   const coverageOpt = opts.coverage;
-  const forceOpt = opts.force;
   const logsOpt = opts.logs;
   const versionOpt = opts.version;
   const latestVersion = opts.latestVersion;
@@ -152,24 +152,50 @@ async function runBinary(
 
   const platform = await getPlatform.bind(this)(versionOpt || latestVersion, logsOpt);
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${
-    versionOpt || latestVersion
-  }/${platform}`;
+  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`;
+  const binDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'node_modules', '.bin');
+  const binPath = path.join(binDir, `matchstick-${platform}`);
 
   if (logsOpt) {
     this.log(`Download link: ${url}`);
+    this.log(`Binary path: ${binPath}`);
   }
 
-  const binary = new Binary(platform, url, versionOpt || latestVersion);
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  forceOpt ? await binary.install(true) : await binary.install(false);
-  const args = [];
+  try {
+    if (!fs.existsSync(binPath)) {
+      this.log(`Downloading matchstick binary: ${url}`);
+      await fs.promises.mkdir(binDir, { recursive: true });
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Failed to download binary: ${response.statusText}`);
+      if (!response.body) throw new Error('No response body received');
 
-  if (coverageOpt) args.push('-c');
-  if (recompileOpt) args.push('-r');
-  if (datasource) args.push(datasource);
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  args.length > 0 ? binary.run(...args) : binary.run();
+      const fileStream = fs.createWriteStream(binPath);
+      await pipeline(response.body, fileStream);
+      await fs.promises.chmod(binPath, '755');
+    }
+
+    const args = [];
+    if (coverageOpt) args.push('-c');
+    if (recompileOpt) args.push('-r');
+    if (datasource) args.push(datasource);
+
+    const child = spawn(binPath, args, { stdio: 'inherit' });
+    await new Promise((resolve, reject) => {
+      child.on('close', code => {
+        if (code === 0) {
+          resolve(code);
+        } else {
+          reject(new Error(`Process exited with code ${code}`));
+        }
+      });
+      child.on('error', reject);
+    });
+  } catch (e) {
+    this.warn(`Failed to run matchstick binary: ${e.message}`);
+    this.warn('Recommendation: Use the -d flag to run tests in Docker instead:');
+    this.warn('  graph test -d\n');
+    this.error('Failed to run matchstick tests', { exit: 1 });
+  }
 }
 
 async function getPlatform(
@@ -282,10 +308,6 @@ async function runDocker(
   const versionOpt = opts.version;
   const latestVersion = opts.latestVersion;
   const recompileOpt = opts.recompile;
-
-  // Remove binary-install binaries, because docker has permission issues
-  // when building the docker images
-  filesystem.remove('./node_modules/binary-install/bin');
 
   // Get current working directory
   const current_folder = filesystem.cwd();
