@@ -292,7 +292,7 @@ importers:
         version: 4.1.0
       kubo-rpc-client:
         specifier: ^5.0.2
-        version: 5.0.2(undici@7.1.1)
+        version: 5.0.2(undici@7.2.3)
       open:
         specifier: 10.1.0
         version: 10.1.0
@@ -306,8 +306,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       undici:
-        specifier: 7.1.1
-        version: 7.1.1
+        specifier: 7.2.3
+        version: 7.2.3
       web3-eth-abi:
         specifier: 4.4.1
         version: 4.4.1(typescript@5.7.2)(zod@3.23.8)
@@ -410,7 +410,7 @@ importers:
         version: 16.9.0
       kubo-rpc-client:
         specifier: ^5.0.2
-        version: 5.0.2(undici@7.1.1)
+        version: 5.0.2(undici@7.2.3)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -9185,8 +9185,8 @@ packages:
     resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
     engines: {node: '>=14.0'}
 
-  undici@7.1.1:
-    resolution: {integrity: sha512-WZkQ6eH9f5ZT93gaIffsbUaDpBwjbpvmMbfaEhOnbdUneurTESeRxwPGwjI28mRFESH3W3e8Togijh37ptOQqA==}
+  undici@7.2.3:
+    resolution: {integrity: sha512-2oSLHaDalSt2/O/wHA9M+/ZPAOcU2yrSP/cdBYJ+YxZskiPYDSqHbysLSlD7gq3JMqOoJI5O31RVU3BxX/MnAA==}
     engines: {node: '>=20.18.1'}
 
   unenv@1.10.0:
@@ -16665,7 +16665,7 @@ snapshots:
       - bluebird
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1)):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.16.0(jiti@2.4.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -16694,7 +16694,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.16.0(jiti@2.4.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.16.0(jiti@2.4.1)))(eslint@9.16.0(jiti@2.4.1))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@2.4.1))(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.16.0(jiti@2.4.1))
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -18519,7 +18519,7 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  kubo-rpc-client@5.0.2(undici@7.1.1):
+  kubo-rpc-client@5.0.2(undici@7.2.3):
     dependencies:
       '@ipld/dag-cbor': 9.2.2
       '@ipld/dag-json': 10.2.3
@@ -18548,7 +18548,7 @@ snapshots:
       merge-options: 3.0.4
       multiformats: 13.3.1
       nanoid: 5.0.9
-      native-fetch: 4.0.2(undici@7.1.1)
+      native-fetch: 4.0.2(undici@7.2.3)
       parse-duration: 1.1.1
       react-native-fetch-api: 3.0.0
       stream-to-it: 1.0.1
@@ -19247,9 +19247,9 @@ snapshots:
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
 
-  native-fetch@4.0.2(undici@7.1.1):
+  native-fetch@4.0.2(undici@7.2.3):
     dependencies:
-      undici: 7.1.1
+      undici: 7.2.3
 
   natural-compare@1.4.0: {}
 
@@ -21264,7 +21264,7 @@ snapshots:
     dependencies:
       '@fastify/busboy': 2.1.1
 
-  undici@7.1.1: {}
+  undici@7.2.3: {}
 
   unenv@1.10.0:
     dependencies:
