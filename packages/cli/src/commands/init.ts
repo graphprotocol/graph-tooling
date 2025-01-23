@@ -23,7 +23,11 @@ import EthereumABI from '../protocols/ethereum/abi.js';
 import Protocol, { ProtocolName } from '../protocols/index.js';
 import { abiEvents } from '../scaffold/schema.js';
 import Schema from '../schema.js';
-import { createIpfsClient, loadSubgraphSchemaFromIPFS } from '../utils.js';
+import {
+  createIpfsClient,
+  loadSubgraphSchemaFromIPFS,
+  validateSubgraphNetworkMatch,
+} from '../utils.js';
 import { validateContract } from '../validation/index.js';
 import AddCommand from './add.js';
 
@@ -508,7 +512,7 @@ async function processInitForm(
               value: 'contract',
             },
             { message: 'Substreams', name: 'substreams', value: 'substreams' },
-            // { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
+            { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
           ].filter(({ name }) => name),
         });
 
@@ -589,9 +593,17 @@ async function processInitForm(
         isSubstreams ||
         (!protocolInstance.hasContract() && !isComposedSubgraph),
       initial: initContract,
-      validate: async (value: string) => {
+      validate: async (value: string): Promise<string | boolean> => {
         if (isComposedSubgraph) {
-          return value.startsWith('Qm') ? true : 'Subgraph deployment ID must start with Qm';
+          if (!ipfsNode) {
+            return true; // Skip validation if no IPFS node is available
+          }
+          const ipfs = createIpfsClient(ipfsNode);
+          const { valid, error } = await validateSubgraphNetworkMatch(ipfs, value, network.id);
+          if (!valid) {
+            return error || 'Invalid subgraph network match';
+          }
+          return true;
         }
         if (initFromExample !== undefined || !protocolInstance.hasContract()) {
           return true;
@@ -706,7 +718,7 @@ async function processInitForm(
         isSubstreams ||
         !!initAbiPath ||
         isComposedSubgraph,
-      validate: async (value: string) => {
+      validate: async (value: string): Promise<string | boolean> => {
         if (
           initFromExample ||
           abiFromApi ||
@@ -796,6 +808,22 @@ async function processInitForm(
     });
 
     await promptManager.executeInteractive();
+
+    // If loading from IPFS, validate network matches
+    if (ipfsNode && subgraphName.startsWith('Qm')) {
+      const ipfs = createIpfsClient(ipfsNode);
+      try {
+        const { valid, error } = await validateSubgraphNetworkMatch(ipfs, subgraphName, network.id);
+        if (!valid) {
+          throw new Error(error || 'Invalid subgraph network match');
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          print.error(`Failed to validate subgraph network: ${e.message}`);
+        }
+        throw e;
+      }
+    }
 
     return {
       abi: (abiFromApi || abiFromFile)!,
@@ -1163,8 +1191,9 @@ async function initSubgraphFromContract(
   }
 
   if (
-    !protocolInstance.isComposedSubgraph() &&
+    !isComposedSubgraph &&
     protocolInstance.hasABIs() &&
+    abi && // Add check for abi existence
     (abiEvents(abi).size === 0 ||
       // @ts-expect-error TODO: the abiEvents result is expected to be a List, how's it an array?
       abiEvents(abi).length === 0)
@@ -1179,6 +1208,12 @@ async function initSubgraphFromContract(
     `Failed to create subgraph scaffold`,
     `Warnings while creating subgraph scaffold`,
     async spinner => {
+      initDebugger('Generating scaffold with ABI:', abi);
+      initDebugger('ABI data:', abi?.data);
+      if (abi) {
+        initDebugger('ABI events:', abiEvents(abi));
+      }
+
       const scaffold = await generateScaffold(
         {
           protocolInstance,
