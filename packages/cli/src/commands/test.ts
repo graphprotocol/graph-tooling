@@ -150,21 +150,22 @@ async function runBinary(
   const versionOpt = opts.version;
   const latestVersion = opts.latestVersion;
   const recompileOpt = opts.recompile;
+  let binPath = '';
 
-  const platform = await getPlatform.bind(this)(versionOpt || latestVersion, logsOpt);
+  try {
+    const platform = await getPlatform.bind(this)(versionOpt || latestVersion, logsOpt);
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`;
-  const binDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'node_modules', '.bin');
-  const binPath = path.join(binDir, `matchstick-${platform}`);
+    const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`;
+    const binDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'node_modules', '.bin');
+    binPath = path.join(binDir, `matchstick-${platform}`);
 
-  if (logsOpt) {
-    this.log(`Download link: ${url}`);
-    this.log(`Binary path: ${binPath}`);
-  }
+    if (logsOpt) {
+      this.log(`Download link: ${url}`);
+      this.log(`Binary path: ${binPath}`);
+    }
 
-  if (!fs.existsSync(binPath)) {
-    this.log(`Downloading matchstick binary: ${url}`);
-    try {
+    if (!fs.existsSync(binPath)) {
+      this.log(`Downloading matchstick binary: ${url}`);
       await fs.promises.mkdir(binDir, { recursive: true });
       const response = await fetch(url);
       if (!response.ok) throw new Error(`Status: ${response.statusText}`);
@@ -173,12 +174,12 @@ async function runBinary(
       const fileStream = fs.createWriteStream(binPath);
       await pipeline(response.body, fileStream);
       await fs.promises.chmod(binPath, '755');
-    } catch (e) {
-      this.warn(`Failed to download matchstick binary for your platform: ${e.message}`);
-      this.warn('Consider using -d flag to run it in Docker instead:');
-      this.warn('  graph test -d');
-      process.exit(1);
     }
+  } catch (e) {
+    this.warn(`Failed to download matchstick binary for your platform: ${e.message}`);
+    this.warn('Consider using -d flag to run it in Docker instead:');
+    this.warn('  graph test -d');
+    process.exit(1);
   }
 
   const args = [];
