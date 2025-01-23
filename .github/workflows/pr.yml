@@ -42,8 +42,10 @@ jobs:
           tag: alpha
           prepareScript: 'pnpm run build'
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
 
   release-candidate:
     runs-on: ubuntu-24.04
