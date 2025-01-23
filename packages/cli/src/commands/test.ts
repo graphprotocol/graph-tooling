@@ -227,7 +227,7 @@ async function getPlatform(
         }
         return 'binary-macos-12';
       }
-      if (type === 'Linux' && majorVersion === 22) {
+      if (type === 'Linux' && (majorVersion === 22 || majorVersion === 24)) {
         return 'binary-linux-22';
       }
     } else {
