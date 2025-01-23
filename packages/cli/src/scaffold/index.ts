@@ -1,3 +1,4 @@
+import debugFactory from 'debug';
 import fs from 'fs-extra';
 import { strings } from 'gluegun';
 import prettier from 'prettier';
@@ -10,6 +11,8 @@ import { getGitIgnore } from './get-git-ignore.js';
 import { generateEventIndexingHandlers } from './mapping.js';
 import { abiEvents, generateEventType, generateExampleEntityType } from './schema.js';
 import { generateTestsFiles } from './tests.js';
+
+const scaffoldDebugger = debugFactory('graph-cli:scaffold');
 
 const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
   ? // JSON.stringify should remove this key, we will install the local
@@ -47,18 +50,34 @@ export default class Scaffold {
   spkgPath?: string;
   entities?: string[];
 
-  constructor(options: ScaffoldOptions) {
-    this.protocol = options.protocol;
-    this.abi = options.abi;
-    this.indexEvents = options.indexEvents;
-    this.contract = options.contract;
-    this.network = options.network;
-    this.contractName = options.contractName;
-    this.subgraphName = options.subgraphName;
-    this.startBlock = options.startBlock;
-    this.node = options.node;
-    this.spkgPath = options.spkgPath;
-    this.entities = options.entities;
+  constructor({
+    protocol,
+    abi,
+    contract,
+    network,
+    contractName,
+    startBlock,
+    subgraphName,
+    node,
+    spkgPath,
+    indexEvents,
+    entities,
+  }: ScaffoldOptions) {
+    this.protocol = protocol;
+    this.abi = abi;
+    this.contract = contract;
+    this.network = network;
+    this.contractName = contractName;
+    this.startBlock = startBlock;
+    this.subgraphName = subgraphName;
+    this.node = node;
+    this.spkgPath = spkgPath;
+    this.indexEvents = indexEvents;
+    this.entities = entities;
+
+    scaffoldDebugger('Scaffold constructor called with ABI:', abi);
+    scaffoldDebugger('ABI data:', abi?.data);
+    scaffoldDebugger('ABI file:', abi?.file);
   }
 
   async generatePackageJson() {
@@ -203,9 +222,24 @@ dataSources:
   }
 
   async generateABIs() {
+    scaffoldDebugger('Generating ABIs...');
+    scaffoldDebugger('Protocol has ABIs:', this.protocol.hasABIs());
+    scaffoldDebugger('ABI data:', this.abi?.data);
+    scaffoldDebugger('ABI file:', this.abi?.file);
+
+    if (!this.protocol.hasABIs()) {
+      scaffoldDebugger('Protocol does not have ABIs, skipping ABI generation');
+      return;
+    }
+
+    if (!this.abi?.data) {
+      scaffoldDebugger('ABI data is undefined, skipping ABI generation');
+      return;
+    }
+
     return this.protocol.hasABIs()
       ? {
-          [`${this.contractName}.json`]: await prettier.format(JSON.stringify(this.abi?.data), {
+          [`${this.contractName}.json`]: await prettier.format(JSON.stringify(this.abi.data), {
             parser: 'json',
           }),
         }
