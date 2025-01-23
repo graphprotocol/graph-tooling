@@ -176,10 +176,11 @@ async function runBinary(
       await fs.promises.chmod(binPath, '755');
     }
   } catch (e) {
-    this.warn(`Failed to download matchstick binary for your platform: ${e.message}`);
-    this.warn('Consider using -d flag to run it in Docker instead:');
-    this.warn('  graph test -d');
-    process.exit(1);
+    this.error(`
+Failed to download matchstick binary for your platform: ${e.message}
+Consider using -d flag to run it in Docker instead:
+  graph test -d
+`);
   }
 
   const args = [];
@@ -190,8 +191,7 @@ async function runBinary(
   const child = spawn(binPath, args, { stdio: 'inherit' });
   const [code] = await events.once(child, 'exit');
   if (code !== 0) {
-    this.warn('Matchstick tests failed');
-    process.exit(1);
+    this.error('Matchstick failed');
   }
 }
 
