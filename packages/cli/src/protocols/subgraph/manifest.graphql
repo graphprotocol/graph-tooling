@@ -63,6 +63,7 @@ type ContractABI {
 type EntityHandler {
   handler: String!
   entity: String!
+  calls: JSON
 }
 
 type Graft {
