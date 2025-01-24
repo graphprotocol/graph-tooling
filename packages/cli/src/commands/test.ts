@@ -113,9 +113,9 @@ export default class TestCommand extends Command {
     }
 
     if (opts.docker) {
-      runDocker.bind(this)(datasource, opts);
+      await runDocker.bind(this)(datasource, opts);
     } else {
-      runBinary.bind(this)(datasource, opts);
+      await runBinary.bind(this)(datasource, opts);
     }
   }
 }
@@ -190,7 +190,7 @@ async function runBinary(
   const child = spawn(binPath, args, { stdio: 'inherit' });
   const [code] = await events.once(child, 'exit');
   if (code !== 0) {
-    this.error('Matchstick failed', { exit: 1 });
+    this.error('Matchstick exited with an error', { exit: 1 });
   }
 }
 

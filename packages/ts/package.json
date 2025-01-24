@@ -2,6 +2,11 @@
   "name": "@graphprotocol/graph-ts",
   "version": "0.37.0",
   "description": "TypeScript/AssemblyScript library for writing subgraph mappings for The Graph",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling.git",
+    "directory": "packages/ts"
+  },
   "main": "index.ts",
   "module": "index.ts",
   "types": "index.ts",
@@ -11,16 +16,11 @@
     "lint": "prettier -c **/*.{js,mjs,ts}",
     "test": "node test/test.mjs"
   },
+  "dependencies": {
+    "assemblyscript": "0.27.31"
+  },
   "publishConfig": {
     "access": "public",
     "provenance": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/graphprotocol/graph-tooling.git",
-    "directory": "packages/ts"
-  },
-  "dependencies": {
-    "assemblyscript": "0.27.31"
   }
 }
