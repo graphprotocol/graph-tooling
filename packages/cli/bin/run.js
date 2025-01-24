@@ -12,5 +12,5 @@ if (!semver.satisfies(process.version, nodeVersion)) {
 }
 
 await run(process.argv.slice(2), import.meta.url)
-  .catch(async error => handle(error))
+  .catch(async error => handle({ ...error, skipOclifErrorHandling: true }))
   .finally(async () => flush());
