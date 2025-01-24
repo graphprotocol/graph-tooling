@@ -3,6 +3,11 @@
   "version": "0.94.0",
   "type": "module",
   "description": "CLI for building for and deploying to The Graph",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling.git",
+    "directory": "packages/cli"
+  },
   "license": "(Apache-2.0 OR MIT)",
   "engines": {
     "node": ">=20.18.1"
@@ -74,11 +79,6 @@
   "publishConfig": {
     "access": "public",
     "provenance": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/graphprotocol/graph-tooling.git",
-    "directory": "packages/cli"
   },
   "oclif": {
     "bin": "graph",
