@@ -39,7 +39,6 @@
     "@pinax/graph-networks-registry": "^0.6.5",
     "@whatwg-node/fetch": "^0.10.1",
     "assemblyscript": "0.19.23",
-    "binary-install": "^1.1.0",
     "chokidar": "4.0.1",
     "debug": "4.3.7",
     "docker-compose": "1.1.0",

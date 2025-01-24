@@ -1,13 +1,15 @@
 import { exec, spawn } from 'node:child_process';
+import events from 'node:events';
+import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { Binary } from 'binary-install';
+import { pipeline } from 'node:stream/promises';
+import { fileURLToPath } from 'node:url';
 import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
 import semver from 'semver';
 import { Args, Command, Flags } from '@oclif/core';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
-import fetch from '../fetch.js';
 
 export default class TestCommand extends Command {
   static description = 'Runs rust binary for subgraph testing.';
@@ -144,32 +146,52 @@ async function runBinary(
   },
 ) {
   const coverageOpt = opts.coverage;
-  const forceOpt = opts.force;
   const logsOpt = opts.logs;
   const versionOpt = opts.version;
   const latestVersion = opts.latestVersion;
   const recompileOpt = opts.recompile;
+  let binPath = '';
 
-  const platform = await getPlatform.bind(this)(versionOpt || latestVersion, logsOpt);
+  try {
+    const platform = await getPlatform.bind(this)(versionOpt || latestVersion, logsOpt);
 
-  const url = `https://github.com/LimeChain/matchstick/releases/download/${
-    versionOpt || latestVersion
-  }/${platform}`;
+    const url = `https://github.com/LimeChain/matchstick/releases/download/${versionOpt || latestVersion}/${platform}`;
+    const binDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'node_modules', '.bin');
+    binPath = path.join(binDir, `matchstick-${platform}`);
 
-  if (logsOpt) {
-    this.log(`Download link: ${url}`);
+    if (logsOpt) {
+      this.log(`Download link: ${url}`);
+      this.log(`Binary path: ${binPath}`);
+    }
+
+    if (!fs.existsSync(binPath)) {
+      this.log(`Downloading matchstick binary: ${url}`);
+      await fs.promises.mkdir(binDir, { recursive: true });
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Status: ${response.statusText}`);
+      if (!response.body) throw new Error('No response body received');
+
+      const fileStream = fs.createWriteStream(binPath);
+      await pipeline(response.body, fileStream);
+      await fs.promises.chmod(binPath, '755');
+    }
+  } catch (e) {
+    this.error(
+      `Failed to get matchstick binary: ${e.message}\nConsider using -d flag to run it in Docker instead:\n  graph test -d`,
+      { exit: 1 },
+    );
   }
 
-  const binary = new Binary(platform, url, versionOpt || latestVersion);
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  forceOpt ? await binary.install(true) : await binary.install(false);
   const args = [];
-
   if (coverageOpt) args.push('-c');
   if (recompileOpt) args.push('-r');
   if (datasource) args.push(datasource);
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  args.length > 0 ? binary.run(...args) : binary.run();
+
+  const child = spawn(binPath, args, { stdio: 'inherit' });
+  const [code] = await events.once(child, 'exit');
+  if (code !== 0) {
+    this.error('Matchstick failed', { exit: 1 });
+  }
 }
 
 async function getPlatform(
@@ -180,7 +202,7 @@ async function getPlatform(
   const type = os.type();
   const arch = os.arch();
   const cpuCore = os.cpus()[0];
-  const isAppleSilicon = arch === 'arm64' && /Apple (M1|M2|M3|M4|processor)/.test(cpuCore.model);
+  const isAppleSilicon = arch === 'arm64' && /Apple (M[0-9]|processor)/.test(cpuCore.model);
   const linuxInfo = type === 'Linux' ? await getLinuxInfo.bind(this)() : {};
   const linuxDistro = linuxInfo.name;
   const release = linuxInfo.version || os.release();
@@ -204,7 +226,7 @@ async function getPlatform(
         }
         return 'binary-macos-12';
       }
-      if (type === 'Linux' && majorVersion === 22) {
+      if (type === 'Linux' && (majorVersion === 22 || majorVersion === 24)) {
         return 'binary-linux-22';
       }
     } else {
@@ -282,10 +304,6 @@ async function runDocker(
   const versionOpt = opts.version;
   const latestVersion = opts.latestVersion;
   const recompileOpt = opts.recompile;
-
-  // Remove binary-install binaries, because docker has permission issues
-  // when building the docker images
-  filesystem.remove('./node_modules/binary-install/bin');
 
   // Get current working directory
   const current_folder = filesystem.cwd();
