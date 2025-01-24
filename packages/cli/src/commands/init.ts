@@ -583,6 +583,19 @@ async function processInitForm(
 
     promptManager.addStep({
       type: 'input',
+      name: 'ipfs',
+      message: `IPFS node to use for fetching subgraph manifest`,
+      initial: ipfsUrl,
+      skip: () => !isComposedSubgraph,
+      result: value => {
+        ipfsNode = value;
+        initDebugger.extend('processInitForm')('ipfs: %O', value);
+        return value;
+      },
+    });
+
+    promptManager.addStep({
+      type: 'input',
       name: 'source',
       message: () =>
         isComposedSubgraph
@@ -596,7 +609,7 @@ async function processInitForm(
       validate: async (value: string): Promise<string | boolean> => {
         if (isComposedSubgraph) {
           if (!ipfsNode) {
-            return true; // Skip validation if no IPFS node is available
+            return true;
           }
           const ipfs = createIpfsClient(ipfsNode);
           const { valid, error } = await validateSubgraphNetworkMatch(ipfs, value, network.id);
@@ -663,19 +676,6 @@ async function processInitForm(
 
         source = address;
         return address;
-      },
-    });
-
-    promptManager.addStep({
-      type: 'input',
-      name: 'ipfs',
-      message: `IPFS node to use for fetching subgraph manifest`,
-      initial: ipfsUrl,
-      skip: () => !isComposedSubgraph,
-      result: value => {
-        ipfsNode = value;
-        initDebugger.extend('processInitForm')('ipfs: %O', value);
-        return value;
       },
     });
 
@@ -809,11 +809,11 @@ async function processInitForm(
 
     await promptManager.executeInteractive();
 
-    // If loading from IPFS, validate network matches
-    if (ipfsNode && subgraphName.startsWith('Qm')) {
+    // Validate network matches if loading from IPFS
+    if (ipfsNode && source && source.startsWith('Qm')) {
       const ipfs = createIpfsClient(ipfsNode);
       try {
-        const { valid, error } = await validateSubgraphNetworkMatch(ipfs, subgraphName, network.id);
+        const { valid, error } = await validateSubgraphNetworkMatch(ipfs, source!, network.id);
         if (!valid) {
           throw new Error(error || 'Invalid subgraph network match');
         }
