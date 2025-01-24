@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import process from 'node:process';
 import semver from 'semver';
-import { execute } from '@oclif/core';
+import { flush, handle, run } from '@oclif/core';
 import { nodeVersion } from '../dist/version.js';
 
 if (!semver.satisfies(process.version, nodeVersion)) {
@@ -11,4 +11,6 @@ if (!semver.satisfies(process.version, nodeVersion)) {
   process.exit(1);
 }
 
-await execute({ dir: import.meta.url });
+await run(process.argv.slice(2), import.meta.url)
+  .catch(async error => handle(error))
+  .finally(async () => flush());
