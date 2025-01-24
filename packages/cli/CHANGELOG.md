@@ -1,5 +1,44 @@
 # @graphprotocol/graph-cli
 
+## 0.95.0
+
+### Minor Changes
+
+- [#1899](https://github.com/graphprotocol/graph-tooling/pull/1899)
+  [`8cdaf31`](https://github.com/graphprotocol/graph-tooling/commit/8cdaf31e78c7fb7bf7ef4f5380d0c72b2a05b08d)
+  Thanks [@0237h](https://github.com/0237h)! - Add support for Sourcify contract information lookup
+
+### Patch Changes
+
+- [#1910](https://github.com/graphprotocol/graph-tooling/pull/1910)
+  [`15384e6`](https://github.com/graphprotocol/graph-tooling/commit/15384e6bd8af6ba2ad07e9eb5a637d148fb39867)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`undici@7.2.3` ↗︎](https://www.npmjs.com/package/undici/v/7.2.3) (from
+    `7.1.1`, in `dependencies`)
+
+- [#1914](https://github.com/graphprotocol/graph-tooling/pull/1914)
+  [`e63b483`](https://github.com/graphprotocol/graph-tooling/commit/e63b483612e74587b3d33b7ce6d5f3264096820f)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - dependencies updates:
+
+  - Removed dependency
+    [`binary-install@^1.1.0` ↗︎](https://www.npmjs.com/package/binary-install/v/1.1.0) (from
+    `dependencies`)
+
+- [#1914](https://github.com/graphprotocol/graph-tooling/pull/1914)
+  [`e63b483`](https://github.com/graphprotocol/graph-tooling/commit/e63b483612e74587b3d33b7ce6d5f3264096820f)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix bug with graph test #1904
+
+- [#1903](https://github.com/graphprotocol/graph-tooling/pull/1903)
+  [`bcaad5e`](https://github.com/graphprotocol/graph-tooling/commit/bcaad5e077e485224c06842491145d05215f4c0e)
+  Thanks [@0237h](https://github.com/0237h)! - Fix `import.meta.url` not being parsed as path
+  properly
+
+- [#1918](https://github.com/graphprotocol/graph-tooling/pull/1918)
+  [`14ac25c`](https://github.com/graphprotocol/graph-tooling/commit/14ac25c1f08134d15410dad215cad8a9e941a105)
+  Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix bug with loud errors in
+  `graph test`
+
 ## 0.94.0
 
 ### Minor Changes
