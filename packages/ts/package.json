@@ -11,6 +11,15 @@
     "lint": "prettier -c **/*.{js,mjs,ts}",
     "test": "node test/test.mjs"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-tooling.git",
+    "directory": "packages/ts"
+  },
   "dependencies": {
     "assemblyscript": "0.27.31"
   }
