@@ -8,13 +8,13 @@ permissions: write-all
 
 jobs:
   dependencies:
-    uses: ./.github/workflows/reusable/changesets-dependencies.yml
+    uses: ./.github/workflows/shared-changesets-dependencies.yml
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
-    uses: ./.github/workflows/reusable/release-snapshot.yml
+    uses: ./.github/workflows/shared-release-snapshot.yml
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     with:
       npmTag: alpha
@@ -27,7 +27,7 @@ jobs:
       npmToken: ${{ secrets.NPM_TOKEN }}
 
   release-candidate:
-    uses: ./.github/workflows/reusable/release-snapshot.yml
+    uses: ./.github/workflows/shared-release-snapshot.yml
     if: ${{ github.event.pull_request.title == 'Upcoming Release Changes' }}
     with:
       npmTag: rc
