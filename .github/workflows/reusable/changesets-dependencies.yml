@@ -1,0 +1,54 @@
+# Note: this is a shared pipeline used by other repositories.
+# Docs: https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+on:
+  workflow_call:
+    inputs:
+      installDependencies:
+        type: boolean
+        default: false
+      preCommit:
+        type: string
+        required: false
+      packageManager:
+        type: string
+        required: false
+        default: yarn
+      packageManagerVersion:
+        type: string
+        description: Package manager version
+        required: false
+        default: ''
+      nodeVersion:
+        required: false
+        type: string
+        default: '20'
+    secrets:
+      githubToken:
+        required: true
+
+jobs:
+  changeset:
+    runs-on: ubuntu-24.04
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.githubToken }}
+
+      - uses: ./.github/actions/setup-node
+        name: setup env and install dependencies
+        if: ${{ inputs.installDependencies }}
+        with:
+          nodeVersion: ${{ inputs.nodeVersion }}
+          packageManager: ${{ inputs.packageManager }}
+          packageManagerVersion: ${{ inputs.packageManagerVersion }}
+
+      - name: Create/Update Changesets
+        uses: pinax-network/changesets-dependencies-action@main
+        with:
+          preCommit: ${{ inputs.preCommit }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.githubToken }}

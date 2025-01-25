@@ -1,0 +1,85 @@
+# Note: This is a composite GitHub Actions, it should do all env setup, caching an so on, so other pipelines can just compose their own stuff on top of that.
+# Docs: https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
+
+name: Configure Environment
+description: Shared configuration for checkout, Node.js and package manager
+inputs:
+  nodeVersion:
+    description: Node.js version to use
+    required: true
+    default: '20'
+  workingDirectory:
+    description: Working directory
+    required: false
+    default: ./
+  packageManager:
+    description: Package manager
+    required: false
+    default: yarn
+  packageManagerVersion:
+    description: Package manager version
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.12.1
+      continue-on-error: true
+      with:
+        access_token: ${{ github.token }}
+
+    - name: check pnpm version
+      shell: bash
+      id: pnpm
+      if: inputs.packageManager == 'pnpm'
+      working-directory: ${{ inputs.workingDirectory }}
+      run: |
+        PNPM_VERSION=${PNPM_VERSION:-9.0.6}
+        PKG_JSON=$(cat package.json | jq -r '.packageManager' | awk -F@ '{print $2}')
+        if [ ! -z $PKG_JSON ]; then
+          PNPM_VERSION=$PKG_JSON
+        fi
+        if [ ! -z {{inputs.packageManager}} ]; then
+          PNPM_VERSION=${{ inputs.packageManagerVersion }}
+        fi
+        echo "Using PNPM version $PNPM_VERSION"
+        echo "version=$PNPM_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Setup ${{ inputs.packageManager }}
+      id: pnpm_setup
+      if: inputs.packageManager == 'pnpm'
+      uses: pnpm/action-setup@v4.0.0
+      with:
+        version: ${{ steps.pnpm.outputs.version }}
+        run_install: false
+        package_json_file: ${{ inputs.workingDirectory }}/package.json
+
+    - name: setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.nodeVersion }}
+        cache: ${{ inputs.packageManager }}
+        cache-dependency-path: |
+          **/pnpm-lock.yaml
+          **/yarn.lock
+          patches/**
+
+    - name: yarn install
+      shell: bash
+      if: inputs.packageManager == 'yarn' && inputs.packageManagerVersion == ''
+      run: yarn install --ignore-engines --frozen-lockfile --immutable
+      working-directory: ${{ inputs.workingDirectory }}
+
+    - name: modern yarn install
+      shell: bash
+      if: inputs.packageManager == 'yarn' && inputs.packageManagerVersion == 'modern'
+      run: corepack enable && yarn
+      working-directory: ${{ inputs.workingDirectory }}
+
+    - name: pnpm install
+      shell: bash
+      if: inputs.packageManager == 'pnpm'
+      run: pnpm install --frozen-lockfile
+      working-directory: ${{ inputs.workingDirectory }}

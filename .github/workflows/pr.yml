@@ -8,13 +8,13 @@ permissions: write-all
 
 jobs:
   dependencies:
-    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yaml@main
+    uses: ./.github/workflows/reusable/changesets-dependencies.yml
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    uses: ./.github/workflows/reusable/release-snapshot.yml
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     with:
       npmTag: alpha
@@ -27,7 +27,7 @@ jobs:
       npmToken: ${{ secrets.NPM_TOKEN }}
 
   release-candidate:
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@main
+    uses: ./.github/workflows/reusable/release-snapshot.yml
     if: ${{ github.event.pull_request.title == 'Upcoming Release Changes' }}
     with:
       npmTag: rc

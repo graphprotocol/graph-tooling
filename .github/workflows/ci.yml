@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup-node
         name: Setup Env
         with:
           nodeVersion: 20
@@ -37,7 +37,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup-node
         name: Setup Env
         with:
           nodeVersion: ${{ matrix.node-version }}
@@ -67,7 +67,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup-node
         name: Setup Env
         with:
           nodeVersion: 20
@@ -95,7 +95,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup-node
         name: Setup Env
         with:
           nodeVersion: 20
