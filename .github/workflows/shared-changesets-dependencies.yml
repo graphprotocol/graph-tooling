@@ -47,7 +47,7 @@ jobs:
           packageManagerVersion: ${{ inputs.packageManagerVersion }}
 
       - name: Create/Update Changesets
-        uses: pinax-network/changesets-dependencies-action@main
+        uses: pinax-network/changesets-dependencies-action@v1.2.2
         with:
           preCommit: ${{ inputs.preCommit }}
         env:
