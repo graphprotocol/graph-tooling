@@ -27,6 +27,10 @@
     {
       "matchPackageNames": ["assemblyscript"],
       "enabled": false
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": null
     }
   ]
 }
