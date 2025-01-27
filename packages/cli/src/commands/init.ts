@@ -835,7 +835,7 @@ async function processInitForm(
     await promptManager.executeInteractive();
 
     // Validate network matches if loading from IPFS
-    if (ipfsNode && source && source.startsWith('Qm')) {
+    if (ipfsNode && source?.startsWith('Qm')) {
       const ipfs = createIpfsClient(ipfsNode);
       try {
         const { valid, error } = await validateSubgraphNetworkMatch(ipfs, source!, network.id);
@@ -844,7 +844,7 @@ async function processInitForm(
         }
       } catch (e) {
         if (e instanceof Error) {
-          print.error(`Failed to validate subgraph network: ${e.message}`);
+          print.error(`Failed to validate subgraph network: ${e?.message}`);
         }
         throw e;
       }
