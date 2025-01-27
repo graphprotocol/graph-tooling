@@ -38,7 +38,7 @@ jobs:
         if: ${{ startsWith(github.event.head_commit.message, env.RELEASE_COMMIT_MSG) }}
         run: pnpm --filter=@graphprotocol/graph-cli oclif:pack
       - name: Release / pull_request
-        uses: dotansimha/changesets-action@v1.5.0
+        uses: dotansimha/changesets-action@v1.5.2
         with:
           publish: pnpm release
           version: pnpm changeset version
