@@ -289,7 +289,7 @@ importers:
         version: 4.1.0
       kubo-rpc-client:
         specifier: ^5.0.2
-        version: 5.0.2(undici@7.2.3)
+        version: 5.0.2(undici@7.3.0)
       open:
         specifier: 10.1.0
         version: 10.1.0
@@ -303,8 +303,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       undici:
-        specifier: 7.2.3
-        version: 7.2.3
+        specifier: 7.3.0
+        version: 7.3.0
       web3-eth-abi:
         specifier: 4.4.1
         version: 4.4.1(typescript@5.7.3)(zod@3.23.8)
@@ -407,7 +407,7 @@ importers:
         version: 16.9.0
       kubo-rpc-client:
         specifier: ^5.0.2
-        version: 5.0.2(undici@7.2.3)
+        version: 5.0.2(undici@7.3.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -9050,8 +9050,8 @@ packages:
     resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
     engines: {node: '>=14.0'}
 
-  undici@7.2.3:
-    resolution: {integrity: sha512-2oSLHaDalSt2/O/wHA9M+/ZPAOcU2yrSP/cdBYJ+YxZskiPYDSqHbysLSlD7gq3JMqOoJI5O31RVU3BxX/MnAA==}
+  undici@7.3.0:
+    resolution: {integrity: sha512-Qy96NND4Dou5jKoSJ2gm8ax8AJM/Ey9o9mz7KN1bb9GP+G0l20Zw8afxTnY2f4b7hmhn/z8aC2kfArVQlAhFBw==}
     engines: {node: '>=20.18.1'}
 
   unenv@1.10.0:
@@ -18262,7 +18262,7 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  kubo-rpc-client@5.0.2(undici@7.2.3):
+  kubo-rpc-client@5.0.2(undici@7.3.0):
     dependencies:
       '@ipld/dag-cbor': 9.2.2
       '@ipld/dag-json': 10.2.3
@@ -18291,7 +18291,7 @@ snapshots:
       merge-options: 3.0.4
       multiformats: 13.3.1
       nanoid: 5.0.9
-      native-fetch: 4.0.2(undici@7.2.3)
+      native-fetch: 4.0.2(undici@7.3.0)
       parse-duration: 1.1.1
       react-native-fetch-api: 3.0.0
       stream-to-it: 1.0.1
@@ -18994,9 +18994,9 @@ snapshots:
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
 
-  native-fetch@4.0.2(undici@7.2.3):
+  native-fetch@4.0.2(undici@7.3.0):
     dependencies:
-      undici: 7.2.3
+      undici: 7.3.0
 
   natural-compare@1.4.0: {}
 
@@ -21017,7 +21017,7 @@ snapshots:
     dependencies:
       '@fastify/busboy': 2.1.1
 
-  undici@7.2.3: {}
+  undici@7.3.0: {}
 
   unenv@1.10.0:
     dependencies:
