@@ -1,0 +1,88 @@
+# Note: this is a shared pipeline used by other repositories.
+# Docs: https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+on:
+  workflow_call:
+    inputs:
+      packageManager:
+        type: string
+        required: false
+        default: yarn
+      packageManagerVersion:
+        description: Package manager version
+        type: string
+        required: false
+        default: ''
+      nodeVersion:
+        required: false
+        type: string
+        default: '20'
+      buildScript:
+        required: false
+        type: string
+        default: build
+      npmTag:
+        required: false
+        type: string
+        default: npmTag
+      exitPre:
+        required: false
+        type: boolean
+        default: false
+      restoreDeletedChangesets:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      githubToken:
+        required: true
+      npmToken:
+        required: true
+    outputs:
+      published:
+        description: A boolean value to indicate whether a publishing is happened or not
+        value: ${{ jobs.snapshot.outputs.published }}
+      publishedPackages:
+        description:
+          'A JSON array to present the published packages. The format is [{"name": "@xx/xx",
+          "version": "1.2.0"}, {"name": "@xx/xy", "version": "0.8.9"}]'
+        value: ${{ jobs.snapshot.outputs.publishedPackages }}
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+      publishedPackages: ${{ steps.changesets.outputs.publishedPackages }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: ./.github/actions/setup-node
+        name: setup env
+        with:
+          nodeVersion: ${{inputs.nodeVersion}}
+          packageManager: ${{inputs.packageManager}}
+          packageManagerVersion: ${{inputs.packageManagerVersion}}
+
+      - if: inputs.exitPre
+        name: Exit Prerelease Mode
+        run: ${{inputs.packageManager}} run changeset pre exit
+
+      - if: inputs.restoreDeletedChangesets
+        name: restore deleted changesets
+        run: git checkout HEAD~1 -- .
+
+      - name: ${{ inputs.npmTag }} release
+        id: changesets
+        uses: pinax-network/changesets-snapshot-action@v0.0.3
+        with:
+          tag: ${{ inputs.npmTag }}
+          prepareScript: '${{inputs.packageManager}} run ${{ inputs.buildScript }}'
+        env:
+          NPM_TOKEN: ${{ secrets.npmToken }}
+          GITHUB_TOKEN: ${{ secrets.githubToken }}
