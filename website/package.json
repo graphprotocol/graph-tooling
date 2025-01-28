@@ -45,8 +45,8 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.16",
-    "@tanstack/router-cli": "1.97.24",
-    "@tanstack/router-vite-plugin": "1.97.24",
+    "@tanstack/router-cli": "1.97.25",
+    "@tanstack/router-vite-plugin": "1.97.25",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/semver": "^7.5.8",
