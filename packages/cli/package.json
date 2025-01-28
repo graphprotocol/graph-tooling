@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "0.0.0-internal-testing.5",
-    "@oclif/core": "4.2.4",
+    "@oclif/core": "4.2.5",
     "@oclif/plugin-autocomplete": "^3.2.11",
     "@oclif/plugin-not-found": "^3.2.29",
     "@oclif/plugin-warn-if-update-available": "^3.1.24",

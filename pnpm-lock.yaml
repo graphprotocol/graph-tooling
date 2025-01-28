@@ -237,8 +237,8 @@ importers:
         specifier: 0.0.0-internal-testing.5
         version: 0.0.0-internal-testing.5
       '@oclif/core':
-        specifier: 4.2.4
-        version: 4.2.4
+        specifier: 4.2.5
+        version: 4.2.5
       '@oclif/plugin-autocomplete':
         specifier: ^3.2.11
         version: 3.2.18
@@ -2420,8 +2420,8 @@ packages:
     resolution: {integrity: sha512-1QlPaHMhOORySCXkQyzjsIsy2GYTilOw3LkjeHkCgsPJQjAT4IclVytJusWktPbYNys9O+O4V23J44yomQvnBQ==}
     engines: {node: '>=14.0.0'}
 
-  '@oclif/core@4.2.4':
-    resolution: {integrity: sha512-JDqdhX6fBbijY3ouubfmX7yFBXy95YSpiAVk0TAaXXCoSqoo/2WMcV2Ufv2V+8zriafPU/rvKgI+ZE07/7HwfQ==}
+  '@oclif/core@4.2.5':
+    resolution: {integrity: sha512-bdXOojq8GaPnWnDgVOw030JlUROJEiDLXiV3XUUGUQDEp6YpVQvEYLIrUsEvyfASU3z3FGg3DC9k0kprcOYdhw==}
     engines: {node: '>=18.0.0'}
 
   '@oclif/plugin-autocomplete@2.3.10':
@@ -12552,7 +12552,7 @@ snapshots:
       - '@types/node'
       - typescript
 
-  '@oclif/core@4.2.4':
+  '@oclif/core@4.2.5':
     dependencies:
       ansi-escapes: 4.3.2
       ansis: 3.10.0
@@ -12587,7 +12587,7 @@ snapshots:
 
   '@oclif/plugin-autocomplete@3.2.18':
     dependencies:
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.5
       ansis: 3.10.0
       debug: 4.4.0(supports-color@5.5.0)
       ejs: 3.1.10
@@ -12596,7 +12596,7 @@ snapshots:
 
   '@oclif/plugin-help@6.2.23':
     dependencies:
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.5
 
   '@oclif/plugin-not-found@2.4.3(@types/node@22.12.0)(typescript@5.7.3)':
     dependencies:
@@ -12612,7 +12612,7 @@ snapshots:
   '@oclif/plugin-not-found@3.2.38(@types/node@22.12.0)':
     dependencies:
       '@inquirer/prompts': 7.2.3(@types/node@22.12.0)
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.5
       ansis: 3.10.0
       fast-levenshtein: 3.0.0
     transitivePeerDependencies:
@@ -12620,7 +12620,7 @@ snapshots:
 
   '@oclif/plugin-warn-if-update-available@3.1.31':
     dependencies:
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.5
       ansis: 3.10.0
       debug: 4.4.0(supports-color@5.5.0)
       http-call: 5.3.0
@@ -18979,7 +18979,7 @@ snapshots:
       '@inquirer/confirm': 3.2.0
       '@inquirer/input': 2.3.0
       '@inquirer/select': 2.5.0
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.5
       '@oclif/plugin-help': 6.2.23
       '@oclif/plugin-not-found': 3.2.38(@types/node@22.12.0)
       '@oclif/plugin-warn-if-update-available': 3.1.31
