@@ -72,6 +72,9 @@ describe('Schema code generator', { concurrent: true }, () => {
         count: Int!
         isActive: Boolean
 
+        # reserved word
+        yield: Int!
+
         # derivedFrom
         wallets: [Wallet!] @derivedFrom(field: "account")
 
@@ -246,6 +249,26 @@ describe('Schema code generator', { concurrent: true }, () => {
             returnType: undefined,
             body: `
               this.set('count', Value.fromI32(value))
+            `,
+          },
+          {
+            name: 'get yield_',
+            params: [],
+            returnType: new NamedType('i32'),
+            body: `let value = this.get('yield')
+            if (!value || value.kind == ValueKind.NULL) {
+              return 0
+            } else {
+              return value.toI32()
+            }
+            `,
+          },
+          {
+            name: 'set yield_',
+            params: [new Param('value', new NamedType('i32'))],
+            returnType: undefined,
+            body: `
+              this.set('yield', Value.fromI32(value))
             `,
           },
           {

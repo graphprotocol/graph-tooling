@@ -9,7 +9,7 @@ export function disambiguateNames<T>({
 }) {
   const collisionCounter = new Map();
   return values.map((value, index) => {
-    const name = getName(value, index);
+    const name = handleReservedWord(getName(value, index));
     const counter = collisionCounter.get(name);
     if (counter === undefined) {
       collisionCounter.set(name, 1);
@@ -18,6 +18,54 @@ export function disambiguateNames<T>({
     collisionCounter.set(name, counter + 1);
     return setName(value, `${name}${counter}`);
   });
+}
+
+const RESERVED_WORDS = new Set([
+  'await',
+  'break',
+  'case',
+  'catch',
+  'class',
+  'const',
+  'continue',
+  'debugger',
+  'delete',
+  'do',
+  'else',
+  'enum',
+  'export',
+  'extends',
+  'false',
+  'finally',
+  'function',
+  'if',
+  'implements',
+  'import',
+  'in',
+  'interface',
+  'let',
+  'new',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'return',
+  'super',
+  'switch',
+  'static',
+  'this',
+  'throw',
+  'true',
+  'try',
+  'typeof',
+  'var',
+  'while',
+  'with',
+  'yield',
+]);
+
+export function handleReservedWord(name: string): string {
+  return RESERVED_WORDS.has(name) ? `${name}_` : name;
 }
 
 export function isTupleType(t: string) {
