@@ -16,6 +16,7 @@ import * as util from './util.js';
 class IdField {
   static BYTES = Symbol('Bytes');
   static STRING = Symbol('String');
+  static INT8 = Symbol('Int8');
 
   private kind: typeof IdField.BYTES | typeof IdField.STRING;
 
@@ -27,15 +28,43 @@ class IdField {
       throw Error('id field must be a named type');
     }
     const typeName = idField.type.type.name.value;
-    this.kind = typeName === 'Bytes' ? IdField.BYTES : IdField.STRING;
+    switch (typeName) {
+      case 'Bytes':
+        this.kind = IdField.BYTES;
+        break;
+      case 'Int8':
+        this.kind = IdField.INT8;
+        break;
+      default:
+        this.kind = IdField.STRING;
+        break;
+    }
   }
 
   typeName() {
-    return this.kind === IdField.BYTES ? 'Bytes' : 'string';
+    switch (this.kind) {
+      case IdField.BYTES:
+        return 'Bytes';
+      case IdField.INT8:
+        return 'Int8';
+      case IdField.STRING:
+        return 'string';
+      default:
+        return 'string';
+    }
   }
 
   gqlTypeName() {
-    return this.kind === IdField.BYTES ? 'Bytes' : 'String';
+    switch (this.kind) {
+      case IdField.BYTES:
+        return 'Bytes';
+      case IdField.INT8:
+        return 'Int8';
+      case IdField.STRING:
+        return 'String';
+      default:
+        return 'String';
+    }
   }
 
   tsNamedType() {
@@ -43,19 +72,55 @@ class IdField {
   }
 
   tsValueFrom() {
-    return this.kind === IdField.BYTES ? 'Value.fromBytes(id)' : 'Value.fromString(id)';
+    switch (this.kind) {
+      case IdField.BYTES:
+        return 'Value.fromBytes(id)';
+      case IdField.INT8:
+        return 'Value.fromI64(id)';
+      case IdField.STRING:
+        return 'Value.fromString(id)';
+      default:
+        return 'Value.fromString(id)';
+    }
   }
 
   tsValueKind() {
-    return this.kind === IdField.BYTES ? 'ValueKind.BYTES' : 'ValueKind.STRING';
+    switch (this.kind) {
+      case IdField.BYTES:
+        return 'ValueKind.BYTES';
+      case IdField.INT8:
+        return 'ValueKind.INT8';
+      case IdField.STRING:
+        return 'ValueKind.STRING';
+      default:
+        return 'ValueKind.STRING';
+    }
   }
 
   tsValueToString() {
-    return this.kind == IdField.BYTES ? 'id.toBytes().toHexString()' : 'id.toString()';
+    switch (this.kind) {
+      case IdField.BYTES:
+        return 'id.toBytes().toHexString()';
+      case IdField.INT8:
+        return 'id.toI64().toString()';
+      case IdField.STRING:
+        return 'id.toString()';
+      default:
+        return 'id.toString()';
+    }
   }
 
   tsToString() {
-    return this.kind == IdField.BYTES ? 'id.toHexString()' : 'id';
+    switch (this.kind) {
+      case IdField.BYTES:
+        return 'id.toHexString()';
+      case IdField.INT8:
+        return 'id.toString()';
+      case IdField.STRING:
+        return 'id';
+      default:
+        return 'id';
+    }
   }
 
   static fromFields(fields: readonly FieldDefinitionNode[] | undefined) {
