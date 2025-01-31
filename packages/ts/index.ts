@@ -19,6 +19,7 @@ export * from './common/datasource';
 export * from './common/json';
 export * from './common/numbers';
 export * from './common/value';
+export * from './common/yaml';
 
 /**
  * Host store interface.

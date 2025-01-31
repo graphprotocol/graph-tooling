@@ -30,6 +30,7 @@ async function main() {
   fs.copyFileSync('common/json.ts', 'test/temp_lib/common/json.ts');
   fs.copyFileSync('common/numbers.ts', 'test/temp_lib/common/numbers.ts');
   fs.copyFileSync('common/value.ts', 'test/temp_lib/common/value.ts');
+  fs.copyFileSync('common/yaml.ts', 'test/temp_lib/common/yaml.ts');
   fs.copyFileSync('chain/arweave.ts', 'test/temp_lib/chain/arweave.ts');
   fs.copyFileSync('chain/ethereum.ts', 'test/temp_lib/chain/ethereum.ts');
   fs.copyFileSync('chain/near.ts', 'test/temp_lib/chain/near.ts');
@@ -40,7 +41,7 @@ async function main() {
   try {
     const outputWasmPath = 'test/temp_out/test.wasm';
 
-    for (const file of ['test/bigInt.ts', 'test/bytes.ts', 'test/entity.ts'])
+    for (const file of ['test/bigInt.ts', 'test/bytes.ts', 'test/entity.ts', 'test/yaml.ts'])
       await testFile(file, outputWasmPath);
   } catch (e) {
     console.error(e);
@@ -51,6 +52,7 @@ async function main() {
     fs.unlinkSync('test/temp_lib/common/json.ts');
     fs.unlinkSync('test/temp_lib/common/numbers.ts');
     fs.unlinkSync('test/temp_lib/common/value.ts');
+    fs.unlinkSync('test/temp_lib/common/yaml.ts');
     fs.rmdirSync('test/temp_lib/common');
     fs.unlinkSync('test/temp_lib/chain/arweave.ts');
     fs.unlinkSync('test/temp_lib/chain/ethereum.ts');
