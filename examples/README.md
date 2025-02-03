@@ -43,7 +43,4 @@ This section contains several subgraph examples to help you get started with [Th
 13. **[Substreams Powered Subgraph](https://github.com/graphprotocol/graph-tooling/tree/adding-table/examples/substreams-powered-subgraph)**  
     This example is a basic Substreams-powered subgraph, which includes the Substreams definition. It tracks new contract deployments on Ethereum and demonstrates integration with Graph Node using `substreams_entity_change` types and helpers.
 
-To learn more about subgraphs, review [subgraphs]( https://thegraph.com/docs/en/subgraphs/developing/subgraphs/) on [The Graph docs]( https://thegraph.com/docs/en/).
-
-
-
+To learn more about subgraphs, review [subgraphs](https://thegraph.com/docs/en/subgraphs/developing/subgraphs/) on [The Graph docs](https://thegraph.com/docs/en/).
