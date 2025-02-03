@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   oclif@4.16.0:
-    hash: cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da
+    hash: ofxhflhoc4vkbbfnh6gtk4pfua
     path: patches/oclif@4.16.0.patch
 
 importers:
