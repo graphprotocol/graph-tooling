@@ -1296,7 +1296,7 @@ async function initSubgraphFromContract(
       this.exit(1);
     }
 
-    while (addContract) {
+    while (addContract && !isComposedSubgraph) {
       addContract = await addAnotherContract
         .bind(this)({
           protocolInstance,
