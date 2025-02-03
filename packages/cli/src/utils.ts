@@ -75,14 +75,8 @@ export async function validateSubgraphNetworkMatch(
 
     // Get network from first data source
     const sourceNetwork = allSources[0].network;
-    if (!sourceNetwork) {
-      return { valid: true }; // Network not specified in source, skip validation
-    }
 
-    const normalizedSourceNetwork = sourceNetwork.toLowerCase();
-    const normalizedTargetNetwork = targetNetwork.toLowerCase();
-
-    if (normalizedSourceNetwork !== normalizedTargetNetwork) {
+    if (sourceNetwork !== targetNetwork) {
       return {
         valid: false,
         error: `Network mismatch: The source subgraph is indexing the '${sourceNetwork}' network, but you're creating a subgraph for '${targetNetwork}' network. When composing subgraphs, they must index the same network.`,

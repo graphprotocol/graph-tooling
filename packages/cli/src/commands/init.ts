@@ -594,6 +594,17 @@ async function processInitForm(
       message: `IPFS node to use for fetching subgraph manifest`,
       initial: ipfsUrl,
       skip: () => !isComposedSubgraph,
+      validate: value => {
+        if (!value) {
+          return 'IPFS node URL cannot be empty';
+        }
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return 'Please enter a valid URL';
+        }
+      },
       result: value => {
         ipfsNode = value;
         initDebugger.extend('processInitForm')('ipfs: %O', value);
@@ -615,9 +626,6 @@ async function processInitForm(
       initial: initContract,
       validate: async (value: string): Promise<string | boolean> => {
         if (isComposedSubgraph) {
-          if (!ipfsNode) {
-            return true;
-          }
           const ipfs = createIpfsClient(ipfsNode);
           const { valid, error } = await validateSubgraphNetworkMatch(ipfs, value, network.id);
           if (!valid) {
@@ -833,22 +841,6 @@ async function processInitForm(
     });
 
     await promptManager.executeInteractive();
-
-    // Validate network matches if loading from IPFS
-    if (ipfsNode && source?.startsWith('Qm')) {
-      const ipfs = createIpfsClient(ipfsNode);
-      try {
-        const { valid, error } = await validateSubgraphNetworkMatch(ipfs, source!, network.id);
-        if (!valid) {
-          throw new Error(error || 'Invalid subgraph network match');
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          print.error(`Failed to validate subgraph network: ${e?.message}`);
-        }
-        throw e;
-      }
-    }
 
     return {
       abi: (abiFromApi || abiFromFile)!,
@@ -1207,10 +1199,19 @@ async function initSubgraphFromContract(
         },
       });
 
+      // Validate network match first
+      const { valid, error } = await validateSubgraphNetworkMatch(ipfsClient, source, network);
+      if (!valid) {
+        throw new Error(error || 'Invalid subgraph network match');
+      }
+
       const schemaString = await loadSubgraphSchemaFromIPFS(ipfsClient, source);
       const schema = await Schema.loadFromString(schemaString);
       entities = schema.getEntityNames();
     } catch (e) {
+      if (e instanceof Error) {
+        print.error(`Failed to validate subgraph: ${e?.message}`);
+      }
       this.error(`Failed to load and parse subgraph schema: ${e.message}`, { exit: 1 });
     }
   }
