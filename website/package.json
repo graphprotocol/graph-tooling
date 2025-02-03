@@ -35,7 +35,7 @@
     "react-dropzone": "^14.3.5",
     "react-hook-form": "^7.53.2",
     "semver": "7.6.3",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "^3.0.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.21.53",
     "vite-plugin-node-polyfills": "^0.23.0",
