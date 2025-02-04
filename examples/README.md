@@ -4,7 +4,7 @@ This section contains several subgraph examples to help you get started with [Th
 
 ## Table of Contents
 
-1. **[Aggregations](https://github.com/graphprotocol/graph-tooling/examples/aggregations)**  
+1. **[Aggregations](/examples/aggregations)**  
    This example demonstrates how to aggregate data using block numbers as predictable values. The comments in the schema, subgraph manifest, and mappings provide guidance for implementing custom aggregations.
 
 2. **[Arweave Blocks and Transactions](https://github.com/graphprotocol/graph-tooling/tree/examples/arweave-blocks-transactions)**  
