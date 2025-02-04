@@ -21,7 +21,7 @@ jobs:
       buildScript: build
       nodeVersion: 20
       packageManager: pnpm
-      packageManagerVersion: 9.10.0
+      packageManagerVersion: 9
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NPM_TOKEN }}
@@ -34,7 +34,7 @@ jobs:
       buildScript: build
       nodeVersion: 20
       packageManager: pnpm
-      packageManagerVersion: 9.10.0
+      packageManagerVersion: 9
       restoreDeletedChangesets: true
     secrets:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
