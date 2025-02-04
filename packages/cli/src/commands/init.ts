@@ -117,7 +117,6 @@ export default class InitCommand extends Command {
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
       default: DEFAULT_IPFS_URL,
-      hidden: true,
     }),
   };
 
@@ -236,6 +235,14 @@ export default class InitCommand extends Command {
       }
 
       const protocolInstance = new Protocol(protocol as ProtocolName);
+
+      if (!fromSourceSubgraph && protocolInstance.isComposedSubgraph()) {
+        this.error('--protocol can only be subgraph when using --from-source-subgraph');
+      }
+
+      if (fromSourceSubgraph && !protocolInstance.isComposedSubgraph()) {
+        this.error('--protocol can only be subgraph when using --from-source-subgraph');
+      }
 
       // Only fetch contract info and ABI for non-source-subgraph cases
       if (!fromSourceSubgraph && protocolInstance.hasABIs()) {
