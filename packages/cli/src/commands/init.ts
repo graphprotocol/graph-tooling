@@ -209,16 +209,15 @@ export default class InitCommand extends Command {
     let abi!: EthereumABI;
 
     // If all parameters are provided from the command-line,
-    // go straight to creating the subgraph from an existing contract
-    if ((fromContract || spkgPath) && protocol && subgraphName && directory && network && node) {
-      const registry = await loadRegistry();
-      const contractService = new ContractService(registry);
-      const sourcifyContractInfo = await contractService.getFromSourcify(
-        EthereumABI,
-        network,
-        fromContract!,
-      );
-
+    // go straight to creating the subgraph from an existing contract or source subgraph
+    if (
+      (fromContract || spkgPath || fromSourceSubgraph) &&
+      protocol &&
+      subgraphName &&
+      directory &&
+      network &&
+      node
+    ) {
       if (!protocolChoices.includes(protocol as ProtocolName)) {
         this.error(
           `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
@@ -228,9 +227,22 @@ export default class InitCommand extends Command {
         );
       }
 
+      if (fromSourceSubgraph && protocol !== 'subgraph') {
+        this.error('--protocol must be subgraph when using --from-source-subgraph');
+      }
+
       const protocolInstance = new Protocol(protocol as ProtocolName);
 
-      if (protocolInstance.hasABIs()) {
+      // Only fetch contract info and ABI for non-source-subgraph cases
+      if (!fromSourceSubgraph && protocolInstance.hasABIs()) {
+        const registry = await loadRegistry();
+        const contractService = new ContractService(registry);
+        const sourcifyContractInfo = await contractService.getFromSourcify(
+          EthereumABI,
+          network,
+          fromContract!,
+        );
+
         const ABI = protocolInstance.getABI();
         if (abiPath) {
           try {
@@ -254,48 +266,7 @@ export default class InitCommand extends Command {
           protocolInstance,
           abi,
           directory,
-          source: fromContract!,
-          indexEvents,
-          network,
-          subgraphName,
-          contractName: contractName || DEFAULT_CONTRACT_NAME,
-          node,
-          startBlock,
-          spkgPath,
-          skipInstall,
-          skipGit,
-          ipfsUrl: ipfs,
-        },
-        { commands, addContract: false },
-      );
-      // Exit with success
-      return this.exit(0);
-    }
-
-    // If all parameters are provided from the command-line,
-    // go straight to creating the subgraph from provided source subgraph
-    if (fromSourceSubgraph && protocol && subgraphName && directory && network && node) {
-      if (!protocolChoices.includes(protocol as ProtocolName)) {
-        this.error(
-          `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
-            ', ',
-          )}`,
-          { exit: 1 },
-        );
-      }
-
-      if (protocol != 'subgraph') {
-        this.error('--protocol must be subgraph when using --from-source-subgraph');
-      }
-
-      const protocolInstance = new Protocol(protocol as ProtocolName);
-
-      await initSubgraphFromContract.bind(this)(
-        {
-          protocolInstance,
-          abi,
-          directory,
-          source: fromSourceSubgraph!,
+          source: fromSourceSubgraph || fromContract!,
           indexEvents,
           network,
           subgraphName,
