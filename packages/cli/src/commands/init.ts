@@ -58,6 +58,10 @@ export default class InitCommand extends Command {
       summary: 'Graph node for which to initialize.',
       char: 'g',
     }),
+    'from-source-subgraph': Flags.string({
+      description: 'Creates a scaffold based on an existing contract.',
+      exclusive: ['from-example', 'from-contract'],
+    }),
     'from-contract': Flags.string({
       description: 'Creates a scaffold based on an existing contract.',
       exclusive: ['from-example'],
@@ -92,7 +96,6 @@ export default class InitCommand extends Command {
       description: 'Block number to start indexing from.',
       // TODO: using a default sets the value and therefore requires --from-contract
       // default: '0',
-      dependsOn: ['from-contract'],
     }),
 
     abi: Flags.string({
@@ -128,6 +131,7 @@ export default class InitCommand extends Command {
       protocol,
       node: nodeFlag,
       'from-contract': fromContract,
+      'from-source-subgraph': fromSourceSubgraph,
       'contract-name': contractName,
       'from-example': fromExample,
       'index-events': indexEvents,
@@ -142,11 +146,16 @@ export default class InitCommand extends Command {
 
     initDebugger('Flags: %O', flags);
 
+    if (startBlock && !(fromContract || fromSourceSubgraph)) {
+      this.error('--start-block can only be used with --from-contract or --from-source-subgraph');
+    }
+
     if (skipGit) {
       this.warn(
         'The --skip-git flag will be removed in the next major version. By default we will stop initializing a Git repository.',
       );
     }
+
     if ((fromContract || spkgPath) && !network && !fromExample) {
       this.error('--network is required when using --from-contract or --spkg');
     }
@@ -246,6 +255,47 @@ export default class InitCommand extends Command {
           abi,
           directory,
           source: fromContract!,
+          indexEvents,
+          network,
+          subgraphName,
+          contractName: contractName || DEFAULT_CONTRACT_NAME,
+          node,
+          startBlock,
+          spkgPath,
+          skipInstall,
+          skipGit,
+          ipfsUrl: ipfs,
+        },
+        { commands, addContract: false },
+      );
+      // Exit with success
+      return this.exit(0);
+    }
+
+    // If all parameters are provided from the command-line,
+    // go straight to creating the subgraph from provided source subgraph
+    if (fromSourceSubgraph && protocol && subgraphName && directory && network && node) {
+      if (!protocolChoices.includes(protocol as ProtocolName)) {
+        this.error(
+          `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
+            ', ',
+          )}`,
+          { exit: 1 },
+        );
+      }
+
+      if (protocol != 'subgraph') {
+        this.error('--protocol must be subgraph when using --from-source-subgraph');
+      }
+
+      const protocolInstance = new Protocol(protocol as ProtocolName);
+
+      await initSubgraphFromContract.bind(this)(
+        {
+          protocolInstance,
+          abi,
+          directory,
+          source: fromSourceSubgraph!,
           indexEvents,
           network,
           subgraphName,
