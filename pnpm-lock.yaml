@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   oclif@4.16.0:
-    hash: ofxhflhoc4vkbbfnh6gtk4pfua
+    hash: cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da
     path: patches/oclif@4.16.0.patch
 
 importers:
@@ -237,8 +237,8 @@ importers:
         specifier: 0.0.0-internal-testing.5
         version: 0.0.0-internal-testing.5
       '@oclif/core':
-        specifier: 4.2.4
-        version: 4.2.4
+        specifier: 4.2.6
+        version: 4.2.6
       '@oclif/plugin-autocomplete':
         specifier: ^3.2.11
         version: 3.2.20
@@ -297,8 +297,8 @@ importers:
         specifier: 3.4.2
         version: 3.4.2
       semver:
-        specifier: 7.6.3
-        version: 7.6.3
+        specifier: 7.7.1
+        version: 7.7.1
       tmp-promise:
         specifier: 3.0.3
         version: 3.0.3
@@ -421,8 +421,8 @@ importers:
         specifier: ^7.53.2
         version: 7.54.2(react@19.0.0)
       semver:
-        specifier: 7.6.3
-        version: 7.6.3
+        specifier: 7.7.1
+        version: 7.7.1
       tailwind-merge:
         specifier: ^3.0.0
         version: 3.0.1
@@ -452,11 +452,11 @@ importers:
         specifier: ^4.0.0
         version: 4.0.3
       '@tanstack/router-cli':
-        specifier: 1.97.25
-        version: 1.97.25(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
+        specifier: 1.99.0
+        version: 1.99.0(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
       '@tanstack/router-vite-plugin':
-        specifier: 1.97.25
-        version: 1.97.25(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(vite@6.0.11(@types/node@22.13.0)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.2)(yaml@2.7.0))
+        specifier: 1.99.3
+        version: 1.99.3(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(vite@6.0.11(@types/node@22.13.0)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.2)(yaml@2.7.0))
       '@types/react':
         specifier: ^19.0.0
         version: 19.0.8
@@ -2461,8 +2461,8 @@ packages:
     resolution: {integrity: sha512-1QlPaHMhOORySCXkQyzjsIsy2GYTilOw3LkjeHkCgsPJQjAT4IclVytJusWktPbYNys9O+O4V23J44yomQvnBQ==}
     engines: {node: '>=14.0.0'}
 
-  '@oclif/core@4.2.4':
-    resolution: {integrity: sha512-JDqdhX6fBbijY3ouubfmX7yFBXy95YSpiAVk0TAaXXCoSqoo/2WMcV2Ufv2V+8zriafPU/rvKgI+ZE07/7HwfQ==}
+  '@oclif/core@4.2.6':
+    resolution: {integrity: sha512-agk1Tlm7qMemWx+qq5aNgkYwX2JCkoVP4M0ruFveJrarmdUPbKZTMW1j/eg8lNKZh1sp68ytZyKhYXYEfRPcww==}
     engines: {node: '>=18.0.0'}
 
   '@oclif/plugin-autocomplete@2.3.10':
@@ -3411,8 +3411,8 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@tanstack/router-cli@1.97.25':
-    resolution: {integrity: sha512-FiKULpq8C3M92wllHWaqJ4kbWrx2+BnMp+ktEu+DNO9at1OImMzMJ6wdp68p/pJvXa0QamrE4wFrRNzMMFytMA==}
+  '@tanstack/router-cli@1.99.0':
+    resolution: {integrity: sha512-cpMx9jhjOGq8+/06poC4jp3fCSxuERuL0dh0Kzg0R1TNL3baETCqrk4VUmwxCgeV8BtcqIF+KuplHOlkO8afTQ==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -3448,8 +3448,8 @@ packages:
     resolution: {integrity: sha512-aVyDLjuUJ4Uf8Qw+ihuU3kG+gd2f/P78Z81AQAryuF8Qm8bcSJukguCYVI4mL9zAkGAifZ9rVk0lR5BKcnI4qA==}
     engines: {node: '>=12'}
 
-  '@tanstack/router-vite-plugin@1.97.25':
-    resolution: {integrity: sha512-K2cpKto7uKcB/DBFnsYFAUxJ1/38iU1wP37yGXYwwkRebVC7wNRUhs6PJTePRpRWD3bKLNgm1ovpSasuyaaSkQ==}
+  '@tanstack/router-vite-plugin@1.99.3':
+    resolution: {integrity: sha512-n9zBwwpLye1TGJpbsZgoxnjqa3/RbFqAMd4Q2nbYND1VnMJB1FlmwQn9z20gg7DlVrYWz7BgstPRb5/lSUJvNA==}
     engines: {node: '>=12'}
 
   '@tanstack/store@0.7.0':
@@ -8277,6 +8277,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.7.1:
+    resolution: {integrity: sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   sentence-case@3.0.4:
     resolution: {integrity: sha512-8LS0JInaQMCRoQ7YUytAo/xUu5W2XnQxV2HI/6uM6U7CITS1RqPElr30V6uIqyMKM9lJGRVFy5/4CuzcixNYSg==}
 
@@ -10938,7 +10943,7 @@ snapshots:
       outdent: 0.5.0
       prettier: 2.8.8
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.1
 
   '@changesets/assemble-release-plan@6.0.5':
     dependencies:
@@ -10947,7 +10952,7 @@ snapshots:
       '@changesets/should-skip-package': 0.1.1
       '@changesets/types': 6.0.0
       '@manypkg/get-packages': 1.1.3
-      semver: 7.6.3
+      semver: 7.7.1
 
   '@changesets/changelog-git@0.2.0':
     dependencies:
@@ -10988,7 +10993,7 @@ snapshots:
       package-manager-detector: 0.2.9
       picocolors: 1.1.1
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.1
       spawndamnit: 3.0.1
       term-size: 2.2.1
 
@@ -11011,7 +11016,7 @@ snapshots:
       '@changesets/types': 6.0.0
       '@manypkg/get-packages': 1.1.3
       picocolors: 1.1.1
-      semver: 7.6.3
+      semver: 7.7.1
 
   '@changesets/get-github-info@0.6.0(encoding@0.1.13)':
     dependencies:
@@ -11725,7 +11730,7 @@ snapshots:
       '@babel/traverse': 7.26.7(supports-color@5.5.0)
       '@babel/types': 7.26.7
       prettier: 3.4.2
-      semver: 7.6.3
+      semver: 7.7.1
     transitivePeerDependencies:
       - supports-color
 
@@ -12135,7 +12140,7 @@ snapshots:
       '@ethereumjs/tx': 4.2.0
       '@types/debug': 4.1.12
       debug: 4.4.0(supports-color@5.5.0)
-      semver: 7.6.3
+      semver: 7.7.1
       superstruct: 1.0.4
     transitivePeerDependencies:
       - supports-color
@@ -12149,7 +12154,7 @@ snapshots:
       '@types/debug': 4.1.12
       debug: 4.4.0(supports-color@5.5.0)
       pony-cause: 2.1.11
-      semver: 7.6.3
+      semver: 7.7.1
       uuid: 9.0.1
     transitivePeerDependencies:
       - supports-color
@@ -12163,7 +12168,7 @@ snapshots:
       '@types/debug': 4.1.12
       debug: 4.4.0(supports-color@5.5.0)
       pony-cause: 2.1.11
-      semver: 7.6.3
+      semver: 7.7.1
       uuid: 9.0.1
     transitivePeerDependencies:
       - supports-color
@@ -12517,7 +12522,7 @@ snapshots:
       ini: 4.1.3
       nopt: 7.2.1
       proc-log: 4.2.0
-      semver: 7.6.3
+      semver: 7.7.1
       walk-up-path: 3.0.1
     transitivePeerDependencies:
       - bluebird
@@ -12531,7 +12536,7 @@ snapshots:
       proc-log: 4.2.0
       promise-inflight: 1.0.1
       promise-retry: 2.0.1
-      semver: 7.6.3
+      semver: 7.7.1
       which: 4.0.0
     transitivePeerDependencies:
       - bluebird
@@ -12553,7 +12558,7 @@ snapshots:
       json-parse-even-better-errors: 3.0.2
       normalize-package-data: 6.0.2
       proc-log: 4.2.0
-      semver: 7.6.3
+      semver: 7.7.1
     transitivePeerDependencies:
       - bluebird
 
@@ -12618,7 +12623,7 @@ snapshots:
       natural-orderby: 2.0.3
       object-treeify: 1.1.33
       password-prompt: 1.1.3
-      semver: 7.6.3
+      semver: 7.7.1
       string-width: 4.2.3
       strip-ansi: 6.0.1
       supports-color: 8.1.1
@@ -12634,7 +12639,7 @@ snapshots:
       - '@types/node'
       - typescript
 
-  '@oclif/core@4.2.4':
+  '@oclif/core@4.2.6':
     dependencies:
       ansi-escapes: 4.3.2
       ansis: 3.10.0
@@ -12648,7 +12653,7 @@ snapshots:
       is-wsl: 2.2.0
       lilconfig: 3.1.3
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.1
       string-width: 4.2.3
       supports-color: 8.1.1
       widest-line: 3.1.0
@@ -12669,7 +12674,7 @@ snapshots:
 
   '@oclif/plugin-autocomplete@3.2.20':
     dependencies:
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.6
       ansis: 3.10.0
       debug: 4.4.0(supports-color@5.5.0)
       ejs: 3.1.10
@@ -12678,7 +12683,7 @@ snapshots:
 
   '@oclif/plugin-help@6.2.24':
     dependencies:
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.6
 
   '@oclif/plugin-not-found@2.4.3(@types/node@22.13.0)(typescript@5.7.3)':
     dependencies:
@@ -12694,7 +12699,7 @@ snapshots:
   '@oclif/plugin-not-found@3.2.40(@types/node@22.13.0)':
     dependencies:
       '@inquirer/prompts': 7.3.1(@types/node@22.13.0)
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.6
       ansis: 3.10.0
       fast-levenshtein: 3.0.0
     transitivePeerDependencies:
@@ -12702,7 +12707,7 @@ snapshots:
 
   '@oclif/plugin-warn-if-update-available@3.1.32':
     dependencies:
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.6
       ansis: 3.10.0
       debug: 4.4.0(supports-color@5.5.0)
       http-call: 5.3.0
@@ -13727,7 +13732,7 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
       use-sync-external-store: 1.4.0(react@19.0.0)
 
-  '@tanstack/router-cli@1.97.25(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))':
+  '@tanstack/router-cli@1.99.0(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))':
     dependencies:
       '@tanstack/router-generator': 1.99.0(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
       chokidar: 3.6.0
@@ -13780,7 +13785,7 @@ snapshots:
       ansis: 3.10.0
       diff: 7.0.0
 
-  '@tanstack/router-vite-plugin@1.97.25(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(vite@6.0.11(@types/node@22.13.0)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.2)(yaml@2.7.0))':
+  '@tanstack/router-vite-plugin@1.99.3(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(vite@6.0.11(@types/node@22.13.0)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@tanstack/router-plugin': 1.99.3(@tanstack/react-router@1.99.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(vite@6.0.11(@types/node@22.13.0)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.2)(yaml@2.7.0))
     transitivePeerDependencies:
@@ -14104,7 +14109,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.1
       ts-api-utils: 1.4.3(typescript@5.7.3)
     optionalDependencies:
       typescript: 5.7.3
@@ -16285,12 +16290,12 @@ snapshots:
   eslint-compat-utils@0.5.1(eslint@9.19.0(jiti@2.4.2)):
     dependencies:
       eslint: 9.19.0(jiti@2.4.2)
-      semver: 7.6.3
+      semver: 7.7.1
 
   eslint-compat-utils@0.6.4(eslint@9.19.0(jiti@2.4.2)):
     dependencies:
       eslint: 9.19.0(jiti@2.4.2)
-      semver: 7.6.3
+      semver: 7.7.1
 
   eslint-config-prettier@9.1.0(eslint@9.19.0(jiti@2.4.2)):
     dependencies:
@@ -16459,7 +16464,7 @@ snapshots:
       globals: 15.14.0
       ignore: 5.3.2
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.1
 
   eslint-plugin-promise@7.2.1(eslint@9.19.0(jiti@2.4.2)):
     dependencies:
@@ -16530,7 +16535,7 @@ snapshots:
       read-pkg-up: 7.0.1
       regexp-tree: 0.1.27
       regjsparser: 0.10.0
-      semver: 7.6.3
+      semver: 7.7.1
       strip-indent: 3.0.0
 
   eslint-plugin-yml@1.16.0(eslint@9.19.0(jiti@2.4.2)):
@@ -17802,7 +17807,7 @@ snapshots:
 
   is-bun-module@1.3.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.1
 
   is-callable@1.2.7: {}
 
@@ -18144,7 +18149,7 @@ snapshots:
       acorn: 8.14.0
       eslint-visitor-keys: 3.4.3
       espree: 9.6.1
-      semver: 7.6.3
+      semver: 7.7.1
 
   jsonfile@4.0.0:
     optionalDependencies:
@@ -19027,7 +19032,7 @@ snapshots:
   normalize-package-data@6.0.2:
     dependencies:
       hosted-git-info: 7.0.2
-      semver: 7.6.3
+      semver: 7.7.1
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -19036,7 +19041,7 @@ snapshots:
 
   npm-install-checks@6.3.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.1
 
   npm-normalize-package-bin@3.0.1: {}
 
@@ -19044,7 +19049,7 @@ snapshots:
     dependencies:
       hosted-git-info: 7.0.2
       proc-log: 4.2.0
-      semver: 7.6.3
+      semver: 7.7.1
       validate-npm-package-name: 5.0.1
 
   npm-pick-manifest@9.1.0:
@@ -19052,7 +19057,7 @@ snapshots:
       npm-install-checks: 6.3.0
       npm-normalize-package-bin: 3.0.1
       npm-package-arg: 11.0.3
-      semver: 7.6.3
+      semver: 7.7.1
 
   npm-run-path@4.0.1:
     dependencies:
@@ -19126,7 +19131,7 @@ snapshots:
       '@inquirer/confirm': 3.2.0
       '@inquirer/input': 2.3.0
       '@inquirer/select': 2.5.0
-      '@oclif/core': 4.2.4
+      '@oclif/core': 4.2.6
       '@oclif/plugin-help': 6.2.24
       '@oclif/plugin-not-found': 3.2.40(@types/node@22.13.0)
       '@oclif/plugin-warn-if-update-available': 3.1.32
@@ -19141,7 +19146,7 @@ snapshots:
       got: 13.0.0
       lodash: 4.17.21
       normalize-package-data: 6.0.2
-      semver: 7.6.3
+      semver: 7.7.1
       sort-package-json: 2.14.0
       tiny-jsonc: 1.0.2
       validate-npm-package-name: 5.0.1
@@ -20056,6 +20061,8 @@ snapshots:
 
   semver@7.6.3: {}
 
+  semver@7.7.1: {}
+
   sentence-case@3.0.4:
     dependencies:
       no-case: 3.0.4
@@ -20222,7 +20229,7 @@ snapshots:
       pify: 4.0.1
       recursive-readdir: 2.2.3
       sc-istanbul: 0.4.6
-      semver: 7.6.3
+      semver: 7.7.1
       shelljs: 0.8.5
       web3-utils: 1.10.4
 
@@ -20239,7 +20246,7 @@ snapshots:
       get-stdin: 9.0.0
       git-hooks-list: 3.1.0
       is-plain-obj: 4.1.0
-      semver: 7.6.3
+      semver: 7.7.1
       sort-object-keys: 1.1.3
       tinyglobby: 0.2.10
 
