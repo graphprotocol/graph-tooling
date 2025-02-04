@@ -10,7 +10,7 @@ RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 
 RUN corepack enable
 
-RUN corepack prepare pnpm@9.3.0 --activate
+RUN corepack prepare pnpm@9.10.0 --activate
 
 RUN pnpm install
 

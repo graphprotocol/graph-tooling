@@ -100,7 +100,7 @@ jobs:
         with:
           nodeVersion: 20
           packageManager: pnpm
-          packageManagerVersion: 9.3.0
+          packageManagerVersion: 9.10.0
 
       - name: Build Packages
         run: pnpm build # will also check types
