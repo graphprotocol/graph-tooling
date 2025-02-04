@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   oclif@4.16.0:
-    hash: cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da
+    hash: ofxhflhoc4vkbbfnh6gtk4pfua
     path: patches/oclif@4.16.0.patch
 
 importers:
@@ -165,7 +165,7 @@ importers:
         version: 0.35.1
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^5.0.0
-        version: 5.0.0(c6e11cbc05c6ca1ddb2b76ce73ede1a0)
+        version: 5.0.0(kpd4wzax4f4vxf4vo3umplav4e)
       apollo-fetch:
         specifier: ^0.7.0
         version: 0.7.0
@@ -183,7 +183,7 @@ importers:
         version: 0.35.1
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^5.0.0
-        version: 5.0.0(dc37372b251dbfdeb0a2722f64608a6b)
+        version: 5.0.0(qbe4ddiozpbeqoerjvufblpnz4)
       hardhat:
         specifier: ^2.22.17
         version: 2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
@@ -332,7 +332,7 @@ importers:
         version: 2.4.1
       oclif:
         specifier: 4.16.0
-        version: 4.16.0(patch_hash=cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da)(@types/node@22.13.1)
+        version: 4.16.0(patch_hash=ofxhflhoc4vkbbfnh6gtk4pfua)(@types/node@22.13.1)
       spawn-command:
         specifier: 1.0.0
         version: 1.0.0
@@ -12411,7 +12411,7 @@ snapshots:
       ethereumjs-util: 7.1.5
       hardhat: 2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
 
-  '@nomicfoundation/hardhat-toolbox@5.0.0(c6e11cbc05c6ca1ddb2b76ce73ede1a0)':
+  '@nomicfoundation/hardhat-toolbox@5.0.0(kpd4wzax4f4vxf4vo3umplav4e)':
     dependencies:
       '@nomicfoundation/hardhat-chai-matchers': 2.0.8(@nomicfoundation/hardhat-ethers@3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)))(chai@4.5.0)(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@nomicfoundation/hardhat-ethers': 3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
@@ -12432,7 +12432,7 @@ snapshots:
       typechain: 8.3.2(typescript@5.7.3)
       typescript: 5.7.3
 
-  '@nomicfoundation/hardhat-toolbox@5.0.0(dc37372b251dbfdeb0a2722f64608a6b)':
+  '@nomicfoundation/hardhat-toolbox@5.0.0(qbe4ddiozpbeqoerjvufblpnz4)':
     dependencies:
       '@nomicfoundation/hardhat-chai-matchers': 2.0.8(@nomicfoundation/hardhat-ethers@3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)))(chai@5.1.2)(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@nomicfoundation/hardhat-ethers': 3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
@@ -19131,7 +19131,7 @@ snapshots:
 
   obliterator@2.0.5: {}
 
-  oclif@4.16.0(patch_hash=cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da)(@types/node@22.13.1):
+  oclif@4.16.0(patch_hash=ofxhflhoc4vkbbfnh6gtk4pfua)(@types/node@22.13.1):
     dependencies:
       '@aws-sdk/client-cloudfront': 3.741.0
       '@aws-sdk/client-s3': 3.741.0
