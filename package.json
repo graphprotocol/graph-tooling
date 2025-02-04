@@ -15,6 +15,7 @@
     "node": ">=20.0.0",
     "pnpm": ">=9"
   },
+  "packageManager": "pnpm@9.10.0",
   "scripts": {
     "build": "pnpm --filter=@graphprotocol/graph-* build",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",

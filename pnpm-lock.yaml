@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   oclif@4.16.0:
-    hash: cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da
+    hash: ofxhflhoc4vkbbfnh6gtk4pfua
     path: patches/oclif@4.16.0.patch
 
 importers:
@@ -165,7 +165,7 @@ importers:
         version: 0.35.1
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^5.0.0
-        version: 5.0.0(eddd556a9a57fc19fa7f8a9c2a89a47e)
+        version: 5.0.0(zvp77724k4u72ql4svncixq6be)
       apollo-fetch:
         specifier: ^0.7.0
         version: 0.7.0
@@ -183,7 +183,7 @@ importers:
         version: 0.35.1
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^5.0.0
-        version: 5.0.0(79f2f7afad76e015e2b84879812798cb)
+        version: 5.0.0(nwg556rab7bwgnojg7regglw6u)
       hardhat:
         specifier: ^2.22.17
         version: 2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
@@ -332,7 +332,7 @@ importers:
         version: 2.4.1
       oclif:
         specifier: 4.16.0
-        version: 4.16.0(patch_hash=cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da)(@types/node@22.13.0)
+        version: 4.16.0(patch_hash=ofxhflhoc4vkbbfnh6gtk4pfua)(@types/node@22.13.0)
       spawn-command:
         specifier: 1.0.0
         version: 1.0.0
@@ -12408,7 +12408,7 @@ snapshots:
       ethereumjs-util: 7.1.5
       hardhat: 2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
 
-  '@nomicfoundation/hardhat-toolbox@5.0.0(79f2f7afad76e015e2b84879812798cb)':
+  '@nomicfoundation/hardhat-toolbox@5.0.0(nwg556rab7bwgnojg7regglw6u)':
     dependencies:
       '@nomicfoundation/hardhat-chai-matchers': 2.0.8(@nomicfoundation/hardhat-ethers@3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)))(chai@5.1.2)(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@nomicfoundation/hardhat-ethers': 3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
@@ -12429,7 +12429,7 @@ snapshots:
       typechain: 8.3.2(typescript@5.7.3)
       typescript: 5.7.3
 
-  '@nomicfoundation/hardhat-toolbox@5.0.0(eddd556a9a57fc19fa7f8a9c2a89a47e)':
+  '@nomicfoundation/hardhat-toolbox@5.0.0(zvp77724k4u72ql4svncixq6be)':
     dependencies:
       '@nomicfoundation/hardhat-chai-matchers': 2.0.8(@nomicfoundation/hardhat-ethers@3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)))(chai@4.5.0)(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@nomicfoundation/hardhat-ethers': 3.0.8(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
@@ -16352,7 +16352,7 @@ snapshots:
       - bluebird
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.19.0(jiti@2.4.2)):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.19.0(jiti@2.4.2)))(eslint@9.19.0(jiti@2.4.2)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -16381,7 +16381,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.19.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.19.0(jiti@2.4.2))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.17.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.19.0(jiti@2.4.2)))(eslint@9.19.0(jiti@2.4.2))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -19124,7 +19124,7 @@ snapshots:
 
   obliterator@2.0.5: {}
 
-  oclif@4.16.0(patch_hash=cf4f9ea2740997b73ebc5e1084352b6adf75960c91a5f924db548e17ce10c6da)(@types/node@22.13.0):
+  oclif@4.16.0(patch_hash=ofxhflhoc4vkbbfnh6gtk4pfua)(@types/node@22.13.0):
     dependencies:
       '@aws-sdk/client-cloudfront': 3.741.0
       '@aws-sdk/client-s3': 3.741.0
