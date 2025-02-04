@@ -150,6 +150,10 @@ export default class InitCommand extends Command {
       this.error('--start-block can only be used with --from-contract or --from-source-subgraph');
     }
 
+    if (fromContract && fromSourceSubgraph) {
+      this.error('Cannot use both --from-contract and --from-source-subgraph at the same time');
+    }
+
     if (skipGit) {
       this.warn(
         'The --skip-git flag will be removed in the next major version. By default we will stop initializing a Git repository.',
