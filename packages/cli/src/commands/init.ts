@@ -232,17 +232,21 @@ export default class InitCommand extends Command {
         );
       }
 
-      if (fromSubgraph && protocol !== 'subgraph') {
+      const protocolInstance = new Protocol(protocol as ProtocolName);
+
+      if (fromSubgraph && protocolInstance.isComposedSubgraph()) {
         this.error('--protocol must be subgraph when using --from-subgraph');
       }
-
-      const protocolInstance = new Protocol(protocol as ProtocolName);
 
       if (!fromSubgraph && protocolInstance.isComposedSubgraph()) {
         this.error('--protocol can only be subgraph when using --from-subgraph');
       }
 
       if (fromSubgraph && !protocolInstance.isComposedSubgraph()) {
+        this.error('--protocol can only be subgraph when using --from-subgraph');
+      }
+
+      if (fromContract && protocolInstance.isComposedSubgraph()) {
         this.error('--protocol can only be subgraph when using --from-subgraph');
       }
 
@@ -323,7 +327,7 @@ export default class InitCommand extends Command {
         abi,
         abiPath,
         directory,
-        source: fromContract,
+        source: fromContract || fromSubgraph,
         indexEvents,
         fromExample,
         subgraphName,
