@@ -25,6 +25,7 @@ import { abiEvents } from '../scaffold/schema.js';
 import Schema from '../schema.js';
 import {
   createIpfsClient,
+  getMinStartBlock,
   loadManifestYaml,
   loadSubgraphSchemaFromIPFS,
   validateSubgraphNetworkMatch,
@@ -665,6 +666,7 @@ async function processInitForm(
           if (!valid) {
             return error || 'Invalid subgraph network match';
           }
+          startBlock ||= getMinStartBlock(manifestYaml)?.toString();
           return true;
         }
         if (initFromExample !== undefined || !protocolInstance.hasContract()) {
@@ -715,6 +717,7 @@ async function processInitForm(
         } else {
           abiFromApi = initAbi;
         }
+
         // If startBlock is not provided, try to fetch it from Etherscan API
         if (!initStartBlock) {
           startBlock = await retryWithPrompt(() =>
@@ -1240,6 +1243,7 @@ async function initSubgraphFromContract(
         throw new Error(error || 'Invalid subgraph network match');
       }
 
+      startBlock ||= getMinStartBlock(manifestYaml)?.toString();
       const schemaString = await loadSubgraphSchemaFromIPFS(ipfsClient, source);
       const schema = await Schema.loadFromString(schemaString);
       entities = schema.getEntityNames();

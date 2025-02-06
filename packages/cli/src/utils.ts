@@ -84,3 +84,18 @@ export function validateSubgraphNetworkMatch(
 
   return { valid: true };
 }
+
+/**
+ * Gets the minimum startBlock from all dataSources in the manifest
+ * @param manifestYaml Parsed manifest YAML
+ * @returns The minimum startBlock or undefined if no startBlock is found
+ */
+export function getMinStartBlock(manifestYaml: any): number | undefined {
+  const dataSources = manifestYaml.dataSources || [];
+
+  const startBlocks = dataSources
+    .map((ds: { source?: { startBlock?: number } }) => ds.source?.startBlock)
+    .filter((block: unknown): block is number => typeof block === 'number');
+
+  return startBlocks.length > 0 ? Math.min(...startBlocks) : undefined;
+}
