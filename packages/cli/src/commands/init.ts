@@ -25,6 +25,7 @@ import { abiEvents } from '../scaffold/schema.js';
 import Schema from '../schema.js';
 import {
   createIpfsClient,
+  loadManifestYaml,
   loadSubgraphSchemaFromIPFS,
   validateSubgraphNetworkMatch,
 } from '../utils.js';
@@ -659,7 +660,8 @@ async function processInitForm(
       validate: async (value: string): Promise<string | boolean> => {
         if (isComposedSubgraph) {
           const ipfs = createIpfsClient(ipfsNode);
-          const { valid, error } = await validateSubgraphNetworkMatch(ipfs, value, network.id);
+          const manifestYaml = await loadManifestYaml(ipfs, value);
+          const { valid, error } = validateSubgraphNetworkMatch(manifestYaml, network.id);
           if (!valid) {
             return error || 'Invalid subgraph network match';
           }
@@ -1232,7 +1234,8 @@ async function initSubgraphFromContract(
       });
 
       // Validate network match first
-      const { valid, error } = await validateSubgraphNetworkMatch(ipfsClient, source, network);
+      const manifestYaml = await loadManifestYaml(ipfsClient, source);
+      const { valid, error } = validateSubgraphNetworkMatch(manifestYaml, network);
       if (!valid) {
         throw new Error(error || 'Invalid subgraph network match');
       }

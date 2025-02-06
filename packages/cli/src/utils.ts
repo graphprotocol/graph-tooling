@@ -48,47 +48,39 @@ export async function loadManifestFromIPFS(ipfsClient: any, manifest: string) {
   }
 }
 
+export async function loadManifestYaml(ipfsClient: any, manifest: string): Promise<any> {
+  const manifestFile = await loadManifestFromIPFS(ipfsClient, manifest);
+  return yaml.load(manifestFile) as any;
+}
+
 /**
  * Validates that the network of a source subgraph matches the target network
- * @param ipfsClient IPFS client instance
- * @param sourceSubgraphId IPFS hash of the source subgraph
+ * @param manifestYaml Parsed manifest YAML
  * @param targetNetwork Network of the target subgraph being created
  * @returns Object containing validation result and error message if any
  */
-export async function validateSubgraphNetworkMatch(
-  ipfsClient: any,
-  sourceSubgraphId: string,
+export function validateSubgraphNetworkMatch(
+  manifestYaml: any,
   targetNetwork: string,
-): Promise<{ valid: boolean; error?: string }> {
-  try {
-    const manifestFile = await loadManifestFromIPFS(ipfsClient, sourceSubgraphId);
-    const manifestYaml = yaml.load(manifestFile) as any;
+): { valid: boolean; error?: string } {
+  // Extract network from data sources
+  const dataSources = manifestYaml.dataSources || [];
+  const templates = manifestYaml.templates || [];
+  const allSources = [...dataSources, ...templates];
 
-    // Extract network from data sources
-    const dataSources = manifestYaml.dataSources || [];
-    const templates = manifestYaml.templates || [];
-    const allSources = [...dataSources, ...templates];
+  if (allSources.length === 0) {
+    return { valid: true }; // No data sources to validate
+  }
 
-    if (allSources.length === 0) {
-      return { valid: true }; // No data sources to validate
-    }
+  // Get network from first data source
+  const sourceNetwork = allSources[0].network;
 
-    // Get network from first data source
-    const sourceNetwork = allSources[0].network;
-
-    if (sourceNetwork !== targetNetwork) {
-      return {
-        valid: false,
-        error: `Network mismatch: The source subgraph is indexing the '${sourceNetwork}' network, but you're creating a subgraph for '${targetNetwork}' network. When composing subgraphs, they must index the same network.`,
-      };
-    }
-
-    return { valid: true };
-  } catch (e) {
-    utilsDebug.extend('validateSubgraphNetworkMatch')(`Failed to validate network match: ${e}`);
+  if (sourceNetwork !== targetNetwork) {
     return {
       valid: false,
-      error: e instanceof Error ? e.message : 'Failed to validate subgraph network',
+      error: `Network mismatch: The source subgraph is indexing the '${sourceNetwork}' network, but you're creating a subgraph for '${targetNetwork}' network. When composing subgraphs, they must index the same network.`,
     };
   }
+
+  return { valid: true };
 }
