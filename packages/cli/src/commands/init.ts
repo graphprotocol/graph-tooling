@@ -234,20 +234,19 @@ export default class InitCommand extends Command {
 
       const protocolInstance = new Protocol(protocol as ProtocolName);
 
-      if (fromSubgraph && protocolInstance.isComposedSubgraph()) {
-        this.error('--protocol must be subgraph when using --from-subgraph');
-      }
-
-      if (!fromSubgraph && protocolInstance.isComposedSubgraph()) {
-        this.error('--protocol can only be subgraph when using --from-subgraph');
-      }
-
       if (fromSubgraph && !protocolInstance.isComposedSubgraph()) {
         this.error('--protocol can only be subgraph when using --from-subgraph');
       }
 
-      if (fromContract && protocolInstance.isComposedSubgraph()) {
-        this.error('--protocol can only be subgraph when using --from-subgraph');
+      if (
+        fromContract &&
+        (protocolInstance.isComposedSubgraph() || protocolInstance.isSubstreams())
+      ) {
+        this.error('--protocol cannot be subgraph or substreams when using --from-contract');
+      }
+
+      if (spkgPath && !protocolInstance.isSubstreams()) {
+        this.error('--protocol can only be substreams when using --spkg');
       }
 
       // Only fetch contract info and ABI for non-source-subgraph cases
