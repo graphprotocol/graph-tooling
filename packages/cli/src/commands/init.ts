@@ -58,8 +58,8 @@ export default class InitCommand extends Command {
       summary: 'Graph node for which to initialize.',
       char: 'g',
     }),
-    'from-source-subgraph': Flags.string({
-      description: 'Creates a scaffold based on an existing contract.',
+    'from-subgraph': Flags.string({
+      description: 'Creates a scaffold based on an existing subgraph.',
       exclusive: ['from-example', 'from-contract'],
     }),
     'from-contract': Flags.string({
@@ -130,7 +130,7 @@ export default class InitCommand extends Command {
       protocol,
       node: nodeFlag,
       'from-contract': fromContract,
-      'from-source-subgraph': fromSourceSubgraph,
+      'from-subgraph': fromSubgraph,
       'contract-name': contractName,
       'from-example': fromExample,
       'index-events': indexEvents,
@@ -145,12 +145,12 @@ export default class InitCommand extends Command {
 
     initDebugger('Flags: %O', flags);
 
-    if (startBlock && !(fromContract || fromSourceSubgraph)) {
-      this.error('--start-block can only be used with --from-contract or --from-source-subgraph');
+    if (startBlock && !(fromContract || fromSubgraph)) {
+      this.error('--start-block can only be used with --from-contract or --from-subgraph');
     }
 
-    if (fromContract && fromSourceSubgraph) {
-      this.error('Cannot use both --from-contract and --from-source-subgraph at the same time');
+    if (fromContract && fromSubgraph) {
+      this.error('Cannot use both --from-contract and --from-subgraph at the same time');
     }
 
     if (skipGit) {
@@ -214,7 +214,7 @@ export default class InitCommand extends Command {
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from an existing contract or source subgraph
     if (
-      (fromContract || spkgPath || fromSourceSubgraph) &&
+      (fromContract || spkgPath || fromSubgraph) &&
       protocol &&
       subgraphName &&
       directory &&
@@ -230,22 +230,22 @@ export default class InitCommand extends Command {
         );
       }
 
-      if (fromSourceSubgraph && protocol !== 'subgraph') {
-        this.error('--protocol must be subgraph when using --from-source-subgraph');
+      if (fromSubgraph && protocol !== 'subgraph') {
+        this.error('--protocol must be subgraph when using --from-subgraph');
       }
 
       const protocolInstance = new Protocol(protocol as ProtocolName);
 
-      if (!fromSourceSubgraph && protocolInstance.isComposedSubgraph()) {
-        this.error('--protocol can only be subgraph when using --from-source-subgraph');
+      if (!fromSubgraph && protocolInstance.isComposedSubgraph()) {
+        this.error('--protocol can only be subgraph when using --from-subgraph');
       }
 
-      if (fromSourceSubgraph && !protocolInstance.isComposedSubgraph()) {
-        this.error('--protocol can only be subgraph when using --from-source-subgraph');
+      if (fromSubgraph && !protocolInstance.isComposedSubgraph()) {
+        this.error('--protocol can only be subgraph when using --from-subgraph');
       }
 
       // Only fetch contract info and ABI for non-source-subgraph cases
-      if (!fromSourceSubgraph && protocolInstance.hasABIs()) {
+      if (!fromSubgraph && protocolInstance.hasABIs()) {
         const registry = await loadRegistry();
         const contractService = new ContractService(registry);
         const sourcifyContractInfo = await contractService.getFromSourcify(
@@ -277,7 +277,7 @@ export default class InitCommand extends Command {
           protocolInstance,
           abi,
           directory,
-          source: fromSourceSubgraph || fromContract!,
+          source: fromSubgraph || fromContract!,
           indexEvents,
           network,
           subgraphName,
