@@ -10,9 +10,8 @@ export async function networkSubgraphExecute<T, V>(
   query: TypedDocumentNode<T, V>,
   variables: V,
   endpoint: string,
-  apiKey: string,
 ) {
-  const response = await fetch(endpoint.replace('{api-key}', apiKey), {
+  const response = await fetch(endpoint.replace('{api-key}', import.meta.env.VITE_STUDIO_API_KEY), {
     method: 'POST',
     body: JSON.stringify({
       query: print(query),

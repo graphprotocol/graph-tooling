@@ -2,16 +2,36 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug website in Chrome against localhost",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:5173/publish?id=QmRkgeh82vfL6HvHZpZfhWeP7GmQAYrMtmpsNKnWk24M81&subgraphId=J55C6VRkMbVH6foEDR1qHtcRArMCqpCneEwLdfuGu2En",
+      "webRoot": "${workspaceFolder}/website",
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/src/*"
+      }
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Debug graph init",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "program": "${workspaceFolder}/packages/cli/bin/run",
-      "args": ["init", "--skip-git"],
+      "args": [
+        "init",
+        "--skip-git"
+      ],
       "preLaunchTask": "build:dev",
-      "outFiles": ["${workspaceFolder}/packages/cli/dist/**/*.js"],
+      "outFiles": [
+        "${workspaceFolder}/packages/cli/dist/**/*.js"
+      ],
       "sourceMaps": true,
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }

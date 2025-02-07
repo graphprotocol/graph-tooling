@@ -42,6 +42,9 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { L2GNSABI } from '../abis/l2gns';
 import addresses from '../addresses.json';
 
+const DEFAULT_SUBGRAPH_IMAGE =
+  'https://api.thegraph.com/ipfs/api/v0/cat?arg=QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9';
+
 const SUPPORTED_CHAIN = {
   'arbitrum-one': {
     chainId: 42_161,
@@ -172,12 +175,10 @@ function DeploySubgraph({
   deploymentId,
   subgraphId,
   network,
-  apiKey,
 }: {
   deploymentId: string;
   subgraphId: string | undefined;
   network: (typeof CHAINS)[number] | undefined;
-  apiKey: string | undefined;
 }) {
   const { writeContractAsync, isPending, error: contractError } = useWriteContract({});
   const { setOpen } = useModal();
@@ -204,8 +205,7 @@ function DeploySubgraph({
     mode: 'all',
     defaultValues: {
       description: subgraphManifest?.parsed.description,
-      subgraphImage:
-        'https://api.thegraph.com/ipfs/api/v0/cat?arg=QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9',
+      subgraphImage: DEFAULT_SUBGRAPH_IMAGE,
       codeRepository: subgraphManifest?.parsed.repository,
       website: undefined,
       categories: undefined,
@@ -216,19 +216,11 @@ function DeploySubgraph({
   const chain = form.watch('chain');
 
   const { data: subgraphInfo } = useQuery({
-    queryKey: ['subgraph-info', subgraphId, chain, chainId, apiKey],
+    queryKey: ['subgraph-info', subgraphId, chain, chainId],
     queryFn: async () => {
       if (!subgraphId) {
         toast({
           description: 'Subgraph ID is missing. Please add it to the URL params and try again.',
-          variant: 'destructive',
-        });
-        return;
-      }
-      if (!apiKey) {
-        toast({
-          description:
-            'apiKey is missing in URL params. Please add it to the URL params and try again.',
           variant: 'destructive',
         });
         return;
@@ -242,36 +234,26 @@ function DeploySubgraph({
         GetSubgraphInfoQuery,
         { subgraphId },
         subgraphEndpoint,
-        apiKey,
       );
+      const subgraph = data?.subgraph;
 
-      const metadata = data.subgraph?.metadata;
-      if (metadata) {
-        if (metadata.image) {
-          form.setValue('subgraphImage', metadata.image);
-        }
-
-        if (metadata.description) {
-          form.setValue('description', metadata.description);
-        }
-
-        if (metadata.codeRepository) {
-          form.setValue('codeRepository', metadata.codeRepository);
-        }
-
-        if (metadata.website) {
-          form.setValue('website', metadata.website);
-        }
-
-        if (metadata.displayName) {
-          form.setValue('displayName', metadata.displayName);
-        }
-
-        if (data.subgraph?.versions?.length) {
-          const version = data.subgraph.versions[data.subgraph.versions.length - 1];
-          form.setValue('versionLabel', version.metadata?.label ?? '');
-        }
+      if (!subgraph) {
+        toast({
+          description: `Failed to load subgraph metadata on ${chain}.\nMake sure subgraph ID is correct and try again.`,
+          variant: 'destructive',
+        });
       }
+
+      const metadata = subgraph?.metadata;
+      form.setValue('subgraphImage', metadata?.image ?? DEFAULT_SUBGRAPH_IMAGE);
+      form.setValue('description', metadata?.description ?? '');
+      form.setValue('displayName', metadata?.displayName ?? '');
+      form.setValue('codeRepository', metadata?.codeRepository ?? '');
+      form.setValue('website', metadata?.website ?? '');
+      form.setValue(
+        'versionLabel',
+        subgraph?.versions?.[subgraph.versions.length - 1]?.metadata?.label ?? '',
+      );
 
       return data;
     },
@@ -586,7 +568,7 @@ function DeploySubgraph({
 }
 
 function Page() {
-  const { id, subgraphId, network, apiKey } = Route.useSearch();
+  const { id, subgraphId, network } = Route.useSearch();
 
   const protocolNetwork = network
     ? // @ts-expect-error we want to compare if it is a string or not
@@ -602,12 +584,7 @@ function Page() {
         <ConnectKitButton />
       </nav>
       {id ? (
-        <DeploySubgraph
-          deploymentId={id}
-          subgraphId={subgraphId}
-          network={protocolNetwork}
-          apiKey={apiKey}
-        />
+        <DeploySubgraph deploymentId={id} subgraphId={subgraphId} network={protocolNetwork} />
       ) : (
         <div className="flex justify-center items-center min-h-screen -mt-16">
           Unable to find the Deployment ID. Go back to CLI

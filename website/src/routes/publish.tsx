@@ -7,6 +7,5 @@ export const Route = createFileRoute('/publish')({
     // Transforming string to enum here doesn't actually work
     network: z.string().optional(),
     id: z.string().optional(),
-    apiKey: z.string().optional(),
   }),
 });
