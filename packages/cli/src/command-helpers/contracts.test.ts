@@ -117,7 +117,7 @@ const TEST_SOURCIFY_CONTRACT_INFO = {
       name: null,
       startBlock: null,
     },
-  }
+  },
 };
 
 // Retry helper with configurable number of retries

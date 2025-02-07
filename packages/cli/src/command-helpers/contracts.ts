@@ -174,14 +174,15 @@ export class ContractService {
             compilation: { name: string };
             deployment: { blockNumber: string };
           }
-        | { customCode: string; message: string; errorId: string; } = await (
+        | { customCode: string; message: string; errorId: string } = await (
         await fetch(url).catch(error => {
           throw new Error(`Sourcify API is unreachable: ${error}`);
         })
       ).json();
 
       if (json) {
-        if ('errorId' in json) throw new Error(`Sourcify API error: [${json.customCode}] ${json.message}`);
+        if ('errorId' in json)
+          throw new Error(`Sourcify API error: [${json.customCode}] ${json.message}`);
 
         const abi = json.abi;
         const contractName = json.compilation.name;
