@@ -13,7 +13,7 @@ const config = createConfig(
       [arbitrum.id]: http(),
       [arbitrumSepolia.id]: http(),
     },
-    walletConnectProjectId: '1',
+    walletConnectProjectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID ?? '1',
     // Required App Info
     appName: 'Graph Tooling',
 
