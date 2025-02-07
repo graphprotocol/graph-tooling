@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ConnectKitButton, useModal } from 'connectkit';
+import { graphql } from 'gql.tada';
 import { useForm } from 'react-hook-form';
 import semver from 'semver';
 import { Address } from 'viem';
@@ -128,9 +129,9 @@ const Manifest = z.object({
   repository: z.string().describe('An optional link to where the subgraph lives.').optional(),
 });
 
-const GetSubgraphInfo = (subgraphId: string) => `
-  {
-    subgraph(id: "${subgraphId}") {
+const GetSubgraphInfoQuery = graphql(`
+  query GetSubgraphInfo($subgraphId: ID!) {
+    subgraph(id: $subgraphId) {
       id
       owner {
         id
@@ -154,7 +155,7 @@ const GetSubgraphInfo = (subgraphId: string) => `
       }
     }
   }
-`;
+`);
 
 function getEtherscanUrl({ chainId, hash }: { chainId: number; hash: string }) {
   switch (chainId) {
@@ -238,7 +239,8 @@ function DeploySubgraph({
       if (!subgraphEndpoint) return;
 
       const data = await networkSubgraphExecute(
-        GetSubgraphInfo(subgraphId),
+        GetSubgraphInfoQuery,
+        { subgraphId },
         subgraphEndpoint,
         apiKey,
       );
@@ -265,7 +267,7 @@ function DeploySubgraph({
           form.setValue('displayName', metadata.displayName);
         }
 
-        if (data.subgraph.versions?.length > 0) {
+        if (data.subgraph?.versions?.length) {
           const version = data.subgraph.versions[data.subgraph.versions.length - 1];
           form.setValue('versionLabel', version.metadata?.label ?? '');
         }
@@ -282,7 +284,7 @@ function DeploySubgraph({
     const version = form.watch('versionLabel');
 
     const versionInfo = subgraphInfo.subgraph?.versions.find(
-      ({ metadata }: { metadata: { label: string } }) => metadata?.label === version,
+      ver => ver.metadata?.label === version,
     );
 
     if (!versionInfo) return false;
@@ -298,9 +300,7 @@ function DeploySubgraph({
 
     const version = form.watch('versionLabel');
 
-    return !subgraphInfo.subgraph?.versions.some(
-      ({ metadata }: { metadata: { label: string } }) => metadata?.label === version,
-    );
+    return !subgraphInfo.subgraph?.versions.some(ver => ver.metadata?.label === version);
   }
 
   function isOwner() {
