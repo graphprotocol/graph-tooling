@@ -111,6 +111,13 @@ const TEST_SOURCIFY_CONTRACT_INFO = {
       startBlock: null,
     },
   },
+  // Invalid address (missing 0x)
+  matic: {
+    '0000000000000000000000000000000000000000': {
+      name: null,
+      startBlock: null,
+    },
+  }
 };
 
 // Retry helper with configurable number of retries

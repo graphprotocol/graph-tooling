@@ -163,37 +163,35 @@ export class ContractService {
       if (!network.caip2Id.startsWith('eip155'))
         throw new Error(`Invalid chainId, Sourcify API only supports EVM chains`);
 
+      if (!address.startsWith('0x') || address.length != 42)
+        throw new Error(`Invalid address, must start with 0x prefix and be 20 bytes long`);
+
       const chainId = network.caip2Id.split(':')[1];
-      const url = `https://sourcify.dev/server/files/any/${chainId}/${address}`;
+      const url = `https://sourcify.dev/server/v2/contract/${chainId}/${address}?fields=abi,compilation,deployment`;
       const json:
         | {
-            status: string;
-            files: { name: string; path: string; content: string }[];
+            abi: any[];
+            compilation: { name: string };
+            deployment: { blockNumber: string };
           }
-        | { error: string } = await (
+        | { customCode: string; message: string; errorId: string; } = await (
         await fetch(url).catch(error => {
           throw new Error(`Sourcify API is unreachable: ${error}`);
         })
       ).json();
 
       if (json) {
-        if ('error' in json) throw new Error(`Sourcify API error: ${json.error}`);
+        if ('errorId' in json) throw new Error(`Sourcify API error: [${json.customCode}] ${json.message}`);
 
-        let metadata: any = json.files.find(e => e.name === 'metadata.json')?.content;
-        if (!metadata) throw new Error('Contract is missing metadata');
+        const abi = json.abi;
+        const contractName = json.compilation.name;
+        const blockNumber = json.deployment.blockNumber;
 
-        const tx_hash = json.files.find(e => e.name === 'creator-tx-hash.txt')?.content;
-        if (!tx_hash) throw new Error('Contract is missing tx creation hash');
+        if (!abi || !contractName || !blockNumber) throw new Error('Contract is missing metadata');
 
-        const tx = await this.fetchTransactionByHash(networkId, tx_hash);
-        if (!tx?.blockNumber)
-          throw new Error(`Can't fetch blockNumber from tx: ${JSON.stringify(tx)}`);
-
-        metadata = JSON.parse(metadata);
-        const contractName = Object.values(metadata.settings.compilationTarget)[0] as string;
         return {
-          abi: new ABICtor(contractName, undefined, immutable.fromJS(metadata.output.abi)) as ABI,
-          startBlock: Number(tx.blockNumber).toString(),
+          abi: new ABICtor(contractName, undefined, immutable.fromJS(abi)) as ABI,
+          startBlock: Number(blockNumber).toString(),
           name: contractName,
         };
       }
