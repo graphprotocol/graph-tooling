@@ -16,7 +16,7 @@ import { retryWithPrompt } from '../command-helpers/retry.js';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold.js';
 import { sortWithPriority } from '../command-helpers/sort.js';
 import { withSpinner } from '../command-helpers/spinner.js';
-import { getSubgraphBasename } from '../command-helpers/subgraph.js';
+import { formatSubgraphName, getSubgraphBasename } from '../command-helpers/subgraph.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 import debugFactory from '../debug.js';
 import EthereumABI from '../protocols/ethereum/abi.js';
@@ -38,8 +38,8 @@ export default class InitCommand extends Command {
   static description = 'Creates a new subgraph with basic scaffolding.';
 
   static args = {
-    subgraphName: Args.string(),
-    directory: Args.string(),
+    argSubgraphName: Args.string(),
+    argDirectory: Args.string(),
   };
 
   static flags = {
@@ -116,9 +116,12 @@ export default class InitCommand extends Command {
 
   async run() {
     const {
-      args: { subgraphName, directory },
+      args: { argSubgraphName, argDirectory },
       flags,
     } = await this.parse(InitCommand);
+
+    const subgraphName = formatSubgraphName(argSubgraphName ?? '');
+    const directory = argDirectory ?? '';
 
     const {
       protocol,
@@ -343,27 +346,44 @@ async function processFromExampleInitForm(
   | undefined
 > {
   try {
-    const { subgraphName } = await prompt.ask<{ subgraphName: string }>([
-      {
-        type: 'input',
-        name: 'subgraphName',
-        message: 'Subgraph slug',
-        initial: initSubgraphName,
-      },
-    ]);
+    const promptManager = new PromptManager();
 
-    const { directory } = await prompt.ask<{ directory: string }>([
-      {
-        type: 'input',
-        name: 'directory',
-        message: 'Directory to create the subgraph in',
-        initial: () => initDirectory || getSubgraphBasename(subgraphName),
+    let subgraphName = initSubgraphName;
+    let directory = initDirectory;
+
+    promptManager.addStep({
+      type: 'input',
+      name: 'subgraphName',
+      message: 'Subgraph slug',
+      initial: initSubgraphName,
+      format: value => formatSubgraphName(value),
+      validate: value => formatSubgraphName(value).length > 0 || 'Subgraph slug must not be empty',
+      result: value => {
+        value = formatSubgraphName(value);
+        initDebugger.extend('processFromExampleInitForm')('subgraphName: %O', value);
+        subgraphName = value;
+        return value;
       },
-    ]);
+    });
+
+    promptManager.addStep({
+      type: 'input',
+      name: 'directory',
+      message: 'Directory to create the subgraph in',
+      initial: () => initDirectory || getSubgraphBasename(subgraphName!),
+      validate: value => value.length > 0 || 'Directory must not be empty',
+      result: value => {
+        directory = value;
+        initDebugger.extend('processFromExampleInitForm')('directory: %O', value);
+        return value;
+      },
+    });
+
+    await promptManager.executeInteractive();
 
     return {
-      subgraphName,
-      directory,
+      subgraphName: subgraphName!,
+      directory: directory!,
     };
   } catch (e) {
     this.error(e, { exit: 1 });
@@ -563,8 +583,10 @@ async function processInitForm(
       name: 'subgraphName',
       message: 'Subgraph slug',
       initial: initSubgraphName,
-      validate: value => value.length > 0 || 'Subgraph slug must not be empty',
+      format: value => formatSubgraphName(value),
+      validate: value => formatSubgraphName(value).length > 0 || 'Subgraph slug must not be empty',
       result: value => {
+        value = formatSubgraphName(value);
         initDebugger.extend('processInitForm')('subgraphName: %O', value);
         subgraphName = value;
         return value;
@@ -575,7 +597,7 @@ async function processInitForm(
       type: 'input',
       name: 'directory',
       message: 'Directory to create the subgraph in',
-      initial: () => initDirectory || getSubgraphBasename(subgraphName),
+      initial: () => initDirectory || getSubgraphBasename(subgraphName!),
       validate: value => value.length > 0 || 'Directory must not be empty',
       result: value => {
         directory = value;
