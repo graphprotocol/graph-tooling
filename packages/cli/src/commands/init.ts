@@ -1251,9 +1251,6 @@ async function initSubgraphFromContract(
       const schema = await Schema.loadFromString(schemaString);
       entities = schema.getEntityNames();
     } catch (e) {
-      if (e instanceof Error) {
-        print.error(`Failed to validate subgraph: ${e?.message}`);
-      }
       this.error(`Failed to load and parse subgraph schema: ${e.message}`, { exit: 1 });
     }
   }
