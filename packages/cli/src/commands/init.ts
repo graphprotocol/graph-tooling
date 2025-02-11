@@ -11,6 +11,7 @@ import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
 import { initNetworksConfig } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
 import { PromptManager } from '../command-helpers/prompt-manager.js';
+import { checkForProxy } from '../command-helpers/proxy.js';
 import { loadRegistry } from '../command-helpers/registry.js';
 import { retryWithPrompt } from '../command-helpers/retry.js';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold.js';
@@ -655,6 +656,7 @@ async function processInitForm(
         }
 
         // If ABI is not provided, try to fetch it from Etherscan API
+        let implAddress: string | undefined = undefined;
         if (protocolInstance.hasABIs() && !initAbi) {
           abiFromApi = await retryWithPrompt(() =>
             withSpinner(
@@ -664,10 +666,29 @@ async function processInitForm(
               () => contractService.getABI(protocolInstance.getABI(), network.id, address),
             ),
           );
-          initDebugger.extend('processInitForm')("abiFromEtherscan len: '%s'", abiFromApi?.name);
+          initDebugger.extend('processInitForm')("ABI: '%s'", abiFromApi?.name);
         } else {
           abiFromApi = initAbi;
         }
+
+        if (abiFromApi) {
+          const { implementationAbi, implementationAddress } = await checkForProxy(
+            contractService,
+            network.id,
+            address,
+            abiFromApi,
+          );
+          if (implementationAddress) {
+            implAddress = implementationAddress;
+            abiFromApi = implementationAbi!;
+            initDebugger.extend('processInitForm')(
+              "Impl ABI: '%s', Impl Address: '%s'",
+              abiFromApi?.name,
+              implAddress,
+            );
+          }
+        }
+
         // If startBlock is not provided, try to fetch it from Etherscan API
         if (!initStartBlock) {
           startBlock = await retryWithPrompt(() =>
@@ -675,7 +696,7 @@ async function processInitForm(
               'Fetching start block from contract API...',
               'Failed to fetch start block',
               'Warning fetching start block',
-              () => contractService.getStartBlock(network.id, address),
+              () => contractService.getStartBlock(network.id, implAddress ?? address),
             ),
           );
           initDebugger.extend('processInitForm')("startBlockFromEtherscan: '%s'", startBlock);
@@ -688,7 +709,7 @@ async function processInitForm(
               'Fetching contract name from contract API...',
               'Failed to fetch contract name',
               'Warning fetching contract name',
-              () => contractService.getContractName(network.id, address),
+              () => contractService.getContractName(network.id, implAddress ?? address),
             ),
           );
           initDebugger.extend('processInitForm')("contractNameFromEtherscan: '%s'", contractName);
@@ -1322,7 +1343,7 @@ async function addAnotherContract(
       name: 'contract',
       initial: ProtocolContract.identifierName(),
       required: true,
-      message: () => `\nContract ${ProtocolContract.identifierName()}`,
+      message: () => `Contract ${ProtocolContract.identifierName()}`,
       validate: value => {
         const { valid, error } = validateContract(value, ProtocolContract);
         return valid ? true : error;

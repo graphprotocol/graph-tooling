@@ -4,6 +4,7 @@ import { Args, Command, Errors, Flags } from '@oclif/core';
 import { ContractService } from '../command-helpers/contracts.js';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
 import { updateNetworksFile } from '../command-helpers/network.js';
+import { checkForProxy } from '../command-helpers/proxy.js';
 import { loadRegistry } from '../command-helpers/registry.js';
 import { retryWithPrompt } from '../command-helpers/retry.js';
 import {
@@ -88,7 +89,9 @@ export default class AddCommand extends Command {
 
     let startBlock = startBlockFlag ? parseInt(startBlockFlag).toString() : startBlockFlag;
     let contractName = contractNameFlag || DEFAULT_CONTRACT_NAME;
-    let ethabi = null;
+
+    let ethabi: EthereumABI | null = null;
+    let implAddress = null;
 
     if (sourcifyContractInfo) {
       startBlock ??= sourcifyContractInfo.startBlock;
@@ -111,6 +114,18 @@ export default class AddCommand extends Command {
             () => contractService.getABI(EthereumABI, network, address),
           ),
         );
+        if (!ethabi) throw Error;
+
+        const { implementationAbi, implementationAddress } = await checkForProxy(
+          contractService,
+          network,
+          address,
+          ethabi,
+        );
+        if (implementationAddress) {
+          implAddress = implementationAddress;
+          ethabi = implementationAbi!;
+        }
         if (!ethabi) throw Error;
       } catch (error) {
         // we cannot ask user to do prompt in test environment
@@ -136,10 +151,15 @@ export default class AddCommand extends Command {
         }
       }
     }
+    if (!ethabi) {
+      this.error('Failed to load ABI', { exit: 1 });
+    }
 
     try {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
-      startBlock ||= Number(await contractService.getStartBlock(network, address)).toString();
+      startBlock ||= Number(
+        await contractService.getStartBlock(network, implAddress ?? address),
+      ).toString();
     } catch (error) {
       // we cannot ask user to do prompt in test environment
       if (process.env.NODE_ENV !== 'test') {
@@ -166,7 +186,8 @@ export default class AddCommand extends Command {
       if (isLocalHost) throw Error; // Triggers user prompting without waiting for Etherscan lookup to fail
       if (contractName === DEFAULT_CONTRACT_NAME) {
         contractName =
-          (await contractService.getContractName(network, address)) ?? DEFAULT_CONTRACT_NAME;
+          (await contractService.getContractName(network, implAddress ?? address)) ??
+          DEFAULT_CONTRACT_NAME;
       }
     } catch (error) {
       // not asking user to do prompt in test environment
@@ -266,8 +287,6 @@ export default class AddCommand extends Command {
       'Warning during codegen',
       async () => await system.run(yarn ? 'yarn codegen' : 'npm run codegen'),
     );
-
-    this.exit(0);
   }
 }
 

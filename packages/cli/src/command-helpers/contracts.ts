@@ -201,6 +201,51 @@ export class ContractService {
     return null;
   }
 
+  async getProxyImplementation(networkId: string, address: string) {
+    const urls = this.getRpcUrls(networkId);
+    if (!urls.length) {
+      throw new Error(`No JSON-RPC available for ${networkId} in the registry`);
+    }
+
+    const EIP_1967_SLOT = '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc';
+    const OPEN_ZEPPELIN_SLOT = '0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3';
+    const getStorageAt = async (url: string, slot: string) => {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'eth_getStorageAt',
+          params: [address, slot, 'latest'],
+          id: 1,
+        }),
+      });
+      const json = await response.json();
+      if (json?.result) {
+        const impl = '0x' + json.result.slice(-40);
+        if (impl !== '0x0000000000000000000000000000000000000000') {
+          return impl;
+        }
+      }
+      return null;
+    };
+
+    for (const url of urls) {
+      for (const slot of [EIP_1967_SLOT, OPEN_ZEPPELIN_SLOT]) {
+        try {
+          const impl = await getStorageAt(url, slot);
+          if (impl) {
+            return impl;
+          }
+        } catch (error) {
+          logger(`Failed to fetch proxy implementation from ${url}: ${error}`);
+        }
+      }
+    }
+
+    throw new Error(`No implementation address found`);
+  }
+
   private async fetchTransactionByHash(networkId: string, txHash: string) {
     const urls = this.getRpcUrls(networkId);
     if (!urls.length) {
@@ -229,6 +274,6 @@ export class ContractService {
       }
     }
 
-    throw new Error(`JSON-RPC is unreachable`);
+    throw new Error(`Failed to fetch tx ${txHash}`);
   }
 }
