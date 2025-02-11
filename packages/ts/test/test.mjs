@@ -1,7 +1,8 @@
 // TODO: disabling eslint for now
 // We need to re-do this and use TS instead of JS
 import fs from 'fs';
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { StringDecoder } from 'string_decoder';
 import asc from 'assemblyscript/asc';
 
@@ -89,7 +90,8 @@ async function testFile(sourceFile, outputWasmPath) {
     env: {
       memory,
       abort(messagePtr, fileNamePtr, lineNumber, columnNumber) {
-        const fileSource = path.join(__dirname, '..', sourceFile);
+        const __filename = fileURLToPath(import.meta.url);
+        const fileSource = path.join(path.dirname(__filename), '..', sourceFile);
         let message = 'assertion failure';
         if (messagePtr !== 0) {
           message += `: ${getString(memory, messagePtr)}`;
