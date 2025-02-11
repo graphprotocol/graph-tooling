@@ -356,7 +356,6 @@ async function processFromExampleInitForm(
       name: 'subgraphName',
       message: 'Subgraph slug',
       initial: initSubgraphName,
-      format: value => formatSubgraphName(value),
       validate: value => formatSubgraphName(value).length > 0 || 'Subgraph slug must not be empty',
       result: value => {
         value = formatSubgraphName(value);
@@ -583,7 +582,6 @@ async function processInitForm(
       name: 'subgraphName',
       message: 'Subgraph slug',
       initial: initSubgraphName,
-      format: value => formatSubgraphName(value),
       validate: value => formatSubgraphName(value).length > 0 || 'Subgraph slug must not be empty',
       result: value => {
         value = formatSubgraphName(value);
