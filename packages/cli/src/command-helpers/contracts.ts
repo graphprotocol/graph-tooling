@@ -168,25 +168,21 @@ export class ContractService {
 
       const chainId = network.caip2Id.split(':')[1];
       const url = `https://sourcify.dev/server/v2/contract/${chainId}/${address}?fields=abi,compilation,deployment`;
-      const json:
-        | {
-            abi: any[];
-            compilation: { name: string };
-            deployment: { blockNumber: string };
-          }
-        | { customCode: string; message: string; errorId: string } = await (
-        await fetch(url).catch(error => {
-          throw new Error(`Sourcify API is unreachable: ${error}`);
-        })
-      ).json();
+      const resp = await fetch(url).catch(error => {
+        throw new Error(`Sourcify API is unreachable: ${error}`);
+      });
+      if (resp.status === 404) throw new Error(`Sourcify API says contract is not verified`);
+      if (!resp.ok) throw new Error(`Sourcify API returned status ${resp.status}`);
+      const json: {
+        abi: any[];
+        compilation: { name: string };
+        deployment: { blockNumber: string };
+      } = await resp.json();
 
       if (json) {
-        if ('errorId' in json)
-          throw new Error(`Sourcify API error: [${json.customCode}] ${json.message}`);
-
         const abi = json.abi;
-        const contractName = json.compilation.name;
-        const blockNumber = json.deployment.blockNumber;
+        const contractName = json.compilation?.name;
+        const blockNumber = json.deployment?.blockNumber;
 
         if (!abi || !contractName || !blockNumber) throw new Error('Contract is missing metadata');
 
