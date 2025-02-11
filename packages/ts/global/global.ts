@@ -6,6 +6,7 @@ import { starknet } from '../chain/starknet';
 import { Bytes, Entity, Result, TypedMap, TypedMapEntry, Wrapped } from '../common/collections';
 import { BigDecimal } from '../common/numbers';
 import { JSONValue, Value } from '../common/value';
+import { YAMLTaggedValue, YAMLValue } from '../common/yaml';
 
 /**
  * Contains type IDs and their discriminants for every blockchain supported by Graph-Node.
@@ -247,7 +248,17 @@ export enum TypeId {
   ```
   */
 
-  // Reserved discriminant space for a future blockchain type IDs: [4,500, 5,499]
+  // Reserved discriminant space for YAML type IDs: [5,500, 6,499]
+  YamlValue = 5500,
+  YamlTaggedValue = 5501,
+  YamlTypedMapEntryValueValue = 5502,
+  YamlTypedMapValueValue = 5503,
+  YamlArrayValue = 5504,
+  YamlArrayTypedMapEntryValueValue = 5505,
+  YamlWrappedValue = 5506,
+  YamlResultValueBool = 5507,
+
+  // Reserved discriminant space for a future blockchain type IDs: [6,500, 7,499]
 }
 
 export function id_of_type(typeId: TypeId): usize {
@@ -593,6 +604,25 @@ export function id_of_type(typeId: TypeId): usize {
       return idof<starknet.Event>();
     case TypeId.StarknetArrayBytes:
       return idof<Array<Bytes>>();
+    /**
+     * YAML type IDs.
+     */
+    case TypeId.YamlValue:
+      return idof<YAMLValue>();
+    case TypeId.YamlTaggedValue:
+      return idof<YAMLTaggedValue>();
+    case TypeId.YamlTypedMapEntryValueValue:
+      return idof<TypedMapEntry<YAMLValue, YAMLValue>>();
+    case TypeId.YamlTypedMapValueValue:
+      return idof<TypedMap<YAMLValue, YAMLValue>>();
+    case TypeId.YamlArrayValue:
+      return idof<Array<YAMLValue>>();
+    case TypeId.YamlArrayTypedMapEntryValueValue:
+      return idof<Array<TypedMapEntry<YAMLValue, YAMLValue>>>();
+    case TypeId.YamlWrappedValue:
+      return idof<Wrapped<YAMLValue>>();
+    case TypeId.YamlResultValueBool:
+      return idof<Result<YAMLValue, boolean>>();
     default:
       return 0;
   }
