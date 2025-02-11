@@ -93,6 +93,12 @@ const TEST_SOURCIFY_CONTRACT_INFO = {
       startBlock: 10_736_242,
     },
   },
+  'mainnet-non-verified': {
+    '0x4a183b7ED67B9E14b3f45Abfb2Cf44ed22c29E54': {
+      name: null,
+      startBlock: null,
+    },
+  },
   optimism: {
     '0xc35DADB65012eC5796536bD9864eD8773aBc74C4': {
       name: 'BentoBoxV1',
@@ -107,6 +113,13 @@ const TEST_SOURCIFY_CONTRACT_INFO = {
   },
   'non-existing chain': {
     '0x0000000000000000000000000000000000000000': {
+      name: null,
+      startBlock: null,
+    },
+  },
+  // Invalid address (missing 0x)
+  matic: {
+    '0000000000000000000000000000000000000000': {
       name: null,
       startBlock: null,
     },

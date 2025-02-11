@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@float-capital/float-subgraph-uncrashable": "0.0.0-internal-testing.5",
-    "@oclif/core": "4.2.4",
+    "@oclif/core": "4.2.6",
     "@oclif/plugin-autocomplete": "^3.2.11",
     "@oclif/plugin-not-found": "^3.2.29",
     "@oclif/plugin-warn-if-update-available": "^3.1.24",
@@ -57,7 +57,7 @@
     "kubo-rpc-client": "^5.0.2",
     "open": "10.1.0",
     "prettier": "3.4.2",
-    "semver": "7.6.3",
+    "semver": "7.7.1",
     "tmp-promise": "3.0.3",
     "undici": "7.3.0",
     "web3-eth-abi": "4.4.1",
