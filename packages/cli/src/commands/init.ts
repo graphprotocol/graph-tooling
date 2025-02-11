@@ -231,7 +231,7 @@ export default class InitCommand extends Command {
               ? sourcifyContractInfo.abi
               : await contractService.getABI(ABI, network, fromContract!);
           } catch (e) {
-            this.exit(1);
+            this.error(`Failed to get ABI: ${e.message}`, { exit: 1 });
           }
         }
       }
