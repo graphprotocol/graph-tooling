@@ -157,6 +157,7 @@ export default class SchemaCodeGenerator {
           'Bytes',
           'BigInt',
           'BigDecimal',
+          'Int8'
         ],
         '@graphprotocol/graph-ts',
       ),
