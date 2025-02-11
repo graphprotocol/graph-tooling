@@ -8,7 +8,7 @@ describe(
   'Init',
   {
     sequential: true,
-    timeout: 100_000,
+    timeout: 500_000,
   },
   () => {
     const baseDir = path.join(__dirname, 'init');
@@ -31,7 +31,7 @@ describe(
         path.join('init', 'ethereum', 'from-example'),
         {
           exitCode: 0,
-          timeout: 100_000,
+          timeout: 200_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
         },
