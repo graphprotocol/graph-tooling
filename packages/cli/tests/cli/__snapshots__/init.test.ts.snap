@@ -22,7 +22,7 @@ exports[`Init > Ethereum > From contract 2`] = `0`;
 
 exports[`Init > Ethereum > From contract 3`] = `
 "
-Subgraph user/subgraph-from-contract created in from-contract
+Subgraph usersubgraph-from-contract created in from-contract
 
 Next steps:
 
@@ -58,7 +58,7 @@ exports[`Init > Ethereum > From contract with abi 2`] = `0`;
 
 exports[`Init > Ethereum > From contract with abi 3`] = `
 "
-Subgraph user/subgraph-from-contract-with-abi created in from-contract-with-abi
+Subgraph usersubgraph-from-contract-with-abi created in from-contract-with-abi
 
 Next steps:
 
@@ -94,7 +94,7 @@ exports[`Init > Ethereum > From contract with abi and structs 2`] = `0`;
 
 exports[`Init > Ethereum > From contract with abi and structs 3`] = `
 "
-Subgraph user/subgraph-from-contract-with-abi-and-structs created in from-contract-with-abi-and-structs
+Subgraph usersubgraph-from-contract-with-abi-and-structs created in from-contract-with-abi-and-structs
 
 Next steps:
 
@@ -130,7 +130,7 @@ exports[`Init > Ethereum > From contract with index events and abi with ID in ev
 
 exports[`Init > Ethereum > From contract with index events and abi with ID in events 3`] = `
 "
-Subgraph user/subgraph-from-contract-with-index-events-and-abi-with-id created in duplicate-ids
+Subgraph usersubgraph-from-contract-with-index-events-and-abi-with-id created in duplicate-ids
 
 Next steps:
 
@@ -166,7 +166,7 @@ exports[`Init > Ethereum > From contract with list items in abi 2`] = `0`;
 
 exports[`Init > Ethereum > From contract with list items in abi 3`] = `
 "
-Subgraph user/subgraph-from-contract-with-lists-in-abi created in from-contract-with-lists-in-abi
+Subgraph usersubgraph-from-contract-with-lists-in-abi created in from-contract-with-lists-in-abi
 
 Next steps:
 
@@ -202,7 +202,7 @@ exports[`Init > Ethereum > From contract with overloaded elements 2`] = `0`;
 
 exports[`Init > Ethereum > From contract with overloaded elements 3`] = `
 "
-Subgraph user/subgraph-from-contract-with-overloaded-elements created in from-contract-with-overloaded-elements
+Subgraph usersubgraph-from-contract-with-overloaded-elements created in from-contract-with-overloaded-elements
 
 Next steps:
 
@@ -236,7 +236,7 @@ exports[`Init > Ethereum > From example 2`] = `0`;
 
 exports[`Init > Ethereum > From example 3`] = `
 "
-Subgraph user/example-subgraph created in from-example
+Subgraph userexample-subgraph created in from-example
 
 Next steps:
 
@@ -272,7 +272,7 @@ exports[`Init > NEAR > From contract 2`] = `0`;
 
 exports[`Init > NEAR > From contract 3`] = `
 "
-Subgraph user/near-from-contract created in from-contract
+Subgraph usernear-from-contract created in from-contract
 
 Next steps:
 
@@ -304,7 +304,7 @@ exports[`Init > Substreams > From package 2`] = `0`;
 
 exports[`Init > Substreams > From package 3`] = `
 "
-Subgraph user/subgraph-from-substreams created in from-package
+Subgraph usersubgraph-from-substreams created in from-package
 
 Next steps:
 
