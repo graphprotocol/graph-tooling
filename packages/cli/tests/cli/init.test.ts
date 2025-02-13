@@ -241,5 +241,32 @@ describe(
         },
       );
     });
+
+    describe('From existing subgraph', () => {
+      const fromSubgraphBaseDir = path.join(baseDir, 'subgraph');
+
+      cliTest(
+        'From existing subgraph',
+        [
+          'init',
+          '--skip-git',
+          '--from-subgraph',
+          'QmSgvtjK6b5GmnSeboH9AMdVrK8YeVrmJ1ESHw3WhYKdDH',
+          '--network',
+          'base',
+          '--protocol',
+          'subgraph',
+          'user/from-existing-subgraph',
+          path.join(fromSubgraphBaseDir, 'subgraph'),
+        ],
+        path.join('init', 'subgraph', 'subgraph'),
+        {
+          exitCode: 0,
+          timeout: 100_000,
+          cwd: fromSubgraphBaseDir,
+          deleteDir: true,
+        },
+      );
+    });
   },
 );

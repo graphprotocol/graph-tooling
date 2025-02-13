@@ -23,7 +23,13 @@ import EthereumABI from '../protocols/ethereum/abi.js';
 import Protocol, { ProtocolName } from '../protocols/index.js';
 import { abiEvents } from '../scaffold/schema.js';
 import Schema from '../schema.js';
-import { createIpfsClient, loadSubgraphSchemaFromIPFS } from '../utils.js';
+import {
+  createIpfsClient,
+  getMinStartBlock,
+  loadManifestYaml,
+  loadSubgraphSchemaFromIPFS,
+  validateSubgraphNetworkMatch,
+} from '../utils.js';
 import { validateContract } from '../validation/index.js';
 import AddCommand from './add.js';
 
@@ -53,6 +59,10 @@ export default class InitCommand extends Command {
     node: Flags.string({
       summary: 'Graph node for which to initialize.',
       char: 'g',
+    }),
+    'from-subgraph': Flags.string({
+      description: 'Creates a scaffold based on an existing subgraph.',
+      exclusive: ['from-example', 'from-contract'],
     }),
     'from-contract': Flags.string({
       description: 'Creates a scaffold based on an existing contract.',
@@ -88,7 +98,6 @@ export default class InitCommand extends Command {
       description: 'Block number to start indexing from.',
       // TODO: using a default sets the value and therefore requires --from-contract
       // default: '0',
-      dependsOn: ['from-contract'],
     }),
 
     abi: Flags.string({
@@ -110,7 +119,6 @@ export default class InitCommand extends Command {
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
       default: DEFAULT_IPFS_URL,
-      hidden: true,
     }),
   };
 
@@ -127,6 +135,7 @@ export default class InitCommand extends Command {
       protocol,
       node: nodeFlag,
       'from-contract': fromContract,
+      'from-subgraph': fromSubgraph,
       'contract-name': contractName,
       'from-example': fromExample,
       'index-events': indexEvents,
@@ -141,11 +150,20 @@ export default class InitCommand extends Command {
 
     initDebugger('Flags: %O', flags);
 
+    if (startBlock && !(fromContract || fromSubgraph)) {
+      this.error('--start-block can only be used with --from-contract or --from-subgraph');
+    }
+
+    if (fromContract && fromSubgraph) {
+      this.error('Cannot use both --from-contract and --from-subgraph at the same time');
+    }
+
     if (skipGit) {
       this.warn(
         'The --skip-git flag will be removed in the next major version. By default we will stop initializing a Git repository.',
       );
     }
+
     if ((fromContract || spkgPath) && !network && !fromExample) {
       this.error('--network is required when using --from-contract or --spkg');
     }
@@ -199,16 +217,15 @@ export default class InitCommand extends Command {
     let abi!: EthereumABI;
 
     // If all parameters are provided from the command-line,
-    // go straight to creating the subgraph from an existing contract
-    if ((fromContract || spkgPath) && protocol && subgraphName && directory && network && node) {
-      const registry = await loadRegistry();
-      const contractService = new ContractService(registry);
-      const sourcifyContractInfo = await contractService.getFromSourcify(
-        EthereumABI,
-        network,
-        fromContract!,
-      );
-
+    // go straight to creating the subgraph from an existing contract or source subgraph
+    if (
+      (fromContract || spkgPath || fromSubgraph) &&
+      protocol &&
+      subgraphName &&
+      directory &&
+      network &&
+      node
+    ) {
       if (!protocolChoices.includes(protocol as ProtocolName)) {
         this.error(
           `Protocol '${protocol}' is not supported, choose from these options: ${protocolChoices.join(
@@ -220,7 +237,31 @@ export default class InitCommand extends Command {
 
       const protocolInstance = new Protocol(protocol as ProtocolName);
 
-      if (protocolInstance.hasABIs()) {
+      if (fromSubgraph && !protocolInstance.isComposedSubgraph()) {
+        this.error('--protocol can only be subgraph when using --from-subgraph');
+      }
+
+      if (
+        fromContract &&
+        (protocolInstance.isComposedSubgraph() || protocolInstance.isSubstreams())
+      ) {
+        this.error('--protocol cannot be subgraph or substreams when using --from-contract');
+      }
+
+      if (spkgPath && !protocolInstance.isSubstreams()) {
+        this.error('--protocol can only be substreams when using --spkg');
+      }
+
+      // Only fetch contract info and ABI for non-source-subgraph cases
+      if (!fromSubgraph && protocolInstance.hasABIs()) {
+        const registry = await loadRegistry();
+        const contractService = new ContractService(registry);
+        const sourcifyContractInfo = await contractService.getFromSourcify(
+          EthereumABI,
+          network,
+          fromContract!,
+        );
+
         const ABI = protocolInstance.getABI();
         if (abiPath) {
           try {
@@ -244,7 +285,7 @@ export default class InitCommand extends Command {
           protocolInstance,
           abi,
           directory,
-          source: fromContract!,
+          source: fromSubgraph || fromContract!,
           indexEvents,
           network,
           subgraphName,
@@ -288,7 +329,7 @@ export default class InitCommand extends Command {
         abi,
         abiPath,
         directory,
-        source: fromContract,
+        source: fromContract || fromSubgraph,
         indexEvents,
         fromExample,
         subgraphName,
@@ -534,7 +575,7 @@ async function processInitForm(
               value: 'contract',
             },
             { message: 'Substreams', name: 'substreams', value: 'substreams' },
-            // { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
+            { message: 'Subgraph', name: 'subgraph', value: 'subgraph' },
           ].filter(({ name }) => name),
         });
 
@@ -606,6 +647,30 @@ async function processInitForm(
 
     promptManager.addStep({
       type: 'input',
+      name: 'ipfs',
+      message: `IPFS node to use for fetching subgraph manifest`,
+      initial: ipfsUrl,
+      skip: () => !isComposedSubgraph,
+      validate: value => {
+        if (!value) {
+          return 'IPFS node URL cannot be empty';
+        }
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return 'Please enter a valid URL';
+        }
+      },
+      result: value => {
+        ipfsNode = value;
+        initDebugger.extend('processInitForm')('ipfs: %O', value);
+        return value;
+      },
+    });
+
+    promptManager.addStep({
+      type: 'input',
       name: 'source',
       message: () =>
         isComposedSubgraph
@@ -616,9 +681,16 @@ async function processInitForm(
         isSubstreams ||
         (!protocolInstance.hasContract() && !isComposedSubgraph),
       initial: initContract,
-      validate: async (value: string) => {
+      validate: async (value: string): Promise<string | boolean> => {
         if (isComposedSubgraph) {
-          return value.startsWith('Qm') ? true : 'Subgraph deployment ID must start with Qm';
+          const ipfs = createIpfsClient(ipfsNode);
+          const manifestYaml = await loadManifestYaml(ipfs, value);
+          const { valid, error } = validateSubgraphNetworkMatch(manifestYaml, network.id);
+          if (!valid) {
+            return error || 'Invalid subgraph network match';
+          }
+          startBlock ||= getMinStartBlock(manifestYaml)?.toString();
+          return true;
         }
         if (initFromExample !== undefined || !protocolInstance.hasContract()) {
           return true;
@@ -668,6 +740,7 @@ async function processInitForm(
         } else {
           abiFromApi = initAbi;
         }
+
         // If startBlock is not provided, try to fetch it from Etherscan API
         if (!initStartBlock) {
           startBlock = await retryWithPrompt(() =>
@@ -696,19 +769,6 @@ async function processInitForm(
 
         source = address;
         return address;
-      },
-    });
-
-    promptManager.addStep({
-      type: 'input',
-      name: 'ipfs',
-      message: `IPFS node to use for fetching subgraph manifest`,
-      initial: ipfsUrl,
-      skip: () => !isComposedSubgraph,
-      result: value => {
-        ipfsNode = value;
-        initDebugger.extend('processInitForm')('ipfs: %O', value);
-        return value;
       },
     });
 
@@ -751,7 +811,7 @@ async function processInitForm(
         isSubstreams ||
         !!initAbiPath ||
         isComposedSubgraph,
-      validate: async (value: string) => {
+      validate: async (value: string): Promise<string | boolean> => {
         if (
           initFromExample ||
           abiFromApi ||
@@ -1199,6 +1259,14 @@ async function initSubgraphFromContract(
         },
       });
 
+      // Validate network match first
+      const manifestYaml = await loadManifestYaml(ipfsClient, source);
+      const { valid, error } = validateSubgraphNetworkMatch(manifestYaml, network);
+      if (!valid) {
+        throw new Error(error || 'Invalid subgraph network match');
+      }
+
+      startBlock ||= getMinStartBlock(manifestYaml)?.toString();
       const schemaString = await loadSubgraphSchemaFromIPFS(ipfsClient, source);
       const schema = await Schema.loadFromString(schemaString);
       entities = schema.getEntityNames();
@@ -1208,8 +1276,9 @@ async function initSubgraphFromContract(
   }
 
   if (
-    !protocolInstance.isComposedSubgraph() &&
+    !isComposedSubgraph &&
     protocolInstance.hasABIs() &&
+    abi && // Add check for abi existence
     (abiEvents(abi).size === 0 ||
       // @ts-expect-error TODO: the abiEvents result is expected to be a List, how's it an array?
       abiEvents(abi).length === 0)
@@ -1224,6 +1293,12 @@ async function initSubgraphFromContract(
     `Failed to create subgraph scaffold`,
     `Warnings while creating subgraph scaffold`,
     async spinner => {
+      initDebugger('Generating scaffold with ABI:', abi);
+      initDebugger('ABI data:', abi?.data);
+      if (abi) {
+        initDebugger('ABI events:', abiEvents(abi));
+      }
+
       const scaffold = await generateScaffold(
         {
           protocolInstance,
@@ -1280,7 +1355,7 @@ async function initSubgraphFromContract(
       this.exit(1);
     }
 
-    while (addContract) {
+    while (addContract && !isComposedSubgraph) {
       addContract = await addAnotherContract
         .bind(this)({
           protocolInstance,

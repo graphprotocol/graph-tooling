@@ -508,6 +508,9 @@ export default class Compiler {
       `Failed to write compiled subgraph to ${displayDir}`,
       `Warnings while writing compiled subgraph to ${displayDir}`,
       async spinner => {
+        // Add debug log for initial subgraph state
+        compilerDebug('Initial subgraph state:', subgraph.toJS());
+
         // Copy schema and update its path
         subgraph = subgraph.updateIn(['schema', 'file'], schemaFile => {
           const schemaFilePath = path.resolve(this.sourceDir, schemaFile as string);
@@ -518,32 +521,49 @@ export default class Compiler {
           return path.relative(this.options.outputDir, targetFile);
         });
 
+        // Add debug log before processing data sources
+        compilerDebug('Processing dataSources:', subgraph.get('dataSources').toJS());
+
         // Copy data source files and update their paths
         subgraph = subgraph.update('dataSources', (dataSources: any[]) =>
           dataSources.map(dataSource => {
+            // Add debug log for each data source
+            compilerDebug('Processing dataSource:', dataSource.toJS());
+
             let updatedDataSource = dataSource;
 
             if (this.protocol.hasABIs()) {
-              updatedDataSource = updatedDataSource
-                // Write data source ABIs to the output directory
-                .updateIn(['mapping', 'abis'], (abis: any[]) =>
-                  abis.map((abi: any) =>
-                    abi.update('file', (abiFile: string) => {
-                      abiFile = path.resolve(this.sourceDir, abiFile);
-                      const abiData = this.ABI.load(abi.get('name'), abiFile);
-                      return path.relative(
-                        this.options.outputDir,
-                        this._writeSubgraphFile(
-                          abiFile,
-                          JSON.stringify(abiData.data.toJS(), null, 2),
-                          this.sourceDir,
-                          this.subgraphDir(this.options.outputDir, dataSource),
-                          spinner,
-                        ),
-                      );
-                    }),
-                  ),
+              // Add debug log for ABIs
+              compilerDebug(
+                'Processing ABIs for dataSource:',
+                dataSource.getIn(['mapping', 'abis'])?.toJS() || 'undefined',
+              );
+
+              updatedDataSource = updatedDataSource.updateIn(['mapping', 'abis'], (abis: any[]) => {
+                compilerDebug('ABIs value:', Array.isArray(abis) ? abis : 'undefined');
+
+                if (!abis) {
+                  compilerDebug('No ABIs found for dataSource');
+                  return immutable.List();
+                }
+
+                return abis.map((abi: any) =>
+                  abi.update('file', (abiFile: string) => {
+                    abiFile = path.resolve(this.sourceDir, abiFile);
+                    const abiData = this.ABI.load(abi.get('name'), abiFile);
+                    return path.relative(
+                      this.options.outputDir,
+                      this._writeSubgraphFile(
+                        abiFile,
+                        JSON.stringify(abiData.data.toJS(), null, 2),
+                        this.sourceDir,
+                        this.subgraphDir(this.options.outputDir, dataSource),
+                        spinner,
+                      ),
+                    );
+                  }),
                 );
+              });
             }
 
             if (protocol.name == 'substreams' || protocol.name == 'substreams/triggers') {
