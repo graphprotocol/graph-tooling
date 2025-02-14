@@ -270,7 +270,7 @@ exports[`Init > From existing subgraph > From existing subgraph 2`] = `0`;
 
 exports[`Init > From existing subgraph > From existing subgraph 3`] = `
 "
-Subgraph user/from-existing-subgraph created in subgraph
+Subgraph userfrom-existing-subgraph created in subgraph
 
 Next steps:
 
