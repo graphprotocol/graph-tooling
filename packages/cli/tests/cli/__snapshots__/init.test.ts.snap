@@ -270,13 +270,13 @@ exports[`Init > From existing subgraph > From existing subgraph 2`] = `0`;
 
 exports[`Init > From existing subgraph > From existing subgraph 3`] = `
 "
-Subgraph userfrom-existing-subgraph created in subgraph
+Subgraph userfrom-existing-subgraph created in from-subgraph
 
 Next steps:
 
   1. Run \`graph auth\` to authenticate with your deploy key.
 
-  2. Type \`cd subgraph\` to enter the subgraph.
+  2. Type \`cd from-subgraph\` to enter the subgraph.
 
   3. Run \`yarn deploy\` to deploy the subgraph.
 

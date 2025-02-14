@@ -142,6 +142,15 @@ async function retry<T>(operation: () => Promise<T>, maxRetries = 3, sleepMs = 5
   throw lastError;
 }
 
+const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => 
+      setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs)
+    )
+  ]);
+};
+
 describe('getStartBlockForContract', { concurrent: true }, async () => {
   const registry = await loadRegistry();
   const contractService = new ContractService(registry);
@@ -152,7 +161,7 @@ describe('getStartBlockForContract', { concurrent: true }, async () => {
         { timeout: 50_000 },
         async ({ expect }) => {
           const startBlock = await retry(
-            () => contractService.getStartBlock(network, contract),
+            async () => withTimeout(contractService.getStartBlock(network, contract), 5000),
             10,
           );
           expect(parseInt(startBlock)).toBe(startBlockExp);

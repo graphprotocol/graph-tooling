@@ -257,9 +257,9 @@ describe(
           '--protocol',
           'subgraph',
           'user/from-existing-subgraph',
-          path.join(fromSubgraphBaseDir, 'subgraph'),
+          path.join(fromSubgraphBaseDir, 'from-subgraph'),
         ],
-        path.join('init', 'subgraph', 'subgraph'),
+        path.join('init', 'subgraph', 'from-subgraph'),
         {
           exitCode: 0,
           timeout: 100_000,
