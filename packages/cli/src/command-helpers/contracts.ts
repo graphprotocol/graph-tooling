@@ -40,10 +40,13 @@ export class ContractService {
       result.url,
       json,
     );
-    if (json.message) {
-      throw new Error(`${json.message ?? ''} - ${json.result ?? ''}`);
+    if (!result.ok) {
+      throw new Error(`${result.status} ${result.statusText}`);
     }
-    return null;
+    if (json.message) {
+      throw new Error(`${json.message} - ${json.result ?? ''}`);
+    }
+    throw new Error('Empty response');
   }
 
   // replace {api_key} with process.env[api_key]
@@ -91,7 +94,7 @@ export class ContractService {
           this.fetchFromEtherscan(`${url}?module=contract&action=getabi&address=${address}`).then(
             json => {
               if (!json?.result) {
-                throw new Error(`no result: ${JSON.stringify(json)}`);
+                throw new Error(`No result: ${JSON.stringify(json ?? {})}`);
               }
               return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
             },
@@ -104,7 +107,7 @@ export class ContractService {
         for (const err of error.errors) {
           logger(`Failed to fetch ABI: ${err}`);
         }
-        throw new Error(`Failed to fetch ABI for ${address}`);
+        throw new Error(`Failed to fetch ABI: ${error.errors?.[0] ?? 'no public RPC endpoints'}`);
       }
       throw error;
     }
@@ -123,7 +126,7 @@ export class ContractService {
             `${url}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
           ).then(async json => {
             if (!json?.result?.length) {
-              throw new Error(`no result: ${JSON.stringify(json)}`);
+              throw new Error(`No result: ${JSON.stringify(json)}`);
             }
             if (json.result[0]?.blockNumber) {
               return json.result[0].blockNumber;
@@ -131,7 +134,7 @@ export class ContractService {
             const txHash = json.result[0].txHash;
             const tx = await this.fetchTransactionByHash(networkId, txHash);
             if (!tx?.blockNumber) {
-              throw new Error(`no blockNumber: ${JSON.stringify(tx)}`);
+              throw new Error(`No block number: ${JSON.stringify(tx)}`);
             }
             return Number(tx.blockNumber).toString();
           }),
@@ -143,7 +146,7 @@ export class ContractService {
         for (const err of error.errors) {
           logger(`Failed to fetch start block: ${err}`);
         }
-        throw new Error(`Failed to fetch deploy contract transaction for ${address}`);
+        throw new Error(`Failed to fetch contract deployment transaction`);
       }
       throw error;
     }
@@ -161,11 +164,11 @@ export class ContractService {
           this.fetchFromEtherscan(
             `${url}?module=contract&action=getsourcecode&address=${address}`,
           ).then(json => {
-            if (!json) {
-              throw new Error(`no result: ${JSON.stringify(json)}`);
+            if (!json?.result?.length) {
+              throw new Error(`No result: ${JSON.stringify(json)}`);
             }
             const { ContractName } = json.result[0];
-            if (ContractName === '') {
+            if (!ContractName) {
               throw new Error('Contract name is empty');
             }
             return ContractName;
@@ -178,7 +181,7 @@ export class ContractService {
         for (const err of error.errors) {
           logger(`Failed to fetch contract name: ${err}`);
         }
-        throw new Error(`Failed to fetch contract name for ${address}`);
+        throw new Error(`Name not found`);
       }
       throw error;
     }
@@ -216,21 +219,20 @@ export class ContractService {
         throw new Error(`Invalid Sourcify response: ${error}`);
       });
 
-      if (json) {
-        const abi = json.abi;
-        const contractName = json.compilation?.name;
-        const blockNumber = json.deployment?.blockNumber;
-
-        if (!abi || !contractName || !blockNumber) throw new Error('Contract is missing metadata');
-
-        return {
-          abi: new ABICtor(contractName, undefined, immutable.fromJS(abi)) as ABI,
-          startBlock: Number(blockNumber).toString(),
-          name: contractName,
-        };
+      if (!json) {
+        throw new Error(`No result`);
       }
+      const abi = json.abi;
+      const contractName = json.compilation?.name;
+      const blockNumber = json.deployment?.blockNumber;
 
-      throw new Error(`No result: ${JSON.stringify(json)}`);
+      if (!abi || !contractName || !blockNumber) throw new Error('Contract is missing metadata');
+
+      return {
+        abi: new ABICtor(contractName, undefined, immutable.fromJS(abi)) as ABI,
+        startBlock: Number(blockNumber).toString(),
+        name: contractName,
+      };
     } catch (error) {
       logger(`Failed to fetch from Sourcify: ${error}`);
     }
@@ -260,7 +262,7 @@ export class ContractService {
             })
               .then(response => response.json())
               .then(json => {
-                if (!json.result) {
+                if (!json?.result) {
                   throw new Error(JSON.stringify(json));
                 }
                 return json.result;
