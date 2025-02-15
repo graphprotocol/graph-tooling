@@ -6,13 +6,23 @@ import ABI from '../protocols/ethereum/abi.js';
 
 const logger = debugFactory('graph-cli:contract-service');
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number = 10_000): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), timeoutMs),
+    ),
+  ]);
+}
 export class ContractService {
   constructor(private registry: NetworksRegistry) {}
 
   private async fetchFromEtherscan(url: string): Promise<any | null> {
-    const result = await fetch(url).catch(_error => {
-      throw new Error(`Contract API is unreachable`);
-    });
+    const result = await withTimeout(
+      fetch(url).catch(_error => {
+        throw new Error(`Contract API is unreachable`);
+      }),
+    );
     let json: any = {};
 
     if (result.ok) {
@@ -191,16 +201,20 @@ export class ContractService {
 
       const chainId = network.caip2Id.split(':')[1];
       const url = `https://sourcify.dev/server/v2/contract/${chainId}/${address}?fields=abi,compilation,deployment`;
-      const resp = await fetch(url).catch(error => {
-        throw new Error(`Sourcify API is unreachable: ${error}`);
-      });
+      const resp = await withTimeout(
+        fetch(url).catch(error => {
+          throw new Error(`Sourcify API is unreachable: ${error}`);
+        }),
+      );
       if (resp.status === 404) throw new Error(`Sourcify API says contract is not verified`);
       if (!resp.ok) throw new Error(`Sourcify API returned status ${resp.status}`);
       const json: {
         abi: any[];
         compilation: { name: string };
         deployment: { blockNumber: string };
-      } = await resp.json();
+      } = await resp.json().catch(error => {
+        throw new Error(`Invalid Sourcify response: ${error}`);
+      });
 
       if (json) {
         const abi = json.abi;
@@ -233,23 +247,25 @@ export class ContractService {
     try {
       const result = await Promise.any(
         urls.map(url =>
-          fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              jsonrpc: '2.0',
-              method: 'eth_getTransactionByHash',
-              params: [txHash],
-              id: 1,
-            }),
-          })
-            .then(response => response.json())
-            .then(json => {
-              if (!json.result) {
-                throw new Error(JSON.stringify(json));
-              }
-              return json.result;
-            }),
+          withTimeout(
+            fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'eth_getTransactionByHash',
+                params: [txHash],
+                id: 1,
+              }),
+            })
+              .then(response => response.json())
+              .then(json => {
+                if (!json.result) {
+                  throw new Error(JSON.stringify(json));
+                }
+                return json.result;
+              }),
+          ),
         ),
       );
       return result;
