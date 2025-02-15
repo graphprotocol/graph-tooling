@@ -6,13 +6,23 @@ import ABI from '../protocols/ethereum/abi.js';
 
 const logger = debugFactory('graph-cli:contract-service');
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number = 10_000): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), timeoutMs),
+    ),
+  ]);
+}
 export class ContractService {
   constructor(private registry: NetworksRegistry) {}
 
   private async fetchFromEtherscan(url: string): Promise<any | null> {
-    const result = await fetch(url).catch(_error => {
-      throw new Error(`Contract API is unreachable`);
-    });
+    const result = await withTimeout(
+      fetch(url).catch(_error => {
+        throw new Error(`Contract API is unreachable`);
+      }),
+    );
     let json: any = {};
 
     if (result.ok) {
@@ -30,10 +40,13 @@ export class ContractService {
       result.url,
       json,
     );
-    if (json.message) {
-      throw new Error(`${json.message ?? ''} - ${json.result ?? ''}`);
+    if (!result.ok) {
+      throw new Error(`${result.status} ${result.statusText}`);
     }
-    return null;
+    if (json.message) {
+      throw new Error(`${json.message} - ${json.result ?? ''}`);
+    }
+    throw new Error('Empty response');
   }
 
   // replace {api_key} with process.env[api_key]
@@ -71,27 +84,33 @@ export class ContractService {
 
   async getABI(ABICtor: typeof ABI, networkId: string, address: string) {
     const urls = this.getEtherscanUrls(networkId);
-    const errors: string[] = [];
     if (!urls.length) {
       throw new Error(`No contract API available for ${networkId} in the registry`);
     }
-    for (const url of urls) {
-      try {
-        const json = await this.fetchFromEtherscan(
-          `${url}?module=contract&action=getabi&address=${address}`,
-        );
 
-        if (json) {
-          return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
+    try {
+      const result = await Promise.any(
+        urls.map(url =>
+          this.fetchFromEtherscan(`${url}?module=contract&action=getabi&address=${address}`).then(
+            json => {
+              if (!json?.result) {
+                throw new Error(`No result: ${JSON.stringify(json ?? {})}`);
+              }
+              return new ABICtor('Contract', undefined, immutable.fromJS(JSON.parse(json.result)));
+            },
+          ),
+        ),
+      );
+      return result;
+    } catch (error) {
+      if (error instanceof AggregateError) {
+        for (const err of error.errors) {
+          logger(`Failed to fetch ABI: ${err}`);
         }
-        throw new Error(`no result: ${JSON.stringify(json)}`);
-      } catch (error) {
-        logger(`Failed to fetch from ${url}: ${error}`);
-        errors.push(String(error));
+        throw new Error(`Failed to fetch ABI: ${error.errors?.[0] ?? 'no public RPC endpoints'}`);
       }
+      throw error;
     }
-
-    throw new Error(errors?.[0]);
   }
 
   async getStartBlock(networkId: string, address: string): Promise<string> {
@@ -99,30 +118,38 @@ export class ContractService {
     if (!urls.length) {
       throw new Error(`No contract API available for ${networkId} in the registry`);
     }
-    for (const url of urls) {
-      try {
-        const json = await this.fetchFromEtherscan(
-          `${url}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
-        );
 
-        if (json?.result?.length) {
-          if (json.result[0]?.blockNumber) {
-            return json.result[0].blockNumber;
-          }
-          const txHash = json.result[0].txHash;
-          const tx = await this.fetchTransactionByHash(networkId, txHash);
-          if (!tx?.blockNumber) {
-            throw new Error(`no blockNumber: ${JSON.stringify(tx)}`);
-          }
-          return Number(tx.blockNumber).toString();
+    try {
+      const result = await Promise.any(
+        urls.map(url =>
+          this.fetchFromEtherscan(
+            `${url}?module=contract&action=getcontractcreation&contractaddresses=${address}`,
+          ).then(async json => {
+            if (!json?.result?.length) {
+              throw new Error(`No result: ${JSON.stringify(json)}`);
+            }
+            if (json.result[0]?.blockNumber) {
+              return json.result[0].blockNumber;
+            }
+            const txHash = json.result[0].txHash;
+            const tx = await this.fetchTransactionByHash(networkId, txHash);
+            if (!tx?.blockNumber) {
+              throw new Error(`No block number: ${JSON.stringify(tx)}`);
+            }
+            return Number(tx.blockNumber).toString();
+          }),
+        ),
+      );
+      return result;
+    } catch (error) {
+      if (error instanceof AggregateError) {
+        for (const err of error.errors) {
+          logger(`Failed to fetch start block: ${err}`);
         }
-        throw new Error(`no result: ${JSON.stringify(json)}`);
-      } catch (error) {
-        logger(`Failed to fetch start block from ${url}: ${error}`);
+        throw new Error(`Failed to fetch contract deployment transaction`);
       }
+      throw error;
     }
-
-    throw new Error(`Failed to fetch deploy contract transaction for ${address}`);
   }
 
   async getContractName(networkId: string, address: string): Promise<string> {
@@ -130,25 +157,34 @@ export class ContractService {
     if (!urls.length) {
       throw new Error(`No contract API available for ${networkId} in the registry`);
     }
-    for (const url of urls) {
-      try {
-        const json = await this.fetchFromEtherscan(
-          `${url}?module=contract&action=getsourcecode&address=${address}`,
-        );
 
-        if (json) {
-          const { ContractName } = json.result[0];
-          if (ContractName !== '') {
+    try {
+      const result = await Promise.any(
+        urls.map(url =>
+          this.fetchFromEtherscan(
+            `${url}?module=contract&action=getsourcecode&address=${address}`,
+          ).then(json => {
+            if (!json?.result?.length) {
+              throw new Error(`No result: ${JSON.stringify(json)}`);
+            }
+            const { ContractName } = json.result[0];
+            if (!ContractName) {
+              throw new Error('Contract name is empty');
+            }
             return ContractName;
-          }
+          }),
+        ),
+      );
+      return result;
+    } catch (error) {
+      if (error instanceof AggregateError) {
+        for (const err of error.errors) {
+          logger(`Failed to fetch contract name: ${err}`);
         }
-        throw new Error(`no result: ${JSON.stringify(json)}`);
-      } catch (error) {
-        logger(`Failed to fetch from ${url}: ${error}`);
+        throw new Error(`Name not found`);
       }
+      throw error;
     }
-
-    throw new Error(`Failed to fetch contract name for ${address}`);
   }
 
   async getFromSourcify(
@@ -168,32 +204,35 @@ export class ContractService {
 
       const chainId = network.caip2Id.split(':')[1];
       const url = `https://sourcify.dev/server/v2/contract/${chainId}/${address}?fields=abi,compilation,deployment`;
-      const resp = await fetch(url).catch(error => {
-        throw new Error(`Sourcify API is unreachable: ${error}`);
-      });
+      const resp = await withTimeout(
+        fetch(url).catch(error => {
+          throw new Error(`Sourcify API is unreachable: ${error}`);
+        }),
+      );
       if (resp.status === 404) throw new Error(`Sourcify API says contract is not verified`);
       if (!resp.ok) throw new Error(`Sourcify API returned status ${resp.status}`);
       const json: {
         abi: any[];
         compilation: { name: string };
         deployment: { blockNumber: string };
-      } = await resp.json();
+      } = await resp.json().catch(error => {
+        throw new Error(`Invalid Sourcify response: ${error}`);
+      });
 
-      if (json) {
-        const abi = json.abi;
-        const contractName = json.compilation?.name;
-        const blockNumber = json.deployment?.blockNumber;
-
-        if (!abi || !contractName || !blockNumber) throw new Error('Contract is missing metadata');
-
-        return {
-          abi: new ABICtor(contractName, undefined, immutable.fromJS(abi)) as ABI,
-          startBlock: Number(blockNumber).toString(),
-          name: contractName,
-        };
+      if (!json) {
+        throw new Error(`No result`);
       }
+      const abi = json.abi;
+      const contractName = json.compilation?.name;
+      const blockNumber = json.deployment?.blockNumber;
 
-      throw new Error(`No result: ${JSON.stringify(json)}`);
+      if (!abi || !contractName || !blockNumber) throw new Error('Contract is missing metadata');
+
+      return {
+        abi: new ABICtor(contractName, undefined, immutable.fromJS(abi)) as ABI,
+        startBlock: Number(blockNumber).toString(),
+        name: contractName,
+      };
     } catch (error) {
       logger(`Failed to fetch from Sourcify: ${error}`);
     }
@@ -206,29 +245,41 @@ export class ContractService {
     if (!urls.length) {
       throw new Error(`No JSON-RPC available for ${networkId} in the registry`);
     }
-    for (const url of urls) {
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            method: 'eth_getTransactionByHash',
-            params: [txHash],
-            id: 1,
-          }),
-        });
 
-        const json = await response.json();
-        if (json.result) {
-          return json.result;
+    try {
+      const result = await Promise.any(
+        urls.map(url =>
+          withTimeout(
+            fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'eth_getTransactionByHash',
+                params: [txHash],
+                id: 1,
+              }),
+            })
+              .then(response => response.json())
+              .then(json => {
+                if (!json?.result) {
+                  throw new Error(JSON.stringify(json));
+                }
+                return json.result;
+              }),
+          ),
+        ),
+      );
+      return result;
+    } catch (error) {
+      if (error instanceof AggregateError) {
+        // All promises were rejected
+        for (const err of error.errors) {
+          logger(`Failed to fetch tx ${txHash}: ${err}`);
         }
-        throw new Error(JSON.stringify(json));
-      } catch (error) {
-        logger(`Failed to fetch tx ${txHash} from ${url}: ${error}`);
+        throw new Error(`Failed to fetch transaction ${txHash}`);
       }
+      throw error;
     }
-
-    throw new Error(`JSON-RPC is unreachable`);
   }
 }
