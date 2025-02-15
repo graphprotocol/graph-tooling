@@ -1,3 +1,5 @@
+import { strings } from 'gluegun';
+
 export const source = ({
   contract,
   startBlock,
@@ -30,5 +32,5 @@ export const mapping = ({
           entity: ${entity}`,
         )
         .join(' ')}
-      file: ./src/${contractName}.ts
+      file: ./src/${strings.kebabCase(contractName)}.ts
 `;
