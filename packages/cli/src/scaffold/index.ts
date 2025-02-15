@@ -20,7 +20,7 @@ const GRAPH_CLI_VERSION = process.env.GRAPH_CLI_TESTS
     undefined
   : // For scaffolding real subgraphs
     version;
-const GRAPH_TS_VERSION = '0.36.0';
+const GRAPH_TS_VERSION = '0.37.0';
 const GRAPH_MATCHSTICK_VERSION = '0.6.0';
 
 export interface ScaffoldOptions {
@@ -141,7 +141,7 @@ export default class Scaffold {
 
     return await prettier.format(
       `
-specVersion: 1.0.0
+specVersion: 1.2.0
 indexerHints:
   prune: auto
 schema:
