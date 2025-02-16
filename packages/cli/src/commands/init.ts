@@ -710,33 +710,34 @@ async function processInitForm(
           return address;
         }
 
-        const sourcifyContractInfo = await contractService.getFromSourcify(
-          EthereumABI,
-          network.id,
-          address,
-        );
-        if (sourcifyContractInfo) {
-          initStartBlock ??= sourcifyContractInfo.startBlock;
-          initContractName ??= sourcifyContractInfo.name;
-          initAbi ??= sourcifyContractInfo.abi;
-          initDebugger.extend('processInitForm')(
-            "infoFromSourcify: '%s'/'%s'",
-            initStartBlock,
-            initContractName,
-          );
-        }
-
-        // If ABI is not provided, try to fetch it from Etherscan API
+        // If ABI is not provided, try to fetch it from Sourcify/Etherscan API
         if (protocolInstance.hasABIs() && !initAbi) {
-          abiFromApi = await retryWithPrompt(() =>
-            withSpinner(
-              'Fetching ABI from contract API...',
-              'Failed to fetch ABI',
-              'Warning fetching ABI',
-              () => contractService.getABI(protocolInstance.getABI(), network.id, address),
-            ),
+          const sourcifyContractInfo = await withSpinner(
+            'Fetching ABI from Sourcify API...',
+            'Failed to fetch ABI',
+            'Warning fetching ABI',
+            () => contractService.getFromSourcify(protocolInstance.getABI(), network.id, address),
           );
-          initDebugger.extend('processInitForm')("abiFromEtherscan len: '%s'", abiFromApi?.name);
+          if (sourcifyContractInfo) {
+            initStartBlock ??= sourcifyContractInfo.startBlock;
+            initContractName ??= sourcifyContractInfo.name;
+            abiFromApi ??= sourcifyContractInfo.abi;
+            initDebugger.extend('processInitForm')(
+              "infoFromSourcify: '%s'/'%s'",
+              initStartBlock,
+              initContractName,
+            );
+          } else {
+            abiFromApi = await retryWithPrompt(() =>
+              withSpinner(
+                'Fetching ABI from Contract API...',
+                'Failed to fetch ABI',
+                'Warning fetching ABI',
+                () => contractService.getABI(protocolInstance.getABI(), network.id, address),
+              ),
+            );
+            initDebugger.extend('processInitForm')("abiFromEtherscan ABI: '%s'", abiFromApi?.name);
+          }
         } else {
           abiFromApi = initAbi;
         }
@@ -745,7 +746,7 @@ async function processInitForm(
         if (!initStartBlock) {
           startBlock = await retryWithPrompt(() =>
             withSpinner(
-              'Fetching start block from contract API...',
+              'Fetching start block from Contract API...',
               'Failed to fetch start block',
               'Warning fetching start block',
               () => contractService.getStartBlock(network.id, address),
@@ -758,7 +759,7 @@ async function processInitForm(
         if (!initContractName) {
           contractName = await retryWithPrompt(() =>
             withSpinner(
-              'Fetching contract name from contract API...',
+              'Fetching contract name from Contract API...',
               'Failed to fetch contract name',
               'Warning fetching contract name',
               () => contractService.getContractName(network.id, address),
