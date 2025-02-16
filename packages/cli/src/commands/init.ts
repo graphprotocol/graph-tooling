@@ -16,7 +16,11 @@ import { retryWithPrompt } from '../command-helpers/retry.js';
 import { generateScaffold, writeScaffold } from '../command-helpers/scaffold.js';
 import { sortWithPriority } from '../command-helpers/sort.js';
 import { withSpinner } from '../command-helpers/spinner.js';
-import { formatSubgraphName, getSubgraphBasename } from '../command-helpers/subgraph.js';
+import {
+  formatContractName,
+  formatSubgraphName,
+  getSubgraphBasename,
+} from '../command-helpers/subgraph.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 import debugFactory from '../debug.js';
 import EthereumABI from '../protocols/ethereum/abi.js';
@@ -289,7 +293,7 @@ export default class InitCommand extends Command {
           indexEvents,
           network,
           subgraphName,
-          contractName: contractName || DEFAULT_CONTRACT_NAME,
+          contractName,
           node,
           startBlock,
           spkgPath,
@@ -351,7 +355,7 @@ export default class InitCommand extends Command {
           network: answers.network,
           source: answers.source,
           indexEvents: answers.indexEvents,
-          contractName: answers.contractName || DEFAULT_CONTRACT_NAME,
+          contractName: answers.contractName,
           node,
           startBlock: answers.startBlock,
           spkgPath: answers.spkgPath,
@@ -1307,7 +1311,7 @@ async function initSubgraphFromContract(
           network,
           source,
           indexEvents,
-          contractName,
+          contractName: formatContractName(contractName || DEFAULT_CONTRACT_NAME),
           startBlock,
           node,
           spkgPath,
