@@ -876,7 +876,7 @@ async function processInitForm(
       type: 'input',
       name: 'contractName',
       message: 'Contract name',
-      initial: () => initContractName || contractName || 'Contract',
+      initial: () => initContractName || contractName || DEFAULT_CONTRACT_NAME,
       skip: () => initFromExample !== undefined || !protocolInstance.hasContract() || isSubstreams,
       validate: value =>
         initFromExample !== undefined ||
