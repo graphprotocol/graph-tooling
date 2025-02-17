@@ -69,6 +69,7 @@ const TEST_TUPLE_ARRAY_EVENT = {
       ],
     },
     { name: 'addressArray', type: 'address[]' },
+    { name: 'addressSizedArray', type: 'address[10]' },
   ],
 };
 
