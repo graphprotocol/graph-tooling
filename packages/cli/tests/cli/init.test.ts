@@ -34,6 +34,7 @@ describe(
           timeout: 200_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
 
@@ -57,6 +58,7 @@ describe(
           timeout: 100_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
 
@@ -82,6 +84,7 @@ describe(
           timeout: 100_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
 
@@ -107,6 +110,7 @@ describe(
           timeout: 100_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
 
@@ -132,6 +136,7 @@ describe(
           timeout: 100_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
 
@@ -157,6 +162,7 @@ describe(
           timeout: 100_000,
           cwd: ethereumBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
 
@@ -211,6 +217,7 @@ describe(
           timeout: 100_000,
           cwd: nearBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
     });
@@ -238,6 +245,7 @@ describe(
           timeout: 100_000,
           cwd: substreamsBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
     });
@@ -265,6 +273,7 @@ describe(
           timeout: 100_000,
           cwd: fromSubgraphBaseDir,
           deleteDir: true,
+          runBuild: true,
         },
       );
     });

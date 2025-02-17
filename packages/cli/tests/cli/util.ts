@@ -42,11 +42,17 @@ export function cliTest(
         expect(stripAnsi(stderr)).toMatchSnapshot();
         expect(exitCode).toMatchSnapshot();
         expect(stripAnsi(stdout)).toMatchSnapshot();
-      } finally {
+
         if (options.runBuild) {
-          const [exitCode] = await packageManagerBuild(resolvePath(`./${testPath}`));
-          expect(exitCode).toBe(0);
+          const [exitCode, stdout, stderr] = await runGraphCli(
+            ['build'],
+            resolvePath(`./${testPath}`),
+          );
+          expect(stripAnsi(stderr)).toMatchSnapshot();
+          expect(exitCode).toMatchSnapshot();
+          expect(stripAnsi(stdout)).toMatchSnapshot();
         }
+      } finally {
         deleteDir(resolvePath(`./${testPath}`), !!options.deleteDir);
       }
     },

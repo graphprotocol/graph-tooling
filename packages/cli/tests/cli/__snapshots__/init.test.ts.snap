@@ -36,6 +36,49 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 "
 `;
 
+exports[`Init > Ethereum > From contract 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Contract/Contract.json
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Ethereum > From contract 5`] = `0`;
+
+exports[`Init > Ethereum > From contract 6`] = `
+"
+Build completed: build/subgraph.yaml
+
+"
+`;
+
 exports[`Init > Ethereum > From contract with abi 1`] = `
 " ›   Warning: The --skip-git flag will be removed in the next major version. By
  ›    default we will stop initializing a Git repository.
@@ -69,6 +112,49 @@ Next steps:
   3. Run \`yarn deploy\` to deploy the subgraph.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with abi 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Contract/Contract.json
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Ethereum > From contract with abi 5`] = `0`;
+
+exports[`Init > Ethereum > From contract with abi 6`] = `
+"
+Build completed: build/subgraph.yaml
+
 "
 `;
 
@@ -108,6 +194,49 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 "
 `;
 
+exports[`Init > Ethereum > From contract with abi and structs 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Contract/Contract.json
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Ethereum > From contract with abi and structs 5`] = `0`;
+
+exports[`Init > Ethereum > From contract with abi and structs 6`] = `
+"
+Build completed: build/subgraph.yaml
+
+"
+`;
+
 exports[`Init > Ethereum > From contract with index events and abi with ID in events 1`] = `
 " ›   Warning: The --skip-git flag will be removed in the next major version. By
  ›    default we will stop initializing a Git repository.
@@ -141,6 +270,49 @@ Next steps:
   3. Run \`yarn deploy\` to deploy the subgraph.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with index events and abi with ID in events 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Contract/Contract.json
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Ethereum > From contract with index events and abi with ID in events 5`] = `0`;
+
+exports[`Init > Ethereum > From contract with index events and abi with ID in events 6`] = `
+"
+Build completed: build/subgraph.yaml
+
 "
 `;
 
@@ -180,6 +352,49 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 "
 `;
 
+exports[`Init > Ethereum > From contract with list items in abi 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Contract/Contract.json
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Ethereum > From contract with list items in abi 5`] = `0`;
+
+exports[`Init > Ethereum > From contract with list items in abi 6`] = `
+"
+Build completed: build/subgraph.yaml
+
+"
+`;
+
 exports[`Init > Ethereum > From contract with overloaded elements 1`] = `
 " ›   Warning: The --skip-git flag will be removed in the next major version. By
  ›    default we will stop initializing a Git repository.
@@ -213,6 +428,49 @@ Next steps:
   3. Run \`yarn deploy\` to deploy the subgraph.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Ethereum > From contract with overloaded elements 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Contract/Contract.json
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Ethereum > From contract with overloaded elements 5`] = `0`;
+
+exports[`Init > Ethereum > From contract with overloaded elements 6`] = `
+"
+Build completed: build/subgraph.yaml
+
 "
 `;
 
@@ -250,6 +508,55 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 "
 `;
 
+exports[`Init > Ethereum > From example 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+⚠ Warnings loading subgraph from subgraph.yaml: Warnings in subgraph.yaml:
+
+    Path: description
+    The description is still the one from the example subgraph.
+    Please update it to tell users more about your subgraph.
+
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Gravity => build/Gravity/Gravity.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Gravity/GravatarRegistry.json
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Ethereum > From example 5`] = `0`;
+
+exports[`Init > Ethereum > From example 6`] = `
+"
+Build completed: build/subgraph.yaml
+
+"
+`;
+
 exports[`Init > From existing subgraph > From existing subgraph 1`] = `
 " ›   Warning: The --skip-git flag will be removed in the next major version. By
  ›    default we will stop initializing a Git repository.
@@ -281,6 +588,47 @@ Next steps:
   3. Run \`yarn deploy\` to deploy the subgraph.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > From existing subgraph > From existing subgraph 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > From existing subgraph > From existing subgraph 5`] = `0`;
+
+exports[`Init > From existing subgraph > From existing subgraph 6`] = `
+"
+Build completed: build/subgraph.yaml
+
 "
 `;
 
@@ -320,6 +668,47 @@ Make sure to visit the documentation on https://thegraph.com/docs/ for further i
 "
 `;
 
+exports[`Init > NEAR > From contract 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+  Compile data source: Contract => build/Contract/Contract.wasm
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > NEAR > From contract 5`] = `0`;
+
+exports[`Init > NEAR > From contract 6`] = `
+"
+Build completed: build/subgraph.yaml
+
+"
+`;
+
 exports[`Init > Substreams > From package 1`] = `
 " ›   Warning: The --skip-git flag will be removed in the next major version. By
  ›    default we will stop initializing a Git repository.
@@ -349,5 +738,46 @@ Next steps:
   3. Run \`yarn deploy\` to deploy the subgraph.
 
 Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+"
+`;
+
+exports[`Init > Substreams > From package 4`] = `
+"- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.1 to 0.0.2 (graph-ts dependency not installed yet)
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.2 to 0.0.3 (graph-ts dependency not installed yet)
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.3 to 0.0.4 (graph-ts dependency not installed yet)
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.4 to 0.0.5 (graph-ts dependency not installed yet)
+- Apply migrations
+  Skip migration: Bump mapping apiVersion from 0.0.5 to 0.0.6 (graph-ts dependency not installed yet)
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.1 to 0.0.2
+- Apply migrations
+  Skip migration: Bump manifest specVersion from 0.0.2 to 0.0.4
+- Apply migrations
+✔ Apply migrations
+- Load subgraph from subgraph.yaml
+✔ Load subgraph from subgraph.yaml
+- Compile subgraph
+✔ Compile subgraph
+- Write compiled subgraph to build/
+  Copy schema file build/schema.graphql
+- Write compiled subgraph to build/
+  Write subgraph file build/Contract/substreams.spkg
+- Write compiled subgraph to build/
+  Write subgraph manifest build/subgraph.yaml
+- Write compiled subgraph to build/
+✔ Write compiled subgraph to build/
+"
+`;
+
+exports[`Init > Substreams > From package 5`] = `0`;
+
+exports[`Init > Substreams > From package 6`] = `
+"
+Build completed: build/subgraph.yaml
+
 "
 `;
