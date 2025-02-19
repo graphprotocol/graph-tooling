@@ -18,7 +18,7 @@ class IdField {
   static STRING = Symbol('String');
   static INT8 = Symbol('Int8');
 
-  private kind: typeof IdField.BYTES | typeof IdField.STRING;
+  private kind: typeof IdField.BYTES | typeof IdField.INT8 | typeof IdField.STRING;
 
   constructor(idField: FieldDefinitionNode | undefined) {
     if (idField?.type.kind !== 'NonNullType') {
@@ -34,6 +34,9 @@ class IdField {
         break;
       case 'Int8':
         this.kind = IdField.INT8;
+        break;
+      case 'String':
+        this.kind = IdField.STRING;
         break;
       default:
         this.kind = IdField.STRING;
