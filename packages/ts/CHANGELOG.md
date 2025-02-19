@@ -1,5 +1,11 @@
 # @graphprotocol/graph-ts
 
+## 0.38.0
+
+### Minor Changes
+
+- [#1935](https://github.com/graphprotocol/graph-tooling/pull/1935) [`0c36a02`](https://github.com/graphprotocol/graph-tooling/commit/0c36a024e0516bbf883ae62b8312dba3d9945f04) Thanks [@isum](https://github.com/isum)! - feat: add yaml parsing support to mappings
+
 ## 0.37.0
 
 ### Minor Changes
