@@ -20,7 +20,7 @@ export const mapping = ({
   contractName: string;
 }) => `
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.9
       language: wasm/assemblyscript
       entities:
        - ExampleEntity
