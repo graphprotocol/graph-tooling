@@ -1,5 +1,43 @@
 # @graphprotocol/graph-cli
 
+## 0.96.0
+
+### Minor Changes
+
+- [#1920](https://github.com/graphprotocol/graph-tooling/pull/1920) [`b6d7f1c`](https://github.com/graphprotocol/graph-tooling/commit/b6d7f1cd149c5784089aa92bafd63e6a0d9814a1) Thanks [@incrypto32](https://github.com/incrypto32)! - Add support for subgraph datasource in `graph init`
+
+- [#1929](https://github.com/graphprotocol/graph-tooling/pull/1929) [`4311d0e`](https://github.com/graphprotocol/graph-tooling/commit/4311d0e177b37a7698d5befae9b6e9cafa6b37c9) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - `graph codegen`: handle events with fields with reserved names #1896
+
+### Patch Changes
+
+- [#1834](https://github.com/graphprotocol/graph-tooling/pull/1834) [`0058157`](https://github.com/graphprotocol/graph-tooling/commit/0058157e45c8902cf0068c359492da3d751529f8) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@4.2.4` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.2.4) (from `4.0.34`, in `dependencies`)
+  - Updated dependency [`chokidar@4.0.3` ↗︎](https://www.npmjs.com/package/chokidar/v/4.0.3) (from `4.0.1`, in `dependencies`)
+  - Updated dependency [`debug@4.4.0` ↗︎](https://www.npmjs.com/package/debug/v/4.4.0) (from `4.3.7`, in `dependencies`)
+  - Updated dependency [`fs-extra@11.3.0` ↗︎](https://www.npmjs.com/package/fs-extra/v/11.3.0) (from `11.2.0`, in `dependencies`)
+  - Updated dependency [`glob@11.0.1` ↗︎](https://www.npmjs.com/package/glob/v/11.0.1) (from `11.0.0`, in `dependencies`)
+  - Updated dependency [`graphql@16.10.0` ↗︎](https://www.npmjs.com/package/graphql/v/16.10.0) (from `16.9.0`, in `dependencies`)
+  - Updated dependency [`undici@7.3.0` ↗︎](https://www.npmjs.com/package/undici/v/7.3.0) (from `7.2.3`, in `dependencies`)
+  - Updated dependency [`yaml@2.7.0` ↗︎](https://www.npmjs.com/package/yaml/v/2.7.0) (from `2.6.1`, in `dependencies`)
+
+- [#1932](https://github.com/graphprotocol/graph-tooling/pull/1932) [`80a2ae9`](https://github.com/graphprotocol/graph-tooling/commit/80a2ae9b11260786896665993655056ff048b84b) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@4.2.6` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.2.6) (from `4.2.4`, in `dependencies`)
+  - Updated dependency [`semver@7.7.1` ↗︎](https://www.npmjs.com/package/semver/v/7.7.1) (from `7.6.3`, in `dependencies`)
+
+- [#1965](https://github.com/graphprotocol/graph-tooling/pull/1965) [`e7b0e72`](https://github.com/graphprotocol/graph-tooling/commit/e7b0e72610c63dceb1c0af9bd2ef2c14b8bf7609) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - `graph init`: get generated apiVersion and specVersion up to date
+
+- [#1957](https://github.com/graphprotocol/graph-tooling/pull/1957) [`e4af888`](https://github.com/graphprotocol/graph-tooling/commit/e4af88808798e11450b7383d2d658b2ee5936979) Thanks [@0237h](https://github.com/0237h)! - Use Sourcify v2 endpoint for contract lookups
+
+- [#1962](https://github.com/graphprotocol/graph-tooling/pull/1962) [`7f22631`](https://github.com/graphprotocol/graph-tooling/commit/7f226318cf95d959bba2752d9c7d2d518c0622d7) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - `graph init`: format and validate subgraph slug to match graph-node rules
+
+- [#1919](https://github.com/graphprotocol/graph-tooling/pull/1919) [`955f7b0`](https://github.com/graphprotocol/graph-tooling/commit/955f7b02629c142b18ea9f05fce0a6745a4921b7) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - chore: move github actions around
+
+- [#1954](https://github.com/graphprotocol/graph-tooling/pull/1954) [`9fc413f`](https://github.com/graphprotocol/graph-tooling/commit/9fc413f6ba39bf0c4cc36a7683bb13a1157e3606) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix bug with "other wallets" not working #1900
+
+- [#1960](https://github.com/graphprotocol/graph-tooling/pull/1960) [`33a7148`](https://github.com/graphprotocol/graph-tooling/commit/33a71482283dd2e578ca02ceb8906e85438e09d0) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - `graph init`: improve error reporting
+
 ## 0.95.0
 
 ### Minor Changes
