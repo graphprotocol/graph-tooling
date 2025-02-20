@@ -13,7 +13,7 @@ dataSources:
     name: Contract
     network: mainnet
     source:
-      # We don't realy need a contract, just use Gravatar to have something
+      # We don't really need a contract, just use Gravatar to have something
       # here
       address: '0x2E645469f354BB4F5c8a05B3b30A929361cf77eC'
       abi: Contract
