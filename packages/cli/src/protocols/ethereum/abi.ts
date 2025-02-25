@@ -105,6 +105,9 @@ export default class ABI {
       (entry: any) => !entry.has('type') || functionTypes.includes(entry.get('type')),
     );
 
+    // @ts-expect-error: Unused variable 'arr'
+    const arr = functions.toArray();
+
     // A function is a call function if it is nonpayable, payable or
     // not constant
     const mutabilityTypes = immutable.Set(['nonpayable', 'payable']);
@@ -118,10 +121,10 @@ export default class ABI {
     return this.callFunctions()
       .filter((entry: any) => entry.get('type') !== 'constructor')
       .map((entry: any) => {
-        const name = entry.get('name', '<default>');
-        const inputs = entry
-          .get('inputs', immutable.List())
-          .map((input: any) => buildSignatureParameter(input));
+        const name = entry.get('name') || '<default>';
+        const inputs = (entry.get('inputs') ?? immutable.List()).map((input: any) =>
+          buildSignatureParameter(input),
+        );
 
         return `${name}(${inputs.join(',')})`;
       });
