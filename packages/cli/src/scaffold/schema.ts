@@ -89,11 +89,10 @@ export const generateExampleEntityType = (protocol: Protocol, events: any[]) => 
   id: Bytes!
   count: BigInt!
   ${events[0].inputs
-    .reduce(
-      (acc: any[], input: any, index: number) =>
-        acc.concat(generateEventFields({ input, index, protocolName: protocol.name })),
-      [],
-    )
+    .reduce((acc: any[], input: any, index: number) => {
+      input.name = renameNameIfNeeded(input.name);
+      return acc.concat(generateEventFields({ input, index, protocolName: protocol.name }));
+    }, [])
     .slice(0, 2)
     .join('\n')}
 }`;
