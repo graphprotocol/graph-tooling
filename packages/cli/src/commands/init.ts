@@ -859,7 +859,7 @@ async function processInitForm(
       type: 'input',
       name: 'startBlock',
       message: 'Start block',
-      initial: () => initStartBlock || startBlock || '0',
+      initial: () => String(initStartBlock || startBlock || 0),
       skip: () => initFromExample !== undefined || isSubstreams,
       validate: value =>
         initFromExample !== undefined ||
