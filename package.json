@@ -36,8 +36,8 @@
     "@theguild/eslint-config": "0.13.2",
     "@theguild/prettier-config": "3.0.0",
     "@types/node": "^22.10.1",
-    "eslint": "9.19.0",
-    "prettier": "3.4.2"
+    "eslint": "9.21.0",
+    "prettier": "3.5.2"
   },
   "pnpm": {
     "patchedDependencies": {
