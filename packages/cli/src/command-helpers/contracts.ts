@@ -164,10 +164,10 @@ export class ContractService {
           this.fetchFromEtherscan(
             `${url}?module=contract&action=getsourcecode&address=${address}`,
           ).then(json => {
-            if (!json?.result?.length) {
+            if (!json?.result) {
               throw new Error(`No result: ${JSON.stringify(json)}`);
             }
-            const { ContractName } = json.result[0];
+            const { ContractName } = json.result?.[0] ?? json.result ?? {};
             if (!ContractName) {
               throw new Error('Contract name is empty');
             }
