@@ -583,6 +583,134 @@ describe('Schema code generator', { concurrent: true }, () => {
     });
   });
 
+  test('Should handle references with Int8 id types', async () => {
+    const codegen = createSchemaCodeGen(`
+    interface Employee {
+      id: Int8!
+      name: String!
+     }
+
+    type Worker implements Employee @entity {
+      id: Int8!
+      name: String!
+      tasks: [Task!]
+   }
+
+    type Task @entity {
+      id: Int8!
+      employee: Employee!
+      workers: [Worker!] @derivedFrom(field: "tasks")
+      worker: Worker!
+   }
+`);
+
+    const generatedTypes = codegen.generateTypes();
+    await testEntity(generatedTypes, {
+      name: 'Task',
+      members: [],
+      methods: [
+        {
+          name: 'constructor',
+          params: [new Param('id', new NamedType('Int8'))],
+          returnType: undefined,
+          body: "\n      super()\n      this.set('id', Value.fromI64(id))\n      ",
+        },
+        {
+          name: 'save',
+          params: [],
+          returnType: new NamedType('void'),
+          body:
+            '\n' +
+            "        let id = this.get('id')\n" +
+            '        assert(id != null,\n' +
+            "               'Cannot save Task entity without an ID')\n" +
+            '        if (id) {\n' +
+            '          assert(id.kind == ValueKind.INT8,\n' +
+            "                 `Entities of type Task must have an ID of type Int8 but the id '${id.displayData()}' is of type ${id.displayKind()}`)\n" +
+            "          store.set('Task', id.toI64().toString(), this)\n" +
+            '        }',
+        },
+        {
+          name: 'loadInBlock',
+          static: true,
+          params: [new Param('id', new NamedType('Int8'))],
+          returnType: new NullableType(new NamedType('Task')),
+          body:
+            '\n' +
+            "        return changetype<Task | null>(store.get_in_block('Task', id.toString()))\n" +
+            '        ',
+        },
+        {
+          name: 'load',
+          static: true,
+          params: [new Param('id', new NamedType('Int8'))],
+          returnType: new NullableType(new NamedType('Task')),
+          body:
+            '\n' +
+            "        return changetype<Task | null>(store.get('Task', id.toString()))\n" +
+            '        ',
+        },
+        {
+          name: 'get id',
+          params: [],
+          returnType: new NamedType('i64'),
+          body: `let value = this.get("id")
+            if (!value || value.kind == ValueKind.NULL) {
+               return 0;
+             } else {
+               return value.toI64()
+             }`,
+        },
+        {
+          name: 'set id',
+          params: [new Param('value', new NamedType('i64'))],
+          returnType: undefined,
+          body: "\n      this.set('id', Value.fromI64(value))\n    ",
+        },
+        {
+          name: 'get employee',
+          params: [],
+          returnType: new NamedType('i64'),
+          body: `let value = this.get('employee')
+            if (!value || value.kind == ValueKind.NULL) {
+              return 0;
+            } else {
+              return value.toI64()
+            }`,
+        },
+        {
+          name: 'set employee',
+          params: [new Param('value', new NamedType('i64'))],
+          returnType: undefined,
+          body: "\n      this.set('employee', Value.fromI64(value))\n    ",
+        },
+        {
+          name: 'get worker',
+          params: [],
+          returnType: new NamedType('i64'),
+          body: `let value = this.get('worker')
+          if (!value || value.kind == ValueKind.NULL) {
+            return 0;
+          } else {
+            return value.toI64()
+          }`,
+        },
+        {
+          name: 'set worker',
+          params: [new Param('value', new NamedType('i64'))],
+          returnType: undefined,
+          body: "\n      this.set('worker', Value.fromI64(value))\n    ",
+        },
+        {
+          name: 'get workers',
+          params: [],
+          returnType: new NamedType('WorkerLoader'),
+          body: "\n      return new WorkerLoader('Task', this.get('id')!.toString(), 'workers')\n    ",
+        },
+      ],
+    });
+  });
+
   test('get related method for WithBytes entity', async () => {
     const codegen = createSchemaCodeGen(`
       type WithBytes @entity {

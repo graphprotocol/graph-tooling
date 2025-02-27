@@ -338,7 +338,7 @@ export class Value {
     }
     return Value.fromArray(output);
   }
-  
+
   static fromI64Array(input: Array<i64>): Value {
     const output = new Array<Value>(input.length);
     for (let i: i64 = 0; i < input.length; i++) {
