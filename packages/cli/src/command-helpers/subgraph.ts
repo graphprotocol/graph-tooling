@@ -9,3 +9,7 @@ export const formatSubgraphName = (slug: string) => {
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9_-]/g, '');
 };
+
+export const formatContractName = (contractName: string) => {
+  return contractName.replace(/[\s.]+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+};
