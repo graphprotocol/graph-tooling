@@ -15,12 +15,13 @@ export const generateFieldAssignment = (
 ): { assignment: string; imports: string[] } => {
   const safeKey = key.map(k => util.handleReservedWord(k));
   const safeValue = value.map(v => util.handleReservedWord(v));
+  const cleanType = type.replace(/\[\d+\]/g, '[]');
 
   let rightSide = `event.params.${safeValue.join('.')}`;
   const imports = [];
 
-  if (type in VALUE_TYPECAST_MAP) {
-    const castTo = VALUE_TYPECAST_MAP[type];
+  if (cleanType in VALUE_TYPECAST_MAP) {
+    const castTo = VALUE_TYPECAST_MAP[cleanType];
     rightSide = `changetype<${castTo}>(${rightSide})`;
     imports.push(castTo.replace('[]', ''));
   }
