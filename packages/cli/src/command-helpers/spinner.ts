@@ -36,7 +36,7 @@ export const withSpinner = async (
   const spinner = print.spin(text);
   try {
     const result = await f(spinner);
-    if (typeof result === 'object') {
+    if (result && typeof result === 'object') {
       const hasError = Object.keys(result).includes('error');
       const hasWarning = Object.keys(result).includes('warning');
       const hasResult = Object.keys(result).includes('result');
