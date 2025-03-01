@@ -1,0 +1,6 @@
+[submodule "examples/subgraph-composition-example"]
+	path = examples/subgraph-composition-example
+	url = https://github.com/isum/subgraph-composition-example.git
+[submodule "examples/subgraph-composition-sample-subgraph"]
+	path = examples/subgraph-composition-sample-subgraph
+	url = https://github.com/incrypto32/subgraph-composition-sample-subgraph.git
