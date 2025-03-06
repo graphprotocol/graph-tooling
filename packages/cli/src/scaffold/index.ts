@@ -141,7 +141,7 @@ export default class Scaffold {
 
     return await prettier.format(
       `
-specVersion: 1.2.0
+specVersion: 1.3.0
 indexerHints:
   prune: auto
 schema:
