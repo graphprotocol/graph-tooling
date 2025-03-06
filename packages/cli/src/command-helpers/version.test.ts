@@ -222,7 +222,7 @@ describe('Version Command Helpers', { concurrent: true }, () => {
       await expect(assertGraphTsVersion(fakeNodeModulesDir, minimumGraphTsVersion)).rejects.toThrow(
         new Error(
           `To use this version of the graph-cli you must upgrade the graph-ts dependency to a version greater than or equal to ${minimumGraphTsVersion}
-Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://thegraph.com/docs/developer/assemblyscript-migration-guide`,
+Also, you'll probably need to take a look at our AssemblyScript migration guide because of language breaking changes: https://thegraph.com/docs/en/resources/migration-guides/assemblyscript-migration-guide/`,
         ),
       );
     });
