@@ -158,7 +158,7 @@ export class Value {
     const values = this.toArray();
     const output = new Array<i64>(values.length);
     for (let i: i32 = 0; i < values.length; i++) {
-      output[i] = values[i].toI32();
+      output[i] = values[i].toI64();
     }
     return output;
   }
