@@ -43,10 +43,4 @@ This section contains several subgraph examples to help you get started with [Th
 13. **[Substreams Powered Subgraph](/examples/substreams-powered-subgraph)**
     This example is a basic Substreams-powered subgraph, which includes the Substreams definition. It tracks new contract deployments on Ethereum and demonstrates integration with Graph Node using `substreams_entity_change` types and helpers.
 
-14. **[Subgraph Composition Using Sushiswap v3 Subgraph on Base](https://github.com/incrypto32/subgraph-composition-sample-subgraph)**
-    This example illustrates how to optimize a Subgraph using Subgraph Composition. It uses a source Subgraph and a dependent Subgraph, where the source Subgraph tracks events from Sushiswap v3 subgraph on Base.
-
-15. **[Subgraph Composition Using Three Source Subgraph](https://github.com/isum/subgraph-composition-example)**
-    This example shows how to combine three source Subgraphs into one composable Subgraph to efficiently aggregate data.
-
 To learn more about subgraphs, review [subgraphs](https://thegraph.com/docs/en/subgraphs/developing/subgraphs/) on [The Graph docs](https://thegraph.com/docs/en/).
