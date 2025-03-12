@@ -1,5 +1,33 @@
 # @graphprotocol/graph-cli
 
+## 0.96.1
+
+### Patch Changes
+
+- [#1956](https://github.com/graphprotocol/graph-tooling/pull/1956) [`59ad5f0`](https://github.com/graphprotocol/graph-tooling/commit/59ad5f06f45cd8d9842156d58f5047040f2cc1dd) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`@oclif/core@4.2.8` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.2.8) (from `4.2.6`, in `dependencies`)
+  - Updated dependency [`docker-compose@1.1.1` ↗︎](https://www.npmjs.com/package/docker-compose/v/1.1.1) (from `1.1.0`, in `dependencies`)
+  - Updated dependency [`prettier@3.5.2` ↗︎](https://www.npmjs.com/package/prettier/v/3.5.2) (from `3.4.2`, in `dependencies`)
+
+- [#1978](https://github.com/graphprotocol/graph-tooling/pull/1978) [`d360f11`](https://github.com/graphprotocol/graph-tooling/commit/d360f11328d32d11246ce5101a168081fedb720a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`undici@7.4.0` ↗︎](https://www.npmjs.com/package/undici/v/7.4.0) (from `7.3.0`, in `dependencies`)
+
+- [#1969](https://github.com/graphprotocol/graph-tooling/pull/1969) [`5ffce65`](https://github.com/graphprotocol/graph-tooling/commit/5ffce651d11a68b8eae743785311eac74c8da563) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - handle sized arrays in abi when changetype
+
+- [#1967](https://github.com/graphprotocol/graph-tooling/pull/1967) [`388ee5a`](https://github.com/graphprotocol/graph-tooling/commit/388ee5a52a150bcd1ce544278f85242ea0498dcf) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - show sourcify fetch status
+
+- [#1934](https://github.com/graphprotocol/graph-tooling/pull/1934) [`30f2aa5`](https://github.com/graphprotocol/graph-tooling/commit/30f2aa500db1b708f38ba6ee7ce7b0e7660cc40b) Thanks [@shiyasmohd](https://github.com/shiyasmohd)! - fix: generate types for mappings when int8 is used as id
+
+- [#1977](https://github.com/graphprotocol/graph-tooling/pull/1977) [`030a7f0`](https://github.com/graphprotocol/graph-tooling/commit/030a7f0d12b7fc178f1e6543e8795511e90b9bc3) Thanks [@idalithb](https://github.com/idalithb)! - Added subgraph composition examples
+
+- [#1971](https://github.com/graphprotocol/graph-tooling/pull/1971) [`4e2b689`](https://github.com/graphprotocol/graph-tooling/commit/4e2b689d90e91b40b6bb4b0af76e42973582ebf7) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - `graph codegen`: fix bug with id field clash in example entity
+
+- [#1966](https://github.com/graphprotocol/graph-tooling/pull/1966) [`84b0d21`](https://github.com/graphprotocol/graph-tooling/commit/84b0d21f60da67295d41f096211d31cd0cd432cb) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - handle invalid characters in contract name #1883
+
+- [#1974](https://github.com/graphprotocol/graph-tooling/pull/1974) [`31c25e7`](https://github.com/graphprotocol/graph-tooling/commit/31c25e74569035209e768332556ad358cb11258d) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - handle non-standard Etherscan API responses, i.e. kaia
+
 ## 0.96.0
 
 ### Minor Changes
