@@ -1,11 +1,11 @@
-type NewGravatar @entity {
+type NewGravatar @entity(immutable: false) {
   id: ID!
   owner: Bytes!
   displayName: String!
   imageUrl: String!
 }
 
-type UpdatedGravatar @entity {
+type UpdatedGravatar @entity(immutable: false) {
   id: ID!
   owner: Bytes!
   displayName: String!

@@ -1,4 +1,4 @@
-type MyEntity @entity {
+type MyEntity @entity(immutable: true) {
   id: ID!
 
   isSet1: bool

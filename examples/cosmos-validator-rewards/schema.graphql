@@ -1,4 +1,4 @@
-type Reward @entity {
+type Reward @entity(immutable: true) {
   id: ID!
   amount: String
   validator: String

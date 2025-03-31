@@ -1,4 +1,4 @@
-type Foo @entity {
+type Foo @entity(immutable: true) {
   id: ID!
   bars: [Bars!]! @derivedFrom(field: "foo")
 }

@@ -1,4 +1,4 @@
-type Block @entity {
+type Block @entity(immutable: true) {
   id: ID!
 
   timestamp: BigInt!
@@ -22,7 +22,7 @@ type Block @entity {
   poa: Poa
 }
 
-type Transaction @entity {
+type Transaction @entity(immutable: true) {
   id: ID!
 
   block: Block!
@@ -39,7 +39,7 @@ type Transaction @entity {
   reward: Bytes!
 }
 
-type Poa @entity {
+type Poa @entity(immutable: true) {
   id: ID!
 
   option: String!
@@ -48,7 +48,7 @@ type Poa @entity {
   chunk: Bytes!
 }
 
-type Tag @entity {
+type Tag @entity(immutable: true) {
   id: ID!
 
   name: Bytes!

@@ -42,4 +42,31 @@ export default class Schema {
       )
       .map(entity => (entity as graphql.ObjectTypeDefinitionNode).name.value);
   }
+
+  immutableEntitiesCount(): number {
+    const isImmutable = (entity: graphql.ConstDirectiveNode) => {
+      return (
+        entity.arguments?.find(arg => {
+          return (
+            (arg.name.value === 'immutable' || arg.name.value === 'timeseries') &&
+            arg.value.kind === 'BooleanValue' &&
+            arg.value.value
+          );
+        }) !== undefined
+      );
+    };
+
+    return this.ast.definitions.filter(def => {
+      if (def.kind !== 'ObjectTypeDefinition') {
+        return false;
+      }
+
+      const entity = def.directives?.find(directive => directive.name.value === 'entity');
+      if (entity === undefined) {
+        return false;
+      }
+
+      return isImmutable(entity);
+    }).length;
+  }
 }

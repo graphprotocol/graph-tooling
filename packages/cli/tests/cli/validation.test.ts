@@ -247,4 +247,13 @@ describe('Validation', { concurrent: true, timeout: 60_000 }, () => {
       exitCode: 0,
     },
   );
+
+  cliTest(
+    'Should require immutable argument on entity directive',
+    ['codegen', '--skip-migrations'],
+    'validation/require-immutable-argument',
+    {
+      exitCode: 1,
+    },
+  );
 });

@@ -1,10 +1,10 @@
-type Greeter @entity {
+type Greeter @entity(immutable: true) {
   id: ID!
   name: String!
   greetings: [Greeting!] @derivedFrom(field: "greeter")
 }
 
-type Greeting @entity {
+type Greeting @entity(immutable: true) {
   id: ID!
   greeter: Greeter!
   timestamp: BigInt!

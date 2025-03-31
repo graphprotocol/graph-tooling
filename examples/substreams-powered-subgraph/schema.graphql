@@ -1,4 +1,4 @@
-type Contract @entity {
+type Contract @entity(immutable: true) {
   id: ID!
 
   "The timestamp when the contract was deployed"

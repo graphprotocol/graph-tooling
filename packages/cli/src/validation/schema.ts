@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { print } from 'gluegun';
 import * as graphql from 'graphql/language/index.js';
 import immutable from 'immutable';
 import debugFactory from '../debug.js';
@@ -97,6 +98,36 @@ const validateEntityDirective = (def: any) => {
           message: `Defined without @entity or @aggregation directive`,
         },
       ]);
+};
+
+const validateEntityDirectiveImmutableArgument = (def: graphql.ObjectTypeDefinitionNode) => {
+  validateDebugger('Validating immutable argument on entity directive for %s', def?.name?.value);
+
+  const entity = def.directives?.find(directive => directive.name.value === 'entity');
+  if (entity === undefined) {
+    return List();
+  }
+
+  const hasImmutableArg =
+    entity.arguments?.find(arg => arg.name.value === 'immutable') !== undefined;
+  const hasTimeseriesArg =
+    entity.arguments?.find(arg => arg.name.value === 'timeseries') !== undefined;
+
+  if (hasImmutableArg || hasTimeseriesArg) {
+    return List();
+  }
+
+  return immutable.fromJS([
+    {
+      loc: def.loc,
+      entity: def.name?.value,
+      message:
+        `@entity directive requires \`immutable\` argument\n  ` +
+        print.colors.yellow(
+          `Hint: Try updating the entity definition with: @entity(immutable: true)`,
+        ),
+    },
+  ]);
 };
 
 const validateEntityID = (def: any) => {
@@ -986,6 +1017,7 @@ const typeDefinitionValidators = {
       ? List.of(...validateSubgraphSchemaDirectives(def), ...validateTypeHasNoFields(def))
       : List.of(
           ...validateEntityDirective(def),
+          ...validateEntityDirectiveImmutableArgument(def),
           ...validateEntityID(def),
           ...validateEntityFields(defs, def),
           ...validateNoImportDirective(def),

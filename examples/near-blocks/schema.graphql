@@ -1,4 +1,4 @@
-type BlockEvent @entity {
+type BlockEvent @entity(immutable: true) {
   id: ID!
   number: BigInt
   hash: Bytes
