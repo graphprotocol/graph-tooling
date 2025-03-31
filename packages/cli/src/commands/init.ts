@@ -1275,6 +1275,13 @@ async function initSubgraphFromContract(
       const schemaString = await loadSubgraphSchemaFromIPFS(ipfsClient, source);
       const schema = await Schema.loadFromString(schemaString);
       immutableEntities = schema.getImmutableEntityNames();
+
+      if (immutableEntities.length === 0) {
+        this.error(
+          'Source subgraph must have at least one immutable entity. This subgraph cannot be used as a source subgraph since it has no immutable entities.',
+          { exit: 1 },
+        );
+      }
     } catch (e) {
       this.error(`Failed to load and parse subgraph schema: ${e.message}`, { exit: 1 });
     }
