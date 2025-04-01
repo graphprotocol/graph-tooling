@@ -102,6 +102,14 @@ export default class TypeGenerator {
       typeGenDebug.extend('generateTypes')('Generating types for schema');
       await this.generateTypesForSchema({ schema });
 
+      if (schema.immutableEntitiesCount() === 0) {
+        toolbox.print.warning(
+          '\nThe GraphQL schema does not take advantage of using immutable entities. ' +
+            'Immutable entities can significantly improve subgraph performance.\n' +
+            'Learn more about using immutable entities: https://thegraph.com/docs/en/subgraphs/best-practices/immutable-entities-bytes-as-ids/#immutable-entities',
+        );
+      }
+
       if (this.options.subgraphSources.length > 0) {
         const ipfsClient = createIpfsClient({
           url: appendApiVersionForGraph(this.options.ipfsUrl.toString()),

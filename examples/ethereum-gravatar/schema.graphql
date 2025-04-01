@@ -1,4 +1,4 @@
-type Gravatar @entity {
+type Gravatar @entity(immutable: false) {
   id: ID!
   owner: Bytes!
   displayName: String!

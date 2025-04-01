@@ -1,4 +1,4 @@
-type A @entity {
+type A @entity(immutable: true) {
   id: ID!
   b: B @derivedFrom(field: "a")
   c: [C!]! @derivedFrom(field: "a")
@@ -9,32 +9,32 @@ type A @entity {
   h: H @derivedFrom(field: "a")
 }
 
-type B @entity {
+type B @entity(immutable: true) {
   id: ID!
 }
 
-type C @entity {
+type C @entity(immutable: true) {
   id: ID!
 }
 
-type D @entity {
+type D @entity(immutable: true) {
   id: ID!
 }
 
-type E @entity {
+type E @entity(immutable: true) {
   id: ID!
 }
 
-type F @entity {
+type F @entity(immutable: true) {
   id: ID!
 }
 
-type G @entity {
+type G @entity(immutable: true) {
   id: ID!
   a: BigInt
 }
 
-type H @entity {
+type H @entity(immutable: true) {
   id: ID!
   a: A!
 }

@@ -1,4 +1,4 @@
-type ExampleEntity @entity {
+type ExampleEntity @entity(immutable: false) {
   id: ID!
 
   optionalBoolean: Boolean
@@ -32,6 +32,6 @@ type ExampleEntity @entity {
   requiredReferenceList: [OtherEntity!]!
 }
 
-type OtherEntity @entity {
+type OtherEntity @entity(immutable: true) {
   id: ID!
 }

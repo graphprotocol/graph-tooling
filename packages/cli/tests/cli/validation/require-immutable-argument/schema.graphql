@@ -1,0 +1,19 @@
+# Entity is not valid because it is missing the immutable argument;
+type EntityA @entity {
+    id: ID!
+}
+
+# Entity is valid because it has the immutable argument;
+type EntityB @entity(immutable: true) {
+    id: ID!
+}
+
+# Entity is valid because it has the immutable argument;
+type EntityC @entity(immutable: false) {
+    id: ID!
+}
+
+# Entity is valid because the timeseries argument ensures immutability;
+type EntityD @entity(timeseries: true) {
+    id: ID!
+}

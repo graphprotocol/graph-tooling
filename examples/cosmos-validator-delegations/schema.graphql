@@ -1,11 +1,11 @@
-type Delegation @entity {
+type Delegation @entity(immutable: true) {
   id: ID!
   delegatorAddress: String
   validatorAddress: String
   amount: Coin
 }
 
-type Coin @entity {
+type Coin @entity(immutable: true) {
   id: ID!
   denom: String
   amount: String

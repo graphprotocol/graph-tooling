@@ -1,4 +1,4 @@
-type Block @entity {
+type Block @entity(immutable: true) {
   id: ID!
   number: BigInt
   timestamp: BigInt

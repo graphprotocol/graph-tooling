@@ -117,7 +117,7 @@ type _Schema_
     }
   ]
 )
-type A @entity @fulltext(
+type A @entity(immutable: true) @fulltext(
   name: "FulltextOnWrongType"
   language: en
   algorithm: rank
@@ -134,7 +134,7 @@ type A @entity @fulltext(
   id: ID!
 }
 
-type B @entity {
+type B @entity(immutable: true) {
   id: ID!
   foo: String!
 }

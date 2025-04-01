@@ -85,7 +85,7 @@ export const generateEventType = (
 
 export const generateExampleEntityType = (protocol: Protocol, events: any[]) => {
   if (protocol.hasABIs() && events.length > 0) {
-    return `type ExampleEntity @entity {
+    return `type ExampleEntity @entity(immutable: true) {
   id: Bytes!
   count: BigInt!
   ${events[0].inputs
@@ -97,7 +97,7 @@ export const generateExampleEntityType = (protocol: Protocol, events: any[]) => 
     .join('\n')}
 }`;
   }
-  return `type ExampleEntity @entity {
+  return `type ExampleEntity @entity(immutable: true) {
   id: ID!
   block: Bytes!
   count: BigInt!

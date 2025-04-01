@@ -62,7 +62,7 @@ export function handleReceipt(
 `;
 
 exports[`NEAR subgraph scaffolding > Schema (default) 1`] = `
-"type ExampleEntity @entity {
+"type ExampleEntity @entity(immutable: true) {
   id: ID!
   block: Bytes!
   count: BigInt!

@@ -932,6 +932,20 @@ Types generated successfully
 "
 `;
 
+exports[`Validation > Should require immutable argument on entity directive 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
+
+  EntityA:
+  - @entity directive requires \`immutable\` argument
+    Hint: Try updating the entity definition with: @entity(immutable: true)
+"
+`;
+
+exports[`Validation > Should require immutable argument on entity directive 2`] = `1`;
+
+exports[`Validation > Should require immutable argument on entity directive 3`] = `""`;
+
 exports[`Validation > Source without address is valid 1`] = `
 "- Load subgraph from subgraph.yaml
 ✔ Load subgraph from subgraph.yaml

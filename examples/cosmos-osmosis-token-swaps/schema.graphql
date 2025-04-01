@@ -1,10 +1,10 @@
-type Token @entity {
+type Token @entity(immutable: true) {
   id: ID!
   amount: String
   denom: String
 }
 
-type TokenSwap @entity {
+type TokenSwap @entity(immutable: true) {
   id: ID!
   sender: String
   poolId: String
