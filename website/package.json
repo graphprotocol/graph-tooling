@@ -46,8 +46,8 @@
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.16",
     "@tailwindcss/postcss": "^4.0.0",
-    "@tanstack/router-cli": "1.112.0",
-    "@tanstack/router-vite-plugin": "1.112.0",
+    "@tanstack/router-cli": "1.112.3",
+    "@tanstack/router-vite-plugin": "1.112.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/semver": "^7.5.8",
