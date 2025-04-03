@@ -1253,7 +1253,7 @@ async function initSubgraphFromContract(
     }
   }
 
-  let entities: string[] | undefined;
+  let immutableEntities: string[] | undefined;
 
   if (isComposedSubgraph) {
     try {
@@ -1274,7 +1274,14 @@ async function initSubgraphFromContract(
       startBlock ||= getMinStartBlock(manifestYaml)?.toString();
       const schemaString = await loadSubgraphSchemaFromIPFS(ipfsClient, source);
       const schema = await Schema.loadFromString(schemaString);
-      entities = schema.getEntityNames();
+      immutableEntities = schema.getImmutableEntityNames();
+
+      if (immutableEntities.length === 0) {
+        this.error(
+          'Source subgraph must have at least one immutable entity. This subgraph cannot be used as a source subgraph since it has no immutable entities.',
+          { exit: 1 },
+        );
+      }
     } catch (e) {
       this.error(`Failed to load and parse subgraph schema: ${e.message}`, { exit: 1 });
     }
@@ -1316,7 +1323,7 @@ async function initSubgraphFromContract(
           startBlock,
           node,
           spkgPath,
-          entities,
+          entities: immutableEntities,
         },
         spinner,
       );

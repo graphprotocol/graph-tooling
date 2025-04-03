@@ -69,4 +69,24 @@ export default class Schema {
       return isImmutable(entity);
     }).length;
   }
+
+  getImmutableEntityNames(): string[] {
+    return this.ast.definitions
+      .filter(
+        def =>
+          def.kind === 'ObjectTypeDefinition' &&
+          def.directives?.find(
+            directive =>
+              directive.name.value === 'entity' &&
+              directive.arguments?.find(arg => {
+                return (
+                  arg.name.value === 'immutable' &&
+                  arg.value.kind === 'BooleanValue' &&
+                  arg.value.value === true
+                );
+              }),
+          ) !== undefined,
+      )
+      .map(entity => (entity as graphql.ObjectTypeDefinitionNode).name.value);
+  }
 }
