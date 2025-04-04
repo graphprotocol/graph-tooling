@@ -86,10 +86,10 @@ export default class Subgraph {
 
     if (validationErrors.size > 0) {
       subgraphDebug.extend('validate')('Schema validation failed for %s', filename);
-      errors = validationErrors.groupBy(error => error.get('entity')).sort();
+      errors = validationErrors.groupBy(error => error.get('entity') ?? '').sort();
       const msg = errors.reduce(
         (msg, errors, entity) => {
-          errors = errors.groupBy((error: any) => error.get('directive'));
+          errors = errors.groupBy((error: any) => error.get('directive') ?? '');
           const inner_msgs = errors.reduce((msg: string, errors: any[], directive: string) => {
             return `${msg}${
               directive

@@ -275,8 +275,10 @@ const dataSourceListToMap = (dataSources: any[]) =>
   dataSources.reduce(
     (protocolKinds, dataSource) =>
       protocolKinds.update(Protocol.normalizeName(dataSource.kind), (networks: any) =>
-        (networks || immutable.OrderedMap()).update(dataSource.network, (dataSourceNames: any) =>
-          (dataSourceNames || immutable.OrderedSet()).add(dataSource.name),
+        (networks || immutable.OrderedMap()).update(
+          dataSource.network ?? '',
+          (dataSourceNames: any) =>
+            (dataSourceNames || immutable.OrderedSet()).add(dataSource.name),
         ),
       ),
     immutable.OrderedMap(),
@@ -294,9 +296,9 @@ const validateDataSourceProtocolAndNetworks = (value: any) => {
         message: `Conflicting protocol kinds used in data sources and templates:
 ${protocolNetworkMap
   .map(
-    (dataSourceNames: any, protocolKind: string | undefined) =>
+    (dataSourceNames: any, protocolKind: string) =>
       `  ${
-        protocolKind === undefined
+        protocolKind === ''
           ? 'Data sources and templates having no protocol kind set'
           : `Data sources and templates using '${protocolKind}'`
       }:\n${dataSourceNames
@@ -320,9 +322,9 @@ Recommendation: Make all data sources and templates use the same protocol kind.`
         message: `Conflicting networks used in data sources and templates:
 ${networks
   .map(
-    (dataSources: any, network: string | undefined) =>
+    (dataSources: any, network: string) =>
       `  ${
-        network === undefined
+        network === ''
           ? 'Data sources and templates having no network set'
           : `Data sources and templates using '${network}'`
       }:\n${dataSources.map((ds: string) => `    - ${ds}`).join('\n')}`,
