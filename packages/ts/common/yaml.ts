@@ -295,6 +295,6 @@ export class YAMLTaggedValue {
       return true;
     }
 
-    return !(a! == b!);
+    return !(a == b);
   }
 }
