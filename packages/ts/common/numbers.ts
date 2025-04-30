@@ -1,3 +1,4 @@
+import './eager_offset';
 import { ByteArray, Bytes } from './collections';
 import { typeConversion } from './conversion';
 
@@ -34,6 +35,10 @@ export type Timestamp = i64;
 /** An Ethereum address (20 bytes). */
 export class Address extends Bytes {
   static fromString(s: string): Address {
+    if (s.startsWith('0x')) s = s.slice(2);
+    if (s.length != 40 || !/^[0-9a-fA-F]+$/.test(s)) {
+      throw new Error('Invalid address format');
+    }
     return changetype<Address>(typeConversion.stringToH160(s));
   }
 

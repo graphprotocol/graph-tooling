@@ -1,3 +1,4 @@
+import './eager_offset';
 import { Bytes, Result, TypedMap } from './collections';
 import { BigInt } from './numbers';
 
@@ -250,7 +251,7 @@ export class YAMLValue {
       return true;
     }
 
-    return !(a! == b!);
+    return !(a == b);
   }
 
   // Makes it easier to access a specific index in a YAML array or a string key in a YAML object.

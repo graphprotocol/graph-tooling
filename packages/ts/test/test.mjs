@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { StringDecoder } from 'string_decoder';
-import asc from 'assemblyscript/asc';
+import asc from 'assemblyscript/cli/asc';
 
 async function main() {
   // Copy index.ts to a temporary subdirectory so that asc doesn't put all the
@@ -28,6 +28,7 @@ async function main() {
   fs.copyFileSync('common/collections.ts', 'test/temp_lib/common/collections.ts');
   fs.copyFileSync('common/conversion.ts', 'test/temp_lib/common/conversion.ts');
   fs.copyFileSync('common/datasource.ts', 'test/temp_lib/common/datasource.ts');
+  fs.copyFileSync('common/eager_offset.ts', 'test/temp_lib/common/eager_offset.ts');
   fs.copyFileSync('common/json.ts', 'test/temp_lib/common/json.ts');
   fs.copyFileSync('common/numbers.ts', 'test/temp_lib/common/numbers.ts');
   fs.copyFileSync('common/value.ts', 'test/temp_lib/common/value.ts');
@@ -42,14 +43,30 @@ async function main() {
   try {
     const outputWasmPath = 'test/temp_out/test.wasm';
 
-    for (const file of ['test/bigInt.ts', 'test/bytes.ts', 'test/entity.ts', 'test/yaml.ts'])
-      await testFile(file, outputWasmPath);
+    const promises = {};
+    promises['bigInt'] = testFile('test/bigInt.ts', outputWasmPath);
+    promises['bytes'] = testFile('test/bytes.ts', outputWasmPath);
+    promises['entity'] = testFile('test/entity.ts', outputWasmPath);
+    promises['yaml'] = testFile('test/yaml.ts', outputWasmPath);
+
+    const entries = Object.entries(promises);
+    const results = await Promise.allSettled(entries.map(entry => entry[1]));
+    const failures = Object.fromEntries(
+      results
+        .map((result, index) => [entries[index][0], result])
+        .filter(([index, result]) => result.status === 'rejected'),
+    );
+
+    if (Object.keys(failures).length > 0) {
+      throw failures;
+    }
   } catch (e) {
     console.error(e);
   } finally {
     fs.unlinkSync('test/temp_lib/common/collections.ts');
     fs.unlinkSync('test/temp_lib/common/conversion.ts');
     fs.unlinkSync('test/temp_lib/common/datasource.ts');
+    fs.unlinkSync('test/temp_lib/common/eager_offset.ts');
     fs.unlinkSync('test/temp_lib/common/json.ts');
     fs.unlinkSync('test/temp_lib/common/numbers.ts');
     fs.unlinkSync('test/temp_lib/common/value.ts');
@@ -70,19 +87,22 @@ async function main() {
 
 async function testFile(sourceFile, outputWasmPath) {
   console.log(`Compiling test file ${sourceFile} to WASM...`);
-  const { error } = await asc.main([
-    '--exportRuntime',
-    '--importMemory',
-    '--runtime',
-    'stub',
-    sourceFile,
-    '--lib',
-    'test',
-    '-o',
-    outputWasmPath,
-  ]);
-
-  if (error) throw Error(`Failed to compile: ${sourceFile}`);
+  if (
+    asc.main([
+      '--explicitStart',
+      '--exportRuntime',
+      '--importMemory',
+      '--runtime',
+      'stub',
+      sourceFile,
+      '--lib',
+      'test',
+      '-b',
+      outputWasmPath,
+    ]) !== 0
+  ) {
+    throw Error(`Failed to compile: ${sourceFile}`);
+  }
 
   const wasmCode = new Uint8Array(fs.readFileSync(outputWasmPath));
   const memory = new WebAssembly.Memory({ initial: 1, maximum: 1 });
@@ -104,6 +124,9 @@ async function testFile(sourceFile, outputWasmPath) {
       'typeConversion.bytesToHex'() {},
     },
   });
+
+  // Call AS start explicitly
+  wasm_module.instance.exports._start();
 
   console.log(`Running "${sourceFile}" tests...`);
   for (const [testName, testFn] of Object.entries(wasm_module.instance.exports)) {

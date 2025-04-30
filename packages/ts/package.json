@@ -1,6 +1,6 @@
 {
   "name": "@graphprotocol/graph-ts",
-  "version": "0.38.0",
+  "version": "0.38.1",
   "description": "TypeScript/AssemblyScript library for writing subgraph mappings for The Graph",
   "repository": {
     "type": "git",
@@ -11,7 +11,8 @@
   "module": "index.ts",
   "types": "index.ts",
   "scripts": {
-    "build": "asc --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts -o index.wasm --disableWarning 235",
+    "build": "asc --explicitStart --exportRuntime --runtime stub index.ts helper-functions.ts --lib graph-ts --outFile index.wasm --optimize --debug",
+    "ascver": "asc --version",
     "format": "prettier --write -c **/*.{js,mjs,ts}",
     "lint": "prettier -c **/*.{js,mjs,ts}",
     "test": "node test/test.mjs"
