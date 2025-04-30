@@ -349,8 +349,8 @@ importers:
   packages/ts:
     dependencies:
       assemblyscript:
-        specifier: 0.27.31
-        version: 0.27.31
+        specifier: 0.19.23
+        version: 0.19.23
 
   website:
     dependencies:
@@ -4006,11 +4006,6 @@ packages:
     resolution: {integrity: sha512-fwOQNZVTMga5KRsfY80g7cpOl4PsFQczMwHzdtgoqLXaYhkhavufKb0sB0l3T1DUxpAufA0KNhlbpuuhZUwxMA==}
     hasBin: true
 
-  assemblyscript@0.27.31:
-    resolution: {integrity: sha512-Ra8kiGhgJQGZcBxjtMcyVRxOEJZX64kd+XGpjWzjcjgxWJVv+CAQO0aDBk4GQVhjYbOkATarC83mHjAVGtwPBQ==}
-    engines: {node: '>=16', npm: '>=7'}
-    hasBin: true
-
   assert@2.1.0:
     resolution: {integrity: sha512-eLHpSK/Y4nhMJ07gDaAzoX/XAKS8PSaojml3M0DM4JpV1LAi5JOJ/p6H/XWrl8L+DzVEvVCW1z3vWAaB9oTsQw==}
 
@@ -4173,10 +4168,6 @@ packages:
 
   binaryen@102.0.0-nightly.20211028:
     resolution: {integrity: sha512-GCJBVB5exbxzzvyt8MGDv/MeUjs6gkXDvf4xOIItRBptYl0Tz5sm1o/uG95YK0L0VeG5ajDu3hRtkBP2kzqC5w==}
-    hasBin: true
-
-  binaryen@116.0.0-nightly.20240114:
-    resolution: {integrity: sha512-0GZrojJnuhoe+hiwji7QFaL3tBlJoA+KFUN7ouYSDGZLSo9CKM8swQX8n/UcbR0d1VuZKU+nhogNzv423JEu5A==}
     hasBin: true
 
   bl@1.2.3:
@@ -14686,11 +14677,6 @@ snapshots:
       long: 5.3.1
       source-map-support: 0.5.21
 
-  assemblyscript@0.27.31:
-    dependencies:
-      binaryen: 116.0.0-nightly.20240114
-      long: 5.3.1
-
   assert@2.1.0:
     dependencies:
       call-bind: 1.0.8
@@ -14941,8 +14927,6 @@ snapshots:
   binaryen@101.0.0-nightly.20210723: {}
 
   binaryen@102.0.0-nightly.20211028: {}
-
-  binaryen@116.0.0-nightly.20240114: {}
 
   bl@1.2.3:
     dependencies:
