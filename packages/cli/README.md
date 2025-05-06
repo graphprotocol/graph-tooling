@@ -87,7 +87,7 @@ decentralized network directly.
 If you are ready to dive into the details of building a subgraph from scratch, there is a
 [detailed walkthrough](https://thegraph.com/docs/en/developing/creating-a-subgraph/) for that as
 well, along with API documentation for the
-[AssemblyScript API](https://thegraph.com/docs/en/developer/assemblyscript-api/).
+[AssemblyScript API](https://thegraph.com/docs/en/subgraphs/developing/creating/graph-ts/api/).
 
 ## Releases
 
