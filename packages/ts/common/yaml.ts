@@ -1,4 +1,4 @@
-import './eager_offset';
+import './eager-offset';
 import { Bytes, Result, TypedMap } from './collections';
 import { BigInt } from './numbers';
 
