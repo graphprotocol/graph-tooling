@@ -1,4 +1,4 @@
-import '../common/eager_offset';
+import '../common/eager-offset';
 import { Bytes } from '../common/collections';
 
 // Most types from this namespace are direct mappings or adaptations from:

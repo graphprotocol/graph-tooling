@@ -1,4 +1,4 @@
-import '../common/eager_offset';
+import '../common/eager-offset';
 import { Bytes } from '../common/collections';
 import { BigInt } from '../common/numbers';
 
