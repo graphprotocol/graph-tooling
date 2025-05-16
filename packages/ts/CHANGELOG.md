@@ -1,5 +1,11 @@
 # @graphprotocol/graph-ts
 
+## 0.38.1
+
+### Patch Changes
+
+- [#2006](https://github.com/graphprotocol/graph-tooling/pull/2006) [`3fb730b`](https://github.com/graphprotocol/graph-tooling/commit/3fb730bdaf331f48519e1d9fdea91d2a68f29fc9) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - fix global variables in wasm
+
 ## 0.38.0
 
 ### Minor Changes
