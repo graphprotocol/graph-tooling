@@ -25,6 +25,7 @@
     "lint:prettier:fix": "prettier . --write",
     "lint:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "release": "pnpm build && changeset publish",
+    "test": "pnpm --filter @graphprotocol/graph-* test",
     "test:cli": "pnpm --filter @graphprotocol/graph-cli test",
     "test:ts": "pnpm --filter @graphprotocol/graph-ts test",
     "type-check": "pnpm --filter=@graphprotocol/graph-cli type-check"

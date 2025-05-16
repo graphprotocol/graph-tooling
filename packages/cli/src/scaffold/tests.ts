@@ -150,7 +150,7 @@ const generateExampleTest = (
 
 
   // Tests structure (matchstick-as >=0.5.0)
-  // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
+  // https://thegraph.com/docs/en/subgraphs/developing/creating/unit-testing-framework/#tests-structure
 
   describe("Describe entity assertions", () => {
     beforeAll(() => {
@@ -166,7 +166,7 @@ const generateExampleTest = (
     })
 
     // For more test scenarios, see:
-    // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
+    // https://thegraph.com/docs/en/subgraphs/developing/creating/unit-testing-framework/#write-a-unit-test
 
     test("${entity} created and stored", () => {
       assert.entityCount('${entity}', 1)
@@ -175,7 +175,7 @@ const generateExampleTest = (
       ${generateFieldsAssertions(entity, eventInputs, indexEvents)}
 
       // More assert options:
-      // https://thegraph.com/docs/en/developer/matchstick/#asserts
+      // https://thegraph.com/docs/en/subgraphs/developing/creating/unit-testing-framework/#asserts
     })
   })
 `;
