@@ -26,8 +26,8 @@ importers:
         specifier: 0.13.2
         version: 0.13.2(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.2)
       '@theguild/prettier-config':
-        specifier: 3.0.0
-        version: 3.0.0(prettier@3.5.3)
+        specifier: 3.0.1
+        version: 3.0.1(prettier@3.5.3)
       '@types/node':
         specifier: ^22.10.1
         version: 22.15.18
@@ -1757,8 +1757,8 @@ packages:
     resolution: {integrity: sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ==}
     engines: {node: '>=18.18'}
 
-  '@ianvs/prettier-plugin-sort-imports@4.4.0':
-    resolution: {integrity: sha512-f4/e+/ANGk3tHuwRW0uh2YuBR50I4h1ZjGQ+5uD8sWfinHTivQsnieR5cz24t8M6Vx4rYvZ5v/IEKZhYpzQm9Q==}
+  '@ianvs/prettier-plugin-sort-imports@4.4.1':
+    resolution: {integrity: sha512-F0/Hrcfpy8WuxlQyAWJTEren/uxKhYonOGY4OyWmwRdeTvkh9mMSCxowZLjNkhwi/2ipqCgtXwwOk7tW0mWXkA==}
     peerDependencies:
       '@vue/compiler-sfc': 2.7.x || 3.x
       prettier: 2 || 3
@@ -3326,8 +3326,8 @@ packages:
       eslint: ^8 || ^9
       typescript: ^5
 
-  '@theguild/prettier-config@3.0.0':
-    resolution: {integrity: sha512-8ABWdMnCoCKKXb+lS337ZVnCJFuKumhK7RhZkAvaTMLi4Z+3c6UUYk1ZAM4KEHEki9bL9yQbtqTlqZVlVSGvhg==}
+  '@theguild/prettier-config@3.0.1':
+    resolution: {integrity: sha512-qSSAHGwIg2cCIyXim5MUe/Icw+DmGEqZz1TtGR55ayZc2BtXme/hV8J068lx19dzJvodDJgYSyWw7Jsu4F05OA==}
     peerDependencies:
       prettier: ^3
 
@@ -7764,8 +7764,8 @@ packages:
     peerDependencies:
       prettier: ^3.0.3
 
-  prettier-plugin-sh@0.14.0:
-    resolution: {integrity: sha512-hfXulj5+zEl/ulrO5kMuuTPKmXvOg0bnLHY1hKFNN/N+/903iZbNp8NyZBTsgI8dtkSgFfAEIQq0IQTyP1ZVFQ==}
+  prettier-plugin-sh@0.15.0:
+    resolution: {integrity: sha512-U0PikJr/yr2bzzARl43qI0mApBj0C1xdAfA04AZa6LnvIKawXHhuy2fFo6LNA7weRzGlAiNbaEFfKMFo0nZr/A==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       prettier: ^3.0.3
@@ -11764,12 +11764,12 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@ianvs/prettier-plugin-sort-imports@4.4.0(prettier@3.5.3)':
+  '@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3)':
     dependencies:
-      '@babel/generator': 7.26.9
-      '@babel/parser': 7.26.9
-      '@babel/traverse': 7.26.9(supports-color@5.5.0)
-      '@babel/types': 7.26.9
+      '@babel/generator': 7.27.0
+      '@babel/parser': 7.27.0
+      '@babel/traverse': 7.27.0(supports-color@5.5.0)
+      '@babel/types': 7.27.0
       prettier: 3.5.3
       semver: 7.7.2
     transitivePeerDependencies:
@@ -13820,12 +13820,12 @@ snapshots:
       - eslint-plugin-import-x
       - supports-color
 
-  '@theguild/prettier-config@3.0.0(prettier@3.5.3)':
+  '@theguild/prettier-config@3.0.1(prettier@3.5.3)':
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports': 4.4.0(prettier@3.5.3)
+      '@ianvs/prettier-plugin-sort-imports': 4.4.1(prettier@3.5.3)
       prettier: 3.5.3
       prettier-plugin-pkg: 0.18.1(prettier@3.5.3)
-      prettier-plugin-sh: 0.14.0(prettier@3.5.3)
+      prettier-plugin-sh: 0.15.0(prettier@3.5.3)
     transitivePeerDependencies:
       - '@vue/compiler-sfc'
       - supports-color
@@ -15261,7 +15261,7 @@ snapshots:
 
   browserify-rsa@4.1.1:
     dependencies:
-      bn.js: 5.2.1
+      bn.js: 5.2.2
       randombytes: 2.1.0
       safe-buffer: 5.2.1
 
@@ -18891,7 +18891,7 @@ snapshots:
 
   miller-rabin@4.0.1:
     dependencies:
-      bn.js: 4.12.1
+      bn.js: 4.12.2
       brorand: 1.1.0
 
   mime-db@1.52.0: {}
@@ -19641,7 +19641,7 @@ snapshots:
     dependencies:
       prettier: 3.5.3
 
-  prettier-plugin-sh@0.14.0(prettier@3.5.3):
+  prettier-plugin-sh@0.15.0(prettier@3.5.3):
     dependencies:
       mvdan-sh: 0.10.1
       prettier: 3.5.3
