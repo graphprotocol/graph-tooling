@@ -21,7 +21,7 @@ importers:
         version: 2.29.4
       '@eslint/js':
         specifier: ^9.16.0
-        version: 9.26.0
+        version: 9.27.0
       '@theguild/eslint-config':
         specifier: 0.13.2
         version: 0.13.2(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.2)
@@ -1554,6 +1554,10 @@ packages:
 
   '@eslint/js@9.26.0':
     resolution: {integrity: sha512-I9XlJawFdSMvWjDt6wksMCrgns5ggLNfFwFvnShsleWruvXM514Qxk8V246efTw+eo9JABvVz+u3q2RiAowKxQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/js@9.27.0':
+    resolution: {integrity: sha512-G5JD9Tu5HJEu4z2Uo4aHY2sLV64B7CDMXxFzqzjl3NKd6RVzSXNoE80jk7Y0lJkTTkjiIhBAqmlYwjuBY3tvpA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/object-schema@2.1.6':
@@ -11356,6 +11360,8 @@ snapshots:
 
   '@eslint/js@9.26.0': {}
 
+  '@eslint/js@9.27.0': {}
+
   '@eslint/object-schema@2.1.6': {}
 
   '@eslint/plugin-kit@0.2.8':
@@ -15261,7 +15267,7 @@ snapshots:
 
   browserify-rsa@4.1.1:
     dependencies:
-      bn.js: 5.2.2
+      bn.js: 5.2.1
       randombytes: 2.1.0
       safe-buffer: 5.2.1
 
@@ -18891,7 +18897,7 @@ snapshots:
 
   miller-rabin@4.0.1:
     dependencies:
-      bn.js: 4.12.2
+      bn.js: 4.12.1
       brorand: 1.1.0
 
   mime-db@1.52.0: {}
