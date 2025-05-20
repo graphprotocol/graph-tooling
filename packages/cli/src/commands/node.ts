@@ -4,7 +4,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { print } from 'gluegun';
 import ProgressBar from 'progress';
-import { Command, Flags } from '@oclif/core';
+import { Args, Command, Flags } from '@oclif/core';
 import {
   downloadGraphNodeRelease,
   extractGz,
@@ -16,43 +16,51 @@ import {
 export default class NodeCommand extends Command {
   static description = 'Manage Graph node related operations';
 
-  static flags = {
+  static override flags = {
     help: Flags.help({
       char: 'h',
     }),
+    tag: Flags.string({
+      summary: 'Tag of the Graph Node release to install.',
+    }),
+    'download-dir': Flags.string({
+      summary: 'Directory to download the Graph Node release to.',
+      default: os.tmpdir(),
+    }),
   };
 
-  static args = {};
+  static override args = {
+    install: Args.boolean({
+      description: 'Install the Graph Node',
+    }),
+  };
 
   static examples = ['$ graph node install'];
 
   static strict = false;
 
   async run() {
-    const { argv } = await this.parse(NodeCommand);
+    const { flags, args } = await this.parse(NodeCommand);
 
-    if (argv.length > 0) {
-      const subcommand = argv[0];
-
-      if (subcommand === 'install') {
-        await installGraphNode();
-      }
-
-      // If no valid subcommand is provided, show help
-      await this.config.runCommand('help', ['node']);
+    if (args.install) {
+      await installGraphNode(flags.tag);
+      return;
     }
+
+    // If no valid subcommand is provided, show help
+    await this.config.runCommand('help', ['node']);
   }
 }
 
-async function installGraphNode() {
-  const latestRelease = await getLatestGraphNodeRelease();
+async function installGraphNode(tag?: string) {
+  const latestRelease = tag || (await getLatestGraphNodeRelease());
   const tmpBase = os.tmpdir();
   const tmpDir = await fs.promises.mkdtemp(path.join(tmpBase, 'graph-node-'));
   let progressBar: ProgressBar | undefined;
-  const downloadPath = await downloadGraphNodeRelease(
-    latestRelease,
-    tmpDir,
-    (downloaded, total) => {
+
+  let downloadPath: string;
+  try {
+    downloadPath = await downloadGraphNodeRelease(latestRelease, tmpDir, (downloaded, total) => {
       if (!total) return;
 
       progressBar ||= new ProgressBar(`Downloading ${latestRelease} [:bar] :percent`, {
@@ -63,18 +71,21 @@ async function installGraphNode() {
       });
 
       progressBar.tick(downloaded - (progressBar.curr || 0));
-    },
-  );
+    });
+  } catch (e) {
+    print.error(e);
+    throw e;
+  }
 
   let extractedPath: string;
 
+  print.info(`Extracting ${downloadPath}`);
   if (downloadPath.endsWith('.gz')) {
     extractedPath = await extractGz(downloadPath);
-    print.info(`Extracted ${extractedPath}`);
   } else if (downloadPath.endsWith('.zip')) {
     extractedPath = await extractZipAndGetExe(downloadPath, tmpDir);
-    print.info(`Extracted ${extractedPath}`);
   } else {
+    print.error(`Unsupported file type: ${downloadPath}`);
     throw new Error(`Unsupported file type: ${downloadPath}`);
   }
 
@@ -84,6 +95,11 @@ async function installGraphNode() {
   if (os.platform() !== 'win32') {
     await chmod(movedPath, 0o755);
   }
+
+  print.info(`Installed Graph Node ${latestRelease}`);
+  print.info(
+    `Please add the following to your PATH: ${path.dirname(movedPath)} if it's not already there or if you're using a custom download directory`,
+  );
 
   // Delete the temporary directory
   await fs.promises.rm(tmpDir, { recursive: true, force: true });
