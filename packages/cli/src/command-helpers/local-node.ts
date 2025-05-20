@@ -52,14 +52,23 @@ export async function downloadGraphNodeRelease(
   onProgress?: (downloaded: number, total: number | null) => void,
 ): Promise<string> {
   const fileName = getPlatformBinaryName();
-  return downloadGithubRelease(
-    'incrypto32',
-    'graph-node',
-    release,
-    outputDir,
-    fileName,
-    onProgress,
-  );
+
+  try {
+    return await downloadGithubRelease(
+      'incrypto32',
+      'graph-node',
+      release,
+      outputDir,
+      fileName,
+      onProgress,
+    );
+  } catch (e) {
+    if (e === 404) {
+      throw `Graph Node release ${release} does not exist, please check the release page for the correct release tag`;
+    }
+
+    throw `Failed to download: ${release}`;
+  }
 }
 
 async function downloadGithubRelease(
@@ -89,7 +98,7 @@ export async function download(
 ): Promise<string> {
   const res = await fetch(url);
   if (!res.ok || !res.body) {
-    throw new Error(`Failed to download: ${res.statusText}`);
+    throw res.status;
   }
 
   const totalLength = Number(res.headers.get('content-length')) || null;
