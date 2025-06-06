@@ -205,7 +205,7 @@ function DeploySubgraph({
     defaultValues: {
       description: subgraphManifest?.parsed.description,
       subgraphImage:
-        'https://ipfs.thegraph.com/ipfs/QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9',
+        'https://api.thegraph.com/ipfs/api/v0/cat?arg=QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9',
       codeRepository: subgraphManifest?.parsed.repository,
       website: undefined,
       categories: undefined,
