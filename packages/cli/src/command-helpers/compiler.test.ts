@@ -3,26 +3,26 @@ import { appendApiVersionForGraph } from './compiler.js';
 
 describe('appendApiVersionForGraph', { concurrent: true }, () => {
   it('append /api/v0 to Prod URL with trailing slash', () => {
-    expect(appendApiVersionForGraph('https://ipfs.thegraph.com/')).toBe(
-      'https://ipfs.thegraph.com/api/v0',
+    expect(appendApiVersionForGraph('https://api.thegraph.com/ipfs/')).toBe(
+      'https://api.thegraph.com/ipfs/api/v0',
     );
   });
 
   it('append /api/v0 to Prod URL without trailing slash', () => {
-    expect(appendApiVersionForGraph('https://ipfs.thegraph.com')).toBe(
-      'https://ipfs.thegraph.com/api/v0',
+    expect(appendApiVersionForGraph('https://api.thegraph.com/ipfs')).toBe(
+      'https://api.thegraph.com/ipfs/api/v0',
     );
   });
 
   it('append /api/v0 to Staging URL without trailing slash', () => {
-    expect(appendApiVersionForGraph('https://staging.ipfs.thegraph.com')).toBe(
-      'https://staging.ipfs.thegraph.com/api/v0',
+    expect(appendApiVersionForGraph('https://staging.api.thegraph.com/ipfs')).toBe(
+      'https://staging.api.thegraph.com/ipfs/api/v0',
     );
   });
 
   it('do nothing if Prod URL has /api/v0', () => {
-    expect(appendApiVersionForGraph('https://ipfs.thegraph.com/api/v0')).toBe(
-      'https://ipfs.thegraph.com/api/v0',
+    expect(appendApiVersionForGraph('https://api.thegraph.com/ipfs/api/v0')).toBe(
+      'https://api.thegraph.com/ipfs/api/v0',
     );
   });
 
