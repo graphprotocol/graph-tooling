@@ -15,7 +15,7 @@ function getPlatformBinaryName(): string {
   if (platform === 'linux' && arch === 'x64') return 'gnd-linux-x86_64.gz';
   if (platform === 'linux' && arch === 'arm64') return 'gnd-linux-aarch64.gz';
   if (platform === 'darwin' && arch === 'x64') return 'gnd-macos-x86_64.gz';
-  if (platform === 'darwin' && arch === 'arm64') return 'gnd-windows-x86_64.exe.zip'; //'gnd-macos-aarch64.gz';
+  if (platform === 'darwin' && arch === 'arm64') return 'gnd-macos-aarch64.gz';
   if (platform === 'win32' && arch === 'x64') return 'gnd-windows-x86_64.exe.zip';
 
   throw new Error(`Unsupported platform: ${platform} ${arch}`);
@@ -144,10 +144,13 @@ export async function extractZipAndGetExe(zipPath: string, outputDir: string): P
 
 export async function moveFileToBinDir(srcPath: string, binDir?: string): Promise<string> {
   const targetDir = binDir || (await getGlobalBinDir());
-  const destPath = path.join(targetDir, path.basename(srcPath));
+  const platform = os.platform();
+  const binaryName = platform === 'win32' ? 'gnd.exe' : 'gnd';
+  const destPath = path.join(targetDir, binaryName);
   await fs.promises.rename(srcPath, destPath);
   return destPath;
 }
+
 export async function moveFile(srcPath: string, destPath: string): Promise<string> {
   await fs.promises.rename(srcPath, destPath);
   return destPath;
