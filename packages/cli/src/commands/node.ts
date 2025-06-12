@@ -23,9 +23,8 @@ export default class NodeCommand extends Command {
     tag: Flags.string({
       summary: 'Tag of the Graph Node release to install.',
     }),
-    'download-dir': Flags.string({
-      summary: 'Directory to download the Graph Node release to.',
-      default: os.tmpdir(),
+    'bin-dir': Flags.string({
+      summary: 'Directory to install the Graph Node binary to.',
     }),
   };
 
@@ -35,7 +34,11 @@ export default class NodeCommand extends Command {
     }),
   };
 
-  static examples = ['$ graph node install'];
+  static examples = [
+    '$ graph node install',
+    '$ graph node install --tag v1.0.0',
+    '$ graph node install --bin-dir /usr/local/bin',
+  ];
 
   static strict = false;
 
@@ -43,7 +46,7 @@ export default class NodeCommand extends Command {
     const { flags, args } = await this.parse(NodeCommand);
 
     if (args.install) {
-      await installGraphNode(flags.tag);
+      await installGraphNode(flags.tag, flags['bin-dir']);
       return;
     }
 
@@ -52,7 +55,7 @@ export default class NodeCommand extends Command {
   }
 }
 
-async function installGraphNode(tag?: string) {
+async function installGraphNode(tag?: string, binDir?: string) {
   const latestRelease = tag || (await getLatestGraphNodeRelease());
   const tmpBase = os.tmpdir();
   const tmpDir = await fs.promises.mkdtemp(path.join(tmpBase, 'graph-node-'));
@@ -79,7 +82,7 @@ async function installGraphNode(tag?: string) {
 
   let extractedPath: string;
 
-  print.info(`Extracting ${downloadPath}`);
+  print.info(`\nExtracting binary...`);
   if (downloadPath.endsWith('.gz')) {
     extractedPath = await extractGz(downloadPath);
   } else if (downloadPath.endsWith('.zip')) {
@@ -89,17 +92,19 @@ async function installGraphNode(tag?: string) {
     throw new Error(`Unsupported file type: ${downloadPath}`);
   }
 
-  const movedPath = await moveFileToBinDir(extractedPath);
-  print.info(`Moved ${extractedPath} to ${movedPath}`);
+  const movedPath = await moveFileToBinDir(extractedPath, binDir);
+  print.info(`✅ Graph Node ${latestRelease} installed successfully`);
+  print.info(`Binary location: ${movedPath}`);
 
   if (os.platform() !== 'win32') {
     await chmod(movedPath, 0o755);
   }
 
-  print.info(`Installed Graph Node ${latestRelease}`);
-  print.info(
-    `Please add the following to your PATH: ${path.dirname(movedPath)} if it's not already there or if you're using a custom download directory`,
-  );
+  print.info('');
+  print.info(`📋 Next steps:`);
+  print.info(`   Add ${path.dirname(movedPath)} to your PATH (if not already)`);
+  print.info(`   Run 'gnd' to start your local Graph Node development environment`);
+  print.info('');
 
   // Delete the temporary directory
   await fs.promises.rm(tmpDir, { recursive: true, force: true });
