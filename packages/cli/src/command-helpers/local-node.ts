@@ -43,7 +43,7 @@ async function getLatestGithubRelease(owner: string, repo: string) {
 }
 
 export async function getLatestGraphNodeRelease(): Promise<string> {
-  return getLatestGithubRelease('incrypto32', 'graph-node');
+  return getLatestGithubRelease('graphprotocol', 'graph-node');
 }
 
 export async function downloadGraphNodeRelease(
@@ -55,7 +55,7 @@ export async function downloadGraphNodeRelease(
 
   try {
     return await downloadGithubRelease(
-      'incrypto32',
+      'graphprotocol',
       'graph-node',
       release,
       outputDir,
