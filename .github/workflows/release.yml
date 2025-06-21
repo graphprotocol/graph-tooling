@@ -28,7 +28,7 @@ jobs:
 
       - name: Import bot's GPG key for signing commits
         id: import-gpg
-        uses: crazy-max/ghaction-import-gpg@v4
+        uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.PINAX_BOT_PGP_PRIVATE_KEY }}
           passphrase: ${{ secrets.PINAX_BOT_PGP_PASSPHRASE }}
