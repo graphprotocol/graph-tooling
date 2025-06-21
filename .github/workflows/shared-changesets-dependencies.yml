@@ -23,8 +23,20 @@ on:
         required: false
         type: string
         default: '20'
+      gitUserEmail:
+        required: false
+        type: string
+        default: ''
+      gitUserName:
+        required: false
+        type: string
+        default: ''
     secrets:
       githubToken:
+        required: true
+      pgpPrivateKey:
+        required: true
+      pgpPassphrase:
         required: true
 
 jobs:
@@ -38,6 +50,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.githubToken }}
 
+      - name: Import bot's GPG key for signing commits
+        id: import-gpg
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.pgpPrivateKey }}
+          passphrase: ${{ secrets.pgpPassphrase }}
+          git_config_global: true
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
       - uses: ./.github/actions/setup-node
         name: setup env and install dependencies
         if: ${{ inputs.installDependencies }}
@@ -47,8 +69,10 @@ jobs:
           packageManagerVersion: ${{ inputs.packageManagerVersion }}
 
       - name: Create/Update Changesets
-        uses: pinax-network/changesets-dependencies-action@v1.2.2
+        uses: pinax-network/changesets-dependencies-action@v1.3.0
         with:
           preCommit: ${{ inputs.preCommit }}
+          gitUserEmail: ${{ inputs.gitUserEmail }}
+          gitUserName: ${{ inputs.gitUserName }}
         env:
           GITHUB_TOKEN: ${{ secrets.githubToken }}

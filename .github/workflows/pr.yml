@@ -9,9 +9,14 @@ permissions: write-all
 jobs:
   dependencies:
     uses: ./.github/workflows/shared-changesets-dependencies.yml
+    with:
+      gitUserEmail: ops@pinax.network
+      gitUserName: pinax-bot
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
     secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
+      githubToken: ${{ secrets.PINAX_BOT_GITHUB_TOKEN }}
+      pgpPrivateKey: ${{ secrets.PINAX_BOT_PGP_PRIVATE_KEY }}
+      pgpPassphrase: ${{ secrets.PINAX_BOT_PGP_PASSPHRASE }}
 
   alpha:
     uses: ./.github/workflows/shared-release-snapshot.yml
