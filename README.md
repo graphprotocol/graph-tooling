@@ -1,12 +1,12 @@
 # The Graph Tooling
 
-Monorepo for various tools used by subgraph developers.
+Monorepo for various tools used by subgraph developers. Test.
 
 This repository houses the following tools:
 
 <!-- prettier-ignore-start -->
-| NPM | Name | 
-| --- | --- | 
+| NPM | Name |
+| --- | --- |
 |[![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-cli.svg?color=success)](https://www.npmjs.com/package/@graphprotocol/graph-cli)| [`@graphprotocol/graph-cli`](./packages/cli) |
 [![npm (scoped)](https://img.shields.io/npm/v/@graphprotocol/graph-ts.svg?color=success)](https://www.npmjs.com/package/@graphprotocol/graph-ts)|[`@graphprotocol/graph-ts`](./packages/ts)|
 
