@@ -1,7 +1,7 @@
 import { create } from 'kubo-rpc-client';
 
 const ipfsClient = create({
-  url: 'https://api.thegraph.com/ipfs/api/v0',
+  url: 'https://ipfs.thegraph.com/ipfs',
 });
 
 export async function uploadFileToIpfs(file: { path: string; content: Buffer }) {
