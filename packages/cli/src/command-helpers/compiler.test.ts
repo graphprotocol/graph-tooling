@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getGraphIpfsUrl } from './ipfs.js';
 
-const DEFAULT_IPFS_URL = 'https://ipfs.thegraph.com/ipfs';
+const DEFAULT_IPFS_URL = 'https://ipfs.thegraph.com/ipfs/api/v0';
 
 describe('getGraphIpfsUrl', { concurrent: true }, () => {
   it('returns default URL when input is undefined', () => {
@@ -57,7 +57,7 @@ describe('getGraphIpfsUrl', { concurrent: true }, () => {
   it('preserves non-deprecated graph endpoints', () => {
     const url = 'https://ipfs.thegraph.com/ipfs';
     expect(getGraphIpfsUrl(url)).toEqual({
-      ipfsUrl: url,
+      ipfsUrl: DEFAULT_IPFS_URL,
     });
   });
 
