@@ -101,7 +101,7 @@ export namespace log {
    * @param msg Format string a la "Value = {}, other = {}".
    * @param args Format string arguments.
    */
-export function critical(msg: string, args: Array<string>): never {
+  export function critical(msg: string, args: Array<string>): never {
     const message = format(msg, args);
     log(Level.CRITICAL, message);
     throw new Error(message);
