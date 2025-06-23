@@ -82,12 +82,10 @@ function format(fmt: string, args: string[]): string {
   return out;
 }
 
-// Host interface for logging
-export declare namespace log {
-  // Host export for logging, providing basic logging functionality
-  export function log(level: Level, msg: string): void;
-}
+// Host export for logging, providing basic logging functionality
+export declare function log(level: log.Level, msg: string): void;
 
+// Host interface for logging
 export namespace log {
   export enum Level {
     CRITICAL = 0,
@@ -105,7 +103,7 @@ export namespace log {
    */
   export function critical(msg: string, args: Array<string>): never {
     const message = format(msg, args);
-    log.log(Level.CRITICAL, message);
+    log(Level.CRITICAL, message);
     throw new Error(message);
   }
 
@@ -116,7 +114,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function error(msg: string, args: Array<string>): void {
-    log.log(Level.ERROR, format(msg, args));
+    log(Level.ERROR, format(msg, args));
   }
 
   /** Logs a warning message.
@@ -125,7 +123,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function warning(msg: string, args: Array<string>): void {
-    log.log(Level.WARNING, format(msg, args));
+    log(Level.WARNING, format(msg, args));
   }
 
   /** Logs an info message.
@@ -134,7 +132,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function info(msg: string, args: Array<string>): void {
-    log.log(Level.INFO, format(msg, args));
+    log(Level.INFO, format(msg, args));
   }
 
   /** Logs a debug message.
@@ -143,7 +141,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function debug(msg: string, args: Array<string>): void {
-    log.log(Level.DEBUG, format(msg, args));
+    log(Level.DEBUG, format(msg, args));
   }
 }
 
