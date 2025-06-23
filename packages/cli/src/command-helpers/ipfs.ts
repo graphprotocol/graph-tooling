@@ -1,4 +1,4 @@
-const DEFAULT_IPFS_URL = 'https://ipfs.thegraph.com/ipfs' as const;
+const DEFAULT_IPFS_URL = 'https://ipfs.thegraph.com/ipfs/api/v0' as const;
 
 /**
  * Validates supplied IPFS URL and provides warnings for deprecated/invalid URLs
@@ -9,6 +9,9 @@ export function getGraphIpfsUrl(ipfsUrl?: string): { ipfsUrl: string; warning?: 
   if (!ipfsUrl) {
     return { ipfsUrl: DEFAULT_IPFS_URL };
   }
+
+  // trim trailing slash
+  ipfsUrl = ipfsUrl.replace(/\/+$/, '');
 
   try {
     new URL(ipfsUrl);
@@ -27,7 +30,14 @@ export function getGraphIpfsUrl(ipfsUrl?: string): { ipfsUrl: string; warning?: 
       };
     }
 
-    return { ipfsUrl: ipfsUrl.replace(/\/+$/, '') };
+    // if default URL - make sure it ends with /api/v0
+    if (DEFAULT_IPFS_URL.startsWith(ipfsUrl)) {
+      return {
+        ipfsUrl: DEFAULT_IPFS_URL,
+      };
+    }
+
+    return { ipfsUrl };
   } catch (e) {
     return {
       ipfsUrl: DEFAULT_IPFS_URL,

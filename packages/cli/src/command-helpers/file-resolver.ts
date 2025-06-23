@@ -39,7 +39,7 @@ export async function resolveFile(
     try {
       // If it's an IPFS hash (Qm...)
       if (source.startsWith('Qm')) {
-        const response = await fetch(`${getGraphIpfsUrl().ipfsUrl}/${source}`);
+        const response = await fetch(`${getGraphIpfsUrl().ipfsUrl}/cat?arg=${source}`);
         if (!response.ok) {
           throw new Error(`failed to fetch from IPFS: ${response.statusText}`);
         }
