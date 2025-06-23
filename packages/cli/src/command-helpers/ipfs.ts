@@ -23,7 +23,7 @@ export function getGraphIpfsUrl(ipfsUrl?: string): { ipfsUrl: string; warning?: 
     if (isDeprecated) {
       return {
         ipfsUrl: DEFAULT_IPFS_URL,
-        warning: `IPFS URL ${ipfsUrl} is deprecated. Using ${DEFAULT_IPFS_URL}`,
+        warning: `IPFS URL ${ipfsUrl} is deprecated. Using default URL instead: ${DEFAULT_IPFS_URL}`,
       };
     }
 
@@ -31,7 +31,7 @@ export function getGraphIpfsUrl(ipfsUrl?: string): { ipfsUrl: string; warning?: 
   } catch (e) {
     return {
       ipfsUrl: DEFAULT_IPFS_URL,
-      warning: `Invalid IPFS URL: ${ipfsUrl}. Using default URL: ${DEFAULT_IPFS_URL}`,
+      warning: `Invalid IPFS URL: ${ipfsUrl}. Using default URL instead: ${DEFAULT_IPFS_URL}`,
     };
   }
 }
