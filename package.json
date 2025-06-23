@@ -25,6 +25,7 @@
     "lint:prettier:fix": "prettier . --write",
     "lint:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "release": "pnpm build && changeset publish",
+    "test": "pnpm --filter @graphprotocol/graph-* test",
     "test:cli": "pnpm --filter @graphprotocol/graph-cli test",
     "test:ts": "pnpm --filter @graphprotocol/graph-ts test",
     "type-check": "pnpm --filter=@graphprotocol/graph-cli type-check"
@@ -34,9 +35,9 @@
     "@changesets/cli": "^2.27.10",
     "@eslint/js": "^9.16.0",
     "@theguild/eslint-config": "0.13.2",
-    "@theguild/prettier-config": "3.0.0",
+    "@theguild/prettier-config": "3.0.1",
     "@types/node": "^22.10.1",
-    "eslint": "9.23.0",
+    "eslint": "9.26.0",
     "prettier": "3.5.3"
   },
   "pnpm": {

@@ -1,3 +1,4 @@
+import './eager-offset';
 import { Bytes, TypedMap } from './collections';
 import { json } from './json';
 import { Address, BigDecimal, BigInt } from './numbers';

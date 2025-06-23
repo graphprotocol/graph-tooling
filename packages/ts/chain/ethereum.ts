@@ -1,3 +1,4 @@
+import '../common/eager-offset';
 import { Bytes, Wrapped } from '../common/collections';
 import { Address, BigInt } from '../common/numbers';
 

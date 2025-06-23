@@ -1,3 +1,4 @@
+import './eager-offset';
 import { Bytes, Result, TypedMap } from './collections';
 import { BigInt } from './numbers';
 
@@ -294,6 +295,6 @@ export class YAMLTaggedValue {
       return true;
     }
 
-    return !(a! == b!);
+    return !(a == b);
   }
 }
