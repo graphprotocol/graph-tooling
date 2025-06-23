@@ -1,7 +1,7 @@
 import os from 'node:os';
 import path from 'node:path';
 import fs from 'fs-extra';
-import { DEFAULT_IPFS_URL } from './ipfs.js';
+import { getGraphIpfsUrl } from './ipfs.js';
 
 export interface FileSource {
   path: string;
@@ -39,7 +39,7 @@ export async function resolveFile(
     try {
       // If it's an IPFS hash (Qm...)
       if (source.startsWith('Qm')) {
-        const response = await fetch(`${DEFAULT_IPFS_URL}/cat?arg=${source}`);
+        const response = await fetch(`${getGraphIpfsUrl().ipfsUrl}/${source}`);
         if (!response.ok) {
           throw new Error(`failed to fetch from IPFS: ${response.statusText}`);
         }

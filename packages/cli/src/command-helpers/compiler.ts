@@ -4,6 +4,7 @@ import Compiler from '../compiler/index.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 import Protocol from '../protocols/index.js';
 import { createIpfsClient } from '../utils.js';
+import { getGraphIpfsUrl } from './ipfs.js';
 
 interface CreateCompilerOptions {
   ipfs: string | URL | undefined;
@@ -14,22 +15,6 @@ interface CreateCompilerOptions {
   // TODO: Remove this is unused
   blockIpfsMethods?: RegExpMatchArray;
   protocol: Protocol;
-}
-
-/**
- * Appends /api/v0 to the end of a The Graph IPFS URL
- */
-export function appendApiVersionForGraph(inputString: string) {
-  // Check if the input string is a valid The Graph IPFS URL
-  const pattern = /^(https?:\/\/)?([\w-]+\.)+thegraph\.com\/ipfs\/?$/;
-  if (pattern.test(inputString)) {
-    // account for trailing slash
-    if (inputString.endsWith('/')) {
-      return inputString.slice(0, -1) + '/api/v0';
-    }
-    return inputString + '/api/v0';
-  }
-  return inputString;
 }
 
 // Helper function to construct a subgraph compiler
@@ -57,7 +42,7 @@ The IPFS URL must be of the following format: http(s)://host[:port]/[path]`);
   // Connect to the IPFS node (if a node address was provided)
   const ipfsClient = ipfs
     ? createIpfsClient({
-        url: appendApiVersionForGraph(ipfs.toString()),
+        url: getGraphIpfsUrl(ipfs.toString()).ipfsUrl,
         headers: {
           ...headers,
           ...GRAPH_CLI_SHARED_HEADERS,
