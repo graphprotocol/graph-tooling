@@ -82,11 +82,11 @@ function format(fmt: string, args: string[]): string {
   return out;
 }
 
-// Host export for logging, providing basic logging functionality
-export declare function log(level: log.Level, msg: string): void;
-
 // Host interface for logging
 export namespace log {
+  // Host export for logging, providing basic logging functionality
+  export declare function log(level: Level, msg: string): void;
+
   export enum Level {
     CRITICAL = 0,
     ERROR = 1,
