@@ -796,21 +796,26 @@ export default class Compiler {
   }
 
   async _uploadToIPFS(file: { path: string; content: Buffer }) {
-    try {
-      const files = this.ipfs.addAll([file]);
+    while (1) {
+      try {
+        const files = this.ipfs.addAll([file]);
+    
+        // We get back async iterable
+        const filesIterator = files[Symbol.asyncIterator]();
+        // We only care about the first item, since that is the file, rest could be directories
+        const { value } = await filesIterator.next();
+    
+        // we grab the file and pin it
+        const uploadedFile = value as Awaited<ReturnType<typeof this.ipfs.add>>;
 
-      // We get back async iterable
-      const filesIterator = files[Symbol.asyncIterator]();
-      // We only care about the first item, since that is the file, rest could be directories
-      const { value } = await filesIterator.next();
+        await this.ipfs.pin.add(uploadedFile.cid);
 
-      // we grab the file and pin it
-      const uploadedFile = value as Awaited<ReturnType<typeof this.ipfs.add>>;
-      await this.ipfs.pin.add(uploadedFile.cid);
-
-      return uploadedFile.cid.toString();
-    } catch (e) {
-      throw Error(`Failed to upload file to IPFS: ${e.message}`);
+        return uploadedFile.cid.toString();
+      } catch (e) {
+        console.log('Failed to upload file to IPFS: ', [(e as any).message]);
+        console.log('Retrying in 4 seconds...');
+        await new Promise(resolve => setTimeout(resolve, 4_000));
+      }
     }
   }
 }
