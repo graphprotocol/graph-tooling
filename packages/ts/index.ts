@@ -84,6 +84,7 @@ function format(fmt: string, args: string[]): string {
 
 // Host export for logging, providing basic logging functionality
 export declare function log(level: log.Level, msg: string): void;
+const logFn = log;
 
 // Host interface for logging
 export namespace log {
@@ -102,7 +103,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function critical(msg: string, args: Array<string>): void {
-    log(Level.CRITICAL, format(msg, args));
+    logFn(Level.CRITICAL, format(msg, args));
   }
 
   /**
@@ -112,7 +113,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function error(msg: string, args: Array<string>): void {
-    log(Level.ERROR, format(msg, args));
+    logFn(Level.ERROR, format(msg, args));
   }
 
   /** Logs a warning message.
@@ -121,7 +122,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function warning(msg: string, args: Array<string>): void {
-    log(Level.WARNING, format(msg, args));
+    logFn(Level.WARNING, format(msg, args));
   }
 
   /** Logs an info message.
@@ -130,7 +131,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function info(msg: string, args: Array<string>): void {
-    log(Level.INFO, format(msg, args));
+    logFn(Level.INFO, format(msg, args));
   }
 
   /** Logs a debug message.
@@ -139,7 +140,7 @@ export namespace log {
    * @param args Format string arguments.
    */
   export function debug(msg: string, args: Array<string>): void {
-    log(Level.DEBUG, format(msg, args));
+    logFn(Level.DEBUG, format(msg, args));
   }
 }
 
