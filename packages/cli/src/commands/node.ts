@@ -46,7 +46,11 @@ export default class NodeCommand extends Command {
     const { flags, args } = await this.parse(NodeCommand);
 
     if (args.install) {
-      await installGraphNode(flags.tag, flags['bin-dir']);
+      try {
+        await installGraphNode(flags.tag, flags['bin-dir']);
+      } catch (e) {
+        this.error(`Failed to install: ${e.message}`, { exit: 1 });
+      }
       return;
     }
 
@@ -61,9 +65,10 @@ async function installGraphNode(tag?: string, binDir?: string) {
   const tmpDir = await fs.promises.mkdtemp(path.join(tmpBase, 'graph-node-'));
   let progressBar: ProgressBar | undefined;
 
-  let downloadPath: string;
-  try {
-    downloadPath = await downloadGraphNodeRelease(latestRelease, tmpDir, (downloaded, total) => {
+  const downloadPath = await downloadGraphNodeRelease(
+    latestRelease,
+    tmpDir,
+    (downloaded, total) => {
       if (!total) return;
 
       progressBar ||= new ProgressBar(`Downloading ${latestRelease} [:bar] :percent`, {
@@ -74,11 +79,8 @@ async function installGraphNode(tag?: string, binDir?: string) {
       });
 
       progressBar.tick(downloaded - (progressBar.curr || 0));
-    });
-  } catch (e) {
-    print.error(e);
-    throw e;
-  }
+    },
+  );
 
   let extractedPath: string;
 
