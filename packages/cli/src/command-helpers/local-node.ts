@@ -8,6 +8,10 @@ import { createGunzip } from 'node:zlib';
 import decompress from 'decompress';
 import fetch from '../fetch.js';
 
+// Add GitHub repository configuration via environment variables with defaults
+const GRAPH_NODE_GITHUB_OWNER = process.env.GRAPH_NODE_GITHUB_OWNER || 'graphprotocol';
+const GRAPH_NODE_GITHUB_REPO = process.env.GRAPH_NODE_GITHUB_REPO || 'graph-node';
+
 function getPlatformBinaryName(): string {
   const platform = os.platform();
   const arch = os.arch();
@@ -43,7 +47,7 @@ async function getLatestGithubRelease(owner: string, repo: string) {
 }
 
 export async function getLatestGraphNodeRelease(): Promise<string> {
-  return getLatestGithubRelease('graphprotocol', 'graph-node');
+  return getLatestGithubRelease(GRAPH_NODE_GITHUB_OWNER, GRAPH_NODE_GITHUB_REPO);
 }
 
 export async function downloadGraphNodeRelease(
@@ -55,8 +59,8 @@ export async function downloadGraphNodeRelease(
 
   try {
     return await downloadGithubRelease(
-      'graphprotocol',
-      'graph-node',
+      GRAPH_NODE_GITHUB_OWNER,
+      GRAPH_NODE_GITHUB_REPO,
       release,
       outputDir,
       fileName,
