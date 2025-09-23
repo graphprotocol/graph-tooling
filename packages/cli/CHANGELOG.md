@@ -1,5 +1,17 @@
 # @graphprotocol/graph-cli
 
+## 0.98.0
+
+### Minor Changes
+
+- [#2041](https://github.com/graphprotocol/graph-tooling/pull/2041) [`42f3803`](https://github.com/graphprotocol/graph-tooling/commit/42f3803346cb7a35f4a37be6eee2f255c9332d90) Thanks [@incrypto32](https://github.com/incrypto32)! - Add a new command to install graph-node dev binary (gnd)
+
+### Patch Changes
+
+- [#2041](https://github.com/graphprotocol/graph-tooling/pull/2041) [`42f3803`](https://github.com/graphprotocol/graph-tooling/commit/42f3803346cb7a35f4a37be6eee2f255c9332d90) Thanks [@incrypto32](https://github.com/incrypto32)! - dependencies updates:
+  - Added dependency [`decompress@^4.2.1` ↗︎](https://www.npmjs.com/package/decompress/v/4.2.1) (to `dependencies`)
+  - Added dependency [`progress@^2.0.3` ↗︎](https://www.npmjs.com/package/progress/v/2.0.3) (to `dependencies`)
+
 ## 0.97.1
 
 ### Patch Changes
