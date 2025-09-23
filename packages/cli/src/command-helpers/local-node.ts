@@ -68,7 +68,9 @@ export async function downloadGraphNodeRelease(
     );
   } catch (e) {
     if (e === 404) {
-      throw new Error(`Graph Node release ${release} does not exist, please check the release page for the correct release tag`);
+      throw new Error(
+        `Graph Node release ${release} does not exist, please check the release page for the correct release tag`,
+      );
     }
 
     throw new Error(`Failed to download: ${release}`);
