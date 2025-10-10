@@ -1,5 +1,11 @@
 # @graphprotocol/graph-ts
 
+## 0.38.2
+
+### Patch Changes
+
+- [#2008](https://github.com/graphprotocol/graph-tooling/pull/2008) [`b9b911e`](https://github.com/graphprotocol/graph-tooling/commit/b9b911e67a5fd404696c1e3d2e68539b1f478724) Thanks [@PaulRBerg](https://github.com/PaulRBerg)! - fixed log namespace reference
+
 ## 0.38.1
 
 ### Patch Changes
