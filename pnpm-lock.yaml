@@ -252,8 +252,8 @@ importers:
         specifier: ^3.1.24
         version: 3.1.49
       '@pinax/graph-networks-registry':
-        specifier: ^0.6.5
-        version: 0.6.7
+        specifier: ^0.7.0
+        version: 0.7.1
       '@whatwg-node/fetch':
         specifier: ^0.10.1
         version: 0.10.11
@@ -2677,8 +2677,8 @@ packages:
     resolution: {integrity: sha512-BRs5XUAwiyCDQMsVA9IDvDa7UBR9gAvPHgugOeGng3YN6vJ9JYonyDc0lNczErgtCWtucjR5N7VtaonboD/ezg==}
     engines: {node: '>=10.12.0'}
 
-  '@pinax/graph-networks-registry@0.6.7':
-    resolution: {integrity: sha512-xogeCEZ50XRMxpBwE3TZjJ8RCO8Guv39gDRrrKtlpDEDEMLm0MzD3A0SQObgj7aF7qTZNRTWzsuvQdxgzw25wQ==}
+  '@pinax/graph-networks-registry@0.7.1':
+    resolution: {integrity: sha512-Gn2kXRiEd5COAaMY/aDCRO0V+zfb1uQKCu5HFPoWka+EsZW27AlTINA7JctYYYEMuCbjMia5FBOzskjgEvj6LA==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -13958,7 +13958,7 @@ snapshots:
       tslib: 2.8.1
       webcrypto-core: 1.8.1
 
-  '@pinax/graph-networks-registry@0.6.7': {}
+  '@pinax/graph-networks-registry@0.7.1': {}
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -20759,7 +20759,7 @@ snapshots:
 
   miller-rabin@4.0.1:
     dependencies:
-      bn.js: 4.12.1
+      bn.js: 4.12.2
       brorand: 1.1.0
 
   mime-db@1.52.0: {}
