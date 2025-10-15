@@ -1,5 +1,25 @@
 # @graphprotocol/graph-cli
 
+## 0.98.1
+
+### Patch Changes
+
+- [#2032](https://github.com/graphprotocol/graph-tooling/pull/2032) [`3ac1c17`](https://github.com/graphprotocol/graph-tooling/commit/3ac1c17ff4d5bb1fd7e7c62e3f291834dfad0cb2) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@oclif/core@4.5.5` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.5.5) (from `4.3.0`, in `dependencies`)
+  - Updated dependency [`debug@4.4.3` ↗︎](https://www.npmjs.com/package/debug/v/4.4.3) (from `4.4.1`, in `dependencies`)
+  - Updated dependency [`docker-compose@1.3.0` ↗︎](https://www.npmjs.com/package/docker-compose/v/1.3.0) (from `1.2.0`, in `dependencies`)
+  - Updated dependency [`fs-extra@11.3.2` ↗︎](https://www.npmjs.com/package/fs-extra/v/11.3.2) (from `11.3.0`, in `dependencies`)
+  - Updated dependency [`glob@11.0.3` ↗︎](https://www.npmjs.com/package/glob/v/11.0.3) (from `11.0.2`, in `dependencies`)
+  - Updated dependency [`immutable@5.1.4` ↗︎](https://www.npmjs.com/package/immutable/v/5.1.4) (from `5.1.2`, in `dependencies`)
+  - Updated dependency [`open@10.2.0` ↗︎](https://www.npmjs.com/package/open/v/10.2.0) (from `10.1.2`, in `dependencies`)
+  - Updated dependency [`prettier@3.6.2` ↗︎](https://www.npmjs.com/package/prettier/v/3.6.2) (from `3.5.3`, in `dependencies`)
+  - Updated dependency [`semver@7.7.3` ↗︎](https://www.npmjs.com/package/semver/v/7.7.3) (from `7.7.2`, in `dependencies`)
+  - Updated dependency [`undici@7.16.0` ↗︎](https://www.npmjs.com/package/undici/v/7.16.0) (from `7.9.0`, in `dependencies`)
+  - Updated dependency [`yaml@2.8.1` ↗︎](https://www.npmjs.com/package/yaml/v/2.8.1) (from `2.8.0`, in `dependencies`)
+
+- [#2058](https://github.com/graphprotocol/graph-tooling/pull/2058) [`84d94cf`](https://github.com/graphprotocol/graph-tooling/commit/84d94cf838906d37b6615c9c5247c988e8636b85) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`@pinax/graph-networks-registry@^0.7.0` ↗︎](https://www.npmjs.com/package/@pinax/graph-networks-registry/v/0.7.0) (from `^0.6.5`, in `dependencies`)
+
 ## 0.98.0
 
 ### Minor Changes
@@ -17,7 +37,6 @@
 ### Patch Changes
 
 - [#1996](https://github.com/graphprotocol/graph-tooling/pull/1996) [`91291f1`](https://github.com/graphprotocol/graph-tooling/commit/91291f1881fdd89f14651d291cb9c61dfe18f754) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@4.2.10` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.2.10) (from `4.2.8`, in `dependencies`)
   - Updated dependency [`docker-compose@1.2.0` ↗︎](https://www.npmjs.com/package/docker-compose/v/1.2.0) (from `1.1.1`, in `dependencies`)
   - Updated dependency [`immutable@5.1.1` ↗︎](https://www.npmjs.com/package/immutable/v/5.1.1) (from `5.0.3`, in `dependencies`)
@@ -37,17 +56,14 @@
 ### Patch Changes
 
 - [#1956](https://github.com/graphprotocol/graph-tooling/pull/1956) [`59ad5f0`](https://github.com/graphprotocol/graph-tooling/commit/59ad5f06f45cd8d9842156d58f5047040f2cc1dd) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@4.2.8` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.2.8) (from `4.2.6`, in `dependencies`)
   - Updated dependency [`docker-compose@1.1.1` ↗︎](https://www.npmjs.com/package/docker-compose/v/1.1.1) (from `1.1.0`, in `dependencies`)
   - Updated dependency [`prettier@3.5.2` ↗︎](https://www.npmjs.com/package/prettier/v/3.5.2) (from `3.4.2`, in `dependencies`)
 
 - [#1978](https://github.com/graphprotocol/graph-tooling/pull/1978) [`d360f11`](https://github.com/graphprotocol/graph-tooling/commit/d360f11328d32d11246ce5101a168081fedb720a) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`undici@7.4.0` ↗︎](https://www.npmjs.com/package/undici/v/7.4.0) (from `7.3.0`, in `dependencies`)
 
 - [#1979](https://github.com/graphprotocol/graph-tooling/pull/1979) [`3f78ac2`](https://github.com/graphprotocol/graph-tooling/commit/3f78ac20925af23df24afec2966d26fc002e3195) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`prettier@3.5.3` ↗︎](https://www.npmjs.com/package/prettier/v/3.5.3) (from `3.5.2`, in `dependencies`)
 
 - [#1969](https://github.com/graphprotocol/graph-tooling/pull/1969) [`5ffce65`](https://github.com/graphprotocol/graph-tooling/commit/5ffce651d11a68b8eae743785311eac74c8da563) Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - handle sized arrays in abi when changetype
@@ -75,7 +91,6 @@
 ### Patch Changes
 
 - [#1834](https://github.com/graphprotocol/graph-tooling/pull/1834) [`0058157`](https://github.com/graphprotocol/graph-tooling/commit/0058157e45c8902cf0068c359492da3d751529f8) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@4.2.4` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.2.4) (from `4.0.34`, in `dependencies`)
   - Updated dependency [`chokidar@4.0.3` ↗︎](https://www.npmjs.com/package/chokidar/v/4.0.3) (from `4.0.1`, in `dependencies`)
   - Updated dependency [`debug@4.4.0` ↗︎](https://www.npmjs.com/package/debug/v/4.4.0) (from `4.3.7`, in `dependencies`)
@@ -86,7 +101,6 @@
   - Updated dependency [`yaml@2.7.0` ↗︎](https://www.npmjs.com/package/yaml/v/2.7.0) (from `2.6.1`, in `dependencies`)
 
 - [#1932](https://github.com/graphprotocol/graph-tooling/pull/1932) [`80a2ae9`](https://github.com/graphprotocol/graph-tooling/commit/80a2ae9b11260786896665993655056ff048b84b) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@4.2.6` ↗︎](https://www.npmjs.com/package/@oclif/core/v/4.2.6) (from `4.2.4`, in `dependencies`)
   - Updated dependency [`semver@7.7.1` ↗︎](https://www.npmjs.com/package/semver/v/7.7.1) (from `7.6.3`, in `dependencies`)
 
@@ -115,14 +129,12 @@
 - [#1910](https://github.com/graphprotocol/graph-tooling/pull/1910)
   [`15384e6`](https://github.com/graphprotocol/graph-tooling/commit/15384e6bd8af6ba2ad07e9eb5a637d148fb39867)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`undici@7.2.3` ↗︎](https://www.npmjs.com/package/undici/v/7.2.3) (from
     `7.1.1`, in `dependencies`)
 
 - [#1914](https://github.com/graphprotocol/graph-tooling/pull/1914)
   [`e63b483`](https://github.com/graphprotocol/graph-tooling/commit/e63b483612e74587b3d33b7ce6d5f3264096820f)
   Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - dependencies updates:
-
   - Removed dependency
     [`binary-install@^1.1.0` ↗︎](https://www.npmjs.com/package/binary-install/v/1.1.0) (from
     `dependencies`)
@@ -237,7 +249,6 @@
 - [#1849](https://github.com/graphprotocol/graph-tooling/pull/1849)
   [`00e0a83`](https://github.com/graphprotocol/graph-tooling/commit/00e0a830165a946749d12fdbcdc0ad00074a2ecd)
   Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - dependencies updates:
-
   - Updated dependency
     [`assemblyscript@0.19.23` ↗︎](https://www.npmjs.com/package/assemblyscript/v/0.19.23) (from
     `0.27.31`, in `dependencies`)
@@ -284,7 +295,6 @@
 - [#1848](https://github.com/graphprotocol/graph-tooling/pull/1848)
   [`f2726cb`](https://github.com/graphprotocol/graph-tooling/commit/f2726cb4741ec87a4292088affbca554c252313a)
   Thanks [@YaroShkvorets](https://github.com/YaroShkvorets)! - dependencies updates:
-
   - Added dependency [`prettier@3.4.2` ↗︎](https://www.npmjs.com/package/prettier/v/3.4.2) (to
     `dependencies`)
   - Added dependency [`undici@7.1.1` ↗︎](https://www.npmjs.com/package/undici/v/7.1.1) (to
@@ -395,7 +405,6 @@
   [`08914a8`](https://github.com/graphprotocol/graph-tooling/commit/08914a89179e31363765bb3a6e72945f4585e207)
   Thanks [@saihaj](https://github.com/saihaj)! - Breaking changes to the CLI to prepare for the
   sunset of the hosted service.
-
   - `graph auth`
     - Removed `--product` flag
     - Removed `--studio` flag
@@ -610,7 +619,6 @@
   Now you can publish your subgraphs directly from the CLI. This command will build your subgraph,
   deploy, prompt you to add metadata and then sign the transaction to publish it to the Graph
   Network.
-
   1. Build the subgraph and publish it to the network.
 
   ```sh
@@ -816,7 +824,6 @@
 - [#1571](https://github.com/graphprotocol/graph-tooling/pull/1571)
   [`76279ab`](https://github.com/graphprotocol/graph-tooling/commit/76279ab7afda5280a202818d64668c9e0873bb91)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Updated dependency [`gluegun@5.1.6` ↗︎](https://www.npmjs.com/package/gluegun/v/5.1.6) (from
     `5.1.2`, in `dependencies`)
 
@@ -889,7 +896,6 @@
 - [#1545](https://github.com/graphprotocol/graph-tooling/pull/1545)
   [`1cfc8ce`](https://github.com/graphprotocol/graph-tooling/commit/1cfc8ce67388ebb9c6dcb1195119959ecd9be325)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Removed dependency
     [`@babel/core@^7.20.5` ↗︎](https://www.npmjs.com/package/@babel/core/v/7.20.5) (from
     `dependencies`)
@@ -942,7 +948,6 @@
 - [#1535](https://github.com/graphprotocol/graph-tooling/pull/1535)
   [`7d5c818`](https://github.com/graphprotocol/graph-tooling/commit/7d5c818fc832cf824421957b02ff3198bcf25a22)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Added dependency [`@babel/core@^7.20.5` ↗︎](https://www.npmjs.com/package/@babel/core/v/7.20.5)
     (to `dependencies`)
   - Added dependency
@@ -1079,7 +1084,6 @@
 - [#1439](https://github.com/graphprotocol/graph-tooling/pull/1439)
   [`b583097`](https://github.com/graphprotocol/graph-tooling/commit/b583097f464a478151068d96d668334602bed3ba)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Added dependency
     [`@oclif/plugin-autocomplete@^2.3.6` ↗︎](https://www.npmjs.com/package/@oclif/plugin-autocomplete/v/2.3.6)
     (to `dependencies`)
@@ -1087,7 +1091,6 @@
 - [#1441](https://github.com/graphprotocol/graph-tooling/pull/1441)
   [`2e656e9`](https://github.com/graphprotocol/graph-tooling/commit/2e656e9cdaaea6d87866adaa142da597fcd7ce65)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Added dependency
     [`@oclif/plugin-not-found@^2.4.0` ↗︎](https://www.npmjs.com/package/@oclif/plugin-not-found/v/2.4.0)
     (to `dependencies`)
@@ -1206,7 +1209,6 @@
 - [#1347](https://github.com/graphprotocol/graph-tooling/pull/1347)
   [`b442a11`](https://github.com/graphprotocol/graph-tooling/commit/b442a111fa2b00df59faf655e5199a8b5248b518)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@2.8.6` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.6)
     (from `2.8.4`, in `dependencies`)
 
@@ -1306,7 +1308,6 @@
 - [#1335](https://github.com/graphprotocol/graph-tooling/pull/1335)
   [`7343f50`](https://github.com/graphprotocol/graph-tooling/commit/7343f50c0e2b767de04909e6020b88fea97ae3cd)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@2.8.4` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.4)
     (from `2.8.2`, in `dependencies`)
   - Updated dependency [`gluegun@5.1.2` ↗︎](https://www.npmjs.com/package/gluegun/v/5.1.2) (from
@@ -1343,7 +1344,6 @@
 - [#1328](https://github.com/graphprotocol/graph-tooling/pull/1328)
   [`4963215`](https://github.com/graphprotocol/graph-tooling/commit/4963215564797393424c563ea0b51aabbfd8e33e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@2.8.4` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.4)
     (from `2.8.2`, in `dependencies`)
 
@@ -1406,28 +1406,24 @@
 - [#1266](https://github.com/graphprotocol/graph-tooling/pull/1266)
   [`0bc47bd`](https://github.com/graphprotocol/graph-tooling/commit/0bc47bd92031b3dab48ff87fc9be20ac2ee35d96)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`glob@9.3.5` ↗︎](https://www.npmjs.com/package/glob/v/9.3.5) (from `9.3.4`,
     in `dependencies`)
 
 - [#1273](https://github.com/graphprotocol/graph-tooling/pull/1273)
   [`83d7a08`](https://github.com/graphprotocol/graph-tooling/commit/83d7a084e529aa87c6b05b21a35c92c1c8ddb7fc)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`semver@7.4.0` ↗︎](https://www.npmjs.com/package/semver/v/7.4.0) (from
     `7.3.8`, in `dependencies`)
 
 - [#1279](https://github.com/graphprotocol/graph-tooling/pull/1279)
   [`1f8b9c9`](https://github.com/graphprotocol/graph-tooling/commit/1f8b9c99456b8be12953ff31cf5c27672a89a90d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@2.8.1` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.1)
     (from `2.8.0`, in `dependencies`)
 
 - [#1288](https://github.com/graphprotocol/graph-tooling/pull/1288)
   [`7090159`](https://github.com/graphprotocol/graph-tooling/commit/7090159be5b40ec78702ce9c870536f4fb7e048d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@2.8.2` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.2)
     (from `2.8.1`, in `dependencies`)
 
@@ -1497,14 +1493,12 @@
 - [#1216](https://github.com/graphprotocol/graph-tooling/pull/1216)
   [`47e683d`](https://github.com/graphprotocol/graph-tooling/commit/47e683da9cd19b1eb6408c84111e1eadad84304d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`yaml@1.10.2` ↗︎](https://www.npmjs.com/package/yaml/v/1.10.2) (from
     `1.9.2`, in `dependencies`)
 
 - [#1218](https://github.com/graphprotocol/graph-tooling/pull/1218)
   [`01046d9`](https://github.com/graphprotocol/graph-tooling/commit/01046d946f42f436fb10d54c5c959012cd6fef67)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Added dependency
     [`@whatwg-node/fetch@^0.8.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.4) (to
     `dependencies`)
@@ -1514,21 +1508,18 @@
 - [#1224](https://github.com/graphprotocol/graph-tooling/pull/1224)
   [`f82aac9`](https://github.com/graphprotocol/graph-tooling/commit/f82aac9e784c9ab6c2c9185cf1ea54ece0be1085)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`chokidar@3.5.3` ↗︎](https://www.npmjs.com/package/chokidar/v/3.5.3) (from
     `3.5.1`, in `dependencies`)
 
 - [#1226](https://github.com/graphprotocol/graph-tooling/pull/1226)
   [`ae76840`](https://github.com/graphprotocol/graph-tooling/commit/ae76840703fa62260d161968abfc461290ecfd22)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`debug@4.3.4` ↗︎](https://www.npmjs.com/package/debug/v/4.3.4) (from
     `4.3.1`, in `dependencies`)
 
 - [#1227](https://github.com/graphprotocol/graph-tooling/pull/1227)
   [`7516030`](https://github.com/graphprotocol/graph-tooling/commit/751603045fc5f92d0d4b950f3a0fa263f040c401)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`docker-compose@0.23.19` ↗︎](https://www.npmjs.com/package/docker-compose/v/0.23.19) (from
     `0.23.4`, in `dependencies`)
@@ -1536,56 +1527,48 @@
 - [#1228](https://github.com/graphprotocol/graph-tooling/pull/1228)
   [`cefbf3a`](https://github.com/graphprotocol/graph-tooling/commit/cefbf3a0d4601d79c4700eed45f1fc3ede35fbd7)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`semver@7.3.8` ↗︎](https://www.npmjs.com/package/semver/v/7.3.8) (from
     `7.3.5`, in `dependencies`)
 
 - [#1229](https://github.com/graphprotocol/graph-tooling/pull/1229)
   [`425558f`](https://github.com/graphprotocol/graph-tooling/commit/425558f3211ed79bbfc090d21e39a0eea7cb7cb5)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`tmp-promise@3.0.3` ↗︎](https://www.npmjs.com/package/tmp-promise/v/3.0.3)
     (from `3.0.2`, in `dependencies`)
 
 - [#1232](https://github.com/graphprotocol/graph-tooling/pull/1232)
   [`dc1e433`](https://github.com/graphprotocol/graph-tooling/commit/dc1e43304cf382d67bbd4f2f5d9f80e3fe676b47)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`@oclif/core@2.8.0` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.8.0)
     (from `2.0.7`, in `dependencies`)
 
 - [#1234](https://github.com/graphprotocol/graph-tooling/pull/1234)
   [`2f6838a`](https://github.com/graphprotocol/graph-tooling/commit/2f6838ac06e0d3b672565594a1acd817d46cb450)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`fs-extra@9.1.0` ↗︎](https://www.npmjs.com/package/fs-extra/v/9.1.0) (from
     `9.0.0`, in `dependencies`)
 
 - [#1239](https://github.com/graphprotocol/graph-tooling/pull/1239)
   [`b331905`](https://github.com/graphprotocol/graph-tooling/commit/b331905790c193183fb9cad834f488027cb3fd91)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`jayson@3.7.0` ↗︎](https://www.npmjs.com/package/jayson/v/3.7.0) (from
     `3.6.6`, in `dependencies`)
 
 - [#1240](https://github.com/graphprotocol/graph-tooling/pull/1240)
   [`ef99d62`](https://github.com/graphprotocol/graph-tooling/commit/ef99d6234de249a04e9d5f09d1f0909f9261d413)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`js-yaml@3.14.1` ↗︎](https://www.npmjs.com/package/js-yaml/v/3.14.1) (from
     `3.13.1`, in `dependencies`)
 
 - [#1243](https://github.com/graphprotocol/graph-tooling/pull/1243)
   [`5682ab5`](https://github.com/graphprotocol/graph-tooling/commit/5682ab5aab38013aa68936d70458962f2927db75)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`yaml@1.10.2` ↗︎](https://www.npmjs.com/package/yaml/v/1.10.2) (from
     `1.9.2`, in `dependencies`)
 
 - [#1248](https://github.com/graphprotocol/graph-tooling/pull/1248)
   [`1ecb75a`](https://github.com/graphprotocol/graph-tooling/commit/1ecb75a7e45b120841c799bcb599a1fde757313c)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`glob@9.3.4` ↗︎](https://www.npmjs.com/package/glob/v/9.3.4) (from `7.1.6`,
     in `dependencies`)
 
@@ -1732,7 +1715,6 @@
 - [#1055](https://github.com/graphprotocol/graph-tooling/pull/1055)
   [`044cd92`](https://github.com/graphprotocol/graph-tooling/commit/044cd92d0ceb9628c7f7fbe3627a09b867710247)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Added dependency [`@oclif/core@2.0.7` ↗︎](https://www.npmjs.com/package/@oclif/core/v/2.0.7)
     (to `dependencies`)
 
@@ -1793,7 +1775,6 @@
 - [#1039](https://github.com/graphprotocol/graph-cli/pull/1039)
   [`accefb6`](https://github.com/graphprotocol/graph-cli/commit/accefb637bf1c1db64f63b32a18c291574aa4974)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Removed dependency [`pkginfo@0.4.1` ↗︎](https://www.npmjs.com/package/pkginfo/v/0.4.1) (from
     `dependencies`)
 
@@ -1829,7 +1810,6 @@
 - [#1020](https://github.com/graphprotocol/graph-cli/pull/1020)
   [`4c5e452`](https://github.com/graphprotocol/graph-cli/commit/4c5e452cbc2eceb75db29019fb3b4c769c9618f4)
   Thanks [@saihaj](https://github.com/saihaj)! - dependencies updates:
-
   - Updated dependency [`immutable@4.2.1` ↗︎](https://www.npmjs.com/package/immutable/v/4.2.1)
     (from `3.8.2`, in `dependencies`)
 
