@@ -1,4 +1,3 @@
-version: '3'
 services:
   graph-node:
     image: graphprotocol/graph-node:v0.32.0
@@ -25,7 +24,7 @@ services:
     ports:
       - '5001:5001'
     volumes:
-      - ./data/ipfs:/data/ipfs
+      - ipfs-data:/data/ipfs
   postgres:
     image: postgres
     ports:
@@ -36,4 +35,8 @@ services:
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  ipfs-data:
+  postgres-data:
