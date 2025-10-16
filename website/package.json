@@ -51,7 +51,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/semver": "^7.5.8",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^5.0.0",
     "postcss": "^8.4.49",
     "rimraf": "^6.0.1",
     "tailwindcss": "^4.0.0",
