@@ -7,7 +7,7 @@ on:
 permissions: write-all
 
 env:
-  RELEASE_COMMIT_MSG: "chore(release): update monorepo packages versions"
+  RELEASE_COMMIT_MSG: 'chore(release): update monorepo packages versions'
 
 jobs:
   stable:

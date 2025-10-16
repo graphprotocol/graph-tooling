@@ -18,19 +18,19 @@ on:
         type: string
         description: Package manager version
         required: false
-        default: ""
+        default: ''
       nodeVersion:
         required: false
         type: string
-        default: "20"
+        default: '20'
       gitUserEmail:
         required: false
         type: string
-        default: ""
+        default: ''
       gitUserName:
         required: false
         type: string
-        default: ""
+        default: ''
     secrets:
       githubToken:
         required: true
