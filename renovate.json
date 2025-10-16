@@ -21,7 +21,7 @@
       "groupSlug": "all-minor-patch"
     },
     {
-      "matchPackageNames": ["oclif", "@theguild/**", "@pinax/**"],
+      "matchPackageNames": ["oclif", "@theguild/**", "@pinax/**", "typescript"],
       "groupName": null
     },
     {
