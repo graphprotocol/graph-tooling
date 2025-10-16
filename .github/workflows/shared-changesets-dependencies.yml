@@ -18,19 +18,19 @@ on:
         type: string
         description: Package manager version
         required: false
-        default: ''
+        default: ""
       nodeVersion:
         required: false
         type: string
-        default: '20'
+        default: "20"
       gitUserEmail:
         required: false
         type: string
-        default: ''
+        default: ""
       gitUserName:
         required: false
         type: string
-        default: ''
+        default: ""
     secrets:
       githubToken:
         required: true
@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.githubToken }}
+          token: ${{ github.token }}
 
       - name: Import bot's GPG key for signing commits
         id: import-gpg

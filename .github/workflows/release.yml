@@ -7,7 +7,7 @@ on:
 permissions: write-all
 
 env:
-  RELEASE_COMMIT_MSG: 'chore(release): update monorepo packages versions'
+  RELEASE_COMMIT_MSG: "chore(release): update monorepo packages versions"
 
 jobs:
   stable:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
       - name: Setup environment
         uses: ./.github/actions/setup-node
         with:
