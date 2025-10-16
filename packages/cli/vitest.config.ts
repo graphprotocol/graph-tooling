@@ -7,5 +7,6 @@ export default defineConfig({
       NODE_NO_WARNINGS: '1',
     },
     hookTimeout: 20_000,
+    globalSetup: './tests/cli/globalSetup.ts',
   },
 });

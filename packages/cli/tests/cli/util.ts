@@ -98,13 +98,8 @@ export function runGraphCli(args: string[], cwd: string) {
   return runCommand(graphCli, args, cwd);
 }
 
-export const linkCli = () => {
-  runCommand(system.which('yarn') ? 'yarn' : 'npm', ['link']);
-};
-
-export const unlinkCli = () => {
-  runCommand(system.which('yarn') ? 'yarn' : 'npm', ['unlink']);
-};
+// Re-export from link.ts to maintain backward compatibility
+export { linkCli, unlinkCli } from './link.js';
 
 export const packageManagerBuild = (cwd: string) =>
   runCommand(system.which('yarn') ? 'yarn' : 'npm', ['run', 'build'], cwd);
