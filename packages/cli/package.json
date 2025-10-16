@@ -55,7 +55,7 @@
     "immutable": "5.1.4",
     "jayson": "4.2.0",
     "js-yaml": "4.1.0",
-    "kubo-rpc-client": "^5.0.2",
+    "kubo-rpc-client": "^6.0.0",
     "open": "10.2.0",
     "prettier": "3.6.2",
     "progress": "^2.0.3",
