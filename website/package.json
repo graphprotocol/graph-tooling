@@ -29,7 +29,7 @@
     "file-type": "^20.0.0",
     "gql.tada": "^1.8.10",
     "graphql": "16.11.0",
-    "kubo-rpc-client": "^5.0.2",
+    "kubo-rpc-client": "^6.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.5",
