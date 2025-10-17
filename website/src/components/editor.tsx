@@ -7,7 +7,7 @@ export function Editor({ value }: { value: string }) {
       options={{
         readOnly: true,
         minimap: {
-          autohide: true,
+          autohide: 'scroll',
         },
       }}
       defaultValue={value}
