@@ -3,9 +3,9 @@ import { URL } from 'node:url';
 import { print, prompt } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
 import { identifyDeployKey } from '../command-helpers/auth.js';
-import { appendApiVersionForGraph, createCompiler } from '../command-helpers/compiler.js';
+import { createCompiler } from '../command-helpers/compiler.js';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import { getGraphIpfsUrl } from '../command-helpers/ipfs.js';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc.js';
 import { updateSubgraphNetwork } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
@@ -60,7 +60,7 @@ export default class DeployCommand extends Command {
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
       char: 'i',
-      default: DEFAULT_IPFS_URL,
+      default: getGraphIpfsUrl().ipfsUrl,
     }),
     'ipfs-hash': Flags.string({
       summary: 'IPFS hash of the subgraph manifest to deploy.',
@@ -228,9 +228,12 @@ export default class DeployCommand extends Command {
 
     // we are provided the IPFS hash, so we deploy directly
     if (ipfsHash) {
-      // Connect to the IPFS node (if a node address was provided)
+      const { ipfsUrl, warning } = getGraphIpfsUrl(ipfs);
+      if (warning) {
+        this.warn(warning);
+      }
       const ipfsClient = createIpfsClient({
-        url: appendApiVersionForGraph(ipfs.toString()),
+        url: ipfsUrl,
         headers: {
           ...headers,
           ...GRAPH_CLI_SHARED_HEADERS,
@@ -277,8 +280,12 @@ export default class DeployCommand extends Command {
       await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
     }
 
+    const { ipfsUrl, warning } = getGraphIpfsUrl(ipfs);
+    if (warning) {
+      this.warn(warning);
+    }
     const compiler = createCompiler(manifest, {
-      ipfs,
+      ipfs: ipfsUrl,
       headers,
       outputDir,
       outputFormat: 'wasm',

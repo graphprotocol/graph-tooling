@@ -2,6 +2,7 @@ import { filesystem } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
 import { createCompiler } from '../command-helpers/compiler.js';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
+import { getGraphIpfsUrl } from '../command-helpers/ipfs.js';
 import { updateSubgraphNetwork } from '../command-helpers/network.js';
 import debug from '../debug.js';
 import Protocol from '../protocols/index.js';
@@ -86,9 +87,13 @@ export default class BuildCommand extends Command {
       const identifierName = protocol.getContract()!.identifierName();
       await updateSubgraphNetwork(manifest, network, networkFile, identifierName);
     }
+    const { ipfsUrl, warning } = getGraphIpfsUrl(ipfs);
+    if (warning) {
+      this.warn(warning);
+    }
 
     const compiler = createCompiler(manifest, {
-      ipfs,
+      ipfs: ipfsUrl,
       outputDir,
       outputFormat,
       skipMigrations,
