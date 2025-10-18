@@ -81,10 +81,7 @@ const subgraphMetadataSchema = z.object({
         code: 'custom',
         message: 'Not a valid semver version. Example: 0.0.1',
       });
-      return false;
     }
-
-    return true;
   }),
   chain: z.enum(CHAINS),
 });
