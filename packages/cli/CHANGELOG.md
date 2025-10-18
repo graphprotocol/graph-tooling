@@ -1,5 +1,12 @@
 # @graphprotocol/graph-cli
 
+## 0.98.2
+
+### Patch Changes
+
+- [#2068](https://github.com/graphprotocol/graph-tooling/pull/2068) [`c05a9b3`](https://github.com/graphprotocol/graph-tooling/commit/c05a9b3685e69aeaabe9181966bc244387b40924) Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`kubo-rpc-client@^6.0.0` ↗︎](https://www.npmjs.com/package/kubo-rpc-client/v/6.0.0) (from `^5.0.2`, in `dependencies`)
+
 ## 0.98.1
 
 ### Patch Changes
