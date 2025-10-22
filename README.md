@@ -70,3 +70,4 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or
 implied. See the License for the specific language governing permissions and limitations under the
 License.
+<br>## Welcome to Subgraph Deploy<br>Graph CLI deploys subgraph queries - new contributors, start your first index with the Init tutorial. Tip: Use Hosted Service for testing! <br>
