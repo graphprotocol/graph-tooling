@@ -2,46 +2,62 @@ services:
   hardhat:
     build: ./hardhat
     ports:
-      - '8545:8545'
+      - "8545:8545"
   graph-node:
     image: graphprotocol/graph-node:latest
+    platform: linux/amd64
     ports:
-      - '8000:8000'
-      - '8001:8001'
-      - '8020:8020'
-      - '8030:8030'
-      - '8040:8040'
+      - "8000:8000"
+      - "8001:8001"
+      - "8020:8020"
+      - "8030:8030"
+      - "8040:8040"
     depends_on:
-      - hardhat
-      - ipfs
-      - postgres
+      hardhat:
+        condition: service_started
+      ipfs:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     environment:
       postgres_host: postgres
       postgres_user: graph-node
       postgres_pass: let-me-in
       postgres_db: graph-node
-      ipfs: 'ipfs:5001'
-      ethereum: 'test:http://hardhat:8545'
+      ipfs: "ipfs:5001"
+      ethereum: "test:http://hardhat:8545"
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: 1
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 8030 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
   ipfs:
     image: ipfs/kubo:v0.19.1
     ports:
-      - '5001:5001'
+      - "5001:5001"
     volumes:
       - ipfs-data:/data/ipfs
   postgres:
     image: postgres
     ports:
-      - '5432:5432'
-    command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
+      - "5432:5432"
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
     environment:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
-      POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U graph-node"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
 
 volumes:
   ipfs-data:
