@@ -8,8 +8,8 @@ import prettier from 'prettier';
 import uncrashable from '@float-capital/float-subgraph-uncrashable/src/Index.bs.js';
 import DataSourceTemplateCodeGenerator from './codegen/template.js';
 import { GENERATED_FILE_NOTE, ModuleImports } from './codegen/typescript.js';
-import { appendApiVersionForGraph } from './command-helpers/compiler.js';
 import { displayPath } from './command-helpers/fs.js';
+import { getGraphIpfsUrl } from './command-helpers/ipfs.js';
 import { Spinner, step, withSpinner } from './command-helpers/spinner.js';
 import { GRAPH_CLI_SHARED_HEADERS } from './constants.js';
 import debug from './debug.js';
@@ -112,7 +112,7 @@ export default class TypeGenerator {
 
       if (this.options.subgraphSources.length > 0) {
         const ipfsClient = createIpfsClient({
-          url: appendApiVersionForGraph(this.options.ipfsUrl.toString()),
+          url: getGraphIpfsUrl(this.options.ipfsUrl.toString()).ipfsUrl,
           headers: {
             ...GRAPH_CLI_SHARED_HEADERS,
           },

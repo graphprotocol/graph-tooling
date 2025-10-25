@@ -114,7 +114,7 @@ export function SubgraphImageDropZone(props: React.InputHTMLAttributes<HTMLInput
                 ...a,
                 target: {
                   ...a.target,
-                  value: `https://api.thegraph.com/ipfs/api/v0/cat?arg=${ipfsHash}`,
+                  value: `https://ipfs.thegraph.com/ipfs/api/v0/cat?arg=${ipfsHash}`,
                 },
               });
             },
