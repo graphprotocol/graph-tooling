@@ -41,10 +41,10 @@ services:
     volumes:
       - ipfs-data:/data/ipfs
   postgres:
-    image: postgres
+    image: postgres:17
     ports:
       - '5432:5432'
-    command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
+    command: ['postgres', '-c', 'shared_preload_libraries=pg_stat_statements']
     environment:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: let-me-in
