@@ -91,7 +91,7 @@ const generateFieldsAssertions = (entity: string, eventInputs: any[], indexEvent
       (input, index) =>
         `assert.fieldEquals(
     "${entity}",
-    "0xa16081f360e3847006db660bae1c6d1b2e17ec2a${indexEvents ? '-1' : ''}",
+    "0xa16081f360e3847006db660bae1c6d1b2e17ec2a${indexEvents ? '01000000' : ''}",
     "${input.name || `param${index}`}",
     "${expectedValue(ascTypeForEthereum(input.type))}"
   )`,
@@ -171,7 +171,9 @@ const generateExampleTest = (
     test("${entity} created and stored", () => {
       assert.entityCount('${entity}', 1)
 
-      // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
+      // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default transaction hash used in newMockEvent() function
+      // When indexEvents is true, entity ID uses concatI32() which appends log index as little-endian bytes
+      // Default log index 1 becomes: 01000000 (4 bytes: 0x01 0x00 0x00 0x00)
       ${generateFieldsAssertions(entity, eventInputs, indexEvents)}
 
       // More assert options:

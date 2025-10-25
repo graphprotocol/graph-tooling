@@ -13,7 +13,7 @@
     "codegen": "graph codegen",
     "create-test": "graph create test/basic-event-handlers --node http://localhost:8020/",
     "deploy-test": "graph deploy test/basic-event-handlers --version-label v0.0.1 --ipfs http://localhost:5001 --node http://localhost:8020/",
-    "test": "docker compose up -d && sleep 30 && hardhat test --network localhost && docker compose down",
+    "test": "docker compose up -d --wait --wait-timeout 50 && hardhat test --network localhost && docker compose down",
     "test:hardhat": "hardhat test --network localhost"
   },
   "dependencies": {

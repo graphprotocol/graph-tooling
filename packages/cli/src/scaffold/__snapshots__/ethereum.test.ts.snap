@@ -315,34 +315,36 @@ describe("Describe entity assertions", () => {
   test("ExampleEvent created and stored", () => {
     assert.entityCount("ExampleEvent", 1)
 
-    // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
+    // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default transaction hash used in newMockEvent() function
+    // When indexEvents is true, entity ID uses concatI32() which appends log index as little-endian bytes
+    // Default log index 1 becomes: 01000000 (4 bytes: 0x01 0x00 0x00 0x00)
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "a",
       "234"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "b",
       "[1234567890]"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "param2",
       "Example string value"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "c",
       "ethereum.Tuple Not implemented"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "d",
       "Example string value"
     )
@@ -482,34 +484,36 @@ describe("Describe entity assertions", () => {
   test("ExampleEvent created and stored", () => {
     assert.entityCount("ExampleEvent", 1)
 
-    // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
+    // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default transaction hash used in newMockEvent() function
+    // When indexEvents is true, entity ID uses concatI32() which appends log index as little-endian bytes
+    // Default log index 1 becomes: 01000000 (4 bytes: 0x01 0x00 0x00 0x00)
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "a",
       "234"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "b",
       "[1234567890]"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "param2",
       "Example string value"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "c",
       "ethereum.Tuple Not implemented"
     )
     assert.fieldEquals(
       "ExampleEvent",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000",
       "d",
       "Example string value"
     )
