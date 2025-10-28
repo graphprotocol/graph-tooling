@@ -268,6 +268,32 @@ export default class DeployCommand extends Command {
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
 
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
+      for (const ds of dataSourcesAndTemplates.dataSources) {
+        const address = ds.source.address;
+        if (!address) continue;
+
+        try {
+          await client.request(
+            'eth_getTransactionCount',
+            [address, 'latest'],
+            (requestError, jsonRpcError, res) => {
+              if (jsonRpcError) {
+                const message = jsonRpcError?.message;
+                deployDebugger('message: %O', message);
+              } else if (requestError) {
+                deployDebugger('HTTP requestError: %O', requestError);
+              } else if (res === '0x0') {
+                print.warning(
+                  `Warning: Contract ${address} does not appear to exist on network ${ds.network}. ` +
+                    `Subgraph may index no events.`,
+                );
+              }
+            },
+          );
+        } catch (e) {
+          print.warning(`Could not check contract ${address}: ${e}`);
+        }
+      }
     } catch (e) {
       this.error(e, { exit: 1 });
     }
