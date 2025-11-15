@@ -56,7 +56,7 @@
     "jayson": "4.2.0",
     "js-yaml": "4.1.0",
     "kubo-rpc-client": "^6.0.0",
-    "open": "10.2.0",
+    "open": "11.0.0",
     "prettier": "3.6.2",
     "progress": "^2.0.3",
     "semver": "7.7.3",
