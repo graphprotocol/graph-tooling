@@ -52,7 +52,7 @@
     "glob": "11.0.3",
     "gluegun": "5.2.0",
     "graphql": "16.11.0",
-    "immutable": "5.1.4",
+    "immutable": "5.1.5",
     "jayson": "4.2.0",
     "js-yaml": "4.1.0",
     "kubo-rpc-client": "^6.0.0",
