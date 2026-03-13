@@ -26,7 +26,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "connectkit": "^1.8.2",
-    "file-type": "^20.0.0",
+    "file-type": "^21.3.2",
     "gql.tada": "^1.8.10",
     "graphql": "16.11.0",
     "kubo-rpc-client": "^6.0.0",
@@ -34,7 +34,7 @@
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.5",
     "react-hook-form": "^7.53.2",
-    "semver": "7.7.3",
+    "semver": "7.7.4",
     "tailwind-merge": "^3.0.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.21.53",
@@ -56,6 +56,6 @@
     "rimraf": "^6.0.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.2"
+    "vite": "^6.4.1"
   }
 }
