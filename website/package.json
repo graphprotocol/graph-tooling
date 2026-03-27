@@ -40,7 +40,7 @@
     "viem": "^2.21.53",
     "vite-plugin-node-polyfills": "^0.24.0",
     "wagmi": "^2.13.3",
-    "yaml": "2.8.1",
+    "yaml": "2.8.3",
     "zod": "^4.0.0"
   },
   "devDependencies": {
