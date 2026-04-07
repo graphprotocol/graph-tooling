@@ -26,7 +26,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "connectkit": "^1.8.2",
-    "file-type": "^20.0.0",
+    "file-type": "^21.3.2",
     "gql.tada": "^1.8.10",
     "graphql": "16.11.0",
     "kubo-rpc-client": "^6.0.0",
@@ -40,7 +40,7 @@
     "viem": "^2.21.53",
     "vite-plugin-node-polyfills": "^0.24.0",
     "wagmi": "^2.13.3",
-    "yaml": "2.8.1",
+    "yaml": "2.8.3",
     "zod": "^4.0.0"
   },
   "devDependencies": {
@@ -56,6 +56,6 @@
     "rimraf": "^6.0.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.2"
+    "vite": "^6.4.2"
   }
 }
