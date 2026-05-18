@@ -4,6 +4,7 @@ module.exports = {
     hardhat: {
       // Pin to Cancun: Prague (default in hardhat >=2.26) enforces EIP-7825's
       // per-transaction gas cap of 2^24, which rejects the test deployments.
+      // Tracking proper fix (pin hardhat / lockfile / fit gas cap) in #2127.
       hardfork: 'cancun',
     },
   },
