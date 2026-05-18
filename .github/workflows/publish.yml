@@ -10,6 +10,9 @@ on:
 permissions:
   contents: read
 
+env:
+  RELEASE_COMMIT_MSG: 'chore(release): update monorepo packages versions'
+
 jobs:
   stable:
     name: Stable
@@ -35,31 +38,37 @@ jobs:
           packageManager: pnpm
           packageManagerVersion: 9
 
-      - name: Set variables
-        id: vars
-        run: echo "date=$(date +'%B %d, %Y')" >> "$GITHUB_OUTPUT"
-
       - name: Build
-        if: startsWith(github.event.head_commit.message, 'chore(release): update monorepo packages versions')
+        if: ${{ startsWith(github.event.head_commit.message, env.RELEASE_COMMIT_MSG) }}
         run: pnpm --filter=@graphprotocol/graph-cli build
 
       - name: Pack binaries
-        if: startsWith(github.event.head_commit.message, 'chore(release): update monorepo packages versions')
+        if: ${{ startsWith(github.event.head_commit.message, env.RELEASE_COMMIT_MSG) }}
         run: pnpm --filter=@graphprotocol/graph-cli oclif:pack
 
       - name: Create Release PR or Publish
+        id: changesets
         uses: changesets/action@v1
         with:
           publish: pnpm release
           version: pnpm changeset version
-          commit: 'chore(release): update monorepo packages versions'
+          commit: ${{ env.RELEASE_COMMIT_MSG }}
           title: Upcoming Release Changes
           createGithubReleases: true
-          githubReleaseName: ${{ steps.vars.outputs.date }}
-          githubReleaseAssets: packages/cli/dist/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
+
+      - name: Attach oclif binaries to GitHub Release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISHED: ${{ steps.changesets.outputs.publishedPackages }}
+        run: |
+          tag=$(jq -r '.[] | select(.name == "@graphprotocol/graph-cli") | "\(.name)@\(.version)"' <<< "$PUBLISHED")
+          if [ -n "$tag" ]; then
+            gh release upload "$tag" packages/cli/dist/*.tar.gz --clobber
+          fi
 
   snapshot:
     name: Snapshot
