@@ -21,7 +21,7 @@ all the communications.
 To run this project locally:
 
 1. Clone the repository
-2. Make sure you have [Node.js](https://nodejs.org/en) `>=20.x` installed
+2. Make sure you have [Node.js](https://nodejs.org/en) `>=22.x` installed
 3. Make sure you have [`pnpm` installed](https://pnpm.io/installation)
 4. Run `pnpm install` to install dependencies
 5. Run `pnpm build` to build the packages

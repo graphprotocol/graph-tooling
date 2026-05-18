@@ -7,7 +7,7 @@ inputs:
   nodeVersion:
     description: Node.js version to use
     required: true
-    default: '20'
+    default: '22'
   workingDirectory:
     description: Working directory
     required: false

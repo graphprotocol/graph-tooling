@@ -24,7 +24,7 @@ jobs:
       - uses: ./.github/actions/setup-node
         name: Setup Env
         with:
-          nodeVersion: 20
+          nodeVersion: 22
           packageManager: pnpm
           packageManagerVersion: 9
 
@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22]
+        node-version: [22, 24]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
@@ -80,7 +80,7 @@ jobs:
       - uses: ./.github/actions/setup-node
         name: Setup Env
         with:
-          nodeVersion: 20
+          nodeVersion: 22
           packageManager: pnpm
           packageManagerVersion: 9
 
@@ -110,7 +110,7 @@ jobs:
       - uses: ./.github/actions/setup-node
         name: Setup Env
         with:
-          nodeVersion: 20
+          nodeVersion: 22
           packageManager: pnpm
           packageManagerVersion: 9
 
