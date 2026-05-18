@@ -8,6 +8,10 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: changeset-deps-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   changeset:
     name: Add changeset for dep bump
@@ -23,6 +27,6 @@ jobs:
           fetch-depth: 0
 
       - name: Add changeset
-        uses: mscharley/dependency-changesets-action@v1
+        uses: mscharley/dependency-changesets-action@v1.2.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

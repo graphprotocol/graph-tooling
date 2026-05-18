@@ -24,12 +24,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.12.1
-      continue-on-error: true
-      with:
-        access_token: ${{ github.token }}
-
     - name: check pnpm version
       shell: bash
       id: pnpm
@@ -50,7 +44,7 @@ runs:
     - name: Setup ${{ inputs.packageManager }}
       id: pnpm_setup
       if: inputs.packageManager == 'pnpm'
-      uses: pnpm/action-setup@v4.2.0
+      uses: pnpm/action-setup@v6
       with:
         version: ${{ steps.pnpm.outputs.version }}
         run_install: false
