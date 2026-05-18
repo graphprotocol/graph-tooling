@@ -1,0 +1,123 @@
+name: Publish
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  stable:
+    name: Stable
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: publish-stable
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-node
+        with:
+          nodeVersion: 24
+          packageManager: pnpm
+          packageManagerVersion: 9
+
+      - name: Set variables
+        id: vars
+        run: echo "date=$(date +'%B %d, %Y')" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        if: startsWith(github.event.head_commit.message, 'chore(release): update monorepo packages versions')
+        run: pnpm --filter=@graphprotocol/graph-cli build
+
+      - name: Pack binaries
+        if: startsWith(github.event.head_commit.message, 'chore(release): update monorepo packages versions')
+        run: pnpm --filter=@graphprotocol/graph-cli oclif:pack
+
+      - name: Create Release PR or Publish
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+          version: pnpm changeset version
+          commit: 'chore(release): update monorepo packages versions'
+          title: Upcoming Release Changes
+          createGithubReleases: true
+          githubReleaseName: ${{ steps.vars.outputs.date }}
+          githubReleaseAssets: packages/cli/dist/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
+
+  snapshot:
+    name: Snapshot
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    concurrency:
+      group: publish-snapshot-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-node
+        with:
+          nodeVersion: 24
+          packageManager: pnpm
+          packageManagerVersion: 9
+
+      - name: Determine snapshot tag
+        id: tag
+        run: |
+          if [ "${{ github.event.pull_request.title }}" = "Upcoming Release Changes" ]; then
+            echo "tag=rc" >> "$GITHUB_OUTPUT"
+            # rc snapshots are taken from the Version PR — restore deleted changesets
+            git checkout HEAD~1 -- .changeset
+          else
+            echo "tag=alpha" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for changesets
+        id: has_changesets
+        run: |
+          if ls .changeset/*.md 2>/dev/null | grep -v README | grep -q .; then
+            echo "has=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build
+        if: steps.has_changesets.outputs.has == 'true'
+        run: pnpm build
+
+      - name: Snapshot version
+        if: steps.has_changesets.outputs.has == 'true'
+        run: pnpm changeset version --snapshot ${{ steps.tag.outputs.tag }}
+
+      - name: Publish snapshot
+        if: steps.has_changesets.outputs.has == 'true'
+        env:
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: pnpm changeset publish --tag ${{ steps.tag.outputs.tag }} --no-git-tag

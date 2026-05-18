@@ -1,0 +1,28 @@
+name: Auto changesets for dep updates
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  changeset:
+    name: Add changeset for dep bump
+    if: |
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login == 'renovate[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Add changeset
+        uses: mscharley/dependency-changesets-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
