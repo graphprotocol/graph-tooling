@@ -123,10 +123,13 @@ jobs:
 
       - name: Snapshot version
         if: steps.has_changesets.outputs.has == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version --snapshot ${{ steps.tag.outputs.tag }}
 
       - name: Publish snapshot
         if: steps.has_changesets.outputs.has == 'true'
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
         run: pnpm changeset publish --tag ${{ steps.tag.outputs.tag }} --no-git-tag
