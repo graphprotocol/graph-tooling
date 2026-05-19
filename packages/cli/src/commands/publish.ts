@@ -5,7 +5,7 @@ import { Args, Command, Flags, ux } from '@oclif/core';
 import { URL, URLSearchParams } from '@whatwg-node/fetch';
 import { createCompiler } from '../command-helpers/compiler.js';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import { getGraphIpfsUrl } from '../command-helpers/ipfs.js';
 import Protocol from '../protocols/index.js';
 
 export default class PublishCommand extends Command {
@@ -34,7 +34,7 @@ export default class PublishCommand extends Command {
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
       char: 'i',
-      default: DEFAULT_IPFS_URL,
+      default: getGraphIpfsUrl().ipfsUrl,
     }),
     'ipfs-hash': Flags.string({
       summary: 'IPFS hash of the subgraph manifest to deploy.',
@@ -128,6 +128,11 @@ export default class PublishCommand extends Command {
       );
     }
 
+    const { ipfsUrl, warning } = getGraphIpfsUrl(ipfs);
+    if (warning) {
+      this.warn(warning);
+    }
+
     if (ipfsHash) {
       await this.publishWithBrowser({
         ipfsHash,
@@ -148,7 +153,7 @@ export default class PublishCommand extends Command {
     }
 
     const compiler = createCompiler(manifest, {
-      ipfs,
+      ipfs: ipfsUrl,
       outputDir: 'build/',
       outputFormat: 'wasm',
       skipMigrations: false,

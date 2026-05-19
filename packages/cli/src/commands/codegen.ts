@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Args, Command, Flags } from '@oclif/core';
 import * as DataSourcesExtractor from '../command-helpers/data-sources.js';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import { getGraphIpfsUrl } from '../command-helpers/ipfs.js';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version.js';
 import debug from '../debug.js';
 import Protocol from '../protocols/index.js';
@@ -42,7 +42,7 @@ export default class CodegenCommand extends Command {
     ipfs: Flags.string({
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
-      default: DEFAULT_IPFS_URL,
+      default: getGraphIpfsUrl().ipfsUrl,
     }),
     'uncrashable-config': Flags.file({
       summary: 'Directory for uncrashable config.',
@@ -89,6 +89,11 @@ export default class CodegenCommand extends Command {
       this.error(e, { exit: 1 });
     }
 
+    const { ipfsUrl, warning } = getGraphIpfsUrl(ipfs);
+    if (warning) {
+      this.warn(warning);
+    }
+
     const generator = new TypeGenerator({
       subgraphManifest: manifest,
       outputDir,
@@ -97,7 +102,7 @@ export default class CodegenCommand extends Command {
       uncrashable,
       subgraphSources,
       uncrashableConfig: uncrashableConfig || 'uncrashable-config.yaml',
-      ipfsUrl: ipfs,
+      ipfsUrl,
     });
 
     // Watch working directory for file updates or additions, trigger

@@ -4,10 +4,9 @@ import path from 'node:path';
 import { filesystem, print, prompt, system } from 'gluegun';
 import { Args, Command, Flags } from '@oclif/core';
 import { Network } from '@pinax/graph-networks-registry';
-import { appendApiVersionForGraph } from '../command-helpers/compiler.js';
 import { ContractService } from '../command-helpers/contracts.js';
 import { resolveFile } from '../command-helpers/file-resolver.js';
-import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
+import { getGraphIpfsUrl } from '../command-helpers/ipfs.js';
 import { initNetworksConfig } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
 import { PromptManager } from '../command-helpers/prompt-manager.js';
@@ -122,7 +121,7 @@ export default class InitCommand extends Command {
     ipfs: Flags.string({
       summary: 'IPFS node to use for fetching subgraph data.',
       char: 'i',
-      default: DEFAULT_IPFS_URL,
+      default: getGraphIpfsUrl().ipfsUrl,
     }),
   };
 
@@ -199,6 +198,11 @@ export default class InitCommand extends Command {
       codegen: yarn ? 'yarn codegen' : 'npm run codegen',
       deploy: yarn ? 'yarn deploy' : 'npm run deploy',
     };
+
+    const { ipfsUrl, warning } = getGraphIpfsUrl(ipfs);
+    if (warning) {
+      this.warn(warning);
+    }
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from the example
@@ -299,7 +303,7 @@ export default class InitCommand extends Command {
           spkgPath,
           skipInstall,
           skipGit,
-          ipfsUrl: ipfs,
+          ipfsUrl,
         },
         { commands, addContract: false },
       );
@@ -340,10 +344,14 @@ export default class InitCommand extends Command {
         contractName,
         startBlock,
         spkgPath,
-        ipfsUrl: ipfs,
+        ipfsUrl,
       });
       if (!answers) {
         this.exit(1);
+      }
+      const { ipfsUrl: suppliedIpfsUrl, warning } = getGraphIpfsUrl(answers.ipfs);
+      if (warning) {
+        this.warn(warning);
       }
 
       await initSubgraphFromContract.bind(this)(
@@ -361,7 +369,7 @@ export default class InitCommand extends Command {
           spkgPath: answers.spkgPath,
           skipInstall,
           skipGit,
-          ipfsUrl: answers.ipfs,
+          ipfsUrl: suppliedIpfsUrl,
         },
         { commands, addContract: true },
       );
@@ -1258,7 +1266,7 @@ async function initSubgraphFromContract(
   if (isComposedSubgraph) {
     try {
       const ipfsClient = createIpfsClient({
-        url: appendApiVersionForGraph(ipfsUrl),
+        url: ipfsUrl,
         headers: {
           ...GRAPH_CLI_SHARED_HEADERS,
         },

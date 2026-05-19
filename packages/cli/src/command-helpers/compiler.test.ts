@@ -1,42 +1,70 @@
 import { describe, expect, it } from 'vitest';
-import { appendApiVersionForGraph } from './compiler.js';
+import { getGraphIpfsUrl } from './ipfs.js';
 
-describe('appendApiVersionForGraph', { concurrent: true }, () => {
-  it('append /api/v0 to Prod URL with trailing slash', () => {
-    expect(appendApiVersionForGraph('https://api.thegraph.com/ipfs/')).toBe(
-      'https://api.thegraph.com/ipfs/api/v0',
-    );
+const DEFAULT_IPFS_URL = 'https://ipfs.thegraph.com/ipfs/api/v0';
+
+describe('getGraphIpfsUrl', { concurrent: true }, () => {
+  it('returns default URL when input is undefined', () => {
+    expect(getGraphIpfsUrl(undefined)).toEqual({
+      ipfsUrl: DEFAULT_IPFS_URL,
+    });
   });
 
-  it('append /api/v0 to Prod URL without trailing slash', () => {
-    expect(appendApiVersionForGraph('https://api.thegraph.com/ipfs')).toBe(
-      'https://api.thegraph.com/ipfs/api/v0',
-    );
+  it('returns default URL when input is empty string', () => {
+    expect(getGraphIpfsUrl('')).toEqual({
+      ipfsUrl: DEFAULT_IPFS_URL,
+    });
   });
 
-  it('append /api/v0 to Staging URL without trailing slash', () => {
-    expect(appendApiVersionForGraph('https://staging.api.thegraph.com/ipfs')).toBe(
-      'https://staging.api.thegraph.com/ipfs/api/v0',
-    );
+  it('returns input URL when valid and not deprecated', () => {
+    const validUrl = 'https://ipfs.network.example.com';
+    expect(getGraphIpfsUrl(validUrl)).toEqual({
+      ipfsUrl: validUrl,
+    });
   });
 
-  it('do nothing if Prod URL has /api/v0', () => {
-    expect(appendApiVersionForGraph('https://api.thegraph.com/ipfs/api/v0')).toBe(
-      'https://api.thegraph.com/ipfs/api/v0',
-    );
+  it('trim trailing slash from valid url', () => {
+    const validUrl = 'https://ipfs.network.example.com/ipfs/';
+    expect(getGraphIpfsUrl(validUrl)).toEqual({
+      ipfsUrl: 'https://ipfs.network.example.com/ipfs',
+    });
   });
 
-  it('do nothing if Prod URL has no /ipfs', () => {
-    expect(appendApiVersionForGraph('https://api.thegraph.com')).toBe('https://api.thegraph.com');
+  it('returns default URL with warning for deprecated api.thegraph.com URL', () => {
+    const result = getGraphIpfsUrl('https://api.thegraph.com/ipfs/api/v0');
+    expect(result.ipfsUrl).toEqual(DEFAULT_IPFS_URL);
+    expect(result.warning).toContain('deprecated');
   });
 
-  it('do nothing for non-graph endpoint', () => {
-    expect(appendApiVersionForGraph('https://ipfs.saihaj.dev/')).toBe('https://ipfs.saihaj.dev/');
+  it('returns default URL with warning for deprecated ipfs.testnet.thegraph.com URL', () => {
+    const result = getGraphIpfsUrl('https://ipfs.testnet.thegraph.com/abc');
+    expect(result.ipfsUrl).toEqual(DEFAULT_IPFS_URL);
+    expect(result.warning).toContain('deprecated');
   });
 
-  it('do nothing for non-graph endpoint ending with /ipfs', () => {
-    expect(appendApiVersionForGraph('https://ipfs.saihaj.dev/ipfs/')).toBe(
-      'https://ipfs.saihaj.dev/ipfs/',
-    );
+  it('returns default URL with warning for deprecated ipfs.network.thegraph.com URL', () => {
+    const result = getGraphIpfsUrl('https://ipfs.network.thegraph.com/xyz');
+    expect(result.ipfsUrl).toEqual(DEFAULT_IPFS_URL);
+    expect(result.warning).toContain('deprecated');
+  });
+
+  it('returns default URL with warning for invalid URL', () => {
+    const result = getGraphIpfsUrl('not-a-valid-url');
+    expect(result.ipfsUrl).toEqual(DEFAULT_IPFS_URL);
+    expect(result.warning).toContain('Invalid IPFS URL');
+  });
+
+  it('preserves non-deprecated graph endpoints', () => {
+    const url = 'https://ipfs.thegraph.com/ipfs';
+    expect(getGraphIpfsUrl(url)).toEqual({
+      ipfsUrl: DEFAULT_IPFS_URL,
+    });
+  });
+
+  it('preserves third-party IPFS endpoints', () => {
+    const url = 'https://ipfs.example.com/api';
+    expect(getGraphIpfsUrl(url)).toEqual({
+      ipfsUrl: url,
+    });
   });
 });
