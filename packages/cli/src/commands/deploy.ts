@@ -9,6 +9,7 @@ import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
 import { createJsonRpcClient } from '../command-helpers/jsonrpc.js';
 import { updateSubgraphNetwork } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
+import { loadRegistry } from '../command-helpers/registry.js';
 import { assertGraphTsVersion, assertManifestApiVersion } from '../command-helpers/version.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 import debugFactory from '../debug.js';
@@ -255,6 +256,7 @@ export default class DeployCommand extends Command {
     }
 
     let protocol;
+    let registry;
     try {
       // Checks to make sure deploy doesn't run against
       // older subgraphs (both apiVersion and graph-ts version).
@@ -265,9 +267,93 @@ export default class DeployCommand extends Command {
       await assertManifestApiVersion(manifest, '0.0.5');
       await assertGraphTsVersion(path.dirname(manifest), '0.25.0');
 
+      try {
+        registry = await loadRegistry();
+        deployDebugger('Loaded networks registry with %d networks', registry.networks.length);
+      } catch (e) {
+        deployDebugger('Failed to load networks registry: %O', e);
+        print.warning('Could not load networks registry. Skipping contract validation.');
+      }
+
       const dataSourcesAndTemplates = await DataSourcesExtractor.fromFilePath(manifest);
 
       protocol = Protocol.fromDataSources(dataSourcesAndTemplates);
+
+      if (registry) {
+        for (const ds of dataSourcesAndTemplates) {
+          const address = ds.source.address;
+          if (!address) continue;
+
+          const network = ds.network;
+          if (!network) continue;
+
+          try {
+            const networkInfo = registry.getNetworkByGraphId(network);
+
+            if (!networkInfo) {
+              deployDebugger('Network %s not found in registry', network);
+              continue;
+            }
+
+            const rpcEndpoints = registry.getRpcUrls(networkInfo.id) || [];
+
+            if (rpcEndpoints.length === 0) {
+              deployDebugger('No RPC endpoints found for network %s', network);
+              continue;
+            }
+
+            const rpcUrl = rpcEndpoints[0];
+
+            deployDebugger(
+              'Checking contract %s on network %s via RPC %s',
+              address,
+              network,
+              rpcUrl,
+            );
+
+            const blockchainClient = createJsonRpcClient(new URL(rpcUrl));
+
+            if (!blockchainClient) {
+              deployDebugger('Could not create blockchain client for %s', rpcUrl);
+              continue;
+            }
+
+            await new Promise<void>(resolve => {
+              blockchainClient.request(
+                'eth_getTransactionCount',
+                [address, 'latest'],
+                (requestError, jsonRpcError, res) => {
+                  if (jsonRpcError) {
+                    const message = jsonRpcError?.message;
+                    deployDebugger('JSON-RPC error checking contract %s: %O', address, message);
+                    resolve();
+                  } else if (requestError) {
+                    deployDebugger('HTTP error checking contract %s: %O', address, requestError);
+                    resolve();
+                  } else if (res === '0x0') {
+                    print.warning(
+                      `Warning: Contract ${address} does not appear to exist on network ${network}. ` +
+                        `Subgraph may index no events.`,
+                    );
+                    resolve();
+                  } else {
+                    deployDebugger(
+                      'Contract %s exists on network %s (tx count: %s)',
+                      address,
+                      network,
+                      res,
+                    );
+                    resolve();
+                  }
+                },
+              );
+            });
+          } catch (e) {
+            print.warning(`Could not check contract ${address}: ${e}`);
+            deployDebugger('Exception checking contract %s: %O', address, e);
+          }
+        }
+      }
     } catch (e) {
       this.error(e, { exit: 1 });
     }
