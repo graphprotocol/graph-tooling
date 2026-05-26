@@ -30,14 +30,14 @@ runs:
       if: inputs.packageManager == 'pnpm'
       working-directory: ${{ inputs.workingDirectory }}
       run: |
-        PNPM_VERSION=${PNPM_VERSION:-9.0.6}
-        PKG_JSON=$(cat package.json | jq -r '.packageManager' | awk -F@ '{print $2}')
-        if [ ! -z $PKG_JSON ]; then
-          PNPM_VERSION=$PKG_JSON
+        PNPM_VERSION='${{ inputs.packageManagerVersion }}'
+        if [ -z "$PNPM_VERSION" ]; then
+          PKG_JSON=$(jq -r '.packageManager // ""' package.json | awk -F@ '{print $2}')
+          if [ -n "$PKG_JSON" ]; then
+            PNPM_VERSION="$PKG_JSON"
+          fi
         fi
-        if [ ! -z {{inputs.packageManager}} ]; then
-          PNPM_VERSION=${{ inputs.packageManagerVersion }}
-        fi
+        PNPM_VERSION="${PNPM_VERSION:-10.17.1}"
         echo "Using PNPM version $PNPM_VERSION"
         echo "version=$PNPM_VERSION" >> $GITHUB_OUTPUT
 

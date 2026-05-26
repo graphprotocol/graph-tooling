@@ -17,12 +17,28 @@ As of today, the command line interface supports the following commands:
 - `graph auth` — Stores a [Graph Node](https://github.com/graphprotocol/graph-node) access token in
   the system's keychain.
 - `graph local` — Runs tests against a [Graph Node](https://github.com/graphprotocol/graph-node)
-  test environment (using Ganache by default).
+  test environment (using Ganache by default) (deprecated, use `graph dev` instead).
+- `graph dev` — Runs a local
+  [Graph Node](https://github.com/graphprotocol/graph-node) in dev mode (delegates to
+  [`gnd dev`](https://www.npmjs.com/package/@graphprotocol/gnd)).
 - `graph test` — Downloads and runs the [Matchstick](https://github.com/LimeChain/matchstick) rust
   binary in order to test a subgraph.
 - `graph add` - Adds a new datasource to the yaml file and writes the necessary changes to other
   files - schema.graphql, abi and mapping.
 - `graph publish` - Publishes the subgraph to the Graph Network.
+
+### Command dispatch via `gnd`
+
+By default, `graph <cmd>` execs the
+[`@graphprotocol/gnd`](https://www.npmjs.com/package/@graphprotocol/gnd) binary, which is shipped
+as a dependency of the CLI. The TypeScript implementation in this package is used as a fallback for
+commands that `gnd` does not provide.
+
+- `graph local` always runs the TypeScript implementation — `gnd` has no equivalent.
+- Set `GRAPH_CLI_IGNORE_GND=1` to route every command through the TypeScript implementation.
+
+The previous `graph node install` command, which downloaded a `gnd` binary from GitHub releases,
+has been removed. Installing `@graphprotocol/graph-cli` is now sufficient to get `gnd`.
 
 ## How It Works
 

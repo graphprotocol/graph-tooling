@@ -36,7 +36,7 @@ jobs:
         with:
           nodeVersion: 24
           packageManager: pnpm
-          packageManagerVersion: 9
+          packageManagerVersion: '10.17.1'
 
       - name: Build
         if: ${{ startsWith(github.event.head_commit.message, env.RELEASE_COMMIT_MSG) }}
@@ -95,7 +95,7 @@ jobs:
         with:
           nodeVersion: 24
           packageManager: pnpm
-          packageManagerVersion: 9
+          packageManagerVersion: '10.17.1'
 
       - name: Determine snapshot tag
         id: tag
