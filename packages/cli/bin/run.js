@@ -2,6 +2,7 @@
 import process from 'node:process';
 import semver from 'semver';
 import { execute } from '@oclif/core';
+import { runGnd } from '../dist/command-helpers/gnd.js';
 import { nodeVersion } from '../dist/version.js';
 
 if (!semver.satisfies(process.version, nodeVersion)) {
@@ -11,4 +12,11 @@ if (!semver.satisfies(process.version, nodeVersion)) {
   process.exit(1);
 }
 
-await execute({ dir: import.meta.url });
+const args = process.argv.slice(2);
+const useGnd = !process.env.GRAPH_CLI_IGNORE_GND && args[0] !== 'local';
+
+if (useGnd) {
+  runGnd(args);
+} else {
+  await execute({ dir: import.meta.url });
+}

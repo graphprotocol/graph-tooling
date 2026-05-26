@@ -4,5 +4,6 @@ import { linkCli } from './link';
 
 export default async () => {
   process.env.GRAPH_CLI_TESTS = '1';
+  process.env.GRAPH_CLI_IGNORE_GND = '1';
   await linkCli();
 };
