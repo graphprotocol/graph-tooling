@@ -51,7 +51,7 @@
     "fs-extra": "11.3.2",
     "glob": "11.0.3",
     "gluegun": "5.2.0",
-    "graphql": "16.11.0",
+    "graphql": "17.0.0",
     "immutable": "5.1.4",
     "jayson": "4.2.0",
     "js-yaml": "4.1.0",
