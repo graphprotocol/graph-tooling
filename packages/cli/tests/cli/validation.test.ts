@@ -111,6 +111,14 @@ describe('Validation', { concurrent: true, timeout: 60_000 }, () => {
     },
   );
   cliTest(
+    'File data source does not skip regular manifest validation',
+    ['codegen', '--skip-migrations'],
+    'validation/file-data-source-invalid-manifest',
+    {
+      exitCode: 1,
+    },
+  );
+  cliTest(
     'Invalid data source template',
     ['codegen', '--skip-migrations'],
     'validation/invalid-data-source-template',
