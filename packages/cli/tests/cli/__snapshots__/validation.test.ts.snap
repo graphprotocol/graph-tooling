@@ -443,6 +443,20 @@ Types generated successfully
 "
 `;
 
+exports[`Validation > File data source does not skip regular manifest validation 1`] = `
+"- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > network
+  Expected string, found number:
+  11155111
+"
+`;
+
+exports[`Validation > File data source does not skip regular manifest validation 2`] = `1`;
+
+exports[`Validation > File data source does not skip regular manifest validation 3`] = `""`;
+
 exports[`Validation > Invalid @fulltext directive 1`] = `
 "- Load subgraph from subgraph.yaml
 ✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:

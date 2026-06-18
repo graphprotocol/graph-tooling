@@ -37,6 +37,31 @@ const buildCombinedWarning = (filename: string, warnings: immutable.List<any>) =
 
 type ResolveFile = (path: string) => string;
 
+const isFileDataSourceKind = (kind: unknown) =>
+  typeof kind === 'string' && (kind === 'file' || kind.startsWith('file/'));
+
+const hasFileDataSources = (data: any) => {
+  const hasFileKind = (entries: any) =>
+    Array.isArray(entries) && entries.some(entry => isFileDataSourceKind(entry?.kind));
+
+  return hasFileKind(data?.dataSources) || hasFileKind(data?.templates);
+};
+
+const omitFileDataSources = (data: any) => {
+  if (data == null || typeof data !== 'object' || Array.isArray(data)) {
+    return data;
+  }
+
+  const omitFileKind = (entries: any) =>
+    Array.isArray(entries) ? entries.filter(entry => !isFileDataSourceKind(entry?.kind)) : entries;
+
+  return {
+    ...data,
+    dataSources: omitFileKind(data.dataSources),
+    templates: omitFileKind(data.templates),
+  };
+};
+
 export default class Subgraph {
   static async validate(data: any, protocol: any, { resolveFile }: { resolveFile: ResolveFile }) {
     subgraphDebug.extend('validate')('Validating Subgraph with protocol %M', protocol);
@@ -266,26 +291,25 @@ More than one template named '${name}', template names must be unique.`,
       subgraphDebug('Loading manifest from %s', filename);
       const raw_data = await fs.readFile(filename, 'utf-8');
       subgraphDebug('Checking for file data sources in %s', filename);
-      has_file_data_sources = raw_data.includes('kind: file');
       subgraphDebug('Parsing manifest from %s', filename);
       data = yaml.parse(raw_data);
+      has_file_data_sources = hasFileDataSources(data);
     }
 
     // Helper to resolve files relative to the subgraph manifest
     const resolveFile: ResolveFile = maybeRelativeFile =>
       path.resolve(path.dirname(filename), maybeRelativeFile);
 
-    // TODO: Validation for file data sources
-    if (!has_file_data_sources) {
-      subgraphDebug('Validating manifest from %s', filename);
-      const manifestErrors = await Subgraph.validate(data, protocol, {
-        resolveFile,
-      });
+    // TODO: Complete schema validation for file data sources themselves.
+    const dataForValidation = has_file_data_sources ? omitFileDataSources(data) : data;
+    subgraphDebug('Validating manifest from %s', filename);
+    const manifestErrors = await Subgraph.validate(dataForValidation, protocol, {
+      resolveFile,
+    });
 
-      if (manifestErrors.size > 0) {
-        subgraphDebug('Manifest validation failed for %s', filename);
-        throwCombinedError(filename, manifestErrors);
-      }
+    if (manifestErrors.size > 0) {
+      subgraphDebug('Manifest validation failed for %s', filename);
+      throwCombinedError(filename, manifestErrors);
     }
 
     const manifest = immutable.fromJS(data) as immutable.Map<any, any>;
