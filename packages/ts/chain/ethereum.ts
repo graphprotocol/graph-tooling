@@ -9,6 +9,7 @@ export declare namespace ethereum {
   function hasCode(address: Address): Wrapped<bool>;
   function encode(token: Value): Bytes | null;
   function decode(types: string, data: Bytes): Value | null;
+  function decodeParams(types: string, data: Bytes): Value | null;
 }
 
 export namespace ethereum {
