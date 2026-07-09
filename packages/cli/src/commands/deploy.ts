@@ -57,6 +57,9 @@ export default class DeployCommand extends Command {
       summary: 'Version label used for the deployment.',
       char: 'l',
     }),
+    'publish-network': Flags.string({
+      summary: 'Graph network to publish the subgraph to.',
+    }),
     ipfs: Flags.string({
       summary: 'Upload build results to an IPFS node.',
       char: 'i',
@@ -98,6 +101,7 @@ export default class DeployCommand extends Command {
         'deploy-key': deployKeyFlag,
         'access-token': accessToken,
         'version-label': versionLabelFlag,
+        'publish-network': publishNetwork,
         ipfs,
         headers,
         node: nodeFlag,
@@ -177,6 +181,7 @@ export default class DeployCommand extends Command {
           ipfs_hash: ipfsHash,
           version_label: versionLabel,
           debug_fork: debugFork,
+          publish_to_graph_network: publishNetwork,
         },
         async (
           // @ts-expect-error TODO: why are the arguments not typed?
