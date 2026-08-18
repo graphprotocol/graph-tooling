@@ -78,7 +78,7 @@
     "spawn-command": "1.0.0",
     "strip-ansi": "7.1.2",
     "typescript": "5.7.3",
-    "vitest": "^3.0.0"
+    "vitest": "^4.0.0"
   },
   "publishConfig": {
     "access": "public",
