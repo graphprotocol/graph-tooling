@@ -122,7 +122,9 @@ export function testBigInt(): void {
   longArray[3] = 255;
   longArray[4] = 0;
   assert(longArray.toU32() == 4_294_705_147);
-  assert(longArray.toI32() == 4_294_705_147);
+  // 4_294_705_147 is past i32.MAX_VALUE, so toI32 reports an overflow rather than
+  // returning the wrapped -262_149. The assert cannot be written here: an overflow
+  // aborts, and this harness has no way to expect one.
 
   const bytes = Bytes.fromHexString('0x56696b746f726961');
   assert((bytes[0] = 0x56));

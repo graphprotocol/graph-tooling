@@ -150,6 +150,14 @@ export class ByteArray extends Uint8Array {
         assert(false, 'overflow converting ' + this.toHexString() + ' to i32');
       }
     }
+    // Matching sign padding above the window is not enough on its own: the sign bit of the
+    // last byte inside the window has to agree with it too. Without this check a positive
+    // value one bit too wide - 0x80000000 carried in five bytes, exactly what
+    // BigInt.fromUnsignedBytes produces for a u32 >= 2^31 - passes the loop above and is
+    // returned as a negative i32 instead of throwing.
+    if (this.length > 4 && this[3] >> 7 != (isNeg ? 1 : 0)) {
+      assert(false, 'overflow converting ' + this.toHexString() + ' to i32');
+    }
     const paddedBytes = new Bytes(4);
     paddedBytes[0] = padding;
     paddedBytes[1] = padding;
@@ -194,6 +202,11 @@ export class ByteArray extends Uint8Array {
       if (this[i] != padding) {
         assert(false, 'overflow converting ' + this.toHexString() + ' to i64');
       }
+    }
+    // Same as in toI32: the sign bit of the last byte inside the window has to agree with
+    // the padding, otherwise a positive value that needs the 64th bit is returned negative.
+    if (this.length > 8 && this[7] >> 7 != (isNeg ? 1 : 0)) {
+      assert(false, 'overflow converting ' + this.toHexString() + ' to i64');
     }
     const paddedBytes = new Bytes(8);
     paddedBytes[0] = padding;
