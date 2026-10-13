@@ -39,7 +39,7 @@
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.21.53",
     "vite-plugin-node-polyfills": "^0.24.0",
-    "wagmi": "^2.13.3",
+    "wagmi": "^3.0.0",
     "yaml": "2.8.1",
     "zod": "^4.0.0"
   },
