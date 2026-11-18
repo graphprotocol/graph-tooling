@@ -268,7 +268,13 @@ export default class Compiler {
             ? templates
             : templates.map((template: any) =>
                 template.updateIn(['mapping', 'file'], (mappingPath: string) =>
-                  this._compileTemplateMapping(template, mappingPath, compiledFiles, spinner),
+                  this._compileTemplateMapping(
+                    template,
+                    mappingPath,
+                    compiledFiles,
+                    spinner,
+                    validate,
+                  ),
                 ),
               ),
         );
@@ -360,6 +366,15 @@ export default class Compiler {
       const alreadyCompiled = compiledFiles.has(inputCacheKey);
       if (alreadyCompiled) {
         const outFile = compiledFiles.get(inputCacheKey);
+        if (validate) {
+          const missingHandlers = this._validateHandlersInWasm({
+            pathToWasm: outFile,
+            dataSource,
+          });
+          if (missingHandlers.length > 0) {
+            throw Error(`\n\tMissing handlers in WASM: ${missingHandlers.join(', ')}`);
+          }
+        }
         step(
           spinner,
           'Compile data source:',
@@ -416,10 +431,11 @@ export default class Compiler {
   }
 
   _compileTemplateMapping(
-    template: immutable.Collection<any, any>,
+    template: immutable.Map<any, any>,
     mappingPath: string,
     compiledFiles: Map<any, any>,
     spinner: Spinner,
+    validate = false,
   ) {
     try {
       const templateName = template.get('name');
@@ -435,6 +451,15 @@ export default class Compiler {
       const alreadyCompiled = compiledFiles.has(inputCacheKey);
       if (alreadyCompiled) {
         const outFile = compiledFiles.get(inputCacheKey);
+        if (validate) {
+          const missingHandlers = this._validateHandlersInWasm({
+            pathToWasm: outFile,
+            dataSource: template,
+          });
+          if (missingHandlers.length > 0) {
+            throw Error(`\n\tMissing handlers in WASM: ${missingHandlers.join(', ')}`);
+          }
+        }
         step(
           spinner,
           'Compile data source template:',
@@ -476,6 +501,16 @@ export default class Compiler {
         libs,
         outputFile,
       });
+
+      if (validate) {
+        const missingHandlers = this._validateHandlersInWasm({
+          pathToWasm: outFile,
+          dataSource: template,
+        });
+        if (missingHandlers.length > 0) {
+          throw Error(`\n\tMissing handlers in WASM: ${missingHandlers.join(', ')}`);
+        }
+      }
 
       // Remember the output file to avoid compiling the same file again
       compiledFiles.set(inputCacheKey, outFile);
