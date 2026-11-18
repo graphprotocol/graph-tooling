@@ -154,6 +154,12 @@ export default class ABI {
       throw Error(`No valid ABI in file: ${path.relative(process.cwd(), file)}`);
     }
 
-    return new ABI(name, file, immutable.fromJS(abi));
+    // Some explorer ABIs encode the parameterless fallback with null arrays.
+    const entries = abi.map((entry: any) =>
+      entry.type === 'fallback'
+        ? { ...entry, inputs: entry.inputs ?? [], outputs: entry.outputs ?? [] }
+        : entry,
+    );
+    return new ABI(name, file, immutable.fromJS(entries));
   }
 }
