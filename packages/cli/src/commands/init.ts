@@ -20,6 +20,7 @@ import {
   formatContractName,
   formatSubgraphName,
   getSubgraphBasename,
+  validateSubgraphDirectory,
 } from '../command-helpers/subgraph.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 import debugFactory from '../debug.js';
@@ -415,7 +416,7 @@ async function processFromExampleInitForm(
       name: 'directory',
       message: 'Directory to create the subgraph in',
       initial: () => initDirectory || getSubgraphBasename(subgraphName!),
-      validate: value => value.length > 0 || 'Directory must not be empty',
+      validate: validateSubgraphDirectory,
       result: value => {
         directory = value;
         initDebugger.extend('processFromExampleInitForm')('directory: %O', value);
@@ -641,7 +642,7 @@ async function processInitForm(
       name: 'directory',
       message: 'Directory to create the subgraph in',
       initial: () => initDirectory || getSubgraphBasename(subgraphName!),
-      validate: value => value.length > 0 || 'Directory must not be empty',
+      validate: validateSubgraphDirectory,
       result: value => {
         directory = value;
         initDebugger.extend('processInitForm')('directory: %O', value);
