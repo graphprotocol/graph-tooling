@@ -3,12 +3,12 @@ import events from 'node:events';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 import { filesystem, patching, print, system } from 'gluegun';
 import yaml from 'js-yaml';
 import semver from 'semver';
 import { Args, Command, Flags } from '@oclif/core';
+import { downloadBinary } from '../command-helpers/download-binary.js';
 import { GRAPH_CLI_SHARED_HEADERS } from '../constants.js';
 
 export default class TestCommand extends Command {
@@ -166,14 +166,7 @@ async function runBinary(
 
     if (!fs.existsSync(binPath)) {
       this.log(`Downloading matchstick binary: ${url}`);
-      await fs.promises.mkdir(binDir, { recursive: true });
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Status: ${response.statusText}`);
-      if (!response.body) throw new Error('No response body received');
-
-      const fileStream = fs.createWriteStream(binPath);
-      await pipeline(response.body, fileStream);
-      await fs.promises.chmod(binPath, '755');
+      await downloadBinary(url, binPath);
     }
   } catch (e) {
     this.error(
