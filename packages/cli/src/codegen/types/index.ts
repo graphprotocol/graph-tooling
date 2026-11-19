@@ -95,8 +95,26 @@ export const ethereumToAsc = (code: string, ethereumType: string, internalType?:
     internalType,
   );
 
-export const ethereumFromAsc = (code: string, ethereumType: string) =>
-  findConversionToType('AssemblyScript', 'ethereum', ethereumType).get('convert')(code);
+export const ethereumFromAsc = (code: string, ethereumType: string) => {
+  const conversion = findConversionToType('AssemblyScript', 'ethereum', ethereumType);
+  if (/\[\d+\]/.test(ethereumType) || /^uint(8|16|24)\[/.test(ethereumType)) {
+    return ethereumArrayFromAsc(code, ethereumType, 0);
+  }
+  return conversion.get('convert')(code);
+};
+
+function ethereumArrayFromAsc(code: string, ethereumType: string, depth: number): string {
+  const array = /^(.*)\[([0-9]*)\]$/.exec(ethereumType);
+  if (!array) {
+    return findConversionToType('AssemblyScript', 'ethereum', ethereumType).get('convert')(code);
+  }
+
+  const [, elementType, length] = array;
+  const value = `value${depth}`;
+  const converted = ethereumArrayFromAsc(value, elementType, depth + 1);
+  const constructor = length ? 'fromFixedSizedArray' : 'fromArray';
+  return `ethereum.Value.${constructor}(${code}.map<ethereum.Value>((${value}: ${ascTypeForEthereum(elementType)}): ethereum.Value => ${converted}))`;
+}
 
 export const ascTypeForValue = (valueType: string) =>
   findConversionFromType('Value', 'AssemblyScript', valueType).getIn(['to', 'type']);
