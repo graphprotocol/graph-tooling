@@ -10,6 +10,7 @@ import { resolveFile } from '../command-helpers/file-resolver.js';
 import { DEFAULT_IPFS_URL } from '../command-helpers/ipfs.js';
 import { initNetworksConfig } from '../command-helpers/network.js';
 import { chooseNodeUrl } from '../command-helpers/node.js';
+import { getPackageManagerCommands } from '../command-helpers/package-manager.js';
 import { PromptManager } from '../command-helpers/prompt-manager.js';
 import { loadRegistry } from '../command-helpers/registry.js';
 import { retryWithPrompt } from '../command-helpers/retry.js';
@@ -184,21 +185,7 @@ export default class InitCommand extends Command {
       });
     }
 
-    // Detect Yarn and/or NPM
-    const yarn = system.which('yarn');
-    const npm = system.which('npm');
-    if (!yarn && !npm) {
-      this.error(`Neither Yarn nor NPM were found on your system. Please install one of them.`, {
-        exit: 1,
-      });
-    }
-
-    const commands = {
-      link: yarn ? 'yarn link @graphprotocol/graph-cli' : 'npm link @graphprotocol/graph-cli',
-      install: yarn ? 'yarn' : 'npm install',
-      codegen: yarn ? 'yarn codegen' : 'npm run codegen',
-      deploy: yarn ? 'yarn deploy' : 'npm run deploy',
-    };
+    const commands = getPackageManagerCommands(path.resolve(directory || '.'));
 
     // If all parameters are provided from the command-line,
     // go straight to creating the subgraph from the example
