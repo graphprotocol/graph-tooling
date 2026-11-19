@@ -44,7 +44,6 @@ export default class DataSourceTemplateCodeGenerator {
 
     const klass = tsCodegen.klass(name, {
       export: true,
-      extends: 'DataSourceTemplate',
     });
     klass.addMethod(this.protocolTemplateCodeGen.generateCreateMethod());
     klass.addMethod(this.protocolTemplateCodeGen.generateCreateWithContextMethod());
