@@ -12,7 +12,7 @@ RUN corepack enable
 
 RUN corepack prepare pnpm@9.10.0 --activate
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY $PWD/entrypoint.sh /usr/local/bin
 
